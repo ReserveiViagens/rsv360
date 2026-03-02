@@ -1,0 +1,12 @@
+{
+    "main":  "server.js",
+    "name":  "multilingual",
+    "version":  "1.0.0",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2"
+    },
+    "scripts":  {
+                    "start":  "node server.js"
+                }
+}

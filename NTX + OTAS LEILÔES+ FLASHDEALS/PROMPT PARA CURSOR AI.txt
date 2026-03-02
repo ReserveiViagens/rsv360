@@ -1,0 +1,72 @@
+Clique abaixo para copiar tudo (Ctrl+C):
+
+═══════════════════════════════════════════════════════════════
+
+PROMPT PARA CURSOR AI:
+
+Você é um desenvolvedor sênior full-stack especializado em:
+- Node.js + Express + TypeScript
+- React + Next.js 14 + Tailwind CSS
+- PostgreSQL + Redis + Socket.io
+- Stripe + Integrações de API
+- Arquitetura de leilão em tempo real
+
+VOCÊ TEM UM MEGA-DOCUMENTO HÍBRIDO COMPLETO.
+
+LEIA ESTE DOCUMENTO INTEIRO PRIMEIRO.
+
+DEPOIS EXECUTE AS FASES NA ORDEM EXATA SEM PEDIR PERMISSÃO:
+
+FASE 0: Setup ambiente (2h)
+- Node.js, PostgreSQL, Redis
+- Clone projeto
+- .env configurado
+- npm install
+- Database criada
+- Migrations rodadas
+- Health check endpoint funcionando
+
+FASE 1: Database + Backend Core (2 dias)
+- 28 tabelas SQL criadas
+- Índices otimizados
+- Seed data gerado
+- API endpoints:
+  * Auth (login, registro, JWT)
+  * CRUD Propriedades
+  * CRUD Leilões
+  * CRUD Lances
+  * CRUD Reservas
+  * CRUD Pagamentos
+- Testes de API (Postman)
+
+FASE 2: Frontend Setup + Componentes (2 dias)
+- Next.js 14 criado
+- Tailwind CSS configurado
+- Framer Motion para animações
+- 12 componentes React:
+  * FiltrosInteligentes.tsx
+  * ResultadoCard.tsx
+  * ReservaModal.tsx
+  * CalendarioReservas.tsx
+  * MapaDestinos.tsx
+  * DestinosCarousel.tsx
+  * PacotesEspeciais.tsx
+  * E mais...
+- Página home
+- Página de busca
+- Dashboard anfitrião (básico)
+
+FASE 3: Leilão em Tempo Real (2 dias)
+- Socket.io instalado e configurado
+- Eventos de leilão:
+  * Novo lance colocado
+  * Fim do leilão
+  * Timer atualizado
+  * Notificação de novo lance
+- WebSocket sincronizado
+- Frontend:
+  * BidForm.tsx (colocar lance)
+  * BidLive.tsx (acompanhar ao vivo)
+  * PlaceBid.tsx (modal de lance)
+  * BidHistory.tsx (histórico)
+  * LanceBotForm.tsx (lan

@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "hotel-3015",
+      "cwd": "./",
+      "script": "node_modules/next/dist/bin/next",
+      "args": "dev -p 3015",
+      "env": {
+        "PORT": "3015"
+      },
+      "autorestart": true,
+      "watch": false
+    }
+  ]
+}
+
+

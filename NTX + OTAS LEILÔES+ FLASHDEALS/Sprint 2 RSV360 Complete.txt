@@ -1,0 +1,1530 @@
+O documento “Sprint 2 RSV360 Complete” junta duas coisas: o mega‑módulo de aluguel/leilão RSV360 e o motor de bolsa de viagens Nexus Travel Exchange (NTX). Ele define praticamente tudo o que o sistema vai fazer: OTA + leilão + deals instantâneos + financeiro + contratos + notificações e governança.
+​
+
+1. Visão geral dos módulos
+RSV360 Aluguel de Temporada: cadastro e gestão completa de acomodações, reservas, pagamentos, chat, integrações com OTAs e Google Vacation Rentals, com ~500 funcionalidades mapeadas.
+​
+
+Leilão de Acomodações RSV360: engine de leilão de imóveis (lances, auto‑lance, leilão reverso/holandês, happy hour, auditoria etc.).
+​
+
+Nexus Travel Exchange (NTX): bolsa de valores de viagens com Order Book (bids/asks), leilão reverso RFP, Flash/Express/Pricebreaker, escrow financeiro e hash de transparência.
+​
+
+2. Módulo RSV360 (aluguel + OTA)
+Gestão de acomodações: cadastro de imóveis, fotos, amenities, regras, sazonalidade, SEO, publicação em Google Vacation Rentals, sincronização com OTAs (Airbnb, Booking, Vrbo etc.).
+​
+
+Busca e filtros: busca por mapa, datas, preço, avaliação, comodidades, raio, trending, full‑text search e filtros específicos para leilão/flash deal.
+​
+
+Reservas e pagamentos: cálculo de diárias, cupons, PIX com desconto, parcelamento, integração Stripe, reembolso total/parcial, repasse a anfitrião, relatórios financeiros.
+​
+
+3. Leilão de acomodações (RSV360 clássico)
+Configuração de leilão: data início/fim, lance mínimo, incremento mínimo, tipos de leilão (normal, comprar agora, reverso, holandês), agendamento e múltiplos leilões simultâneos.
+​
+
+Dinâmica do leilão: lances em tempo real via WebSocket, auto‑bid, extensão automática se houver lance nos últimos minutos, proteção antifraude, limite de lances por usuário e IP blocking.
+​
+
+Resultado e contrato: confirmação automática do vencedor, envio de contrato de aluguel, integração com OTAs e reservas, histórico/auditoria completo e exportação de relatórios.
+​
+
+4. Nexus Travel Exchange (NTX) – mercado e matching
+Modelo de dados: marketassets (ativos: voo/hotel/pacote), marketbids (ordens de compra), marketasks (ordens de venda), marketmatches (trades com transactionhash e escrowstatus).
+​
+
+Matching Engine: prioridade preço‑tempo; se maxPrice >= minPrice, gera match com finalPrice (ask), calcula spreadFee da plataforma e grava hash SHA‑256 como prova de transparência.
+​
+
+Leilão reverso RFP: viajante abre RFP; fornecedores competem baixando preço com decremento mínimo; ordenação por score (preço + reputação); anti‑sniping com extensão de tempo.
+​
+
+5. Deals instantâneos (Flash, Express, Pricebreaker)
+Flash Deals: ofertas com grande desconto e tempo/estoque limitado (saletype = FLASH, dealexpiresat, stocklimit), expiradas e removidas por cron job + WebSocket.
+​
+
+Express Deals: compra direta (tipo “Buy Now”) que pula a fase de bidding e manda direto para escrow usando serviço de deals com lock pessimista (FOR UPDATE).
+​
+
+Pricebreakers (hotel secreto): hotel de alto padrão com nome oculto; usuário vê cidade, categoria e preço; ativo SECRET revela propertyname só após pagamento em escrow.
+​
+
+6. Financeiro, escrow e carteiras
+Carteiras: tabela financialwallets com balance_available e balance_frozen por usuário; seed com carteiras de teste.
+​
+
+Escrow Service: holdFunds move valor de disponível para congelado na criação do match; releaseFunds libera do congelado do comprador para disponível do fornecedor, registrando tudo em escrowledger.
+​
+
+Regras de segurança: uso de transações ACID com Knex, testes Jest de “conservação de saldo”, penalidades em cancelamento e verificação de saldo antes de fechar match.
+​
+
+7. Tempo real, cron e notificações
+WebSocket / Socket.io: salas por assetId; eventos NEWBID, TRADEEXECUTED, MARKETUPDATE, DEALEXPIRED alimentam Order Book, timers de Flash Deals e alerts em tempo real.
+​
+
+Cron jobs: serviço cronService varre Flash Deals expirados, muda status para EXPIRED e emite eventos para limpar a UI; pode ser estendido para outros timeouts.
+​
+
+Notificações push: notificationService registra alertas em tabela de notificações e envia push (ex.: nova oportunidade Pricebreaker) + broadcast via WebSocket.
+​
+
+8. Segurança, governança e verificação
+isVerified / acesso ao mercado: migration adiciona isverified em users e middleware verifyMarketAccess bloqueia POST em rotas de mercado para contas não verificadas.
+​
+
+Circuit breaker: se o Matching Engine estiver lento, pausa temporariamente novas ordens para evitar erros em cascata; health check script avalia DB, socket e integridade do escrow.
+​
+
+Auditoria e certificado: cada match gera hash SHA‑256; há tela de “Certificado de Transparência NTX” para o usuário auditar o negócio e ver se o leilão foi justo.
+​
+
+Se quiser, o próximo passo pode ser pegar um subconjunto (por exemplo: só “Flash Deals + Pricebreakers”) e transformar em backlog Sprint 2 com histórias claras para você jogar direto no Cursor.
+
+egue o “destrinchar” focado em Flash Deals + Pricebreakers e, em seguida, o backlog da Sprint 2 em formato de histórias para você colar direto no Cursor.
+
+1. O que são Flash Deals e Pricebreakers
+Flash Deals (FLASH)
+
+Ativos em marketassets com saletype = FLASH, deal_expires_at e stock_limit.
+​
+
+Compra direta, sem bidding: o host coloca X unidades com grande desconto por um tempo limitado; ao acabar tempo ou estoque, a oferta morre.
+​
+
+Pricebreakers (SECRET)
+
+Ativos em marketassets com saletype = SECRET e property_name oculta até a compra.
+​
+
+“Hotel secreto”: usuário vê cidade, categoria, bairro e preço quebrando tarifa, mas só descobre o hotel após o pagamento passar no escrow.
+​
+
+2. Como funciona o backend desses deals
+Modelagem de dados
+
+Campos extras em marketassets: saletype (AUCTION | FLASH | EXPRESS | SECRET), deal_expires_at, stock_limit, status. 
+​
+
+Compra instantânea grava trade em marketmatches com final_price, transaction_hash (ex: DIRECT-<timestamp>) e escrow_status.
+​
+
+Serviço de deals (dealService)
+
+processInstantPurchase(userId, assetId) roda em transação: dá SELECT ... FOR UPDATE no ativo, checa stock_limit > 0 e status = ACTIVE.
+​
+
+Decrementa stock_limit, cria o match, e chama o escrowService.holdFunds para mover saldo do comprador de balance_available para balance_frozen.
+​
+
+Escrow e carteiras
+
+financialwallets: campos balance_available e balance_frozen por usuário.
+​
+
+escrowledger: registra eventos LOCK, RELEASE, REFUND vinculados ao match_id e ao transaction_hash da deal.
+​
+
+3. Tempo real e expiração de Flash Deals
+Cron de expiração
+
+cronService.cleanupExpiredDeals() roda a cada minuto: encontra marketassets FLASH ativos com deal_expires_at < now, muda status para EXPIRED.
+​
+
+Emite evento via WebSocket (DEALEXPIRED) para remover essas ofertas da UI em tempo real.
+​
+
+WebSocket
+
+socketService.broadcastMarketUpdate(assetId, { type: 'DEALEXPIRED' ... }) notifica quem está na sala daquele ativo.
+​
+
+Mesma infra pode enviar atualizações de progresso de estoque e countdown se você quiser.
+​
+
+4. UI / UX de Flash Deals e Pricebreakers
+FlashDealCard.tsx
+
+Card com preço promocional, barra de estoque (ex: “80% reservado”) e cronômetro regressivo em tempo real, alimentado por WebSocket.
+​
+
+Botão “Comprar agora” dispara POST apiv1/market/instant-purchase.
+​
+
+PricebreakerCard.tsx (mistério)
+
+Imagem com blur, badge “HOTEL SECRETO”, mostra stars, bairro, cidade, preço original riscado e preço Pricebreaker.
+​
+
+Botão “Revelar Agora” chama instant-purchase; após sucesso, backend devolve revealedName (hotel) que aparecerá no voucher/confirm.
+​
+
+Rotas / navegação
+
+Menu com itens “Ofertas Flash” (/negociacao/flash) e “Hotéis Secretos” (/negociacao/secret).
+​
+
+Página /negociacao centraliza Order Book, Flash Deals e Pricebreakers.
+​
+
+5. Backlog Sprint 2 – Flash Deals + Pricebreakers
+Formato: User Story + critérios de aceite + notas de implementação já pensados para o Cursor.
+
+US 1 – Modelar tipos de deal no banco
+Como engenheiro de mercado, quero classificar ativos como AUCTION, FLASH, EXPRESS ou SECRET para que o mesmo sistema suporte bolsa, ofertas relâmpago e hotéis secretos.
+​
+
+Critérios de aceite
+
+Campo saletype criado na tabela marketassets (AUCTION | FLASH | EXPRESS | SECRET, default AUCTION). 
+​
+
+Campos deal_expires_at (timestamp) e stock_limit (int) adicionados.
+​
+
+Migração reversível (exports.down) remove esses campos.
+​
+
+Notas p/ Cursor
+
+Criar migration 029_add_deal_types_to_assets.js seguindo o padrão Knex existente.
+​
+
+US 2 – Serviço de compra instantânea com lock de estoque
+Como viajante, quero comprar um Flash Deal ou Pricebreaker com um clique e confirmação imediata, sem entrar em leilão.
+​
+
+Critérios de aceite
+
+Criado serviço dealService.processInstantPurchase(userId, assetId) rodando em transação ACID.
+​
+
+Usa SELECT ... FOR UPDATE em marketassets para garantir que stock_limit > 0 e status = ACTIVE.
+​
+
+Decrementa stock_limit em 1 e falha com erro “Oferta esgotada ou expirada” se não houver estoque.
+​
+
+Cria registro em marketmatches com final_price = baseprice do asset, transaction_hash do tipo DIRECT-<timestamp> e escrow_status = PENDING.
+​
+
+Chama escrowService.holdFunds passando matchId, userId e finalPrice; se escrow falhar, a transação inteira é rollback.
+​
+
+Notas p/ Cursor
+
+Implementar classe/objeto DealService em src/services/dealService.ts conforme esqueleto do docs.
+​
+
+Reaproveitar financialwallets e escrowledger já descritos; se ainda não existirem, incluir migrações correspondentes (027_create_escrow_ecosystem.js).
+​
+
+US 3 – Rota REST POST /apiv1/market/instant-purchase
+Como cliente web, quero chamar uma API de compra instantânea para que a UI de Flash Deal / Pricebreaker fique simples (um POST resolve tudo).
+​
+
+Critérios de aceite
+
+Rota POST apiv1/market/instant-purchase criada em market.routes.ts.
+​
+
+Request body mínimo: { assetId }; userId vem do token/autenticação.
+​
+
+Aplica middleware de verificação de mercado (só users.isverified = true podem comprar).
+​
+
+Resposta de sucesso inclui: matchId, finalPrice, assetId e, no caso de SECRET, revealedName para a tela de confirmação/voucher.
+​
+
+Em caso de erro, responde com mensagens claras: “Saldo insuficiente”, “Oferta esgotada ou expirada”, “Conta não verificada”.
+​
+
+Notas p/ Cursor
+
+Reutilizar o pattern de rotas de place-bid, mas chamando dealService.processInstantPurchase em vez de matchingEngine.
+​
+
+US 4 – Cron job para expirar Flash Deals
+Como plataforma, quero expirar automaticamente Flash Deals que passaram da validade para garantir escassez real e não vender ofertas vencidas.
+​
+
+Critérios de aceite
+
+Serviço cronService.init() agenda um job a cada 1 minuto.
+​
+
+Job cleanupExpiredDeals encontra marketassets com saletype = FLASH, status = ACTIVE e deal_expires_at < now.
+​
+
+Atualiza essas linhas para status = EXPIRED.
+​
+
+Emite via WebSocket um evento DEALEXPIRED para cada assetId expirado.
+​
+
+Notas p/ Cursor
+
+Implementar cronService em src/services/cronService.ts com node-cron.
+​
+
+Registrar cronService.init() no index.ts do backend durante o boot.
+​
+
+US 5 – Componente React FlashDealCard
+Como usuário final, quero ver cards de Flash Deals com prazo e estoque visual para sentir urgência e tomar decisão rápida.
+​
+
+Critérios de aceite
+
+Componente FlashDealCard recebe props como: { id, title, city, basePrice, promoPrice, stockLimit, stockLeft, dealExpiresAt }.
+​
+
+Exibe: preço original riscado, preço promocional, barra de progresso orientada por stockLeft/stockLimit e contador regressivo até dealExpiresAt.
+​
+
+Botão “Comprar agora” desabilita quando o status local fica “EXPIRED” ou stockLeft === 0.
+​
+
+Ao clicar, dispara POST instant-purchase; em caso de sucesso, redireciona para página de confirmação.
+​
+
+Notas p/ Cursor
+
+Implementar em frontend/components/market/FlashDealCard.tsx usando Tailwind e, se quiser, Framer Motion para microanimações.
+​
+
+US 6 – Componente React PricebreakerCard (hotel secreto)
+Como viajante curioso, quero ver ofertas de hotéis secretos (Pricebreakers) com visual de mistério e botão “Revelar agora”.
+​
+
+Critérios de aceite
+
+Componente PricebreakerCard aplica blur na imagem e badge “HOTEL SECRETO”.
+​
+
+Mostra: categoria (estrelas), bairro, cidade, preço original riscado e preço Pricebreaker.
+​
+
+Botão “Revelar Agora” chama instant-purchase.
+​
+
+Após resposta de sucesso, a confirmação (nova tela ou modal) deve exibir revealedName do hotel.
+​
+
+Notas p/ Cursor
+
+Implementar exatamente conforme o snippet já descrito no docs, em app/site-publico/components/deals/PricebreakerCard.tsx ou equivalente.
+​
+
+US 7 – Listagens / páginas de Flash e Secret
+Como usuário, quero páginas dedicadas para ver todas as Ofertas Flash e todos os Hotéis Secretos.
+​
+
+Critérios de aceite
+
+Rota /negociacao/flash: lista todos marketassets com saletype = FLASH e status = ACTIVE, renderizando FlashDealCard para cada.
+​
+
+Rota /negociacao/secret: lista todos marketassets com saletype = SECRET e status = ACTIVE, renderizando PricebreakerCard.
+​
+
+Menu principal inclui links para essas rotas com ícones apropriados.
+​
+
+Notas p/ Cursor
+
+Pode usar SWR/fetch simples para consumir API REST que liste assets por saletype.
+​
+
+US 8 – Testes de integridade (estoque e dinheiro)
+Como engenheiro de plataforma, quero garantir via testes automatizados que a compra instantânea não cria overbooking nem “some” com dinheiro.
+​
+
+Critérios de aceite
+
+Teste Jest de concorrência: dois processInstantPurchase simultâneos no último item de um Flash Deal resultam em 1 sucesso e 1 falha (sem estoque).
+​
+
+Teste Jest de zero‑sum: antes e depois de uma compra, balance_available + balance_frozen do usuário é constante.
+​
+
+Testes rodam com sucesso via npm test.
+​
+
+Notas p/ Cursor
+
+Basear os testes no exemplo de escrow.test.js presente na documentação (Zero Loss Money Test).
+​
+
+Se quiser, no próximo passo dá para pegar essas US e gerar um prompt único “MASTER” para o Cursor (backend primeiro, depois frontend), já com a ordem de implementação sugerida.
+
+A assinatura, NTX, OTAs/Channel Manager, escrow, tempo real e segurança formam um ecossistema único: recorrência previsível, liquidez de inventário, automação e compliance financeiro.
+​
+
+Assinatura RSV360
+Produto de assinatura
+
+Camada SaaS que dá acesso ao painel RSV360 (gestão de hotéis, leilões, Flash Deals, Pricebreakers, etc.) mediante plano mensal/anual por propriedade ou grupo.
+​
+
+Assinatura pode incluir limites de inventário, slots de leilão, número de usuários, integrações OTAs e acesso ao NTX.
+​
+
+Lógica de cobrança e acesso
+
+Tabela de planos/assinaturas vincula hotel → plano → status (TRIAL, ACTIVE, SUSPENDED).
+​
+
+Middleware bloqueia uso de mercado, OTAs e deals caso assinatura esteja suspensa (ex: falha de pagamento).
+​
+
+Integração OTAs e Channel Manager
+Objetivo das integrações
+
+OTAs/Channel Manager são a fonte e o dreno de inventário: RSV360 espelha disponibilidade e tarifas nesses canais e puxa inventário para o NTX, Flash Deals e Pricebreakers.
+​
+
+O Channel Manager evita overbooking, sincronizando allotment entre Bolsa de viagens, Flash/SECRET deals e OTAs tradicionais.
+​
+
+Fluxo de dados
+
+Pull: RSV360 consome disponibilidade/tarifas do Channel Manager (API/webhooks) para alimentar marketassets (AUCTION, FLASH, SECRET).
+​
+
+Push: quando há match ou compra instantânea, RSV360 decrementa inventário no Channel Manager/OTAs para manter consistência.
+​
+
+Bolsa de viagens (NTX)
+Core de leilão (Bid/Ask)
+
+NTX implementa a Bolsa: marketassets (ativos de viagem), marketbids (Bids de viajantes), marketasks (Asks de hotéis), marketmatches (trades).
+​
+
+Matching Engine aplica prioridade preço‑tempo, gera final_price, spread_fee e transaction_hash por trade.
+​
+
+Modos de venda
+
+AUCTION: book de ofertas tradicional (Bid/Ask).
+​
+
+FLASH: compra direta com tempo/estoque limitado.
+​
+
+EXPRESS: “Buy now” acima do preço de leilão, mas confirmação instantânea.
+​
+
+SECRET (Pricebreakers): hotel secreto, revelado após pagamento em custódia.
+​
+
+Escrow financeiro e módulo financialwallets
+Carteiras internas
+
+financialwallets controla balance_available e balance_frozen por usuário ou hotel, simulando contas internas de liquidação.
+​
+
+escrowledger registra cada evento de custódia: LOCK, RELEASE, REFUND, ligado a match_id e transaction_hash.
+​
+
+Fluxo de dinheiro
+
+Match ou compra instantânea → holdFunds move final_price de balance_available para balance_frozen (comprador).
+​
+
+Após check‑in ou confirmação, releaseFunds debita o congelado do comprador e credita balance_available do hotel.
+​
+
+Testes de integridade garantem que available + frozen é constante (lei de conservação de saldo).
+​
+
+Tempo real e automação
+Socket.io / Order Book ao vivo
+
+Canal de tempo real atualiza Order Book, novos lances, trades executados e mudanças em deals sem reload de página.
+​
+
+Cada assetId funciona como uma “sala” (room) independente de mercado.
+​
+
+Cron jobs (node-cron)
+
+Tarefa periódica verifica Flash Deals expiradas (saletype = FLASH, deal_expires_at < now, status = ACTIVE), marca como EXPIRED e notifica front.
+​
+
+Pode estender também para limpeza de deals antigos e manutenção de perceção de escassez.
+​
+
+Push / alertas de novas oportunidades
+
+Serviço de notificação grava alertas em tabela de notificações e dispara push (Firebase/OneSignal) para Pricebreakers e Flash Deals relevantes.
+​
+
+Integra com WebSocket para alertas em tempo real no dashboard (“Novo Pricebreaker detectado!”).
+​
+
+Segurança e governança
+Verificação de usuário (isVerified)
+
+Campo isVerified em users controla quem pode operar no mercado (dar Bids, comprar Flash/SECRET).
+​
+
+Middleware de mercado nega acesso a contas não verificadas (KYC/KYB simplificado).
+​
+
+Anti-sniping e circuit-breaker
+
+Anti‑sniping: se um bid chega nos últimos 2 minutos do leilão, o sistema estende o tempo (ex: +5 min) para evitar bots que entram no último segundo.
+​
+
+Circuit‑breaker: se o tempo de resposta ou erro do Matching Engine passa de um limite (ex: 500 ms), o sistema pausa novos Bids por alguns segundos, protegendo a ordem de execução.
+​
+
+Penalidade de cancelamento e spoofing
+
+Se o usuário cancela Match após escrow ou falha por falta de saldo, cobra‑se fee percentual como multa, reduzindo spoofing (lances falsos para manipular preço).
+​
+
+Auditoria e health‑check
+
+Cada trade gera hash SHA‑256 com IDs das partes, preço e timestamp, guardado em transaction_hash, permitindo prova de integridade.
+​
+
+Health‑checks monitoram latência do Matching Engine, fila de cron jobs, Socket.io e integridade do escrow (zero‑sum), formando o “painel de saúde” do mercado.
+​
+
+Se quiser, o próximo passo pode ser transformar esse bloco em outro backlog de Sprint (igual fizemos com Flash + Pricebreakers), já quebrado em US para Cursor.
+
+
+Segue o backlog da Sprint focada em: assinatura, OTAs/Channel Manager, NTX, escrow, tempo real/automação e governança – tudo já em formato de histórias para você jogar no Cursor usando os specs que você já tem em arquivo.
+​
+
+US 1 – Modelo de assinatura RSV360
+Como hotel/parceiro, quero assinar o RSV360 para ter acesso ao painel, NTX, Flash Deals e integrações OTAs.
+​
+
+Critérios de aceite
+
+Existir entidade de assinatura/planos que vincula hotel_id (ou account_id) a um plan_id, com status (TRIAL, ACTIVE, SUSPENDED) e expires_at.
+​
+
+Cada plano define limites básicos: número de propriedades, integrações OTAs inclusas, acesso ao NTX e volume de deals (Flash/SECRET) permitidos.
+​
+
+Middleware de acesso verifica status da assinatura antes de permitir:
+
+Criar/editar leilões NTX.
+
+Criar Flash Deals ou Pricebreakers.
+
+Ativar integrações OTAs/Channel Manager.
+​
+
+Notas para implementação
+
+Reaproveitar padrão de migrations e middlewares já descritos para mercado; apenas mudar a lógica de bloqueio de rota para “assinatura ativa”.
+​
+
+US 2 – Integração OTAs / Channel Manager: ingestão e sincronização de inventário
+Como plataforma, quero espelhar inventário do Channel Manager nas estruturas do NTX e deals para evitar overbooking e preço divergente.
+​
+
+Critérios de aceite
+
+Endpoints / jobs que:
+
+Consomem disponibilidade/tarifa das OTAs/Channel Manager e criam/atualizam marketassets (AUCTION, FLASH, SECRET) com base nesse inventário.
+
+Mapeiam quartos/planos tarifários para asset.details (JSONB).
+​
+
+Ao ocorrer Match ou compra instantânea, o sistema aciona callback ou API no Channel Manager para decrementar o allotment correspondente.
+​
+
+Em caso de falha de comunicação com OTA/Channel Manager, o sistema loga e aplica política conservadora (ex: reduzir internamente o estoque para não sobrevender).
+​
+
+Notas para implementação
+
+Usar o mesmo padrão event‑driven descrito para NTX: a confirmação de marketmatches deve disparar “evento de sincronização OTAs”.
+​
+
+US 3 – Consolidação da Bolsa de Viagens (NTX) com modos AUCTION / FLASH / EXPRESS / SECRET
+Como engenheiro de mercado, quero um único módulo de “market” que suporte leilão clássico, compra rápida e hotéis secretos.
+​
+
+Critérios de aceite
+
+marketassets possui saletype (AUCTION, FLASH, EXPRESS, SECRET) e status (ACTIVE, EXPIRED, CLOSED).
+​
+
+Matching Engine:
+
+Continua cuidando de AUCTION (Bid/Ask) com prioridade preço‑tempo e anti‑sniping.
+
+dealService cuida de FLASH, EXPRESS e SECRET, sempre com transação ACID e FOR UPDATE.
+​
+
+marketmatches registra transações de todos os tipos, identificando o “modo” via campos (saletype ou metadados).
+​
+
+Notas para implementação
+
+Garantir que a UI consuma o mesmo backend de “market”, filtrando por saletype para Order Book, Flash Deals e Pricebreakers.
+​
+
+US 4 – Escrow financeiro robusto com financialwallets
+Como operador financeiro, quero um módulo de escrow interno que garanta que nenhum centavo desapareça durante o fluxo de compra.
+​
+
+Critérios de aceite
+
+financialwallets:
+
+Um registro por usuário/hotel, com balance_available e balance_frozen.
+
+Todas as operações de débito/crédito ocorrendo em transações ACID (Knex).
+​
+
+escrowledger:
+
+Registra LOCK, RELEASE, REFUND com match_id, amount, transaction_hash e timestamp.
+​
+
+Funções principais:
+
+holdFunds(matchData, trx) move available → frozen e marca escrow_status = HELD.
+
+releaseFunds(matchId) libera do comprador para o hotel, atualizando carteiras e ledger.
+
+Testes automatizados garantem zero‑sum: available + frozen constante antes/depois.
+​
+
+Notas para implementação
+
+Reutilizar a ideia dos testes de integridade “Zero Loss Money Test” e cenários de saldo insuficiente.
+​
+
+US 5 – Tempo real unificado: Order Book + Deals + Expiração
+Como usuário, quero ver lances, negociações e deals expirando em tempo real, sem recarregar a página.
+​
+
+Critérios de aceite
+
+Socket de mercado:
+
+Rooms por assetId, emitindo eventos NEWBID, TRADEEXECUTED, DEALEXPIRED, NEWPRICEBREAKER.
+​
+
+Cron jobs:
+
+Job a cada minuto encontra Flash Deals vencidas (deal_expires_at < now) e seta status = EXPIRED.
+
+Dispara evento DEALEXPIRED para remover/atualizar cards na UI.
+​
+
+Componente frontend de mercado (Order Book + Flash + Secret) reage a esses eventos imediatamente.
+​
+
+Notas para implementação
+
+Garantir que o mesmo canal de tempo real sirva tanto o book de leilões quanto os cards de deals.
+​
+
+US 6 – Push notifications e alertas de oportunidades
+Como viajante, quero receber alertas de novas oportunidades (Pricebreakers, Flash Deals) para não perder promoções.
+​
+
+Critérios de aceite
+
+Serviço de notificações grava alertas em tabela notifications com tipo MARKETALERT.
+​
+
+Integração com push (Firebase/OneSignal, ou placeholder) dispara mensagens como “Novo Pricebreaker em [cidade] por [preço]”.
+​
+
+Emite também via WebSocket evento NEWPRICEBREAKER com payload suficiente para o frontend abrir o card.
+​
+
+Notas para implementação
+
+Seguir o padrão já descrito de notificationService que grava no banco e emite evento para usuários online.
+​
+
+US 7 – Segurança e governança de mercado (isVerified, anti‑sniping, penalty)
+Como plataforma, quero mecanismos de segurança e disciplina de mercado para proteger hotéis e viajantes contra abuso.
+​
+
+Critérios de aceite
+
+users.isVerified e verified_at controlam quem pode operar no mercado (Bid/instant purchase).
+​
+
+Anti‑sniping: leilão se estende automaticamente se bid entrar nos últimos N minutos.
+​
+
+Circuit‑breaker: se o Matching Engine ultrapassar limiar de latência/erro, recusará novos Bids por uma janela curta, com log de evento.
+​
+
+Penalidade: se um Match confirmado (com escrow) for desfeito por falta de saldo ou cancelamento indevido, aplica‑se multa percentual, registrada em ledger.
+​
+
+Notas para implementação
+
+Middleware de mercado reutiliza tanto isVerified quanto status de assinatura; lógica de penalty pode ser implementada como parte de um fluxo de cancelamento de Match.
+​
+
+US 8 – Auditoria por hash e health‑check de mercado
+Como admin, quero auditar transações e monitorar a saúde do NTX, deals e escrow para garantir confiança institucional.
+​
+
+Critérios de aceite
+
+Cada trade gera transaction_hash SHA‑256 (UserID, ProviderID, FinalPrice, Timestamp, salt), salvo em marketmatches.transaction_hash.
+​
+
+Página/endpoint de “Certificado de Transparência” exibe dados do Match + hash para o usuário conferir.
+​
+
+Health‑check do mercado expõe:
+
+Latência média do Matching Engine.
+
+Status do cron de Flash Deals.
+
+Status do socket (conectividade).
+
+Verificação periódica de zero‑sum no escrow.
+​
+
+Notas para implementação
+
+Pode ser exposto em rota interna /health/market e em uma página administrativa com cards de status.
+​
+
+Se quiser, no próximo passo dá para ordenar essas US em Sprints (ex.: Sprint 2 “Market Core + Deals”, Sprint 3 “OTAs + Segurança”) ou gerar um prompt master único em inglês para você colar no Cursor e ele construir tudo em sequência.
+
+Segue um “próximos passos” bem pragmático, já pensando em como você vai orquestrar isso no Cursor e no seu repositório.
+
+1. Ordenar o roadmap por sprints
+Sprint 2 – Market core + Deals (o que já está em andamento)
+
+Finalizar: marketassets com saletype, stock_limit, deal_expires_at.
+​
+
+Fechar: dealService.processInstantPurchase, escrow com financialwallets e escrowledger, Flash + Pricebreaker UI.
+​
+
+Sprint 3 – Segurança + governança + saúde do mercado
+
+Implementar isVerified, anti‑sniping, penalty de cancelamento, circuit‑breaker e health‑check.
+​
+
+Sprint 4 – OTAs / Channel Manager + assinatura
+
+Modelar planos/assinaturas e travas de acesso por plano.
+
+Implementar ingestão/sincronização de inventário com Channel Manager/OTAs.
+​
+
+2. Criar um “MASTER PROMPT” para o Cursor – Market/Deals
+Sugestão de prompt único (você pode só colar e adaptar nomes de pasta):
+
+Título: NEXUS TRAVEL EXCHANGE NTX – MARKET & DEALS IMPLEMENTATION
+
+Contexto:
+
+Backend em Node/TypeScript com Knex (PostgreSQL) e monólito modular.
+
+Já existe módulo “market” com marketassets, marketbids, marketasks, marketmatches e escrow (financialwallets, escrowledger).
+​
+
+Tarefas desta rodada:
+
+Garantir que marketassets tenha campos:
+
+saletype (AUCTION | FLASH | EXPRESS | SECRET, default AUCTION),
+
+stock_limit (int),
+
+deal_expires_at (timestamp),
+
+status (ACTIVE | EXPIRED | CLOSED). 
+​
+
+Implementar dealService.processInstantPurchase(userId, assetId) com transação ACID:
+
+SELECT ... FOR UPDATE no asset.
+
+Verificar stock_limit > 0 e status = ACTIVE, senão erro “Esgotado ou expirado”.
+
+Decrementar stock_limit, criar marketmatches com final_price = baseprice e transaction_hash (DIRECT-<timestamp>).
+
+Chamar escrowService.holdFunds(matchId, userId, finalPrice, trx); se falhar, rollback geral.
+​
+
+Criar rota POST /apiv1/market/instant-purchase que:
+
+Lê assetId do body, userId do auth.
+
+Exige usuário verificado (middleware).
+
+Chama dealService.processInstantPurchase e retorna matchId, finalPrice, assetId e, se SECRET, revealedName.
+​
+
+Integrar com Socket:
+
+Emitir evento TRADEEXECUTED após compra instantânea.
+
+Emitir DEALEXPIRED quando um deal passar para EXPIRED.
+​
+
+Implementar cron job (node‑cron) que roda a cada 1 min e:
+
+Marca como EXPIRED todos os marketassets FLASH ativos com deal_expires_at < now.
+
+Emite DEALEXPIRED no socket.
+​
+
+Pedir explicitamente para o Cursor trabalhar nestes arquivos (ajuste ao seu tree real):
+​
+
+backend/src/services/dealService.ts
+
+backend/src/services/escrowService.ts (caso precise complementar)
+
+backend/src/services/cronService.ts
+
+backend/src/api/v1/market.routes.ts
+
+backend/database/migrations/*_add_deal_types_to_assets.js
+
+3. MASTER PROMPT – Segurança, governança e health‑check (Sprint 3)
+Depois do core acima estar ok, outra rodada no Cursor:
+
+Título: NTX – SECURITY, GOVERNANCE & HEALTH
+
+Tarefas:
+
+Usuário verificado:
+
+Adicionar isVerified (boolean, default false) e verified_at em users.
+
+Criar middleware verifyMarketAccess que bloqueia Bids e instant purchase para quem não for verificado.
+​
+
+Anti‑sniping no Matching Engine:
+
+Se o leilão está nos últimos 2 minutos e entra novo bid válido, estende fim em +5 minutos.
+​
+
+Circuit‑breaker:
+
+Medir tempo de execução do Matching Engine; se passar de X ms por N chamadas consecutivas ou lançar erro crítico, entrar em modo “PAUSED” por alguns segundos, rejeitando novos Bids com mensagem clara.
+​
+
+Penalidade de cancelamento:
+
+Ao cancelar um Match já em HELD (escrow travado) por falta de saldo ou desistência, lançar um registro de multa (percentual do valor) no ledger e manter isso disponível para relatórios.
+​
+
+Auditoria por hash e health‑check:
+
+Garantir que toda linha de marketmatches tenha transaction_hash SHA‑256.
+
+Disponibilizar rota /health/market retornando: latência média do Matching Engine, status do cron de Flash Deals, status do Socket, checagem de zero‑sum (available + frozen).
+​
+
+4. MASTER PROMPT – OTAs/Channel Manager + assinatura (Sprint 4)
+Por fim, outro pacote para o Cursor:
+
+Título: RSV360 – SUBSCRIPTION & OTA/CHANNEL MANAGER INTEGRATION
+
+Tarefas:
+
+Assinaturas:
+
+Tabelas de plans e subscriptions ligando hotel/conta ao plano.
+
+Campos de limites: nº de propriedades, integrações OTAs, número máximo de deals ativos, acesso ao NTX.
+
+Middleware que bloqueia criação de leilões, deals e ativação de integrações se assinatura estiver SUSPENDED ou limites forem excedidos.
+​
+
+Integração Channel Manager/OTAs (primeiro em stub/módulo fake):
+
+Criar serviço channelManagerService com métodos:
+
+pullInventory() para transformar allotment/tarifas em marketassets.
+
+pushReservation(match) para decrementar allotment no Channel Manager/OTA quando há match ou instant purchase.
+​
+
+Conectar pushReservation ao fluxo de confirmação de marketmatches.
+
+5. Checklist operacional para você
+Definir na mão a ordem de execução dos prompts no Cursor:
+
+Market & Deals core (já aproveitando seu NTXSPEC).
+​
+
+Segurança/governança.
+
+Assinatura + OTAs.
+
+Em cada rodada com o Cursor:
+
+Fixar escopo (“não mexer fora do módulo X/Y”).
+
+Pedir para gerar e rodar testes (especialmente escrow e concorrência).
+​
+
+Pedir para atualizar/gerar README do módulo “market” com endpoints e eventos de socket.
+​
+
+Se quiser, posso agora escrever um prompt master em português ou inglês, completo, já pronto para colar no Cursor com todo esse escopo consolidado em um único texto, ou separar em dois prompts (backend e frontend).
+
+
+
+Segue um “próximos passos” bem pragmático, já pensando em como você vai orquestrar isso no Cursor e no seu repositório.
+
+1. Ordenar o roadmap por sprints
+Sprint 2 – Market core + Deals (o que já está em andamento)
+
+Finalizar: marketassets com saletype, stock_limit, deal_expires_at.
+​
+
+Fechar: dealService.processInstantPurchase, escrow com financialwallets e escrowledger, Flash + Pricebreaker UI.
+​
+
+Sprint 3 – Segurança + governança + saúde do mercado
+
+Implementar isVerified, anti‑sniping, penalty de cancelamento, circuit‑breaker e health‑check.
+​
+
+Sprint 4 – OTAs / Channel Manager + assinatura
+
+Modelar planos/assinaturas e travas de acesso por plano.
+
+Implementar ingestão/sincronização de inventário com Channel Manager/OTAs.
+​
+
+2. Criar um “MASTER PROMPT” para o Cursor – Market/Deals
+Sugestão de prompt único (você pode só colar e adaptar nomes de pasta):
+
+Título: NEXUS TRAVEL EXCHANGE NTX – MARKET & DEALS IMPLEMENTATION
+
+Contexto:
+
+Backend em Node/TypeScript com Knex (PostgreSQL) e monólito modular.
+
+Já existe módulo “market” com marketassets, marketbids, marketasks, marketmatches e escrow (financialwallets, escrowledger).
+​
+
+Tarefas desta rodada:
+
+Garantir que marketassets tenha campos:
+
+saletype (AUCTION | FLASH | EXPRESS | SECRET, default AUCTION),
+
+stock_limit (int),
+
+deal_expires_at (timestamp),
+
+status (ACTIVE | EXPIRED | CLOSED). 
+​
+
+Implementar dealService.processInstantPurchase(userId, assetId) com transação ACID:
+
+SELECT ... FOR UPDATE no asset.
+
+Verificar stock_limit > 0 e status = ACTIVE, senão erro “Esgotado ou expirado”.
+
+Decrementar stock_limit, criar marketmatches com final_price = baseprice e transaction_hash (DIRECT-<timestamp>).
+
+Chamar escrowService.holdFunds(matchId, userId, finalPrice, trx); se falhar, rollback geral.
+​
+
+Criar rota POST /apiv1/market/instant-purchase que:
+
+Lê assetId do body, userId do auth.
+
+Exige usuário verificado (middleware).
+
+Chama dealService.processInstantPurchase e retorna matchId, finalPrice, assetId e, se SECRET, revealedName.
+​
+
+Integrar com Socket:
+
+Emitir evento TRADEEXECUTED após compra instantânea.
+
+Emitir DEALEXPIRED quando um deal passar para EXPIRED.
+​
+
+Implementar cron job (node‑cron) que roda a cada 1 min e:
+
+Marca como EXPIRED todos os marketassets FLASH ativos com deal_expires_at < now.
+
+Emite DEALEXPIRED no socket.
+​
+
+Pedir explicitamente para o Cursor trabalhar nestes arquivos (ajuste ao seu tree real):
+​
+
+backend/src/services/dealService.ts
+
+backend/src/services/escrowService.ts (caso precise complementar)
+
+backend/src/services/cronService.ts
+
+backend/src/api/v1/market.routes.ts
+
+backend/database/migrations/*_add_deal_types_to_assets.js
+
+3. MASTER PROMPT – Segurança, governança e health‑check (Sprint 3)
+Depois do core acima estar ok, outra rodada no Cursor:
+
+Título: NTX – SECURITY, GOVERNANCE & HEALTH
+
+Tarefas:
+
+Usuário verificado:
+
+Adicionar isVerified (boolean, default false) e verified_at em users.
+
+Criar middleware verifyMarketAccess que bloqueia Bids e instant purchase para quem não for verificado.
+​
+
+Anti‑sniping no Matching Engine:
+
+Se o leilão está nos últimos 2 minutos e entra novo bid válido, estende fim em +5 minutos.
+​
+
+Circuit‑breaker:
+
+Medir tempo de execução do Matching Engine; se passar de X ms por N chamadas consecutivas ou lançar erro crítico, entrar em modo “PAUSED” por alguns segundos, rejeitando novos Bids com mensagem clara.
+​
+
+Penalidade de cancelamento:
+
+Ao cancelar um Match já em HELD (escrow travado) por falta de saldo ou desistência, lançar um registro de multa (percentual do valor) no ledger e manter isso disponível para relatórios.
+​
+
+Auditoria por hash e health‑check:
+
+Garantir que toda linha de marketmatches tenha transaction_hash SHA‑256.
+
+Disponibilizar rota /health/market retornando: latência média do Matching Engine, status do cron de Flash Deals, status do Socket, checagem de zero‑sum (available + frozen).
+​
+
+4. MASTER PROMPT – OTAs/Channel Manager + assinatura (Sprint 4)
+Por fim, outro pacote para o Cursor:
+
+Título: RSV360 – SUBSCRIPTION & OTA/CHANNEL MANAGER INTEGRATION
+
+Tarefas:
+
+Assinaturas:
+
+Tabelas de plans e subscriptions ligando hotel/conta ao plano.
+
+Campos de limites: nº de propriedades, integrações OTAs, número máximo de deals ativos, acesso ao NTX.
+
+Middleware que bloqueia criação de leilões, deals e ativação de integrações se assinatura estiver SUSPENDED ou limites forem excedidos.
+​
+
+Integração Channel Manager/OTAs (primeiro em stub/módulo fake):
+
+Criar serviço channelManagerService com métodos:
+
+pullInventory() para transformar allotment/tarifas em marketassets.
+
+pushReservation(match) para decrementar allotment no Channel Manager/OTA quando há match ou instant purchase.
+​
+
+Conectar pushReservation ao fluxo de confirmação de marketmatches.
+
+5. Checklist operacional para você
+Definir na mão a ordem de execução dos prompts no Cursor:
+
+Market & Deals core (já aproveitando seu NTXSPEC).
+​
+
+Segurança/governança.
+
+Assinatura + OTAs.
+
+Em cada rodada com o Cursor:
+
+Fixar escopo (“não mexer fora do módulo X/Y”).
+
+Pedir para gerar e rodar testes (especialmente escrow e concorrência).
+​
+
+Pedir para atualizar/gerar README do módulo “market” com endpoints e eventos de socket.
+​
+
+Se quiser, posso agora escrever um prompt master em português ou inglês, completo, já pronto para colar no Cursor com todo esse escopo consolidado em um único texto, ou separar em dois prompts (backend e frontend).
+
+Abaixo está um prompt master em português, já consolidando backend + frontend para você colar direto no Cursor. Ajuste só caminhos de pasta se necessário.
+
+PROMPT MASTER – RSV360 + Nexus Travel Exchange (NTX) – BACKEND E FRONTEND
+Quero que você atue como pair programmer sênior dentro de um monólito modular RSV360 (Node/TypeScript + PostgreSQL + React/Next), implementando o módulo de mercado de viagens Nexus Travel Exchange (NTX) com:
+
+Leilão (Bid/Ask)
+
+Flash Deals
+
+Pricebreakers (Hotéis Secretos)
+
+Escrow financeiro com wallets
+
+Tempo real via Socket
+
+Cron jobs para expiração de deals
+
+Push/alertas de oportunidades
+
+Segurança, governança e auditoria
+
+Abaixo estão os requisitos consolidados. Siga esta ordem de entrega, gerando código funcional, testes e documentação mínima onde indicado.
+
+1. Contexto de arquitetura
+Backend: Node + TypeScript, Express, Knex (PostgreSQL), monólito modular.
+
+Frontend: React/Next (provavelmente apps site-publico e dashboard), Tailwind.
+
+Já existe base de NTX descrita:
+
+Tabelas: marketassets, marketbids, marketasks, marketmatches.
+
+Tabelas financeiras: financialwallets, escrowledger.
+
+Matching Engine com prioridade preço‑tempo, anti‑sniping conceitual, SHA‑256 para transaction_hash.
+
+Queremos agora consolidar: Deals (FLASH / EXPRESS / SECRET), Escrow completo, tempo real, segurança e assinatura/OTAs.
+
+Se você não encontrar algum arquivo exatamente como descrito, crie-o seguindo o padrão do projeto (estrutura de pastas, nomes em inglês, etc.).
+
+2. Modelagem de deals no banco (AUCTION / FLASH / EXPRESS / SECRET)
+2.1 Migration para tipos de deals
+Crie/ajuste uma migration para marketassets com:
+
+Campo saletype com valores: AUCTION, FLASH, EXPRESS, SECRET (default AUCTION).
+
+Campo stock_limit (integer, nullable) – usado para Flash/Secret/Express.
+
+Campo deal_expires_at (timestamp, nullable) – usado para Flash Deals.
+
+Campo status (ACTIVE, EXPIRED, CLOSED) com default ACTIVE.
+
+Implemente também o down removendo esses campos.
+
+Objetivo: um único módulo market com múltiplas modalidades de venda.
+
+3. Escrow financeiro robusto – financialwallets e escrowledger
+3.1 Estrutura de dados
+Certifique-se de que existam (ou crie):
+
+Tabela financialwallets
+
+user_id (PK/FK)
+
+balance_available (decimal 14,2)
+
+balance_frozen (decimal 14,2)
+
+updated_at
+
+Tabela escrowledger
+
+id (uuid)
+
+match_id (FK para marketmatches)
+
+type (LOCK, RELEASE, REFUND)
+
+amount (decimal 14,2)
+
+transaction_hash (string)
+
+created_at
+
+3.2 Serviço de Escrow
+Implemente/ajuste um serviço escrowService com:
+
+async holdFunds({ matchId, userId, finalPrice, transactionHash }, trx)
+
+Usa trx (transação Knex).
+
+Dá SELECT ... FOR UPDATE em financialwallets do userId.
+
+Verifica se balance_available >= finalPrice, senão lança erro Saldo insuficiente.
+
+Move finalPrice de balance_available para balance_frozen.
+
+Insere registro em escrowledger com type = LOCK.
+
+Atualiza marketmatches.escrow_status = 'HELD'.
+
+async releaseFunds(matchId)
+
+Abre nova transação.
+
+Busca match + comprador + fornecedor.
+
+Debita do balance_frozen do comprador.
+
+Cria/atualiza wallet do fornecedor, creditando balance_available.
+
+Insere escrowledger com type = RELEASE.
+
+Atualiza marketmatches.escrow_status = 'RELEASED'.
+
+Opcional: refundFunds(matchId) para estorno, com type = REFUND.
+
+3.3 Testes de integridade financeira
+Crie testes automatizados (Jest) para:
+
+Zero‑Sum Test:
+
+Cria carteira com X.
+
+Chama holdFunds com valor Y.
+
+Verifica que available + frozen continua X.
+
+Saldo insuficiente:
+
+Carteira com 100.
+
+Tenta segurar 500.
+
+Espera exceção e garante que saldos não mudam.
+
+4. Serviço de Deals – compra instantânea (FLASH/EXPRESS/SECRET)
+4.1 Serviço dealService
+Crie dealService.ts com função principal:
+
+ts
+async function processInstantPurchase(userId: string, assetId: string): Promise<...>
+Regras:
+
+Abrir transação Knex.
+
+Buscar asset em marketassets com id = assetId, status = ACTIVE e stock_limit > 0 (quando aplicável), usando FOR UPDATE.
+
+Se não encontrar ou stock_limit <= 0 ou (para FLASH) deal_expires_at < now, lançar erro Oferta esgotada ou expirada.
+
+Decrementar stock_limit em 1.
+
+Criar registro em marketmatches com:
+
+asset_id,
+
+buyer_id = userId,
+
+final_price = baseprice (ou campo equivalente do asset),
+
+spread_fee se aplicável (pode ser 0 ou taxa configurável),
+
+transaction_hash = 'DIRECT-' + Date.now() ou SHA‑256 se preferir,
+
+escrow_status = 'PENDING'.
+
+Chamar escrowService.holdFunds com { matchId, userId, finalPrice, transactionHash } e a mesma trx.
+
+Se holdFunds lançar erro, fazer rollback da transação toda.
+
+Commit e retornar objeto com matchId, finalPrice, assetId.
+
+Se saletype = 'SECRET', retornar também revealedName (por exemplo, asset.property_name que fica oculto na listagem pública).
+
+4.2 Rota REST instant-purchase
+No arquivo de rotas de mercado, adicione:
+
+POST /api/v1/market/instant-purchase
+
+Regras:
+
+userId vem do contexto de autenticação (ex: req.user.id).
+
+Body inclui ao menos { assetId }.
+
+Aplicar middleware de verificação de mercado (ver item Segurança).
+
+Chamar dealService.processInstantPurchase(userId, assetId).
+
+Responder JSON com { matchId, finalPrice, assetId, revealedName? }.
+
+Tratar erros (Saldo insuficiente, Oferta esgotada ou expirada, Conta não verificada) com mensagens claras e HTTP status adequado.
+
+5. Tempo real: Socket.io + eventos de mercado
+5.1 Serviço de Socket
+Garanta um serviço de socket com:
+
+Uma função init(server) que configura Socket.io.
+
+Organização por rooms: cada assetId é uma sala.
+
+Eventos de broadcast:
+
+broadcastNewBid(assetId, bidData)
+
+broadcastMatch(assetId, matchData)
+
+broadcastDealExpired(assetId, payload)
+
+broadcastNewPricebreaker(payload)
+
+5.2 Integrações
+No Matching Engine (leilão AUCTION):
+
+Ao receber novo Bid, chamar broadcastNewBid.
+
+Ao fechar Match, chamar broadcastMatch.
+
+No dealService.processInstantPurchase:
+
+Após commit, chamar broadcastMatch para aquele assetId.
+
+6. Cron jobs – expiração de Flash Deals
+Crie cronService.ts (ou similar) com:
+
+init() que agenda um job (node‑cron) a cada 1 minuto.
+
+Job cleanupExpiredDeals():
+
+Seleciona marketassets com:
+
+saletype = 'FLASH'
+
+status = 'ACTIVE'
+
+deal_expires_at < now
+
+Atualiza status para EXPIRED.
+
+Para cada asset expirado, chama socket.broadcastDealExpired(assetId, { message: 'Flash Deal expirada' }).
+
+Certifique-se de inicializar cronService.init() no bootstrap do backend.
+
+7. Push notifications / alertas de oportunidades
+Crie um notificationService simples com:
+
+Função notifyNewPricebreaker(deal) que:
+
+Grava em tabela notifications (se existir) um registro de tipo MARKETALERT.
+
+Chama integração de push (pode ser apenas um stub com log, mas deixe ponto de extensão).
+
+Emite via socket um evento global NEWPRICEBREAKER com um payload mínimo (cidade, preço, id do asset).
+
+8. Segurança e governança de mercado
+8.1 Verificação de usuário (isVerified)
+Adicionar migration em users com campos:
+
+isVerified boolean (default false)
+
+verified_at timestamp (nullable)
+
+Criar middleware verifyMarketAccess que:
+
+Lê req.user.id.
+
+Checa se user.isVerified === true; caso contrário, responde 403 com mensagem “Conta não verificada para operar no mercado”.
+
+Aplicar esse middleware em:
+
+POST /market/place-bid
+
+POST /market/instant-purchase
+
+Qualquer rota crítica de leilão/compra.
+
+8.2 Anti-sniping no Matching Engine
+No Matching Engine de AUCTION:
+
+Sempre que um novo Bid válido chegar:
+
+Se o tempo restante do leilão for menor que 2 minutos, estender fim do leilão em +5 minutos.
+
+Registrar esse comportamento em log para auditoria.
+
+8.3 Circuit-breaker de mercado
+Implemente um mecanismo simples:
+
+Medir tempo de execução das chamadas ao Matching Engine (ou contagem de erros).
+
+Se a latência média passar de um limite (ex: 500 ms) em N chamadas consecutivas OU ocorrer erro crítico:
+
+Entrar em modo MARKET_PAUSED por alguns segundos.
+
+Enquanto em MARKET_PAUSED, novas tentativas de place-bid retornam 503 com mensagem “Mercado temporariamente pausado para proteção”.
+
+Após o tempo de cooldown, retomar modo normal.
+
+O estado do circuit‑breaker pode ser mantido em memória, com logs.
+
+8.4 Penalidade de cancelamento e spoofing
+Defina lógica para cancelamento de Match:
+
+Ao cancelar um Match com escrow_status = 'HELD' por:
+
+Falta de saldo (ex: falha posterior no meio de fluxo), ou
+
+Desistência injustificada do comprador,
+
+Aplicar multa percentual sobre final_price (ex: 2%):
+
+Registrar essa multa em escrowledger (pode ser um tipo próprio ou anotação).
+
+Ajustar financialwallets para descontar a multa do comprador e possivelmente remunerar a plataforma/hotel.
+
+9. Auditoria por hash e health-check
+9.1 SHA‑256 por trade
+Assegure que toda transação (Match ou Deal instantâneo) tenha um transaction_hash SHA‑256 gerado a partir de:
+
+buyerId, providerId (hotel), finalPrice, timestamp, salt
+
+Armazene em marketmatches.transaction_hash.
+
+9.2 Certificado de transparência
+Crie um endpoint e/ou página (no dashboard) que:
+
+Recebe matchId.
+
+Retorna dados da transação + transaction_hash.
+
+Mostra um “Certificado de Transparência NTX” com esses dados (no frontend, um componente simples de card).
+
+9.3 Health-check de mercado
+Crie rota GET /health/market que retorne JSON com:
+
+Latência média ou última latência do Matching Engine.
+
+Status do cron de Flash Deals (última execução OK/erro e timestamp).
+
+Estado atual do Socket (pelo menos um flag se está inicializado).
+
+Checagem de amostragem de zero‑sum (por exemplo, rodar um teste rápido em um ambiente de teste ou usando flag).
+
+10. Frontend – UI/UX do mercado
+10.1 Order Book (AUCTION)
+Crie/ajuste componente OrderBook.tsx:
+
+Recebe assetId.
+
+Usa hook useAuctionSocket(assetId) para ouvir eventos NEWBID e TRADEEXECUTED.
+
+Renderiza:
+
+Lista de Asks (vendedores) em vermelho.
+
+Lista de Bids (compradores) em verde.
+
+Spread entre melhor Bid e melhor Ask.
+
+Último preço negociado.
+
+10.2 FlashDealCard.tsx
+Crie componente de card de Flash Deal:
+
+Props: { id, title, city, basePrice, promoPrice, stockLimit, stockLeft, dealExpiresAt }.
+
+Mostra:
+
+Preço original riscado, preço promo em destaque.
+
+Barra de progresso (stockLeft / stockLimit).
+
+Cronômetro regressivo até dealExpiresAt.
+
+Botão “Comprar agora”:
+
+Chama POST /market/instant-purchase com assetId.
+
+Desabilita se expirada ou stockLeft == 0.
+
+10.3 PricebreakerCard.tsx (Hotel Secreto)
+Crie componente com:
+
+Imagem com blur/fog + overlay de ícone de cadeado.
+
+Badge “HOTEL SECRETO”.
+
+Mostra: categoria (estrelas), bairro, cidade, preço original e preço quebrado.
+
+Botão “Revelar Agora” → instant-purchase.
+
+Após sucesso, exibir tela/modal de confirmação com o revealedName do hotel.
+
+10.4 Páginas de listagem
+Crie páginas:
+
+/negociacao – hub com:
+
+Order Book para AUCTION.
+
+Grid de Flash Deals.
+
+Grid de Pricebreakers.
+
+/negociacao/flash – lista apenas saletype = FLASH.
+
+/negociacao/secret – lista apenas saletype = SECRET.
+
+Menu de navegação deve ter entradas para:
+
+“Leilões Ativos”
+
+“Ofertas Flash”
+
+“Hotéis Secretos”
+
+11. Assinaturas e OTAs/Channel Manager (estrutura inicial)
+11.1 Assinaturas
+Modele:
+
+Tabela plans com: nome, preço, limites (nº de propriedades, integrações OTAs, deals ativos, acesso ao NTX).
+
+Tabela subscriptions ligando account/hotel ao plan_id, com status (TRIAL, ACTIVE, SUSPENDED) e expires_at.
+
+Middleware de assinatura:
+
+Em rotas de criação de leilões, deals e ativação de integrações, verificar:
+
+subscription.status = ACTIVE.
+
+Limites não extrapolados (ex: número de deals ativos ≤ limite do plano).
+
+11.2 OTAs / Channel Manager (stub)
+Crie um channelManagerService com interface:
+
+async pullInventory(accountId) → retorna/atualiza lista de marketassets para aquele hotel, com base em allotment/tarifas (por enquanto stub).
+
+async pushReservation(match) → chamado após Match/Instant Purchase para decrementar allotment nas OTAs/Channel Manager (por enquanto stub/log).
+
+Integre pushReservation(match) no fluxo de confirmação de marketmatches (por exemplo, após releaseFunds ou ao confirmar reserva).
+
+12. Estilo de implementação
+Manter variáveis, nomes de arquivos e padrões consistentes com o código já existente.
+
+Onde não houver padrão claro, seguir boas práticas TypeScript/Express/React.
+
+Escrever testes sempre que modificar lógica financeira ou de concorrência.
+
+Documentar endpoints principais do módulo market em um README local (backend/src/modules/market/README.md), listando:
+
+Rotas, parâmetros, respostas.
+
+Eventos de socket.
+
+Explicação curta de AUCTION / FLASH / EXPRESS / SECRET.
+
+Importante:
+Implemente tudo de forma incremental, validando tipos, migrations e testes.
+Sempre que precisar escolher entre complexidade e segurança em lógica financeira/concorrência, priorize segurança (transações, locks, validações extras).

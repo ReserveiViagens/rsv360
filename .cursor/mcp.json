@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright-local": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--headless",
+        "--browser",
+        "chrome"
+      ]
+    }
+  }
+}

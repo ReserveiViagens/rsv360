@@ -1,0 +1,274 @@
+# .cursorrules
+# Regras específicas para este repositório de reservas / hotelaria / temporada
+
+################################################################################
+# 0. ANÁLISE OBRIGATÓRIA DA CODEBASE COMPLETA (LER TUDO PRIMEIRO)
+################################################################################
+
+codebase_analysis:
+  mandatory_scanning:
+    instructions: >
+      ANTES DE QUALQUER RESPOSTA TÉCNICA, VOCÊ DEVE:
+      
+      1. **LER PASTA RAIZ COMPLETA** (ls -la .)
+      2. **ESCANEAR TODAS SUB-PASTAS** recursivamente (find . -type d)
+      3. **LISTAR TODOS ARQUIVOS** (.ts, .tsx, .js, .jsx, .py, .sql, .yaml, .json, .md, etc.)
+      4. **LER CONTEÚDO DE ARQUIVOS CRÍTICOS**:
+         - package.json, tsconfig.json, next.config.js
+         - README.md, docs/**
+         - app/**, src/**, lib/**, components/**
+         - api routes (app/api/**, pages/api/**, routes/**)
+         - configs (.env*, docker-compose.yml)
+         - database (prisma/schema.prisma, migrations/**, db.sql)
+      
+      5. **ANALISAR DEPENDÊNCIAS** (npm ls, yarn list, pnpm list)
+      6. **IDENTIFICAR FRAMEWORKS** (Next.js, React, Express, etc.)
+      7. **MAPEAR ESTRUTURA REAL** vs estrutura esperada
+
+    output_required:
+      - "📁 **Estrutura detectada:** X apps, Y APIs, Z libs"
+      - "**Framework:** Next.js/React/Vue/etc."
+      - "**Banco:** Prisma/Postgres/Supabase/etc."
+      - "**Dependências chave:** stripe, supabase, etc."
+
+  file_priority:
+    high:
+      - "*.json" (package.json, next.config.js, tsconfig.json)
+      - "*.md" (README, docs)
+      - "app/**", "pages/**", "src/app/**"
+      - "app/api/**", "pages/api/**"
+    medium:
+      - "components/**", "lib/**", "utils/**", "hooks/**"
+      - "prisma/**", "migrations/**", "*.sql"
+      - ".env*", "docker-compose.yml"
+    low:
+      - "tests/**", "__tests__/**"
+      - "*.test.ts", "*.spec.ts"
+
+################################################################################
+# 1. CONTEXTO DO PROJETO (DEPOIS DA ANÁLISE)
+################################################################################
+
+project:
+  name: "RSV360 – Hotelaria & Temporada"
+  description: >
+    Sistema de reservas e gerenciamento de hotelaria e alugueis para temporada.
+    Este repo pode conter múltiplos apps (web hóspede, painel admin, APIs, jobs).
+
+  primary_domains:
+    - booking_reservations
+    - guests
+    - properties_units
+    - pricing_availability
+    - contracts_signatures
+    - payments_billing
+    - reports_analytics
+    - admin_settings
+
+  # SISTEMAS IDENTIFICADOS (NÃO MISTURAR) - BASEADO NA ANÁLISE REAL
+  systems:
+    - name: guest_web_app
+      description: "App web para hóspedes finais (busca, reserva, pagamento)"
+      modules_allowed:
+        - booking_reservations
+        - guests
+        - properties_units
+        - payments_billing
+      forbidden_modules:
+        - admin_settings
+        - reports_analytics
+      paths_to_scan: ["app/(guest)/**", "src/guest/**", "pages/guest/**"]
+
+    - name: admin_panel
+      description: "Painel administrativo (hotéis, proprietários, operadores)"
+      modules_allowed: [ALL]
+      forbidden_modules: []
+      paths_to_scan: ["app/(admin)/**", "src/admin/**", "pages/admin/**"]
+
+    - name: api_backend
+      description: "APIs internas/externas (REST/GraphQL para todos os domínios)"
+      modules_allowed: [ALL]
+      forbidden_modules: []
+      paths_to_scan: ["app/api/**", "src/api/**", "pages/api/**"]
+
+    - name: background_jobs
+      description: "Workers, cron jobs, sincronizações (OTAs, pagamentos, notificações)"
+      modules_allowed:
+        - booking_reservations
+        - payments_billing
+        - contracts_signatures
+        - pricing_availability
+      forbidden_modules:
+        - admin_settings
+        - reports_analytics
+      paths_to_scan: ["workers/**", "jobs/**", "cron/**", "scripts/**"]
+
+    - name: shared_libs
+      description: "Bibliotecas compartilhadas (tipos, utils, UI components)"
+      modules_allowed: []
+      forbidden_modules: []
+      paths_to_scan: ["packages/**", "src/lib/**", "src/shared/**", "src/types/**"]
+
+  # MENU STRUCTURE - URLs, SUBLINKS, NAVEGAÇÃO (VALIDAR COM ARQUIVOS REAIS)
+  menu_structure:
+    guest_app:
+      - "/": "Home / Busca Principal"
+      - "/explore": "Explorar Imóveis/Hotéis"
+      - "/property/[slug]": "Detalhes do Imóvel/Quarto"
+      - "/reservations": "Minhas Reservas"
+      - "/profile": "Meu Perfil"
+      - "/ai-agent": "Assistente IA"
+    
+    admin_panel:
+      - "/admin/dashboard": "Dashboard Principal"
+      - "/admin/properties": "Propriedades/Hotéis"
+      - "/admin/bookings": "Reservas"
+      - "/admin/guests": "Hóspedes"
+      - "/admin/pricing": "Tarifas & Disponibilidade"
+      - "/admin/contracts": "Contratos"
+      - "/admin/payments": "Pagamentos/Faturamento"
+      - "/admin/reports": "Relatórios"
+      - "/admin/settings": "Configurações"
+
+################################################################################
+# 2. REGRAS GERAIS PARA A IA - ANÁLISE PRIMEIRO, EDIÇÃO DEPOIS
+################################################################################
+
+rules:
+  - id: mandatory-full-scan
+    description: "🚫 SEMPRE escanear codebase COMPLETA antes de responder."
+    instructions: >
+      **PRIMEIRO PASSO OBRIGATÓRIO:**
+      1. `ls -la` (pasta raiz)
+      2. `find . -type f -name "*.ts" -o -name "*.tsx" -o -name "*.js" | head -20`
+      3. Ler package.json, tsconfig.json, README.md
+      4. Identificar: Next.js? Express? Prisma? Docker?
+      
+      **SÓ DEPOIS** responder à pergunta do usuário.
+
+  - id: no-edit-before-full-mapping
+    description: "Não editar SEM mapa completo da codebase."
+    instructions: >
+      Antes de QUALQUER edição significativa:
+        1) Produzir **MAPA COMPLETO** (tabela + árvore)
+        2) Identificar sistema/módulo/URLs do código alvo
+        3) Confirmar se mudança é permitida no sistema
+        4) Listar arquivos que serão modificados
+
+  - id: module-system-segregation
+    description: "🚫 NÃO MISTURAR módulos entre sistemas."
+    instructions: >
+      VERIFIQUE SEMPRE (baseado na análise real):
+        1) guest_web_app → só módulos permitidos
+        2) Se encontrar violações → **ALERTA VERMELHO**
+        3) Propor migração para sistema correto
+
+  - id: docs-first
+    description: "Sempre atualizar docs ANTES de editar código."
+    instructions: >
+      Toda mudança → atualizar ARCHITECTURE_DISCOVERY.md:
+        - Novo path detectado
+        - Novo sistema/módulo identificado
+        - URLs encontradas nos arquivos
+
+################################################################################
+# 3. MAPEAMENTO COMPLETO E ROBUSTO (OUTPUT OBRIGATÓRIO)
+################################################################################
+
+architecture_mapping:
+  full_scan_template: |
+    📁 **ESTRUTURA DETECTADA:**
+    ```
+    Raiz: {ls output}
+    Apps: {app/, pages/}
+    APIs: {app/api/, pages/api/}
+    Libs: {lib/, shared/}
+    DB: {prisma/, migrations/}
+    ```
+    
+    🏗 **SISTEMAS IDENTIFICADOS:**
+    | Sistema | Paths Reais | Módulos | URLs |
+    |---------|-------------|---------|------|
+    
+    🌳 **ÁRVORE COMPLETA:**
+    guest_web_app
+    ├── app/(guest)/explore/page.tsx → /explore
+    ├── components/PropertyCard.tsx
+    └── ...
+    
+    ⚠️ **VIOLAÇÕES:** guest_web_app tem código de admin_settings
+
+  table_columns:
+    - Path
+    - Sistema
+    - Módulo
+    - Arquivos (top 3)
+    - URLs
+    - Tipo
+    - Domínio
+    - Status (OK/VIOLAÇÃO)
+
+  tree_levels:
+    - level_1: Sistemas (baseado em paths reais)
+    - level_2: Pastas principais encontradas
+    - level_3: Arquivos chave
+    - level_4: URLs implementadas
+
+################################################################################
+# 4. MÉTODOS DE RACIOCÍNIO (COM FOCO NA ANÁLISE COMPLETA)
+################################################################################
+
+thinking_methods:
+  - name: full_codebase_chain
+    steps:
+      1. "📂 Escaneando pasta raiz: {ls -la}"
+      2. "🔍 Subpastas: {find . -type d | head -10}"
+      3. "📄 Arquivos principais: {find . -name '*.ts' | head -5}"
+      4. "📦 package.json → Framework: {detected}"
+      5. "🗄️ DB/ORM detectado: {prisma/nextauth/etc}"
+      6. "🌐 Sistemas identificados: {guest/admin/api}"
+
+  - name: comprehensive_tree
+    structure: |
+      📁 ROOT
+      ├── Sistema 1 (guest_web_app)
+      │   ├── Paths reais: app/(guest)/**
+      │   ├── Módulos: booking_reservations
+      │   └── Arquivos: 15 .tsx, 3 APIs
+      ├── Sistema 2 (admin_panel)
+      └── ...
+
+  - name: docs_analysis
+    instructions: >
+      Ler TODOS arquivos .md, README, docs/**:
+      - Extrair arquitetura descrita
+      - Comparar com código real
+      - Listar discrepâncias
+
+################################################################################
+# 5. DOMÍNIOS COM VALIDAÇÃO DE PASTAS REAIS
+################################################################################
+
+business_domains:
+  - booking_reservations:
+      paths_patterns: ["**/booking", "**/reservations", "**/reservas"]
+      file_indicators: ["bookingService", "Reservation", "createBooking"]
+  - contracts_signatures:
+      paths_patterns: ["**/contracts", "**/contratos", "**/signatures"]
+      file_indicators: ["contract", "docusign", "govbr"]
+  # ... outros domínios com patterns reais
+
+################################################################################
+# 6. RELATÓRIO AUTOMÁTICO (QUANDO PEDIDO "MAPEAR")
+################################################################################
+
+auto_report:
+  when_user_says: ["mapear", "analisar", "entender", "arquitetura", "organizar"]
+  generate:
+    - Full scan da codebase
+    - Tabela completa (50+ linhas)
+    - Árvore de 4 níveis
+    - Lista de 10 recomendações
+    - Alertas de violações sistema/módulo
+
+# FIM .cursorrules - ANÁLISE COMPLETA OBRIGATÓRIA 🚀

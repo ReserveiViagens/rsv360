@@ -1,0 +1,1233 @@
+export interface Hotel {
+  id: string
+  name: string
+  stars: number
+  description: string
+  price: number
+  originalPrice?: number
+  images: string[]
+  features: string[]
+  location: string
+  discount?: number
+  category: 'luxury' | 'premium' | 'standard' | 'budget'
+  amenities: string[]
+  maxGuests: number
+  coordinates: {
+    lat: number
+    lng: number
+  }
+  availability: {
+    status: 'available' | 'limited' | 'sold_out' | 'coming_soon'
+    lastUpdated: string
+    roomsAvailable?: number
+  }
+  distanceFromCenter: number // em km
+  rating: number
+  reviewCount: number
+}
+
+export const hotelsData: Hotel[] = [
+  // Hotéis Premium/Luxo
+  {
+    id: "lagoa-eco-towers",
+    name: "Lagoa Eco Towers",
+    stars: 5,
+    description: "Luxo e sustentabilidade em Caldas Novas. Torres ecológicas com vista panorâmica e serviços premium.",
+    price: 850,
+    originalPrice: 1062.5,
+    discount: 20,
+    images: [
+      "/images/lagoa-eco-towers-hotel.jpeg",
+      "/Pictures/Lagoa Eco Towers reservei/1.jpg",
+      "/Pictures/Lagoa Eco Towers reservei/2.jpg",
+      "/Pictures/Lagoa Eco Towers reservei/3.jpg",
+      "/Pictures/Lagoa Eco Towers reservei/4.jpg",
+    ],
+    features: ["Torres Ecológicas", "Vista Panorâmica", "Spa Completo", "Gastronomia Premium", "Sustentabilidade"],
+    location: "Área Premium",
+    category: 'luxury',
+    amenities: ["Spa", "Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Academia"],
+    maxGuests: 7,
+    coordinates: { lat: -17.7444, lng: -48.6278 },
+    availability: {
+      status: 'available',
+      lastUpdated: new Date().toISOString(),
+      roomsAvailable: 12
+    },
+    distanceFromCenter: 2.5,
+    rating: 4.8,
+    reviewCount: 324
+  },
+  {
+    id: "piazza-diroma",
+    name: "Piazza DiRoma",
+    stars: 5,
+    description: "Sofisticação e acesso privilegiado aos parques diRoma. Arquitetura italiana e serviços premium.",
+    price: 260,
+    originalPrice: 325,
+    discount: 20,
+    images: [
+      "/images/piazza-diroma-hotel.jpg",
+      "/Pictures/Piazza DiRoma Caldas Novas/1.jpg",
+      "/Pictures/Piazza DiRoma Caldas Novas/2.jpg",
+      "/Pictures/Piazza DiRoma Caldas Novas/3.jpg",
+      "/Pictures/Piazza DiRoma Caldas Novas/4.jpg",
+    ],
+    features: ["Arquitetura Italiana", "Spa Premium", "Piscinas Exclusivas", "Restaurante Gourmet", "Concierge"],
+    location: "Área Nobre - Caldas Novas",
+    category: 'luxury',
+    amenities: ["Spa", "Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Concierge"],
+    maxGuests: 4,
+    coordinates: { lat: -17.7444, lng: -48.6278 },
+    availability: {
+      status: 'available',
+      lastUpdated: new Date().toISOString(),
+      roomsAvailable: 8
+    },
+    distanceFromCenter: 1.2,
+    rating: 4.9,
+    reviewCount: 156
+  },
+  {
+    id: "spazzio-diroma",
+    name: "Spazzio DiRoma",
+    stars: 4,
+    description: "Conforto e lazer completo com a qualidade diRoma. Piscinas termais naturais e estrutura completa para toda família.",
+    price: 250,
+    originalPrice: 312.5,
+    discount: 20,
+    images: [
+      "/images/spazzio-diroma-hotel.jpg",
+      "/Pictures/Spazzio diRoma/1.jpg",
+      "/Pictures/Spazzio diRoma/2.jpg",
+      "/Pictures/Spazzio diRoma/3.jpg",
+      "/Pictures/Spazzio diRoma/4.jpg",
+    ],
+    features: ["Piscinas Termais", "Acqua Park", "Restaurante", "Wi-Fi Gratuito", "Estacionamento"],
+    location: "Centro de Caldas Novas",
+    category: 'premium',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Acqua Park"],
+    maxGuests: 4,
+    coordinates: { lat: -17.7444, lng: -48.6278 },
+    availability: {
+      status: 'available',
+      lastUpdated: new Date().toISOString(),
+      roomsAvailable: 15
+    },
+    distanceFromCenter: 0.8,
+    rating: 4.7,
+    reviewCount: 289
+  },
+  {
+    id: "lacqua-diroma",
+    name: "Lacqua DiRoma",
+    stars: 4,
+    description: "Parque aquático exclusivo e diversão para toda a família. Toboáguas e piscinas de ondas incríveis.",
+    price: 440,
+    originalPrice: 550,
+    discount: 20,
+    images: [
+      "/images/lacqua-diroma-hotel.png",
+      "/Pictures/Lacqua Di Roma/1.jpeg",
+      "/Pictures/Lacqua Di Roma/2.jpeg",
+      "/Pictures/Lacqua Di Roma/3.jpeg",
+      "/Pictures/Lacqua Di Roma/4.jpeg",
+    ],
+    features: ["Jardins Acqua Park", "Piscinas de Ondas", "Toboáguas", "Ofurôs", "Kids Club"],
+    location: "Próximo ao Centro",
+    category: 'premium',
+    amenities: ["Piscina", "Acqua Park", "Restaurante", "Wi-Fi", "Estacionamento", "Kids Club"],
+    maxGuests: 4,
+    coordinates: { lat: -17.72876, lng: -48.62984 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T23:36:59.849Z',
+      roomsAvailable: 13
+    },
+    distanceFromCenter: 6.5,
+    rating: 3.5,
+    reviewCount: 238
+  },
+  {
+    id: "praias-do-lago-eco-resort",
+    name: "Praias do Lago Eco Resort",
+    stars: 4,
+    description: "Resort ecológico com praias artificiais e lagoas termais. Diversão garantida para toda família.",
+    price: 320,
+    originalPrice: 400,
+    discount: 20,
+    images: [
+      "/Pictures/Praias do Lago Eco Resort/1.jpg",
+      "/Pictures/Praias do Lago Eco Resort/2.jpg",
+      "/Pictures/Praias do Lago Eco Resort/3.jpg",
+      "/Pictures/Praias do Lago Eco Resort/4.jpg",
+    ],
+    features: ["Praias Artificiais", "Lagoas Termais", "Estrutura Ecológica", "Restaurante", "Wi-Fi"],
+    location: "Área Verde",
+    category: 'premium',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Praias Artificiais"],
+    maxGuests: 6,
+    coordinates: { lat: -17.731076, lng: -48.619533 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T23:36:59.866Z',
+      roomsAvailable: 4
+    },
+    distanceFromCenter: 6.6,
+    rating: 4.3,
+    reviewCount: 95
+  },
+  {
+    id: "resort-do-lago",
+    name: "Resort do Lago",
+    stars: 4,
+    description: "Resort completo às margens do lago com atividades aquáticas e estrutura de lazer completa.",
+    price: 280,
+    originalPrice: 350,
+    discount: 20,
+    images: [
+      "/Pictures/Resort do lago Reservei Viagens/1.jpeg",
+      "/Pictures/Resort do lago Reservei Viagens/2.jpeg",
+      "/Pictures/Resort do lago Reservei Viagens/3.jpeg",
+      "/Pictures/Resort do lago Reservei Viagens/4.jpeg",
+    ],
+    features: ["Vista para o Lago", "Atividades Aquáticas", "Spa", "Restaurante", "Wi-Fi"],
+    location: "Margem do Lago",
+    category: 'premium',
+    amenities: ["Piscina", "Spa", "Restaurante", "Wi-Fi", "Estacionamento", "Atividades Aquáticas"],
+    maxGuests: 6,
+    coordinates: { lat: -17.764485, lng: -48.641918 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T20:36:59.956Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 7.5,
+    rating: 4.3,
+    reviewCount: 407
+  },
+
+  // Hotéis Standard
+  {
+    id: "diroma-fiori",
+    name: "DiRoma Fiori",
+    stars: 3,
+    description: "Hotel aconchegante com piscinas termais e tranquilidade. Perfeito para relaxar em família.",
+    price: 407,
+    originalPrice: 508.75,
+    discount: 20,
+    images: [
+      "/images/diroma-fiori-hotel.jpeg",
+      "/Pictures/Fiori DiRoma/1.jpg",
+      "/Pictures/Fiori DiRoma/2.jpg",
+      "/Pictures/Fiori DiRoma/3.jpg",
+      "/Pictures/Fiori DiRoma/4.jpg",
+    ],
+    features: ["Ambiente Familiar", "Piscinas Termais", "Sauna", "Jardins", "Playground"],
+    location: "Zona Residencial",
+    category: 'standard',
+    amenities: ["Piscina", "Sauna", "Restaurante", "Wi-Fi", "Estacionamento", "Playground"],
+    maxGuests: 5,
+    coordinates: { lat: -17.759496, lng: -48.62467 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T07:37:00.018Z',
+      roomsAvailable: 20
+    },
+    distanceFromCenter: 14.9,
+    rating: 4.6,
+    reviewCount: 18
+  },
+  {
+    id: "hotel-parque-das-primaveras",
+    name: "Hotel Parque das Primaveras",
+    stars: 3,
+    description: "Hotel com ampla área verde e piscinas termais. Ideal para famílias que buscam tranquilidade.",
+    price: 180,
+    originalPrice: 225,
+    discount: 20,
+    images: [
+      "/Pictures/Hotel Parque Das Primaveras/1.jpg",
+      "/Pictures/Hotel Parque Das Primaveras/2.jpg",
+      "/Pictures/Hotel Parque Das Primaveras/3.jpg",
+      "/Pictures/Hotel Parque Das Primaveras/4.jpg",
+    ],
+    features: ["Área Verde", "Piscinas Termais", "Restaurante", "Wi-Fi", "Estacionamento"],
+    location: "Zona Verde",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Área Verde"],
+    maxGuests: 4,
+    coordinates: { lat: -17.744872, lng: -48.641904 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T12:37:00.067Z',
+      roomsAvailable: 15
+    },
+    distanceFromCenter: 10.3,
+    rating: 4.9,
+    reviewCount: 404
+  },
+  {
+    id: "hotel-ctc",
+    name: "Hotel CTC",
+    stars: 3,
+    description: "Hotel confortável com piscinas termais e boa localização. Excelente custo-benefício.",
+    price: 150,
+    originalPrice: 187.5,
+    discount: 20,
+    images: [
+      "/Pictures/Hotel CTC/1.webp",
+      "/Pictures/Hotel CTC/2.webp",
+      "/Pictures/Hotel CTC/3.webp",
+      "/Pictures/Hotel CTC/4.webp",
+    ],
+    features: ["Boa Localização", "Piscinas Termais", "Restaurante", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento"],
+    maxGuests: 4,
+    coordinates: { lat: -17.72725, lng: -48.639652 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T12:37:00.126Z',
+      roomsAvailable: 2
+    },
+    distanceFromCenter: 7.3,
+    rating: 3.6,
+    reviewCount: 83
+  },
+  {
+    id: "hotel-marina-flat",
+    name: "Hotel Marina Flat",
+    stars: 3,
+    description: "Hotel com apartamentos amplos e piscinas termais. Ideal para estadias mais longas.",
+    price: 200,
+    originalPrice: 250,
+    discount: 20,
+    images: [
+      "/Pictures/Hotel Marina Flat/1.jpg",
+      "/Pictures/Hotel Marina Flat/2.jpg",
+      "/Pictures/Hotel Marina Flat/3.jpg",
+      "/Pictures/Hotel Marina Flat/4.jpg",
+    ],
+    features: ["Apartamentos Amplos", "Piscinas Termais", "Cozinha", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Cozinha", "Wi-Fi", "Estacionamento", "Apartamentos"],
+    maxGuests: 4,
+    coordinates: { lat: -17.74803, lng: -48.628708 },
+    availability: {
+      status: 'sold_out',
+      lastUpdated: '2025-10-16T12:37:00.145Z',
+      roomsAvailable: 0
+    },
+    distanceFromCenter: 4,
+    rating: 4.4,
+    reviewCount: 181
+  },
+  {
+    id: "golden-dolphin-gran-hotel",
+    name: "Golden Dolphin Caldas Novas Gran Hotel",
+    stars: 4,
+    description: "Hotel tradicional com piscinas termais e estrutura completa. Tradição e qualidade em Caldas Novas.",
+    price: 220,
+    originalPrice: 275,
+    discount: 20,
+    images: [
+      "/Pictures/Golden Dolphin Caldas Novas Gran Hotel/1.jpg",
+      "/Pictures/Golden Dolphin Caldas Novas Gran Hotel/2.jpg",
+      "/Pictures/Golden Dolphin Caldas Novas Gran Hotel/3.jpg",
+      "/Pictures/Golden Dolphin Caldas Novas Gran Hotel/4.jpg",
+    ],
+    features: ["Tradição", "Piscinas Termais", "Restaurante", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento"],
+    maxGuests: 4,
+    coordinates: { lat: -17.739327, lng: -48.61231 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T05:37:00.152Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 8.2,
+    rating: 3.8,
+    reviewCount: 67
+  },
+  {
+    id: "golden-dolphin-express",
+    name: "Golden Dolphin Express",
+    stars: 3,
+    description: "Hotel econômico com piscinas termais e boa localização. Perfeito para quem busca praticidade.",
+    price: 120,
+    originalPrice: 150,
+    discount: 20,
+    images: [
+      "/Pictures/Golden Dolphin Express/1.jpg",
+      "/Pictures/Golden Dolphin Express/2.jpg",
+      "/Pictures/Golden Dolphin Express/3.jpg",
+      "/Pictures/Golden Dolphin Express/4.jpg",
+    ],
+    features: ["Econômico", "Piscinas Termais", "Boa Localização", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'budget',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento"],
+    maxGuests: 3,
+    coordinates: { lat: -17.741915, lng: -48.644597 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T08:37:00.222Z',
+      roomsAvailable: 20
+    },
+    distanceFromCenter: 1.6,
+    rating: 4.1,
+    reviewCount: 403
+  },
+  {
+    id: "hotsprings-b3-hoteis",
+    name: "HotSprings B3 Hotéis",
+    stars: 3,
+    description: "Rede de hotéis com piscinas termais e estrutura moderna. Conforto e qualidade garantidos.",
+    price: 190,
+    originalPrice: 237.5,
+    discount: 20,
+    images: [
+      "/Pictures/HotSprings B3 Hotéis/1.jpg",
+      "/Pictures/HotSprings B3 Hotéis/2.jpg",
+      "/Pictures/HotSprings B3 Hotéis/3.jpg",
+      "/Pictures/HotSprings B3 Hotéis/4.jpg",
+    ],
+    features: ["Rede de Hotéis", "Piscinas Termais", "Estrutura Moderna", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Rede de Hotéis"],
+    maxGuests: 4,
+    coordinates: { lat: -17.724755, lng: -48.624708 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T22:37:00.241Z',
+      roomsAvailable: 17
+    },
+    distanceFromCenter: 7.8,
+    rating: 4.5,
+    reviewCount: 491
+  },
+  {
+    id: "imperio-romano",
+    name: "Império Romano",
+    stars: 3,
+    description: "Hotel temático com piscinas termais e decoração romana. Diversão e conforto para toda família.",
+    price: 170,
+    originalPrice: 212.5,
+    discount: 20,
+    images: [
+      "/Pictures/Império Romano/1.jpg",
+      "/Pictures/Império Romano/2.jpg",
+      "/Pictures/Império Romano/3.jpg",
+      "/Pictures/Império Romano/4.jpg",
+    ],
+    features: ["Temático Romano", "Piscinas Termais", "Restaurante", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Temático"],
+    maxGuests: 4,
+    coordinates: { lat: -17.768591, lng: -48.650523 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-15T14:37:00.328Z',
+      roomsAvailable: 1
+    },
+    distanceFromCenter: 5.4,
+    rating: 4.2,
+    reviewCount: 327
+  },
+  {
+    id: "lagoa-quente-hotel",
+    name: "Lagoa Quente Hotel",
+    stars: 3,
+    description: "Hotel com lagoas termais naturais e estrutura completa. Relaxamento garantido.",
+    price: 160,
+    originalPrice: 200,
+    discount: 20,
+    images: [
+      "/Pictures/LAGOA QUENTE Hotel/1.jpg",
+      "/Pictures/LAGOA QUENTE Hotel/2.jpg",
+      "/Pictures/LAGOA QUENTE Hotel/3.jpg",
+      "/Pictures/LAGOA QUENTE Hotel/4.jpg",
+    ],
+    features: ["Lagoas Termais", "Estrutura Completa", "Restaurante", "Wi-Fi", "Estacionamento"],
+    location: "Zona Termal",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Lagoas Termais"],
+    maxGuests: 4,
+    coordinates: { lat: -17.721206, lng: -48.644051 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T08:37:00.408Z',
+      roomsAvailable: 1
+    },
+    distanceFromCenter: 7.1,
+    rating: 4.5,
+    reviewCount: 151
+  },
+  {
+    id: "rio-das-pedras-thermas",
+    name: "Rio das Pedras Thermas Hotel",
+    stars: 3,
+    description: "Hotel com piscinas termais e ambiente natural. Perfeito para quem busca tranquilidade.",
+    price: 140,
+    originalPrice: 175,
+    discount: 20,
+    images: [
+      "/Pictures/Rio das Pedras Thermas Hotel/1.jpg",
+      "/Pictures/Rio das Pedras Thermas Hotel/2.jpg",
+      "/Pictures/Rio das Pedras Thermas Hotel/3.jpg",
+      "/Pictures/Rio das Pedras Thermas Hotel/4.jpg",
+    ],
+    features: ["Ambiente Natural", "Piscinas Termais", "Tranquilidade", "Wi-Fi", "Estacionamento"],
+    location: "Zona Rural",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Ambiente Natural"],
+    maxGuests: 4,
+    coordinates: { lat: -17.738003, lng: -48.632629 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T07:37:00.493Z',
+      roomsAvailable: 7
+    },
+    distanceFromCenter: 6.3,
+    rating: 4.4,
+    reviewCount: 384
+  },
+  {
+    id: "thermas-do-bandeirante",
+    name: "Thermas do Bandeirante",
+    stars: 3,
+    description: "Hotel histórico com piscinas termais e tradição em Caldas Novas. Conforto e história.",
+    price: 180,
+    originalPrice: 225,
+    discount: 20,
+    images: [
+      "/Pictures/Thermas do Bandeirante/1.jpg",
+      "/Pictures/Thermas do Bandeirante/2.jpg",
+      "/Pictures/Thermas do Bandeirante/3.jpg",
+      "/Pictures/Thermas do Bandeirante/4.jpg",
+    ],
+    features: ["Histórico", "Piscinas Termais", "Tradição", "Restaurante", "Wi-Fi"],
+    location: "Centro Histórico",
+    category: 'standard',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Histórico"],
+    maxGuests: 4,
+    coordinates: { lat: -17.735383, lng: -48.609742 },
+    availability: {
+      status: 'sold_out',
+      lastUpdated: '2025-10-15T15:37:00.508Z',
+      roomsAvailable: 0
+    },
+    distanceFromCenter: 13,
+    rating: 4.2,
+    reviewCount: 100
+  },
+  {
+    id: "thermas-place",
+    name: "Thermas Place",
+    stars: 3,
+    description: "Hotel moderno com piscinas termais e boa localização. Conforto e praticidade.",
+    price: 200,
+    originalPrice: 250,
+    discount: 20,
+    images: [
+      "/Pictures/Thermas Place/1.jpeg",
+      "/Pictures/Thermas Place/2.jpeg",
+      "/Pictures/Thermas Place/3.jpeg",
+      "/Pictures/Thermas Place/4.jpeg",
+    ],
+    features: ["Moderno", "Piscinas Termais", "Boa Localização", "Wi-Fi", "Estacionamento"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Moderno"],
+    maxGuests: 4,
+    coordinates: { lat: -17.761908, lng: -48.63129 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T19:37:00.518Z',
+      roomsAvailable: 9
+    },
+    distanceFromCenter: 11.5,
+    rating: 4.4,
+    reviewCount: 442
+  },
+
+  // Flats e Apartamentos
+  {
+    id: "aquarius-residence",
+    name: "Aquarius Residence",
+    stars: 4,
+    description: "Apartamentos de luxo com piscinas termais e vista panorâmica. Conforto e privacidade.",
+    price: 300,
+    originalPrice: 375,
+    discount: 20,
+    images: [
+      "/Pictures/Aquarius Residence/1.jpg",
+      "/Pictures/Aquarius Residence/2.jpg",
+      "/Pictures/Aquarius Residence/3.jpg",
+      "/Pictures/Aquarius Residence/4.jpg",
+    ],
+    features: ["Apartamentos de Luxo", "Vista Panorâmica", "Piscinas Termais", "Privacidade", "Wi-Fi"],
+    location: "Área Nobre",
+    category: 'premium',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Apartamentos", "Vista Panorâmica"],
+    maxGuests: 6,
+    coordinates: { lat: -17.740197, lng: -48.633557 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T02:37:00.535Z',
+      roomsAvailable: 5
+    },
+    distanceFromCenter: 3.2,
+    rating: 4.3,
+    reviewCount: 442
+  },
+  {
+    id: "araras-apart-service",
+    name: "ARARAS Apart Service",
+    stars: 3,
+    description: "Apartamentos com serviço completo e piscinas termais. Ideal para estadias longas.",
+    price: 180,
+    originalPrice: 225,
+    discount: 20,
+    images: [
+      "/Pictures/ARARAS Apart Service/1.jpeg",
+      "/Pictures/ARARAS Apart Service/2.jpeg",
+      "/Pictures/ARARAS Apart Service/3.jpeg",
+      "/Pictures/ARARAS Apart Service/4.jpeg",
+    ],
+    features: ["Apartamentos", "Serviço Completo", "Piscinas Termais", "Cozinha", "Wi-Fi"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Cozinha", "Wi-Fi", "Estacionamento", "Apartamentos"],
+    maxGuests: 4,
+    coordinates: { lat: -17.757685, lng: -48.617001 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T22:37:00.538Z',
+      roomsAvailable: 6
+    },
+    distanceFromCenter: 14.6,
+    rating: 4.5,
+    reviewCount: 220
+  },
+  {
+    id: "boulevard-prive-suite",
+    name: "Boulevard Prive Suite Hotel",
+    stars: 4,
+    description: "Suítes privativas com piscinas termais e serviços exclusivos. Luxo e privacidade.",
+    price: 350,
+    originalPrice: 437.5,
+    discount: 20,
+    images: [
+      "/Pictures/Boulevard Prive Suite Hotel/1.jpg",
+      "/Pictures/Boulevard Prive Suite Hotel/2.jpg",
+      "/Pictures/Boulevard Prive Suite Hotel/3.jpg",
+      "/Pictures/Boulevard Prive Suite Hotel/4.jpg",
+    ],
+    features: ["Suítes Privativas", "Piscinas Termais", "Serviços Exclusivos", "Luxo", "Privacidade"],
+    location: "Área Exclusiva",
+    category: 'luxury',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Suítes", "Serviços Exclusivos"],
+    maxGuests: 4,
+    coordinates: { lat: -17.733899, lng: -48.621996 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T04:37:00.541Z',
+      roomsAvailable: 5
+    },
+    distanceFromCenter: 1.7,
+    rating: 4.3,
+    reviewCount: 110
+  },
+  {
+    id: "casa-da-madeira",
+    name: "Casa da Madeira",
+    stars: 3,
+    description: "Apartamentos rústicos com piscinas termais e ambiente acolhedor. Tradição e conforto.",
+    price: 150,
+    originalPrice: 187.5,
+    discount: 20,
+    images: [
+      "/Pictures/casa da madeira/1.jpeg",
+      "/Pictures/casa da madeira/2.jpeg",
+      "/Pictures/casa da madeira/3.jpeg",
+      "/Pictures/casa da madeira/4.jpeg",
+    ],
+    features: ["Rústico", "Piscinas Termais", "Ambiente Acolhedor", "Cozinha", "Wi-Fi"],
+    location: "Zona Rural",
+    category: 'standard',
+    amenities: ["Piscina", "Cozinha", "Wi-Fi", "Estacionamento", "Rústico"],
+    maxGuests: 4,
+    coordinates: { lat: -17.734268, lng: -48.621407 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T14:37:00.558Z',
+      roomsAvailable: 16
+    },
+    distanceFromCenter: 3.1,
+    rating: 4.4,
+    reviewCount: 146
+  },
+  {
+    id: "diroma-exclusive",
+    name: "DiRoma Exclusive",
+    stars: 4,
+    description: "Apartamentos exclusivos com piscinas termais e serviços premium. Sofisticação e conforto.",
+    price: 280,
+    originalPrice: 350,
+    discount: 20,
+    images: [
+      "/Pictures/Diroma Exclusive/1.jpg",
+      "/Pictures/Diroma Exclusive/2.jpg",
+      "/Pictures/Diroma Exclusive/3.jpg",
+      "/Pictures/Diroma Exclusive/4.jpg",
+    ],
+    features: ["Exclusivo", "Piscinas Termais", "Serviços Premium", "Sofisticação", "Wi-Fi"],
+    location: "Área Nobre",
+    category: 'premium',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Apartamentos", "Serviços Premium"],
+    maxGuests: 4,
+    coordinates: { lat: -17.746285, lng: -48.607189 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T01:37:00.567Z',
+      roomsAvailable: 4
+    },
+    distanceFromCenter: 3.3,
+    rating: 3.8,
+    reviewCount: 327
+  },
+  {
+    id: "eldorado-flat",
+    name: "Eldorado Flat",
+    stars: 3,
+    description: "Flats modernos com piscinas termais e boa localização. Conforto e praticidade.",
+    price: 160,
+    originalPrice: 200,
+    discount: 20,
+    images: [
+      "/Pictures/Eldorado Flat/1.jpeg",
+      "/Pictures/Eldorado Flat/2.jpeg",
+      "/Pictures/Eldorado Flat/3.jpeg",
+      "/Pictures/Eldorado Flat/4.jpeg",
+    ],
+    features: ["Flats Modernos", "Piscinas Termais", "Boa Localização", "Cozinha", "Wi-Fi"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Cozinha", "Wi-Fi", "Estacionamento", "Flats"],
+    maxGuests: 4,
+    coordinates: { lat: -17.757575, lng: -48.632082 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T11:37:00.570Z',
+      roomsAvailable: 4
+    },
+    distanceFromCenter: 6,
+    rating: 4.5,
+    reviewCount: 196
+  },
+  {
+    id: "everest-flat-service",
+    name: "Everest Flat Service",
+    stars: 3,
+    description: "Flats com serviço completo e piscinas termais. Ideal para famílias e grupos.",
+    price: 170,
+    originalPrice: 212.5,
+    discount: 20,
+    images: [
+      "/Pictures/Everest Flat Service/1.jpg",
+      "/Pictures/Everest Flat Service/2.jpg",
+      "/Pictures/Everest Flat Service/3.jpg",
+      "/Pictures/Everest Flat Service/4.jpg",
+    ],
+    features: ["Flats", "Serviço Completo", "Piscinas Termais", "Famílias", "Wi-Fi"],
+    location: "Centro",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Flats", "Serviço Completo"],
+    maxGuests: 4,
+    coordinates: { lat: -17.740672, lng: -48.61248 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T03:37:00.570Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 5,
+    rating: 4.6,
+    reviewCount: 64
+  },
+  {
+    id: "fiore-prime-flat",
+    name: "Fiore Prime Flat",
+    stars: 4,
+    description: "Flats premium com piscinas termais e serviços exclusivos. Conforto e qualidade.",
+    price: 250,
+    originalPrice: 312.5,
+    discount: 20,
+    images: [
+      "/Pictures/Fiore Prime Flat/1.jpg",
+      "/Pictures/Fiore Prime Flat/2.jpg",
+      "/Pictures/Fiore Prime Flat/3.jpg",
+      "/Pictures/Fiore Prime Flat/4.jpg",
+    ],
+    features: ["Flats Premium", "Piscinas Termais", "Serviços Exclusivos", "Qualidade", "Wi-Fi"],
+    location: "Área Nobre",
+    category: 'premium',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Flats", "Serviços Exclusivos"],
+    maxGuests: 4,
+    coordinates: { lat: -17.731706, lng: -48.611318 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T02:37:00.572Z',
+      roomsAvailable: 18
+    },
+    distanceFromCenter: 12.5,
+    rating: 3.6,
+    reviewCount: 357
+  },
+  {
+    id: "le-jardin-suites",
+    name: "Le Jardin Suítes",
+    stars: 4,
+    description: "Suítes com jardins privativos e piscinas termais. Tranquilidade e sofisticação.",
+    price: 300,
+    originalPrice: 375,
+    discount: 20,
+    images: [
+      "/Pictures/Le Jardin Suítes/1.jpg",
+      "/Pictures/Le Jardin Suítes/2.jpg",
+      "/Pictures/Le Jardin Suítes/3.jpg",
+      "/Pictures/Le Jardin Suítes/4.jpg",
+    ],
+    features: ["Jardins Privativos", "Piscinas Termais", "Suítes", "Tranquilidade", "Wi-Fi"],
+    location: "Área Verde",
+    category: 'premium',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Suítes", "Jardins"],
+    maxGuests: 4,
+    coordinates: { lat: -17.722904, lng: -48.614629 },
+    availability: {
+      status: 'sold_out',
+      lastUpdated: '2025-10-15T19:37:00.575Z',
+      roomsAvailable: 0
+    },
+    distanceFromCenter: 7.6,
+    rating: 4.8,
+    reviewCount: 437
+  },
+  {
+    id: "paradise-flat-residence",
+    name: "Paradise Flat Residence",
+    stars: 3,
+    description: "Residência com flats e piscinas termais. Ambiente familiar e acolhedor.",
+    price: 190,
+    originalPrice: 237.5,
+    discount: 20,
+    images: [
+      "/Pictures/Paradise Flat Residence/1.jpeg",
+      "/Pictures/Paradise Flat Residence/2.jpeg",
+      "/Pictures/Paradise Flat Residence/3.jpeg",
+      "/Pictures/Paradise Flat Residence/4.jpeg",
+    ],
+    features: ["Residência", "Flats", "Piscinas Termais", "Familiar", "Wi-Fi"],
+    location: "Zona Residencial",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Flats", "Familiar"],
+    maxGuests: 4,
+    coordinates: { lat: -17.743776, lng: -48.612124 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-16T04:37:00.601Z',
+      roomsAvailable: 1
+    },
+    distanceFromCenter: 7.5,
+    rating: 4.7,
+    reviewCount: 311
+  },
+  {
+    id: "recanto-do-bosque-flat",
+    name: "Recanto do Bosque - Flat Service",
+    stars: 3,
+    description: "Flats em ambiente natural com piscinas termais. Tranquilidade e contato com a natureza.",
+    price: 160,
+    originalPrice: 200,
+    discount: 20,
+    images: [
+      "/Pictures/Recanto do Bosque - Flat Service/1.jpeg",
+      "/Pictures/Recanto do Bosque - Flat Service/2.jpeg",
+      "/Pictures/Recanto do Bosque - Flat Service/3.jpeg",
+      "/Pictures/Recanto do Bosque - Flat Service/4.jpeg",
+    ],
+    features: ["Ambiente Natural", "Flats", "Piscinas Termais", "Tranquilidade", "Wi-Fi"],
+    location: "Zona Verde",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Flats", "Ambiente Natural"],
+    maxGuests: 4,
+    coordinates: { lat: -17.74444, lng: -48.628767 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T23:37:00.604Z',
+      roomsAvailable: 18
+    },
+    distanceFromCenter: 6.5,
+    rating: 4.6,
+    reviewCount: 27
+  },
+  {
+    id: "the-villeneuve-residence",
+    name: "The Villeneuve Residence",
+    stars: 4,
+    description: "Residência de luxo com apartamentos e piscinas termais. Privacidade e conforto.",
+    price: 320,
+    originalPrice: 400,
+    discount: 20,
+    images: [
+      "/Pictures/The Villeneuve Residence/1.jpeg",
+      "/Pictures/The Villeneuve Residence/2.jpeg",
+      "/Pictures/The Villeneuve Residence/3.jpeg",
+      "/Pictures/The Villeneuve Residence/4.jpeg",
+    ],
+    features: ["Residência de Luxo", "Apartamentos", "Piscinas Termais", "Privacidade", "Wi-Fi"],
+    location: "Área Exclusiva",
+    category: 'premium',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Apartamentos", "Luxo"],
+    maxGuests: 6,
+    coordinates: { lat: -17.743734, lng: -48.634181 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T21:37:00.613Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 1.3,
+    rating: 4,
+    reviewCount: 382
+  },
+
+  // Resorts e Pousadas
+  {
+    id: "aldeia-do-lago",
+    name: "Aldeia do Lago",
+    stars: 3,
+    description: "Pousada rústica às margens do lago com piscinas termais. Ambiente acolhedor e familiar.",
+    price: 120,
+    originalPrice: 150,
+    discount: 20,
+    images: [
+      "/Pictures/ALDEIA DO LAGO/1.jpg",
+      "/Pictures/ALDEIA DO LAGO/2.jpg",
+      "/Pictures/ALDEIA DO LAGO/3.jpg",
+      "/Pictures/ALDEIA DO LAGO/4.jpg",
+    ],
+    features: ["Rústico", "Margem do Lago", "Piscinas Termais", "Familiar", "Wi-Fi"],
+    location: "Margem do Lago",
+    category: 'budget',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Familiar"],
+    maxGuests: 3,
+    coordinates: { lat: -17.766997, lng: -48.638742 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-15T17:37:00.634Z',
+      roomsAvailable: 8
+    },
+    distanceFromCenter: 11,
+    rating: 4.7,
+    reviewCount: 238
+  },
+  {
+    id: "alta-vista-thermas",
+    name: "Alta Vista Thermas",
+    stars: 3,
+    description: "Pousada com vista panorâmica e piscinas termais. Tranquilidade e belas paisagens.",
+    price: 140,
+    originalPrice: 175,
+    discount: 20,
+    images: [
+      "/Pictures/Alta Vista Thermas/1.jpg",
+      "/Pictures/Alta Vista Thermas/2.jpg",
+      "/Pictures/Alta Vista Thermas/3.jpg",
+      "/Pictures/Alta Vista Thermas/4.jpg",
+    ],
+    features: ["Vista Panorâmica", "Piscinas Termais", "Tranquilidade", "Paisagens", "Wi-Fi"],
+    location: "Alto da Colina",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Vista Panorâmica"],
+    maxGuests: 4,
+    coordinates: { lat: -17.749051, lng: -48.640722 },
+    availability: {
+      status: 'coming_soon',
+      lastUpdated: '2025-10-16T04:37:00.664Z',
+      roomsAvailable: 13
+    },
+    distanceFromCenter: 2.7,
+    rating: 4.2,
+    reviewCount: 249
+  },
+  {
+    id: "ecologic-park",
+    name: "Ecologic Park",
+    stars: 3,
+    description: "Parque ecológico com piscinas termais e atividades na natureza. Sustentabilidade e diversão.",
+    price: 160,
+    originalPrice: 200,
+    discount: 20,
+    images: [
+      "/Pictures/Ecologic Park/1.jpeg",
+      "/Pictures/Ecologic Park/2.jpeg",
+      "/Pictures/Ecologic Park/3.jpeg",
+      "/Pictures/Ecologic Park/4.jpeg",
+    ],
+    features: ["Ecológico", "Piscinas Termais", "Atividades na Natureza", "Sustentabilidade", "Wi-Fi"],
+    location: "Parque Ecológico",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Ecológico"],
+    maxGuests: 4,
+    coordinates: { lat: -17.738551, lng: -48.609805 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T21:37:00.734Z',
+      roomsAvailable: 3
+    },
+    distanceFromCenter: 7.2,
+    rating: 5,
+    reviewCount: 402
+  },
+  {
+    id: "ecologic-ville-resort",
+    name: "Ecologic Ville Resort",
+    stars: 4,
+    description: "Resort ecológico com piscinas termais e estrutura completa. Sustentabilidade e conforto.",
+    price: 240,
+    originalPrice: 300,
+    discount: 20,
+    images: [
+      "/Pictures/Ecologic Ville Resort/1.jpg",
+      "/Pictures/Ecologic Ville Resort/2.jpg",
+      "/Pictures/Ecologic Ville Resort/3.jpg",
+      "/Pictures/Ecologic Ville Resort/4.jpg",
+    ],
+    features: ["Resort Ecológico", "Piscinas Termais", "Estrutura Completa", "Sustentabilidade", "Wi-Fi"],
+    location: "Parque Ecológico",
+    category: 'premium',
+    amenities: ["Piscina", "Restaurante", "Wi-Fi", "Estacionamento", "Ecológico"],
+    maxGuests: 6,
+    coordinates: { lat: -17.757281, lng: -48.64205 },
+    availability: {
+      status: 'sold_out',
+      lastUpdated: '2025-10-15T23:37:00.777Z',
+      roomsAvailable: 0
+    },
+    distanceFromCenter: 8.9,
+    rating: 4.1,
+    reviewCount: 184
+  },
+  {
+    id: "ilhas-do-lago",
+    name: "Ilhas do Lago",
+    stars: 3,
+    description: "Pousada em ilhas artificiais com piscinas termais. Experiência única e exclusiva.",
+    price: 200,
+    originalPrice: 250,
+    discount: 20,
+    images: [
+      "/Pictures/ilhas do lago/1.jpg",
+      "/Pictures/ilhas do lago/2.jpg",
+      "/Pictures/ilhas do lago/3.jpg",
+      "/Pictures/ilhas do lago/4.jpg",
+    ],
+    features: ["Ilhas Artificiais", "Piscinas Termais", "Experiência Única", "Exclusivo", "Wi-Fi"],
+    location: "Ilhas do Lago",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Ilhas"],
+    maxGuests: 4,
+    coordinates: { lat: -17.756886, lng: -48.613801 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T15:37:00.785Z',
+      roomsAvailable: 10
+    },
+    distanceFromCenter: 6,
+    rating: 3.8,
+    reviewCount: 467
+  },
+  {
+    id: "parque-veredas",
+    name: "Parque Veredas",
+    stars: 3,
+    description: "Parque com piscinas termais e trilhas ecológicas. Contato com a natureza e relaxamento.",
+    price: 130,
+    originalPrice: 162.5,
+    discount: 20,
+    images: [
+      "/Pictures/parque veredas/1.jpg",
+      "/Pictures/parque veredas/2.jpg",
+      "/Pictures/parque veredas/3.jpg",
+      "/Pictures/parque veredas/4.jpg",
+    ],
+    features: ["Parque", "Piscinas Termais", "Trilhas Ecológicas", "Natureza", "Wi-Fi"],
+    location: "Parque Natural",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Trilhas"],
+    maxGuests: 4,
+    coordinates: { lat: -17.73072, lng: -48.628413 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T17:37:00.788Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 7.3,
+    rating: 4,
+    reviewCount: 33
+  },
+  {
+    id: "prive-das-thermas",
+    name: "Prive das Thermas",
+    stars: 4,
+    description: "Resort privativo com piscinas termais exclusivas. Luxo e privacidade garantidos.",
+    price: 400,
+    originalPrice: 500,
+    discount: 20,
+    images: [
+      "/Pictures/Prive das Thermas/1.jpg",
+      "/Pictures/Prive das Thermas/2.jpg",
+      "/Pictures/Prive das Thermas/3.jpg",
+      "/Pictures/Prive das Thermas/4.jpg",
+    ],
+    features: ["Privativo", "Piscinas Exclusivas", "Luxo", "Privacidade", "Wi-Fi"],
+    location: "Área Exclusiva",
+    category: 'luxury',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Privativo"],
+    maxGuests: 4,
+    coordinates: { lat: -17.748509, lng: -48.651739 },
+    availability: {
+      status: 'sold_out',
+      lastUpdated: '2025-10-16T09:37:00.790Z',
+      roomsAvailable: 0
+    },
+    distanceFromCenter: 5.6,
+    rating: 3.7,
+    reviewCount: 346
+  },
+  {
+    id: "recanto-do-bosque",
+    name: "Recanto do Bosque",
+    stars: 3,
+    description: "Pousada em meio à natureza com piscinas termais. Tranquilidade e contato com a natureza.",
+    price: 110,
+    originalPrice: 137.5,
+    discount: 20,
+    images: [
+      "/Pictures/recanto do bosque/1.webp",
+      "/Pictures/recanto do bosque/2.webp",
+      "/Pictures/recanto do bosque/3.webp",
+      "/Pictures/recanto do bosque/4.webp",
+    ],
+    features: ["Natureza", "Piscinas Termais", "Tranquilidade", "Bosque", "Wi-Fi"],
+    location: "Meio à Natureza",
+    category: 'budget',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Natureza"],
+    maxGuests: 3,
+    coordinates: { lat: -17.746176, lng: -48.624994 },
+    availability: {
+      status: 'coming_soon',
+      lastUpdated: '2025-10-16T05:37:00.791Z',
+      roomsAvailable: 3
+    },
+    distanceFromCenter: 6.8,
+    rating: 4.7,
+    reviewCount: 329
+  },
+  {
+    id: "riviera-sem-ruidos",
+    name: "Riviera sem Ruídos",
+    stars: 3,
+    description: "Pousada tranquila com piscinas termais e ambiente silencioso. Perfeita para relaxar.",
+    price: 150,
+    originalPrice: 187.5,
+    discount: 20,
+    images: [
+      "/Pictures/riviera sem ruidos/1.jpg",
+      "/Pictures/riviera sem ruidos/2.jpg",
+      "/Pictures/riviera sem ruidos/3.jpg",
+      "/Pictures/riviera sem ruidos/4.jpg",
+    ],
+    features: ["Tranquila", "Piscinas Termais", "Silenciosa", "Relaxamento", "Wi-Fi"],
+    location: "Zona Tranquila",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Tranquila"],
+    maxGuests: 4,
+    coordinates: { lat: -17.75306, lng: -48.638046 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T16:37:00.810Z',
+      roomsAvailable: 9
+    },
+    distanceFromCenter: 13.6,
+    rating: 4.3,
+    reviewCount: 294
+  },
+  {
+    id: "t-bandeirantes",
+    name: "T. Bandeirantes",
+    stars: 3,
+    description: "Pousada histórica com piscinas termais e tradição. Conforto e história de Caldas Novas.",
+    price: 130,
+    originalPrice: 162.5,
+    discount: 20,
+    images: [
+      "/Pictures/T. BANDEIRANTES 1003A-001/1.jpg",
+      "/Pictures/T. BANDEIRANTES 1003A-001/2.jpg",
+      "/Pictures/T. BANDEIRANTES 1003A-001/3.jpg",
+      "/Pictures/T. BANDEIRANTES 1003A-001/4.jpg",
+    ],
+    features: ["Histórica", "Piscinas Termais", "Tradição", "Conforto", "Wi-Fi"],
+    location: "Centro Histórico",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Histórica"],
+    maxGuests: 4,
+    coordinates: { lat: -17.759018, lng: -48.618962 },
+    availability: {
+      status: 'limited',
+      lastUpdated: '2025-10-16T06:37:00.811Z',
+      roomsAvailable: 19
+    },
+    distanceFromCenter: 2.9,
+    rating: 4.2,
+    reviewCount: 245
+  },
+
+  // Hotéis com Águas Termais Especiais
+  {
+    id: "aguas-da-fonte",
+    name: "Águas da Fonte",
+    stars: 3,
+    description: "Hotel com águas termais naturais da fonte. Propriedades terapêuticas únicas.",
+    price: 180,
+    originalPrice: 225,
+    discount: 20,
+    images: [
+      "/Pictures/AGUAS DA FONTE/403569606.jpeg",
+      "/Pictures/AGUAS DA FONTE/403569640.jpeg",
+      "/Pictures/AGUAS DA FONTE/403569643.jpeg",
+      "/Pictures/AGUAS DA FONTE/403569650.jpeg",
+    ],
+    features: ["Águas Naturais", "Propriedades Terapêuticas", "Fonte Natural", "Saúde", "Wi-Fi"],
+    location: "Fonte Natural",
+    category: 'standard',
+    amenities: ["Piscina", "Wi-Fi", "Estacionamento", "Águas Naturais"],
+    maxGuests: 4,
+    coordinates: { lat: -17.768916, lng: -48.62444 },
+    availability: {
+      status: 'available',
+      lastUpdated: '2025-10-15T23:37:00.813Z',
+      roomsAvailable: 5
+    },
+    distanceFromCenter: 6.6,
+    rating: 5,
+    reviewCount: 404
+  }
+]

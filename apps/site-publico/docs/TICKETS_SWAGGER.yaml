@@ -1,0 +1,573 @@
+openapi: 3.0.0
+info:
+  title: Sistema de Tickets API
+  version: 1.0.0
+  description: API para gerenciamento de tickets de suporte
+  contact:
+    name: RSV Gen 2 Support
+    email: support@rsvgen2.com
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desenvolvimento
+  - url: https://api.rsvgen2.com/api
+    description: Servidor de produção
+
+tags:
+  - name: Tickets
+    description: Operações de tickets
+
+paths:
+  /tickets:
+    get:
+      tags:
+        - Tickets
+      summary: Listar tickets
+      description: Retorna lista de tickets com filtros e paginação
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, in_progress, resolved, closed, cancelled]
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, urgent, critical]
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Lista de tickets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketsListResponse'
+        '401':
+          description: Não autorizado
+
+    post:
+      tags:
+        - Tickets
+      summary: Criar ticket
+      description: Cria um novo ticket
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+      responses:
+        '200':
+          description: Ticket criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '400':
+          description: Dados inválidos
+        '401':
+          description: Não autorizado
+
+  /tickets/{id}:
+    get:
+      tags:
+        - Tickets
+      summary: Obter ticket
+      description: Retorna informações de um ticket específico
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDetailResponse'
+        '404':
+          description: Ticket não encontrado
+
+    put:
+      tags:
+        - Tickets
+      summary: Atualizar ticket
+      description: Atualiza um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketRequest'
+      responses:
+        '200':
+          description: Ticket atualizado
+        '404':
+          description: Ticket não encontrado
+
+  /tickets/{id}/comments:
+    get:
+      tags:
+        - Tickets
+      summary: Listar comentários
+      description: Retorna comentários de um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de comentários
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TicketComment'
+
+    post:
+      tags:
+        - Tickets
+      summary: Adicionar comentário
+      description: Adiciona comentário a um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                is_internal:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Comentário adicionado
+        '404':
+          description: Ticket não encontrado
+
+  /tickets/{id}/assign:
+    post:
+      tags:
+        - Tickets
+      summary: Atribuir ticket
+      description: Atribui ticket a um agente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assign_to:
+                  type: integer
+      responses:
+        '200':
+          description: Ticket atribuído
+        '404':
+          description: Ticket não encontrado
+
+  /tickets/{id}/status:
+    post:
+      tags:
+        - Tickets
+      summary: Atualizar status
+      description: Atualiza status de um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [open, in_progress, resolved, closed, cancelled]
+      responses:
+        '200':
+          description: Status atualizado
+        '404':
+          description: Ticket não encontrado
+
+  /tickets/{id}/attachments:
+    get:
+      tags:
+        - Tickets
+      summary: Listar anexos
+      description: Retorna anexos de um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de anexos
+
+    post:
+      tags:
+        - Tickets
+      summary: Upload de anexo
+      description: Faz upload de anexo para um ticket
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Anexo enviado
+        '404':
+          description: Ticket não encontrado
+
+  /tickets/stats:
+    get:
+      tags:
+        - Tickets
+      summary: Estatísticas
+      description: Retorna estatísticas de tickets (admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Estatísticas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketStatsResponse'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Acesso negado
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CreateTicketRequest:
+      type: object
+      required:
+        - subject
+        - description
+        - category
+        - priority
+      properties:
+        subject:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent, critical]
+
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [open, in_progress, resolved, closed, cancelled]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent, critical]
+        assigned_to:
+          type: integer
+
+    TicketResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Ticket'
+
+    TicketDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/TicketDetail'
+
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_number:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [open, in_progress, resolved, closed, cancelled]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent, critical]
+        category:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TicketDetail:
+      allOf:
+        - $ref: '#/components/schemas/Ticket'
+        - type: object
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketComment'
+            attachments:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketAttachment'
+            history:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketHistory'
+            sla:
+              $ref: '#/components/schemas/SLA'
+
+    TicketComment:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_id:
+          type: integer
+        user_id:
+          type: integer
+        comment:
+          type: string
+        is_internal:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    TicketAttachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_id:
+          type: integer
+        file_url:
+          type: string
+        file_name:
+          type: string
+        file_size:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    TicketHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_id:
+          type: integer
+        field_name:
+          type: string
+        old_value:
+          type: string
+        new_value:
+          type: string
+        changed_by:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    SLA:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_id:
+          type: integer
+        priority:
+          type: string
+        first_response_target_minutes:
+          type: integer
+        resolution_target_minutes:
+          type: integer
+        first_response_met:
+          type: boolean
+        resolution_met:
+          type: boolean
+        breached_at:
+          type: string
+          format: date-time
+
+    TicketsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+        pagination:
+          type: object
+          properties:
+            total:
+              type: integer
+            limit:
+              type: integer
+            offset:
+              type: integer
+            has_more:
+              type: boolean
+
+    TicketStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            overview:
+              type: object
+              properties:
+                total:
+                  type: integer
+                open:
+                  type: integer
+                resolved:
+                  type: integer
+                closed:
+                  type: integer
+                unassigned:
+                  type: integer
+                sla_breached:
+                  type: integer
+            by_priority:
+              type: array
+              items:
+                type: object
+                properties:
+                  priority:
+                    type: string
+                  count:
+                    type: string
+            by_category:
+              type: array
+              items:
+                type: object
+                properties:
+                  category:
+                    type: string
+                  count:
+                    type: string
+            metrics:
+              type: object
+              properties:
+                avg_resolution_hours:
+                  type: number
+                sla:
+                  type: object
+

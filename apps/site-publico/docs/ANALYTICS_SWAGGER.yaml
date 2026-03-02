@@ -1,0 +1,478 @@
+openapi: 3.0.0
+info:
+  title: API de Analytics
+  description: API para análises de receita, demanda, ocupação e benchmark
+  version: 1.0.0
+
+paths:
+  /api/analytics/dashboard:
+    get:
+      summary: Obter dados do dashboard de analytics
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados do dashboard
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/AnalyticsDashboard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/analytics/revenue-forecast:
+    get:
+      summary: Obter previsão de receita
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: months
+          in: query
+          schema:
+            type: integer
+            default: 12
+            minimum: 1
+            maximum: 24
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Previsão de receita
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/RevenueForecast'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/analytics/demand-heatmap:
+    get:
+      summary: Obter heatmap de demanda
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Heatmap de demanda
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/DemandHeatmap'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/analytics/competitor-benchmarking:
+    get:
+      summary: Obter benchmark de concorrentes
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: property_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Benchmark de concorrentes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/CompetitorBenchmark'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/analytics/insights:
+    get:
+      summary: Obter insights e recomendações
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+        - name: insight_types
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [revenue, occupancy, pricing, demand, competition, performance]
+      responses:
+        '200':
+          description: Insights e recomendações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/AnalyticsInsights'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  schemas:
+    AnalyticsDashboard:
+      type: object
+      properties:
+        kpis:
+          type: object
+          properties:
+            totalRevenue:
+              type: number
+            totalBookings:
+              type: integer
+            avgOccupancy:
+              type: number
+            avgBookingValue:
+              type: number
+        revenue:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              revenue:
+                type: number
+              bookings:
+                type: integer
+        occupancy:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              total_properties:
+                type: integer
+              booked_properties:
+                type: integer
+              occupancy_rate:
+                type: number
+        bookingsByStatus:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
+              revenue:
+                type: number
+        topProperties:
+          type: array
+          items:
+            type: object
+            properties:
+              property_id:
+                type: integer
+              property_name:
+                type: string
+              bookings:
+                type: integer
+              revenue:
+                type: number
+              avg_booking_value:
+                type: number
+        comparison:
+          type: object
+          properties:
+            bookings:
+              type: object
+              properties:
+                current:
+                  type: integer
+                previous:
+                  type: integer
+                change:
+                  type: number
+            revenue:
+              type: object
+              properties:
+                current:
+                  type: number
+                previous:
+                  type: number
+                change:
+                  type: number
+
+    RevenueForecast:
+      type: object
+      properties:
+        historical:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              revenue:
+                type: number
+              bookings_count:
+                type: integer
+        forecasts:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              forecasted_revenue:
+                type: number
+              confidence:
+                type: number
+              growth_rate:
+                type: number
+              seasonal_factor:
+                type: number
+        average_revenue:
+          type: number
+        growth_rate:
+          type: number
+        months_ahead:
+          type: integer
+
+    DemandHeatmap:
+      type: object
+      properties:
+        heatmap:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              bookings:
+                type: integer
+              revenue:
+                type: number
+              avg_value:
+                type: number
+              demand_level:
+                type: integer
+              intensity:
+                type: string
+                enum: [low, medium, high]
+        max_demand:
+          type: integer
+        date_range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+
+    CompetitorBenchmark:
+      type: object
+      properties:
+        property:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            current_price:
+              type: number
+            avg_booking_value:
+              type: number
+            total_bookings:
+              type: integer
+            avg_rating:
+              type: number
+        competitors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              avg_price:
+                type: number
+              min_price:
+                type: number
+              max_price:
+                type: number
+              data_points:
+                type: integer
+        benchmarking:
+          type: object
+          properties:
+            market_avg_price:
+              type: number
+            price_position:
+              type: string
+              enum: [above, below, competitive]
+            price_difference_percent:
+              type: number
+            recommendation:
+              type: string
+
+    AnalyticsInsights:
+      type: object
+      properties:
+        insights:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                enum: [revenue, occupancy, pricing, demand, competition, performance]
+              title:
+                type: string
+              description:
+                type: string
+              severity:
+                type: string
+                enum: [info, warning, critical]
+              recommendation:
+                type: string
+              metrics:
+                type: object
+              created_at:
+                type: string
+                format: date-time
+        summary:
+          type: object
+          properties:
+            total_insights:
+              type: integer
+            critical_count:
+              type: integer
+            warning_count:
+              type: integer
+            info_count:
+              type: integer
+        date_range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date-time
+            end:
+              type: string
+              format: date-time
+
+  responses:
+    Unauthorized:
+      description: Não autenticado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Não autenticado
+
+    BadRequest:
+      description: Requisição inválida
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: property_id é obrigatório
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+

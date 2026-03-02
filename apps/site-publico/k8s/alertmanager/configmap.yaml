@@ -1,0 +1,175 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: rsv-gen2
+  labels:
+    app: alertmanager
+    component: monitoring
+data:
+  alertmanager.yml: |
+    global:
+      # Resolver tempo de espera antes de enviar notificações
+      resolve_timeout: 5m
+      
+      # Configuração de SMTP (email)
+      # Descomente e configure em produção
+      # smtp_smarthost: 'smtp.gmail.com:587'
+      # smtp_from: 'alerts@rsv-gen2.com'
+      # smtp_auth_username: 'alerts@rsv-gen2.com'
+      # smtp_auth_password: 'SUA_SENHA'
+      # smtp_require_tls: true
+
+      # Configuração de Slack (opcional)
+      # slack_api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL'
+
+    # Templates de notificação (opcional)
+    # templates:
+    #   - '/etc/alertmanager/templates/*.tmpl'
+
+    # Roteamento de alertas
+    route:
+      # Agrupar alertas por labels
+      group_by: ['alertname', 'cluster', 'service']
+      
+      # Tempo de espera antes de enviar notificação de grupo
+      group_wait: 10s
+      
+      # Tempo de espera antes de enviar notificação de grupo após primeiro alerta
+      group_interval: 10s
+      
+      # Intervalo mínimo entre notificações do mesmo grupo
+      repeat_interval: 12h
+      
+      # Receiver padrão
+      receiver: 'default'
+      
+      # Rotas específicas por severidade
+      routes:
+        # Alertas críticos - notificação imediata
+        - match:
+            severity: critical
+          receiver: 'critical-alerts'
+          group_wait: 0s
+          repeat_interval: 1h
+          continue: true
+        
+        # Alertas de warning - notificação após 5 minutos
+        - match:
+            severity: warning
+          receiver: 'warning-alerts'
+          group_wait: 5m
+          repeat_interval: 6h
+          continue: true
+        
+        # Alertas de info - apenas log
+        - match:
+            severity: info
+          receiver: 'info-alerts'
+          group_wait: 15m
+          repeat_interval: 24h
+
+    # Receivers (destinos de notificação)
+    receivers:
+      # Receiver padrão (fallback)
+      - name: 'default'
+        email_configs:
+          # Descomente e configure em produção
+          # - to: 'ops-team@rsv-gen2.com'
+          #   headers:
+          #     Subject: 'RSV Gen 2 - Alerta: {{ .GroupLabels.alertname }}'
+          #   html: |
+          #     <h2>Alerta: {{ .GroupLabels.alertname }}</h2>
+          #     <p><strong>Severidade:</strong> {{ .CommonLabels.severity }}</p>
+          #     <p><strong>Componente:</strong> {{ .CommonLabels.component }}</p>
+          #     <p><strong>Descrição:</strong> {{ .CommonAnnotations.description }}</p>
+          #     <hr>
+          #     <p><small>Enviado por Alertmanager em {{ .StartsAt }}</small></p>
+        # Slack (opcional)
+        # slack_configs:
+        #   - channel: '#alerts'
+        #     title: 'RSV Gen 2 - Alerta: {{ .GroupLabels.alertname }}'
+        #     text: |
+        #       *Severidade:* {{ .CommonLabels.severity }}
+        #       *Componente:* {{ .CommonLabels.component }}
+        #       *Descrição:* {{ .CommonAnnotations.description }}
+
+      # Receiver para alertas críticos
+      - name: 'critical-alerts'
+        email_configs:
+          # Descomente e configure em produção
+          # - to: 'on-call@rsv-gen2.com'
+          #   headers:
+          #     Subject: '🚨 CRÍTICO - RSV Gen 2: {{ .GroupLabels.alertname }}'
+          #   html: |
+          #     <h1 style="color: red;">🚨 ALERTA CRÍTICO</h1>
+          #     <h2>{{ .GroupLabels.alertname }}</h2>
+          #     <p><strong>Severidade:</strong> {{ .CommonLabels.severity }}</p>
+          #     <p><strong>Componente:</strong> {{ .CommonLabels.component }}</p>
+          #     <p><strong>Descrição:</strong> {{ .CommonAnnotations.description }}</p>
+          #     <hr>
+          #     <p><small>Enviado por Alertmanager em {{ .StartsAt }}</small></p>
+        # Slack (opcional)
+        # slack_configs:
+        #   - channel: '#alerts-critical'
+        #     title: '🚨 CRÍTICO: {{ .GroupLabels.alertname }}'
+        #     text: |
+        #       *Severidade:* {{ .CommonLabels.severity }}
+        #       *Componente:* {{ .CommonLabels.component }}
+        #       *Descrição:* {{ .CommonAnnotations.description }}
+        #     color: 'danger'
+
+      # Receiver para alertas de warning
+      - name: 'warning-alerts'
+        email_configs:
+          # Descomente e configure em produção
+          # - to: 'ops-team@rsv-gen2.com'
+          #   headers:
+          #     Subject: '⚠️ WARNING - RSV Gen 2: {{ .GroupLabels.alertname }}'
+          #   html: |
+          #     <h2 style="color: orange;">⚠️ ALERTA DE WARNING</h2>
+          #     <h3>{{ .GroupLabels.alertname }}</h3>
+          #     <p><strong>Severidade:</strong> {{ .CommonLabels.severity }}</p>
+          #     <p><strong>Componente:</strong> {{ .CommonLabels.component }}</p>
+          #     <p><strong>Descrição:</strong> {{ .CommonAnnotations.description }}</p>
+          #     <hr>
+          #     <p><small>Enviado por Alertmanager em {{ .StartsAt }}</small></p>
+        # Slack (opcional)
+        # slack_configs:
+        #   - channel: '#alerts'
+        #     title: '⚠️ WARNING: {{ .GroupLabels.alertname }}'
+        #     text: |
+        #       *Severidade:* {{ .CommonLabels.severity }}
+        #       *Componente:* {{ .CommonLabels.component }}
+        #       *Descrição:* {{ .CommonAnnotations.description }}
+        #     color: 'warning'
+
+      # Receiver para alertas de info
+      - name: 'info-alerts'
+        # Apenas log, sem notificação
+        # email_configs:
+        #   - to: 'logs@rsv-gen2.com'
+        #     headers:
+        #       Subject: 'ℹ️ INFO - RSV Gen 2: {{ .GroupLabels.alertname }}'
+
+    # Inhibition rules (suprimir alertas relacionados)
+    inhibit_rules:
+      # Se o serviço está down, suprimir outros alertas do mesmo serviço
+      - source_match:
+          alertname: 'ServiceDown'
+        target_match:
+          component: 'application'
+        equal: ['job']
+      
+      # Se o Redis está down, suprimir alertas de baixa hit rate
+      - source_match:
+          alertname: 'RedisDown'
+        target_match:
+          alertname: 'LowRedisHitRate'
+      
+      # Se o banco está com pool esgotado, suprimir alertas de latência
+      - source_match:
+          alertname: 'DatabaseConnectionPoolExhausted'
+        target_match:
+          alertname: 'HighDatabaseQueryDuration'
+

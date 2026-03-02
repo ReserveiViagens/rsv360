@@ -1,0 +1,47 @@
+# 🔍 DOCKER COMPOSE - MONITORAMENTO SIMPLES
+# RSV 360° ECOSYSTEM - Prometheus e Grafana
+
+version: '3.8'
+
+services:
+  # 📈 PROMETHEUS - Monitoramento
+  prometheus-simple:
+    image: prom/prometheus:v2.40.0
+    container_name: rsv-prometheus-simple
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./config/prometheus-simple.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - local-production_rsv-local-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+      - '--web.listen-address=0.0.0.0:9090'
+
+  # 📊 GRAFANA - Dashboard
+  grafana-simple:
+    image: grafana/grafana:9.0.0
+    container_name: rsv-grafana-simple
+    ports:
+      - "3006:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: rsvadmin2025
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - local-production_rsv-local-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus-simple
+
+volumes:
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

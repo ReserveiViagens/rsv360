@@ -1,0 +1,28 @@
+{
+  "name": "rsv-analytics-intelligence",
+  "version": "1.0.0",
+  "description": "RSV Analytics Intelligence - Inteligência de Dados",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^6.0.1",
+    "dotenv": "^16.0.3",
+    "pg": "^8.8.0",
+    "redis": "^4.5.1",
+    "jsonwebtoken": "^9.0.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "jest": "^29.3.1"
+  },
+  "keywords": ["rsv", "analytics", "intelligence", "data"],
+  "author": "RSV Team",
+  "license": "MIT"
+}

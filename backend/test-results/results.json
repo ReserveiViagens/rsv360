@@ -1,0 +1,2228 @@
+{
+  "config": {
+    "configFile": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\playwright.config.js",
+    "rootDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "e2e",
+        "name": "e2e",
+        "testDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "performance",
+        "name": "performance",
+        "testDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/tests/performance",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "security",
+        "name": "security",
+        "testDir": "D:/Backup rsv36-servidor-oficial 22_11_2025as_08_36/RSV360 Versao Oficial/backend/tests/security",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "security\\auth.spec.js",
+      "file": "security/auth.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Security - Authentication",
+          "file": "security/auth.spec.js",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve rejeitar requisições sem token",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:11:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 11
+                        },
+                        "snippet": "   9 | test.describe('Security - Authentication', () => {\n  10 |   test('deve rejeitar requisições sem token', async ({ request }) => {\n> 11 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  12 |       data: { title: 'Test' }\n  13 |     });\n  14 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 11
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n\n\n   9 | test.describe('Security - Authentication', () => {\n  10 |   test('deve rejeitar requisições sem token', async ({ request }) => {\n> 11 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  12 |       data: { title: 'Test' }\n  13 |     });\n  14 |\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:11:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:02.384Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 11
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-493a33c06e1373ef4305",
+              "file": "security/auth.spec.js",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "deve rejeitar token inválido",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 28,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer invalid-token-12345\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer invalid-token-12345\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:19:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 19
+                        },
+                        "snippet": "  17 |\n  18 |   test('deve rejeitar token inválido', async ({ request }) => {\n> 19 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  20 |       headers: {\n  21 |         'Authorization': 'Bearer invalid-token-12345'\n  22 |       },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 19
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer invalid-token-12345\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 16\u001b[22m\n\n\n  17 |\n  18 |   test('deve rejeitar token inválido', async ({ request }) => {\n> 19 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  20 |       headers: {\n  21 |         'Authorization': 'Bearer invalid-token-12345'\n  22 |       },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:19:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:02.791Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 19
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-71c636dbc13d4abb54b7",
+              "file": "security/auth.spec.js",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "deve rejeitar token expirado",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTYwOTQ1NjgwMH0.invalid\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTYwOTQ1NjgwMH0.invalid\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:33:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 33
+                        },
+                        "snippet": "  31 |     const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTYwOTQ1NjgwMH0.invalid';\n  32 |     \n> 33 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  34 |       headers: {\n  35 |         'Authorization': `Bearer ${expiredToken}`\n  36 |       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 33
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTYwOTQ1NjgwMH0.invalid\u001b[22m\n\n\n  31 |     const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTYwOTQ1NjgwMH0.invalid';\n  32 |     \n> 33 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                    ^\n  34 |       headers: {\n  35 |         'Authorization': `Bearer ${expiredToken}`\n  36 |       }\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:33:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:07.147Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 33
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-6b3c360f1109b0df90fd",
+              "file": "security/auth.spec.js",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "deve aceitar token válido",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/login\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 51\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/login\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 51\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:44:41",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 41,
+                          "line": 44
+                        },
+                        "snippet": "  42 |   test('deve aceitar token válido', async ({ request }) => {\n  43 |     // Primeiro fazer login para obter token válido\n> 44 |     const loginResponse = await request.post(`${API_BASE_URL}/api/v1/auth/login`, {\n     |                                         ^\n  45 |       data: {\n  46 |         email: 'admin@test.com',\n  47 |         password: 'password123'"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 41,
+                            "line": 44
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/login\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 51\u001b[22m\n\n\n  42 |   test('deve aceitar token válido', async ({ request }) => {\n  43 |     // Primeiro fazer login para obter token válido\n> 44 |     const loginResponse = await request.post(`${API_BASE_URL}/api/v1/auth/login`, {\n     |                                         ^\n  45 |       data: {\n  46 |         email: 'admin@test.com',\n  47 |         password: 'password123'\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:44:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:07.557Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 41,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-fbd033c516ae5259fc4f",
+              "file": "security/auth.spec.js",
+              "line": 42,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Input Validation",
+          "file": "security/auth.spec.js",
+          "line": 71,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve rejeitar dados maliciosos em SQL injection",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 56\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 56\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:82:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 38,
+                          "line": 82
+                        },
+                        "snippet": "  80 |\n  81 |     for (const malicious of maliciousInputs) {\n> 82 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                      ^\n  83 |         headers: {\n  84 |           'Authorization': 'Bearer test-token'\n  85 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 38,
+                            "line": 82
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 56\u001b[22m\n\n\n  80 |\n  81 |     for (const malicious of maliciousInputs) {\n> 82 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                      ^\n  83 |         headers: {\n  84 |           'Authorization': 'Bearer test-token'\n  85 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:82:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:11.905Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 38,
+                        "line": 82
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-df06c5aafe222dbb9703",
+              "file": "security/auth.spec.js",
+              "line": 72,
+              "column": 3
+            },
+            {
+              "title": "deve validar tipos de dados",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 28,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 93\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 93\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:106:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 38,
+                          "line": 106
+                        },
+                        "snippet": "  104 |\n  105 |     for (const data of invalidData) {\n> 106 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  107 |         headers: {\n  108 |           'Authorization': 'Bearer test-token'\n  109 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 38,
+                            "line": 106
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 93\u001b[22m\n\n\n  104 |\n  105 |     for (const data of invalidData) {\n> 106 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  107 |         headers: {\n  108 |           'Authorization': 'Bearer test-token'\n  109 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:106:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:12.317Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 38,
+                        "line": 106
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-0f9e2f22436e8f75e091",
+              "file": "security/auth.spec.js",
+              "line": 97,
+              "column": 3
+            },
+            {
+              "title": "deve validar campos obrigatórios",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:122:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 122
+                        },
+                        "snippet": "  120 |\n  121 |   test('deve validar campos obrigatórios', async ({ request }) => {\n> 122 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  123 |       headers: {\n  124 |         'Authorization': 'Bearer test-token'\n  125 |       },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 122
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n\n\n  120 |\n  121 |   test('deve validar campos obrigatórios', async ({ request }) => {\n> 122 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  123 |       headers: {\n  124 |         'Authorization': 'Bearer test-token'\n  125 |       },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:122:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:16.722Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 122
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-70a959c0cb9e48d8ab37",
+              "file": "security/auth.spec.js",
+              "line": 121,
+              "column": 3
+            },
+            {
+              "title": "deve validar tamanho máximo de campos",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 32,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 10108\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 10108\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:137:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 137
+                        },
+                        "snippet": "  135 |     const longString = 'a'.repeat(10000); // String muito longa\n  136 |\n> 137 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  138 |       headers: {\n  139 |         'Authorization': 'Bearer test-token'\n  140 |       },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 137
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 10108\u001b[22m\n\n\n  135 |     const longString = 'a'.repeat(10000); // String muito longa\n  136 |\n> 137 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  138 |       headers: {\n  139 |         'Authorization': 'Bearer test-token'\n  140 |       },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:137:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:17.123Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 137
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-4670b58c3f3153040522",
+              "file": "security/auth.spec.js",
+              "line": 134,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Rate Limiting",
+          "file": "security/auth.spec.js",
+          "line": 156,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve aplicar rate limiting após muitas requisições",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 239,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:167:41",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 41,
+                          "line": 167
+                        },
+                        "snippet": "  165 |\n  166 |     // Pelo menos uma requisição deve ser bloqueada\n> 167 |     expect(rateLimitedResponses.length).toBeGreaterThan(0);\n      |                                         ^\n  168 |   });\n  169 |\n  170 |   test('deve retornar headers de rate limiting', async ({ request }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 41,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  165 |\n  166 |     // Pelo menos uma requisição deve ser bloqueada\n> 167 |     expect(rateLimitedResponses.length).toBeGreaterThan(0);\n      |                                         ^\n  168 |   });\n  169 |\n  170 |   test('deve retornar headers de rate limiting', async ({ request }) => {\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:167:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:21.526Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 41,
+                        "line": 167
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-a426bff7daa5d6c34198",
+              "file": "security/auth.spec.js",
+              "line": 157,
+              "column": 3
+            },
+            {
+              "title": "deve retornar headers de rate limiting",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:171:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 171
+                        },
+                        "snippet": "  169 |\n  170 |   test('deve retornar headers de rate limiting', async ({ request }) => {\n> 171 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  172 |     \n  173 |     // Verificar headers de rate limiting se existirem\n  174 |     const headers = response.headers();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 171
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  169 |\n  170 |   test('deve retornar headers de rate limiting', async ({ request }) => {\n> 171 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  172 |     \n  173 |     // Verificar headers de rate limiting se existirem\n  174 |     const headers = response.headers();\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:171:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:21.904Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 171
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-3ba3a3bf773b71bc8456",
+              "file": "security/auth.spec.js",
+              "line": 170,
+              "column": 3
+            },
+            {
+              "title": "deve resetar rate limit após período de tempo",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 2306,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:197:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 197
+                        },
+                        "snippet": "  195 |\n  196 |     // Fazer nova requisição - deve funcionar novamente\n> 197 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  198 |     \n  199 |     // Pode ser 200 (sucesso) ou 429 (ainda limitado) dependendo do tempo\n  200 |     expect([200, 429]).toContain(response.status());"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 197
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  195 |\n  196 |     // Fazer nova requisição - deve funcionar novamente\n> 197 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  198 |     \n  199 |     // Pode ser 200 (sucesso) ou 429 (ainda limitado) dependendo do tempo\n  200 |     expect([200, 429]).toContain(response.status());\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:197:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:26.704Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 197
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-b986654149da25dbc296",
+              "file": "security/auth.spec.js",
+              "line": 187,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - CORS",
+          "file": "security/auth.spec.js",
+          "line": 207,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve ter headers CORS configurados",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 28,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://localhost:3000\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://localhost:3000\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:209:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 209
+                        },
+                        "snippet": "  207 | test.describe('Security - CORS', () => {\n  208 |   test('deve ter headers CORS configurados', async ({ request }) => {\n> 209 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`, {\n      |                                    ^\n  210 |       headers: {\n  211 |         'Origin': 'http://localhost:3000'\n  212 |       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 209
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://localhost:3000\u001b[22m\n\n\n  207 | test.describe('Security - CORS', () => {\n  208 |   test('deve ter headers CORS configurados', async ({ request }) => {\n> 209 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`, {\n      |                                    ^\n  210 |       headers: {\n  211 |         'Origin': 'http://localhost:3000'\n  212 |       }\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:209:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:27.103Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 209
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-e9e046d815c558588109",
+              "file": "security/auth.spec.js",
+              "line": 208,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - XSS Protection",
+          "file": "security/auth.spec.js",
+          "line": 227,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve sanitizar inputs para prevenir XSS",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:237:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 38,
+                          "line": 237
+                        },
+                        "snippet": "  235 |\n  236 |     for (const payload of xssPayloads) {\n> 237 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  238 |         headers: {\n  239 |           'Authorization': 'Bearer test-token'\n  240 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 38,
+                            "line": 237
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n\n\n  235 |\n  236 |     for (const payload of xssPayloads) {\n> 237 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  238 |         headers: {\n  239 |           'Authorization': 'Bearer test-token'\n  240 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:237:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:31.218Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 38,
+                        "line": 237
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-549502e9141d6e44376c",
+              "file": "security/auth.spec.js",
+              "line": 228,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - CSRF Protection",
+          "file": "security/auth.spec.js",
+          "line": 262,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve validar origem das requisições",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - Origin: https://malicious-site.com\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 34\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - Origin: https://malicious-site.com\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 34\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:264:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 264
+                        },
+                        "snippet": "  262 | test.describe('Security - CSRF Protection', () => {\n  263 |   test('deve validar origem das requisições', async ({ request }) => {\n> 264 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  265 |       headers: {\n  266 |         'Authorization': 'Bearer test-token',\n  267 |         'Origin': 'https://malicious-site.com'"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 264
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - Origin: https://malicious-site.com\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 34\u001b[22m\n\n\n  262 | test.describe('Security - CSRF Protection', () => {\n  263 |   test('deve validar origem das requisições', async ({ request }) => {\n> 264 |     const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  265 |       headers: {\n  266 |         'Authorization': 'Bearer test-token',\n  267 |         'Origin': 'https://malicious-site.com'\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:264:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:33.037Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 264
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-6caf82d51a21d63e1d03",
+              "file": "security/auth.spec.js",
+              "line": 263,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Security Headers",
+          "file": "security/auth.spec.js",
+          "line": 284,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve ter headers de segurança configurados",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:286:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                          "column": 36,
+                          "line": 286
+                        },
+                        "snippet": "  284 | test.describe('Security - Security Headers', () => {\n  285 |   test('deve ter headers de segurança configurados', async ({ request }) => {\n> 286 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  287 |     const headers = response.headers();\n  288 |\n  289 |     // Verificar headers de segurança (se configurados via Helmet)"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                            "column": 36,
+                            "line": 286
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  284 | test.describe('Security - Security Headers', () => {\n  285 |   test('deve ter headers de segurança configurados', async ({ request }) => {\n> 286 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n      |                                    ^\n  287 |     const headers = response.headers();\n  288 |\n  289 |     // Verificar headers de segurança (se configurados via Helmet)\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js:286:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:35.273Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\auth.spec.js",
+                        "column": 36,
+                        "line": 286
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-224716fc51afd9f0f02b",
+              "file": "security/auth.spec.js",
+              "line": 285,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "security\\rate-limiting.spec.js",
+      "file": "security/rate-limiting.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Security - Rate Limiting",
+          "file": "security/rate-limiting.spec.js",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve bloquear após exceder limite de requisições",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 31,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:16:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 16
+                        },
+                        "snippet": "  14 |\n  15 |     for (let i = 0; i < 120; i++) {\n> 16 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                      ^\n  17 |       requestCount++;\n  18 |\n  19 |       if (response.status() === 429) {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 16
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  14 |\n  15 |     for (let i = 0; i < 120; i++) {\n> 16 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                      ^\n  17 |       requestCount++;\n  18 |\n  19 |       if (response.status() === 429) {\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:37.112Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 16
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-51513626f440b8f61aaf",
+              "file": "security/rate-limiting.spec.js",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "deve retornar headers de rate limiting",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:35:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 36,
+                          "line": 35
+                        },
+                        "snippet": "  33 |\n  34 |   test('deve retornar headers de rate limiting', async ({ request }) => {\n> 35 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                    ^\n  36 |     const headers = response.headers();\n  37 |\n  38 |     // Verificar se headers de rate limiting existem"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 36,
+                            "line": 35
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  33 |\n  34 |   test('deve retornar headers de rate limiting', async ({ request }) => {\n> 35 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                    ^\n  36 |     const headers = response.headers();\n  37 |\n  38 |     // Verificar se headers de rate limiting existem\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:35:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:39.351Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 36,
+                        "line": 35
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-95b5ef6f025332fe81f5",
+              "file": "security/rate-limiting.spec.js",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "deve aplicar rate limiting por IP",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 232,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:62:25",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 25,
+                          "line": 62
+                        },
+                        "snippet": "  60 |\n  61 |     // Algumas requisições devem ser bloqueadas\n> 62 |     expect(rateLimited).toBeGreaterThan(0);\n     |                         ^\n  63 |   });\n  64 | });\n  65 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 25,
+                            "line": 62
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  60 |\n  61 |     // Algumas requisições devem ser bloqueadas\n> 62 |     expect(rateLimited).toBeGreaterThan(0);\n     |                         ^\n  63 |   });\n  64 | });\n  65 |\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:62:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:41.162Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 25,
+                        "line": 62
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-8d4530755bc0800cc88a",
+              "file": "security/rate-limiting.spec.js",
+              "line": 52,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Header Validation",
+          "file": "security/rate-limiting.spec.js",
+          "line": 69,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve ter headers de segurança configurados",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:71:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 36,
+                          "line": 71
+                        },
+                        "snippet": "  69 | test.describe('Security - Header Validation', () => {\n  70 |   test('deve ter headers de segurança configurados', async ({ request }) => {\n> 71 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                    ^\n  72 |     const headers = response.headers();\n  73 |\n  74 |     // Verificar headers de segurança (Helmet)"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 36,
+                            "line": 71
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  69 | test.describe('Security - Header Validation', () => {\n  70 |   test('deve ter headers de segurança configurados', async ({ request }) => {\n> 71 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active`);\n     |                                    ^\n  72 |     const headers = response.headers();\n  73 |\n  74 |     // Verificar headers de segurança (Helmet)\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:71:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:43.421Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 36,
+                        "line": 71
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-bfa3b78cc6c038d04d60",
+              "file": "security/rate-limiting.spec.js",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "deve rejeitar métodos HTTP não permitidos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 39,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:45.607Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-86623516f3009d82ebf5",
+              "file": "security/rate-limiting.spec.js",
+              "line": 88,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Common Attacks",
+          "file": "security/rate-limiting.spec.js",
+          "line": 111,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve proteger contra SQL Injection",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 31,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%27%3B%20DROP%20TABLE%20auctions%3B%20--\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%27%3B%20DROP%20TABLE%20auctions%3B%20--\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:122:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 122
+                        },
+                        "snippet": "  120 |\n  121 |     for (const payload of sqlInjectionPayloads) {\n> 122 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active?search=${encodeURIComponent(payload)}`);\n      |                                      ^\n  123 |       \n  124 |       // Não deve retornar erro 500 (erro de SQL)\n  125 |       expect(response.status()).not.toBe(500);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 122
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%27%3B%20DROP%20TABLE%20auctions%3B%20--\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  120 |\n  121 |     for (const payload of sqlInjectionPayloads) {\n> 122 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active?search=${encodeURIComponent(payload)}`);\n      |                                      ^\n  123 |       \n  124 |       // Não deve retornar erro 500 (erro de SQL)\n  125 |       expect(response.status()).not.toBe(500);\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:122:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:47.522Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 122
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-b6e1eaea9da139a083ba",
+              "file": "security/rate-limiting.spec.js",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "deve proteger contra XSS",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 9,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:142:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 142
+                        },
+                        "snippet": "  140 |\n  141 |     for (const payload of xssPayloads) {\n> 142 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  143 |         headers: {\n  144 |           'Authorization': 'Bearer test-token'\n  145 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 142
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 139\u001b[22m\n\n\n  140 |\n  141 |     for (const payload of xssPayloads) {\n> 142 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  143 |         headers: {\n  144 |           'Authorization': 'Bearer test-token'\n  145 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:142:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:45.672Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 142
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-4e6b39fd8939f6a7f6e7",
+              "file": "security/rate-limiting.spec.js",
+              "line": 132,
+              "column": 3
+            },
+            {
+              "title": "deve proteger contra Path Traversal",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/etc/passwd\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/etc/passwd\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:175:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 175
+                        },
+                        "snippet": "  173 |\n  174 |     for (const payload of pathTraversalPayloads) {\n> 175 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/${payload}`);\n      |                                      ^\n  176 |       \n  177 |       // Deve retornar 404 ou 400, não 200 com conteúdo do arquivo\n  178 |       expect([400, 404, 422]).toContain(response.status());"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 175
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/etc/passwd\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  173 |\n  174 |     for (const payload of pathTraversalPayloads) {\n> 175 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/${payload}`);\n      |                                      ^\n  176 |       \n  177 |       // Deve retornar 404 ou 400, não 200 com conteúdo do arquivo\n  178 |       expect([400, 404, 422]).toContain(response.status());\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:175:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:49.673Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 175
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-f862b43233ac8a818bae",
+              "file": "security/rate-limiting.spec.js",
+              "line": 166,
+              "column": 3
+            },
+            {
+              "title": "deve proteger contra Command Injection",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%3B%20ls%20-la\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%3B%20ls%20-la\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:192:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 192
+                        },
+                        "snippet": "  190 |\n  191 |     for (const payload of commandInjectionPayloads) {\n> 192 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active?search=${encodeURIComponent(payload)}`);\n      |                                      ^\n  193 |       \n  194 |       // Não deve executar comandos (não deve retornar 500 com erro de sistema)\n  195 |       expect(response.status()).not.toBe(500);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 192
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions/active?search=%3B%20ls%20-la\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  190 |\n  191 |     for (const payload of commandInjectionPayloads) {\n> 192 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions/active?search=${encodeURIComponent(payload)}`);\n      |                                      ^\n  193 |       \n  194 |       // Não deve executar comandos (não deve retornar 500 com erro de sistema)\n  195 |       expect(response.status()).not.toBe(500);\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:192:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:51.576Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 192
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-4e98e60aae51e1dc51a7",
+              "file": "security/rate-limiting.spec.js",
+              "line": 182,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - JWT Validation",
+          "file": "security/rate-limiting.spec.js",
+          "line": 203,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve validar assinatura do token",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.invalid-signature\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.invalid-signature\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:208:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 36,
+                          "line": 208
+                        },
+                        "snippet": "  206 |     const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.invalid-signature';\n  207 |     \n> 208 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  209 |       headers: {\n  210 |         'Authorization': `Bearer ${invalidToken}`\n  211 |       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 36,
+                            "line": 208
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.invalid-signature\u001b[22m\n\n\n  206 |     const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.invalid-signature';\n  207 |     \n> 208 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  209 |       headers: {\n  210 |         'Authorization': `Bearer ${invalidToken}`\n  211 |       }\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:208:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:53.725Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 36,
+                        "line": 208
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-e17fbeee0db2280e9039",
+              "file": "security/rate-limiting.spec.js",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "deve validar expiração do token",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTAwMDAwMDAwMH0.expired\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTAwMDAwMDAwMH0.expired\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:221:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 36,
+                          "line": 221
+                        },
+                        "snippet": "  219 |     const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTAwMDAwMDAwMH0.expired';\n  220 |     \n> 221 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  222 |       headers: {\n  223 |         'Authorization': `Bearer ${expiredToken}`\n  224 |       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 36,
+                            "line": 221
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTAwMDAwMDAwMH0.expired\u001b[22m\n\n\n  219 |     const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImV4cCI6MTAwMDAwMDAwMH0.expired';\n  220 |     \n> 221 |     const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                    ^\n  222 |       headers: {\n  223 |         'Authorization': `Bearer ${expiredToken}`\n  224 |       }\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:221:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:55.716Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 36,
+                        "line": 221
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-daac9356fc3401eb270b",
+              "file": "security/rate-limiting.spec.js",
+              "line": 217,
+              "column": 3
+            },
+            {
+              "title": "deve validar formato do token",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 51,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: not-a-token\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: not-a-token\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:239:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                          "column": 38,
+                          "line": 239
+                        },
+                        "snippet": "  237 |\n  238 |     for (const token of invalidTokens) {\n> 239 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  240 |         headers: {\n  241 |           'Authorization': token\n  242 |         }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                            "column": 38,
+                            "line": 239
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: not-a-token\u001b[22m\n\n\n  237 |\n  238 |     for (const token of invalidTokens) {\n> 239 |       const response = await request.get(`${API_BASE_URL}/api/v1/auctions`, {\n      |                                      ^\n  240 |         headers: {\n  241 |           'Authorization': token\n  242 |         }\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js:239:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:58.351Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\rate-limiting.spec.js",
+                        "column": 38,
+                        "line": 239
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b3d2e365812c23575db6-e0553c2d14f24939365b",
+              "file": "security/rate-limiting.spec.js",
+              "line": 230,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "security\\validation.spec.js",
+      "file": "security/validation.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Security - Data Validation",
+          "file": "security/validation.spec.js",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve validar formato de email",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 69\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 69\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:19:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 38,
+                          "line": 19
+                        },
+                        "snippet": "  17 |\n  18 |     for (const email of invalidEmails) {\n> 19 |       const response = await request.post(`${API_BASE_URL}/api/v1/auth/register`, {\n     |                                      ^\n  20 |         data: {\n  21 |           email: email,\n  22 |           password: 'password123',"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 38,
+                            "line": 19
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 69\u001b[22m\n\n\n  17 |\n  18 |     for (const email of invalidEmails) {\n> 19 |       const response = await request.post(`${API_BASE_URL}/api/v1/auth/register`, {\n     |                                      ^\n  20 |         data: {\n  21 |           email: email,\n  22 |           password: 'password123',\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:19:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:01:59.983Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 38,
+                        "line": 19
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-1c199d4290af81153435",
+              "file": "security/validation.spec.js",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "deve validar força de senha",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 33,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 61\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 61\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:40:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 38,
+                          "line": 40
+                        },
+                        "snippet": "  38 |\n  39 |     for (const password of weakPasswords) {\n> 40 |       const response = await request.post(`${API_BASE_URL}/api/v1/auth/register`, {\n     |                                      ^\n  41 |         data: {\n  42 |           email: 'test@test.com',\n  43 |           password: password,"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 38,
+                            "line": 40
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 61\u001b[22m\n\n\n  38 |\n  39 |     for (const password of weakPasswords) {\n> 40 |       const response = await request.post(`${API_BASE_URL}/api/v1/auth/register`, {\n     |                                      ^\n  41 |         data: {\n  42 |           email: 'test@test.com',\n  43 |           password: password,\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:40:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:02.273Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 38,
+                        "line": 40
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-5e73bec753271ecce998",
+              "file": "security/validation.spec.js",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "title": "deve validar datas",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/bookings\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 63\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/bookings\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 63\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:62:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 38,
+                          "line": 62
+                        },
+                        "snippet": "  60 |\n  61 |     for (const date of invalidDates) {\n> 62 |       const response = await request.post(`${API_BASE_URL}/api/v1/bookings`, {\n     |                                      ^\n  63 |         headers: {\n  64 |           'Authorization': 'Bearer test-token'\n  65 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 38,
+                            "line": 62
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/bookings\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 63\u001b[22m\n\n\n  60 |\n  61 |     for (const date of invalidDates) {\n> 62 |       const response = await request.post(`${API_BASE_URL}/api/v1/bookings`, {\n     |                                      ^\n  63 |         headers: {\n  64 |           'Authorization': 'Bearer test-token'\n  65 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:62:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:03.842Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 38,
+                        "line": 62
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-b59dd27008e9c2fa0284",
+              "file": "security/validation.spec.js",
+              "line": 53,
+              "column": 3
+            },
+            {
+              "title": "deve validar valores numéricos",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 29,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 35,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 123\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 123\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:88:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 38,
+                          "line": 88
+                        },
+                        "snippet": "  86 |\n  87 |     for (const num of invalidNumbers) {\n> 88 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                      ^\n  89 |         headers: {\n  90 |           'Authorization': 'Bearer test-token'\n  91 |         },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 38,
+                            "line": 88
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer test-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 123\u001b[22m\n\n\n  86 |\n  87 |     for (const num of invalidNumbers) {\n> 88 |       const response = await request.post(`${API_BASE_URL}/api/v1/auctions`, {\n     |                                      ^\n  89 |         headers: {\n  90 |           'Authorization': 'Bearer test-token'\n  91 |         },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:88:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:06.128Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 38,
+                        "line": 88
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-635451ff066b6f9c9d80",
+              "file": "security/validation.spec.js",
+              "line": 77,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Authorization",
+          "file": "security/validation.spec.js",
+          "line": 110,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve impedir acesso não autorizado a recursos privados",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 30,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 30,
+                      "error": {
+                        "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:121:38",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 38,
+                          "line": 121
+                        },
+                        "snippet": "  119 |\n  120 |     for (const endpoint of endpoints) {\n> 121 |       const response = await request.get(`${API_BASE_URL}${endpoint}`);\n      |                                      ^\n  122 |       expect([401, 403]).toContain(response.status());\n  123 |     }\n  124 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 38,
+                            "line": 121
+                          },
+                          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:5000/api/v1/auctions\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  119 |\n  120 |     for (const endpoint of endpoints) {\n> 121 |       const response = await request.get(`${API_BASE_URL}${endpoint}`);\n      |                                      ^\n  122 |       expect([401, 403]).toContain(response.status());\n  123 |     }\n  124 |   });\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:121:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:07.695Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 38,
+                        "line": 121
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-eb70b5aeb4afe784710a",
+              "file": "security/validation.spec.js",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "deve validar permissões de usuário",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 29,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/marketplace/listings/:id/approve\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer user-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/marketplace/listings/:id/approve\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer user-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:128:36",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 36,
+                          "line": 128
+                        },
+                        "snippet": "  126 |   test('deve validar permissões de usuário', async ({ request }) => {\n  127 |     // Tentar criar recurso que requer permissões específicas\n> 128 |     const response = await request.post(`${API_BASE_URL}/api/v1/marketplace/listings/:id/approve`, {\n      |                                    ^\n  129 |       headers: {\n  130 |         'Authorization': 'Bearer user-token' // Token de usuário comum, não admin\n  131 |       },"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 36,
+                            "line": 128
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:5000\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:5000/api/v1/marketplace/listings/:id/approve\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Authorization: Bearer user-token\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 2\u001b[22m\n\n\n  126 |   test('deve validar permissões de usuário', async ({ request }) => {\n  127 |     // Tentar criar recurso que requer permissões específicas\n> 128 |     const response = await request.post(`${API_BASE_URL}/api/v1/marketplace/listings/:id/approve`, {\n      |                                    ^\n  129 |       headers: {\n  130 |         'Authorization': 'Bearer user-token' // Token de usuário comum, não admin\n  131 |       },\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:128:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:09.967Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 36,
+                        "line": 128
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-1c90dc6ba4f16f3faed3",
+              "file": "security/validation.spec.js",
+              "line": 126,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Security - Detailed Rate Limiting",
+          "file": "security/validation.spec.js",
+          "line": 143,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deve aplicar rate limiting por IP",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 32,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 296,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:154:23",
+                        "location": {
+                          "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                          "column": 23,
+                          "line": 154
+                        },
+                        "snippet": "  152 |\n  153 |     // Algumas requisições devem ser bloqueadas\n> 154 |     expect(status429).toBeGreaterThan(0);\n      |                       ^\n  155 |     \n  156 |     // Mas algumas devem passar\n  157 |     expect(status200).toBeGreaterThan(0);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                            "column": 23,
+                            "line": 154
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  152 |\n  153 |     // Algumas requisições devem ser bloqueadas\n> 154 |     expect(status429).toBeGreaterThan(0);\n      |                       ^\n  155 |     \n  156 |     // Mas algumas devem passar\n  157 |     expect(status200).toBeGreaterThan(0);\n    at D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js:154:23"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:11.548Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "D:\\Backup rsv36-servidor-oficial 22_11_2025as_08_36\\RSV360 Versao Oficial\\backend\\tests\\security\\validation.spec.js",
+                        "column": 23,
+                        "line": 154
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-3ebb1b798993147897ff",
+              "file": "security/validation.spec.js",
+              "line": 144,
+              "column": 3
+            },
+            {
+              "title": "deve aplicar rate limiting por endpoint",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "security",
+                  "projectName": "security",
+                  "results": [
+                    {
+                      "workerIndex": 33,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 539,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-22T22:02:13.775Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "57b727ec0c4c9269d87e-bd2b486758a9ed1ddebb",
+              "file": "security/validation.spec.js",
+              "line": 160,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-22T22:00:56.918Z",
+    "duration": 77670.697,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 33,
+    "flaky": 0
+  }
+}

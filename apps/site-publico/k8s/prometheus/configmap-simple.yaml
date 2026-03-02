@@ -1,0 +1,66 @@
+# Versão simplificada do ConfigMap do Prometheus
+# Use esta versão se a versão com kubernetes_sd_configs não funcionar
+# ou se preferir uma configuração mais direta
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: rsv-gen2
+  labels:
+    app: prometheus
+    component: monitoring
+data:
+  prometheus.yml: |
+    # Configuração global do Prometheus
+    global:
+      scrape_interval: 15s          # Intervalo de coleta de métricas
+      evaluation_interval: 15s       # Intervalo de avaliação de regras de alerta
+      external_labels:
+        cluster: 'rsv-gen2'
+        environment: 'production'
+        monitor: 'prometheus'
+
+    # Configurações de scrape (targets para coletar métricas)
+    scrape_configs:
+      # ============================================
+      # Next.js Application
+      # ============================================
+      - job_name: 'rsv-gen2-app'
+        static_configs:
+          - targets:
+              - 'rsv-gen2-app-service.rsv-gen2.svc.cluster.local:80'
+            labels:
+              job: 'rsv-gen2-app'
+              service: 'nextjs'
+              component: 'app'
+        metrics_path: '/api/metrics'
+        scrape_interval: 15s
+        scrape_timeout: 10s
+
+      # ============================================
+      # WebSocket Server
+      # ============================================
+      - job_name: 'rsv-gen2-websocket'
+        static_configs:
+          - targets:
+              - 'rsv-gen2-websocket-service.rsv-gen2.svc.cluster.local:80'
+            labels:
+              job: 'rsv-gen2-websocket'
+              service: 'websocket'
+              component: 'websocket'
+        metrics_path: '/api/metrics'
+        scrape_interval: 15s
+        scrape_timeout: 10s
+
+      # ============================================
+      # Prometheus Self-Monitoring
+      # ============================================
+      - job_name: 'prometheus'
+        static_configs:
+          - targets:
+              - 'localhost:9090'
+            labels:
+              job: 'prometheus'
+              instance: 'prometheus-server'
+

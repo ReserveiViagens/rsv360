@@ -1,0 +1,24 @@
+# 📊 CONFIGURAÇÃO DE DATASOURCES - GRAFANA
+# RSV 360° ECOSYSTEM - Prometheus Datasource
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://monitoring-local:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.40.0
+      cacheLevel: 'High'
+      disableRecordingRules: false
+      incrementalQueryOverlapWindow: 10m
+      queryTimeout: 60s
+      timeInterval: 15s
+    secureJsonData: {}
+    version: 1

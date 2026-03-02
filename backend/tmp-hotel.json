@@ -1,0 +1,21 @@
+{
+  "page_type": "hotels",
+  "content_id": "hoteltestersv4",
+  "title": "Hotel Teste RSV 4",
+  "description": "Hotel de teste criado automaticamente para validar CRUD end-to-end.",
+  "images": ["https://via.placeholder.com/800x600"],
+  "metadata": {
+    "stars": 4,
+    "price": 250,
+    "originalPrice": 312.5,
+    "features": ["Wi-Fi", "Piscina"],
+    "location": "Caldas Novas, GO",
+    "capacity": "4 pessoas"
+  },
+  "seo_data": {
+    "title": "Hotel Teste RSV 4 - Caldas Novas",
+    "description": "Hotel de teste criado automaticamente em Caldas Novas para valida��o do CMS.",
+    "keywords": ["hotel", "caldas novas"]
+  },
+  "status": "active"
+}

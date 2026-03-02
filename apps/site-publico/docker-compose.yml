@@ -1,0 +1,81 @@
+# ✅ DOCKER COMPOSE PARA DESENVOLVIMENTO E PRODUÇÃO
+# Configuração completa com PostgreSQL, Redis e Next.js
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: rsv-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rsv_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rsv_password}
+      POSTGRES_DB: ${POSTGRES_DB:-rsv_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rsv_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rsv-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: rsv-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rsv-network
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rsv-app
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rsv_user}:${POSTGRES_PASSWORD:-rsv_password}@postgres:5432/${POSTGRES_DB:-rsv_db}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    restart: unless-stopped
+    networks:
+      - rsv-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  rsv-network:
+    driver: bridge

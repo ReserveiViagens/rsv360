@@ -1,0 +1,143 @@
+# Configuração do Artillery para testes de performance
+# Artillery é uma ferramenta de teste de carga baseada em Node.js
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    # Fase 1: Warm-up
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm-up"
+    # Fase 2: Ramp-up
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 50
+      name: "Ramp-up"
+    # Fase 3: Carga estável
+    - duration: 300
+      arrivalRate: 50
+      name: "Carga estável"
+    # Fase 4: Spike
+    - duration: 60
+      arrivalRate: 50
+      rampTo: 200
+      name: "Spike test"
+    # Fase 5: Ramp-down
+    - duration: 120
+      arrivalRate: 200
+      rampTo: 0
+      name: "Ramp-down"
+  
+  processor: "./artillery-processor.js"
+  
+  variables:
+    baseUrl: "http://localhost:3000"
+    apiToken: ""
+
+  payload:
+    # Arquivo com dados de teste (opcional)
+    # path: "./test-data.csv"
+    # fields:
+    #   - "email"
+    #   - "password"
+
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: true
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  # Cenário 1: Navegação básica
+  - name: "Navegação básica"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/properties"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      
+      - think: 2
+      
+      - get:
+          url: "/api/bookings"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+
+  # Cenário 2: Busca e detalhes
+  - name: "Busca e detalhes"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/properties?search=test"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/properties/{{ $randomInt(1, 100) }}"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: [200, 404]
+      
+      - think: 2
+
+  # Cenário 3: Dashboard e métricas
+  - name: "Dashboard e métricas"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/crm/dashboard"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/analytics/insights"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          expect:
+            - statusCode: 200
+
+  # Cenário 4: Criação de recursos
+  - name: "Criação de recursos"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/bookings"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+          json:
+            property_id: "{{ $randomInt(1, 100) }}"
+            check_in: "2025-02-01"
+            check_out: "2025-02-05"
+            guests: 2
+          expect:
+            - statusCode: [200, 201, 400]
+

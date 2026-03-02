@@ -1,0 +1,381 @@
+name: 🚀 CI - Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job 1: Lint and Code Quality
+  lint-and-quality:
+    name: 🔍 Lint & Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🔍 Run ESLint
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run lint
+
+      - name: 🎨 Run Prettier
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run format:check
+
+      - name: 🔒 Run Security Audit
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm audit --audit-level=moderate
+
+      - name: 📊 Upload lint results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-results
+          path: |
+            INFRASTRUCTURE/testing-framework/lint-results/
+            INFRASTRUCTURE/testing-framework/security-audit.json
+
+  # Job 2: Unit Tests
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-quality
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: rsvpassword
+          POSTGRES_USER: rsvuser
+          POSTGRES_DB: rsv_ecosystem_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🗄️ Setup test database
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          cp env.test.example .env.test
+          echo "DB_HOST=localhost" >> .env.test
+          echo "DB_PORT=5432" >> .env.test
+          echo "DB_USER=rsvuser" >> .env.test
+          echo "DB_PASSWORD=rsvpassword" >> .env.test
+          echo "DB_NAME=rsv_ecosystem_test" >> .env.test
+
+      - name: 🧪 Run unit tests
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run test:unit
+
+      - name: 📊 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: |
+            INFRASTRUCTURE/testing-framework/coverage/
+            INFRASTRUCTURE/testing-framework/test-results/
+
+  # Job 3: Integration Tests
+  integration-tests:
+    name: 🔗 Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: rsvpassword
+          POSTGRES_USER: rsvuser
+          POSTGRES_DB: rsv_ecosystem_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🚀 Start test server
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          cp env.test.example .env.test
+          echo "DB_HOST=localhost" >> .env.test
+          echo "DB_PORT=5432" >> .env.test
+          echo "DB_USER=rsvuser" >> .env.test
+          echo "DB_PASSWORD=rsvpassword" >> .env.test
+          echo "DB_NAME=rsv_ecosystem_test" >> .env.test
+          echo "TEST_SERVER_PORT=3001" >> .env.test
+          echo "TEST_SERVER_URL=http://localhost:3001" >> .env.test
+          npm run test:integration &
+          sleep 30
+
+      - name: 🔗 Run integration tests
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run test:integration
+
+      - name: 📊 Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            INFRASTRUCTURE/testing-framework/coverage/
+            INFRASTRUCTURE/testing-framework/test-results/
+
+  # Job 4: E2E Tests
+  e2e-tests:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: rsvpassword
+          POSTGRES_USER: rsvuser
+          POSTGRES_DB: rsv_ecosystem_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🎭 Install Playwright
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npx playwright install --with-deps
+
+      - name: 🚀 Start application
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          cp env.test.example .env.test
+          echo "DB_HOST=localhost" >> .env.test
+          echo "DB_PORT=5432" >> .env.test
+          echo "DB_USER=rsvuser" >> .env.test
+          echo "DB_PASSWORD=rsvpassword" >> .env.test
+          echo "DB_NAME=rsv_ecosystem_test" >> .env.test
+          echo "PLAYWRIGHT_BASE_URL=http://localhost:3000" >> .env.test
+          npm start &
+          sleep 30
+
+      - name: 🎭 Run E2E tests
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run test:e2e
+
+      - name: 📊 Upload E2E test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            INFRASTRUCTURE/testing-framework/test-results/
+            INFRASTRUCTURE/testing-framework/playwright-report/
+
+  # Job 5: Build and Security Scan
+  build-and-scan:
+    name: 🏗️ Build & Security Scan
+    runs-on: ubuntu-latest
+    needs: [lint-and-quality, unit-tests]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🏗️ Build application
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm run build
+
+      - name: 🔒 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: 📊 Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            INFRASTRUCTURE/testing-framework/dist/
+            INFRASTRUCTURE/testing-framework/build/
+
+  # Job 6: Performance Tests
+  performance-tests:
+    name: ⚡ Performance Tests
+    runs-on: ubuntu-latest
+    needs: build-and-scan
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm ci
+
+      - name: 🚀 Start application for performance testing
+        run: |
+          cd INFRASTRUCTURE/testing-framework
+          npm start &
+          sleep 30
+
+      - name: ⚡ Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: './INFRASTRUCTURE/ci-cd/lighthouse.config.js'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: 📊 Upload performance results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-results
+          path: |
+            INFRASTRUCTURE/testing-framework/lighthouse-results/
+
+  # Job 7: Summary and Notifications
+  ci-summary:
+    name: 📋 CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint-and-quality, unit-tests, integration-tests, e2e-tests, build-and-scan, performance-tests]
+    if: always()
+    
+    steps:
+      - name: 📊 Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: 📋 Generate CI summary
+        run: |
+          echo "# 🚀 CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Jobs Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Lint & Quality**: ${{ needs.lint-and-quality.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Tests**: ${{ needs.unit-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Integration Tests**: ${{ needs.integration-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **E2E Tests**: ${{ needs.e2e-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build & Scan**: ${{ needs.build-and-scan.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Performance Tests**: ${{ needs.performance-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Overall Status" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.lint-and-quality.result }}" == "success" && "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" && "${{ needs.e2e-tests.result }}" == "success" && "${{ needs.build-and-scan.result }}" == "success" && "${{ needs.performance-tests.result }}" == "success" ]]; then
+            echo "🎉 **All tests passed!** Ready for deployment." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Some tests failed.** Please check the logs." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📧 Send notification
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#ci-cd'
+          text: '❌ CI Pipeline failed for RSV 360° Ecosystem'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

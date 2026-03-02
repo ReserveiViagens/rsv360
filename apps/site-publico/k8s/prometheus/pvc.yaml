@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-pvc
+  namespace: rsv-gen2
+  labels:
+    app: prometheus
+    component: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  # Ajustar conforme o StorageClass disponível no cluster
+  # Para produção, considere usar um StorageClass com alta performance
+  storageClassName: standard
+  # Se não houver StorageClass padrão, remova a linha acima e use:
+  # volumeMode: Filesystem
+

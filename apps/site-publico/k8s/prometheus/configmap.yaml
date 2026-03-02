@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: rsv-gen2
+  labels:
+    app: prometheus
+    component: monitoring
+data:
+  prometheus.yml: |
+    # Configuração global do Prometheus
+    global:
+      scrape_interval: 15s          # Intervalo de coleta de métricas
+      evaluation_interval: 15s       # Intervalo de avaliação de regras de alerta
+      external_labels:
+        cluster: 'rsv-gen2'
+        environment: 'production'
+        monitor: 'prometheus'
+
+    # Configuração de alertas
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - alertmanager.rsv-gen2.svc.cluster.local:9093
+
+    # Configuração de regras de alerta
+    rule_files:
+      - "/etc/prometheus/alert-rules/*.yaml"
+
+    # Configurações de scrape (targets para coletar métricas)
+    scrape_configs:
+      # ============================================
+      # Next.js Application (Porta 3000)
+      # ============================================
+      - job_name: 'rsv-gen2-app'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - rsv-gen2
+        relabel_configs:
+          # Selecionar apenas endpoints do serviço da aplicação
+          - source_labels: [__meta_kubernetes_service_name]
+            regex: 'rsv-gen2-app-service'
+            action: keep
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: 'http'
+            action: keep
+          # Adicionar labels úteis
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          # Configurar o path de métricas
+          - target_label: __metrics_path__
+            replacement: '/api/metrics'
+          # Configurar o scheme
+          - target_label: __scheme__
+            replacement: 'http'
+        scrape_interval: 15s
+        scrape_timeout: 10s
+        metrics_path: '/api/metrics'
+
+      # ============================================
+      # WebSocket Server (Porta 3001)
+      # ============================================
+      - job_name: 'rsv-gen2-websocket'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - rsv-gen2
+        relabel_configs:
+          # Selecionar apenas endpoints do serviço WebSocket
+          - source_labels: [__meta_kubernetes_service_name]
+            regex: 'rsv-gen2-websocket-service'
+            action: keep
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: 'ws'
+            action: keep
+          # Adicionar labels úteis
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          # Configurar o path de métricas
+          - target_label: __metrics_path__
+            replacement: '/api/metrics'
+          # Configurar o scheme
+          - target_label: __scheme__
+            replacement: 'http'
+        scrape_interval: 15s
+        scrape_timeout: 10s
+        metrics_path: '/api/metrics'
+
+      # ============================================
+      # Prometheus Self-Monitoring
+      # ============================================
+      - job_name: 'prometheus'
+        static_configs:
+          - targets:
+              - 'localhost:9090'
+            labels:
+              job: 'prometheus'
+              instance: 'prometheus-server'
+
+      # ============================================
+      # PostgreSQL Exporter (Opcional - requer deploy)
+      # ============================================
+      # Descomente quando o PostgreSQL Exporter estiver configurado
+      # - job_name: 'postgres-exporter'
+      #   kubernetes_sd_configs:
+      #     - role: endpoints
+      #       namespaces:
+      #         names:
+      #           - rsv-gen2
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_service_name]
+      #       regex: 'postgres-exporter'
+      #       action: keep
+      #     - source_labels: [__meta_kubernetes_namespace]
+      #       target_label: namespace
+      #     - source_labels: [__meta_kubernetes_pod_name]
+      #       target_label: pod
+      #   scrape_interval: 30s
+      #   scrape_timeout: 10s
+
+      # ============================================
+      # Redis Exporter (Opcional - requer deploy)
+      # ============================================
+      # Descomente quando o Redis Exporter estiver configurado
+      # - job_name: 'redis-exporter'
+      #   kubernetes_sd_configs:
+      #     - role: endpoints
+      #       namespaces:
+      #         names:
+      #           - rsv-gen2
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_service_name]
+      #       regex: 'redis-exporter'
+      #       action: keep
+      #     - source_labels: [__meta_kubernetes_namespace]
+      #       target_label: namespace
+      #     - source_labels: [__meta_kubernetes_pod_name]
+      #       target_label: pod
+      #   scrape_interval: 30s
+      #   scrape_timeout: 10s
+
+      # ============================================
+      # Kubernetes API Server (Opcional)
+      # ============================================
+      # - job_name: 'kubernetes-apiservers'
+      #   kubernetes_sd_configs:
+      #     - role: endpoints
+      #   scheme: https
+      #   tls_config:
+      #     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+      #       action: keep
+      #       regex: default;kubernetes;https
+
+      # ============================================
+      # Kubernetes Nodes (Opcional)
+      # ============================================
+      # - job_name: 'kubernetes-nodes'
+      #   kubernetes_sd_configs:
+      #     - role: node
+      #   scheme: https
+      #   tls_config:
+      #     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      #   relabel_configs:
+      #     - action: labelmap
+      #       regex: __meta_kubernetes_node_label_(.+)
+
+      # ============================================
+      # Kubernetes Pods (Opcional - para métricas de pods)
+      # ============================================
+      # - job_name: 'kubernetes-pods'
+      #   kubernetes_sd_configs:
+      #     - role: pod
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+      #       action: keep
+      #       regex: true
+      #     - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      #       action: replace
+      #       target_label: __metrics_path__
+      #       regex: (.+)
+      #     - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      #       action: replace
+      #       regex: ([^:]+)(?::\d+)?;(\d+)
+      #       replacement: $1:$2
+      #       target_label: __address__
+      #     - action: labelmap
+      #       regex: __meta_kubernetes_pod_label_(.+)
+      #     - source_labels: [__meta_kubernetes_namespace]
+      #       action: replace
+      #       target_label: kubernetes_namespace
+      #     - source_labels: [__meta_kubernetes_pod_name]
+      #       action: replace
+      #       target_label: kubernetes_pod_name
+

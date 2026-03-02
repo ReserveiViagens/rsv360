@@ -1,0 +1,77 @@
+name: Performance Tests
+
+on:
+  schedule:
+    # Executar diariamente às 2h da manhã
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Tipo de teste'
+        required: true
+        default: 'load'
+        type: choice
+        options:
+          - load
+          - stress
+          - endurance
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Install Artillery
+        run: npm install -g artillery
+
+      - name: Start application
+        run: |
+          npm install
+          npm run build
+          npm start &
+          sleep 10
+
+      - name: Run performance tests
+        env:
+          BASE_URL: http://localhost:3000
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: |
+          TEST_TYPE=${INPUT_TEST_TYPE:-load}
+          case $TEST_TYPE in
+            load)
+              k6 run tests/performance/k6/config.js
+              ;;
+            stress)
+              k6 run tests/performance/k6/stress-test.js
+              ;;
+            endurance)
+              k6 run tests/performance/k6/endurance-test.js
+              ;;
+          esac
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: |
+            k6-results-*.json
+            artillery-report-*.html
+

@@ -1,0 +1,441 @@
+# 🚀 CONFIGURAÇÃO DOS SERVIÇOS LOCAIS
+# RSV 360° ECOSYSTEM - Configuração de Serviços
+
+# Configurações gerais do ambiente
+environment:
+  name: "local-production"
+  description: "Ambiente de produção local para testes"
+  version: "1.0.0"
+  debug: false
+  log_level: "info"
+
+# Configurações de rede
+network:
+  name: "rsv-local-network"
+  subnet: "172.20.0.0/16"
+  gateway: "172.20.0.1"
+  dns:
+    - "8.8.8.8"
+    - "8.8.4.4"
+
+# Configurações dos serviços
+services:
+  # 🌐 ECOSYSTEM MASTER
+  ecosystem_master:
+    name: "ecosystem-master-local"
+    port: 3000
+    health_check:
+      endpoint: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "512MB"
+      cpu: "0.5"
+    environment:
+      NODE_ENV: "production"
+      PORT: 3000
+      LOG_LEVEL: "info"
+    dependencies:
+      - "database"
+      - "redis"
+      - "monitoring"
+
+  # 👥 CRM SYSTEM
+  crm_system:
+    name: "crm-system-local"
+    port: 3001
+    health_check:
+      endpoint: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "256MB"
+      cpu: "0.25"
+    environment:
+      NODE_ENV: "production"
+      PORT: 3001
+      LOG_LEVEL: "info"
+    dependencies:
+      - "database"
+      - "redis"
+
+  # 🎯 BOOKING ENGINE
+  booking_engine:
+    name: "booking-engine-local"
+    port: 3002
+    health_check:
+      endpoint: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "256MB"
+      cpu: "0.25"
+    environment:
+      NODE_ENV: "production"
+      PORT: 3002
+      LOG_LEVEL: "info"
+    dependencies:
+      - "database"
+      - "redis"
+
+  # 🏨 HOTEL MANAGEMENT
+  hotel_management:
+    name: "hotel-management-local"
+    port: 3003
+    health_check:
+      endpoint: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "256MB"
+      cpu: "0.25"
+    environment:
+      NODE_ENV: "production"
+      PORT: 3003
+      LOG_LEVEL: "info"
+    dependencies:
+      - "database"
+      - "redis"
+
+  # 📊 ANALYTICS INTELLIGENCE
+  analytics_intelligence:
+    name: "analytics-intelligence-local"
+    port: 3004
+    health_check:
+      endpoint: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "512MB"
+      cpu: "0.5"
+    environment:
+      NODE_ENV: "production"
+      PORT: 3004
+      LOG_LEVEL: "info"
+    dependencies:
+      - "database"
+      - "redis"
+
+  # 🗄️ DATABASE
+  database:
+    name: "db-local"
+    port: 5432
+    health_check:
+      command: "pg_isready -U rsvuser -d rsv_ecosystem_local"
+      interval: 10
+      timeout: 5
+      retries: 5
+    resources:
+      memory: "1GB"
+      cpu: "0.5"
+    environment:
+      POSTGRES_DB: "rsv_ecosystem_local"
+      POSTGRES_USER: "rsvuser"
+      POSTGRES_PASSWORD: "rsvpassword"
+    volumes:
+      - "db_local_data:/var/lib/postgresql/data"
+      - "./config/local-database.yml:/etc/postgresql/local-database.yml"
+
+  # 🔴 REDIS
+  redis:
+    name: "redis-local"
+    port: 6379
+    health_check:
+      command: "redis-cli ping"
+      interval: 10
+      timeout: 5
+      retries: 3
+    resources:
+      memory: "128MB"
+      cpu: "0.1"
+    environment:
+      REDIS_PASSWORD: ""
+    volumes:
+      - "redis_local_data:/data"
+      - "./config/redis.conf:/usr/local/etc/redis/redis.conf"
+
+  # 📈 MONITORING
+  monitoring:
+    name: "monitoring-local"
+    port: 9090
+    health_check:
+      endpoint: "/-/healthy"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "256MB"
+      cpu: "0.25"
+    environment:
+      PROMETHEUS_CONFIG: "/etc/prometheus/prometheus.yml"
+    volumes:
+      - "prometheus_local_data:/prometheus"
+      - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
+
+  # 📊 GRAFANA
+  grafana:
+    name: "grafana-local"
+    port: 3005
+    health_check:
+      endpoint: "/api/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    resources:
+      memory: "256MB"
+      cpu: "0.25"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "rsvadmin2025"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - "grafana_local_data:/var/lib/grafana"
+      - "./config/grafana:/etc/grafana/provisioning"
+
+# Configurações de volumes
+volumes:
+  db_local_data:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./data/postgresql"
+  
+  redis_local_data:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./data/redis"
+  
+  prometheus_local_data:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./data/prometheus"
+  
+  grafana_local_data:
+    driver: "local"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./data/grafana"
+
+# Configurações de logs
+logging:
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,environment"
+
+# Configurações de restart
+restart_policy:
+  condition: "unless-stopped"
+  delay: "5s"
+  max_attempts: 3
+  window: "120s"
+
+# Configurações de health check global
+global_health_check:
+  enabled: true
+  interval: 60
+  timeout: 30
+  retries: 3
+  start_period: 30
+
+# Configurações de monitoramento
+monitoring_config:
+  # Configurações do Prometheus
+  prometheus:
+    scrape_interval: "15s"
+    evaluation_interval: "15s"
+    scrape_configs:
+      - job_name: "ecosystem-master"
+        static_configs:
+          - targets: ["ecosystem-master-local:3000"]
+        metrics_path: "/metrics"
+        scrape_interval: "15s"
+      
+      - job_name: "crm-system"
+        static_configs:
+          - targets: ["crm-system-local:3001"]
+        metrics_path: "/metrics"
+        scrape_interval: "15s"
+      
+      - job_name: "booking-engine"
+        static_configs:
+          - targets: ["booking-engine-local:3002"]
+        metrics_path: "/metrics"
+        scrape_interval: "15s"
+      
+      - job_name: "hotel-management"
+        static_configs:
+          - targets: ["hotel-management-local:3003"]
+        metrics_path: "/metrics"
+        scrape_interval: "15s"
+      
+      - job_name: "analytics-intelligence"
+        static_configs:
+          - targets: ["analytics-intelligence-local:3004"]
+        metrics_path: "/metrics"
+        scrape_interval: "15s"
+      
+      - job_name: "postgresql"
+        static_configs:
+          - targets: ["db-local:5432"]
+        scrape_interval: "30s"
+      
+      - job_name: "redis"
+        static_configs:
+          - targets: ["redis-local:6379"]
+        scrape_interval: "30s"
+
+  # Configurações do Grafana
+  grafana:
+    datasources:
+      - name: "Prometheus"
+        type: "prometheus"
+        url: "http://monitoring-local:9090"
+        access: "proxy"
+        isDefault: true
+    
+    dashboards:
+      - name: "RSV Ecosystem Overview"
+        path: "./config/grafana/dashboards/ecosystem-overview.json"
+      - name: "Database Performance"
+        path: "./config/grafana/dashboards/database-performance.json"
+      - name: "Application Metrics"
+        path: "./config/grafana/dashboards/application-metrics.json"
+
+# Configurações de alertas
+alerts:
+  enabled: true
+  rules:
+    - name: "HighCPUUsage"
+      condition: "cpu_usage > 80"
+      severity: "warning"
+      duration: "5m"
+    
+    - name: "HighMemoryUsage"
+      condition: "memory_usage > 85"
+      severity: "warning"
+      duration: "5m"
+    
+    - name: "ServiceDown"
+      condition: "service_status != 'healthy'"
+      severity: "critical"
+      duration: "1m"
+    
+    - name: "DatabaseConnections"
+      condition: "db_connections > 80"
+      severity: "warning"
+      duration: "3m"
+    
+    - name: "SlowQueries"
+      condition: "avg_query_time > 5000"
+      severity: "warning"
+      duration: "5m"
+
+# Configurações de backup
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention:
+    daily: 7
+    weekly: 4
+    monthly: 12
+  
+  destinations:
+    - type: "local"
+      path: "./backups"
+    - type: "s3"
+      bucket: "rsv-backups"
+      region: "us-east-1"
+      enabled: false  # Desabilitado para ambiente local
+  
+  services:
+    - "database"
+    - "redis"
+    - "grafana"
+    - "prometheus"
+
+# Configurações de segurança
+security:
+  # Configurações de firewall
+  firewall:
+    enabled: true
+    rules:
+      - port: 3000
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 3001
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 3002
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 3003
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 3004
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 3005
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+      - port: 9090
+        protocol: "tcp"
+        action: "allow"
+        source: "0.0.0.0/0"
+  
+  # Configurações de SSL/TLS
+  ssl:
+    enabled: false  # Desabilitado para ambiente local
+    certificate: ""
+    private_key: ""
+  
+  # Configurações de autenticação
+  authentication:
+    jwt_secret: "rsv-local-jwt-secret-key-2025-production-test"
+    jwt_expires_in: "24h"
+    bcrypt_rounds: 12
+    session_secret: "rsv-local-session-secret-2025"
+
+# Configurações de performance
+performance:
+  # Configurações de cache
+  cache:
+    enabled: true
+    ttl: 3600
+    max_size: 1000
+    strategy: "lru"
+  
+  # Configurações de rate limiting
+  rate_limiting:
+    enabled: true
+    window_ms: 900000
+    max_requests: 100
+  
+  # Configurações de compressão
+  compression:
+    enabled: true
+    level: 6
+    threshold: 1024
+  
+  # Configurações de timeout
+  timeouts:
+    connection: 30000
+    request: 30000
+    keep_alive: 5000

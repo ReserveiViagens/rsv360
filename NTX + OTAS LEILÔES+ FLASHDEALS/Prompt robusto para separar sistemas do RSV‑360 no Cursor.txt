@@ -1,0 +1,214 @@
+Prompt robusto para separar sistemas do RSV‑360 no Cursor
+Quero que você atue como arquiteto de software sênior e codebase refactor planner para o projeto RSV‑360 (hotelaria + temporada + reservas).
+
+Você DEVE usar como fonte principal de verdade estes arquivos já gerados:
+
+Identificacao-RSV-360-Relatorio-Final-Completo.txt
+
+Identificacao-RSV-360-Analise-Completa-da-Codebase.txt
+
+Identificacao-RSV-360-Tabela-Completa-de-Mapeamento.txt
+
+Eles já contêm o mapeamento completo da pasta raiz, sistemas, módulos, domínios de negócio e conflitos.
+
+1. Objetivo geral
+Separar de forma clara e definitiva cada sistema do repo:
+
+guest_web_app (app do hóspede)
+
+admin_panel (painel de operação)
+
+api_backend (APIs internas/externas)
+
+background_jobs (workers, cron, sincronizações)
+
+shared_libs (código compartilhado)
+
+Identificar conflitos e misturas (módulos/domínios/sistemas errados).
+
+Propor e detalhar um plano de refactor, nova organização de rotas e atualização de documentação.
+
+Garantir que cada sistema tenha inicialização independente (start separado, scripts claros).
+
+2. Passos OBRIGATÓRIOS (Chain of Thought)
+Siga este fluxo, passo a passo:
+
+Ler e resumir em poucas linhas cada arquivo de identificação:
+
+O que cada um diz sobre sistemas, módulos, domínios e conflitos.
+
+A partir da Tabela Completa de Mapeamento, montar uma visão consolidada:
+
+Para cada Sistema (coluna), listar:
+
+Paths principais
+
+Domínios
+
+Rotas/URLs
+
+Status de conflito (OK/VIOLAÇÃO).
+
+Identificar todos os pontos onde:
+
+Código de um domínio está no sistema errado.
+
+Frontend e backend estão acoplados de forma indevida.
+
+Shared libs estão misturadas com lógica de domínio.
+
+Mostre esse raciocínio explicitamente em texto, como Chain of Thought (mas sem imprimir o raciocínio interno no código).
+
+3. Separação de sistemas (System of Thought)
+Para cada sistema a seguir, produza:
+
+guest_web_app
+
+Descrição: app para hóspedes (busca, detalhes, reserva, pagamentos).
+
+Lista de pastas/arquivos que devem fazer parte dele (baseado na tabela).
+
+Quais arquivos atualmente estão errados (ex.: coisas de admin, reports, settings).
+
+Como deve ser o entrypoint (por ex.: apps/guest/, app/(guest)/, scripts npm run dev:guest).
+
+admin_panel
+
+Descrição: painel interno para hotéis/proprietários/operadores.
+
+Pastas/arquivos que pertencem a ele.
+
+O que precisa ser removido/movido para shared/api.
+
+Entrypoint sugerido (ex.: apps/admin/, app/(admin)/, script npm run dev:admin).
+
+api_backend
+
+Descrição: APIs HTTP/GraphQL usadas por guest + admin + parceiros.
+
+Listar rotas (/api/**) e módulos de serviço correspondentes.
+
+Ver onde há lógica de UI misturada com API e propor separação.
+
+Entrypoint (ex.: apps/api/, server/index.ts, npm run dev:api).
+
+background_jobs
+
+Descrição: workers de e-mail, notificações, sincronização de disponibilidade, pagamentos, etc.
+
+Listar jobs, filas, cron, scripts.
+
+Isolar o que hoje está espalhado em scripts/rotas.
+
+Entrypoint (jobs/index.ts, npm run worker, etc.).
+
+shared_libs
+
+O que deve entrar aqui:
+
+Tipos, DTOs, modelos, helpers, funções utilitárias, componentes UI genéricos.
+
+O que não deve entrar (regras de negócio pesadas, chamadas diretas a serviços específicos).
+
+4. Identificação de conflitos (Tree of Thought)
+Usando a Tabela-Completa-de-Mapeamento, construa uma árvore textual:
+
+Nível 1: Sistema (guest_web_app, admin_panel, api_backend, background_jobs, shared_libs).
+
+Nível 2: Domínios (booking, guests, properties, payments, contracts, reports, admin_settings).
+
+Nível 3: Paths principais.
+
+Nível 4: Status (OK / VIOLAÇÃO).
+
+Depois, produza uma lista de conflitos críticos, por exemplo:
+
+Código de reports_analytics aparecendo em guest_web_app.
+
+Código de admin_settings dentro de background_jobs.
+
+Rotas /admin/** misturadas em arquivos genéricos do app do hóspede.
+
+Para cada conflito, descreva:
+
+Onde está (Path).
+
+Qual sistema é o certo.
+
+A ação de refactor necessária (mover, extrair, renomear, criar módulo shared, etc.).
+
+5. Plano de refactor em fases
+Organize o plano em fases, para ser viável:
+
+Fase 1 – Organização de pastas e entrypoints
+
+Criar apps/guest, apps/admin, apps/api, apps/jobs (ou estrutura equivalente que fizer sentido).
+
+Ajustar package.json com scripts:
+
+dev:guest, dev:admin, dev:api, dev:jobs.
+
+Mover apenas o mínimo de arquivos para respeitar os sistemas, sem mudar lógica ainda.
+
+Fase 2 – Limpeza de conflitos óbvios
+
+Mover arquivos marcados como VIOLAÇÃO para o sistema certo.
+
+Extrair código compartilhado para shared_libs (tipos, utilitários).
+
+Garantir que cada sistema só importe o que faz sentido.
+
+Fase 3 – Rotas e domínios
+
+Ajustar rotas de frontend e backend para refletir a divisão por sistema.
+
+Ex.:
+
+/reservations → guest_web_app
+
+/admin/bookings → admin_panel
+
+/api/bookings → api_backend.
+
+Fase 4 – Documentação
+
+Atualizar ou gerar ARCHITECTURE_DISCOVERY.md com:
+
+Nova estrutura de pastas.
+
+Sistemas, domínios, entrypoints, rotas.
+
+Incluir tabela principal de mapeamento atualizada.
+
+Incluir diagrama textual (árvore) da arquitetura final.
+
+Fase 5 – Novas features (guia)
+
+Definir guidelines para futuras features:
+
+Onde criar novas rotas de hóspede.
+
+Onde criar telas admin.
+
+Onde colocar novas APIs.
+
+Onde colocar novo código compartilhado.
+
+6. Saída esperada (formato)
+A resposta deve conter, na ordem:
+
+Resumo executivo (5–10 linhas) da situação atual e objetivo da separação.
+
+Tabela em Markdown com colunas:
+
+Sistema | Domínio | Paths principais | Rotas/URLs | Conflitos (OK/VIOLAÇÃO).
+
+Árvore (Tree of Thought) dos sistemas e domínios, com marcação dos conflitos.
+
+Lista numerada de conflitos críticos + ações de refactor (passos claros).
+
+Plano em fases (Fase 1–5) com bullets práticos, como se fosse um mini‑roadmap.
+
+Opcional: sugestões de ajustes no .cursorrules/docs para travar futuras misturas.
+
+Não escreva código ainda; a prioridade aqui é o plano completo e detalhado de separação de sistemas, refactor, novas rotas e docs, usando profundamente os três arquivos de identificação do RSV‑360.

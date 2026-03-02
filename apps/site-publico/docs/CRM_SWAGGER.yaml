@@ -1,0 +1,942 @@
+openapi: 3.0.0
+info:
+  title: RSV Gen 2 - CRM API
+  version: 2.0.0
+  description: |
+    API completa para gestão de relacionamento com clientes (CRM).
+    Inclui endpoints para clientes, segmentos, campanhas, interações e preferências.
+  contact:
+    name: RSV Support
+    email: support@rsv.com
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desenvolvimento
+  - url: https://api.rsv.com
+    description: Servidor de produção
+
+tags:
+  - name: Customers
+    description: Gestão de perfis de clientes
+  - name: Preferences
+    description: Preferências de clientes
+  - name: Interactions
+    description: Interações com clientes
+  - name: Segments
+    description: Segmentação de clientes
+  - name: Campaigns
+    description: Campanhas de marketing
+  - name: Dashboard
+    description: Métricas e dashboards
+
+paths:
+  /api/crm/customers:
+    get:
+      tags: [Customers]
+      summary: Listar clientes
+      description: Retorna lista de clientes com filtros, paginação e ordenação
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: loyalty_tier
+          in: query
+          schema:
+            type: string
+            enum: [bronze, silver, gold, platinum, diamond]
+        - name: min_total_spent
+          in: query
+          schema:
+            type: number
+        - name: max_total_spent
+          in: query
+          schema:
+            type: number
+        - name: min_bookings
+          in: query
+          schema:
+            type: integer
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: Tags separadas por vírgula
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: total_spent
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomerProfile'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags: [Customers]
+      summary: Criar cliente
+      description: Cria um novo perfil de cliente
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerProfile'
+      responses:
+        '201':
+          description: Cliente criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/CustomerProfile'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/crm/customers/{id}:
+    get:
+      tags: [Customers]
+      summary: Obter cliente
+      description: Retorna detalhes de um cliente específico
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/CustomerProfile'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags: [Customers]
+      summary: Atualizar cliente
+      description: Atualiza um perfil de cliente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerProfile'
+      responses:
+        '200':
+          description: Cliente atualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/CustomerProfile'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags: [Customers]
+      summary: Deletar cliente
+      description: Remove um perfil de cliente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cliente deletado
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/crm/customers/{id}/preferences:
+    get:
+      tags: [Preferences]
+      summary: Listar preferências
+      description: Retorna preferências de um cliente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de preferências
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomerPreference'
+
+    post:
+      tags: [Preferences]
+      summary: Adicionar preferência
+      description: Adiciona uma preferência a um cliente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerPreference'
+      responses:
+        '201':
+          description: Preferência adicionada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/CustomerPreference'
+
+  /api/crm/customers/{id}/preferences/{pref_id}:
+    put:
+      tags: [Preferences]
+      summary: Atualizar preferência
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: pref_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerPreference'
+      responses:
+        '200':
+          description: Preferência atualizada
+
+    delete:
+      tags: [Preferences]
+      summary: Remover preferência
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: pref_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Preferência removida
+
+  /api/crm/interactions:
+    get:
+      tags: [Interactions]
+      summary: Listar interações
+      description: Retorna lista de interações com filtros
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: interaction_type
+          in: query
+          schema:
+            type: string
+        - name: channel
+          in: query
+          schema:
+            type: string
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [low, normal, high, urgent]
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Lista de interações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Interaction'
+
+    post:
+      tags: [Interactions]
+      summary: Criar interação
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInteraction'
+      responses:
+        '201':
+          description: Interação criada
+
+  /api/crm/segments:
+    get:
+      tags: [Segments]
+      summary: Listar segmentos
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de segmentos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Segment'
+
+    post:
+      tags: [Segments]
+      summary: Criar segmento
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSegment'
+      responses:
+        '201':
+          description: Segmento criado
+
+  /api/crm/segments/{id}:
+    get:
+      tags: [Segments]
+      summary: Obter segmento
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do segmento
+
+    put:
+      tags: [Segments]
+      summary: Atualizar segmento
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSegment'
+      responses:
+        '200':
+          description: Segmento atualizado
+
+    delete:
+      tags: [Segments]
+      summary: Deletar segmento
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Segmento deletado
+
+  /api/crm/segments/{id}/calculate:
+    post:
+      tags: [Segments]
+      summary: Recalcular segmento
+      description: Recalcula clientes em um segmento
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Segmento recalculado
+
+  /api/crm/campaigns:
+    get:
+      tags: [Campaigns]
+      summary: Listar campanhas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de campanhas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Campaign'
+
+    post:
+      tags: [Campaigns]
+      summary: Criar campanha
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCampaign'
+      responses:
+        '201':
+          description: Campanha criada
+
+  /api/crm/campaigns/{id}:
+    get:
+      tags: [Campaigns]
+      summary: Obter campanha
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes da campanha
+
+    put:
+      tags: [Campaigns]
+      summary: Atualizar campanha
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCampaign'
+      responses:
+        '200':
+          description: Campanha atualizada
+
+  /api/crm/dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Obter métricas do dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: segment_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Métricas do dashboard
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/DashboardMetrics'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CustomerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        customer_id:
+          type: integer
+        loyalty_tier:
+          type: string
+          enum: [bronze, silver, gold, platinum, diamond]
+        total_spent:
+          type: number
+        total_bookings:
+          type: integer
+        engagement_score:
+          type: number
+        churn_risk_score:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateCustomerProfile:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: integer
+        loyalty_tier:
+          type: string
+          enum: [bronze, silver, gold, platinum, diamond]
+        tags:
+          type: array
+          items:
+            type: string
+
+    UpdateCustomerProfile:
+      type: object
+      properties:
+        loyalty_tier:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+
+    CustomerPreference:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer_id:
+          type: integer
+        preference_key:
+          type: string
+        preference_value:
+          type: string
+        preference_type:
+          type: string
+          enum: [string, boolean, number, json]
+        category:
+          type: string
+        is_active:
+          type: boolean
+
+    CreateCustomerPreference:
+      type: object
+      required:
+        - preference_key
+        - preference_value
+      properties:
+        preference_key:
+          type: string
+        preference_value:
+          type: string
+        preference_type:
+          type: string
+        category:
+          type: string
+
+    UpdateCustomerPreference:
+      type: object
+      properties:
+        preference_value:
+          type: string
+        is_active:
+          type: boolean
+
+    Interaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer_id:
+          type: integer
+        interaction_type:
+          type: string
+        channel:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+        outcome:
+          type: string
+        sentiment:
+          type: string
+          enum: [positive, neutral, negative]
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+        interaction_date:
+          type: string
+          format: date-time
+
+    CreateInteraction:
+      type: object
+      required:
+        - customer_id
+        - interaction_type
+        - channel
+        - subject
+      properties:
+        customer_id:
+          type: integer
+        interaction_type:
+          type: string
+        channel:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+        outcome:
+          type: string
+        sentiment:
+          type: string
+
+    Segment:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        criteria:
+          type: object
+        customer_count:
+          type: integer
+        is_active:
+          type: boolean
+        is_auto_update:
+          type: boolean
+
+    CreateSegment:
+      type: object
+      required:
+        - name
+        - criteria
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        criteria:
+          type: object
+        is_active:
+          type: boolean
+        is_auto_update:
+          type: boolean
+
+    UpdateSegment:
+      type: object
+      properties:
+        name:
+          type: string
+        criteria:
+          type: object
+        is_active:
+          type: boolean
+
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        campaign_type:
+          type: string
+        channel:
+          type: string
+        status:
+          type: string
+        total_recipients:
+          type: integer
+        sent_count:
+          type: integer
+        opened_count:
+          type: integer
+        clicked_count:
+          type: integer
+
+    CreateCampaign:
+      type: object
+      required:
+        - name
+        - campaign_type
+        - channel
+        - message
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        campaign_type:
+          type: string
+        channel:
+          type: string
+        target_segment_id:
+          type: integer
+        subject:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum: [draft, scheduled, active, paused, completed, cancelled]
+
+    UpdateCampaign:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
+
+    DashboardMetrics:
+      type: object
+      properties:
+        total_customers:
+          type: integer
+        active_customers:
+          type: integer
+        new_customers:
+          type: integer
+        total_revenue:
+          type: number
+        average_order_value:
+          type: number
+        total_interactions:
+          type: integer
+        top_segments:
+          type: array
+          items:
+            type: object
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+  responses:
+    UnauthorizedError:
+      description: Não autenticado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Não autenticado
+
+    BadRequestError:
+      description: Dados inválidos
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+
+    NotFoundError:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Recurso não encontrado
+

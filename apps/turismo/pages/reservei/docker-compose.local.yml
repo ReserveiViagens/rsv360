@@ -1,0 +1,224 @@
+version: '3.8'
+
+services:
+  # 🌐 ECOSYSTEM MASTER - Servidor Principal
+  ecosystem-master-local:
+    build:
+      context: ../ECOSYSTEM-MASTER
+      dockerfile: Dockerfile
+    container_name: rsv-ecosystem-master-local
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://rsvuser:rsvpassword@db-local:5432/rsv_ecosystem_local
+      REDIS_URL: redis://redis-local:6379
+      JWT_SECRET: rsv-local-jwt-secret-key-2025
+      API_BASE_URL: http://localhost:3000
+    depends_on:
+      db-local:
+        condition: service_healthy
+      redis-local:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🏢 CRM SYSTEM - Sistema de Gestão de Clientes
+  crm-system-local:
+    build:
+      context: ../BUSINESS-MODULES/crm-system
+      dockerfile: Dockerfile
+    container_name: rsv-crm-system-local
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgres://rsvuser:rsvpassword@db-local:5432/rsv_ecosystem_local
+      REDIS_URL: redis://redis-local:6379
+      API_BASE_URL: http://localhost:3000
+    depends_on:
+      db-local:
+        condition: service_healthy
+      redis-local:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🎯 BOOKING ENGINE - Motor de Reservas
+  booking-engine-local:
+    build:
+      context: ../BUSINESS-MODULES/booking-engine
+      dockerfile: Dockerfile
+    container_name: rsv-booking-engine-local
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      DATABASE_URL: postgres://rsvuser:rsvpassword@db-local:5432/rsv_ecosystem_local
+      REDIS_URL: redis://redis-local:6379
+      API_BASE_URL: http://localhost:3000
+    depends_on:
+      db-local:
+        condition: service_healthy
+      redis-local:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🏨 HOTEL MANAGEMENT - Gestão de Hotéis
+  hotel-management-local:
+    build:
+      context: ../BUSINESS-MODULES/hotel-management
+      dockerfile: Dockerfile
+    container_name: rsv-hotel-management-local
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      DATABASE_URL: postgres://rsvuser:rsvpassword@db-local:5432/rsv_ecosystem_local
+      REDIS_URL: redis://redis-local:6379
+      API_BASE_URL: http://localhost:3000
+    depends_on:
+      db-local:
+        condition: service_healthy
+      redis-local:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 📊 ANALYTICS INTELLIGENCE - Inteligência de Dados
+  analytics-intelligence-local:
+    build:
+      context: ../ANALYTICS-INTELLIGENCE
+      dockerfile: Dockerfile
+    container_name: rsv-analytics-intelligence-local
+    ports:
+      - "3004:3004"
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      DATABASE_URL: postgres://rsvuser:rsvpassword@db-local:5432/rsv_ecosystem_local
+      REDIS_URL: redis://redis-local:6379
+      API_BASE_URL: http://localhost:3000
+    depends_on:
+      db-local:
+        condition: service_healthy
+      redis-local:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🗄️ POSTGRESQL DATABASE - Banco de Dados Local
+  db-local:
+    image: postgres:15-alpine
+    container_name: rsv-db-local
+    environment:
+      POSTGRES_DB: rsv_ecosystem_local
+      POSTGRES_USER: rsvuser
+      POSTGRES_PASSWORD: rsvpassword
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=pt_BR.UTF-8 --lc-ctype=pt_BR.UTF-8"
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_local_data:/var/lib/postgresql/data
+      - ../INFRASTRUCTURE/database-cluster/schemas:/docker-entrypoint-initdb.d
+      - ./config/local-database.yml:/etc/postgresql/local-database.yml
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rsvuser -d rsv_ecosystem_local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 🔴 REDIS CACHE - Cache e Sessões
+  redis-local:
+    image: redis:7-alpine
+    container_name: rsv-redis-local
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_local_data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 📊 GRAFANA DASHBOARD - Dashboard de Monitoramento
+  grafana-local:
+    image: grafana/grafana:9.0.0
+    container_name: rsv-grafana-local
+    ports:
+      - "3006:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: rsvadmin2025
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_local_data:/var/lib/grafana
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+
+# 💾 VOLUMES PERSISTENTES
+volumes:
+  db_local_data:
+    driver: local
+  redis_local_data:
+    driver: local
+  grafana_local_data:
+    driver: local
