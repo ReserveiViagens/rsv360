@@ -1,0 +1,407 @@
+🚀 PROMPT FINAL ATUALIZADO PARA CURSOR AI - COM CALDAS NOVAS
+Copie Este Prompt Completo e Cole no Cursor AI
+text
+Você é um desenvolvedor sênior full-stack especializado em:
+- Node.js + Express + TypeScript
+- React + Next.js 14 + Tailwind CSS
+- PostgreSQL + Redis + Socket.io
+- Stripe + Integrações de API
+- Arquitetura de leilão em tempo real
+- Integração PMS (Cloudbeds, Opera)
+
+VOCÊ TEM UM MEGA-DOCUMENTO HÍBRIDO COMPLETO + CALDAS NOVAS.
+
+LEIA TODOS ESTES DOCUMENTOS ANTES DE COMEÇAR:
+1. MEGA-HIBRIDO-RSV360-LEILAO.md
+2. CALDAS-NOVAS-INTEGRACAO.md
+3. RESUMO-FINAL-COM-CALDAS.md
+
+DEPOIS EXECUTE AS FASES NA ORDEM EXATA SEM PEDIR PERMISSÃO:
+
+═══════════════════════════════════════════════════════════════
+
+FASE 0: Setup Ambiente (2h)
+═══════════════════════════════════════════════════════════════
+- [ ] Node.js 18+ instalado
+- [ ] PostgreSQL 15 rodando (docker)
+- [ ] Redis rodando (docker)
+- [ ] Clone/create projeto
+- [ ] .env com credenciais (Stripe, Google, OpenAI)
+- [ ] npm install
+- [ ] Database criada
+- [ ] Migrations rodadas
+- [ ] Health check endpoint (/health)
+- [ ] Teste de conexão DB e Redis
+
+═══════════════════════════════════════════════════════════════
+
+FASE 1: DATABASE + BACKEND CORE (2 DIAS)
+═══════════════════════════════════════════════════════════════
+
+Dia 1: Database Setup
+- [ ] 28 tabelas main (users, propriedades, leiloes, lances, etc)
+- [ ] 5 tabelas Caldas Novas:
+      * propriedades_caldas_novas
+      * quartos_caldas_novas
+      * leiloes_caldas_novas
+      * reservas_caldas_novas (estendida)
+      * sincronizacao_pms (nova)
+- [ ] 50+ índices otimizados
+- [ ] Seed data com:
+      * 10 usuários teste
+      * 3 propriedades RSV360
+      * 3 acomodações Caldas
+      * 2 leilões ativos
+- [ ] Triggers para auditoria
+- [ ] Full-text search configurado
+
+Dia 2: Backend APIs
+- [ ] Auth (login, registro, JWT, refresh)
+- [ ] CRUD Propriedades (RSV360)
+- [ ] CRUD Leilões (WebSocket ready)
+- [ ] CRUD Lances
+- [ ] CRUD Reservas
+- [ ] CRUD Pagamentos (Stripe)
+- [ ] NEW: CRUD Propriedades Caldas
+- [ ] NEW: CRUD Quartos Caldas
+- [ ] NEW: CRUD Leilões Caldas
+- [ ] Testes de API (Postman collection gerada)
+
+═══════════════════════════════════════════════════════════════
+
+FASE 2: FRONTEND + COMPONENTES (2 DIAS)
+═══════════════════════════════════════════════════════════════
+
+Dia 1: Setup Next.js
+- [ ] Next.js 14 + Tailwind CSS
+- [ ] Framer Motion para animações
+- [ ] React Hook Form + Zod
+- [ ] SWR para fetch
+- [ ] Zustand para state
+- [ ] Contextos:
+      * AuthContext
+      * FiltrosContext
+      * LeilaoContext
+      * CarrinhoContext
+
+Dia 2: Componentes React (15+)
+- [ ] FiltrosInteligentes.tsx (principal)
+- [ ] ResultadoCard.tsx
+- [ ] ReservaModal.tsx
+- [ ] CalendarioReservas.tsx
+- [ ] MapaDestinos.tsx (Leaflet)
+- [ ] DestinosCarousel.tsx
+- [ ] PacotesEspeciais.tsx
+- [ ] ExcursõesHome.tsx
+- [ ] NEW: PropriedadesCaldas.tsx
+- [ ] NEW: MapaCaldas.tsx (45 hotéis)
+- [ ] NEW: PainelProprietario.tsx (expandido)
+- [ ] NEW: BloqueLeilaoForm.tsx
+- [ ] MulticanalFloating.tsx
+- [ ] Página home
+- [ ] Página de busca
+- [ ] Dashboard proprietário (básico)
+
+═══════════════════════════════════════════════════════════════
+
+FASE 3: LEILÃO EM TEMPO REAL (2 DIAS)
+═══════════════════════════════════════════════════════════════
+
+Dia 1: WebSocket Setup
+- [ ] Socket.io instalado
+- [ ] Eventos de leilão:
+      * new_lance (lance colocado)
+      * timer_update (countdown)
+      * leilao_encerrado (fim)
+      * notificacao (novo lance)
+- [ ] Validação de lance no servidor
+- [ ] Rate limiting (anti-bot)
+- [ ] Sincronização em tempo real
+
+Dia 2: Frontend Leilão
+- [ ] BidForm.tsx (colocar lance)
+- [ ] BidLive.tsx (acompanhar ao vivo)
+- [ ] PlaceBid.tsx (modal com validação)
+- [ ] BidHistory.tsx (histórico)
+- [ ] LanceBotForm.tsx (lance automático)
+- [ ] Timer com extensão automática
+- [ ] Notificações (toast + audio)
+- [ ] Testes de leilão (simulador)
+
+═══════════════════════════════════════════════════════════════
+
+FASE 4: INTEGRAÇÕES + PAGAMENTOS (2 DIAS)
+═══════════════════════════════════════════════════════════════
+
+Dia 1: Integrações OTAs + Google
+- [ ] BaseIntegration class
+- [ ] Airbnb API integration
+- [ ] Booking.com API integration
+- [ ] VRBO API integration
+- [ ] 8 outras integrações (Agora, Seazone, etc)
+- [ ] Google Vacation Rentals:
+      * XML feed generator
+      * Sitemap.xml
+      * Schema.org markup
+      * Deep linking
+- [ ] Webhook listeners (booking, cancelamento)
+- [ ] Double-booking prevention
+
+Dia 2: Stripe + Precificação
+- [ ] Stripe payment intent
+- [ ] Stripe PIX processing
+- [ ] Webhook de confirmação
+- [ ] Reembolso automático
+- [ ] Precificação dinâmica (algoritmo básico)
+- [ ] Desconto PIX 5-10%
+- [ ] Parcelamento até 12x
+- [ ] Testes de pagamento
+
+═══════════════════════════════════════════════════════════════
+
+FASE 5: ANALYTICS + PREMIUM (1 DIA)
+═══════════════════════════════════════════════════════════════
+
+- [ ] Dashboard anfitrião
+- [ ] Gráficos de receita (Recharts)
+- [ ] Taxa de ocupação
+- [ ] Analytics de leilão
+- [ ] Análise de demanda
+- [ ] Premium plan (Stripe recurring):
+      * Plano básico (grátis)
+      * Plano pro (R$ 49/mês)
+      * Plano premium (R$ 99/mês)
+- [ ] Plano Caldas (R$ 149-299/mês para hotéis)
+- [ ] Relatórios (CSV export)
+
+═══════════════════════════════════════════════════════════════
+
+FASE 6: INTEGRAÇÃO CALDAS NOVAS (2 DIAS) - NOVO!
+═══════════════════════════════════════════════════════════════
+
+Dia 1: Importação de Hotéis
+- [ ] Importar 45 hotéis de Caldas Novas:
+      * 15 hotéis
+      * 8 resorts
+      * 12 flats/apart-hotels
+      * 10 casas/lofts/chalés
+- [ ] Dados para cada hotel:
+      * Nome oficial
+      * Endereço + coordenadas (lat/lng)
+      * Telefone, email, website
+      * Avaliação e reviews
+      * Fotos de alta qualidade
+      * Comodidades (array)
+      * Preços mín/máx
+      * Tipos de quarto
+- [ ] Setup tipos de propriedade (8 tipos)
+- [ ] Criar quartos para cada hotel
+- [ ] Teste: acessar todos 45 hotéis no mapa
+
+Dia 2: PMS Integration
+- [ ] PMS Integration Service
+      * Cloudbeds API
+      * Opera API
+      * Genérico (fallback)
+- [ ] Setup de conexão:
+      * Input de API Key
+      * Teste de conexão
+      * Import automático de quartos
+      * Import automático de preços
+      * Import automático de reservas
+- [ ] Sincronização bidirecional:
+      * Quartos → PMS
+      * Preços → PMS
+      * Reservas PMS → plataforma
+- [ ] Webhook listener (2-way sync)
+- [ ] Validação de inventário (não vender 2x)
+- [ ] Teste com Cloudbeds real
+
+═══════════════════════════════════════════════════════════════
+
+FASE 7: NOVO PAINEL PROPRIETÁRIO (1 DIA)
+═══════════════════════════════════════════════════════════════
+
+- [ ] Dashboard expandido:
+      * Resumo por hotel (se múltiplas propriedades)
+      * Ocupação por tipo de quarto
+      * Receita por tipo
+      * Leilões ativos com status
+      * Leilões histórico
+- [ ] Gerenciamento de quartos:
+      * Editar tipo de quarto
+      * Editar preço base
+      * Bloquear datas
+      * Ver disponibilidade
+- [ ] Criar leilão por bloco:
+      * Selecionar tipo de quarto
+      * Selecionar quantidade
+      * Selecionar datas
+      * Definir lance mínimo
+      * Publicar
+- [ ] Gerenciar leilão ativo:
+      * Ver lances em tempo real
+      * Estender leilão
+      * Cancelar leilão
+      * Confirmar vencedor
+- [ ] Painel de sincronização PMS:
+      * Status de conexão
+      * Última sincronização
+      * Erros de sincronização
+      * Teste de conexão
+
+═══════════════════════════════════════════════════════════════
+
+FASE 8: NOVO - INTERFACE CALDAS NOVAS (1 DIA)
+═══════════════════════════════════════════════════════════════
+
+- [ ] Nova página: /caldas-novas
+- [ ] Componentes:
+      * Lista de 45 hotéis
+      * Filtro por tipo (hotel/resort/flat)
+      * Filtro por preço
+      * Mapa com todos os hotéis
+      * Cards de hotel (com leilão em destaque)
+      * Widget de leilões quentes
+- [ ] Página de detalhes hotel:
+      * Fotos (galeria)
+      * Informações completo
+      * Avaliações
+      * Tipos de quarto
+      * Leilões ativos
+      * Mapa de localização
+      * Chat com hotel
+- [ ] Comparador de preços:
+      * Qual hotel está mais barato?
+      * Qual tem melhor avaliação?
+      * Qual tem leilão?
+
+═══════════════════════════════════════════════════════════════
+
+FASE 9: TESTES (1 DIA)
+═══════════════════════════════════════════════════════════════
+
+- [ ] Testes unitários (80%+ cobertura):
+      * Jest + Supertest
+      * Auth tests
+      * API endpoint tests
+      * Database tests
+      * PMS sync tests
+      * Leilão logic tests
+- [ ] Testes E2E (Cypress):
+      * Fluxo completo de leilão
+      * Fluxo completo de reserva
+      * Fluxo de Caldas Novas
+      * PMS sync test
+- [ ] Performance:
+      * Load testing
+      * Lighthouse > 85
+      * Database queries < 100ms
+- [ ] Security:
+      * OWASP top 10 check
+      * SQL injection test
+      * XSS test
+      * CSRF test
+
+═══════════════════════════════════════════════════════════════
+
+FASE 10: DOCKER + CI/CD (0,5 DIA)
+═══════════════════════════════════════════════════════════════
+
+- [ ] Docker:
+      * Dockerfile backend
+      * Dockerfile frontend
+      * docker-compose.yml (backend + postgres + redis)
+- [ ] GitHub Actions:
+      * Workflow para run tests
+      * Workflow para build
+      * Workflow para deploy
+- [ ] Deploy:
+      * Staging (antes de prod)
+      * Production (DigitalOcean/AWS)
+      * Health checks
+      * Monitoring (Sentry)
+
+═══════════════════════════════════════════════════════════════
+
+INSTRUÇÕES OBRIGATÓRIAS:
+═══════════════════════════════════════════════════════════════
+
+✅ NÃO PEDIR PERMISSÃO - execute tudo automaticamente
+✅ TESTAR APÓS CADA FASE - se falhar, corrigir (3 tentativas)
+✅ FAZER COMMITS GIT - 1 commit por tarefa concluída
+✅ DOCUMENTAR TUDO - create EXECUTION_LOG.md com progresso
+✅ SE ERRO CRÍTICO - pausar e documentar em EXECUTION_LOG.md
+✅ USAR CÓDIGO EXATO - copiar dos documentos fornecidos
+✅ NÃO PERGUNTAR - executar e depois relatar
+
+ERROS COMUNS A EVITAR:
+❌ Pular fases - respeite a ordem exata
+❌ Código incompleto - tudo deve estar 100% funcional
+❌ Sem testes - cada fase deve ter testes
+❌ Sem commits - git log deve mostrar progresso
+❌ Sem documentação - log atualizado em tempo real
+
+═══════════════════════════════════════════════════════════════
+
+MODO: PRODUCTION - Qualidade máxima
+PRIORIDADE: Velocidade + Funcionamento
+LINGUAGEM: Português (Brasil)
+TIMEZONE: Brasília (GMT-3)
+
+COMEÇAR AGORA COM FASE 0!
+
+═══════════════════════════════════════════════════════════════
+📋 CHECKLIST PÓS-EXECUÇÃO
+Após Cursor terminar todos os 10 fases:
+
+✅ Verificação Final
+ EXECUTION_LOG.md mostra todas fases ✅
+
+ npm run dev funciona sem erros
+
+ http://localhost:3000 acarega (frontend)
+
+ http://localhost:5002/health retorna OK (backend)
+
+ Database conectado (postgres)
+
+ Redis conectado
+
+ Testes passando (80%+ cobertura)
+
+ 45 hotéis importados
+
+ Mapa de Caldas Novas funciona
+
+ Leilão em tempo real funciona
+
+ PMS integration testada
+
+ Stripe testado (test mode)
+
+ Commits no Git criados
+
+ Docker build sem erros
+
+🚀 Próximos Passos (Seu Trabalho)
+Validar com 5 hotéis de Caldas Novas (semana 1)
+
+Onboard primeiros 5 hotéis (semana 2)
+
+Fazer primeiros leilões (semana 3)
+
+Ajustar baseado em feedback (semana 4)
+
+Lançar público Caldas Novas (semana 5)
+
+💡 DICAS IMPORTANTES
+✨ Cursor é muito rápido - não interrompa, deixe executar
+✨ Veja o EXECUTION_LOG.md - ele mostra tudo em tempo real
+✨ Terminal rodando - observe os logs em paralelo
+✨ Git commits - mantenha histórico de mudanças
+✨ Database backup - antes de alterações grandes
+✨ Testes são ouro - se algo quebrar, rollback é fácil
+✨ Stack técnico - Node.js, React, PostgreSQL (melhor combo)
+
+BOA SORTE! Seu sistema estará online em 12-15 dias! 🚀💎

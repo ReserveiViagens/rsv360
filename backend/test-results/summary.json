@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-01-22T22:02:14.714Z",
+  "results": {
+    "unit": false,
+    "integration": false,
+    "e2e": false,
+    "performance": false,
+    "security": false
+  },
+  "summary": {
+    "total": 5,
+    "passed": 0,
+    "failed": 5,
+    "successRate": "0.00%"
+  }
+}

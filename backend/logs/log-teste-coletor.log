@@ -1,0 +1,27 @@
+# Log de teste para o Coletor SRE - RSV360
+# Este arquivo contém erros simulados para validar o monitoramento.
+# Pode ser removido após os testes.
+
+2025-01-28T10:00:00 [INFO] Servidor iniciando na porta 5000
+2025-01-28T10:00:01 [INFO] Conectando ao PostgreSQL...
+2025-01-28T10:00:02 [INFO] Conexão estabelecida
+
+2025-01-28T10:00:05 [ERROR] ECONNREFUSED - Falha ao conectar no microserviço core-api (porta 6000)
+2025-01-28T10:00:06 [WARN] Tentando reconexão em 3 segundos...
+
+2025-01-28T10:00:10 [ERROR] Exception: TypeError - Cannot read property 'id' of undefined
+    at UserController.getProfile (controllers/UserController.js:45)
+    at Layer.handle (node_modules/express/lib/router/layer.js:95)
+
+2025-01-28T10:00:15 [CRITICAL] Banco de dados não responde - timeout após 30s
+2025-01-28T10:00:16 [ERROR] failed to fetch /api/hotels - 500 Internal Server Error
+
+2025-01-28T10:00:20 [INFO] Requisição GET /health - 200 OK
+2025-01-28T10:00:21 [ERROR] EADDRINUSE: porta 6005 já está em uso pelo processo 12345
+
+2025-01-28T10:00:25 [ERROR] unhandledRejection: Promise rejeitada em BookingService.create
+2025-01-28T10:00:26 [WARN] Stack: Error: Invalid date format
+    at BookingService.validateDates (services/BookingService.js:78)
+
+2025-01-28T10:00:30 [INFO] Sistema operacional - fim do log de teste
+# Remova ou comente as linhas acima após validar o Coletor SRE

@@ -1,0 +1,25 @@
+# RSV360 – Módulo Excursões em Grupo (100% Brasileiro)
+
+**Status:** 100% funcional  
+**Identidade:** Ônibus Água Termal — Caldas Novas — PIX — Parcelamento 12x  
+**Não é plágio** — 100% diferente do Airbnb Experiences
+
+## Funcionalidades
+- Criar excursão (ônibus/van)
+- Participar de excursões existentes
+- Divisão automática de custos
+- Votação de roteiro no grupo
+- Chat em tempo real
+- Desconto PIX para grupos
+
+## Arquivos criados
+/components/excursões/ExcursõesHome.tsx
+/components/excursões/ExcursaoCard.tsx
+/app/page.tsx (já importado)
+
+## Próximos passos
+1. Criar a pasta `components/excursões`
+2. Colar os 3 arquivos acima
+3. Rodar `npm run dev`
+
+Pronto! Você já tem o módulo de excursões rodando em menos de 2 minutos.

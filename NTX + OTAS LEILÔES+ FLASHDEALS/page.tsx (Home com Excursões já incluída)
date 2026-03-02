@@ -1,0 +1,15 @@
+// app/page.tsx
+import { DestinosCarousel } from '@/components/home/DestinosCarousel'
+import { PacotesEspeciais } from '@/components/home/PacotesEspeciais'
+import { ExcursõesHome } from '@/components/excursões/ExcursõesHome'
+
+export default function Home() {
+  return (
+    <>
+      <DestinosCarousel />
+      <PacotesEspeciais />
+      <ExcursõesHome />        {/* ← NOVIDADE */}
+      {/* resto da página */}
+    </>
+  )
+}

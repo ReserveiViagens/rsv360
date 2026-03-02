@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rsv-gen2
+  labels:
+    name: rsv-gen2
+    environment: production
+

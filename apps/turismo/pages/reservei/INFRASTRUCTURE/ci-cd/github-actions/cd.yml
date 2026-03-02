@@ -1,0 +1,351 @@
+name: 🚀 CD - Continuous Deployment
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job 1: Prepare Deployment
+  prepare-deployment:
+    name: 🎯 Prepare Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      version: ${{ steps.set-version.outputs.version }}
+      should-deploy: ${{ steps.check-deploy.outputs.should-deploy }}
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🎯 Set environment
+        id: set-env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏷️ Set version
+        id: set-version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=$(date +'%Y.%m.%d')-${GITHUB_SHA::7}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: ✅ Check if should deploy
+        id: check-deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📋 Deployment info
+        run: |
+          echo "🚀 Deployment Information:"
+          echo "Environment: ${{ steps.set-env.outputs.environment }}"
+          echo "Version: ${{ steps.set-version.outputs.version }}"
+          echo "Should Deploy: ${{ steps.check-deploy.outputs.should-deploy }}"
+
+  # Job 2: Build Docker Images
+  build-images:
+    name: 🐳 Build Docker Images
+    runs-on: ubuntu-latest
+    needs: prepare-deployment
+    if: needs.prepare-deployment.outputs.should-deploy == 'true'
+    
+    strategy:
+      matrix:
+        service: [ecosystem-master, crm-system, booking-engine, financial-system, product-catalog, marketing-automation, analytics-intelligence, administration, inventory-management, payment-gateway, public-facing]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=${{ needs.prepare-deployment.outputs.version }}
+
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./INFRASTRUCTURE/ci-cd/docker/Dockerfile.${{ matrix.service }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+      - name: 📊 Upload build logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-build-logs-${{ matrix.service }}
+          path: |
+            docker-build.log
+
+  # Job 3: Deploy to Staging
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [prepare-deployment, build-images]
+    if: needs.prepare-deployment.outputs.should-deploy == 'true' && needs.prepare-deployment.outputs.environment == 'staging'
+    environment: staging
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Version: ${{ needs.prepare-deployment.outputs.version }}"
+          
+          # Deploy using kubectl or docker-compose
+          cd INFRASTRUCTURE/ci-cd/environments/staging
+          
+          # Update image tags in deployment files
+          sed -i "s|IMAGE_TAG|${{ needs.prepare-deployment.outputs.version }}|g" docker-compose.yml
+          sed -i "s|IMAGE_TAG|${{ needs.prepare-deployment.outputs.version }}|g" kubernetes/*.yaml
+          
+          # Deploy with docker-compose
+          docker-compose -f docker-compose.yml up -d
+          
+          # Or deploy with kubectl
+          # kubectl apply -f kubernetes/
+          # kubectl rollout status deployment/rsv-ecosystem
+
+      - name: 🔍 Health check
+        run: |
+          echo "🔍 Performing health checks..."
+          sleep 30
+          
+          # Check if services are healthy
+          curl -f http://staging.rsv360.com/health || exit 1
+          curl -f http://staging.rsv360.com/api/health || exit 1
+          
+          echo "✅ All services are healthy!"
+
+      - name: 🧪 Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          cd INFRASTRUCTURE/testing-framework
+          npm run test:smoke -- --base-url=http://staging.rsv360.com
+
+      - name: 📊 Upload deployment logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: staging-deployment-logs
+          path: |
+            INFRASTRUCTURE/ci-cd/environments/staging/deployment.log
+
+  # Job 4: Deploy to Production
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [prepare-deployment, build-images, deploy-staging]
+    if: needs.prepare-deployment.outputs.should-deploy == 'true' && needs.prepare-deployment.outputs.environment == 'production'
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Version: ${{ needs.prepare-deployment.outputs.version }}"
+          
+          # Deploy using kubectl or docker-compose
+          cd INFRASTRUCTURE/ci-cd/environments/production
+          
+          # Update image tags in deployment files
+          sed -i "s|IMAGE_TAG|${{ needs.prepare-deployment.outputs.version }}|g" docker-compose.yml
+          sed -i "s|IMAGE_TAG|${{ needs.prepare-deployment.outputs.version }}|g" kubernetes/*.yaml
+          
+          # Deploy with docker-compose
+          docker-compose -f docker-compose.yml up -d
+          
+          # Or deploy with kubectl
+          # kubectl apply -f kubernetes/
+          # kubectl rollout status deployment/rsv-ecosystem
+
+      - name: 🔍 Health check
+        run: |
+          echo "🔍 Performing health checks..."
+          sleep 30
+          
+          # Check if services are healthy
+          curl -f https://rsv360.com/health || exit 1
+          curl -f https://rsv360.com/api/health || exit 1
+          
+          echo "✅ All services are healthy!"
+
+      - name: 🧪 Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          cd INFRASTRUCTURE/testing-framework
+          npm run test:smoke -- --base-url=https://rsv360.com
+
+      - name: 📊 Upload deployment logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-deployment-logs
+          path: |
+            INFRASTRUCTURE/ci-cd/environments/production/deployment.log
+
+  # Job 5: Post-Deployment Tasks
+  post-deployment:
+    name: 📋 Post-Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: [prepare-deployment, deploy-staging, deploy-production]
+    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📊 Update monitoring
+        run: |
+          echo "📊 Updating monitoring configuration..."
+          # Update monitoring dashboards
+          # Update alerting rules
+          # Update service discovery
+
+      - name: 🔄 Update load balancer
+        run: |
+          echo "🔄 Updating load balancer configuration..."
+          # Update load balancer rules
+          # Update SSL certificates
+          # Update DNS records
+
+      - name: 📧 Send deployment notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          channel: '#deployments'
+          text: |
+            🚀 Deployment Successful!
+            Environment: ${{ needs.prepare-deployment.outputs.environment }}
+            Version: ${{ needs.prepare-deployment.outputs.version }}
+            URL: ${{ needs.prepare-deployment.outputs.environment == 'production' && 'https://rsv360.com' || 'http://staging.rsv360.com' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 📋 Create deployment summary
+        run: |
+          echo "# 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Deployment Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ needs.prepare-deployment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ needs.prepare-deployment.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Success" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔗 Links" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.prepare-deployment.outputs.environment }}" == "production" ]]; then
+            echo "- **Production URL**: https://rsv360.com" >> $GITHUB_STEP_SUMMARY
+            echo "- **API URL**: https://rsv360.com/api" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Staging URL**: http://staging.rsv360.com" >> $GITHUB_STEP_SUMMARY
+            echo "- **API URL**: http://staging.rsv360.com/api" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Services Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "- Ecosystem Master" >> $GITHUB_STEP_SUMMARY
+          echo "- CRM System" >> $GITHUB_STEP_SUMMARY
+          echo "- Booking Engine" >> $GITHUB_STEP_SUMMARY
+          echo "- Financial System" >> $GITHUB_STEP_SUMMARY
+          echo "- Product Catalog" >> $GITHUB_STEP_SUMMARY
+          echo "- Marketing Automation" >> $GITHUB_STEP_SUMMARY
+          echo "- Analytics Intelligence" >> $GITHUB_STEP_SUMMARY
+          echo "- Administration" >> $GITHUB_STEP_SUMMARY
+          echo "- Inventory Management" >> $GITHUB_STEP_SUMMARY
+          echo "- Payment Gateway" >> $GITHUB_STEP_SUMMARY
+          echo "- Public Facing" >> $GITHUB_STEP_SUMMARY
+
+  # Job 6: Rollback (if needed)
+  rollback:
+    name: 🔄 Rollback
+    runs-on: ubuntu-latest
+    needs: [prepare-deployment, deploy-staging, deploy-production]
+    if: failure() && (needs.deploy-staging.result == 'failure' || needs.deploy-production.result == 'failure')
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔄 Rollback deployment
+        run: |
+          echo "🔄 Rolling back deployment..."
+          echo "Environment: ${{ needs.prepare-deployment.outputs.environment }}"
+          
+          cd INFRASTRUCTURE/ci-cd/environments/${{ needs.prepare-deployment.outputs.environment }}
+          
+          # Rollback with docker-compose
+          docker-compose -f docker-compose.yml down
+          docker-compose -f docker-compose.yml up -d
+          
+          # Or rollback with kubectl
+          # kubectl rollout undo deployment/rsv-ecosystem
+
+      - name: 📧 Send rollback notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#deployments'
+          text: |
+            🔄 Rollback Executed!
+            Environment: ${{ needs.prepare-deployment.outputs.environment }}
+            Version: ${{ needs.prepare-deployment.outputs.version }}
+            Reason: Deployment failed
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,41 @@
+Tarefa 1.1: Configurar OpenWeather API (2h) - Obter API key, adicionar ao .env, verificar integração, criar testes
+Tarefa 1.2: Configurar Google Calendar OAuth (4h) - Criar projeto Google Cloud, habilitar API, criar credenciais, implementar fluxo OAuth
+Tarefa 1.3: Configurar Eventbrite API (2h) - Obter API key, adicionar ao .env, verificar integração, criar testes
+Tarefa 1.4: Melhorar Scraping de Competidores (6h) - Implementar proxies, melhorar rate limiting, adicionar retry logic, User-Agent rotation
+Tarefa 1.5: Testes de Integração Smart Pricing (4h) - Criar testes para OpenWeather, Google Calendar, Eventbrite, testes E2E
+Tarefa 1.6: Criar Página Pública de Leaderboard (4h) - Criar página Next.js, componente PublicLeaderboard, API pública, SEO
+Tarefa 1.7: Adicionar Badges Visuais nas Páginas de Propriedades (3h) - Atualizar PropertyCard, página de detalhes, componente PropertyBadges
+Tarefa 1.8: Integrar Sistema de Comissões com SuperHosts (4h) - Criar serviço de comissões, atualizar cálculo de preços, criar API, atualizar dashboard
+Tarefa 1.9: Sistema de Notificações para Conquista de Badges (3h) - Criar serviço de notificações, integrar com verificação, criar templates, atualizar UI
+Tarefa 1.10: Testes E2E Completos para Viagens em Grupo (6h) - Criar testes para wishlist, split payment, convites, chat, calendário
+Tarefa 1.11: Documentação de Uso para Viagens em Grupo (3h) - Criar guia visual, tutorial de wishlist, tutorial de split payment, FAQ
+Tarefa 1.12: Notificações Push para Eventos de Grupo (4h) - Configurar push notifications, criar serviço, integrar WebSocket, criar componente de permissões
+Tarefa 2.1: Testes de Performance do Modelo ML (4h) - Criar testes de performance, benchmarks, otimizar modelo se necessário
+Tarefa 2.2: Validação A/B de Precificação (6h) - Criar sistema de A/B testing, tabela de experimentos, tracking, dashboard, API
+Tarefa 2.3: Relatórios de ROI de Precificação (4h) - Criar serviço de cálculo de ROI, tabela de histórico, componente de relatório, API
+Tarefa 2.4: Melhorar Ranking Público (Cache e Paginação) (3h) - Implementar cache Redis, paginação, filtros, otimizar queries
+Tarefa 2.5: Testes E2E Completos para Programa Top Host (4h) - Criar testes para verificação, rating, leaderboard, incentivos
+Tarefa 2.6: Guia Visual de Check-in Digital (2h) - Criar guia visual, tutorial de self check-in, FAQ
+Tarefa 2.7: Guia Visual de Sistema de Tickets (2h) - Criar guia visual, tutorial de criação de ticket, FAQ
+Tarefa 2.8: Testes E2E para Smart Pricing End-to-End (4h) - Criar teste de fluxo completo, teste com APIs externas, teste de alertas
+Tarefa 2.9: Expandir Testes de Carga (4h) - Adicionar testes para mais endpoints, criar testes de stress para Smart Pricing, testes de endurance expandidos
+Tarefa 2.10: Executar Deploy Real no K8s (2h) - Verificar cluster, criar secrets, executar deploy, verificar e testar métricas
+Tarefa 3.1: Completar Reserve Now, Pay Later (Klarna) (6h) - Verificar integração, completar checkout, criar UI, criar testes
+Tarefa 3.2: Completar Smart Locks Integration (6h) - Verificar integração, completar geração de códigos, criar UI, criar testes
+Tarefa 3.3: Completar Google Calendar Sync (4h) - Completar OAuth, implementar sincronização bidirecional, criar UI, criar testes
+Tarefa 3.4: Implementar Background Check (8h) - Pesquisar APIs, criar migration, criar serviço, criar API, criar UI, criar testes
+Tarefa 3.5: Melhorar Votação em Tempo Real (3h) - Otimizar WebSocket, adicionar confirmação, melhorar UI, criar testes
+Tarefa 3.6: Melhorar Compartilhamento de Localização (3h) - Melhorar precisão, adicionar privacidade, melhorar UI, criar testes
+Tarefa 4.1: Airbnb Experiences/Services (8h) - Pesquisar API, criar integração, criar UI, documentar
+Tarefa 4.2: AI Search Conversacional (12h) - Integrar com OpenAI, criar serviço, criar UI de chat, criar testes
+Lista de tarefas criada
+Documento criado
+LISTA_TAREFAS_COMPLETA_FINAL.md — Lista com 53 tarefas organizadas por prioridade e fase.
+Resumo da lista
+Por prioridade
+Prioridade	Tarefas	Tempo Estimado
+🔴 CRÍTICA	12 tarefas	~40 horas
+🟡 ALTA	18 tarefas	~60 horas
+🟢 MÉDIA	15 tarefas	~30 horas
+🔵 BAIXA	8 tarefas	~20 horas
+TOTAL	53 tarefas	~150 horas

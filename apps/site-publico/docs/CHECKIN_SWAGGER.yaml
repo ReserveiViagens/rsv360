@@ -1,0 +1,543 @@
+openapi: 3.0.0
+info:
+  title: Check-in Digital API
+  version: 1.0.0
+  description: API para gerenciamento de check-in e check-out digital
+  contact:
+    name: RSV Gen 2 Support
+    email: support@rsvgen2.com
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desenvolvimento
+  - url: https://api.rsvgen2.com/api
+    description: Servidor de produção
+
+tags:
+  - name: Check-in
+    description: Operações de check-in digital
+
+paths:
+  /checkin/request:
+    post:
+      tags:
+        - Check-in
+      summary: Criar solicitação de check-in
+      description: Cria uma nova solicitação de check-in digital
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckinRequest'
+            example:
+              booking_id: 1
+              user_id: 1
+              property_id: 1
+      responses:
+        '200':
+          description: Check-in criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckinResponse'
+        '400':
+          description: Dados inválidos
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro interno do servidor
+
+  /checkin/{id}:
+    get:
+      tags:
+        - Check-in
+      summary: Obter check-in
+      description: Retorna informações de um check-in específico
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Check-in encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckinDetailResponse'
+        '404':
+          description: Check-in não encontrado
+        '401':
+          description: Não autorizado
+
+    put:
+      tags:
+        - Check-in
+      summary: Atualizar check-in
+      description: Atualiza informações de um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckinUpdate'
+      responses:
+        '200':
+          description: Check-in atualizado
+        '404':
+          description: Check-in não encontrado
+
+    delete:
+      tags:
+        - Check-in
+      summary: Cancelar check-in
+      description: Cancela um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Check-in cancelado
+        '404':
+          description: Check-in não encontrado
+
+  /checkin/{id}/qr-code:
+    get:
+      tags:
+        - Check-in
+      summary: Obter QR code
+      description: Retorna o QR code de um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: QR code retornado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QRCodeResponse'
+        '404':
+          description: Check-in não encontrado
+
+    post:
+      tags:
+        - Check-in
+      summary: Regenerar QR code
+      description: Regenera o QR code de um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: QR code regenerado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QRCodeResponse'
+
+  /checkin/{id}/documents:
+    get:
+      tags:
+        - Check-in
+      summary: Listar documentos
+      description: Retorna lista de documentos de um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de documentos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CheckinDocument'
+
+    post:
+      tags:
+        - Check-in
+      summary: Upload de documento
+      description: Faz upload de um documento para o check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document:
+                  type: string
+                  format: binary
+                document_type:
+                  type: string
+                  enum: [rg, cpf, cnh, passport, selfie, proof_address, other]
+      responses:
+        '200':
+          description: Documento enviado
+        '400':
+          description: Dados inválidos
+
+  /checkin/{id}/verify:
+    post:
+      tags:
+        - Check-in
+      summary: Verificar documentos e processar check-in
+      description: Verifica documentos e processa o check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Check-in processado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckinProcessedResponse'
+        '400':
+          description: Documentos não verificados
+
+  /checkin/{id}/checkout:
+    post:
+      tags:
+        - Check-in
+      summary: Processar check-out
+      description: Processa o check-out de um check-in
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        '200':
+          description: Check-out processado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+
+  /checkin/scan:
+    post:
+      tags:
+        - Check-in
+      summary: Escanear QR code
+      description: Escaneia um QR code e retorna informações do check-in
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qr_code_data:
+                  type: string
+                  description: Dados do QR code escaneado
+      responses:
+        '200':
+          description: Check-in encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        '404':
+          description: Check-in não encontrado
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CheckinRequest:
+      type: object
+      required:
+        - booking_id
+        - user_id
+        - property_id
+      properties:
+        booking_id:
+          type: integer
+        user_id:
+          type: integer
+        property_id:
+          type: integer
+        metadata:
+          type: object
+
+    CheckinUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, documents_pending, verified, checked_in, checked_out, cancelled]
+        metadata:
+          type: object
+
+    CheckinResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/DigitalCheckin'
+
+    CheckinDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/CheckinDetail'
+
+    DigitalCheckin:
+      type: object
+      properties:
+        id:
+          type: integer
+        booking_id:
+          type: integer
+        user_id:
+          type: integer
+        property_id:
+          type: integer
+        check_in_code:
+          type: string
+        qr_code:
+          type: string
+        qr_code_url:
+          type: string
+        status:
+          type: string
+          enum: [pending, documents_pending, verified, checked_in, checked_out, cancelled]
+        check_in_at:
+          type: string
+          format: date-time
+        check_out_at:
+          type: string
+          format: date-time
+        documents_verified:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CheckinDetail:
+      allOf:
+        - $ref: '#/components/schemas/DigitalCheckin'
+        - type: object
+          properties:
+            documents:
+              type: array
+              items:
+                $ref: '#/components/schemas/CheckinDocument'
+            access_codes:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccessCode'
+            inspections:
+              type: array
+              items:
+                $ref: '#/components/schemas/Inspection'
+
+    CheckinDocument:
+      type: object
+      properties:
+        id:
+          type: integer
+        checkin_id:
+          type: integer
+        document_type:
+          type: string
+          enum: [rg, cpf, cnh, passport, selfie, proof_address, other]
+        document_url:
+          type: string
+        document_name:
+          type: string
+        is_verified:
+          type: boolean
+        verified_at:
+          type: string
+          format: date-time
+        extracted_data:
+          type: object
+
+    AccessCode:
+      type: object
+      properties:
+        id:
+          type: integer
+        checkin_id:
+          type: integer
+        code_type:
+          type: string
+          enum: [qr, smart_lock, pin, nfc, other]
+        code:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        used:
+          type: boolean
+
+    Inspection:
+      type: object
+      properties:
+        id:
+          type: integer
+        checkin_id:
+          type: integer
+        inspection_type:
+          type: string
+          enum: [before_checkin, after_checkout]
+        photos:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+        damages:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    QRCodeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            qr_code:
+              type: string
+            qr_code_url:
+              type: string
+
+    CheckinProcessedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+            documents_verified:
+              type: boolean
+            access_codes:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccessCode'
+
+    CheckoutRequest:
+      type: object
+      properties:
+        notes:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+        damages:
+          type: string
+
+    CheckoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+            check_out_at:
+              type: string
+              format: date-time
+
+    ScanResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            checkin:
+              $ref: '#/components/schemas/DigitalCheckin'
+            booking:
+              type: object
+            user:
+              type: object
+

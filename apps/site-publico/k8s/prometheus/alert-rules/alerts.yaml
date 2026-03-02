@@ -1,0 +1,308 @@
+groups:
+  - name: rsv_gen2_application_alerts
+    interval: 30s
+    rules:
+      # HTTP Error Rate
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status_code=~"4..|5.."}[5m]))
+            /
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Alta taxa de erro HTTP detectada"
+          description: "Taxa de erro está acima de 5% por mais de 5 minutos. Taxa atual: {{ $value | humanizePercentage }}"
+
+      # High Latency
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Latência HTTP alta detectada"
+          description: "Latência p95 está acima de 1s por mais de 5 minutos. Latência atual: {{ $value }}s"
+
+      # Service Down
+      - alert: ServiceDown
+        expr: up{job=~"rsv-gen2.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "Serviço {{ $labels.job }} indisponível"
+          description: "O serviço {{ $labels.job }} está down há mais de 1 minuto"
+
+      # High Request Rate
+      - alert: HighRequestRate
+        expr: |
+          sum(rate(http_requests_total[5m])) > 1000
+        for: 5m
+        labels:
+          severity: info
+          component: application
+        annotations:
+          summary: "Alta taxa de requisições"
+          description: "Taxa de requisições está acima de 1000 req/s por mais de 5 minutos. Taxa atual: {{ $value }} req/s"
+
+  - name: rsv_gen2_infrastructure_alerts
+    interval: 30s
+    rules:
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Uso de CPU alto"
+          description: "Uso de CPU está acima de 80% por mais de 10 minutos. Uso atual: {{ $value }}%"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
+            /
+            node_memory_MemTotal_bytes
+          ) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Uso de memória alto"
+          description: "Uso de memória está acima de 85% por mais de 10 minutos. Uso atual: {{ $value }}%"
+
+      # Node.js Heap Memory
+      - alert: HighNodeJSHeapMemory
+        expr: |
+          (
+            nodejs_heap_size_used_bytes
+            /
+            nodejs_heap_size_total_bytes
+          ) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Heap do Node.js alto"
+          description: "Uso do heap do Node.js está acima de 90% por mais de 5 minutos. Uso atual: {{ $value }}%"
+
+      # Event Loop Lag
+      - alert: HighEventLoopLag
+        expr: nodejs_eventloop_lag_seconds > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Event loop lag alto"
+          description: "Event loop lag está acima de 100ms por mais de 5 minutos. Lag atual: {{ $value }}s"
+
+  - name: rsv_gen2_database_alerts
+    interval: 30s
+    rules:
+      # Database Connection Pool Exhausted
+      - alert: DatabaseConnectionPoolExhausted
+        expr: |
+          (
+            db_connections_active
+            /
+            db_pool_size
+          ) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Pool de conexões do banco de dados esgotado"
+          description: "Pool de conexões está acima de 90% por mais de 5 minutos. Uso atual: {{ $value }}%"
+
+      # High Database Query Duration
+      - alert: HighDatabaseQueryDuration
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(db_query_duration_seconds_bucket[5m])) by (le)
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Queries do banco de dados lentas"
+          description: "Latência p95 de queries está acima de 1s por mais de 5 minutos. Latência atual: {{ $value }}s"
+
+      # High Database Error Rate
+      - alert: HighDatabaseErrorRate
+        expr: |
+          (
+            sum(rate(db_query_errors_total[5m]))
+            /
+            sum(rate(db_query_total[5m]))
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Alta taxa de erros no banco de dados"
+          description: "Taxa de erros está acima de 5% por mais de 5 minutos. Taxa atual: {{ $value }}%"
+
+      # Database Connections Waiting
+      - alert: DatabaseConnectionsWaiting
+        expr: db_pool_waiting > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Conexões aguardando no pool"
+          description: "Há mais de 5 conexões aguardando no pool por mais de 5 minutos. Conexões aguardando: {{ $value }}"
+
+  - name: rsv_gen2_redis_alerts
+    interval: 30s
+    rules:
+      # Redis Down
+      - alert: RedisDown
+        expr: redis_operations_total == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "Redis indisponível"
+          description: "Redis não está respondendo há mais de 2 minutos"
+
+      # Low Redis Hit Rate
+      - alert: LowRedisHitRate
+        expr: redis_hit_rate < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Taxa de hit do Redis baixa"
+          description: "Taxa de hit do Redis está abaixo de 70% por mais de 10 minutos. Taxa atual: {{ $value | humanizePercentage }}"
+
+      # High Redis Memory Usage
+      - alert: HighRedisMemoryUsage
+        expr: |
+          (
+            redis_memory_used_bytes
+            /
+            1073741824
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Uso de memória do Redis alto"
+          description: "Uso de memória do Redis está acima de 2GB por mais de 10 minutos. Uso atual: {{ $value }}GB"
+
+      # High Redis Error Rate
+      - alert: HighRedisErrorRate
+        expr: |
+          (
+            sum(rate(redis_operations_total{status="error"}[5m]))
+            /
+            sum(rate(redis_operations_total[5m]))
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Alta taxa de erros no Redis"
+          description: "Taxa de erros do Redis está acima de 5% por mais de 5 minutos. Taxa atual: {{ $value }}%"
+
+  - name: rsv_gen2_business_alerts
+    interval: 30s
+    rules:
+      # High Ticket SLA Breach Rate
+      - alert: HighTicketSLABreachRate
+        expr: |
+          (
+            tickets_sla_breached
+            /
+            tickets_open
+          ) * 100 > 10
+        for: 10m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Alta taxa de violação de SLA de tickets"
+          description: "Taxa de violação de SLA está acima de 10% por mais de 10 minutos. Taxa atual: {{ $value }}%"
+
+      # High Ticket Resolution Time
+      - alert: HighTicketResolutionTime
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(ticket_resolution_time_seconds_bucket[5m])) by (le)
+          ) > 86400
+        for: 1h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Tempo de resolução de tickets alto"
+          description: "Tempo de resolução p95 está acima de 24h por mais de 1 hora. Tempo atual: {{ $value | humanizeDuration }}"
+
+      # High Number of Open Tickets
+      - alert: HighNumberOfOpenTickets
+        expr: tickets_open > 100
+        for: 30m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Número alto de tickets abertos"
+          description: "Há mais de 100 tickets abertos há mais de 30 minutos. Tickets abertos: {{ $value }}"
+
+      # Low Check-in Completion Rate
+      - alert: LowCheckinCompletionRate
+        expr: |
+          (
+            sum(rate(checkins_completed_total[1h]))
+            /
+            sum(rate(checkins_created_total[1h]))
+          ) < 0.8
+        for: 1h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Taxa de conclusão de check-ins baixa"
+          description: "Taxa de conclusão está abaixo de 80% por mais de 1 hora. Taxa atual: {{ $value | humanizePercentage }}"
+
+      # High Payment Failure Rate
+      - alert: HighPaymentFailureRate
+        expr: |
+          (
+            sum(rate(payments_processed_total{status="failed"}[5m]))
+            /
+            sum(rate(payments_processed_total[5m]))
+          ) * 100 > 5
+        for: 10m
+        labels:
+          severity: critical
+          component: business
+        annotations:
+          summary: "Alta taxa de falha em pagamentos"
+          description: "Taxa de falha em pagamentos está acima de 5% por mais de 10 minutos. Taxa atual: {{ $value }}%"
+

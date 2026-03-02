@@ -1,0 +1,171 @@
+{
+  "ecosystem": {
+    "name": "RSV 360° Ecosystem AI",
+    "version": "1.0.0",
+    "description": "Servidor master que integra todos os sistemas da Reservei Viagens",
+    "company": {
+      "name": "Reservei Viagens",
+      "sede": "Rua RP5, Residencial Primavera 2, Caldas Novas, GO",
+      "filial": "Av. Manoel José de Arruda, Porto, Cuiabá, MT",
+      "contacts": {
+        "whatsapp": ["(64) 99319-7555", "(64) 99306-8752", "(65) 99235-1207", "(65) 99204-8814"],
+        "phone": "(65) 2127-0415",
+        "email": "reservas@reserveiviagens.com.br",
+        "website": "reserveiviagens.com.br"
+      },
+      "social": {
+        "instagram": "@reserveiviagens",
+        "facebook": "facebook.com/comercialreservei"
+      },
+      "hours": "Seg-Sex 8h-18h, Sáb 8h-12h"
+    }
+  },
+  "modules": {
+    "ecosystem-master": {
+      "api-gateway": {
+        "port": 3000,
+        "baseUrl": "/api/v1/ecosystem",
+        "rateLimit": {
+          "windowMs": 900000,
+          "max": 100
+        }
+      },
+      "auth-service": {
+        "jwt": {
+          "secret": "rsv-360-ecosystem-secret",
+          "expiresIn": "24h"
+        },
+        "oauth2": {
+          "providers": ["google", "facebook", "linkedin"]
+        }
+      },
+      "notification-hub": {
+        "channels": ["email", "sms", "whatsapp", "push", "in-app"],
+        "websocket": {
+          "port": 3001
+        }
+      }
+    },
+    "business-modules": {
+      "crm-system": {
+        "port": 3002,
+        "features": ["customers", "leads", "opportunities", "contacts"]
+      },
+      "booking-engine": {
+        "port": 3003,
+        "features": ["hotels", "reservations", "availability", "pricing"]
+      },
+      "payment-gateway": {
+        "port": 3004,
+        "providers": ["stripe", "paypal", "mercadopago", "pix"]
+      },
+      "customer-service": {
+        "port": 3005,
+        "features": ["tickets", "chat", "knowledge-base", "faq"]
+      },
+      "marketing-automation": {
+        "port": 3006,
+        "features": ["email-marketing", "sms", "campaigns", "automation"]
+      },
+      "financial-system": {
+        "port": 3007,
+        "features": ["billing", "invoicing", "cash-flow", "reports"]
+      },
+      "product-catalog": {
+        "port": 3008,
+        "features": ["products", "travels", "parks", "attractions"]
+      }
+    },
+    "public-facing": {
+      "website-public": {
+        "port": 3009,
+        "features": ["homepage", "booking", "about", "contact"]
+      },
+      "admin-dashboard": {
+        "port": 3010,
+        "features": ["dashboard", "analytics", "management", "settings"]
+      },
+      "customer-portal": {
+        "port": 3011,
+        "features": ["profile", "bookings", "history", "preferences"]
+      }
+    },
+    "analytics-intelligence": {
+      "business-intelligence": {
+        "port": 3012,
+        "features": ["reports", "dashboards", "kpis", "metrics"]
+      },
+      "ai-recommendations": {
+        "port": 3013,
+        "features": ["personalization", "recommendations", "ml-models"]
+      },
+      "predictive-analytics": {
+        "port": 3014,
+        "features": ["forecasting", "trends", "predictions", "insights"]
+      }
+    }
+  },
+  "integration": {
+    "messageQueue": {
+      "type": "redis",
+      "host": "localhost",
+      "port": 6379
+    },
+    "database": {
+      "primary": {
+        "type": "postgresql",
+        "host": "localhost",
+        "port": 5432,
+        "database": "rsv_ecosystem"
+      },
+      "cache": {
+        "type": "redis",
+        "host": "localhost",
+        "port": 6379
+      }
+    },
+    "external": {
+      "apis": {
+        "google-maps": "AIzaSyB...",
+        "payment-providers": {
+          "stripe": "sk_test_...",
+          "mercadopago": "TEST-..."
+        }
+      }
+    }
+  },
+  "security": {
+    "cors": {
+      "origin": ["http://localhost:3000", "https://reserveiviagens.com.br"],
+      "credentials": true
+    },
+    "helmet": {
+      "contentSecurityPolicy": true,
+      "hsts": true
+    },
+    "rateLimit": {
+      "global": {
+        "windowMs": 900000,
+        "max": 1000
+      },
+      "api": {
+        "windowMs": 900000,
+        "max": 100
+      }
+    }
+  },
+  "monitoring": {
+    "healthCheck": {
+      "interval": 30000,
+      "timeout": 5000
+    },
+    "logging": {
+      "level": "info",
+      "format": "json"
+    },
+    "metrics": {
+      "enabled": true,
+      "endpoint": "/metrics"
+    }
+  }
+}

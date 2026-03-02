@@ -1,0 +1,164 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "João Silva",
+      "email": "joao.silva@example.com",
+      "role": "customer",
+      "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Maria Santos",
+      "email": "maria.santos@example.com",
+      "role": "admin",
+      "created_at": "2024-01-02T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Pedro Oliveira",
+      "email": "pedro.oliveira@example.com",
+      "role": "customer",
+      "created_at": "2024-01-03T00:00:00Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "company_name": "Empresa ABC Ltda",
+      "contact_person": "João Silva",
+      "email": "joao.silva@example.com",
+      "phone": "+55 11 99999-9999",
+      "address": "Rua das Flores, 123, São Paulo, SP"
+    },
+    {
+      "id": 2,
+      "user_id": 3,
+      "company_name": "Comércio XYZ S.A.",
+      "contact_person": "Pedro Oliveira",
+      "email": "pedro.oliveira@example.com",
+      "phone": "+55 21 88888-8888",
+      "address": "Av. Principal, 456, Rio de Janeiro, RJ"
+    }
+  ],
+  "hotels": [
+    {
+      "id": 1,
+      "name": "Hotel RSV Premium",
+      "location": "São Paulo, SP",
+      "description": "Hotel de luxo no centro de São Paulo",
+      "rating": 4.8,
+      "price_per_night": 350.00,
+      "amenities": ["WiFi", "Piscina", "Academia", "Restaurante"]
+    },
+    {
+      "id": 2,
+      "name": "RSV Business Hotel",
+      "location": "Rio de Janeiro, RJ",
+      "description": "Hotel executivo próximo ao centro financeiro",
+      "rating": 4.5,
+      "price_per_night": 280.00,
+      "amenities": ["WiFi", "Business Center", "Restaurante", "Estacionamento"]
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "hotel_id": 1,
+      "room_number": "101",
+      "room_type": "Standard",
+      "capacity": 2,
+      "price_per_night": 350.00,
+      "amenities": ["WiFi", "TV", "Ar Condicionado", "Frigobar"]
+    },
+    {
+      "id": 2,
+      "hotel_id": 1,
+      "room_number": "201",
+      "room_type": "Deluxe",
+      "capacity": 4,
+      "price_per_night": 450.00,
+      "amenities": ["WiFi", "TV", "Ar Condicionado", "Frigobar", "Varanda"]
+    }
+  ],
+  "reservations": [
+    {
+      "id": 1,
+      "hotel_id": 1,
+      "room_id": 1,
+      "guest_name": "João Silva",
+      "guest_email": "joao.silva@example.com",
+      "check_in": "2024-02-01",
+      "check_out": "2024-02-03",
+      "guests": 2,
+      "total_amount": 700.00,
+      "status": "confirmed"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Pacote Turístico São Paulo",
+      "description": "Pacote completo para conhecer São Paulo",
+      "price": 299.99,
+      "category": "Turismo",
+      "stock_quantity": 50,
+      "features": ["City Tour", "Almoço", "Guia Turístico"]
+    },
+    {
+      "id": 2,
+      "name": "Transfer Aeroporto",
+      "description": "Transfer confortável do aeroporto ao hotel",
+      "price": 89.99,
+      "category": "Transporte",
+      "stock_quantity": 100,
+      "features": ["Veículo Executivo", "Motorista Bilíngue"]
+    }
+  ],
+  "invoices": [
+    {
+      "id": 1,
+      "customer_id": 1,
+      "invoice_number": "INV-2024-001",
+      "amount": 700.00,
+      "description": "Reserva Hotel RSV Premium",
+      "due_date": "2024-02-01",
+      "status": "paid"
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "invoice_id": 1,
+      "amount": 700.00,
+      "payment_method": "credit_card",
+      "transaction_id": "TXN_123456789",
+      "status": "completed",
+      "processed_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": 1,
+      "name": "Promoção Verão 2024",
+      "description": "Descontos especiais para o verão",
+      "start_date": "2024-01-01",
+      "end_date": "2024-03-31",
+      "discount_percentage": 20,
+      "status": "active"
+    }
+  ],
+  "leads": [
+    {
+      "id": 1,
+      "source": "Website",
+      "status": "new",
+      "contact_name": "Ana Costa",
+      "contact_email": "ana.costa@example.com",
+      "contact_phone": "+55 11 77777-7777",
+      "interest": "Pacote Turístico",
+      "created_at": "2024-01-10T14:30:00Z"
+    }
+  ]
+}

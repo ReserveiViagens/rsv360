@@ -1,0 +1,902 @@
+[
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/",
+    "name": "Site:/"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/buscar",
+    "name": "Site:/buscar"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/hoteis",
+    "name": "Site:/hoteis"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/hoteis/busca/completa",
+    "name": "Site:/hoteis/busca/completa"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/leiloes",
+    "name": "Site:/leiloes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/flash-deals",
+    "name": "Site:/flash-deals"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/ingressos",
+    "name": "Site:/ingressos"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/atracoes",
+    "name": "Site:/atracoes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/promocoes",
+    "name": "Site:/promocoes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/tickets",
+    "name": "Site:/tickets"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/viagens-grupo",
+    "name": "Site:/viagens-grupo"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/group-travel",
+    "name": "Site:/group-travel"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/booking",
+    "name": "Site:/booking"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/booking/pay-later",
+    "name": "Site:/booking/pay-later"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/minhas-reservas",
+    "name": "Site:/minhas-reservas"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/perfil",
+    "name": "Site:/perfil"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/login",
+    "name": "Site:/login"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/recuperar-senha",
+    "name": "Site:/recuperar-senha"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/contato",
+    "name": "Site:/contato"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/politica-privacidade",
+    "name": "Site:/politica-privacidade"
+  },
+  {
+    "ok": true,
+    "status": 307,
+    "url": "http://localhost:3000/admin/cms",
+    "name": "Site:/admin/cms"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/admin/login",
+    "name": "Site:/admin/login"
+  },
+  {
+    "ok": true,
+    "status": 307,
+    "url": "http://localhost:3000/admin/crm",
+    "name": "Site:/admin/crm"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/dashboard/proprietario",
+    "name": "Site:/dashboard/proprietario"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/dashboard-rsv",
+    "name": "Site:/dashboard-rsv"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/checkin/scan",
+    "name": "Site:/checkin/scan"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/pricing/dashboard",
+    "name": "Site:/pricing/dashboard"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/analytics",
+    "name": "Site:/analytics"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/crm",
+    "name": "Site:/crm"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/loyalty",
+    "name": "Site:/loyalty"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/quality",
+    "name": "Site:/quality"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/cupons",
+    "name": "Site:/cupons"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/fidelidade",
+    "name": "Site:/fidelidade"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/wishlists",
+    "name": "Site:/wishlists"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/group-chats",
+    "name": "Site:/group-chats"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/mensagens",
+    "name": "Site:/mensagens"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/notificacoes",
+    "name": "Site:/notificacoes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/marketplace",
+    "name": "Site:/marketplace"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/insurance",
+    "name": "Site:/insurance"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/onboarding",
+    "name": "Site:/onboarding"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/verification",
+    "name": "Site:/verification"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/trips",
+    "name": "Site:/trips"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/buscar-hosts",
+    "name": "Site:/buscar-hosts"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/hoteis/1",
+    "name": "Site:/hoteis/1"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3000/leiloes/1",
+    "name": "Site:/leiloes/1"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/",
+    "name": "Dash:/"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/login",
+    "name": "Dash:/login"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/register",
+    "name": "Dash:/register"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard",
+    "name": "Dash:/dashboard"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard-master",
+    "name": "Dash:/dashboard-master"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/rsv-360-ecosystem",
+    "name": "Dash:/rsv-360-ecosystem"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/integracoes-apis",
+    "name": "Dash:/integracoes-apis"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/hotels",
+    "name": "Dash:/hotels"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/reservations-rsv",
+    "name": "Dash:/reservations-rsv"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/travel-catalog-rsv",
+    "name": "Dash:/travel-catalog-rsv"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/cotacoes",
+    "name": "Dash:/cotacoes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/financeiro",
+    "name": "Dash:/financeiro"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/pagamentos",
+    "name": "Dash:/pagamentos"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/marketing",
+    "name": "Dash:/marketing"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/analytics-dashboard",
+    "name": "Dash:/analytics-dashboard"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/reports-dashboard",
+    "name": "Dash:/reports-dashboard"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/leiloes",
+    "name": "Dash:/dashboard/leiloes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/leiloes/novo",
+    "name": "Dash:/dashboard/leiloes/novo"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/leiloes/flash-deals",
+    "name": "Dash:/dashboard/leiloes/flash-deals"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/excursoes",
+    "name": "Dash:/dashboard/excursoes"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/viagens-grupo",
+    "name": "Dash:/dashboard/viagens-grupo"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/marketplace",
+    "name": "Dash:/dashboard/marketplace"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/ota-sync",
+    "name": "Dash:/dashboard/ota-sync"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/voice-commerce",
+    "name": "Dash:/dashboard/voice-commerce"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/dashboard/google-hotel-ads",
+    "name": "Dash:/dashboard/google-hotel-ads"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/accommodations/enterprises",
+    "name": "Dash:/accommodations/enterprises"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/accommodations/analytics",
+    "name": "Dash:/accommodations/analytics"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/users",
+    "name": "Dash:/users"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/roles",
+    "name": "Dash:/roles"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/permissions",
+    "name": "Dash:/permissions"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/settings",
+    "name": "Dash:/settings"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/notifications",
+    "name": "Dash:/notifications"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/reviews",
+    "name": "Dash:/reviews"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/vouchers",
+    "name": "Dash:/vouchers"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/giftcards",
+    "name": "Dash:/giftcards"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/subscriptions",
+    "name": "Dash:/subscriptions"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/seo",
+    "name": "Dash:/seo"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/multilingual",
+    "name": "Dash:/multilingual"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/photos",
+    "name": "Dash:/photos"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/videos",
+    "name": "Dash:/videos"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/maps",
+    "name": "Dash:/maps"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/insurance",
+    "name": "Dash:/insurance"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/visa",
+    "name": "Dash:/visa"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/products",
+    "name": "Dash:/products"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/orders",
+    "name": "Dash:/orders"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/inventory",
+    "name": "Dash:/inventory"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/refunds",
+    "name": "Dash:/refunds"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/partners",
+    "name": "Dash:/partners"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/plans",
+    "name": "Dash:/plans"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/upgrades",
+    "name": "Dash:/upgrades"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/workflows",
+    "name": "Dash:/workflows"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/validation",
+    "name": "Dash:/validation"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/documents",
+    "name": "Dash:/documents"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/e-commerce",
+    "name": "Dash:/e-commerce"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/finance",
+    "name": "Dash:/finance"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/sales",
+    "name": "Dash:/sales"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/recommendations",
+    "name": "Dash:/recommendations"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/transport",
+    "name": "Dash:/transport"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/parks",
+    "name": "Dash:/parks"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/loyalty",
+    "name": "Dash:/loyalty"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:3005/rewards",
+    "name": "Dash:/rewards"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/health",
+    "name": "API:/health"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/website/content/hotels",
+    "name": "API:/api/website/content/hotels"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/website/content/promotions",
+    "name": "API:/api/website/content/promotions"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/website/content/attractions",
+    "name": "API:/api/website/content/attractions"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/website/content/tickets",
+    "name": "API:/api/website/content/tickets"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/v1/auctions/active",
+    "name": "API:/api/v1/auctions/active"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5000/api/v1/flash-deals/active",
+    "name": "API:/api/v1/flash-deals/active"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5002/health",
+    "name": "BackendAdmin:health"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6000/health",
+    "name": "MS:6000"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6001/health",
+    "name": "MS:6001"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6002/health",
+    "name": "MS:6002"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6003/health",
+    "name": "MS:6003"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6004/health",
+    "name": "MS:6004"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6005/health",
+    "name": "MS:6005"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6006/health",
+    "name": "MS:6006"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6007/health",
+    "name": "MS:6007"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6008/health",
+    "name": "MS:6008"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6009/health",
+    "name": "MS:6009"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6010/health",
+    "name": "MS:6010"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6011/health",
+    "name": "MS:6011"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6012/health",
+    "name": "MS:6012"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6013/health",
+    "name": "MS:6013"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6014/health",
+    "name": "MS:6014"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6015/health",
+    "name": "MS:6015"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6016/health",
+    "name": "MS:6016"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6017/health",
+    "name": "MS:6017"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6018/health",
+    "name": "MS:6018"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6019/health",
+    "name": "MS:6019"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6020/health",
+    "name": "MS:6020"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6021/health",
+    "name": "MS:6021"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6022/health",
+    "name": "MS:6022"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6023/health",
+    "name": "MS:6023"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6024/health",
+    "name": "MS:6024"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6025/health",
+    "name": "MS:6025"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6026/health",
+    "name": "MS:6026"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6027/health",
+    "name": "MS:6027"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6028/health",
+    "name": "MS:6028"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6029/health",
+    "name": "MS:6029"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6030/health",
+    "name": "MS:6030"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:6031/health",
+    "name": "MS:6031"
+  },
+  {
+    "ok": true,
+    "status": 200,
+    "url": "http://localhost:5050/",
+    "name": "SRE:/"
+  },
+  {
+    "ok": false,
+    "status": 404,
+    "url": "http://localhost:5050/logs",
+    "name": "SRE:/logs"
+  },
+  {
+    "ok": false,
+    "status": 404,
+    "url": "http://localhost:5050/collector",
+    "name": "SRE:/collector"
+  },
+  {
+    "ok": false,
+    "status": 404,
+    "url": "http://localhost:5050/history",
+    "name": "SRE:/history"
+  }
+]

@@ -1,0 +1,194 @@
+# 🗄️ CONFIGURAÇÃO DO BANCO DE DADOS LOCAL
+# RSV 360° ECOSYSTEM - PostgreSQL Local
+
+# Configurações do PostgreSQL
+postgresql:
+  # Configurações básicas
+  version: "15"
+  port: 5432
+  database: "rsv_ecosystem_local"
+  username: "rsvuser"
+  password: "rsvpassword"
+  
+  # Configurações de performance
+  shared_buffers: "256MB"
+  effective_cache_size: "1GB"
+  maintenance_work_mem: "64MB"
+  checkpoint_completion_target: 0.9
+  wal_buffers: "16MB"
+  default_statistics_target: 100
+  
+  # Configurações de conexão
+  max_connections: 100
+  listen_addresses: "*"
+  
+  # Configurações de log
+  log_destination: "stderr"
+  logging_collector: true
+  log_directory: "/var/log/postgresql"
+  log_filename: "postgresql-%Y-%m-%d_%H%M%S.log"
+  log_rotation_age: "1d"
+  log_rotation_size: "100MB"
+  log_min_duration_statement: 1000
+  log_line_prefix: "%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
+  
+  # Configurações de autenticação
+  authentication:
+    method: "md5"
+    local: "trust"
+  
+  # Configurações de backup
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"
+    retention_days: 7
+    path: "/backups"
+  
+  # Configurações de replicação (desabilitada para local)
+  replication:
+    enabled: false
+  
+  # Configurações de SSL (desabilitada para local)
+  ssl:
+    enabled: false
+
+# Configurações específicas do ambiente local
+local_settings:
+  # Configurações de desenvolvimento
+  development:
+    log_statement: "all"
+    log_min_duration_statement: 0
+    debug_print_parse: false
+    debug_print_rewritten: false
+    debug_print_plan: false
+    debug_pretty_print: true
+  
+  # Configurações de teste
+  test:
+    log_statement: "none"
+    log_min_duration_statement: -1
+    shared_preload_libraries: ""
+  
+  # Configurações de produção local
+  production_local:
+    log_statement: "mod"
+    log_min_duration_statement: 1000
+    shared_preload_libraries: "pg_stat_statements"
+    track_activities: true
+    track_counts: true
+    track_io_timing: true
+    track_functions: "all"
+
+# Configurações de extensões
+extensions:
+  - name: "uuid-ossp"
+    version: "1.1"
+  - name: "pg_stat_statements"
+    version: "1.8"
+  - name: "pg_trgm"
+    version: "1.4"
+  - name: "unaccent"
+    version: "1.1"
+
+# Configurações de schemas
+schemas:
+  - name: "public"
+    description: "Schema principal do sistema"
+  - name: "crm"
+    description: "Schema do sistema CRM"
+  - name: "booking"
+    description: "Schema do sistema de reservas"
+  - name: "hotel"
+    description: "Schema do sistema de hotéis"
+  - name: "analytics"
+    description: "Schema do sistema de analytics"
+  - name: "audit"
+    description: "Schema de auditoria"
+
+# Configurações de usuários e permissões
+users:
+  - username: "rsvuser"
+    password: "rsvpassword"
+    superuser: true
+    createdb: true
+    createrole: true
+    login: true
+  
+  - username: "rsv_readonly"
+    password: "rsvreadonly2025"
+    superuser: false
+    createdb: false
+    createrole: false
+    login: true
+    permissions:
+      - "SELECT ON ALL TABLES IN SCHEMA public"
+      - "SELECT ON ALL TABLES IN SCHEMA crm"
+      - "SELECT ON ALL TABLES IN SCHEMA booking"
+      - "SELECT ON ALL TABLES IN SCHEMA hotel"
+      - "SELECT ON ALL TABLES IN SCHEMA analytics"
+
+# Configurações de monitoramento
+monitoring:
+  enabled: true
+  metrics:
+    - "pg_stat_activity"
+    - "pg_stat_database"
+    - "pg_stat_user_tables"
+    - "pg_stat_user_indexes"
+    - "pg_stat_user_functions"
+  
+  alerts:
+    - name: "high_connections"
+      condition: "active_connections > 80"
+      severity: "warning"
+    
+    - name: "slow_queries"
+      condition: "avg_query_time > 5000"
+      severity: "warning"
+    
+    - name: "disk_space"
+      condition: "disk_usage > 80"
+      severity: "critical"
+
+# Configurações de backup automático
+backup_automation:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention:
+    daily: 7
+    weekly: 4
+    monthly: 12
+  
+  destinations:
+    - type: "local"
+      path: "/backups/postgresql"
+    - type: "s3"
+      bucket: "rsv-backups"
+      region: "us-east-1"
+      enabled: false  # Desabilitado para ambiente local
+
+# Configurações de performance tuning
+performance:
+  # Configurações de memória
+  memory:
+    shared_buffers: "256MB"
+    effective_cache_size: "1GB"
+    work_mem: "4MB"
+    maintenance_work_mem: "64MB"
+  
+  # Configurações de I/O
+  io:
+    random_page_cost: 1.1
+    effective_io_concurrency: 200
+    max_worker_processes: 8
+    max_parallel_workers_per_gather: 2
+    max_parallel_workers: 8
+    max_parallel_maintenance_workers: 2
+  
+  # Configurações de query planner
+  planner:
+    default_statistics_target: 100
+    constraint_exclusion: "partition"
+    cursor_tuple_fraction: 0.1
+    from_collapse_limit: 8
+    join_collapse_limit: 8

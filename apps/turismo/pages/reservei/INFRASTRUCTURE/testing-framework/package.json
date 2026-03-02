@@ -1,0 +1,70 @@
+{
+  "name": "rsv-360-testing-framework",
+  "version": "1.0.0",
+  "description": "Framework de testes para o RSV 360° Ecosystem",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=unit-tests",
+    "test:integration": "jest --testPathPattern=integration-tests",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "playwright:install": "playwright install --with-deps",
+    "test:db": "jest --testPathPattern=database-tests",
+    "test:api": "jest --testPathPattern=api-tests"
+  },
+  "dependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "playwright": "^1.40.0",
+    "@playwright/test": "^1.40.0",
+    "pg": "^8.11.3",
+    "axios": "^1.6.0",
+    "faker": "^6.6.6",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/supertest": "^2.0.16",
+    "@types/pg": "^8.10.7",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/unit-tests",
+      "<rootDir>/integration-tests"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
+    ],
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.d.ts",
+      "!**/node_modules/**",
+      "!**/test-data/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test-utils/setup.ts"
+    ],
+    "testTimeout": 30000
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

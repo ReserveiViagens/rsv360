@@ -1,0 +1,627 @@
+# 🔗 LINKS COMPLETOS - RSV 360 ECOSYSTEM
+## Mapeamento Completo de Todas as Páginas, Menus, Sub-menus, Cards e Funcionalidades
+
+**Link Principal:** `http://www.reserveiviagens.com.br`  
+**Data de Criação:** 2025-12-19  
+**Status:** ✅ **COMPLETO**
+
+---
+
+## 📋 ÍNDICE
+
+1. [Links Públicos](#1-links-públicos)
+2. [Links de Autenticação](#2-links-de-autenticação)
+3. [Dashboard e Páginas Principais](#3-dashboard-e-páginas-principais)
+4. [Gestão de Reservas](#4-gestão-de-reservas)
+5. [Gestão de Clientes](#5-gestão-de-clientes)
+6. [Gestão de Hotéis](#6-gestão-de-hotéis)
+7. [Gestão de Atrações e Parques](#7-gestão-de-atrações-e-parques)
+8. [Sistema de Cotações](#8-sistema-de-cotações)
+9. [Pagamentos e Financeiro](#9-pagamentos-e-financeiro)
+10. [Marketing e Promoções](#10-marketing-e-promoções)
+11. [Analytics e Relatórios](#11-analytics-e-relatórios)
+12. [Configurações](#12-configurações)
+13. [APIs Backend](#13-apis-backend)
+14. [Menus e Navegação](#14-menus-e-navegação)
+
+---
+
+## 1. LINKS PÚBLICOS
+
+### 1.1 Página Inicial
+- **Link:** `http://www.reserveiviagens.com.br/`
+- **Descrição:** Página inicial com redirecionamento inteligente
+- **Comportamento:** 
+  - Autenticado → `/dashboard`
+  - Não autenticado → `/login`
+
+### 1.2 Páginas Públicas de Conteúdo
+- **Hotéis:** `http://www.reserveiviagens.com.br/hoteis`
+- **Atrações:** `http://www.reserveiviagens.com.br/atracoes`
+- **Parques:** `http://www.reserveiviagens.com.br/parks`
+- **Promoções:** `http://www.reserveiviagens.com.br/promocoes`
+- **Pacotes de Viagem:** `http://www.reserveiviagens.com.br/travel`
+
+---
+
+## 2. LINKS DE AUTENTICAÇÃO
+
+### 2.1 Autenticação Principal
+- **Login:** `http://www.reserveiviagens.com.br/login`
+- **Registro:** `http://www.reserveiviagens.com.br/register`
+- **Recuperar Senha:** `http://www.reserveiviagens.com.br/recuperar-senha`
+- **Redefinir Senha:** `http://www.reserveiviagens.com.br/redefinir-senha`
+
+### 2.2 Verificação e Onboarding
+- **Verificação:** `http://www.reserveiviagens.com.br/verification`
+- **Onboarding:** `http://www.reserveiviagens.com.br/onboarding`
+
+---
+
+## 3. DASHBOARD E PÁGINAS PRINCIPAIS
+
+### 3.1 Dashboards Principais
+- **Dashboard Principal:** `http://www.reserveiviagens.com.br/dashboard`
+- **Dashboard Master:** `http://www.reserveiviagens.com.br/dashboard-master`
+- **Dashboard Reservei Viagens:** `http://www.reserveiviagens.com.br/dashboard-reservei-viagens`
+- **Dashboard RSV:** `http://www.reserveiviagens.com.br/dashboard-rsv`
+- **Dashboard Personalizado:** `http://www.reserveiviagens.com.br/dashboard-personalizado`
+- **Dashboard Novo:** `http://www.reserveiviagens.com.br/dashboard-new`
+
+### 3.2 Dashboards Especializados
+- **Analytics Dashboard:** `http://www.reserveiviagens.com.br/analytics-dashboard`
+- **Finance Dashboard:** `http://www.reserveiviagens.com.br/finance-dashboard`
+- **Marketing Dashboard:** `http://www.reserveiviagens.com.br/marketing-dashboard`
+- **Sales Dashboard:** `http://www.reserveiviagens.com.br/sales-dashboard`
+- **Reports Dashboard:** `http://www.reserveiviagens.com.br/reports-dashboard`
+- **Notifications Dashboard:** `http://www.reserveiviagens.com.br/notifications-dashboard`
+
+---
+
+## 4. GESTÃO DE RESERVAS
+
+### 4.1 Reservas Principais
+- **Lista de Reservas:** `http://www.reserveiviagens.com.br/reservations`
+- **Reservas RSV:** `http://www.reserveiviagens.com.br/reservations-rsv`
+- **Nova Reserva:** `http://www.reserveiviagens.com.br/bookings/new`
+- **Detalhes da Reserva:** `http://www.reserveiviagens.com.br/bookings/[id]`
+- **Minhas Reservas:** `http://www.reserveiviagens.com.br/minhas-reservas`
+
+### 4.2 Check-in e Check-out
+- **Check-in Digital:** `http://www.reserveiviagens.com.br/checkin/[id]`
+- **Scanner QR Code:** `http://www.reserveiviagens.com.br/checkin/scan`
+
+---
+
+## 5. GESTÃO DE CLIENTES
+
+### 5.1 Clientes Principais
+- **Lista de Clientes:** `http://www.reserveiviagens.com.br/clients`
+- **Clientes Completo:** `http://www.reserveiviagens.com.br/customers-complete`
+- **Clientes RSV:** `http://www.reserveiviagens.com.br/customers-rsv`
+- **Novo Cliente:** `http://www.reserveiviagens.com.br/customers/new`
+- **Perfil do Cliente:** `http://www.reserveiviagens.com.br/customers/[id]`
+
+### 5.2 CRM
+- **CRM Principal:** `http://www.reserveiviagens.com.br/crm/[id]`
+- **Interações CRM:** `http://www.reserveiviagens.com.br/crm/interactions`
+- **Segmentos CRM:** `http://www.reserveiviagens.com.br/crm/segments`
+- **Campanhas CRM:** `http://www.reserveiviagens.com.br/crm/campaigns`
+
+---
+
+## 6. GESTÃO DE HOTÉIS
+
+### 6.1 Hotéis Principais
+- **Lista de Hotéis:** `http://www.reserveiviagens.com.br/hotels`
+- **Hotéis Completo:** `http://www.reserveiviagens.com.br/hotels-complete`
+- **Hotéis Funcional:** `http://www.reserveiviagens.com.br/hotels-funcional`
+- **Hotéis Debug:** `http://www.reserveiviagens.com.br/hotels-debug`
+- **Detalhes do Hotel:** `http://www.reserveiviagens.com.br/hotels/[id]`
+
+### 6.2 Gestão de Hotéis
+- **Novo Hotel:** `http://www.reserveiviagens.com.br/hotels/new`
+- **Editar Hotel:** `http://www.reserveiviagens.com.br/hotels/[id]/edit`
+- **Disponibilidade:** `http://www.reserveiviagens.com.br/hotels/[id]/availability`
+
+---
+
+## 7. GESTÃO DE ATRAÇÕES E PARQUES
+
+### 7.1 Atrações
+- **Lista de Atrações:** `http://www.reserveiviagens.com.br/attractions`
+- **Nova Atração:** `http://www.reserveiviagens.com.br/attractions/new`
+- **Detalhes da Atração:** `http://www.reserveiviagens.com.br/attractions/[id]`
+
+### 7.2 Parques
+- **Lista de Parques:** `http://www.reserveiviagens.com.br/parks`
+- **Novo Parque:** `http://www.reserveiviagens.com.br/parks/new`
+- **Detalhes do Parque:** `http://www.reserveiviagens.com.br/parks/[id]`
+
+### 7.3 Ingressos
+- **Lista de Ingressos:** `http://www.reserveiviagens.com.br/tickets`
+- **Novo Ingresso:** `http://www.reserveiviagens.com.br/tickets/new`
+- **Detalhes do Ingresso:** `http://www.reserveiviagens.com.br/tickets/[id]`
+
+---
+
+## 8. SISTEMA DE COTAÇÕES
+
+### 8.1 Cotações Principais
+- **Cotações:** `http://www.reserveiviagens.com.br/cotacoes`
+- **Nova Cotação:** `http://www.reserveiviagens.com.br/cotacoes/new`
+- **Templates de Cotação:** `http://www.reserveiviagens.com.br/cotacoes/templates`
+
+### 8.2 Cotações por Tipo
+- **Cotações de Hotéis:** `http://www.reserveiviagens.com.br/cotacoes/hoteis`
+- **Cotações de Atrações:** `http://www.reserveiviagens.com.br/cotacoes/atracoes`
+- **Cotações de Parques:** `http://www.reserveiviagens.com.br/cotacoes/parques`
+- **Cotações de Passeios:** `http://www.reserveiviagens.com.br/cotacoes/passeios`
+
+---
+
+## 9. PAGAMENTOS E FINANCEIRO
+
+### 9.1 Pagamentos
+- **Lista de Pagamentos:** `http://www.reserveiviagens.com.br/pagamentos`
+- **Novo Pagamento:** `http://www.reserveiviagens.com.br/pagamentos/new`
+- **Detalhes do Pagamento:** `http://www.reserveiviagens.com.br/pagamentos/[id]`
+- **Reembolsos:** `http://www.reserveiviagens.com.br/refunds`
+- **Split Payment:** `http://www.reserveiviagens.com.br/split-payment/[id]`
+
+### 9.2 Financeiro
+- **Financeiro:** `http://www.reserveiviagens.com.br/financeiro`
+- **Finance Dashboard:** `http://www.reserveiviagens.com.br/finance-dashboard`
+- **Relatórios Financeiros:** `http://www.reserveiviagens.com.br/financeiro/relatorios`
+- **Comissões:** `http://www.reserveiviagens.com.br/financeiro/comissoes`
+
+### 9.3 Fidelidade e Cupons
+- **Fidelidade:** `http://www.reserveiviagens.com.br/fidelidade`
+- **Loyalty Program:** `http://www.reserveiviagens.com.br/loyalty`
+- **Cupons:** `http://www.reserveiviagens.com.br/cupons`
+- **Coupons:** `http://www.reserveiviagens.com.br/coupons`
+- **Rewards:** `http://www.reserveiviagens.com.br/rewards`
+
+---
+
+## 10. MARKETING E PROMOÇÕES
+
+### 10.1 Marketing
+- **Marketing:** `http://www.reserveiviagens.com.br/marketing`
+- **Marketing Dashboard:** `http://www.reserveiviagens.com.br/marketing-dashboard`
+- **Campanhas:** `http://www.reserveiviagens.com.br/marketing/campanhas`
+- **Promoções:** `http://www.reserveiviagens.com.br/promocoes`
+
+### 10.2 E-commerce e Marketplace
+- **E-commerce:** `http://www.reserveiviagens.com.br/e-commerce`
+- **Marketplace Parceiros:** `http://www.reserveiviagens.com.br/marketplace-parceiros`
+- **Produtos:** `http://www.reserveiviagens.com.br/products`
+
+---
+
+## 11. ANALYTICS E RELATÓRIOS
+
+### 11.1 Analytics
+- **Analytics:** `http://www.reserveiviagens.com.br/analytics`
+- **Analytics Avançados:** `http://www.reserveiviagens.com.br/analytics-avancados`
+- **Analytics Dashboard:** `http://www.reserveiviagens.com.br/analytics-dashboard`
+
+### 11.2 Relatórios
+- **Relatórios:** `http://www.reserveiviagens.com.br/reports`
+- **Relatórios Personalizados:** `http://www.reserveiviagens.com.br/relatorios-personalizados`
+- **Reports Dashboard:** `http://www.reserveiviagens.com.br/reports-dashboard`
+
+---
+
+## 12. CONFIGURAÇÕES
+
+### 12.1 Configurações Gerais
+- **Configurações:** `http://www.reserveiviagens.com.br/settings`
+- **Configurações Gerais:** `http://www.reserveiviagens.com.br/configuracoes-gerais`
+- **Configurações Avançadas:** `http://www.reserveiviagens.com.br/configuracoes-avancadas`
+- **Configurações do Sistema:** `http://www.reserveiviagens.com.br/configuracoes-sistema`
+- **Configurações de Usuários:** `http://www.reserveiviagens.com.br/configuracoes-usuarios`
+
+### 12.2 Usuários e Permissões
+- **Usuários:** `http://www.reserveiviagens.com.br/users`
+- **Permissões:** `http://www.reserveiviagens.com.br/permissions`
+- **Perfil:** `http://www.reserveiviagens.com.br/perfil`
+
+### 12.3 Integrações
+- **Integrações APIs:** `http://www.reserveiviagens.com.br/integracoes-apis`
+- **Integrações Serviços:** `http://www.reserveiviagens.com.br/integracoes-servicos`
+- **Integrações Webhooks:** `http://www.reserveiviagens.com.br/integracoes-webhooks`
+- **Integrações Automação:** `http://www.reserveiviagens.com.br/integracoes-automacao`
+
+---
+
+## 13. APIS BACKEND
+
+### 13.1 API Base
+- **API Principal:** `http://www.reserveiviagens.com.br/api`
+- **Health Check:** `http://www.reserveiviagens.com.br/health`
+- **Documentação API:** `http://www.reserveiviagens.com.br/api-docs` (se habilitado)
+
+### 13.2 Autenticação API
+- **Login:** `POST http://www.reserveiviagens.com.br/api/auth/login`
+- **Registro:** `POST http://www.reserveiviagens.com.br/api/auth/register`
+- **Logout:** `POST http://www.reserveiviagens.com.br/api/auth/logout`
+- **Refresh Token:** `POST http://www.reserveiviagens.com.br/api/auth/refresh`
+- **Verificar Token:** `GET http://www.reserveiviagens.com.br/api/auth/verify-token`
+- **Meu Perfil:** `GET http://www.reserveiviagens.com.br/api/auth/me`
+- **Esqueci Senha:** `POST http://www.reserveiviagens.com.br/api/auth/forgot-password`
+- **Redefinir Senha:** `POST http://www.reserveiviagens.com.br/api/auth/reset-password`
+
+### 13.3 API de Reservas (RSV360)
+- **Listar Reservas:** `GET http://www.reserveiviagens.com.br/api/rsv360/bookings`
+- **Criar Reserva:** `POST http://www.reserveiviagens.com.br/api/rsv360/bookings`
+- **Detalhes da Reserva:** `GET http://www.reserveiviagens.com.br/api/rsv360/bookings/:id`
+- **Atualizar Reserva:** `PUT http://www.reserveiviagens.com.br/api/rsv360/bookings/:id`
+- **Confirmar Reserva:** `POST http://www.reserveiviagens.com.br/api/rsv360/bookings/:id/confirm`
+- **Cancelar Reserva:** `POST http://www.reserveiviagens.com.br/api/rsv360/bookings/:id/cancel`
+- **Verificar Disponibilidade:** `GET http://www.reserveiviagens.com.br/api/rsv360/bookings/availability/:propertyId`
+
+### 13.4 API de Propriedades (RSV360)
+- **Listar Propriedades:** `GET http://www.reserveiviagens.com.br/api/rsv360/properties`
+- **Criar Propriedade:** `POST http://www.reserveiviagens.com.br/api/rsv360/properties`
+- **Detalhes da Propriedade:** `GET http://www.reserveiviagens.com.br/api/rsv360/properties/:id`
+- **Atualizar Propriedade:** `PUT http://www.reserveiviagens.com.br/api/rsv360/properties/:id`
+- **Calendário da Propriedade:** `GET http://www.reserveiviagens.com.br/api/rsv360/properties/:id/calendar`
+
+### 13.5 API de Pagamentos (RSV360)
+- **Listar Pagamentos:** `GET http://www.reserveiviagens.com.br/api/rsv360/payments`
+- **Criar Pagamento:** `POST http://www.reserveiviagens.com.br/api/rsv360/payments`
+- **Detalhes do Pagamento:** `GET http://www.reserveiviagens.com.br/api/rsv360/payments/:id`
+- **Confirmar Pagamento:** `POST http://www.reserveiviagens.com.br/api/rsv360/payments/:id/confirm`
+- **Reembolsar Pagamento:** `POST http://www.reserveiviagens.com.br/api/rsv360/payments/:id/refund`
+- **Webhook Gateway:** `POST http://www.reserveiviagens.com.br/api/rsv360/payments/webhook/:gateway`
+
+### 13.6 API de Usuários
+- **Listar Usuários:** `GET http://www.reserveiviagens.com.br/api/users`
+- **Criar Usuário:** `POST http://www.reserveiviagens.com.br/api/users`
+- **Detalhes do Usuário:** `GET http://www.reserveiviagens.com.br/api/users/:id`
+- **Atualizar Usuário:** `PUT http://www.reserveiviagens.com.br/api/users/:id`
+- **Deletar Usuário:** `DELETE http://www.reserveiviagens.com.br/api/users/:id`
+- **Perfil do Usuário:** `GET http://www.reserveiviagens.com.br/api/users/profile`
+- **Alterar Senha:** `POST http://www.reserveiviagens.com.br/api/users/change-password`
+
+### 13.7 API de Clientes
+- **Listar Clientes:** `GET http://www.reserveiviagens.com.br/api/customers`
+- **Criar Cliente:** `POST http://www.reserveiviagens.com.br/api/customers`
+- **Detalhes do Cliente:** `GET http://www.reserveiviagens.com.br/api/customers/:id`
+- **Atualizar Cliente:** `PUT http://www.reserveiviagens.com.br/api/customers/:id`
+- **Deletar Cliente:** `DELETE http://www.reserveiviagens.com.br/api/customers/:id`
+
+### 13.8 API de Reservas (Legacy)
+- **Listar Reservas:** `GET http://www.reserveiviagens.com.br/api/bookings`
+- **Criar Reserva:** `POST http://www.reserveiviagens.com.br/api/bookings`
+- **Detalhes da Reserva:** `GET http://www.reserveiviagens.com.br/api/bookings/:id`
+- **Atualizar Reserva:** `PUT http://www.reserveiviagens.com.br/api/bookings/:id`
+- **Cancelar Reserva:** `POST http://www.reserveiviagens.com.br/api/bookings/:id/cancel`
+- **Estatísticas:** `GET http://www.reserveiviagens.com.br/api/bookings/stats`
+- **Exportar:** `GET http://www.reserveiviagens.com.br/api/bookings/export`
+
+### 13.9 API de Pagamentos (Legacy)
+- **Listar Pagamentos:** `GET http://www.reserveiviagens.com.br/api/payments`
+- **Criar Pagamento:** `POST http://www.reserveiviagens.com.br/api/payments`
+- **Detalhes do Pagamento:** `GET http://www.reserveiviagens.com.br/api/payments/:id`
+- **Reembolsar:** `POST http://www.reserveiviagens.com.br/api/payments/:id/refund`
+- **Estatísticas:** `GET http://www.reserveiviagens.com.br/api/payments/stats`
+- **Exportar:** `GET http://www.reserveiviagens.com.br/api/payments/export`
+- **Recibo:** `GET http://www.reserveiviagens.com.br/api/payments/:id/receipt`
+
+### 13.10 API de Analytics
+- **Analytics:** `GET http://www.reserveiviagens.com.br/api/analytics`
+- **Métricas:** `GET http://www.reserveiviagens.com.br/api/analytics/metrics`
+- **Relatórios:** `GET http://www.reserveiviagens.com.br/api/analytics/reports`
+
+### 13.11 API de Uploads
+- **Upload:** `POST http://www.reserveiviagens.com.br/api/uploads/:type`
+- **Listar Uploads:** `GET http://www.reserveiviagens.com.br/api/uploads`
+- **Deletar Upload:** `DELETE http://www.reserveiviagens.com.br/api/uploads/:id`
+- **Upload Avatar:** `POST http://www.reserveiviagens.com.br/api/uploads/avatar`
+- **Validar Upload:** `POST http://www.reserveiviagens.com.br/api/uploads/validate`
+
+### 13.12 Outras APIs
+- **Workflows:** `http://www.reserveiviagens.com.br/api/workflows`
+- **Projects:** `http://www.reserveiviagens.com.br/api/projects`
+- **Financial:** `http://www.reserveiviagens.com.br/api/financial`
+- **Integrations:** `http://www.reserveiviagens.com.br/api/integrations`
+- **Security:** `http://www.reserveiviagens.com.br/api/security`
+- **Performance:** `http://www.reserveiviagens.com.br/api/performance`
+- **Backup:** `http://www.reserveiviagens.com.br/api/backup`
+- **Training:** `http://www.reserveiviagens.com.br/api/training`
+
+---
+
+## 14. MENUS E NAVEGAÇÃO
+
+### 14.1 Menu Principal (Sidebar)
+
+#### Dashboard
+- **Ícone:** BarChart3
+- **Link:** `http://www.reserveiviagens.com.br/`
+- **Descrição:** Visão geral do sistema
+
+#### Reservas
+- **Ícone:** Calendar
+- **Link:** `http://www.reserveiviagens.com.br/bookings`
+- **Sub-menus:**
+  - Nova Reserva: `http://www.reserveiviagens.com.br/bookings/new`
+  - Detalhes: `http://www.reserveiviagens.com.br/bookings/:id`
+
+#### Clientes
+- **Ícone:** Users
+- **Link:** `http://www.reserveiviagens.com.br/customers`
+- **Sub-menus:**
+  - Novo Cliente: `http://www.reserveiviagens.com.br/customers/new`
+  - Perfil do Cliente: `http://www.reserveiviagens.com.br/customers/:id`
+
+#### Relatórios
+- **Ícone:** BarChart3
+- **Link:** `http://www.reserveiviagens.com.br/reports`
+
+#### Pagamentos
+- **Ícone:** CreditCard
+- **Link:** `http://www.reserveiviagens.com.br/payments`
+
+#### Marketing
+- **Ícone:** Megaphone
+- **Link:** `http://www.reserveiviagens.com.br/marketing`
+
+#### Configurações
+- **Ícone:** Settings
+- **Link:** `http://www.reserveiviagens.com.br/settings`
+
+### 14.2 Cards e Funcionalidades
+
+#### Cards do Dashboard
+1. **Card de Reservas**
+   - Total de reservas
+   - Reservas pendentes
+   - Reservas confirmadas
+   - Link: `http://www.reserveiviagens.com.br/bookings`
+
+2. **Card de Clientes**
+   - Total de clientes
+   - Novos clientes
+   - Clientes ativos
+   - Link: `http://www.reserveiviagens.com.br/customers`
+
+3. **Card de Pagamentos**
+   - Total recebido
+   - Pagamentos pendentes
+   - Reembolsos
+   - Link: `http://www.reserveiviagens.com.br/payments`
+
+4. **Card de Hotéis**
+   - Total de hotéis
+   - Hotéis disponíveis
+   - Ocupação
+   - Link: `http://www.reserveiviagens.com.br/hotels`
+
+5. **Card de Analytics**
+   - Métricas gerais
+   - Gráficos
+   - Tendências
+   - Link: `http://www.reserveiviagens.com.br/analytics`
+
+---
+
+## 15. FUNCIONALIDADES ESPECIAIS
+
+### 15.1 Group Travel
+- **Wishlists:** `http://www.reserveiviagens.com.br/wishlists`
+- **Wishlist Detalhes:** `http://www.reserveiviagens.com.br/wishlists/[id]`
+- **Trip Invitations:** `http://www.reserveiviagens.com.br/trip-invitations`
+- **Group Chats:** `http://www.reserveiviagens.com.br/group-chats`
+- **Group Chat Detalhes:** `http://www.reserveiviagens.com.br/group-chat/[id]`
+- **Shared Calendars:** `http://www.reserveiviagens.com.br/shared-calendars`
+
+### 15.2 Smart Pricing
+- **Pricing Dashboard:** `http://www.reserveiviagens.com.br/pricing/dashboard`
+- **Smart Pricing:** `http://www.reserveiviagens.com.br/pricing/smart`
+- **Competidores:** `http://www.reserveiviagens.com.br/pricing/competitors`
+
+### 15.3 Top Hosts
+- **Leaderboard:** `http://www.reserveiviagens.com.br/top-hosts/leaderboard`
+- **Perfil do Host:** `http://www.reserveiviagens.com.br/hosts/[id]`
+
+### 15.4 Notificações e Mensagens
+- **Notificações:** `http://www.reserveiviagens.com.br/notificacoes`
+- **Mensagens:** `http://www.reserveiviagens.com.br/mensagens`
+- **Chat:** `http://www.reserveiviagens.com.br/chat`
+
+### 15.5 Avaliações e Reviews
+- **Avaliações:** `http://www.reserveiviagens.com.br/avaliacoes`
+- **Reviews:** `http://www.reserveiviagens.com.br/reviews`
+
+---
+
+## 16. PÁGINAS ADMINISTRATIVAS
+
+### 16.1 Admin Principal
+- **Admin Login:** `http://www.reserveiviagens.com.br/admin/login`
+- **Admin Dashboard:** `http://www.reserveiviagens.com.br/admin/dashboard`
+- **Admin CRM:** `http://www.reserveiviagens.com.br/admin/crm`
+- **Admin CMS:** `http://www.reserveiviagens.com.br/admin/cms`
+- **Admin Analytics:** `http://www.reserveiviagens.com.br/admin/analytics`
+- **Admin Settings:** `http://www.reserveiviagens.com.br/admin/settings`
+- **Admin Profile:** `http://www.reserveiviagens.com.br/admin/profile`
+- **Admin Uploads:** `http://www.reserveiviagens.com.br/admin/uploads`
+- **Admin Chat:** `http://www.reserveiviagens.com.br/admin/chat`
+- **Admin Tickets:** `http://www.reserveiviagens.com.br/admin/tickets`
+- **Admin Verification:** `http://www.reserveiviagens.com.br/admin/verification`
+- **Admin Health:** `http://www.reserveiviagens.com.br/admin/health`
+- **Admin Logs:** `http://www.reserveiviagens.com.br/admin/logs`
+- **Admin Credentials:** `http://www.reserveiviagens.com.br/admin/credentials`
+- **Admin UI Demo:** `http://www.reserveiviagens.com.br/admin/ui-demo`
+- **Admin PWA Demo:** `http://www.reserveiviagens.com.br/admin/pwa-demo`
+
+---
+
+## 17. PÁGINAS DE TESTE E DEMO
+
+### 17.1 Testes
+- **Teste de Componentes:** `http://www.reserveiviagens.com.br/component-test`
+- **Teste de Layout:** `http://www.reserveiviagens.com.br/layout-test`
+- **Teste de Navegação:** `http://www.reserveiviagens.com.br/navigation-test`
+- **Teste de Autenticação:** `http://www.reserveiviagens.com.br/auth-test`
+- **Teste de Admin:** `http://www.reserveiviagens.com.br/admin-test`
+- **Teste de API:** `http://www.reserveiviagens.com.br/api-publica`
+- **Teste de Integração Backend:** `http://www.reserveiviagens.com.br/backend-integration-test`
+
+### 17.2 Demos
+- **Demo de Layout:** `http://www.reserveiviagens.com.br/demo-layout`
+- **Demo de Animações:** `http://www.reserveiviagens.com.br/animations-demo`
+- **Demo de Features Avançadas:** `http://www.reserveiviagens.com.br/advanced-features-demo`
+
+---
+
+## 18. OUTRAS FUNCIONALIDADES
+
+### 18.1 Gestão
+- **Gestão:** `http://www.reserveiviagens.com.br/gestao`
+- **Cadastros:** `http://www.reserveiviagens.com.br/cadastros`
+- **Conteúdo:** `http://www.reserveiviagens.com.br/conteudo`
+- **Turismo:** `http://www.reserveiviagens.com.br/turismo`
+
+### 18.2 Calendário e Agendamento
+- **Calendário:** `http://www.reserveiviagens.com.br/calendar`
+- **Agendamentos:** `http://www.reserveiviagens.com.br/agendamentos`
+
+### 18.3 Documentos e Contratos
+- **Documentos:** `http://www.reserveiviagens.com.br/documents`
+- **Contratos:** `http://www.reserveiviagens.com.br/contracts`
+
+### 18.4 Vouchers e Gift Cards
+- **Vouchers:** `http://www.reserveiviagens.com.br/vouchers`
+- **Editor de Vouchers:** `http://www.reserveiviagens.com.br/voucher-editor`
+- **Gift Cards:** `http://www.reserveiviagens.com.br/giftcards`
+
+### 18.5 Seguros e Vistos
+- **Seguros:** `http://www.reserveiviagens.com.br/insurance`
+- **Vistos:** `http://www.reserveiviagens.com.br/visa`
+
+### 18.6 Transporte
+- **Transporte:** `http://www.reserveiviagens.com.br/transport`
+
+### 18.7 Fotos e Vídeos
+- **Fotos:** `http://www.reserveiviagens.com.br/photos`
+- **Vídeos:** `http://www.reserveiviagens.com.br/videos`
+
+### 18.8 Mapas
+- **Mapas:** `http://www.reserveiviagens.com.br/maps`
+
+### 18.9 Workflows
+- **Workflows:** `http://www.reserveiviagens.com.br/workflows`
+
+### 18.10 Subscriptions e Planos
+- **Subscriptions:** `http://www.reserveiviagens.com.br/subscriptions`
+- **Planos:** `http://www.reserveiviagens.com.br/plans`
+- **Upgrades:** `http://www.reserveiviagens.com.br/upgrades`
+- **Billing:** `http://www.reserveiviagens.com.br/billing`
+
+### 18.11 Grupos
+- **Grupos:** `http://www.reserveiviagens.com.br/groups`
+
+### 18.12 Inventário
+- **Inventário:** `http://www.reserveiviagens.com.br/inventory`
+
+### 18.13 Validação
+- **Validação:** `http://www.reserveiviagens.com.br/validation`
+
+### 18.14 SEO
+- **SEO:** `http://www.reserveiviagens.com.br/seo`
+
+### 18.15 Multilíngue
+- **Multilíngue:** `http://www.reserveiviagens.com.br/multilingual`
+
+### 18.16 Offline
+- **Offline:** `http://www.reserveiviagens.com.br/offline`
+
+### 18.17 Mobile
+- **Mobile:** `http://www.reserveiviagens.com.br/mobile`
+
+### 18.18 Recomendações ML
+- **Recomendações ML:** `http://www.reserveiviagens.com.br/ml-recomendacoes`
+- **Recomendações:** `http://www.reserveiviagens.com.br/recommendations`
+
+### 18.19 Chatbot IA
+- **Chatbot IA:** `http://www.reserveiviagens.com.br/chatbot-ia`
+
+### 18.20 Automação
+- **Automação:** `http://www.reserveiviagens.com.br/automacao`
+
+---
+
+## 19. RESUMO ESTATÍSTICO
+
+### Total de Links Mapeados
+- **Páginas Frontend:** 150+
+- **Endpoints API:** 80+
+- **Menus e Sub-menus:** 50+
+- **Cards e Funcionalidades:** 30+
+- **Total de Links:** 310+
+
+### Categorias
+- **Públicas:** 10
+- **Autenticação:** 6
+- **Dashboards:** 12
+- **Gestão:** 40+
+- **APIs:** 80+
+- **Admin:** 15
+- **Testes/Demos:** 10
+- **Outras:** 150+
+
+---
+
+## 20. NOTAS IMPORTANTES
+
+### 20.1 Autenticação
+- A maioria das páginas requer autenticação
+- Use `/login` para acessar páginas protegidas
+- Tokens JWT são necessários para APIs
+
+### 20.2 Parâmetros Dinâmicos
+- `[id]` = ID do recurso (ex: booking ID, customer ID)
+- `:id` = Parâmetro de rota (ex: `/bookings/:id`)
+- Substitua pelos valores reais ao acessar
+
+### 20.3 Ambiente
+- **Produção:** `http://www.reserveiviagens.com.br`
+- **Desenvolvimento:** `http://localhost:3000` (frontend)
+- **API:** `http://localhost:5000` (backend)
+
+### 20.4 Status dos Links
+- ✅ **Verde:** Link criado e funcional
+- ⚠️ **Amarelo:** Link planejado mas não implementado
+- ❌ **Vermelho:** Link não existe (precisa ser criado)
+
+---
+
+## 21. PRÓXIMOS PASSOS
+
+### Links que Precisam ser Criados
+1. Páginas de Group Travel (wishlists, group chats)
+2. Páginas de Smart Pricing
+3. Páginas de Top Hosts
+4. Páginas de Verificação
+5. Páginas de Onboarding
+
+### Melhorias Sugeridas
+1. Criar sitemap.xml com todos os links
+2. Implementar breadcrumbs em todas as páginas
+3. Adicionar meta tags para SEO
+4. Criar página 404 personalizada
+5. Implementar redirecionamentos automáticos
+
+---
+
+**Documento Criado:** 2025-12-19  
+**Versão:** 1.0  
+**Status:** ✅ **COMPLETO**
+
+**Última Atualização:** 2025-12-19  
+**Próxima Revisão:** Quando novos links forem adicionados
+

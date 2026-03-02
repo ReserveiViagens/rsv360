@@ -1,0 +1,151 @@
+
+O Gemini disse
+Excelente escolha tecnológica. Utilizar Leaflet com OpenStreetMap (OSM) é a decisão mais inteligente para o RSV360, pois oferece total controle sobre a camada de personalização das etiquetas sem os custos proibitivos de APIs proprietárias para cada carregamento de mapa.
+
+Abaixo, apresento a lógica completa para criar essas etiquetas de preço dinâmicas, integrando o seu sistema de cores e estados (Regular, Flash Deal, Leilão).
+
+1. Estrutura CSS (Tailwind + Custom)
+Para que as etiquetas tenham aquele visual "Premium", precisamos definir as animações e estilos base:
+
+CSS
+/* No seu globals.css */
+.price-tag-marker {
+  background: none;
+  border: none;
+}
+
+.price-tag-bubble {
+  @apply relative flex items-center justify-center px-3 py-1 rounded-full font-bold text-sm shadow-lg transition-all duration-200 border-2;
+  min-width: 60px;
+}
+
+/* Triângulo do balão */
+.price-tag-bubble::after {
+  content: '';
+  @apply absolute -bottom-1 w-2 h-2 rotate-45;
+  background: inherit;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
+.tag-regular { @apply bg-white text-blue-600 border-blue-100; }
+.tag-flash { @apply bg-orange-500 text-white border-orange-600 animate-pulse; }
+.tag-auction { @apply bg-indigo-600 text-white border-indigo-700; }
+
+.price-tag-bubble:hover {
+  transform: scale(1.1) translateY(-5px);
+  z-index: 1000 !important;
+}
+2. Componente de Mapa Leaflet (React + TypeScript)
+Esta lógica utiliza L.divIcon para injetar o componente React dentro do Leaflet.
+
+TypeScript
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Interface para os dados dos hotéis vindos do seu backend
+interface HotelMarker {
+  id: string;
+  nome: string;
+  lat: number;
+  lng: number;
+  preco: number;
+  tipo: 'regular' | 'flash' | 'auction';
+}
+
+const PriceMarker = ({ hotel }: { hotel: HotelMarker }) => {
+  // Criamos o ícone personalizado usando HTML/Tailwind
+  const customIcon = L.divIcon({
+    className: 'price-tag-marker',
+    html: `
+      <div class="price-tag-bubble tag-${hotel.tipo}">
+        R$ ${hotel.preco}
+      </div>
+    `,
+    iconSize: [70, 30],
+    iconAnchor: [35, 30],
+  });
+
+  return (
+    <Marker position={[hotel.lat, hotel.lng]} icon={customIcon}>
+      <Popup className="rsv-popup">
+        <div className="p-2">
+          <h3 className="font-bold text-gray-900">${hotel.nome}</h3>
+          <p className="text-sm text-gray-600">Melhor oferta para hoje!</p>
+          <button className="mt-2 w-full bg-green-600 text-white py-1 rounded text-xs font-bold">
+            Ver Detalhes
+          </button>
+        </div>
+      </Popup>
+    </Marker>
+  );
+};
+
+export default function CaldasMapa({ hoteis }: { hoteis: HotelMarker[] }) {
+  const centroCaldasNovas: [number, number] = [-17.7444, -48.6250];
+
+  return (
+    <div className="h-[600px] w-full rounded-xl overflow-hidden shadow-2xl">
+      <MapContainer 
+        center={centroCaldasNovas} 
+        zoom={15} 
+        scrollWheelZoom={false}
+        className="h-full w-full"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        
+        {hoteis.map(hotel => (
+          <PriceMarker key={hotel.id} hotel={hotel} />
+        ))}
+      </MapContainer>
+    </div>
+  );
+}
+3. Lógica de Integração com Google Maps (Opcional/Híbrida)
+Se desejar usar o Google Maps como provedor de dados mas manter o Leaflet para renderização, você pode usar o plugin leaflet-google-mutant. No entanto, se quiser usar a API Nativa do Google, a lógica para etiquetas (Advanced Markers) seria:
+
+JavaScript
+// Google Maps JavaScript API (v3.56+)
+async function initMap() {
+  const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+  const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+
+  const map = new Map(document.getElementById("map"), {
+    zoom: 15,
+    center: { lat: -17.7444, lng: -48.6250 },
+    mapId: "RSV360_MAP_ID", // Necessário para Advanced Markers
+  });
+
+  hoteis.forEach((hotel) => {
+    // Criamos o elemento DOM da etiqueta de preço
+    const priceTag = document.createElement("div");
+    priceTag.className = `price-tag-bubble tag-${hotel.tipo}`;
+    priceTag.textContent = `R$ ${hotel.preco}`;
+
+    const marker = new AdvancedMarkerElement({
+      map,
+      position: { lat: hotel.lat, lng: hotel.lng },
+      content: priceTag,
+      title: hotel.nome,
+    });
+
+    marker.addListener("click", () => {
+      // Lógica de abertura do Mini-Card da RSV360
+    });
+  });
+}
+🚀 Por que esta abordagem com Leaflet é a melhor para você?
+Performance: L.divIcon é extremamente leve, permitindo centenas de etiquetas no mapa sem lag.
+
+Customização Total: Você pode usar o seu tailwind.config.js diretamente para estilizar as etiquetas.
+
+Economia: Zero custo de API por visualização de mapa (Tile Layer gratuita do OSM ou MapTiler).
+
+Integração RAG: Quando o usuário clica em um marcador, você pode disparar um evento que carrega o contexto do CaldasAI específico para aquele hotel.
+
+Seu sistema de mapas agora está no mesmo nível visual de gigantes como Airbnb e Booking.com. Pronto para o deploy?

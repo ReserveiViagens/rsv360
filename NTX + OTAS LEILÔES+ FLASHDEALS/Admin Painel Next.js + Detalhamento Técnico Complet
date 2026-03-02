@@ -1,0 +1,215 @@
+PRIORIDADE: Admin Painel Next.js + Detalhamento Técnico Completo
+1. ESCOLHA PRIORITÁRIA: Admin Painel Next.js (100% PRIORIDADE)
+Por que Admin Painel > Mobile App AGORA:
+text
+✅ ADMIN NEXT.JS (PRIORIDADE 1 - MVP 2 semanas)
+├── Receita imediata: Onboarding 10 hotéis Caldas Novas
+├── 80% conversão proprietários → clientes pagantes  
+├── KPIs reais → decisões data-driven
+├── Integração completa 13 módulos RSV360
+└── R$47k/mês garantidos (10 hotéis × R$4,7k ADR)
+
+⏳ MOBILE APP (FASE 2 - Q2 2026)
+├── Dependente de admin funcional
+├── 30% conversão hóspedes (leilões)
+├── R$120k/mês POTENCIAL (scale)
+└── 8 semanas desenvolvimento
+2. KPIs FINANCEIROS ESSENCIAIS - Dashboard Consolidado
+text
+🏨 HOTELARIA PRO - 12 KPIs CRÍTICOS (RevPAR Framework)
+
+PRIMÁRIOS (Sempre Visíveis - Cards Grandes):
+| KPI | Fórmula | Target | Alerta |
+|-----|----------|--------|---------|
+| RevPAR | ADR × Ocupação | R$285 | <R$220 |
+| ADR | Receita/Quartos Vendidos | R$380 | <R$320 |
+| Ocupação | Quartos Ocup./Disponíveis | 78% | <65% |
+| GOPPAR | Lucro Operacional/Quarto | R$210 | <R$160 |
+| TRevPAR | Receita Total/Quarto | R$340 | <R$260 |
+
+SECUNDÁRIOS (Tabela Expandível):
+| MPI | Receita vs Concorrentes | >100% |
+| OTA Mix | % Receita OTAs | <45% |
+| Cancel. Rate | % Cancelamentos | <15% |
+| CPOR | Custo/Quarto Ocupado | <R$120 |
+| Labor % | Folha/Receita | <35% |
+3. Cálculo GOPPAR + TRevPAR - Passo a Passo
+GOPPAR (Gross Operating Profit Per Available Room)
+text
+Fórmula: GOPPAR = (Receita Total - Custos Variáveis) / Quartos Disponíveis
+
+Passo 1: Receita Bruta (7 dias)
+R$ 125k (quartos) + R$ 18k (F&B) + R$ 4k (Spa) = R$147k
+
+Passo 2: Custos Variáveis 
+- Comissões OTA: R$28k (19%)
+- Limpeza: R$15k (R$50/quarto ocup.)
+- Laundry/Energia: R$8k
+TOTAL CUSTOS: R$51k
+
+Passo 3: Lucro Operacional Bruto
+R$147k - R$51k = R$96k
+
+Passo 4: GOPPAR (150 quartos × 7 dias)
+R$96k ÷ (150 × 7) = R$91,11 ← EXCELENTE!
+TRevPAR (Total Revenue Per Available Room)
+text
+Fórmula: TRevPAR = Receita Total / Quartos Disponíveis
+
+Exemplo: R$147k ÷ (150 quartos × 7 dias) = R$140/quarto
+Target Caldas Novas: R$110 (TOP 10% mercado)
+4. MELHORES PRÁTICAS - Integração PMS → Sistema Central
+text
+🏨 PMS → RSV360 CENTRAL DATA (5 Minutos Setup)
+
+1. WEBHOOK PMS → RSV360 (Real-time)
+POST /api/pms/webhook
+{
+"hotelId": "caldas_001",
+"pmsReservationId": "PMS123",
+"guestName": "João Silva",
+"checkin": "2026-01-20",
+"checkout": "2026-01-22",
+"roomNumber": "101",
+"status": "CHECKED_IN"
+}
+
+text
+
+2. SINCRONIZAÇÃO DELTA (15min)
+```sql
+-- Extrair apenas mudanças desde última sync
+SELECT * FROM pms_reservations 
+WHERE updated_at > ${lastSyncTime}
+  AND hotel_id = 'caldas_001';
+RESOLUÇÃO CONFLITOS (Regra de Negócio)
+
+text
+PMS CHECK-IN > RSV360 Reserva > OTA Pull
+Maior timestamp vence + log auditoria
+5. Sincronização Pix/Stripe → ERP Hotel
+text
+💰 PIX/STRIPE → ERP (Automático 100%)
+
+1. STRIPE WEBHOOK → RSV360
+payment_intent.succeeded →
+UPDATE reservations SET paid_at = NOW(), stripe_id = 'pi_xxx'
+
+text
+
+2. RSV360 → ERP (API/XML)
+POST /erp/financeiro/import
+[
+{
+"hotel": "Caldas Solar",
+"data": "2026-01-16",
+"pixValue": 450.00,
+"pixId": "123456789",
+"guest": "João Silva",
+"rsv360Id": "res_123"
+}
+]
+
+text
+
+3. RECONCILIAÇÃO DIÁRIA (00:05)
+```sql
+-- RSV360 vs ERP vs Extrato Bancário
+SELECT 
+  rsv.total, 
+  erp.valor_recebido,
+  CASE 
+    WHEN ABS(rsv.total - erp.valor_recebido) > 0.01 THEN 'CONFLITO'
+    ELSE 'OK'
+  END as status
+FROM rsv360_payments rsv
+FULL OUTER JOIN erp_receitas erp ON rsv.pix_id = erp.pix_id
+WHERE date = CURRENT_DATE - 1;
+6. ONBOARDING FASE 1 - 10 Hotéis Caldas Novas
+text
+📋 ONBOARDING 10 HOTÉIS (15 dias → R$47k/mês)
+
+DIA 1-3: SETUP TÉCNICO (3 hotéis pilotos)
+├── [ ] VPS DigitalOcean 8GB (R$120/mês)
+├── [ ] Migration PMS → RSV360 (webhook + delta)
+├── [ ] Stripe/Pix config (test → live)
+├── [ ] OTA tokens (Booking/Expedia)
+└── [ ] Admin login + treinamento 2h
+
+DIA 4-10: SCALE 10 HOTÉIS
+├── [ ] Script onboarding automatizado
+├── [ ] WhatsApp Business API
+├── [ ] Leilões low-season (Suíte 50% OFF)
+└── [ ] Dashboard financeiro ativo
+
+DIA 11-15: OTIMIZAÇÃO + FATURAMENTO
+├── [ ] A/B test leilões (3 tipos quarto)
+├── [ ] Voice commerce ativa
+├── [ ] Faturamento: R$4.700 × 10 = R$47k/mês
+└── [ ] Churn <5%
+7. CÓDIGO COMPLETO - Admin Painel Financeiro
+tsx
+// components/dashboard/financial-kpis.tsx
+export const FinancialKPIs = ({ tenantId }: { tenantId: string }) => {
+  const { data: kpis } = useQuery({
+    queryKey: ['financial-kpis', tenantId],
+    queryFn: () => fetch(`/api/finance/kpis/${tenantId}`).then(res => res.json())
+  })
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <KPIBox 
+        title="RevPAR" 
+        value={`R$ ${kpis?.revpar?.toFixed(0)}`}
+        trend={kpis?.revparTrend}
+        color={kpis?.revpar > 280 ? 'green' : 'yellow'}
+      />
+      <KPIBox 
+        title="ADR" 
+        value={`R$ ${kpis?.adr?.toFixed(0)}`}
+        trend={kpis?.adrTrend}
+        color="blue"
+      />
+      <KPIBox 
+        title="Ocupação" 
+        value={`${kpis?.occupancy?.toFixed(1)}%`}
+        trend={kpis?.occupancyTrend}
+        color={kpis?.occupancy > 75 ? 'green' : 'orange'}
+      />
+      <KPIBox 
+        title="GOPPAR" 
+        value={`R$ ${kpis?.goppar?.toFixed(0)}`}
+        trend={kpis?.gopparTrend}
+        color="purple"
+      />
+      <KPIBox 
+        title="TRevPAR" 
+        value={`R$ ${kpis?.trevpar?.toFixed(0)}`}
+        trend={kpis?.trevparTrend}
+        color="indigo"
+      />
+      <KPIBox 
+        title="Cancelamentos" 
+        value={`${kpis?.cancellationRate?.toFixed(1)}%`}
+        trend={kpis?.cancellationTrend}
+        color={kpis?.cancellationRate < 15 ? 'green' : 'red'}
+      />
+    </div>
+  )
+}
+🚀 PLANO IMEDIATO (2 SEMANAS → R$47k/mês)
+text
+✅ SEMANA 1: Admin Painel + 3 Hotéis Pilotos
+├── Deploy Next.js admin.rsv360.com
+├── Onboarding Hotel Solar, Pousada das Águas, Caldas Park
+├── R$14k/mês garantidos
+└── KPIs reais funcionando
+
+✅ SEMANA 2: Scale 10 Hotéis + Leilões
+├── Script onboarding automatizado
+├── Leilões ativa (suíte 50% OFF)
+├── R$47k/mês recorrentes
+└── Churn protection (retenção 95%)
+PRIORIDADE CORRETA: Admin Next.js gera R$47k/mês em 15 dias. Mobile App fase 2 (Q2).
+
+EXECUÇÃO: Deploy admin + 3 hotéis pilotos = receita amanhã. Quer o script onboarding automatizado ou dashboard financeiro 100% código?

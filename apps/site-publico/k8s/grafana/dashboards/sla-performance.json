@@ -1,0 +1,190 @@
+{
+  "dashboard": {
+    "title": "RSV Gen 2 - SLA & Performance",
+    "tags": ["rsv-gen2", "sla", "performance"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Tickets SLA Breached",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "targets": [
+          {
+            "expr": "tickets_sla_breached",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 5 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "SLA Compliance Rate",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "targets": [
+          {
+            "expr": "(1 - (tickets_sla_breached / tickets_open)) * 100",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "yellow", "value": 90 },
+              { "color": "green", "value": 95 }
+            ]
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Average Ticket Resolution Time",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "targets": [
+          {
+            "expr": "avg(histogram_quantile(0.50, rate(ticket_resolution_time_seconds_bucket[5m])))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "unit": "s"
+        }
+      },
+      {
+        "id": 4,
+        "title": "HTTP Response Time (p95)",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 0.5 },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Ticket Resolution Time by Priority",
+        "type": "graph",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(ticket_resolution_time_seconds_bucket{priority=\"urgent\"}[5m]))",
+            "legendFormat": "Urgent - p95",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(ticket_resolution_time_seconds_bucket{priority=\"high\"}[5m]))",
+            "legendFormat": "High - p95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(ticket_resolution_time_seconds_bucket{priority=\"medium\"}[5m]))",
+            "legendFormat": "Medium - p95",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Resolution Time" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "HTTP Response Time Distribution",
+        "type": "graph",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p99",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Duration" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Database Query Performance",
+        "type": "graph",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 - {{type}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Query Duration" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Throughput (Requests/sec)",
+        "type": "graph",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total[5m]))",
+            "legendFormat": "Total Requests/sec",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "reqps", "label": "Throughput" },
+          { "format": "short" }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    }
+  }
+}
+

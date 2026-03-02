@@ -1,0 +1,103 @@
+A documentação Sprint 2 RSV360 descreve um ecossistema bem amplo: OTA + Channel Manager + leilão de acomodações (NTX) + deals instantâneos + financeiro (escrow) + notificações em tempo real + segurança/transparência.
+​
+
+Visão geral das funcionalidades
+Integração OTAs e Channel Manager: RSV360 centraliza estoque, tarifas e reservas de Booking.com, Airbnb, Expedia e canal direto, com travas transacionais para evitar overbooking e race conditions.
+​
+
+Bolsa de viagens (Nexus Travel Exchange / NTX): motor de leilão com Bids (comprador), Asks (fornecedor), ordem por prioridade preço-tempo, e registro imutável em marketmatches com transactionhash.
+​
+
+Escrow financeiro: módulo financialwallets controla balance_available e balance_frozen, com serviço de escrow que congela fundos no match e libera ao host após check-in.
+​
+
+Deals instantâneos: além do leilão clássico, existem Flash Deals, Express Deals e Pricebreakers (hotel secreto), usando compra atômica com lock pessimista e expiração automática via cron.
+​
+
+Tempo real e automação: Socket.io para Order Book ao vivo, cron jobs (node-cron) para expirar Flash Deals, e push/alertas de novas oportunidades (Pricebreaker etc.).
+​
+
+Segurança e governança: verificação de usuário (isVerified), anti-sniping, circuit-breaker de mercado, penalidade de cancelamento, auditoria por hash SHA‑256 e health-check integrado.
+​
+
+Como funciona o leilão (mercado NTX)
+Modelo de mercado
+Ativo (Asset): cada voo/hotel/pacote entra em marketassets com tipo de venda (SALE_TYPE = AUCTION/FLASH/EXPRESS/SECRET), preço base, estoque e datas de expiração.
+​
+
+Bid (lado do viajante): ordem de compra com preço máximo, validade e status (OPEN/MATCHED/EXPIRED) em marketbids.
+​
+
+Ask (lado do fornecedor): oferta com preço mínimo, quantidade e status em marketasks.
+​
+
+Match: quando maxPrice >= minPrice, o Matching Engine gera um registro em marketmatches com finalPrice, spreadFee (lucro da plataforma) e transactionHash, e dispara o fluxo de escrow.
+​
+
+Lógica de Matching e Leilão Reverso
+Matching Engine preço-tempo:
+
+filtra Asks compatíveis (minPrice <= maxPrice);
+
+ordena por menor preço e depois por ordem de criação;
+
+decide o finalPrice (normalmente o Ask) e aplica spreadRate (ex. 5%).
+​
+
+Leilão reverso (RFP):
+
+viajante abre um RFP com requisitos; vários fornecedores baixam preço progressivamente;
+
+regra de decremento mínimo (1–2%) para evitar “lances de centavos”;
+
+ordenação por score multi-atributo (preço + reputação etc.).
+​
+
+Anti-sniping:
+
+se um lance chegar nos últimos 2 minutos, o sistema adiciona +5 minutos ao fim do leilão.
+​
+
+Circuit breaker:
+
+se o tempo de resposta do Matching passar de um limite (ex. 500 ms), pausa novas ordens por alguns segundos para evitar erros em cascata.
+​
+
+Experiência de usuário no leilão
+Dashboard de Mercado / Order Book:
+
+lista bids e asks, spread, profundidade de mercado (Depth of Market), candlesticks de destinos e ticker com últimos negócios.
+​
+
+Fluxo do viajante:
+
+escolhe entre: colocar Bid, aceitar Ask atual (Instant Buy), ou abrir RFP de grupo (leilão reverso).
+​
+
+Fluxo do fornecedor:
+
+Supplier Console com heatmap de demanda, lista de RFPs, auto-responder de lance (regra “se entrar RFP X, baixar até Y”), e botão “Vender agora” para aceitar Bid.
+​
+
+Assinatura de documento digital e contrato
+Contrato de locação:
+
+ao final do leilão vencedor ou reserva via Express/Pricebreaker, o sistema gera um contrato de aluguel com cláusulas de uso, cancelamento, LGPD etc.
+​
+
+Bíblia de Regras / RFP corporativo:
+
+para B2B/logística, o sistema gera automaticamente o documento de RFP com termos legais, protegendo ambas as partes; isso funciona como uma “assinatura digital indireta” do processo de licitação.
+​
+
+Prova criptográfica (hash):
+
+cada match grava um transactionHash SHA‑256 com IDs, preço e timestamp, servindo como certificado de transparência (página de “Certificado NTX” no dashboard).
+​
+
+Escrow e logs:
+
+o escrow registra eventos de LOCK/RELEASE/REFUND, compondo um trilho de auditoria que pode complementar a assinatura de documento digital em disputas.
+​
+
+Se quiser, o próximo passo pode ser destrinchar só a parte de assinatura/contrato (fluxo jurídico completo) ou só a parte de leilão reverso para você transformar em estórias de usuário.

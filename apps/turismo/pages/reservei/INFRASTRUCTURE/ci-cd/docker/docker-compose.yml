@@ -1,0 +1,458 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:13
+    container_name: rsv-ecosystem-db
+    environment:
+      POSTGRES_DB: rsv_ecosystem_prod
+      POSTGRES_USER: rsvuser
+      POSTGRES_PASSWORD: rsvpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schemas:/docker-entrypoint-initdb.d/schemas
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rsvuser -d rsv_ecosystem_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rsv-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: rsv-ecosystem-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rsv-network
+
+  # Ecosystem Master (API Gateway)
+  ecosystem-master:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.ecosystem-master
+    container_name: rsv-ecosystem-master
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # CRM System
+  crm-system:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.crm-system
+    container_name: rsv-crm-system
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      SERVICE_NAME: crm-system
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Booking Engine
+  booking-engine:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.booking-engine
+    container_name: rsv-booking-engine
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      SERVICE_NAME: booking-engine
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Financial System
+  financial-system:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.financial-system
+    container_name: rsv-financial-system
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      SERVICE_NAME: financial-system
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Product Catalog
+  product-catalog:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.product-catalog
+    container_name: rsv-product-catalog
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      SERVICE_NAME: product-catalog
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3004:3004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Marketing Automation
+  marketing-automation:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.marketing-automation
+    container_name: rsv-marketing-automation
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+      SERVICE_NAME: marketing-automation
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3005:3005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Analytics Intelligence
+  analytics-intelligence:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.analytics-intelligence
+    container_name: rsv-analytics-intelligence
+    environment:
+      NODE_ENV: production
+      PORT: 3006
+      SERVICE_NAME: analytics-intelligence
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3006:3006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Administration
+  administration:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.administration
+    container_name: rsv-administration
+    environment:
+      NODE_ENV: production
+      PORT: 3007
+      SERVICE_NAME: administration
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3007:3007"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Inventory Management
+  inventory-management:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.inventory-management
+    container_name: rsv-inventory-management
+    environment:
+      NODE_ENV: production
+      PORT: 3008
+      SERVICE_NAME: inventory-management
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3008:3008"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Payment Gateway
+  payment-gateway:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.payment-gateway
+    container_name: rsv-payment-gateway
+    environment:
+      NODE_ENV: production
+      PORT: 3009
+      SERVICE_NAME: payment-gateway
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3009:3009"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Public Facing
+  public-facing:
+    build:
+      context: ../../
+      dockerfile: INFRASTRUCTURE/ci-cd/docker/Dockerfile.public-facing
+    container_name: rsv-public-facing
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      SERVICE_NAME: public-facing
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: rsvuser
+      DB_PASSWORD: rsvpassword
+      DB_NAME: rsv_ecosystem_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ECOSYSTEM_MASTER_URL: http://ecosystem-master:3000
+    ports:
+      - "3010:3010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ecosystem-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+  # Nginx Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: rsv-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - ecosystem-master
+      - crm-system
+      - booking-engine
+      - financial-system
+      - product-catalog
+      - marketing-automation
+      - analytics-intelligence
+      - administration
+      - inventory-management
+      - payment-gateway
+      - public-facing
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rsv-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  rsv-network:
+    driver: bridge

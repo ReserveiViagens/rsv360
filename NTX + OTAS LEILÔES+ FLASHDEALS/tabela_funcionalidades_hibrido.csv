@@ -1,0 +1,16 @@
+Módulo,Features,Prioridade,Dias de Implementação,Status MVP,Total Features
+Busca & Filtros,20,CRÍTICA,1.0,SIM,20
+Gestão Acomodações,25,CRÍTICA,1.0,SIM,45
+Leilão Dinâmico,40,CRÍTICA,2.0,SIM,85
+Reservas,30,CRÍTICA,1.0,SIM,115
+Pagamentos,25,CRÍTICA,1.0,SIM,140
+Comunicação,25,ALTA,1.0,NÃO,165
+Avaliações,20,ALTA,1.0,NÃO,185
+Analytics,25,ALTA,1.0,NÃO,210
+IA & ML,30,ALTA,2.0,NÃO,240
+Integrações OTAs,18,ALTA,2.0,PARCIAL,258
+Google VR,10,MÉDIA,0.5,NÃO,268
+Mobile & UX,20,ALTA,1.0,SIM,288
+Segurança,25,CRÍTICA,0.5,SIM,313
+Excursões,15,MÉDIA,0.5,NÃO,328
+Premium Features,15,BAIXA,1.0,NÃO,343

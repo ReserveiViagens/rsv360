@@ -1,0 +1,464 @@
+2026-01-31 12:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 12:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 13:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-01-31 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 19:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-01-31 19:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-02 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-02 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-02 16:11:58 error: Database connection error: Connection terminated due to connection timeout
+2026-02-02 16:50:37 error: Database connection error: Connection terminated due to connection timeout
+2026-02-02 16:59:51 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 16:59:51 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 16:59:51 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 16:59:51 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:03:54 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:03:54 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:03:54 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:03:54 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:28 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:28 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:28 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:28 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:39 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:39 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:39 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:42:39 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:48 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:48 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:49 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:49 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:52 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:52 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:52 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:52 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:57 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:57 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:57 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:49:57 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:02 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:02 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:02 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:02 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:44 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:44 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:44 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:50:44 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:55:26 error: Port 5000 is already in use
+2026-02-02 17:58:52 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:58:52 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:58:52 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:58:52 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:59:58 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:59:58 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 17:59:58 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 17:59:58 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-02 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-02 18:01:19 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 18:01:19 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 18:01:19 error: Error listing auctions: column a.enterprise_id does not exist
+2026-02-02 18:01:19 error: Error in list auctions: column a.enterprise_id does not exist
+2026-02-02 18:08:40 error: Port 5000 is already in use
+2026-02-02 18:12:17 error: Port 5000 is already in use
+2026-02-02 21:04:26 error: Port 5000 is already in use
+2026-02-02 21:06:55 error: Database connection error: Connection terminated due to connection timeout
+2026-02-02 21:42:20 error: Database connection error: Connection terminated due to connection timeout
+2026-02-02 22:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-02 22:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-02 23:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-02 23:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-03 00:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-03 00:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-03 01:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-03 01:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-03 17:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-03 17:00:02 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-03 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-03 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-03 18:18:37 error: Application Error: Email already registered
+2026-02-04 10:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-04 10:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-04 11:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-04 11:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-05 22:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-05 22:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-05 23:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-05 23:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 00:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 00:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 08:08:05 error: Database connection error: Connection terminated due to connection timeout
+2026-02-06 09:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 09:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 10:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 10:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 11:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 11:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 12:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 12:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 13:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 19:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 19:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 20:00:02 error: Error in checkConnectionStatus job: Connection terminated due to connection timeout
+2026-02-06 20:00:02 error: Error in syncAllConnections job: Connection terminated due to connection timeout
+2026-02-06 20:00:02 error: Error listing Google Hotel Ads feeds: Connection terminated due to connection timeout
+2026-02-06 20:00:02 error: Error in generateFeedsJob: Connection terminated due to connection timeout
+2026-02-06 20:00:02 error: Error in finalizeAbandonedSessionsJob: Connection terminated due to connection timeout
+2026-02-06 20:00:03 error: Error listing Google Hotel Ads feeds: Connection terminated due to connection timeout
+2026-02-06 20:00:03 error: Error in uploadFeedsJob: Connection terminated due to connection timeout
+2026-02-06 21:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 21:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-06 22:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-06 22:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-09 09:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-09 09:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-09 09:02:18 error: Database connection error: Connection terminated due to connection timeout
+2026-02-09 10:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-09 10:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 10:11:20 error: Database connection error:
+2026-02-10 10:11:20 error: ❌ Database connection failed:
+2026-02-10 10:19:39 error: Database connection error: Connection terminated due to connection timeout
+2026-02-10 10:28:08 error: Database connection error: Connection terminated due to connection timeout
+2026-02-10 19:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-10 19:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 20:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 20:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-10 21:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-10 21:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 22:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 22:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-10 22:37:04 error: Application Error: Invalid email or password
+2026-02-10 22:37:17 error: Application Error: Invalid email or password
+2026-02-10 23:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-10 23:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-11 10:03:41 error: Database connection error: Connection terminated due to connection timeout
+2026-02-11 11:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-11 11:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-11 12:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-11 12:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-11 13:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-11 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-11 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-11 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-11 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-11 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-13 09:56:47 error: Database connection error: Connection terminated due to connection timeout
+2026-02-13 10:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-13 10:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-13 10:10:02 error: Database connection error: Connection terminated due to connection timeout
+2026-02-13 10:52:35 error: Database connection error: Connection terminated due to connection timeout
+2026-02-13 11:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-13 11:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-13 11:04:36 error: Database connection error: Connection terminated due to connection timeout
+2026-02-13 12:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-13 12:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-13 12:14:08 error: Database connection error: Connection terminated due to connection timeout
+2026-02-13 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-13 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-14 14:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-14 14:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-14 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-14 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-14 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-14 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-14 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-14 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-14 19:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-14 19:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 12:21:52 error: Error getting bids for auction [id]: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:52 error: Error in get bids: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:52 error: Error finding auction [id]: column a.enterprise_id does not exist
+2026-02-15 12:21:52 error: Error in get auction by id: column a.enterprise_id does not exist
+2026-02-15 12:21:53 error: Error getting bids for auction [id]: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:53 error: Error in get bids: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:53 error: Error finding auction [id]: column a.enterprise_id does not exist
+2026-02-15 12:21:53 error: Error in get auction by id: column a.enterprise_id does not exist
+2026-02-15 12:21:55 error: Error getting bids for auction [id]: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:55 error: Error in get bids: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:55 error: Error finding auction [id]: column a.enterprise_id does not exist
+2026-02-15 12:21:55 error: Error in get auction by id: column a.enterprise_id does not exist
+2026-02-15 12:21:59 error: Error getting bids for auction [id]: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:59 error: Error in get bids: invalid input syntax for type uuid: "[id]"
+2026-02-15 12:21:59 error: Error finding auction [id]: column a.enterprise_id does not exist
+2026-02-15 12:21:59 error: Error in get auction by id: column a.enterprise_id does not exist
+2026-02-15 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 13:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-15 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-15 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 15:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 15:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-15 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-15 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-15 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-15 17:13:38 error: Database connection error: Connection terminated due to connection timeout
+2026-02-16 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-16 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-16 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-16 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-16 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 18:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-16 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 19:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-16 19:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-17 12:14:52 error: Database connection error: Connection terminated due to connection timeout
+2026-02-17 12:15:29 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:29 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:30 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:30 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:32 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:32 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:36 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:36 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:47 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:15:47 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:17:12 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:17:12 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:18:06 error: Database connection error: Connection terminated due to connection timeout
+2026-02-17 12:18:20 error: Error getting active auctions: operator does not exist: uuid = integer
+2026-02-17 12:18:20 error: Error in get active auctions: operator does not exist: uuid = integer
+2026-02-17 12:19:25 error: Database connection error: Connection terminated due to connection timeout
+2026-02-17 12:22:35 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:22:35 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:22:35 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:22:35 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:39:59 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:39:59 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:39:59 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:39:59 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:40:03 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:40:03 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:40:03 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:40:03 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:40:27 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:40:27 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:40:27 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:40:27 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:40:31 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:40:31 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:40:31 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:40:31 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:40:41 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:40:41 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:40:41 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:40:41 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:40:54 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:40:54 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:40:54 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:40:54 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:09 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:41:09 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:41:09 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:41:09 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:19 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:41:19 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:19 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:41:19 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:41:28 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:41:28 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:28 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:41:28 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:41:29 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:41:29 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:29 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:41:29 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:41:31 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:41:31 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:31 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:41:31 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:41:35 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:41:35 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:41:35 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:41:35 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:44:05 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:44:05 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:44:05 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:44:05 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:44:09 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:44:09 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:44:09 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:44:09 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:45:40 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:45:40 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:45:40 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:45:40 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:45:55 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:45:55 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:45:55 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:45:55 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:01 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:46:01 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:01 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:46:01 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:21 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:46:21 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:21 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:46:21 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:42 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:46:42 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:42 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:46:42 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:46 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:46:46 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:46 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:46:46 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:55 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:46:55 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:55 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:46:55 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:56 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:46:56 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:56 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:46:56 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:46:58 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:46:58 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:46:58 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:46:58 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:47:02 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-17 12:47:02 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:47:02 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-17 12:47:02 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:47:37 error: Application Error: Invalid email or password
+2026-02-17 12:47:54 error: Application Error: Invalid email or password
+2026-02-17 12:48:14 error: Application Error: Email already registered
+2026-02-17 12:53:22 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:53:22 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:53:22 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:53:22 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:53:40 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:53:40 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:53:40 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:53:40 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:54:42 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:54:42 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:54:42 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:54:42 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:54:45 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:54:45 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:54:45 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:54:45 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:57:20 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:57:20 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:57:20 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:57:20 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:58:11 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:58:11 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:58:11 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:58:11 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:58:19 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:58:19 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:58:19 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:58:19 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:58:22 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:58:22 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:58:22 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:58:22 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:58:29 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:58:29 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:58:29 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:58:29 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:59:17 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:59:17 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:59:17 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:59:17 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:59:33 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:59:33 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:59:34 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:59:34 error: Error in get bids: relation "customers" does not exist
+2026-02-17 12:59:40 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 12:59:40 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 12:59:40 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 12:59:40 error: Error in get bids: relation "customers" does not exist
+2026-02-17 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-17 13:00:02 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-17 13:00:02 error: Error listing Google Hotel Ads feeds: Connection terminated due to connection timeout
+2026-02-17 13:00:02 error: Error in generateFeedsJob: Connection terminated due to connection timeout
+2026-02-17 13:00:29 error: Error finding auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: operator does not exist: uuid = integer
+2026-02-17 13:00:29 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-17 13:00:29 error: Error getting bids for auction ae488ca0-a5e1-4491-ba0a-03a21cd90e4d: relation "customers" does not exist
+2026-02-17 13:00:29 error: Error in get bids: relation "customers" does not exist
+2026-02-17 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-17 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-17 14:19:41 error: Application Error: Invalid email or password
+2026-02-17 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-17 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 10:00:01 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 10:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 11:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 11:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 12:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 12:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 13:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 13:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 13:17:04 error: Application Error: Invalid email or password
+2026-02-18 13:17:43 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-18 13:17:43 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-18 13:17:43 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-18 13:17:43 error: Error in get bids: relation "customers" does not exist
+2026-02-18 13:17:44 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-18 13:17:44 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-18 13:17:44 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-18 13:17:44 error: Error in get bids: relation "customers" does not exist
+2026-02-18 13:17:46 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-18 13:17:46 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-18 13:17:46 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-18 13:17:46 error: Error in get bids: relation "customers" does not exist
+2026-02-18 13:17:50 error: Error finding auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: operator does not exist: uuid = integer
+2026-02-18 13:17:50 error: Error in get auction by id: operator does not exist: uuid = integer
+2026-02-18 13:17:50 error: Error getting bids for auction 7fe30c1b-7475-47d5-a3db-b2b8353cc2ce: relation "customers" does not exist
+2026-02-18 13:17:50 error: Error in get bids: relation "customers" does not exist
+2026-02-18 13:51:01 error: Application Error: Invalid email or password
+2026-02-18 13:52:25 error: Failed to log audit event: insert into "audit_logs" ("action", "created_at", "entity_id", "entity_type", "failure_reason", "ip_address", "metadata", "severity", "success", "user_agent", "user_id") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) - relation "audit_logs" does not exist
+2026-02-18 13:52:25 error: Failed to log audit event: insert into "audit_logs" ("action", "created_at", "entity_id", "entity_type", "failure_reason", "ip_address", "metadata", "severity", "success", "user_agent", "user_id") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) - relation "audit_logs" does not exist
+2026-02-18 13:52:38 error: Failed to log audit event: insert into "audit_logs" ("action", "created_at", "entity_id", "entity_type", "failure_reason", "ip_address", "metadata", "severity", "success", "user_agent", "user_id") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) - relation "audit_logs" does not exist
+2026-02-18 13:52:38 error: Failed to log audit event: insert into "audit_logs" ("action", "created_at", "entity_id", "entity_type", "failure_reason", "ip_address", "metadata", "severity", "success", "user_agent", "user_id") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) - relation "audit_logs" does not exist
+2026-02-18 14:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 14:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 21:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 21:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 22:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-18 22:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 23:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-18 23:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-19 23:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-19 23:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 07:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 07:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 08:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 08:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 15:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 15:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 16:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 16:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 17:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 17:00:00 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist
+2026-02-20 18:00:00 error: Error in generateTranscriptionsJob: relation "voice_commerce_calls" does not exist
+2026-02-20 18:00:01 error: Error in finalizeAbandonedSessionsJob: relation "voice_commerce_sessions" does not exist

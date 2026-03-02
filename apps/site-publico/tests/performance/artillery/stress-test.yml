@@ -1,0 +1,59 @@
+# Teste de Stress com Artillery
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 100
+      name: "Ramp-up rápido"
+    - duration: 120
+      arrivalRate: 100
+      rampTo: 300
+      name: "Aumento de carga"
+    - duration: 120
+      arrivalRate: 300
+      rampTo: 500
+      name: "Carga máxima"
+    - duration: 300
+      arrivalRate: 500
+      name: "Sustentar carga máxima"
+    - duration: 120
+      arrivalRate: 500
+      rampTo: 0
+      name: "Ramp-down"
+  
+  processor: "./artillery-processor.js"
+  
+  variables:
+    baseUrl: "http://localhost:3000"
+    apiToken: ""
+
+  plugins:
+    expect: {}
+    metrics-by-endpoint: {}
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Stress test"
+    flow:
+      - get:
+          url: "/api/properties"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+      
+      - get:
+          url: "/api/bookings"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+      
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer {{ apiToken }}"
+      
+      - think: 0.5
+

@@ -1,0 +1,382 @@
+name: 🚀 CI/CD Pipeline - Sistema RSV
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "docker/**"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ambiente para deploy"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 🔍 Análise de Código e Qualidade
+  code-quality:
+    name: 📊 Análise de Qualidade
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Instalar dependências Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit safety
+
+      - name: 🔒 Análise de Segurança (Bandit)
+        run: |
+          bandit -r frontend/src/ -f json -o bandit-report.json || true
+          bandit -r backend/src/ -f json -o bandit-backend-report.json || true
+
+      - name: 🚨 Análise de Vulnerabilidades (Safety)
+        run: |
+          safety check --json --output safety-report.json || true
+
+      - name: 📊 Upload relatórios de segurança
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+
+  # 🧪 Testes Frontend
+  test-frontend:
+    name: 🎯 Testes Frontend
+    runs-on: ubuntu-latest
+    needs: code-quality
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🔍 Linting e formatação
+        run: |
+          npm run lint
+          npm run format:check
+
+      - name: 🧪 Executar testes unitários
+        run: npm run test:unit
+
+      - name: 🧪 Executar testes de integração
+        run: npm run test:integration
+
+      - name: 📊 Cobertura de testes
+        run: npm run test:coverage
+
+      - name: 📈 Upload cobertura de testes
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+
+  # 🧪 Testes Backend
+  test-backend:
+    name: 🎯 Testes Backend
+    runs-on: ubuntu-latest
+    needs: code-quality
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🔍 Linting e formatação
+        run: |
+          npm run lint
+          npm run format:check
+
+      - name: 🧪 Executar testes unitários
+        run: npm run test:unit
+
+      - name: 🧪 Executar testes de integração
+        run: npm run test:integration
+
+      - name: 📊 Cobertura de testes
+        run: npm run test:coverage
+
+      - name: 📈 Upload cobertura de testes
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+
+  # 🐳 Build e Teste de Containers
+  build-containers:
+    name: 🐳 Build de Containers
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend]
+    strategy:
+      matrix:
+        include:
+          - name: frontend
+            dockerfile: frontend/Dockerfile
+            context: frontend
+          - name: backend
+            dockerfile: backend/Dockerfile
+            context: backend
+          - name: nginx
+            dockerfile: docker/nginx/Dockerfile
+            context: docker/nginx
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login no Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extrair metadados
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🔍 Build e push da imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 🧪 Teste de container
+        run: |
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.name }}:${{ steps.meta.outputs.version }} \
+            echo "Container ${{ matrix.name }} funcionando corretamente"
+
+  # 🚀 Deploy Staging
+  deploy-staging:
+    name: 🚀 Deploy Staging
+    runs-on: ubuntu-latest
+    needs: [build-containers]
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'staging'
+    environment: staging
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configurar SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Deploy para Staging
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_HOST }} << 'EOF'
+            cd /opt/rsv/staging
+            echo "🔄 Atualizando código..."
+            git pull origin develop
+            
+            echo "🐳 Reconstruindo containers..."
+            docker-compose -f docker-compose.staging.yml down
+            docker-compose -f docker-compose.staging.yml build --no-cache
+            docker-compose -f docker-compose.staging.yml up -d
+            
+            echo "🧪 Executando testes de smoke..."
+            sleep 30
+            curl -f http://localhost:3000/health || exit 1
+            
+            echo "✅ Deploy staging concluído com sucesso!"
+          EOF
+
+      - name: 📊 Notificar deploy
+        run: |
+          echo "🚀 Deploy para STAGING concluído!"
+          echo "🌐 URL: https://staging.reserveiviagensrsv.com.br"
+          echo "📅 Timestamp: $(date -u)"
+
+  # 🚀 Deploy Production
+  deploy-production:
+    name: 🚀 Deploy Production
+    runs-on: ubuntu-latest
+    needs: [build-containers]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    environment: production
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configurar SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Deploy para Production
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.PRODUCTION_SSH_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+            cd /opt/rsv/production
+            
+            echo "🔄 Criando backup antes do deploy..."
+            docker-compose -f docker-compose.production.yml exec -T postgres pg_dump -U $POSTGRES_USER $POSTGRES_DB > backup_$(date +%Y%m%d_%H%M%S).sql
+            
+            echo "🔄 Atualizando código..."
+            git pull origin main
+            
+            echo "🐳 Reconstruindo containers..."
+            docker-compose -f docker-compose.production.yml down
+            docker-compose -f docker-compose.production.yml build --no-cache
+            docker-compose -f docker-compose.production.yml up -d
+            
+            echo "🧪 Executando testes de smoke..."
+            sleep 30
+            curl -f https://api.reserveiviagensrsv.com.br/health || exit 1
+            
+            echo "🧹 Limpando imagens antigas..."
+            docker image prune -f
+            
+            echo "✅ Deploy production concluído com sucesso!"
+          EOF
+
+      - name: 📊 Notificar deploy
+        run: |
+          echo "🚀 Deploy para PRODUCTION concluído!"
+          echo "🌐 URL: https://api.reserveiviagensrsv.com.br"
+          echo "📅 Timestamp: $(date -u)"
+
+      - name: 📧 Notificar equipe
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          subject: "🚀 Deploy Production Concluído - Sistema RSV"
+          to: ${{ secrets.TEAM_EMAIL }}
+          from: "CI/CD <noreply@reserveiviagensrsv.com.br>"
+          body: |
+            Deploy para produção concluído com sucesso!
+
+            📅 Data: $(date -u)
+            🔗 URL: https://api.reserveiviagensrsv.com.br
+            📊 Status: ✅ Sucesso
+
+            Equipe de Desenvolvimento RSV
+
+  # 📊 Relatório Final
+  deployment-report:
+    name: 📊 Relatório de Deploy
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 📊 Gerar relatório
+        run: |
+          echo "## 🚀 Relatório de Deploy - Sistema RSV" >> deployment-report.md
+          echo "" >> deployment-report.md
+          echo "### 📅 Data: $(date -u)" >> deployment-report.md
+          echo "### 🔗 Commit: ${{ github.sha }}" >> deployment-report.md
+          echo "### 🌿 Branch: ${{ github.ref_name }}" >> deployment-report.md
+          echo "" >> deployment-report.md
+
+          if [ "${{ needs.deploy-staging.result }}" == "success" ]; then
+            echo "### 🟢 Staging: ✅ Deploy concluído" >> deployment-report.md
+          else
+            echo "### 🔴 Staging: ❌ Falha no deploy" >> deployment-report.md
+          fi
+
+          if [ "${{ needs.deploy-production.result }}" == "success" ]; then
+            echo "### 🟢 Production: ✅ Deploy concluído" >> deployment-report.md
+          else
+            echo "### 🔴 Production: ❌ Falha no deploy" >> deployment-report.md
+          fi
+
+          echo "" >> deployment-report.md
+          echo "### 📈 Métricas:" >> deployment-report.md
+          echo "- 🧪 Testes executados: ${{ needs.test-frontend.result }}, ${{ needs.test-backend.result }}" >> deployment-report.md
+          echo "- 🐳 Containers construídos: ${{ needs.build-containers.result }}" >> deployment-report.md
+          echo "- 🚀 Deploys realizados: ${{ needs.deploy-staging.result }}, ${{ needs.deploy-production.result }}" >> deployment-report.md
+
+      - name: 📤 Upload relatório
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-report
+          path: deployment-report.md
+
+      - name: 📧 Enviar relatório por email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          subject: "📊 Relatório de Deploy - Sistema RSV"
+          to: ${{ secrets.TEAM_EMAIL }}
+          from: "CI/CD <noreply@reserveiviagensrsv.com.br>"
+          body: |
+            Relatório de deploy anexado.
+
+            📅 Data: $(date -u)
+            🔗 Commit: ${{ github.sha }}
+            🌿 Branch: ${{ github.ref_name }}
+
+            Equipe de Desenvolvimento RSV

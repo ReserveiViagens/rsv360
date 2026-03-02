@@ -1,0 +1,183 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  Home,
+  MapPin,
+  Users,
+  DollarSign,
+  Plus,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/providers/toast-wrapper';
+import { getToken } from '@/lib/auth';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
+
+interface Property {
+  id: number;
+  name: string;
+  property_type: string;
+  address_city?: string;
+  address_state?: string;
+  max_guests?: number;
+  base_price_per_night?: number;
+  status?: string;
+}
+
+function FlatsPageContent() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const toast = useToast();
+
+  useEffect(() => {
+    loadProperties();
+  }, []);
+
+  const loadProperties = async () => {
+    setLoading(true);
+    try {
+      const token = getToken();
+      const params = new URLSearchParams({ property_type: 'flat' });
+      const response = await fetch(`/api/properties?${params}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setProperties(result.data);
+      } else {
+        setProperties([]);
+      }
+    } catch {
+      setProperties([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="h-48 bg-gray-200 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Meus Apartamentos</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
+              Gerencie seus flats e apartamentos
+            </p>
+          </div>
+          <Button className="w-full sm:w-auto">
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Apartamento
+          </Button>
+        </div>
+
+        {properties.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <Home className="w-16 h-16 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Nenhum apartamento cadastrado</h3>
+              <p className="text-muted-foreground text-center mb-4 max-w-md">
+                Cadastre seu primeiro apartamento para começar a receber reservas.
+              </p>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Cadastrar Apartamento
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {properties.map((prop) => (
+              <Card key={prop.id} className="overflow-hidden">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                  <CardTitle className="text-base font-semibold line-clamp-1">
+                    {prop.name}
+                  </CardTitle>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {(prop.address_city || prop.address_state) && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4 shrink-0" />
+                      <span>
+                        {[prop.address_city, prop.address_state].filter(Boolean).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {prop.max_guests && (
+                      <div className="flex items-center gap-1 text-sm">
+                        <Users className="w-4 h-4" />
+                        <span>{prop.max_guests} hóspedes</span>
+                      </div>
+                    )}
+                    {prop.base_price_per_night && (
+                      <div className="flex items-center gap-1 text-sm">
+                        <DollarSign className="w-4 h-4" />
+                        <span>R$ {prop.base_price_per_night}/noite</span>
+                      </div>
+                    )}
+                  </div>
+{prop.status && (
+                      <Badge variant={prop.status === 'active' ? 'default' : 'secondary'}>
+                        {prop.status === 'active' ? 'ativo' : prop.status}
+                      </Badge>
+                    )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function FlatsDashboardPage() {
+  return (
+    <ErrorBoundary>
+      <FlatsPageContent />
+    </ErrorBoundary>
+  );
+}

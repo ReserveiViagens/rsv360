@@ -1,0 +1,1551 @@
+🚀 MEGA-DOCUMENTO HÍBRIDO - RSV360 + LEILÃO DE ACOMODAÇÕES
+Sistema Completo: Aluguel de Temporada + Leilão Dinâmico + Agregador (Google Vacation Rentals)
+Data: 13/12/2025
+Status: 🟢 PRONTO PARA EXECUÇÃO IMEDIATA COM CURSOR AI
+Tipo: Arquitetura Híbrida (3 módulos integrados)
+Total de Funcionalidades: 500+
+Tempo de Desenvolvimento: 10-12 dias
+Modo: Automático - EXECUTA SEM PARAR
+
+🎯 VISÃO GERAL - O QUE VOCÊ VAI TER
+Módulo 1: RSV360 (Aluguel de Temporada Completo)
+✅ 12 componentes React prontos para colar
+✅ Precificação dinâmica com IA (PriceLabs-like)
+✅ Integração 11 OTAs/PMS (Airbnb, Booking, VRBO, etc)
+✅ Calendário de disponibilidade síncrono
+✅ Módulo excursões em grupo com divisão de custos
+✅ Sistema de cupons/promoções (PIX 10% OFF)
+
+Módulo 2: Leilão de Acomodações (DIFERENCIAL ÚNICO)
+✅ Modelo agregador (like Google Vacation Rentals)
+✅ Anfitrião ativa/desativa leilão quando quer
+✅ Hóspede participa de leilão em tempo real (WebSocket)
+✅ Sincronização automática com site anfitrião (Webhook)
+✅ Analytics de leilão (preços, demanda, conversão)
+✅ SEO + Google Vacation Rentals indexação
+
+Módulo 3: Receita & Monetização (MULTI-STREAM)
+✅ Comissão 2% por leilão finalizado
+✅ Premium plan (R$ 99/mês) = analytics avançado
+✅ Publicidade + afiliados (OTAs)
+✅ Dados de mercado (venda de insights para anfitriões)
+✅ White-label para agências
+
+📊 ARQUITETURA TÉCNICA - VISÃO 360º
+text
+┌─────────────────────────────────────────────────────────────┐
+│                   ANFITRIÃO (Painel Admin)                  │
+│  ✅ Cadastro de acomodação                                 │
+│  ✅ Ativar/desativar leilão                                │
+│  ✅ Gerenciar disponibilidade + preços                    │
+│  ✅ Ver lances em tempo real                              │
+│  ✅ Confirmar reserva                                     │
+└─────────────────────────────────────────────────────────────┘
+                           ⬇️
+┌─────────────────────────────────────────────────────────────┐
+│              PLATAFORMA RSV360-LEILÃO (Backend)             │
+│  ✅ WebSocket para lances em tempo real (Socket.io)      │
+│  ✅ Agregação de acomodações + indexação                 │
+│  ✅ Google Vacation Rentals feed (XML)                   │
+│  ✅ Sincronização com OTAs (Webhook)                     │
+│  ✅ Precificação dinâmica (IA + ML)                      │
+│  ✅ Processamento de pagamentos (Stripe)                 │
+│  ✅ Analytics + relatórios (Datadog)                     │
+│  ✅ Full-text search (PostgreSQL)                        │
+└─────────────────────────────────────────────────────────────┘
+                           ⬇️
+┌─────────────────────────────────────────────────────────────┐
+│           DISTRIBUIÇÃO (Google Vacation Rentals)            │
+│  ✅ Agregador puro (sem intermediação)                    │
+│  ✅ Deep link para site anfitrião                        │
+│  ✅ Sincronização de preços (XML feed)                   │
+│  ✅ Indexação automática em Google Search               │
+└─────────────────────────────────────────────────────────────┘
+                           ⬇️
+┌─────────────────────────────────────────────────────────────┐
+│              LEILOADOR (Usuário Final - APP)               │
+│  ✅ Busca inteligente (filtros + IA)                     │
+│  ✅ Ver detalhes acomodação (fotos, mapa, reviews)      │
+│  ✅ Participar leilão em tempo real                      │
+│  ✅ Lance automático (bot de lance)                      │
+│  ✅ Confirmação de reserva                              │
+│  ✅ Chat com anfitrião                                  │
+└─────────────────────────────────────────────────────────────┘
+🏗️ ARQUITETURA DE COMPONENTES
+Frontend (React + Next.js 14)
+text
+3-frontend/
+├── app/
+│   ├── page.tsx (Home + busca)
+│   ├── propriedade/[id]/page.tsx (Detalhes + leilão)
+│   ├── dashboard/ (Admin anfitrião)
+│   │   ├── acomodacoes/page.tsx
+│   │   ├── leiloes/page.tsx
+│   │   └── analytics/page.tsx
+│   └── api/ (Client-side API calls)
+├── components/
+│   ├── search/ (FiltrosInteligentes, ResultadoCard, MapaDestinos)
+│   ├── leilao/ (BidForm, BidLive, PlaceBid, BidHistory)
+│   ├── reserva/ (ReservaModal, CalendarioReservas, ConfirmacaoPagamento)
+│   ├── excursoes/ (ExcursõesHome, CriarExcursao, ParticipantesConta)
+│   └── multicanal/ (MulticanalFloating - WhatsApp, Telegram, Email)
+├── contexts/
+│   ├── FiltrosContext.tsx
+│   ├── LeilaoContext.tsx (estado do leilão em tempo real)
+│   ├── AuthContext.tsx
+│   └── CarrinhoContext.tsx
+├── lib/
+│   ├── websocket.ts (Socket.io client)
+│   ├── api.ts (fetch calls)
+│   └── validators.ts (zod schemas)
+└── styles/
+    ├── globals.css (Tailwind v4)
+    └── animations.css (Framer Motion)
+Backend (Node.js + Express/NestJS)
+text
+2-backend/src/
+├── app.ts (Express setup)
+├── start.ts (Server start)
+├── routes/
+│   ├── auth.ts (Login, registro, JWT)
+│   ├── propriedades.ts (CRUD acomodações)
+│   ├── leiloes.ts (CRUD leilões, colocar lance)
+│   ├── reservas.ts (CRUD reservas)
+│   ├── pagamentos.ts (Stripe webhook)
+│   ├── otas.ts (Integração OTAs)
+│   └── google.ts (Google Vacation Rentals feed)
+├── services/
+│   ├── auth.service.ts (JWT, hashing)
+│   ├── leilao.service.ts (Lógica leilão)
+│   ├── precificacao.service.ts (IA - precificação dinâmica)
+│   ├── otas.integration.ts (11 integrações)
+│   ├── pagamento.service.ts (Stripe)
+│   └── notificacao.service.ts (Email, SMS)
+├── websocket/
+│   ├── leilao.socket.ts (Eventos leilão em tempo real)
+│   └── notificacao.socket.ts (Notificações push)
+├── models/
+│   ├── User.ts
+│   ├── Propriedade.ts
+│   ├── Leilao.ts
+│   ├── Lance.ts
+│   ├── Reserva.ts
+│   └── Pagamento.ts
+├── middleware/
+│   ├── auth.ts (JWT verification)
+│   ├── validacao.ts (Joi/Zod)
+│   └── erro.ts (Error handling)
+├── integrations/
+│   ├── base/BaseIntegration.ts
+│   ├── airbnb/AirbnbIntegration.ts
+│   ├── booking/BookingIntegration.ts
+│   ├── vrbo/VRBOIntegration.ts
+│   └── manager/IntegrationManager.ts
+└── config/
+    ├── database.ts (PostgreSQL)
+    ├── redis.ts (Cache + Session)
+    ├── stripe.ts
+    ├── openai.ts
+    └── google.ts (Google Vacation Rentals)
+Database (PostgreSQL 15)
+text
+28 tabelas principais:
+
+CORE:
+- users (id, email, password_hash, role, verified_at)
+- propriedades (id, user_id, name, description, address, lat, lng, type, price, amenities)
+- leiloes (id, propriedade_id, data_inicio, data_fim, status, lance_minimo, lance_atual)
+- lances (id, leilao_id, usuario_id, valor, timestamp, ip_address)
+- reservas (id, usuario_id, propriedade_id, check_in, check_out, total_price, status)
+- pagamentos (id, reserva_id, stripe_id, status, metodo, amount)
+
+OTIMIZAÇÕES:
+- 50+ índices (B-tree, GIN, BRIN)
+- Full-text search (tsvector em propriedades)
+- Particionamento por data (lances, reservas)
+- Triggers para auditoria
+
+EXTENSÕES:
+- uuid-ossp (para UUIDs)
+- pg_trgm (trigram search)
+- hstore (chave-valor)
+🔑 FUNCIONALIDADES CRÍTICAS (500+ Total)
+Busca & Filtros (20 features)
+ Busca por localização (Google Maps API)
+
+ Filtro por data (check-in/check-out)
+
+ Filtro por preço (range slider)
+
+ Filtro por tipo (casa, apartamento, resort)
+
+ Filtro por comodidades (PIX, piscina, WiFi)
+
+ Filtro por avaliação (star rating)
+
+ Full-text search (descrição, localização)
+
+ Busca salva (favoritados)
+
+ Busca por distância (raio)
+
+ Autocomplete de localidades
+
+ Sugestões (trending, near you)
+
+ Ordenação (preço, avaliação, novo)
+
+ Aplicar múltiplos filtros
+
+ Limpar filtros
+
+ Ver em mapa (Leaflet)
+
+ Filtro de leilões apenas
+
+ Filtro por oferta relâmpago
+
+ Filtro por disponibilidade rápida
+
+ Salvar busca (newsletter)
+
+ Histórico de buscas
+
+Gestão de Acomodações (25 features)
+ Upload de fotos (min 5, máx 50)
+
+ Crop/editar fotos
+
+ Ordenar fotos
+
+ Título e descrição
+
+ Categorização (tipo, tamanho)
+
+ Seleção de comodidades (30+)
+
+ Preço base (por noite)
+
+ Regras de cancelamento (flexível/moderada/rígida)
+
+ Política de hóspedes (máximo pessoas, animais)
+
+ Mapa + endereço
+
+ Código postal e bairro
+
+ Dados de check-in/check-out
+
+ Telefone para contato
+
+ Horários especiais (feriados, weekends)
+
+ Sazonalidade (preços diferentes por período)
+
+ Template de descrição (IA gera)
+
+ SEO da acomodação (título, meta description)
+
+ Publicação automática em Google
+
+ Status (ativa/inativa)
+
+ Revisar antes de publicar
+
+ Análise de completude (score)
+
+ Histórico de edições
+
+ Sincronizar com OTAs
+
+ Desativar leilão temporariamente
+
+ Deletar acomodação
+
+Leilão de Acomodações (40 features - CORE DO PROJETO)
+ Criar leilão (data inicio, fim, lance mínimo)
+
+ Editar leilão em andamento
+
+ Cancelar leilão
+
+ Timer do leilão (countdown)
+
+ Lance mínimo (validação)
+
+ Incremento mínimo de lance (R$ 50, R$ 100, R$ 500)
+
+ Lance automático (bot)
+
+ Notificação de novo lance (em tempo real)
+
+ Histórico de lances
+
+ Maior lance atual
+
+ Número de licitantes
+
+ Atividade do leilão (gráfico)
+
+ Estender leilão (automático se lance nos últimos 5 min)
+
+ Somente leilão (sem preço fixo)
+
+ Leilão + "Comprar agora" (preço fixo)
+
+ Leilão reverso (anfitrião reduz preço)
+
+ Leilão holandês (preço desce)
+
+ Validação de lance (não pode ser menor que maior atual)
+
+ Proteção contra fraude (verificação de usuário)
+
+ Bloquear lances suspeitos (bot detection)
+
+ Confirmar vencedor automaticamente
+
+ Enviar contrato para vencedor
+
+ Integração com Google Vacation Rentals
+
+ Deep link para lance (compartilhar)
+
+ Analytics de leilão (taxa sucesso, preço médio)
+
+ Relatório de leilões (CSV export)
+
+ Leilão com depósito (garantia)
+
+ Validação de cartão antes do lance
+
+ Limite de lances por usuário
+
+ IP blocking (fraude)
+
+ Webhook para lance (notificar anfitrião)
+
+ Sincronizar resultado com OTAs
+
+ Cancelar leilão se lance baixo
+
+ Renovar leilão (mesmo imóvel)
+
+ Template de leilão (configurações padrão)
+
+ Agendamento de leilão
+
+ Leilão em horário específico (happy hour)
+
+ Múltiplos leilões simultâneos
+
+ Estatísticas em tempo real
+
+ Histórico completo (auditoria)
+
+ Reversão de leilão (se necessário)
+
+Reservas (30 features)
+ Seleção de datas (date picker)
+
+ Cálculo automático de dias
+
+ Preço total (com taxas)
+
+ Aplicar cupom desconto
+
+ PIX 5-10% desconto
+
+ Parcelamento (até 12x sem juros)
+
+ Confirmar dados hóspede
+
+ Verificação de email
+
+ Verificação de telefone
+
+ Validação de documento (CPF)
+
+ Adicionar requisitos especiais
+
+ Contrato de aluguel
+
+ Política de privacidade (LGPD)
+
+ Seguro de acomodação (opcional)
+
+ Processar pagamento (Stripe)
+
+ Confirmação instantânea
+
+ Gerar código de acesso
+
+ Enviar confirmação por email
+
+ Calendário de reservas (anfitrião)
+
+ Blocos de indisponibilidade
+
+ Cancelar reserva
+
+ Reembolso automático
+
+ Alterar datas (se disponível)
+
+ Upgrade de acomodação
+
+ Histórico de reservas
+
+ Exportar contrato
+
+ Lembretes automáticos (1 dia antes)
+
+ Check-in guiado
+
+ Check-out guiado
+
+ Status de reserva em tempo real
+
+Pagamentos & Financeiro (25 features)
+ Integração Stripe (cards)
+
+ Integração Stripe PIX
+
+ Checkout seguro (PCI compliant)
+
+ Validação de cartão
+
+ Fraude detection
+
+ Salvar cartão (tokenização)
+
+ Múltiplas moedas (BRL, USD)
+
+ Conversão automática
+
+ Webhook de confirmação
+
+ Reembolso automático
+
+ Reembolso parcial
+
+ Histórico de transações
+
+ Fatura (PDF)
+
+ Comprovante PIX
+
+ Reconciliação automática
+
+ Relatório financeiro
+
+ Imposto (IRRF) automático
+
+ Pagamento para anfitrião (semanal)
+
+ Reter comissão plataforma
+
+ Aviso de pagamento (email)
+
+ Taxa de processamento transparente
+
+ Simulador de parcelas
+
+ Limite de transação
+
+ Bloqueio de país
+
+ Relatório de receita (anfitrião)
+
+Comunicação (25 features)
+ Chat hóspede ↔ anfitrião
+
+ Chat em tempo real (WebSocket)
+
+ Upload de arquivos no chat
+
+ Histórico de chat
+
+ Notificação de mensagem
+
+ WhatsApp integration (Evolution API)
+
+ Telegram bot
+
+ Email automático (confirmação, lembrete)
+
+ SMS (Twilio)
+
+ Push notification (app mobile)
+
+ Notificação de novo lance
+
+ Notificação de ganhar leilão
+
+ Notificação de fim de leilão
+
+ Template de mensagem
+
+ Auto-responder (fora do horário)
+
+ Bloqueio de contato
+
+ Moderação de chat
+
+ Reportar mensagem
+
+ Tradução automática
+
+ Envelope de sugestões
+
+ Feedback pós-leilão
+
+ Survey automático
+
+ Newsletter (opt-in)
+
+ Notificação de ofertas
+
+ Unsubscribe (LGPD)
+
+Avaliações & Confiança (20 features)
+ Avaliação após checkout (1-5 estrelas)
+
+ Comentário textual
+
+ Foto da acomodação (validar)
+
+ Validação de avaliação
+
+ Moderação (remover abuse)
+
+ Respostas do anfitrião
+
+ Score de confiança
+
+ Verificação de email
+
+ Verificação de telefone
+
+ Verificação de documento
+
+ ID verificado (badge)
+
+ Acomodação verificada (badge)
+
+ Host superhost (badge)
+
+ Histórico de avaliações
+
+ Filtro por avaliação
+
+ Mostrar críticas também
+
+ Trending (avaliacões recentes)
+
+ Helpful count
+
+ Reported reviews (moderação)
+
+ Review remover (anfitrião pode discordar)
+
+Analytics & Relatórios (25 features)
+ Dashboard geral (overview)
+
+ Total de reservas
+
+ Total de receita
+
+ Taxa de ocupação
+
+ Revenue por período
+
+ Preço médio
+
+ Tendências (gráficos)
+
+ Hóspedes por região
+
+ Taxa de conversão
+
+ Tempo de booking
+
+ Peak seasons
+
+ Competidores (preço comparativo)
+
+ Análise de leilões
+
+ Taxa de sucesso de leilão
+
+ Preço final médio vs esperado
+
+ Demanda por data
+
+ Análise de buscas (keywords)
+
+ Origem de tráfego
+
+ Comportamento de usuário (heatmap)
+
+ Exportar relatório (CSV, PDF)
+
+ Email automático de relatório (semanal)
+
+ Alertas de anomalia
+
+ Comparação ano a ano
+
+ ROI de marketing
+
+ Lifetime value de hóspede
+
+IA & Machine Learning (30 features)
+ Precificação dinâmica (algoritmo)
+
+ Análise de demanda (previsão)
+
+ Recomendação de acomodação
+
+ Descrição automática (GPT-4)
+
+ Título otimizado para SEO
+
+ Detecção de fraude (ML)
+
+ Detecção de bot (lances)
+
+ Análise de sentimento (reviews)
+
+ Chatbot de atendimento
+
+ Sugestão de preço (anfitrião)
+
+ Otimização de fotos (AI)
+
+ Análise de imagem (Computer Vision)
+
+ OCR de documento (CPF)
+
+ Previsão de cancelamento
+
+ Recomendação de acomodação similar
+
+ Sugestão de melhoria (acomodação)
+
+ Previsão de trend
+
+ Análise de competidor
+
+ Busca semântica (embeddings)
+
+ Clustering de usuários
+
+ Segmentação de mercado
+
+ Previsão de demanda (Prophet)
+
+ Detecção de anomalia
+
+ Otimização de lance mínimo
+
+ Sugestão de data de leilão
+
+ Score de qualidade (foto)
+
+ Análise de texto (TF-IDF)
+
+ Embedding de propriedade
+
+ Similar properties (KNN)
+
+ Forecast de ocupação
+
+Integração Multi-Canal (18 features)
+ Airbnb sync (API oficial)
+
+ Booking.com sync
+
+ VRBO sync
+
+ Agora sync
+
+ Seazone sync
+
+ Hoteis.com sync
+
+ Expedia sync
+
+ TripAdvisor sync
+
+ Google Vacation Rentals (XML feed)
+
+ Sincronização de disponibilidade
+
+ Sincronização de preços
+
+ Sincronização de reviews
+
+ Webhook de reserva (OTA → plataforma)
+
+ Webhook de cancelamento
+
+ Double-booking prevention
+
+ Sobre-reserva (buffer)
+
+ Channel manager (manual)
+
+ Importar reservas legacy
+
+Google Vacation Rentals (10 features - ESPECIAL)
+ Integração automática
+
+ XML feed diário
+
+ Validação de feed
+
+ Sitemap gerado
+
+ Schema.org markup
+
+ Deep linking
+
+ Tracking de cliques
+
+ Atualização de preços
+
+ Indexação em Google Search
+
+ Performance metrics
+
+Mobile & UX (20 features)
+ Responsive design (mobile-first)
+
+ App instalável (PWA)
+
+ Dark mode
+
+ Modo offline
+
+ Loading states (skeleton)
+
+ Error states
+
+ Toast notifications
+
+ Modal dialogs
+
+ Breadcrumb navigation
+
+ Bottom navigation (mobile)
+
+ Gesture controls (swipe)
+
+ Infinite scroll
+
+ Pull-to-refresh
+
+ Lazy loading (imagens)
+
+ Video player otimizado
+
+ Lighthouse > 90
+
+ Web Vitals otimizados
+
+ Accessibility (a11y)
+
+ Keyboard navigation
+
+ Screen reader friendly
+
+Segurança & Conformidade (25 features)
+ JWT authentication
+
+ OAuth2 (Google, Facebook)
+
+ 2FA (two-factor)
+
+ HTTPS only
+
+ CORS configuration
+
+ Rate limiting
+
+ SQL injection protection
+
+ XSS protection
+
+ CSRF tokens
+
+ Input validation
+
+ Output encoding
+
+ Password hashing (bcrypt)
+
+ Session timeout
+
+ Cookie secure flags
+
+ PCI compliance (Stripe)
+
+ LGPD compliance
+
+ GDPR compliance
+
+ Data encryption (at rest)
+
+ Data encryption (in transit)
+
+ Backup automático
+
+ Disaster recovery
+
+ Audit logs
+
+ User activity logs
+
+ IP whitelisting (admin)
+
+ Suspensão de conta
+
+Excursões em Grupo (15 features)
+ Criar excursão (ônibus)
+
+ Definir rotas
+
+ Definir preço (por pessoa)
+
+ Cronograma de saída
+
+ Capacidade máxima
+
+ Participantes registrados
+
+ Divisão inteligente de custos
+
+ Votação de itinerário
+
+ Divisão de quartos (room pairing)
+
+ Chat do grupo
+
+ Compartilhamento de documentos
+
+ Pagamento de grupo (boleto)
+
+ Cancelamento com reembolso
+
+ Histórico de excursões
+
+ Avaliação de grupo
+
+Premium Features (15 features)
+ Analytics avançado (IA)
+
+ Precificação automática (setup fácil)
+
+ Removedor de marca d'água
+
+ API acesso (white-label)
+
+ Integração custom
+
+ Suporte prioritário (chat)
+
+ Templates de leilão
+
+ Automação de mensagens
+
+ Bulk upload
+
+ Relatórios customizados
+
+ Dados de mercado (preços concorrentes)
+
+ Treinamento (webinar)
+
+ Consultoria (30 min/mês)
+
+ Branding customizado
+
+ Domain customizado
+
+🗂️ ROADMAP DETALHADO (10-12 DIAS)
+FASE 0: Setup & Validação (Dias 1-2)
+Dia 1: Ambiente
+ Node.js 18+ instalado
+
+ PostgreSQL 15 rodando (docker)
+
+ Redis rodando (docker)
+
+ Clone do repositório
+
+ Variáveis .env configuradas
+
+ npm install
+
+ Database criada
+
+ Migrations rodadas
+
+Dia 2: Validação Arquitetura
+ Health check endpoint (/health)
+
+ Database connection test
+
+ Redis connection test
+
+ JWT token gerado
+
+ Primeiro usuário criado (seed)
+
+ Primeira acomodação criada (seed)
+
+ Primeiro leilão criado (seed)
+
+FASE 1: Database + Backend Core (Dias 2-3)
+Dia 2: Database Setup
+sql
+-- 28 tabelas criadas
+CREATE TABLE users (id SERIAL PRIMARY KEY, ...);
+CREATE TABLE propriedades (id SERIAL PRIMARY KEY, ...);
+CREATE TABLE leiloes (id SERIAL PRIMARY KEY, ...);
+CREATE TABLE lances (id SERIAL PRIMARY KEY, ...);
+-- ... etc
+Dia 3: APIs Core
+ Auth (login, registro, JWT)
+
+ CRUD Propriedades
+
+ CRUD Leilões
+
+ CRUD Lances
+
+ CRUD Reservas
+
+ CRUD Pagamentos
+
+ Testes de API (Postman)
+
+FASE 2: Frontend Setup + Components (Dias 4-5)
+Dia 4: Next.js Setup
+ Next.js 14 criado
+
+ Tailwind CSS configurado
+
+ Framer Motion configurado
+
+ Componentes estrutura
+
+ Página home
+
+ Página de busca
+
+Dia 5: Componentes React
+ FiltrosInteligentes.tsx
+
+ ResultadoCard.tsx
+
+ ReservaModal.tsx
+
+ CalendarioReservas.tsx
+
+ MapaDestinos.tsx
+
+ DestinosCarousel.tsx
+
+ PacotesEspeciais.tsx
+
+FASE 3: Leilão em Tempo Real (Dias 6-7)
+Dia 6: WebSocket Setup
+ Socket.io instalado
+
+ Eventos de leilão
+
+ Sincronização em tempo real
+
+ Notificação de novo lance
+
+ Timer do leilão
+
+Dia 7: Frontend Leilão
+ BidForm.tsx
+
+ BidLive.tsx
+
+ PlaceBid.tsx
+
+ BidHistory.tsx
+
+ LanceBotForm.tsx
+
+FASE 4: Integrações & Monetização (Dias 8-9)
+Dia 8: Integrações OTAs + Google
+ Base Integration class
+
+ Airbnb Integration
+
+ Booking.com Integration
+
+ VRBO Integration
+
+ Google Vacation Rentals feed (XML)
+
+ Webhook handlers
+
+Dia 9: Stripe + Precificação
+ Stripe payment intent
+
+ PIX integration
+
+ Webhook de pagamento
+
+ Precificação dinâmica (algoritmo básico)
+
+ Desconto PIX 5%
+
+ Parcelamento (até 12x)
+
+FASE 5: Analytics + Premium (Dia 10)
+Dia 10: Analytics
+ Dashboard anfitrião
+
+ Gráficos de receita
+
+ Taxa de ocupação
+
+ Analytics de leilão
+
+ Relatórios (CSV)
+
+ Premium plan (stripe recurring)
+
+FASE 6: Testes + Deploy (Dias 11-12)
+Dia 11: Testes
+ Testes unitários (80%+ cobertura)
+
+ Testes E2E (Cypress)
+
+ Load testing
+
+ Security scan
+
+Dia 12: Deploy
+ Docker build
+
+ GitHub Actions CI/CD
+
+ Deploy staging
+
+ Deploy produção
+
+ Monitoramento (Sentry/Datadog)
+
+💻 STACK TÉCNICO (RECOMENDADO)
+Frontend
+Framework: Next.js 14 (App Router)
+
+Styling: Tailwind CSS v4
+
+UI Components: shadcn/ui (ou Untitled UI)
+
+Animation: Framer Motion
+
+Maps: Leaflet.js + Mapbox
+
+Estado: Zustand + Context API
+
+HTTP Client: SWR + Fetch
+
+WebSocket: Socket.io-client
+
+Form: React Hook Form + Zod
+
+Charts: Recharts + Chart.js
+
+Date: date-fns
+
+Utils: clsx, tailwind-merge
+
+Backend
+Runtime: Node.js 18+
+
+Framework: Express.js (ou NestJS para escalar)
+
+Language: TypeScript
+
+ORM: Prisma (melhor que Sequelize)
+
+Database: PostgreSQL 15
+
+Cache: Redis
+
+Queue: Bull (para jobs)
+
+WebSocket: Socket.io
+
+Validation: Joi + Zod
+
+Auth: JWT + bcrypt
+
+Payment: Stripe SDK
+
+Email: Nodemailer
+
+API Calls: Axios
+
+Testing: Jest + Supertest
+
+Logger: Winston ou Pino
+
+DevOps & Deployment
+Container: Docker + Docker Compose
+
+Orchestration: Kubernetes (ou Docker Swarm para MVP)
+
+CI/CD: GitHub Actions
+
+Hosting: DigitalOcean App Platform (ou AWS ECS)
+
+Database Hosting: DigitalOcean Managed DB
+
+CDN: Cloudflare
+
+Error Tracking: Sentry
+
+Monitoring: Datadog (ou Prometheus + Grafana)
+
+Logging: ELK Stack (ou Datadog)
+
+Backup: AWS S3 (backups diários)
+
+Integrações Terceiros
+Stripe: Pagamentos + PIX
+
+SendGrid/Mailgun: Email em massa
+
+Twilio: SMS
+
+Google Maps API: Geocoding + Directions
+
+Google Vacation Rentals: XML Feed Integration
+
+OpenAI GPT-4: IA (descrição, recomendação)
+
+AWS S3: Storage de fotos
+
+Firebase: Analytics (ou Mixpanel)
+
+🎨 DESIGN SYSTEM & COMPONENTES
+Paleta de Cores (Tailwind)
+text
+Primary: #3B82F6 (blue-500) - Confiança, ação
+Secondary: #10B981 (emerald-500) - Sucesso, leilão
+Accent: #F59E0B (amber-500) - Alerta, promoção
+Danger: #EF4444 (red-500) - Erro
+Gray: #6B7280 (gray-500) - Neutro
+Tipografia
+text
+Heading 1: 3rem (Bold) - Títulos principais
+Heading 2: 2.25rem (Bold) - Subtítulos
+Heading 3: 1.875rem (SemiBold) - Seções
+Body: 1rem (Regular) - Texto padrão
+Small: 0.875rem (Regular) - Labels
+Componentes Reutilizáveis
+Button (4 variants: primary, secondary, outline, ghost)
+
+Card (com header, body, footer)
+
+Modal (com title, body, actions)
+
+Input (text, email, number, date)
+
+Select/Dropdown
+
+Checkbox + Radio
+
+Slider (range)
+
+Tabs
+
+Breadcrumb
+
+Pagination
+
+Badge
+
+Alert
+
+Toast
+
+Spinner
+
+Skeleton
+
+Tooltip
+
+Popover
+
+📱 FUNCIONALIDADES ÚNICAS DO MODELO HÍBRIDO
+Diferencial 1: Leilão de Acomodações (ÚNICO NO MERCADO)
+✨ Anfitrião controla 100% quando ativa/desativa
+✨ Hóspede participa em tempo real (WebSocket)
+✨ Zero intermediação de pagamento (redirecionamento)
+✨ Sincronização automática com site anfitrião
+✨ Google Vacation Rentals como principal canal
+
+Diferencial 2: Precificação Dinâmica com IA
+✨ Ajusta preço baseado em: demanda, concorrentes, sazonalidade
+✨ Algoritmo treina com dados históricos
+✨ Aumento de 30-50% de receita (comprovado)
+✨ Simples para anfitrião (1 clique para ativar)
+
+Diferencial 3: Multi-Monetização
+✨ Comissão 2% (vs 15% Airbnb)
+✨ Premium plan (R$ 99/mês) com analytics avançado
+✨ Dados de mercado (venda para anfitriões)
+✨ White-label para agências
+✨ Publicidade (OTAs pagam para estar lá)
+
+Diferencial 4: Excursões em Grupo
+✨ Dividir custos automaticamente
+✨ Votação de itinerário
+✨ Pairing de quartos automático
+✨ Chat do grupo
+✨ Histórico de excursões
+
+Diferencial 5: Integração Perfeita
+✨ Anfitrião Airbnb adiciona 1 leilão
+✨ Aparece em RSV360 + Google Vacation Rentals
+✨ Recebe lances via email/WhatsApp
+✨ Confirma reserva via plataforma
+✨ Pagamento direto na conta dele
+
+💰 MODELO DE RECEITA (ANÁLISE FINANCEIRA)
+Revenue Stream 1: Comissão Leilão (PRINCIPAL)
+Modelo: 2% por leilão finalizado
+
+Exemplo: Leilão de R$ 1.000 = R$ 20 para plataforma
+
+Volume esperado: 100 leilões/mês (Mês 3)
+
+Receita: 100 × R$ 1.000 × 2% = R$ 2.000/mês
+
+Escalado: 1.000 leilões/mês (Mês 12) = R$ 20.000/mês
+
+Revenue Stream 2: Premium Plan
+Preço: R$ 99/mês
+
+Features: Analytics avançado, removedor marca d'água, API
+
+Target: 10% de anfitriões
+
+Volume esperado: 50 anfitriões ativos
+
+Receita: 50 × R$ 99 = R$ 4.950/mês (Mês 6)
+
+Revenue Stream 3: Dados de Mercado
+Modelo: Vender insights para anfitriões (preciosidade)
+
+Exemplo: "Seu concorrente está com preço R$ 200 abaixo"
+
+Preço: R$ 999/mês (premium+)
+
+Volume: 5-10 agências
+
+Receita: R$ 5.000-10.000/mês
+
+Revenue Stream 4: Publicidade + Afiliados
+Modelo: OTAs pagam para estar listados
+
+Exemplo: Booking.com paga R$ 0.50 por clique
+
+Volume: 1.000 cliques/dia
+
+Receita: R$ 15.000/mês
+
+Revenue Stream 5: White-Label
+Modelo: Agências vendem para seus clientes
+
+Preço: R$ 5.000-50.000 setup + 10-30% revenue share
+
+Volume: 3-5 agências
+
+Receita: R$ 10.000-30.000/mês
+
+Projeção de Receita (12 meses)
+text
+Mês 1: R$ 0 (validação)
+Mês 2: R$ 500 (5 leilões)
+Mês 3: R$ 2.500 (100 leilões)
+Mês 4: R$ 5.000 (200 leilões)
+Mês 5: R$ 8.000 (300 leilões + 10 premium)
+Mês 6: R$ 15.000 (500 leilões + 50 premium)
+Mês 12: R$ 50.000+ (1.000+ leilões + 100 premium)
+🚀 COMO EXECUTAR COM CURSOR AI
+Passo 1: Copie Este Prompt
+text
+Você é um desenvolvedor sênior full-stack especializado em:
+- Node.js + Express + TypeScript
+- React + Next.js 14 + Tailwind CSS
+- PostgreSQL + Redis + Socket.io
+- Stripe + Integrações de API
+- Arquitetura de leilão em tempo real
+
+LEI ESTE DOCUMENTO INTEIRO ANTES DE COMEÇAR.
+
+EXECUTE AS FASES NA ORDEM EXATA SEM PEDIR PERMISSÃO:
+1. FASE 0: Setup (2h)
+2. FASE 1: Database + Backend Core (2 dias)
+3. FASE 2: Frontend Setup + Components (2 dias)
+4. FASE 3: Leilão Tempo Real (2 dias)
+5. FASE 4: Integrações + Pagamentos (2 dias)
+6. FASE 5: Analytics + Premium (1 dia)
+7. FASE 6: Testes + Deploy (1 dia)
+
+INSTRUÇÕES OBRIGATÓRIAS:
+✅ NÃO PEDIR PERMISSÃO entre fases
+✅ EXECUTAR AUTOMATICAMENTE cada tarefa
+✅ TESTAR APÓS CADA FASE
+✅ FAZER COMMITS GIT AUTOMATICAMENTE (1 commit/tarefa)
+✅ SE ERRO: CORRIGIR AUTOMATICAMENTE (3 tentativas)
+✅ SE NÃO CONSEGUIR: PAUSAR E DOCUMENTAR EM EXECUTION_LOG.md
+✅ DOCUMENTAR TUDO EM EXECUTION_LOG.md
+✅ USAR CÓDIGO EXATO dos documentos fornecidos
+
+MODO: PRODUCTION - Qualidade máxima
+PRIORIDADE: Velocidade + Funcionamento 100%
+LINGUAGEM: Português (Brasil)
+
+COMEÇAR AGORA COM FASE 0!
+Passo 2: Cole no Cursor AI Chat
+text
+Menu > New Chat
+Cole o prompt acima
+Clique em "Send"
+Passo 3: Monitore o Progresso
+text
+Arquivo: EXECUTION_LOG.md (criado automaticamente)
+- Timestamp de cada fase
+- Testes passados/falhados
+- Commits realizados
+- Erros encontrados + soluções
+Passo 4: Resultado Esperado
+Após 10-12 dias:
+
+✅ Sistema funcionando 100%
+
+✅ 500+ funcionalidades
+
+✅ Testes > 80% cobertura
+
+✅ Deploy em produção
+
+✅ Documentação completa
+
+✅ Pronto para escalar
+
+🎯 CHECKLIST DE EXECUÇÃO
+Pré-Launch (Semanas 1-2)
+Semana 1: MVP Completo
+ Dia 1: Setup ambiente
+
+ Dia 2: Database + seeds
+
+ Dia 3: Auth + APIs core
+
+ Dia 4-5: Frontend components
+
+ Dia 6-7: Leilão WebSocket
+
+ Dia 8: Integração Stripe
+
+ Dia 9: Testes
+
+ Dia 10: Deploy staging
+
+Semana 2: Beta Testing
+ 10-20 beta users
+
+ Feedback collection
+
+ Bug fixes
+
+ Performance tuning
+
+ Deploy produção
+
+ Monitoramento ativo
+
+Launch (Semana 3)
+Dia 1: Soft Launch
+ Notificar beta users
+
+ Aceitar primeiras reservas
+
+ Monitorar 24/7
+
+ Documentar problemas
+
+Dia 2-3: Ramp Up
+ Marketing (email, redes sociais)
+
+ Aumentar tráfego gradualmente
+
+ Coletar feedback
+
+Dia 4-7: Full Launch
+ Aceitar todo tráfego
+
+ Promoção agressiva
+
+ Aquisição de anfitriões
+
+📊 MÉTRICAS DE SUCESSO
+MVP (Dia 10)
+✅ 100% uptime
+
+✅ 0 bugs críticos
+
+✅ Todos endpoints testados
+
+✅ Testes > 80% cobertura
+
+✅ Página home carrega < 3s
+
+✅ Lighthouse > 85
+
+Beta (Semana 2)
+✅ 10+ leilões criados
+
+✅ 5+ reservas confirmadas
+
+✅ Taxa de conversão > 2%
+
+✅ NPS > 50
+
+✅ Sem crash reports
+
+Launch (Semana 3-4)
+✅ 100+ acomodações
+
+✅ 1.000+ usuários
+
+✅ 50+ leilões ativos
+
+✅ R$ 1.000+ em volume
+
+90 Dias
+✅ 1.000+ acomodações
+
+✅ 10.000+ usuários
+
+✅ 500+ leilões finalizados
+
+✅ R$ 50.000+ em volume
+
+✅ R$ 1.000+ em receita plataforma
+
+🔒 SEGURANÇA & CONFORMIDADE
+Implementações Obrigatórias
+✅ JWT + refresh tokens
+
+✅ Password hashing (bcrypt)
+
+✅ HTTPS only
+
+✅ CORS proper configuration
+
+✅ Rate limiting (1.000 req/hora por IP)
+
+✅ Input validation (Zod)
+
+✅ SQL injection protection (Prisma)
+
+✅ XSS protection (React)
+
+✅ CSRF tokens
+
+✅ Audit logs (todas ações)
+
+✅ Backup automático (diário)
+
+✅ LGPD compliance (GDPR-ready)
+
+✅ PCI compliance (Stripe)
+
+✅ Data encryption (TLS 1.3)
+
+✅ IP whitelisting (admin)
+
+📞 SUPORTE & DOCUMENTAÇÃO
+Documentação Gerada Automaticamente
+ README.md (setup + deploy)
+
+ API.md (endpoints documentados)
+
+ ARCHITECTURE.md (diagrama técnico)
+
+ DEPLOYMENT.md (guia deploy)
+
+ TROUBLESHOOTING.md (problemas comuns)
+
+ SECURITY.md (segurança)
+
+ CHANGELOG.md (histórico)
+
+✨ DIFERENCIAIS COMPETITIVOS
+vs Airbnb (15% comissão)
+Comissão 2% = 13% de economia para anfitrião
+
+Leilão dinâmico = maior demanda
+
+Analytics IA = otimização automática
+
+vs Booking.com (18% comissão)
+Zero intermediação de pagamento
+
+Anfitrião controla 100%
+
+Integração Google Vacation Rentals = mais visibilidade
+
+vs Plataformas de Leilão
+Foco em acomodações (nicho)
+
+Modelo agregador (sem intermediação)
+
+Precificação dinâmica automática
+
+vs Zuk/Leilão Ninja
+Foco em leilão (não revenda)
+
+Aluguel de temporada (receita recorrente)
+
+Ativo, não passivo
+
+🎉 RESULTADO FINAL
+Ao terminar o projeto você terá:
+
+✅ Plataforma completa de aluguel de temporada + leilão
+✅ 500+ funcionalidades mapeadas e priorizadas
+✅ Arquitetura escalável (microserviços ready)
+✅ Modelo de receita múltiplo (comissão + premium + dados)
+✅ Integração perfeita com Google Vacation Rentals
+✅ Leilão em tempo real com WebSocket
+✅ Precificação dinâmica com IA
+✅ Anfitrião 100% no controle (zero intermediação)
+✅ Sistema pronto para produção (testes + monitoramento)
+✅ Documentação completa (código + API + deployment)
+
+🚀 COMECE AGORA!
+Copie o prompt acima para o Cursor AI e execute tudo automaticamente.
+
+Você terá um sistema profissional, escalável e rentável em 10-12 dias.
+
+BOA SORTE! 🎉💎
+
+v1.0 | 13/12/2025 | Documentação Final | Pronto para Execução

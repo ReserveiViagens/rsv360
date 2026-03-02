@@ -1,0 +1,68 @@
+{
+  "name": "rsv360-modular-monolith",
+  "version": "1.0.0",
+  "description": "RSV360 - Sistema Modular Monolith - Turismo Completo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:apps\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:apps": "concurrently \"npm run dev --workspace=apps/turismo\" \"npm run dev --workspace=apps/site-publico\" \"npm run dev --workspace=apps/guest\" \"npm run dev --workspace=apps/admin\"",
+    "dev:turismo": "npm run dev --workspace=apps/turismo",
+    "dev:site": "npm run dev --workspace=apps/site-publico",
+    "dev:guest": "npm run dev --workspace=apps/guest",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:atendimento": "npm run dev --workspace=apps/atendimento-ia",
+    "dev:microservices": "powershell -ExecutionPolicy Bypass -File .\\INICIAR_MICROSERVICES.ps1",
+    "build": "npm run build --workspaces --if-present",
+    "build:turismo": "npm run build --workspace=apps/turismo",
+    "build:site": "npm run build --workspace=apps/site-publico",
+    "build:backend": "npm run build --workspace=backend",
+    "start": "concurrently \"npm run start --workspace=backend\" \"npm run start:apps\"",
+    "start:apps": "concurrently \"npm run start --workspace=apps/turismo\" \"npm run start --workspace=apps/site-publico\"",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "migrate": "npm run migrate --workspace=backend",
+    "migrate:new": "npm run migrate:new --workspace=backend",
+    "migrate:rollback": "npm run migrate:rollback --workspace=backend",
+    "seed": "npm run seed --workspace=backend",
+    "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
+    "clean:install": "npm run clean && npm install",
+    "type-check": "npm run type-check --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@alloc/quick-lru": "^5.2.0",
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "overrides": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "modular-monolith",
+    "monorepo",
+    "tourism",
+    "booking",
+    "nextjs",
+    "nodejs",
+    "rsv360"
+  ],
+  "author": {
+    "name": "RSV360 Team",
+    "email": "dev@rsv360.com.br"
+  },
+  "license": "MIT"
+}

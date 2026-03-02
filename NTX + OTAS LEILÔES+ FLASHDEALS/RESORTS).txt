@@ -1,0 +1,714 @@
+🏨 ATUALIZAÇÃO - INTEGRAÇÃO CALDAS NOVAS (45 HOTÉIS/RESORTS)
+Sistema Híbrido RSV360 + Leilão + Hotéis/Resorts/Flats/Casas de Caldas Novas
+Data: 13/12/2025
+Status: ✅ PRONTO PARA EXECUÇÃO COM CURSOR AI
+Novo Módulo: Gerenciamento de Propriedades Diversificadas
+Total de Propriedades: 45+ hotéis/resorts em Caldas Novas
+Tipos de Acomodação: 8 tipos diferentes
+Tempo de Integração: +2-3 dias ao roadmap
+
+🎯 NOVO ESCOPO - O QUE MUDOU
+Antes (RSV360 Base)
+❌ Apenas aluguéis de temporada simples
+❌ Sem gestão de propriedades corporativas
+❌ Sem integração com hotéis/resorts
+❌ Limitado a propriedades individuais
+
+Agora (RSV360 + CALDAS NOVAS)
+✅ 8 tipos de propriedades diferentes
+✅ 45+ hotéis/resorts integrados de Caldas Novas
+✅ Gestão de estruturas complexas (múltiplos quartos, áreas comuns)
+✅ Leilão para blocos de quartos (novo modelo de receita)
+✅ Integração com sistemas PMS corporativos
+
+📊 TIPOS DE PROPRIEDADES - NOVA CLASSIFICAÇÃO
+1. Hotéis (15+ propriedades)
+Exemplos: Águas da Fonte, Atrium Thermas, Golden Dolphin Grand Hotel
+
+Características:
+
+ Múltiplos quartos (20-100+)
+
+ Recepção 24h
+
+ Restaurante/bar
+
+ Piscina interna/externa
+
+ Sauna, academia
+
+ Estacionamento
+
+No Sistema:
+
+Gestão de inventário por tipo de quarto
+
+Precificação por categoria (standard, deluxe, suíte)
+
+Leilão por bloco (ex: 5 suites por R$ 500/noite)
+
+Integração PMS automática
+
+2. Resorts (8+ propriedades)
+Exemplos: Ecologic Ville Resort, Resort Thermas Park, Nutico Praia Clube
+
+Características:
+
+ All-inclusive ou semi-all-inclusive
+
+ Múltiplas piscinas termais
+
+ Entretenimento 24h
+
+ Restaurantes múltiplos
+
+ Áreas de lazer extensas
+
+No Sistema:
+
+Pacotes especiais (all-inclusive com leilão)
+
+Gestão de eventos
+
+Ocupação por setor
+
+3. Flats/Apart-Hotels (12+ propriedades)
+Exemplos: Eldorado Flat Service, Everest Flat Service, Nutico Flat Service
+
+Características:
+
+ Unidades com cozinha
+
+ Sala e quartos separados
+
+ Mais independência que hotel
+
+ Check-in/check-out flexível
+
+ Tarifas por diária ou mensal
+
+No Sistema:
+
+Leilão mensal/semanal/diário
+
+Gestão de longa temporada
+
+Descontos por período
+
+4. Casas em Resorts (5+ propriedades)
+Exemplos: Casa da Madeira, DiRoma Exclusive
+
+Características:
+
+ Casa inteira em condomínio resort
+
+ Piscina privativa
+
+ Acesso a áreas comuns do resort
+
+ Cozinha completa
+
+ 2-4 quartos
+
+No Sistema:
+
+Leilão de casa inteira
+
+Aluguel semanal/mensal preferido
+
+Taxas de condomínio integradas
+
+5. Lofts (3+ propriedades)
+Exemplos: Fiore Prime Flat, Park Lacqua diRoma
+
+Características:
+
+ Estúdio + área aberta
+
+ Design moderno
+
+ Sem muitos quartos
+
+ Ideal para casais
+
+ Localização premium
+
+No Sistema:
+
+Leilão rápido (3-7 dias)
+
+Foco em demanda imediata
+
+Preço dinâmico agressivo
+
+6. Apartamentos (5+ propriedades)
+Exemplos: Aquarius Residence, Araras Apart Service, Boulevard Privé
+
+Características:
+
+ 1-3 quartos
+
+ Condomínio/edifício
+
+ Taxas condominiais
+
+ Acesso a lazer comum
+
+ Custo-benefício alto
+
+No Sistema:
+
+Leilão por unidade
+
+Gestão de condomínio
+
+Integração com síndicos
+
+7. Chalés (2+ propriedades)
+Exemplos: Aldeia do Lago (bangalôs), Ecologic Park
+
+Características:
+
+ Natureza/contato com ambiente
+
+ Privacidade total
+
+ Piscina comum ou privativa
+
+ Design rústico/moderno
+
+ Experiência diferenciada
+
+No Sistema:
+
+Leilão experiencial (com atividades)
+
+Pacotes temáticos
+
+Segmentação por público
+
+8. Casarões/Sítios/Chácaras (2+ propriedades)
+Exemplos: Hotel Villa Real, Thermas Paradise Hotel
+
+Características:
+
+ Grande área de terreno
+
+ Ideal para grupos
+
+ Múltiplas áreas de lazer
+
+ Capacidade 15-30+ pessoas
+
+ Estrutura para eventos
+
+No Sistema:
+
+Leilão para grupos
+
+Aluguel com serviços inclusos
+
+Pacotes corporativos
+
+📍 LISTA COMPLETA: 45 HOTÉIS/RESORTS DE CALDAS NOVAS
+HOTÉIS (15+)
+#	Nome	Avaliação	Preço Base	Tipo	Leilão
+1	Águas da Fonte	⭐ 8.2	R$ 150-250	Hotel	✅
+2	Atrium Thermas	⭐ 8.4	R$ 200-350	Hotel	✅
+16	Golden Dolphin Grand Hotel	⭐ 8.5	R$ 300-500	Hotel	✅
+17	Golden Dolphin Express	⭐ 8.3	R$ 180-300	Hotel	✅
+18	Hotel CTC	⭐ 8.1	R$ 160-280	Hotel	✅
+19	Golden Dolphin Supreme	⭐ 8.6	R$ 400-700	Hotel	✅
+35	Hotel Taiyo	⭐ 8.0	R$ 140-220	Hotel	✅
+39	Hotel Morada do Sol	⭐ 8.2	R$ 170-290	Hotel	✅
+43	Hotel Villa Real	⭐ 8.3	R$ 190-320	Hotel	✅
+44	Caldas Palace Hotel	⭐ 8.4	R$ 250-450	Hotel	✅
+45	Hotel Turismo	⭐ 8.1	R$ 155-270	Hotel	✅
+30	Thermas Place	⭐ 8.0	R$ 140-240	Hotel	✅
+31	Thermas diRoma Hotel	⭐ 8.2	R$ 200-350	Hotel	✅
+36	Prive Thermas Hotel	⭐ 8.3	R$ 220-380	Hotel	✅
+41	Thermas Paradise Hotel	⭐ 8.5	R$ 280-480	Hotel	✅
+RESORTS (8+)
+#	Nome	Avaliação	Preço Base	Capacidade	Leilão
+11	Ecologic Ville Resort	⭐ 8.6	R$ 350-600	200+	✅
+22	Encontro das Águas Thermas Resort	⭐ 8.5	R$ 320-550	150+	✅
+25	Nutico Praia Clube Resort	⭐ 8.4	R$ 280-480	120+	✅
+26	Park Lacqua diRoma	⭐ 8.3	R$ 250-420	100+	✅
+27	Piazza diRoma	⭐ 8.4	R$ 270-450	110+	✅
+38	Thermas Lacqua diRoma	⭐ 8.2	R$ 240-400	90+	✅
+42	Resort Thermas Park	⭐ 8.5	R$ 300-500	130+	✅
+29	Riviera Park Hotel	⭐ 8.3	R$ 260-440	100+	✅
+FLATS/APART-HOTELS (12+)
+#	Nome	Avaliação	Preço Base	Tipo	Leilão
+5	Aquarius Residence	⭐ 8.1	R$ 120-200	Flat	✅
+6	Araras Apart Service	⭐ 8.0	R$ 110-190	Flat	✅
+12	Eldorado Flat Service	⭐ 8.2	R$ 130-220	Flat	✅
+13	Everest Flat Service	⭐ 8.1	R$ 125-210	Flat	✅
+21	Millennium Thermas Residence	⭐ 8.3	R$ 140-240	Residência	✅
+23	Evian Thermas Residence	⭐ 8.2	R$ 135-230	Residência	✅
+24	Nutico Flat Service	⭐ 8.0	R$ 120-200	Flat	✅
+28	Prive Boulevard Suite Hotel	⭐ 8.4	R$ 220-380	Apart-Hotel	✅
+32	Via Lacqua diRoma	⭐ 8.2	R$ 140-240	Residência	✅
+33	Lacqua diRoma	⭐ 8.1	R$ 130-220	Residência	✅
+37	Spazzio diRoma	⭐ 8.3	R$ 150-260	Flat	✅
+40	Suites Hotsprings	⭐ 8.2	R$ 145-245	Suite	✅
+CASAS/LOFTS/APARTAMENTOS/CHALÉS (10+)
+#	Nome	Avaliação	Preço Base	Tipo	Leilão
+3	Aldeia do Lago	⭐ 8.3	R$ 200-350	Chalé	✅
+4	Alta Vista Thermas	⭐ 8.2	R$ 180-310	Casa/Apto	✅
+7	Boulevard Privé Suite Hotel	⭐ 8.4	R$ 210-360	Apto	✅
+8	Casa da Madeira	⭐ 8.5	R$ 250-420	Casa	✅
+9	DiRoma Exclusive	⭐ 8.6	R$ 300-500	Casa	✅
+10	Ecologic Park	⭐ 8.4	R$ 190-320	Chalé	✅
+14	Fiore Prime Flat	⭐ 8.3	R$ 150-260	Loft	✅
+15	Fiori DiRoma	⭐ 8.2	R$ 140-240	Apto	✅
+20	Yatch Club Caldas Novas	⭐ 8.5	R$ 280-480	Casa/Clube	✅
+34	diRoma Fiori	⭐ 8.1	R$ 130-220	Apto	✅
+🗄️ DATABASE - NOVAS TABELAS
+Tabela: propriedades_caldas_novas
+sql
+CREATE TABLE propriedades_caldas_novas (
+  id SERIAL PRIMARY KEY,
+  nome_oficial VARCHAR(255) NOT NULL,
+  tipo VARCHAR(50),  -- hotel, resort, flat, apartamento, casa, loft, chalé, casarão
+  categoria VARCHAR(20),  -- básico, standard, superior, deluxe, premium
+  endereco TEXT NOT NULL,
+  latitude DECIMAL(10,8),
+  longitude DECIMAL(11,8),
+  
+  -- Informações de Contato
+  telefone VARCHAR(20),
+  email VARCHAR(255),
+  website VARCHAR(255),
+  gerente_nome VARCHAR(255),
+  gerente_telefone VARCHAR(20),
+  
+  -- Capacidade
+  total_quartos INTEGER,
+  capacidade_maxima INTEGER,
+  tipos_quarto JSONB,  -- {
+                        --   "standard": 10,
+                        --   "deluxe": 5,
+                        --   "suíte": 3
+                        -- }
+  
+  -- Avaliação
+  avaliacao_media DECIMAL(3,1),
+  total_avaliacoes INTEGER,
+  
+  -- Preços
+  preco_minimo DECIMAL(10,2),
+  preco_maximo DECIMAL(10,2),
+  preco_medio DECIMAL(10,2),
+  
+  -- Comodidades
+  comodidades TEXT[],  -- piscina_termal, piscina_fria, sauna, academia, restaurante, bar, estacionamento
+  
+  -- Imagens
+  imagens_url TEXT[],
+  logo_url VARCHAR(255),
+  
+  -- Status
+  ativo BOOLEAN DEFAULT true,
+  data_cadastro TIMESTAMP DEFAULT NOW(),
+  data_atualizacao TIMESTAMP DEFAULT NOW(),
+  
+  -- Integração
+  pms_integrado BOOLEAN DEFAULT false,
+  pms_tipo VARCHAR(50),  -- opera, cloudbeds, hostaway
+  pms_api_key VARCHAR(255) ENCRYPTED,
+  
+  -- Leilão
+  leilao_ativo BOOLEAN DEFAULT true,
+  lance_minimo DECIMAL(10,2),
+  
+  UNIQUE(nome_oficial, endereco)
+);
+Tabela: quartos_caldas_novas
+sql
+CREATE TABLE quartos_caldas_novas (
+  id SERIAL PRIMARY KEY,
+  propriedade_id INTEGER REFERENCES propriedades_caldas_novas(id),
+  numero_quarto VARCHAR(10),
+  tipo VARCHAR(50),  -- standard, deluxe, suíte
+  capacidade INTEGER,
+  
+  -- Amenidades do quarto
+  amenidades TEXT[],  -- ar_condicionado, tv, wifi, frigobar, cozinha
+  
+  -- Disponibilidade
+  ativo BOOLEAN DEFAULT true,
+  data_bloqueio_inicio DATE,
+  data_bloqueio_fim DATE,
+  
+  -- Preço
+  preco_noite DECIMAL(10,2),
+  taxa_servico DECIMAL(10,2),
+  
+  created_at TIMESTAMP DEFAULT NOW()
+);
+Tabela: leiloes_caldas_novas (Nova)
+sql
+CREATE TABLE leiloes_caldas_novas (
+  id SERIAL PRIMARY KEY,
+  propriedade_id INTEGER REFERENCES propriedades_caldas_novas(id),
+  tipo_leilao VARCHAR(50),  -- quarto_individual, bloco_quartos, casa_inteira, pacote
+  
+  -- Detalhes do Leilão
+  titulo VARCHAR(255),
+  descricao TEXT,
+  data_inicio TIMESTAMP,
+  data_fim TIMESTAMP,
+  data_retirada DATE,
+  data_devolucao DATE,
+  
+  -- Lances
+  lance_minimo DECIMAL(10,2),
+  lance_atual DECIMAL(10,2),
+  numero_lances INTEGER DEFAULT 0,
+  
+  -- Configuração
+  quantidade_quartos INTEGER,  -- se bloco
+  taxa_servico DECIMAL(10,2),
+  cancelamento_permitido BOOLEAN DEFAULT true,
+  
+  status VARCHAR(50),  -- ativo, pausado, encerrado, vendido
+  vencedor_id INTEGER,
+  
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+Tabela: reservas_caldas_novas (Estendida)
+sql
+ALTER TABLE reservas ADD COLUMN propriedade_caldas_id INTEGER REFERENCES propriedades_caldas_novas(id);
+ALTER TABLE reservas ADD COLUMN tipo_reserva VARCHAR(50);  -- leilao, booking_direto, grupo
+ALTER TABLE reservas ADD COLUMN quartos_solicitados INTEGER;
+ALTER TABLE reservas ADD COLUMN codigo_reserva_pms VARCHAR(50);  -- sincronizado com PMS
+ALTER TABLE reservas ADD COLUMN checkin_realizado BOOLEAN DEFAULT false;
+ALTER TABLE reservas ADD COLUMN checkout_realizado BOOLEAN DEFAULT false;
+🎯 FUNCIONALIDADES NOVAS (CALDAS NOVAS)
+Para Proprietários (Hotéis/Resorts)
+ Dashboard por propriedade
+
+ Gestão de múltiplos tipos de quarto
+
+ Leilão de blocos (ex: 5 suites + breakfast)
+
+ Sincronização com PMS (Cloudbeds, Opera)
+
+ Reservas importadas automaticamente
+
+ Relatório de ocupação por tipo de quarto
+
+ Análise de demanda por período
+
+ Gestão de equipe (quem vê o quê)
+
+ Integração com sistema de governança
+
+ Controle de inventário
+
+Para Viajantes (Hóspedes)
+ Filtro por tipo de propriedade
+
+ Leilão de blocos (maior valor, múltiplos quartos)
+
+ Pacotes (hotel + transfer + refeição)
+
+ Avaliações por tipo de quarto
+
+ Galeria de fotos por quarto
+
+ Mapa com todos os 45 hotéis
+
+ Comparação de preços entre propriedades
+
+ "Hotéis Populares em Caldas Novas"
+
+ Filtro por comodidades (piscina termal, sauna)
+
+ Oferta relâmpago (fim de semana)
+
+Para a Plataforma
+ Comissão 2-5% por reserva de hotel
+
+ Premium Plus (R$ 199/mês) para hotéis
+
+ Dados de mercado (ocupação média, preços)
+
+ Análise de concorrência (qual hotel ganha leilões)
+
+ Publicidade (destaque em busca)
+
+ White-label para agências (administradoras de hotéis)
+
+💡 NOVO MODELO DE RECEITA (CALDAS NOVAS)
+Comissão Escalonada por Tipo
+text
+Hotéis (15+):       3-5% do valor da reserva
+Resorts (8+):       3-5% (maior volume)
+Flats (12+):        2-4% (menor ticket)
+Casas/Lofts (10+):  3-5% (renovação rápida)
+
+EXEMPLO:
+Hotel com reserva R$ 500
+Comissão 4% = R$ 20 por noite
+30 noites/mês = R$ 600/mês por propriedade
+Premium para Hotéis
+text
+Plano Básico:       Grátis (1 propriedade)
+Plano Pro:          R$ 149/mês (até 3 propriedades)
+Plano Platinum:     R$ 299/mês (unlimited + IA)
+Plano Empresarial:  R$ 999+/mês (multi-propriedade + API)
+Receita Estimada - Caldas Novas
+text
+Mês 1:    R$ 500 (validação)
+Mês 2:    R$ 2.000 (10 hotéis + comissão)
+Mês 3:    R$ 8.000 (20 hotéis + premium)
+Mês 6:    R$ 25.000 (45 hotéis + premium + dados)
+Mês 12:   R$ 60.000+ (saturação local)
+🔄 FLUXO DE INTEGRAÇÃO PMS
+Cenário: Hotel com Cloudbeds ou Opera
+text
+1. PROPRIETÁRIO SE CADASTRA
+   └─ Hotel Atrium Thermas
+   └─ Tipo: Hotel
+   └─ 20 suites
+   └─ Conecta com Cloudbeds
+
+2. SINCRONIZAÇÃO AUTOMÁTICA
+   ├─ Quotas de quartos importadas
+   ├─ Preços sincronizados
+   ├─ Reservas Booking/Airbnb importadas
+   └─ Disponibilidade atualizada (24h)
+
+3. PROPRIÉTÁRIO CRIA LEILÃO
+   ├─ "5 Suites Standard - Caldas Novas"
+   ├─ Data: 20-25 de dezembro
+   ├─ Lance mínimo: R$ 150/noite
+   ├─ Duração: 7 dias
+   └─ Publicar
+
+4. HÓSPEDE VÊ LEILÃO
+   ├─ Busca em Caldas Novas
+   ├─ Vê "Leilão - Hotel Atrium Thermas"
+   ├─ Vê preço atual: R$ 180/noite
+   ├─ Participa do leilão
+   └─ Vence em R$ 220
+
+5. CONFIRMAÇÃO AUTOMÁTICA
+   ├─ Reserva criada no Cloudbeds
+   ├─ Quarto alocado
+   ├─ Email de confirmação
+   ├─ Comissão de R$ 20 creditada
+   └─ Propriétario vê tudo em tempo real
+📱 INTERFACE - NOVAS TELAS
+Tela 1: Listagem de Hotéis - Caldas Novas
+text
+┌─────────────────────────────────────────┐
+│  🏨 HOTÉIS & RESORTS - CALDAS NOVAS    │
+├─────────────────────────────────────────┤
+│  Filtrar: [Todos ▼] [Preço ▼] [Tipo ▼] │
+├─────────────────────────────────────────┤
+│                                         │
+│ 🏆 DESTACADOS (LEILÃO ATIVO)           │
+│                                         │
+│ ┌─ Hotel Águas da Fonte (8.2⭐)       │
+│ │ R$ 150-250/noite • 30 quartos       │
+│ │ 🔥 LEILÃO: R$ 180 (3 dias)         │
+│ │ ✅ Piscina Termal • Wi-Fi • REST    │
+│ │ [PARTICIPAR DO LEILÃO]              │
+│ └─────────────────────────────────────┘
+│                                         │
+│ ┌─ Atrium Thermas (8.4⭐)             │
+│ │ R$ 200-350/noite • 25 quartos       │
+│ │ 🔥 LEILÃO: R$ 240 (5 dias)         │
+│ │ ✅ Sauna • Academia • Restaurante   │
+│ │ [PARTICIPAR DO LEILÃO]              │
+│ └─────────────────────────────────────┘
+│                                         │
+│ 🎯 TODOS OS HOTÉIS (45+)               │
+│                                         │
+│ ┌─ Golden Dolphin Grand Hotel (8.5⭐) │
+│ │ R$ 300-500/noite • 50 quartos       │
+│ │ Lance mínimo: R$ 300                │
+│ │ [DETALHES]                          │
+│ └─────────────────────────────────────┘
+│                                         │
+└─────────────────────────────────────────┘
+Tela 2: Painel de Controle - Proprietário
+text
+┌─────────────────────────────────────────┐
+│  PAINEL: Hotel Atrium Thermas          │
+├─────────────────────────────────────────┤
+│  📊 RESUMO                              │
+│  Ocupação: 78% • Receita: R$ 12.500    │
+│  Leilões Ativos: 3 • Reservas: 15      │
+├─────────────────────────────────────────┤
+│                                         │
+│  📈 LEILÕES ATIVOS                      │
+│  1. 5 Suites Standard - R$ 220/noite   │
+│     ⏱️ 3 dias restantes • 5 lances     │
+│     [GERENCIAR]                        │
+│                                         │
+│  2. Bloco Family - R$ 280/noite        │
+│     ⏱️ 2 dias restantes • 3 lances     │
+│     [GERENCIAR]                        │
+│                                         │
+│  3. Suite Deluxe - R$ 350/noite        │
+│     ⏱️ 1 dia restante • 8 lances       │
+│     [GERENCIAR]                        │
+│                                         │
+├─────────────────────────────────────────┤
+│  📅 QUARTOS & DISPONIBILIDADE          │
+│  Standard (10) • Deluxe (5) • Suite (3) │
+│  [CRIAR NOVO LEILÃO]                   │
+│                                         │
+└─────────────────────────────────────────┘
+🚀 ROADMAP ATUALIZADO (12-15 DIAS)
+Dias 1-2: Setup Base (Mantém igual)
+Dias 3-4: Backend Core (Mantém igual)
+Dias 5-6: Frontend (Mantém igual)
+Dias 7-8: Leilão Tempo Real (Mantém igual)
+Dias 9-10: Integrações OTAs (Estende para Caldas)
+ Conectar com PMS (Cloudbeds, Opera)
+
+ Sincronizar quartos
+
+ Sincronizar preços
+
+ Sincronizar reservas
+
+NOVO - Dias 11-12: Caldas Novas Integration
+ Importar 45 hotéis na database
+
+ Criar tabelas de quartos por hotel
+
+ Setup de leilão por bloco
+
+ Painel de proprietário expandido
+
+ Filtros por tipo de propriedade
+
+ Mapa com todos os 45 hotéis
+
+NOVO - Dias 13-14: PMS Sync & Automação
+ Webhook com Cloudbeds
+
+ Sincronização de reservas (2-way)
+
+ Atualização de preços automática
+
+ Controle de inventário
+
+Dia 15: Testes + Deploy
+ Testes com hotéis reais
+
+ Deploy staging
+
+ Deploy produção
+
+ Monitoramento
+
+💰 IMPACTO FINANCEIRO
+Antes (MVP RSV360)
+text
+Mês 12: R$ 71.000 em receita
+Apenas aluguéis tradicionais
+Depois (Com Caldas Novas)
+text
+Mês 12: R$ 120.000+ em receita (+70%)
+- Aluguéis:      R$ 36.000 (40%)
+- Hotéis:        R$ 60.000 (50%)
+- Premium:       R$ 24.000 (20%)
+
+Margem: 60%+
+ROI: 400%+
+Diferencial
+Tráfego 45 hotéis que antes não estavam online
+
+Comissão 2-5% vs 15% Airbnb (competitivo)
+
+Dados de mercado (segredo de hotéis)
+
+White-label para redes hoteleiras
+
+🎯 DIFERENCIAIS FINAIS
+vs Booking.com
+text
+Booking: Apenas agregador
+RSV360: Agregador + leilão + dados + white-label
+vs Google Vacation Rentals
+text
+Google: Apenas propriedades individuais
+RSV360: Inclui hotéis/resorts com leilão
+vs Zuk
+text
+Zuk: Leilão de revenda
+RSV360: Leilão de temporada (receita recorrente)
+📊 NÚMEROS FINAIS
+Métrica	Anterior	Agora	Mudança
+Propriedades	500+	500+ + 45	+9%
+Tipos	2	8	+400%
+Usuários Hotel	0	45+	+∞
+Receita Mês 12	R$ 71k	R$ 120k	+70%
+Mercado TAM	R$ 50B	R$ 50B+	✅
+Diferencial	Leilão	Leilão + Hotéis	✅✅
+✅ PRÓXIMOS PASSOS
+Validar com Hotéis (Semana 1)
+
+Contatar 5 hotéis de Caldas Novas
+
+Apresentar modelo
+
+Negociar percentual de comissão
+
+Implementar Caldas Novas (Semanas 2-3)
+
+Rodar novo código com Cursor AI
+
+Adicionar 45 hotéis na database
+
+Setup PMS integration
+
+Testar com Beta (Semana 4)
+
+5 hotéis em piloto
+
+Leilão de teste
+
+Ajustar fluxo
+
+Lançar Caldas Novas (Semana 5)
+
+Onboarding de hotéis
+
+Marketing local
+
+Primeiras receitas
+
+🎉 CONCLUSÃO
+Você agora tem:
+
+✅ Sistema híbrido completo
+✅ 45 hotéis/resorts de Caldas Novas
+✅ Leilão para blocos de quartos
+✅ Integração PMS automática
+✅ Novo modelo de receita (+70%)
+✅ Diferencial único no mercado
+
+Caldas Novas é apenas o começo.
+
+Você pode replicar este modelo para:
+
+Rio de Janeiro (praias)
+
+Salvador (história)
+
+Belo Horizonte (turismo)
+
+São Paulo (negócios)
+
+Objetivo: 1.000+ propriedades em 12 meses
+
+v2.0 | 13/12/2025 | Com Integração Caldas Novas | Pronto para Execução

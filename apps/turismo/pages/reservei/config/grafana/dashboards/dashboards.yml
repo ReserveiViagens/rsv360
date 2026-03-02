@@ -1,0 +1,16 @@
+# 📊 CONFIGURAÇÃO DE DASHBOARDS - GRAFANA
+# RSV 360° ECOSYSTEM - Dashboard Provisioning
+
+apiVersion: 1
+
+providers:
+  - name: 'RSV Ecosystem Dashboards'
+    orgId: 1
+    folder: 'RSV 360° Ecosystem'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: true

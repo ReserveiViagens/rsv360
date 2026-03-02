@@ -1,0 +1,114 @@
+# 🔍 CONFIGURAÇÃO DO PROMETHEUS - RSV 360° ECOSYSTEM
+# Monitoramento Local de Produção
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'rsv-local'
+    environment: 'local-production'
+
+# Configurações de regras
+rule_files:
+  - "rules/*.yml"
+
+# Configurações de scraping
+scrape_configs:
+  # Prometheus próprio
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # Ecosystem Master
+  - job_name: 'ecosystem-master'
+    static_configs:
+      - targets: ['ecosystem-master-local:3000']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # CRM System
+  - job_name: 'crm-system'
+    static_configs:
+      - targets: ['crm-system-local:3001']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # Booking Engine
+  - job_name: 'booking-engine'
+    static_configs:
+      - targets: ['booking-engine-local:3002']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # Hotel Management
+  - job_name: 'hotel-management'
+    static_configs:
+      - targets: ['hotel-management-local:3003']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # Analytics Intelligence
+  - job_name: 'analytics-intelligence'
+    static_configs:
+      - targets: ['analytics-intelligence-local:3004']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # PostgreSQL Database
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['db-local:5432']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-local:6379']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Node Exporter (métricas do sistema)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Docker daemon
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['docker:9323']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+# Configurações de alerting
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Configurações de storage
+storage:
+  tsdb:
+    retention.time: 15d
+    retention.size: 1GB
+    wal-compression: true
+
+# Configurações de web
+web:
+  listen-address: '0.0.0.0:9090'
+  external-url: 'http://localhost:9091'
+  route-prefix: '/'
+  enable-lifecycle: true
+  enable-admin-api: true
+  console-libraries: '/etc/prometheus/console_libraries'
+  console-templates: '/etc/prometheus/consoles'

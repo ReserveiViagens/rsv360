@@ -1,0 +1,195 @@
+# Regras de alerta adicionais para o Prometheus
+# Adicione estas regras ao ConfigMap: k8s/prometheus/alert-rules-configmap.yaml
+#
+# Como usar:
+# 1. Copie as regras desejadas deste arquivo
+# 2. Adicione ao arquivo k8s/prometheus/alert-rules-configmap.yaml na seção data.alerts.yaml
+# 3. Aplique: kubectl apply -f k8s/prometheus/alert-rules-configmap.yaml
+
+groups:
+  # ============================================
+  # ALERTAS DE CAPACIDADE
+  # ============================================
+  - name: rsv_gen2_capacity_alerts
+    interval: 30s
+    rules:
+      - alert: HighDiskUsage
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: warning
+          type: infrastructure
+        annotations:
+          summary: "Uso de disco alto no nó {{ $labels.instance }}"
+          description: "O uso de disco no nó {{ $labels.instance }} está acima de 90%. Espaço disponível: {{ $value | humanizePercentage }}"
+
+      - alert: HighNetworkLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: warning
+          type: application
+        annotations:
+          summary: "Alta latência de rede detectada"
+          description: "A latência p95 das requisições HTTP está acima de 2 segundos por 10 minutos. Valor atual: {{ $value | humanizeDuration }}"
+
+  # ============================================
+  # ALERTAS DE SEGURANÇA
+  # ============================================
+  - name: rsv_gen2_security_alerts
+    interval: 30s
+    rules:
+      - alert: HighFailedLoginAttempts
+        expr: sum(rate(http_requests_total{route=~"/api/auth.*", status_code="401"}[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          type: security
+        annotations:
+          summary: "Alto número de tentativas de login falhadas"
+          description: "Mais de 10 tentativas de login falhadas por minuto detectadas. Possível ataque de força bruta."
+
+      - alert: UnusualAPIAccessPattern
+        expr: sum(rate(http_requests_total{status_code=~"4.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          type: security
+        annotations:
+          summary: "Padrão de acesso anormal à API"
+          description: "Mais de 20% das requisições estão retornando erro 4xx. Possível tentativa de acesso não autorizado."
+
+  # ============================================
+  # ALERTAS DE NEGÓCIO AVANÇADOS
+  # ============================================
+  - name: rsv_gen2_business_advanced_alerts
+    interval: 30s
+    rules:
+      - alert: LowBookingConversionRate
+        expr: (sum(rate(rsv_bookings_created_total[1h])) / sum(rate(http_requests_total{route=~"/api/properties.*"}[1h]))) < 0.05
+        for: 1h
+        labels:
+          severity: info
+          type: business
+        annotations:
+          summary: "Taxa de conversão de reservas baixa"
+          description: "A taxa de conversão de visualizações para reservas está abaixo de 5% na última hora."
+
+      - alert: HighCancellationRate
+        expr: sum(rate(rsv_bookings_cancelled_total[1h])) / sum(rate(rsv_bookings_created_total[1h])) > 0.2
+        for: 1h
+        labels:
+          severity: warning
+          type: business
+        annotations:
+          summary: "Alta taxa de cancelamento de reservas"
+          description: "Mais de 20% das reservas criadas na última hora foram canceladas."
+
+      - alert: SlowPaymentProcessing
+        expr: histogram_quantile(0.95, rate(payment_processing_time_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+          type: business
+        annotations:
+          summary: "Processamento de pagamentos lento"
+          description: "O tempo de processamento de pagamentos (p95) está acima de 5 segundos por 10 minutos."
+
+  # ============================================
+  # ALERTAS DE INTEGRAÇÃO
+  # ============================================
+  - name: rsv_gen2_integration_alerts
+    interval: 30s
+    rules:
+      - alert: GoogleCalendarSyncFailure
+        expr: sum(rate(google_calendar_sync_errors_total[5m])) > 0
+        for: 5m
+        labels:
+          severity: warning
+          type: integration
+        annotations:
+          summary: "Falha na sincronização com Google Calendar"
+          description: "Erros detectados na sincronização com Google Calendar. Taxa de erro: {{ $value }}"
+
+      - alert: SmartLockAPIUnavailable
+        expr: sum(rate(smart_lock_api_errors_total[5m])) > 5
+        for: 5m
+        labels:
+          severity: critical
+          type: integration
+        annotations:
+          summary: "API de Smart Locks indisponível"
+          description: "Mais de 5 erros por minuto na API de Smart Locks. Verificar conectividade."
+
+      - alert: KlarnaPaymentGatewayDown
+        expr: sum(rate(payments_failed_total{payment_method="klarna"}[5m])) / sum(rate(payments_processed_total{payment_method="klarna"}[5m])) > 0.5
+        for: 10m
+        labels:
+          severity: critical
+          type: integration
+        annotations:
+          summary: "Gateway de pagamento Klarna com alta taxa de falha"
+          description: "Mais de 50% dos pagamentos Klarna estão falhando. Verificar status do gateway."
+
+  # ============================================
+  # ALERTAS DE PERFORMANCE
+  # ============================================
+  - name: rsv_gen2_performance_alerts
+    interval: 30s
+    rules:
+      - alert: HighEventLoopLag
+        expr: nodejs_eventloop_lag_seconds > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          type: performance
+        annotations:
+          summary: "Alto lag no event loop do Node.js"
+          description: "O lag no event loop está acima de 100ms por 5 minutos. Valor atual: {{ $value | humanizeDuration }}"
+
+      - alert: HighGarbageCollectionTime
+        expr: rate(nodejs_gc_duration_seconds_sum[5m]) > 0.1
+        for: 10m
+        labels:
+          severity: warning
+          type: performance
+        annotations:
+          summary: "Alto tempo de garbage collection"
+          description: "O tempo gasto em garbage collection está acima de 10% por 10 minutos."
+
+      - alert: LowThroughput
+        expr: sum(rate(http_requests_total[5m])) < 10
+        for: 15m
+        labels:
+          severity: info
+          type: performance
+        annotations:
+          summary: "Throughput baixo"
+          description: "Menos de 10 requisições por segundo nos últimos 15 minutos. Pode indicar problema ou baixo tráfego."
+
+  # ============================================
+  # ALERTAS DE DISPONIBILIDADE
+  # ============================================
+  - name: rsv_gen2_availability_alerts
+    interval: 30s
+    rules:
+      - alert: ServiceDegraded
+        expr: sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+          type: availability
+        annotations:
+          summary: "Serviço degradado"
+          description: "Mais de 10% das requisições estão retornando erro 5xx por 5 minutos."
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 3
+        for: 10m
+        labels:
+          severity: warning
+          type: availability
+        annotations:
+          summary: "Tempo de resposta alto (p99)"
+          description: "O tempo de resposta p99 está acima de 3 segundos por 10 minutos. Valor atual: {{ $value | humanizeDuration }}"
+

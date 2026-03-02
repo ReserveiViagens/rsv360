@@ -1,0 +1,168 @@
+# 🚨 REGRAS DE ALERTAS - RSV 360° ECOSYSTEM
+# Alertas para Monitoramento Local
+
+groups:
+  # Alertas de Sistema
+  - name: system_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Alto uso de CPU detectado"
+          description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Alto uso de memória detectado"
+          description: "Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}"
+
+      - alert: DiskSpaceLow
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Espaço em disco baixo"
+          description: "Disk space is above 90% on {{ $labels.instance }} at {{ $labels.mountpoint }}"
+
+  # Alertas de Aplicação
+  - name: application_alerts
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: application
+        annotations:
+          summary: "Serviço indisponível"
+          description: "Service {{ $labels.job }} is down on {{ $labels.instance }}"
+
+      - alert: HighResponseTime
+        expr: http_request_duration_seconds{quantile="0.95"} > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: application
+        annotations:
+          summary: "Tempo de resposta alto"
+          description: "95th percentile response time is above 2s for {{ $labels.job }}"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: application
+        annotations:
+          summary: "Taxa de erro alta"
+          description: "Error rate is above 10% for {{ $labels.job }}"
+
+  # Alertas de Banco de Dados
+  - name: database_alerts
+    rules:
+      - alert: DatabaseConnectionsHigh
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 3m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Muitas conexões no banco"
+          description: "Database connections are above 80% of max connections"
+
+      - alert: DatabaseSlowQueries
+        expr: rate(pg_stat_database_tup_returned[5m]) / rate(pg_stat_database_tup_fetched[5m]) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Queries lentas detectadas"
+          description: "Slow queries detected in database"
+
+      - alert: DatabaseDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Banco de dados indisponível"
+          description: "PostgreSQL database is down"
+
+  # Alertas de Redis
+  - name: redis_alerts
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis indisponível"
+          description: "Redis cache is down"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Alto uso de memória no Redis"
+          description: "Redis memory usage is above 85%"
+
+      - alert: RedisHighConnections
+        expr: redis_connected_clients / redis_maxclients * 100 > 80
+        for: 3m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Muitas conexões no Redis"
+          description: "Redis connections are above 80% of max connections"
+
+  # Alertas de Docker
+  - name: docker_alerts
+    rules:
+      - alert: ContainerDown
+        expr: container_last_seen - container_start_time_seconds > 300
+        for: 1m
+        labels:
+          severity: critical
+          service: docker
+        annotations:
+          summary: "Container parado"
+          description: "Container {{ $labels.name }} has been down for more than 5 minutes"
+
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "Alto uso de CPU no container"
+          description: "Container {{ $labels.name }} CPU usage is above 80%"
+
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "Alto uso de memória no container"
+          description: "Container {{ $labels.name }} memory usage is above 85%"

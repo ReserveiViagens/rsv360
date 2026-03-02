@@ -1,0 +1,5 @@
+export { default as BackupCenter } from './BackupCenter'
+export { default as DisasterRecovery } from './DisasterRecovery'
+export { default as DataReplication } from './DataReplication'
+export { default as RecoveryTesting } from './RecoveryTesting'
+export { default as BackupAnalytics } from './BackupAnalytics'
