@@ -1,0 +1,45 @@
+# Code Owners - Responsáveis por cada área
+
+# Documentação
+/docs/ @ReserveiViagens/docs-team
+
+# Backend - APIs principais
+/backend/ @ReserveiViagens/backend-team
+/backend/src/api/ @ReserveiViagens/backend-team
+/backend/src/services/ @ReserveiViagens/backend-team
+
+# Frontend - Site Público
+apps/site-publico/ @ReserveiViagens/frontend-team
+
+# Frontend - Dashboard Turismo
+apps/turismo/ @ReserveiViagens/frontend-team
+
+# Frontend - Atendimento IA
+apps/atendimento-ia/ @ReserveiViagens/ai-team
+
+# Database & Migrations
+/database/ @ReserveiViagens/devops-team
+/backend/migrations/ @ReserveiViagens/devops-team
+
+# Shared Packages
+/packages/ @ReserveiViagens/core-team
+
+# Configurações & CI/CD
+/.github/ @ReserveiViagens/devops-team
+/scripts/ @ReserveiViagens/devops-team
+/.env* @ReserveiViagens/devops-team
+/Dockerfile @ReserveiViagens/devops-team
+/docker-compose.yml @ReserveiViagens/devops-team
+
+# Configurações npm
+package.json @ReserveiViagens/core-team
+package-lock.json @ReserveiViagens/core-team
+pnpm-workspace.yaml @ReserveiViagens/core-team
+
+# Root Config
+/.gitignore @ReserveiViagens/core-team
+/tsconfig.json @ReserveiViagens/core-team
+/README.md @ReserveiViagens/core-team
+
+# Configuração padrão para mudanças não categorizadas
+* @ReserveiViagens/maintainers

@@ -1,0 +1,194 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18.x'
+  NODE_ENV: 'test'
+
+jobs:
+  # ==================== LINT E TYPE CHECK ====================
+  lint-and-type-check:
+    runs-on: ubuntu-latest
+    name: 🔍 Lint & Type Check
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --workspaces
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: ✅ TypeScript type check
+        run: npm run type-check
+
+  # ==================== TESTES ====================
+  tests:
+    runs-on: ubuntu-latest
+    name: 🧪 Unit Tests
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: rsv360_test
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --workspaces
+
+      - name: 🗄️ Setup database
+        run: |
+          npm run migrate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+
+      - name: 🧪 Run tests
+        run: npm run test -- --coverage
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+        continue-on-error: true
+
+  # ==================== BUILD ====================
+  build:
+    runs-on: ubuntu-latest
+    name: 🔨 Build
+    needs: [lint-and-type-check, tests]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --workspaces
+
+      - name: 🔨 Build all workspaces
+        run: npm run build
+
+      - name: 📊 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            apps/*/dist
+            apps/*/.next
+            backend/dist
+            packages/*/dist
+          retention-days: 5
+
+  # ==================== SEGURANÇA ====================
+  security:
+    runs-on: ubuntu-latest
+    name: 🔐 Security Check
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔐 Run npm audit
+        run: npm audit --audit-level=low
+        continue-on-error: true
+
+      - name: 🔍 OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          path: '.'
+          format: 'JSON'
+          args: >
+            -l CRITICAL 
+            -l HIGH
+        continue-on-error: true
+
+  # ==================== DEPLOY (Opcional - Remover se não usar) ====================
+  deploy-staging:
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy to Staging
+    needs: [build]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: 🚀 Deploy to staging
+        run: echo "Deploy to staging environment"
+        continue-on-error: true
+        # Adicione aqui o comando apropriado para seu ambiente
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy to Production
+    needs: [build]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: 🚀 Deploy to production
+        run: echo "Deploy to production environment"
+        continue-on-error: true
+        # Adicione aqui o comando apropriado para seu ambiente
+
+  # ==================== Notificação ====================
+  notify:
+    if: always()
+    runs-on: ubuntu-latest
+    name: 📢 Notify Status
+    needs: [lint-and-type-check, tests, build, security]
+    
+    steps:
+      - name: ✅ All checks passed
+        if: success()
+        run: echo "✅ Pipeline completed successfully!"
+
+      - name: ❌ Pipeline failed
+        if: failure()
+        run: echo "❌ Pipeline failed - check logs above"
