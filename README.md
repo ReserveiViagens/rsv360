@@ -1,15 +1,31 @@
-# RSV360 - Sistema Modular Monolith
+# PMS CRM RSV360 - Sistema Modular Monolith
 
-Sistema completo de turismo transformado em uma arquitetura **Modular Monolith** organizada e escalável.
+[![Status](https://img.shields.io/badge/status-stable-green)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)]()
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)]()
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B-blue)]()
 
-## 🏗️ Arquitetura
+> **Sistema completo de gerenciamento de turismo e propriedades** com arquitetura Modular Monolith, escalável e pronto para operações em produção.
 
-Este projeto utiliza uma arquitetura **Modular Monolith** com:
+## 📊 Visão Geral
 
-- **Código Organizado por Domínio**: Cada módulo em sua própria pasta
-- **Deploy Monolítico**: Um único deploy, banco de dados compartilhado
-- **Estrutura Escalável**: Fácil adicionar novos módulos
-- **Pronto para Microserviços**: Pode evoluir para microserviços se necessário
+O **RSV360** é uma plataforma integrada de gerenciamento que combina:
+
+- 🏨 **Property Management System (PMS)** completo
+- 💼 **Customer Relationship Management (CRM)** integrado
+- 🎯 **Sistema de Leilões e Flash Deals** em tempo real
+- ✈️ **Gestão de Excursões e Viagens em Grupo**
+- 🤖 **Atendimento Automatizado com IA**
+- 📱 **Interface Pública e Administrativa**
+
+### 🏗️ Arquitetura
+
+Utiliza o padrão **Modular Monolith** com:
+
+- **Código Organizado por Domínio**: Cada module em sua própria pasta, com dependências claras
+- **Deploy Monolítico**: Um único deploy, banco de dados compartilhado, fácil manutenção
+- **Estrutura Escalável**: Simples adicionar novos módulos sem refatoração
+- **Pronto para Microserviços**: Evolução facilitada se necessário no futuro
 
 ## 📁 Estrutura do Projeto
 
