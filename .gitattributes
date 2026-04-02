@@ -43,3 +43,8 @@
 # Note: Git LFS also automatically tracks any file > 100 MB on push
 apps/site-publico/logs/dev.log filter=lfs diff=lfs merge=lfs -text
 apps/turismo/logs/dev.log filter=lfs diff=lfs merge=lfs -text
+
+# Line endings
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.md text eol=lf
