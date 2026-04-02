@@ -58,3 +58,6 @@ temporary/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Local standalone repositories
+/Crm-RSV-360-Completo1.1/
