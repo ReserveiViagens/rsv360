@@ -175,9 +175,9 @@ try {
         $stashName = "pre-reapply-patch-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         Write-Info 'Salvando estado local (tracked + untracked) em stash...'
         git stash push -u -m "$stashName" *> $null
-        if ($LASTEXITCODE -ne 0) {
-            throw 'Falha ao criar stash de segurança.'
-        }
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warn 'git stash push retornou código não zero; tentando localizar stash criado para continuar com segurança.'
+            }
 
         $stashRef = Get-StashRefByMessage -Message $stashName
         if (-not $stashRef) {
