@@ -3,6 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, develop ]
+    branches-ignore: [ 'f0/**' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -13,6 +14,7 @@ env:
 jobs:
   # ==================== LINT E TYPE CHECK ====================
   lint-and-type-check:
+    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/') }}
     runs-on: ubuntu-latest
     name: 🔍 Lint & Type Check
     
@@ -38,6 +40,7 @@ jobs:
 
   # ==================== TESTES ====================
   tests:
+    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/') }}
     runs-on: ubuntu-latest
     name: 🧪 Unit Tests
     
@@ -82,6 +85,7 @@ jobs:
 
   # ==================== BUILD ====================
   build:
+    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/') }}
     runs-on: ubuntu-latest
     name: 🔨 Build
     needs: [lint-and-type-check, tests]
@@ -115,6 +119,7 @@ jobs:
 
   # ==================== SEGURANÇA ====================
   security:
+    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/') }}
     runs-on: ubuntu-latest
     name: 🔐 Security Check
     
@@ -138,7 +143,7 @@ jobs:
 
   # ==================== DEPLOY (Opcional - Remover se não usar) ====================
   deploy-staging:
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' && (github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/')) }}
     runs-on: ubuntu-latest
     name: 🚀 Deploy to Staging
     needs: [build]
@@ -158,7 +163,7 @@ jobs:
         # Adicione aqui o comando apropriado para seu ambiente
 
   deploy-production:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' && (github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/')) }}
     runs-on: ubuntu-latest
     name: 🚀 Deploy to Production
     needs: [build]
@@ -179,7 +184,7 @@ jobs:
 
   # ==================== Notificação ====================
   notify:
-    if: always()
+    if: ${{ (github.event_name != 'pull_request' || !contains(github.event.pull_request.head.label, ':f0/')) && always() }}
     runs-on: ubuntu-latest
     name: 📢 Notify Status
     needs: [lint-and-type-check, tests, build, security]
