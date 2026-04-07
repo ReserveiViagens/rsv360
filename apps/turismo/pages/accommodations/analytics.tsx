@@ -20,6 +20,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 export default function AccommodationsAnalyticsPage() {
@@ -239,11 +240,15 @@ export default function AccommodationsAnalyticsPage() {
                   >
                     <div className="flex items-center gap-3 mb-2">
                       {enterprise.images && enterprise.images.length > 0 && (
-                        <img
-                          src={enterprise.images[0]}
-                          alt={enterprise.name}
-                          className="w-12 h-12 rounded-md object-cover"
-                        />
+                        <div className="w-12 h-12 relative rounded-md overflow-hidden">
+                          <Image
+                            src={enterprise.images[0]}
+                            alt={enterprise.name}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
                       )}
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900">{enterprise.name}</h4>
