@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Settings, RefreshCw, Upload, Shield, Database, User, LogOut } from "@/lib/lucide-icons";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useWebsiteData } from "@/hooks/useWebsiteData";
@@ -12,6 +11,7 @@ import { useActivityLog } from "@/hooks/useActivityLog";
 import { logout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import HotelManagement from "@/components/admin/HotelManagement";
+import type { HotelData } from "@/components/admin/HotelManagement";
 import PromotionManagement from "@/components/admin/PromotionManagement";
 import AttractionManagement from "@/components/admin/AttractionManagement";
 import TicketManagement from "@/components/admin/TicketManagement";
@@ -32,7 +32,6 @@ export default function CMSDashboard() {
     promotions,
     attractions,
     tickets,
-    settings,
     loading,
     error,
     loadAllData,
@@ -50,6 +49,35 @@ export default function CMSDashboard() {
     deleteTicket,
   } = useWebsiteData();
 
+  // Adapter: produzir `HotelData[]` exatamente como `HotelManagement` espera
+  const hotelsList: HotelData[] = (hotels ?? []).map((h: any) => ({
+    id: h?.id,
+    title: h?.title ?? '',
+    description: h?.description ?? '',
+    location: h?.location ?? h?.metadata?.location ?? '',
+    price: Number(h?.price ?? h?.metadata?.price ?? 0),
+    originalPrice: h?.originalPrice ?? h?.metadata?.originalPrice,
+    rating: Number(h?.rating ?? h?.metadata?.rating ?? 0),
+    maxGuests: h?.maxGuests ?? h?.metadata?.maxGuests,
+    distanceFromCenter: h?.distanceFromCenter ?? h?.metadata?.distanceFromCenter,
+    reviewCount: h?.reviewCount ?? h?.metadata?.reviewCount,
+    features: Array.isArray(h?.features) ? h.features : h?.metadata?.features ?? [],
+    amenities: Array.isArray(h?.amenities) ? h.amenities : h?.metadata?.amenities ?? [],
+    images: Array.isArray(h?.images) ? h.images : [],
+    status: h?.status === 'active' ? 'active' : h?.status === 'draft' ? 'draft' : 'inactive',
+    metadata: h?.metadata ?? {}
+  } as HotelData));
+
+  const promotionsList = (promotions ?? []).map((p: any) => ({ ...(p || {}) }));
+  const attractionsList = (attractions ?? []).map((a: any) => ({ ...(a || {}) }));
+  const ticketsList = (tickets ?? []).map((t: any) => ({ ...(t || {}) }));
+
+  const wrapVoid = (fn: (...args: any[]) => Promise<any>) => {
+    return async (...args: any[]) => {
+      await fn(...args);
+    };
+  };
+
   const [activeTab, setActiveTab] = useState("hotels");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -65,14 +93,14 @@ export default function CMSDashboard() {
 
   // Estatísticas
   const stats = {
-    totalHotels: hotels.length,
-    activeHotels: hotels.filter(h => h.status === 'active').length,
-    totalPromotions: promotions.length,
-    activePromotions: promotions.filter(p => p.status === 'active').length,
-    totalAttractions: attractions.length,
-    activeAttractions: attractions.filter(a => a.status === 'active').length,
-    totalTickets: tickets.length,
-    activeTickets: tickets.filter(t => t.is_active || t.status === 'active').length,
+    totalHotels: hotelsList.length,
+    activeHotels: hotelsList.filter(h => h?.status === 'active').length,
+    totalPromotions: promotionsList.length,
+    activePromotions: promotionsList.filter(p => p?.status === 'active').length,
+    totalAttractions: attractionsList.length,
+    activeAttractions: attractionsList.filter(a => a?.status === 'active').length,
+    totalTickets: ticketsList.length,
+    activeTickets: ticketsList.filter(t => t?.is_active || t?.status === 'active').length,
   };
 
   return (
@@ -300,8 +328,8 @@ export default function CMSDashboard() {
                     <ol className="text-yellow-700 text-xs list-decimal list-inside space-y-1">
                       <li>Abra um terminal na pasta <code className="bg-yellow-100 px-1 rounded">backend</code></li>
                       <li>Execute: <code className="bg-yellow-100 px-1 rounded">node test-admin-server.js</code></li>
-                      <li>Aguarde a mensagem: "Servidor Admin APIs rodando na porta 5002"</li>
-                      <li>Clique em "Atualizar" acima para recarregar os dados</li>
+                      <li>Aguarde a mensagem: &quot;Servidor Admin APIs rodando na porta 5002&quot;</li>
+                      <li>Clique em &quot;Atualizar&quot; acima para recarregar os dados</li>
                     </ol>
                   </div>
                 )}
@@ -404,10 +432,10 @@ export default function CMSDashboard() {
                 <div className="p-6">
                   <TabsContent value="hotels" className="mt-0">
                     <HotelManagement
-                      hotels={hotels}
-                      onCreate={createHotel}
-                      onUpdate={updateHotel}
-                      onDelete={deleteHotel}
+                      hotels={hotelsList}
+                      onCreate={wrapVoid(createHotel)}
+                      onUpdate={wrapVoid(updateHotel)}
+                      onDelete={wrapVoid(deleteHotel)}
                       onRefresh={loadAllData}
                       loading={loading}
                     />
@@ -415,30 +443,30 @@ export default function CMSDashboard() {
 
                   <TabsContent value="promotions" className="mt-0">
                     <PromotionManagement
-                      promotions={promotions}
-                      onCreate={createPromotion}
-                      onUpdate={updatePromotion}
-                      onDelete={deletePromotion}
+                      promotions={promotionsList}
+                      onCreate={wrapVoid(createPromotion)}
+                      onUpdate={wrapVoid(updatePromotion)}
+                      onDelete={wrapVoid(deletePromotion)}
                       loading={loading}
                     />
                   </TabsContent>
 
                   <TabsContent value="attractions" className="mt-0">
                     <AttractionManagement
-                      attractions={attractions}
-                      onCreate={createAttraction}
-                      onUpdate={updateAttraction}
-                      onDelete={deleteAttraction}
+                      attractions={attractionsList}
+                      onCreate={wrapVoid(createAttraction)}
+                      onUpdate={wrapVoid(updateAttraction)}
+                      onDelete={wrapVoid(deleteAttraction)}
                       loading={loading}
                     />
                   </TabsContent>
 
                   <TabsContent value="tickets" className="mt-0">
                     <TicketManagement
-                      tickets={tickets}
-                      onCreate={createTicket}
-                      onUpdate={updateTicket}
-                      onDelete={deleteTicket}
+                      tickets={ticketsList}
+                      onCreate={wrapVoid(createTicket)}
+                      onUpdate={wrapVoid(updateTicket)}
+                      onDelete={wrapVoid(deleteTicket)}
                       loading={loading}
                     />
                   </TabsContent>
