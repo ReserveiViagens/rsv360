@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const { pool } = require('../../database/db');
 const auctionsService = require('../api/v1/auctions/service');
+const { locks } = require('../config/redis');
 const logger = require('../utils/logger');
 
 /**
