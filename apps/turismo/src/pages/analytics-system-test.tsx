@@ -98,6 +98,8 @@ export default function AnalyticsSystemTest() {
               <h3 className="text-2xl font-bold text-gray-900 mb-1">100%</h3>
               <p className="text-gray-600">Funcional</p>
             </CardContent>
+          </Card>
+
         </div>
 
         {/* Tabs de Demonstração */}

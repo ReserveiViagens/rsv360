@@ -3,8 +3,8 @@
 import { useState, useMemo } from "react"
 import { Check, ChevronsUpDown, Search, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/label"
 import { brazilStates, searchHotels, type Hotel } from "@/lib/hotels-data"
 import {

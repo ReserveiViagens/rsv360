@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Photo } from '@/lib/types/budget';
 import { Youtube, Link2, Trash2, Eye, X } from 'lucide-react';
 import { generateId } from '@/lib/utils';

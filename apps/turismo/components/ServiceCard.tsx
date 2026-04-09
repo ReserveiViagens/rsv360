@@ -57,7 +57,7 @@ import {
   Award,
   Target
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/Button";
 import { Badge } from "./ui/badge";
 
 export interface ServiceCardProps extends React.HTMLAttributes<HTMLDivElement> {

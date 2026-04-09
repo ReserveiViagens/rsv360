@@ -350,7 +350,7 @@ export default function ChatConversations({ onConversationSelect }: ChatConversa
             <option value="rating">Por Avaliação</option>
           </Select>
         </div>
-      </div>
+      </Card>
 
       {/* Tabs de Categorias */}
       <Card>
