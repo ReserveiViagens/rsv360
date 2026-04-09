@@ -3,8 +3,8 @@
 import { useState, useMemo } from "react"
 import { Check, ChevronsUpDown, Search, MapPin, Clock, Users, Star, Globe, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/label"
 import { brazilStatesWithAttractions, searchAttractions, attractionTypes, type Attraction } from "@/lib/attractions-data"
 import {

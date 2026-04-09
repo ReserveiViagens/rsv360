@@ -5,7 +5,7 @@
 import React from 'react';
 import { useNotifications } from '../../context/NotificationContext';
 import { webSocketService } from '../../services/websocket';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 import {
   Bell,
   Calendar,

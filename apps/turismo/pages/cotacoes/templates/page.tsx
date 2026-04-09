@@ -9,8 +9,8 @@ import { BudgetTemplate } from '@/lib/types/budget';
 import { templateStorage } from '@/lib/template-storage';
 import { initializeDefaultTemplates } from '@/lib/default-templates';
 import { MAIN_CATEGORIES, SUB_CATEGORIES } from '@/lib/budget-types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {

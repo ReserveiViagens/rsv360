@@ -26,7 +26,7 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { BudgetType } from '@/lib/types/budget';
 import { Hotel, TreePine, MapPin, Route, Settings } from 'lucide-react';
 
