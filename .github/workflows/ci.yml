@@ -50,7 +50,7 @@ jobs:
       # ===== TESTES (DÍVIDA TÉCNICA — config Jest/DB) =====
       - name: Tests - site-publico
         run: cd apps/site-publico && npm test --if-present || true
-        continue-on-error: true  # TODO: corrigir configuração Jest
+        continue-on-error: true  # TODO: corriguração Jest
 
       - name: Tests - backend
         run: cd backend && npm test --if-present || true
