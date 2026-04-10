@@ -38,11 +38,9 @@ jobs:
       # ===== TYPECHECK (DÍVIDA TÉCNICA — @ts-nocheck em progresso) =====
       - name: TypeCheck - site-publico
         run: cd apps/site-publico && npx tsc -p tsconfig.json --noEmit
-        continue-on-error: true  # TODO: corrigir erros restantes de typecheck
 
       - name: TypeCheck - turismo
         run: cd apps/turismo && npx tsc -p tsconfig.json --noEmit
-        continue-on-error: true  # TODO: corrigir erros restantes de typecheck
 
       # ===== BUILD (site-publico DEVE PASSAR) =====
       - name: Build - site-publico
