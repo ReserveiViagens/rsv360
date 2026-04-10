@@ -428,5 +428,4 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
   );
 };
 
-export { PushNotificationSystem };
-export type { PushNotification, NotificationTemplate };
+export default PushNotificationSystem;

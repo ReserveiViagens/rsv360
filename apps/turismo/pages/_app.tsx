@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '../src/context/AuthContext'
+import { ThemeProvider } from '../src/context/ThemeContext'
 import '../styles/globals.css'
 import AppSidebar from '../components/AppSidebar'
 import Head from 'next/head'
@@ -97,15 +98,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Reservei Viagens - Sistema de Turismo</title>
         <meta name="description" content="Sistema completo de gestão turística Reservei Viagens" />
       </Head>
-      <AuthProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          {!isAuthPage && <AppSidebar />}
-          <main className={`transition-all duration-300 ease-in-out ${getMainContentMargin()} min-h-screen`}>
-            <Component {...pageProps} />
-          </main>
-          <Toaster position="top-right" />
-        </div>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            {!isAuthPage && <AppSidebar />}
+            <main className={`transition-all duration-300 ease-in-out ${getMainContentMargin()} min-h-screen`}>
+              <Component {...pageProps} />
+            </main>
+            <Toaster position="top-right" />
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
     </>
   )
 }

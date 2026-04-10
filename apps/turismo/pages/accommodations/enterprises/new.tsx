@@ -4,10 +4,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../../src/context/AuthContext';
-import ProtectedRoute from '../../src/components/ProtectedRoute';
-import { EnterpriseForm } from '../../src/components/accommodations/EnterpriseForm';
-import { enterprisesApi } from '../../src/services/api/accommodationsApi';
+import { useAuth } from '../../../src/context/AuthContext';
+import ProtectedRoute from '../../../src/components/ProtectedRoute';
+import { EnterpriseForm } from '../../../src/components/accommodations/EnterpriseForm';
+import { enterprisesApi } from '../../../src/services/api/accommodationsApi';
 import type { Enterprise } from '../../src/types/accommodations';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import ProtectedRoute from '../src/components/ProtectedRoute';
 import ModernLayout from '../src/components/layout/ModernLayout';
