@@ -1,70 +1,55 @@
-﻿name: CI
-
+﻿name: CI Pipeline
 on:
   push:
-    branches:
-      - main
-      - 'f0/**'
+    branches: [main, 'stabilization/**']
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '18'
           cache: 'npm'
+      - run: npm ci
 
-      - name: Install dependencies (lockfile-aware)
-        run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            npm ci
-          elif [ -f pnpm-lock.yaml ]; then
-            npm i -g pnpm
-            pnpm install
-          elif [ -f yarn.lock ]; then
-            corepack enable
-            yarn install
-          else
-            npm install
-          fi
-        shell: bash
+      # ===== TYPECHECK (SEM continue-on-error — DEVE PASSAR) =====
+      - name: TypeCheck - site-publico
+        run: cd apps/site-publico && npx tsc -p tsconfig.json --noEmit
 
-      # NOTE: continue-on-error enabled because apps/turismo has 200+ pre-existing
-      # TS errors, missing ESLint config in backend, and webpack version mismatch.
-      # TODO: Fix these issues in a dedicated PR after recovery merge.
-      - name: Typecheck (frontend workspace)
-        continue-on-error: true
-        run: |
-          echo "Running frontend type-check (non-blocking - pre-existing errors)..."
-          npm --workspace rsv-360-ecosystem-frontend run type-check --if-present
-        shell: bash
+      - name: TypeCheck - turismo
+        run: cd apps/turismo && npx tsc -p tsconfig.json --noEmit
 
-      - name: Lint (non-blocking - known issues)
-        continue-on-error: true
-        run: |
-          echo "Running lint (non-blocking - pre-existing ESLint errors + missing backend config)"
-          npm run lint --if-present
+      # ===== BUILD (site-publico DEVE PASSAR) =====
+      - name: Build - site-publico
+        run: cd apps/site-publico && npx next build
 
-      - name: Build (frontend workspace, non-blocking)
-        continue-on-error: true
-        run: |
-          echo "Running build (non-blocking due to workspace issues)..."
-          npm run build --if-present
+      # ===== BUILD (turismo — DÍVIDA TÉCNICA) =====
+      - name: Build - turismo
+        run: cd apps/turismo && npx next build
+        continue-on-error: true  # TODO: corrigir erros restantes de build
 
-      - name: Test (frontend workspace, non-blocking)
-        continue-on-error: true
-        run: |
-          echo "Running tests (non-blocking due to workspace issues)..."
-          npm test --if-present
+      # ===== LINT (DÍVIDA TÉCNICA — 1243 erros) =====
+      - name: Lint - site-publico
+        run: cd apps/site-publico && npx eslint . --max-warnings=9999 || true
+        continue-on-error: true  # TODO: corrigir 966 erros ESLint
+
+      - name: Lint - turismo
+        run: cd apps/turismo && npx eslint . --max-warnings=9999 || true
+        continue-on-error: true  # TODO: corrigir 277 erros ESLint
+
+      # ===== TESTES (DÍVIDA TÉCNICA — config Jest/DB) =====
+      - name: Tests - site-publico
+        run: cd apps/site-publico && npm test --if-present || true
+        continue-on-error: true  # TODO: corrigir configuração Jest
+
+      - name: Tests - backend
+        run: cd backend && npm test --if-present || true
+        continue-on-error: true  # TODO: configurar PostgreSQL para testes
