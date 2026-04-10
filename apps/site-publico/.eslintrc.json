@@ -6,6 +6,11 @@
     "rules": {
         "@typescript-eslint/no-unused-vars": "warn",
         "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-require-imports": "warn",
+        "@typescript-eslint/no-unsafe-declaration-merging": "warn",
+        "@typescript-eslint/ban-ts-comment": "warn",
+        "@next/next/no-assign-module-variable": "warn",
+        "@typescript-eslint/no-unused-expressions": "warn",
         "react-hooks/exhaustive-deps": "warn"
     },
     "ignorePatterns": [
