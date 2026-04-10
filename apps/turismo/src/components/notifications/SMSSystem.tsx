@@ -619,5 +619,4 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
   );
 };
 
-export { SMSSystem };
-export type { SMSMessage, SMSCampaign, SMSTemplate };
+export default SMSSystem;

@@ -4,7 +4,7 @@ import {
   Plus, Edit, Trash2, Download, Upload, Eye, Camera, Video, BarChart3,
   FileText, Settings, MoreHorizontal, Heart, Share2, MessageCircle,
   Phone, Mail, Globe, Clock, CheckCircle, AlertCircle, X, Save, Loader,
-  Wifi, Car, Coffee, Utensils, Dumbbell, Pool, Tv, AirVent, ShieldCheck
+  Wifi, Car, Coffee, Utensils, Dumbbell, Waves, Tv, AirVent, ShieldCheck
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -634,7 +634,7 @@ export default function HotelsComplete() {
                         {hotel.amenities.slice(0, 4).map((amenity, index) => (
                           <div key={index} className="flex items-center text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
                             {amenity.includes('Wi-Fi') && <Wifi className="w-3 h-3 mr-1" />}
-                            {amenity.includes('Piscina') && <Pool className="w-3 h-3 mr-1" />}
+                            {amenity.includes('Piscina') && <Waves className="w-3 h-3 mr-1" />}
                             {amenity.includes('Estacionamento') && <Car className="w-3 h-3 mr-1" />}
                             {amenity.includes('Restaurante') && <Utensils className="w-3 h-3 mr-1" />}
                             <span>{amenity}</span>
@@ -1301,7 +1301,7 @@ export default function HotelsComplete() {
                       {selectedHotel.amenities.map((amenity, index) => (
                         <div key={index} className="flex items-center text-sm text-gray-700 bg-blue-50 px-3 py-2 rounded-lg">
                           {amenity.includes('Wi-Fi') && <Wifi className="w-4 h-4 mr-2 text-blue-600" />}
-                          {amenity.includes('Piscina') && <Pool className="w-4 h-4 mr-2 text-blue-600" />}
+                          {amenity.includes('Piscina') && <Waves className="w-4 h-4 mr-2 text-blue-600" />}
                           {amenity.includes('Estacionamento') && <Car className="w-4 h-4 mr-2 text-blue-600" />}
                           {amenity.includes('Restaurante') && <Utensils className="w-4 h-4 mr-2 text-blue-600" />}
                           {amenity.includes('Academia') && <Dumbbell className="w-4 h-4 mr-2 text-blue-600" />}

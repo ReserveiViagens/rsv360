@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
@@ -6,7 +8,7 @@ import {
   Award, Trophy, Gift, ShoppingCart, ShoppingBag, Package, Store,
   Calculator, FileText, CreditCard, RefreshCw, Image, Video, Heart,
   MessageCircle, Bot, Bell, Settings, Zap, Edit3, FileCheck,
-  Shield, Passport, Car, Hotel, Map, Subscription, CreditCard as CardIcon,
+  Shield, IdCard, Car, Hotel, Map, CreditCard as SubscriptionIcon, CreditCard as CardIcon,
   Cpu, Activity,
   TrendingUp as UpgradeIcon, User, Lock, UserCheck, Calendar,
   Home, Facebook, Instagram, Twitter, MessageSquare, ExternalLink
@@ -290,7 +292,7 @@ export default function DashboardReserveiViagens() {
         { name: 'Documentos', href: '/reservei/documentos', icon: <FileText className="w-4 h-4" /> },
         { name: 'Contratos', href: '/reservei/contratos', icon: <FileCheck className="w-4 h-4" /> },
         { name: 'Seguros', href: '/reservei/seguros', icon: <Shield className="w-4 h-4" /> },
-        { name: 'Vistos', href: '/reservei/vistos', icon: <Passport className="w-4 h-4" /> }
+        { name: 'Vistos', href: '/reservei/vistos', icon: <IdCard className="w-4 h-4" /> }
       ]
     },
     {
@@ -310,12 +312,12 @@ export default function DashboardReserveiViagens() {
     {
       id: 'subscricoes',
       title: 'Subscrições',
-      icon: <Subscription className="w-8 h-8" />,
+      icon: <SubscriptionIcon className="w-8 h-8" />,
       description: 'Planos e assinaturas',
       color: 'bg-violet-50 border-violet-200 text-violet-700',
       status: '4/4',
       items: [
-        { name: 'Subscrições', href: '/reservei/subscricoes', icon: <Subscription className="w-4 h-4" /> },
+        { name: 'Subscrições', href: '/reservei/subscricoes', icon: <SubscriptionIcon className="w-4 h-4" /> },
         { name: 'Planos', href: '/reservei/planos', icon: <Package className="w-4 h-4" /> },
         { name: 'Cobrança', href: '/reservei/cobranca', icon: <CardIcon className="w-4 h-4" /> },
         { name: 'Upgrades', href: '/reservei/upgrades', icon: <UpgradeIcon className="w-4 h-4" /> }

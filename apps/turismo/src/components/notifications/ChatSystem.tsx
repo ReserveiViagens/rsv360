@@ -571,5 +571,4 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
   );
 };
 
-export { ChatSystem };
-export type { ChatConversation, ChatMessage, ChatAgent };
+export default ChatSystem;

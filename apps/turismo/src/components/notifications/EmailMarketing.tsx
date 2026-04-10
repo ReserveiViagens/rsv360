@@ -535,5 +535,4 @@ const EmailMarketing: React.FC<EmailMarketingProps> = ({
   );
 };
 
-export { EmailMarketing };
-export type { EmailCampaign, EmailTemplate, ContactList };
+export default EmailMarketing;

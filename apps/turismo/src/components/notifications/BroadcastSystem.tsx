@@ -640,5 +640,4 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
   );
 };
 
-export { BroadcastSystem };
-export type { BroadcastMessage, BroadcastTemplate, BroadcastSegment };
+export default BroadcastSystem;
