@@ -1,17 +1,61 @@
-const auctionsService = require('../../api/v1/auctions/service');
-const flashDealsService = require('../../api/v1/flash-deals/service');
+const auctionsService = require('../../../src/api/v1/auctions/service');
+const flashDealsService = require('../../../src/api/v1/flash-deals/service');
+
+// Mock setup
+jest.mock('../../../database/db', () => ({
+  pool: {
+    query: jest.fn(),
+  },
+}));
+
+jest.mock('../../../src/config/redis', () => ({
+  cache: {
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+    deletePattern: jest.fn(),
+  },
+  locks: {
+    acquire: jest.fn(),
+    release: jest.fn(),
+  },
+}));
+
+jest.mock('../../../src/utils/logger', () => ({
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+}));
+
 const { pool } = require('../../../database/db');
 
 /**
  * Testes unitários - Auctions Service
  */
 describe('Auctions Service', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('createAuction', () => {
     it('should create an auction with valid data', async () => {
+      // Mock da query de inserção
+      const mockAuction = {
+        id: 1,
+        title: 'Test Auction',
+        start_price: 100,
+        enterprise_id: 1,
+        start_date: new Date(Date.now() + 3600000).toISOString(),
+        end_date: new Date(Date.now() + 86400000).toISOString(),
+        status: 'scheduled',
+      };
+
+      pool.query.mockResolvedValueOnce({ rows: [mockAuction] });
+
       const auctionData = {
         title: 'Test Auction',
         start_price: 100,
-        start_date: new Date().toISOString(),
+        start_date: new Date(Date.now() + 3600000).toISOString(), // 1 hora no futuro
         end_date: new Date(Date.now() + 86400000).toISOString(),
         enterprise_id: 1,
       };
@@ -27,7 +71,7 @@ describe('Auctions Service', () => {
         title: 'Test Auction',
         start_price: 100,
         min_increment: 5,
-        start_date: new Date().toISOString(),
+        start_date: new Date(Date.now() + 3600000).toISOString(), // 1 hora no futuro
         end_date: new Date(Date.now() + 86400000).toISOString(),
       };
 
