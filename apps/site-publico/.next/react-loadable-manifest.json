@@ -1,9 +1,0 @@
-{
-  "app\\melhorias-mobile\\page.tsx -> @/components/auctions/AuctionMapLeaflet": {
-    "id": "app\\melhorias-mobile\\page.tsx -> @/components/auctions/AuctionMapLeaflet",
-    "files": [
-      "static/css/_app-pages-browser_components_auctions_AuctionMapLeaflet_tsx.css",
-      "static/chunks/_app-pages-browser_components_auctions_AuctionMapLeaflet_tsx.js"
-    ]
-  }
-}
