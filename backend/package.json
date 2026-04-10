@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest",
+    "test:ci": "jest --passWithNoTests --coverage --watchAll=false",
     "test:verbose": "node scripts/run-jest-test-env.js --test-logs",
     "test:unit": "jest tests/unit",
     "test:prepare": "node scripts/test-prepare.js",
