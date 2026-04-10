@@ -1,0 +1,28 @@
+{
+  "name": "@rsv360/shared",
+  "version": "1.0.0",
+  "description": "Shared contracts and types for RSV360 ecosystem",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "keywords": [
+    "rsv360",
+    "shared",
+    "types",
+    "contracts",
+    "zod",
+    "validators"
+  ],
+  "author": "RSV360 Team",
+  "license": "MIT"
+}

@@ -1,3 +1,5 @@
+// import { PaymentMethod } from '@rsv360/shared'; // Connected to shared contracts
+
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
