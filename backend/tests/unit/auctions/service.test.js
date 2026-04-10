@@ -1,5 +1,5 @@
-// Mocks já configurados em __mocks__/setup.js
-const { mockPool } = require('./__mocks__/setup');
+﻿// Mocks jÃ¡ configurados em __mocks__/setup.js
+const { mockPool, mockClient } = require('./__mocks__/setup');
 
 // Configurar mocks
 jest.mock('../../../database/db', () => ({
@@ -21,7 +21,7 @@ const auctionsService = require('../../../src/api/v1/auctions/service');
 const flashDealsService = require('../../../src/api/v1/flash-deals/service');
 
 /**
- * Testes unitários - Auctions Service
+ * Testes unitÃ¡rios - Auctions Service
  */
 describe('Auctions Service', () => {
   beforeEach(() => {
@@ -84,7 +84,7 @@ describe('Auctions Service', () => {
 
   describe('placeBid', () => {
     it('should place a bid higher than current price', async () => {
-      // Mock da criação do leilão
+      // Mock da criaÃ§Ã£o do leilÃ£o
       const mockAuction = {
         id: 3,
         title: 'Test Auction',
@@ -95,10 +95,10 @@ describe('Auctions Service', () => {
       };
       mockPool.query.mockResolvedValueOnce({ rows: [mockAuction] });
 
-      // Mock da verificação do leilão para bid
+      // Mock da verificaÃ§Ã£o do leilÃ£o para bid
       mockPool.query.mockResolvedValueOnce({ rows: [mockAuction] });
 
-      // Configurar mocks específicos para a transação
+      // Configurar mocks especÃ­ficos para a transaÃ§Ã£o
       const { mockClient } = require('./__mocks__/setup');
       let callCount = 0;
       mockClient.query.mockImplementation((query, params) => {
@@ -114,7 +114,7 @@ describe('Auctions Service', () => {
         return Promise.resolve({ rows: [] });
       });
 
-      // Criar leilão primeiro
+      // Criar leilÃ£o primeiro
       const auction = await auctionsService.create({
         title: 'Test Auction',
         start_price: 100,
@@ -128,7 +128,7 @@ describe('Auctions Service', () => {
     });
 
     it('should reject bid lower than current price', async () => {
-      // Mock da criação do leilão
+      // Mock da criaÃ§Ã£o do leilÃ£o
       const mockAuction = {
         id: 4,
         title: 'Test Auction',
@@ -156,7 +156,7 @@ describe('Auctions Service', () => {
 });
 
 /**
- * Testes unitários - Flash Deals Service
+ * Testes unitÃ¡rios - Flash Deals Service
  */
 describe('Flash Deals Service', () => {
   describe('createFlashDeal', () => {
@@ -197,7 +197,7 @@ describe('Flash Deals Service', () => {
         id: 2,
         title: 'Test Deal',
         original_price: 200,
-        discount_percentage: 25, // Deve aumentar devido às unidades vendidas
+        discount_percentage: 25, // Deve aumentar devido Ã s unidades vendidas
         current_price: 150,
         start_date: new Date().toISOString(),
         end_date: new Date(Date.now() + 86400000).toISOString(),
@@ -224,39 +224,142 @@ describe('Flash Deals Service', () => {
 });
 
 /**
+ * Testes de integraÃ§Ã£o - Fluxo completo de leilÃ£o
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
+ * Testes de integração - Fluxo completo de leilão
+ */
+/**
  * Testes de integração - Fluxo completo de leilão
  */
 describe('Auction Flow Integration', () => {
   it('should complete full auction flow: create -> bid -> finish -> booking', async () => {
+    const { mockClient } = require('./__mocks__/setup');
+
+    // Salvar estado original
+    const originalPoolQuery = mockPool.query;
+    const originalClientQuery = mockClient.query;
+
     // Mock da criação do leilão
     const mockAuction = {
       id: 5,
       title: 'Integration Test Auction',
       start_price: 100,
+      current_price: 100,
+      min_increment: 10,
       start_date: new Date().toISOString(),
       end_date: new Date(Date.now() + 3600000).toISOString(),
       status: 'active',
     };
-    mockPool.query.mockResolvedValueOnce({ rows: [mockAuction] });
 
-    // Mock da verificação do leilão para primeiro bid
-    mockPool.query.mockResolvedValueOnce({ rows: [mockAuction] });
-    // Mock da inserção do primeiro bid
-    const mockBid1 = { id: 1, auction_id: 5, user_id: 1, amount: 110 };
-    mockPool.query.mockResolvedValueOnce({ rows: [mockBid1] });
+    // Mock para findById
+    const mockFindByIdResult = {
+      ...mockAuction,
+      total_bids: 0,
+      highest_bid: null,
+      enterprise_name: 'Test Enterprise',
+      property_name: 'Test Property',
+      accommodation_name: 'Test Accommodation'
+    };
 
-    // Mock da verificação do leilão para segundo bid
-    mockPool.query.mockResolvedValueOnce({ rows: [mockAuction] });
-    // Mock da inserção do segundo bid
-    const mockBid2 = { id: 2, auction_id: 5, user_id: 2, amount: 120 };
-    mockPool.query.mockResolvedValueOnce({ rows: [mockBid2] });
+    let findByIdCallCount = 0;
 
-    // Mock do finish (atualizar status e definir winner)
-    const finishedAuction = { ...mockAuction, status: 'finished', winner_id: 2 };
-    mockPool.query.mockResolvedValueOnce({ rows: [finishedAuction] });
+    // Override mockPool.query apenas para este teste
+    mockPool.query = jest.fn((query, params) => {
+      // findById query
+      if (query.includes('SELECT') && query.includes('FROM auctions a') && query.includes('LEFT JOIN enterprises')) {
+        findByIdCallCount++;
+        if (findByIdCallCount <= 3) {
+          // Chamadas durante placeBid e finish
+          return Promise.resolve({ rows: [{ ...mockFindByIdResult, status: 'active', current_price: 100 + (findByIdCallCount - 1) * 10 }] });
+        } else {
+          // Chamada final de verificação
+          return Promise.resolve({ rows: [{ ...mockFindByIdResult, status: 'finished', current_price: 120, winner_id: 2 }] });
+        }
+      }
+      // createAuction query
+      if (query.includes('INSERT INTO auctions')) {
+        return Promise.resolve({ rows: [mockAuction] });
+      }
+      // Fallback
+      return Promise.resolve({ rows: [] });
+    });
 
-    // Mock do findById
-    mockPool.query.mockResolvedValueOnce({ rows: [finishedAuction] });
+    // Configurar mockClient para simular transações placeBid e finish
+    let bidCounter = 0;
+    const bids = []; // Armazenar bids criados
+    mockClient.query = jest.fn((query, params) => {
+      // Transação
+      if (query.includes('BEGIN')) {
+        return Promise.resolve({ rows: [] });
+      }
+      if (query.includes('COMMIT')) {
+        return Promise.resolve({ rows: [] });
+      }
+      if (query.includes('ROLLBACK')) {
+        return Promise.resolve({ rows: [] });
+      }
+
+      // Buscar bids para finish (maior lance)
+      if (query.includes('SELECT * FROM bids') && query.includes('ORDER BY amount DESC')) {
+        const winningBid = bids.length > 0 ? bids.reduce((max, bid) => bid.amount > max.amount ? bid : max) : null;
+        return Promise.resolve({ rows: winningBid ? [winningBid] : [] });
+      }
+
+      // Criar bid — ESTE É O CRÍTICO (precisa retornar o bid com .id)
+      if (query.includes('INSERT INTO bids')) {
+        bidCounter++;
+        const bid = {
+          id: bidCounter,
+          auction_id: 5,
+          customer_id: params[1],
+          amount: params[2],
+          status: 'accepted',
+          created_at: new Date().toISOString()
+        };
+        bids.push(bid); // Armazenar bid
+        return Promise.resolve({ rows: [bid] });
+      }
+
+      // Atualizar preço do leilão
+      if (query.includes('UPDATE auctions SET current_price')) {
+        return Promise.resolve({ rows: [] });
+      }
+
+      // Finalizar leilão (finish)
+      if (query.includes('UPDATE auctions') && query.includes('status = , winner_id = ')) {
+        return Promise.resolve({ rows: [] });
+      }
+
+      // Invalidar bids anteriores
+      if (query.includes('UPDATE bids SET status')) {
+        return Promise.resolve({ rows: [] });
+      }
+
+      // Fallback genérico
+      return Promise.resolve({ rows: [] });
+    });
 
     // Criar leilão
     const auction = await auctionsService.create({
@@ -277,7 +380,29 @@ describe('Auction Flow Integration', () => {
     const resultAuction = await auctionsService.findById(auction.id);
     expect(resultAuction.status).toBe('finished');
     expect(resultAuction.winner_id).toBe(2);
+
+    // Restaurar mocks originais
+    mockPool.query = originalPoolQuery;
+    mockClient.query = originalClientQuery;
   });
 });
 
 module.exports = {};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
