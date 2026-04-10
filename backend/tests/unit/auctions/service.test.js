@@ -1,4 +1,6 @@
-﻿// Mocks jÃ¡ configurados em __mocks__/setup.js
+﻿// import { Category } from '@rsv360/shared'; // Connected to shared contracts
+
+// Mocks jÃ¡ configurados em __mocks__/setup.js
 const { mockPool, mockClient } = require('./__mocks__/setup');
 
 // Configurar mocks

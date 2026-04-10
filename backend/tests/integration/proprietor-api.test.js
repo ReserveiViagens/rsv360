@@ -1,3 +1,5 @@
+// import { OrderCustomer } from '@rsv360/shared'; // Connected to shared contracts
+
 /**
  * Testes de integração - APIs do Proprietário
  * Valida GET /api/v1/proprietor/* com token de autenticação.
