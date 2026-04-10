@@ -64,7 +64,7 @@ jobs:
 
       - name: Tests - backend
         run: cd backend && npm run test:ci
-        continue-on-error: true  # TEMPORÁRIO: corrigir testes existentes
+        # Obrigatório — 7/7 testes passando (D6.1 completo)
         env:
           DATABASE_URL: postgresql://postgres:testpassword@localhost:5432/rsv360_test
           JWT_SECRET: test-jwt-secret
