@@ -1,6 +1,12 @@
 // Mocks para testes
+const mockClient = {
+  query: jest.fn(),
+  release: jest.fn(),
+};
+
 const mockPool = {
   query: jest.fn(),
+  connect: jest.fn(),
   end: jest.fn(),
 };
 
@@ -14,25 +20,8 @@ const mockCache = {
 const mockLocks = {
   acquire: jest.fn(),
   release: jest.fn(),
+  exists: jest.fn(),
 };
-
-// Mock do pool do PostgreSQL
-jest.mock('../../../database/db', () => ({
-  pool: mockPool,
-}));
-
-// Mock do Redis
-jest.mock('../../../config/redis', () => ({
-  cache: mockCache,
-  locks: mockLocks,
-}));
-
-// Mock do logger
-jest.mock('../../../utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-}));
 
 // Setup global
 beforeEach(() => {
@@ -41,8 +30,13 @@ beforeEach(() => {
 
   // Mock padrão para queries - retorna dados vazios
   mockPool.query.mockResolvedValue({ rows: [] });
+  mockPool.connect.mockResolvedValue(mockClient);
+  mockClient.query.mockResolvedValue({ rows: [] });
+  mockClient.release.mockResolvedValue();
 });
 
 afterEach(() => {
   // Cleanup após cada teste
 });
+
+module.exports = { mockPool, mockCache, mockLocks, mockClient };
