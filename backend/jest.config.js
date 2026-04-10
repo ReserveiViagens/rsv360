@@ -11,7 +11,3 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   testTimeout: 10000,
 };
-
-export default config;
-
-export default config;
