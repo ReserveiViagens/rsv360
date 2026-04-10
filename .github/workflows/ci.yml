@@ -37,7 +37,6 @@ jobs:
       # ===== BUILD (turismo — DÍVIDA TÉCNICA) =====
       - name: Build - turismo 
         run: cd apps/turismo && npx next build
-        continue-on-error: true  # TODO: corrigir erros restantes de build
 
       # ===== LINT (DÍVIDA TÉCNICA - 1243 erros) =====
       - name: Lint - site-publico
