@@ -13,6 +13,20 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: rsv360_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,5 +67,9 @@ jobs:
         continue-on-error: true  # TODO: corriguraó÷ Jest
 
       - name: Tests - backend
-        run: cd backend && npm test --if-present || true
-        continue-on-error: true  # TODO: configurar PostgreSQL para testes
+        run: cd backend && npm run test:ci
+        continue-on-error: true  # TEMPORÁRIO: corrigir testes existentes
+        env:
+          DATABASE_URL: postgresql://postgres:testpassword@localhost:5432/rsv360_test
+          JWT_SECRET: test-jwt-secret
+          NODE_ENV: test
