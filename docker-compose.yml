@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rsv360-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: rsv360
+      POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
+      POSTGRES_DB: rsv360_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - rsv360_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rsv360 -d rsv360_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  rsv360_pgdata:
+    driver: local
