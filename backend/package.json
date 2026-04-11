@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "dev": "tsx server.js",
+    "seed": "tsx src/db/seed.ts"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  }
+}
