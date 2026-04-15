@@ -28,6 +28,14 @@ async function createApp() {
   app.use('/api/portal', portalRouter);
   app.use('/api/admin/portal', adminRouter);
 
+  try {
+    const housekeepingModule = require('../server/modules/housekeeping');
+    housekeepingModule.registerHousekeepingModule(app);
+    console.log('[MODULE] Housekeeping carregado ✓');
+  } catch (err) {
+    console.warn('[MODULE] Housekeeping não disponível:', err.message);
+  }
+
   app.use((err, req, res, next) => {
     console.error('[SERVER] Error:', err.message);
     res.status(500).json({ success: false, error: 'Internal server error' });
