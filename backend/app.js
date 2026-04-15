@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('tsx/cjs');
 const { SecurityConfig } = require('./src/middleware/security-config');
+const { portalRouter, adminRouter } = require('../server/modules/guest-portal/routes');
 
 async function createApp() {
   const app = express();
@@ -24,6 +25,8 @@ async function createApp() {
 
   SecurityConfig.setupHealthCheck(app);
   app.use('/api/v1/payments', paymentsRoutes);
+  app.use('/api/portal', portalRouter);
+  app.use('/api/admin/portal', adminRouter);
 
   app.use((err, req, res, next) => {
     console.error('[SERVER] Error:', err.message);
