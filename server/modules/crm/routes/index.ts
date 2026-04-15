@@ -7,6 +7,17 @@ import kpisRoutes from './kpis.routes';
 
 const router = Router();
 
+router.use((req, _res, next) => {
+  const propertyId = (req as any).propertyId;
+  if (propertyId !== undefined) {
+    (req.query as any).property_id = (req.query as any).property_id || String(propertyId);
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
+      (req.body as any).property_id = (req.body as any).property_id || propertyId;
+    }
+  }
+  next();
+});
+
 router.use('/guests', guestsRoutes);
 router.use('/loyalty', loyaltyRoutes);
 router.use('/campaigns', campaignsRoutes);

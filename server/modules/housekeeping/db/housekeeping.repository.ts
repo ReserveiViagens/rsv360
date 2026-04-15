@@ -45,6 +45,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const tableCache = new Map<string, string | null>();
 const columnsCache = new Map<string, string[]>();
 let databaseUnavailable = false;
+databaseUnavailable = process.env.NODE_ENV !== 'production' || process.env.ENABLE_MODULE_DB !== 'true';
 const memory: MemoryStore = {
   rooms: [],
   tasks: [],

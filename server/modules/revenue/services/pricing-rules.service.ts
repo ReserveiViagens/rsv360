@@ -13,7 +13,7 @@ function isDateRangeValid(range?: { start: string; end: string }) {
 }
 
 export class PricingRulesService {
-  async listRules(filters?: { is_active?: boolean; roomTypeId?: number; channel?: string }) {
+  async listRules(filters?: { is_active?: boolean; roomTypeId?: number; channel?: string; property_id?: number }) {
     return revenueRepository.listRules(filters);
   }
 
@@ -112,7 +112,7 @@ export class PricingRulesService {
     return revenueRepository.getActiveRules(roomTypeId, channel);
   }
 
-  async seedDefaults() {
+  async seedDefaults(propertyId?: number) {
     const defaults: RuleInput[] = [
       {
         name: 'Alta Temporada',
@@ -209,7 +209,7 @@ export class PricingRulesService {
     for (const rule of defaults) {
       const found = existing.find((item) => item.name === rule.name);
       if (!found) {
-        await this.createRule(rule);
+        await this.createRule({ ...rule, property_id: propertyId });
       }
     }
     return this.listRules();

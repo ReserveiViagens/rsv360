@@ -8,6 +8,7 @@ router.get('/', async (_req, res) => {
     is_active: _req.query.is_active === 'true' ? true : _req.query.is_active === 'false' ? false : undefined,
     roomTypeId: _req.query.roomTypeId ? Number(_req.query.roomTypeId) : undefined,
     channel: _req.query.channel as string | undefined,
+    property_id: _req.query.property_id ? Number(_req.query.property_id) : undefined,
   });
   res.json({ success: true, data: rules });
 });
@@ -22,7 +23,7 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/seed', async (_req, res) => {
-  const rules = await pricingRulesService.seedDefaults();
+  const rules = await pricingRulesService.seedDefaults(_req.query.property_id ? Number(_req.query.property_id) : undefined);
   res.json({ success: true, data: { count: rules.length } });
 });
 
