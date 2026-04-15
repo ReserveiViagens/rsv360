@@ -13,6 +13,22 @@ async function createApp() {
   app.use('/api/v1/payments/webhooks/stripe', express.raw({ type: 'application/json' }));
   app.use(express.json());
 
+  let tenantMiddleware = (req, _res, next) => {
+    req.propertyId = 1;
+    next();
+  };
+
+  try {
+    const multiPropertyModule = require('../server/modules/multi-property');
+    const loaded = await multiPropertyModule.registerMultiPropertyModule(app);
+    tenantMiddleware = loaded.tenantMiddleware || tenantMiddleware;
+    console.log('[BOOT] Multi-property module loaded');
+  } catch (err) {
+    console.warn('[BOOT] Multi-property module failed:', err.message);
+  }
+
+  app.use('/api', tenantMiddleware);
+
   const paymentsRoutes = require('./server/modules/payments/routes');
 
   app.get('/health', (req, res) => {

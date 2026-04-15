@@ -37,6 +37,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const tableCache = new Map<string, string | null>();
 const columnsCache = new Map<string, string[]>();
 let databaseUnavailable = false;
+databaseUnavailable = process.env.NODE_ENV !== 'production' || process.env.ENABLE_MODULE_DB !== 'true';
 
 const memory: MemoryStore = {
   rules: [],
@@ -407,7 +408,7 @@ export class RevenueRepository {
     return this.tryTable(['rooms', 'accommodations', 'room_types']);
   }
 
-  async listRules(filters?: { is_active?: boolean; roomTypeId?: number; channel?: string }) {
+  async listRules(filters?: { is_active?: boolean; roomTypeId?: number; channel?: string; property_id?: number }) {
     const table = await this.getRuleTable();
     let rows: PricingRule[] = [];
 
@@ -427,6 +428,9 @@ export class RevenueRepository {
       rows = rows.filter((rule) => !rule.channel || rule.channel === filters.channel);
     } else {
       rows = rows.filter((rule) => !rule.channel);
+    }
+    if (filters?.property_id !== undefined) {
+      rows = rows.filter((rule) => Number(rule.property_id) === Number(filters.property_id) || rule.property_id === undefined || rule.property_id === null);
     }
 
     return rows.sort((left, right) => left.priority - right.priority);

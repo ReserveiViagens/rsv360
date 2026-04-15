@@ -135,11 +135,11 @@ export class CrmRepository {
 
     if (this.guestProfiles.size === 0) {
       const guests: Array<Partial<GuestProfile>> = [
-        { first_name: 'João', last_name: 'Silva', email: 'joao.silva@example.com', phone: '(62) 99999-0001', lifecycle_stage: 'loyal', total_stays: 12, total_revenue: 18500, average_daily_rate: 1541.67, is_vip: false, is_blacklisted: false, source: 'direct', tags: ['frequente'] },
-        { first_name: 'Maria', last_name: 'Santos', email: 'maria.santos@example.com', phone: '(62) 99999-0002', lifecycle_stage: 'repeat', total_stays: 4, total_revenue: 6200, average_daily_rate: 1550, is_vip: false, is_blacklisted: false, source: 'ota', tags: ['família'] },
-        { first_name: 'Pedro', last_name: 'Oliveira', email: 'pedro.oliveira@example.com', phone: '(62) 99999-0003', lifecycle_stage: 'first_stay', total_stays: 1, total_revenue: 850, average_daily_rate: 850, is_vip: false, is_blacklisted: false, source: 'booking.com', tags: ['primeira-viagem'] },
-        { first_name: 'Ana', last_name: 'Costa', email: 'ana.costa@example.com', phone: '(62) 99999-0004', lifecycle_stage: 'advocate', total_stays: 20, total_revenue: 45000, average_daily_rate: 2250, is_vip: true, is_blacklisted: false, source: 'direct', tags: ['vip'] },
-        { first_name: 'Carlos', last_name: 'Lima', email: 'carlos.lima@example.com', phone: '(62) 99999-0005', lifecycle_stage: 'at_risk', total_stays: 3, total_revenue: 4100, average_daily_rate: 1366.67, is_vip: false, is_blacklisted: false, source: 'ota', last_stay_date: new Date(Date.now() - 14 * 30 * 86400000).toISOString() },
+        { property_id: 1, first_name: 'João', last_name: 'Silva', email: 'joao.silva@example.com', phone: '(62) 99999-0001', lifecycle_stage: 'loyal', total_stays: 12, total_revenue: 18500, average_daily_rate: 1541.67, is_vip: false, is_blacklisted: false, source: 'direct', tags: ['frequente'] },
+        { property_id: 1, first_name: 'Maria', last_name: 'Santos', email: 'maria.santos@example.com', phone: '(62) 99999-0002', lifecycle_stage: 'repeat', total_stays: 4, total_revenue: 6200, average_daily_rate: 1550, is_vip: false, is_blacklisted: false, source: 'ota', tags: ['família'] },
+        { property_id: 1, first_name: 'Pedro', last_name: 'Oliveira', email: 'pedro.oliveira@example.com', phone: '(62) 99999-0003', lifecycle_stage: 'first_stay', total_stays: 1, total_revenue: 850, average_daily_rate: 850, is_vip: false, is_blacklisted: false, source: 'booking.com', tags: ['primeira-viagem'] },
+        { property_id: 1, first_name: 'Ana', last_name: 'Costa', email: 'ana.costa@example.com', phone: '(62) 99999-0004', lifecycle_stage: 'advocate', total_stays: 20, total_revenue: 45000, average_daily_rate: 2250, is_vip: true, is_blacklisted: false, source: 'direct', tags: ['vip'] },
+        { property_id: 1, first_name: 'Carlos', last_name: 'Lima', email: 'carlos.lima@example.com', phone: '(62) 99999-0005', lifecycle_stage: 'at_risk', total_stays: 3, total_revenue: 4100, average_daily_rate: 1366.67, is_vip: false, is_blacklisted: false, source: 'ota', last_stay_date: new Date(Date.now() - 14 * 30 * 86400000).toISOString() },
       ];
       guests.forEach((guest) => void this.createProfile(guest));
     }
