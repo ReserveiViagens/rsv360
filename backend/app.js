@@ -36,6 +36,14 @@ async function createApp() {
     console.warn('[MODULE] Housekeeping não disponível:', err.message);
   }
 
+  try {
+    const revenueModule = require('../server/modules/revenue');
+    revenueModule.registerRevenueModule(app);
+    console.log('[MODULE] Revenue Engine carregado ✓');
+  } catch (err) {
+    console.warn('[MODULE] Revenue Engine não disponível:', err.message);
+  }
+
   app.use((err, req, res, next) => {
     console.error('[SERVER] Error:', err.message);
     res.status(500).json({ success: false, error: 'Internal server error' });
