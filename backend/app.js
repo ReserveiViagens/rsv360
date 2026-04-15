@@ -44,6 +44,14 @@ async function createApp() {
     console.warn('[MODULE] Revenue Engine não disponível:', err.message);
   }
 
+  try {
+    const crmModule = require('../server/modules/crm');
+    await crmModule.registerCrmModule(app);
+    console.log('[BOOT] CRM & Loyalty module loaded');
+  } catch (err) {
+    console.warn('[BOOT] CRM module failed:', err.message);
+  }
+
   app.use((err, req, res, next) => {
     console.error('[SERVER] Error:', err.message);
     res.status(500).json({ success: false, error: 'Internal server error' });

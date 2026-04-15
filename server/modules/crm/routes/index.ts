@@ -1,0 +1,37 @@
+import { Router } from 'express';
+import guestsRoutes from './guest-profiles.routes';
+import loyaltyRoutes from './loyalty.routes';
+import campaignsRoutes from './campaigns.routes';
+import segmentsRoutes from './segments.routes';
+import kpisRoutes from './kpis.routes';
+
+const router = Router();
+
+router.use('/guests', guestsRoutes);
+router.use('/loyalty', loyaltyRoutes);
+router.use('/campaigns', campaignsRoutes);
+router.use('/segments', segmentsRoutes);
+router.use('/kpis', kpisRoutes);
+
+router.get('/health', (_req, res) => {
+  res.json({
+    module: 'crm',
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    routes: {
+      guests: '/api/crm/guests',
+      loyalty: '/api/crm/loyalty',
+      campaigns: '/api/crm/campaigns',
+      segments: '/api/crm/segments',
+      kpis: '/api/crm/kpis',
+    },
+  });
+});
+
+export function registerCrmRoutes(app: any) {
+  app.use('/api/crm', router);
+}
+
+export default router;
+
+module.exports = router;
