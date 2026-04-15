@@ -36,12 +36,17 @@
   },
   "devDependencies": {
     "@alloc/quick-lru": "^5.2.0",
+    "@types/nodemailer": "^8.0.0",
     "concurrently": "^8.2.2",
     "rimraf": "^5.0.5"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "handlebars": "^4.7.9",
+    "nodemailer": "^8.0.5",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "twilio": "^5.13.1"
   },
   "overrides": {
     "react": "^19.2.3",
