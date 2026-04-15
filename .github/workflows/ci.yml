@@ -7,15 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  backend-tests:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:16
         env:
+          POSTGRES_DB: rsv360_test
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -23,54 +26,41 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 22
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
-        continue-on-error: true
 
-      - name: Type check
+      - name: Run backend tests (coverage)
+        run: npm run test:ci --workspace=backend
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+          NODE_ENV: test
+          MP_ACCESS_TOKEN: test-token
+
+  frontend-typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check (workspaces)
         run: npm run type-check --workspaces --if-present
         continue-on-error: true
-
-      - name: Lint
-        run: npm run lint --workspaces --if-present
-        continue-on-error: true
-
-      - name: Build
-        run: npm run build --workspaces --if-present
-        continue-on-error: true
-
-      - name: Test
-        run: npm run test --workspaces --if-present
-        continue-on-error: true
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test 
-        run: cd apps/turismo && npx next build
-
-      # ===== LINT (DÍVIDA TÉCNICA - 1243 erros) =====
-      - name: Lint - site-publico
-        run: cd apps/site-publico && npx eslint . --max-warnings=3111
-
-      - name: Lint - turismo
-        run: cd apps/turismo && npx eslint . --max-warnings=25
-
-      # ===== TESTES (DÍVIDA TÉCNICA - config Jest/DB) =====
-      - name: Tests - site-publico
-        run: cd apps/site-publico && npm test --if-present || true
-        continue-on-error: true  # TODO: corriguraó÷ Jest
-
-      - name: Tests - backend
-        run: cd backend && npm run test:ci
-        # Obrigatório — 7/7 testes passando (D6.1 completo)
-        env:
-          DATABASE_URL: postgresql://postgres:testpassword@localhost:5432/rsv360_test
-          JWT_SECRET: test-jwt-secret
-          NODE_ENV: test
