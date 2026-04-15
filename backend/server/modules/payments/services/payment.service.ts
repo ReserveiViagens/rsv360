@@ -38,7 +38,7 @@ export class PaymentService {
     };
   }
 
-  async listPayments(enterpriseId: string, filters: PaymentFilters): Promise<PaginatedResult<PaymentResult>> {
+  async listPayments(enterpriseId: string, filters: PaymentFilters = {}): Promise<PaginatedResult<PaymentResult>> {
     // Mock implementation for testing
     return {
       data: [{

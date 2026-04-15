@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const filters = req.query;
-    const result = await paymentService.listPayments(filters as any);
+    const result = await paymentService.listPayments(req.query.enterpriseId as string, filters as any);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const result = await paymentService.getPayment(req.params.id);
+    const result = await paymentService.getPayment(req.query.enterpriseId as string, req.params.id);
     if (!result) return res.status(404).json({ error: 'Payment not found' });
     res.json(result);
   } catch (error) {
@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/:id/cancel', async (req, res) => {
   try {
-    const result = await paymentService.cancelPayment(req.params.id);
+    const result = await paymentService.cancelPayment(req.body.enterpriseId, req.params.id);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
