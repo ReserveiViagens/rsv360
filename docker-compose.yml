@@ -1,4 +1,12 @@
-version: '3.9'
+# RSV360 PMS/CRM — Reservei Viagens
+# Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
+# Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+# @author Douglas P. Figueiredo
+# @license UNLICENSED
+
+x-app-env: &app-env
+  NEXT_PUBLIC_API_URL: http://localhost:3002
+  NEXT_PUBLIC_BACKEND_URL: http://localhost:3002
 
 services:
   postgres:
@@ -6,20 +14,191 @@ services:
     container_name: rsv360-postgres
     restart: unless-stopped
     ports:
-      - "5433:5432"
+      - '5432:5432'
     environment:
       POSTGRES_USER: rsv360
       POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
-      POSTGRES_DB: rsv360_db
+      POSTGRES_DB: rsv_360_ecosystem
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - rsv360_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rsv360 -d rsv360_db"]
+      test: ['CMD-SHELL', 'pg_isready -U rsv360 -d rsv_360_ecosystem']
       interval: 10s
       timeout: 5s
+      retries: 8
+
+  redis:
+    image: redis:7-alpine
+    container_name: rsv360-redis
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '6379:6379'
+    volumes:
+      - rsv360_redisdata:/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: rsv360-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '3002:3002'
+    environment:
+      PORT: 3002
+      NODE_ENV: production
+      DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@postgres:5432/rsv_360_ecosystem
+      REDIS_DISABLED: 'true'
+      JWT_SECRET: your_very_secure_jwt_secret_here_minimum_32_characters
+      MP_ACCESS_TOKEN: test-token
+      META_PIXEL_ID: G-XXXXXXXXXX
+      META_CAPI_ACCESS_TOKEN: placeholder
+      TIKTOK_PIXEL_ID: G-XXXXXXXXXX
+      TIKTOK_ACCESS_TOKEN: placeholder
+    healthcheck:
+      test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1']
+      interval: 20s
+      timeout: 8s
       retries: 5
+
+  admin:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        APP_DIR: apps/admin
+        APP_PORT: 3004
+        <<: *app-env
+    container_name: rsv360-admin
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '3004:3004'
+    environment:
+      <<: *app-env
+      PORT: 3004
+
+  guest:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        APP_DIR: apps/guest
+        APP_PORT: 3006
+        <<: *app-env
+    container_name: rsv360-guest
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '3006:3006'
+    environment:
+      <<: *app-env
+      PORT: 3006
+
+  site-publico:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        APP_DIR: apps/site-publico
+        APP_PORT: 3000
+        <<: *app-env
+    container_name: rsv360-site-publico
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '3000:3000'
+    environment:
+      <<: *app-env
+      PORT: 3000
+
+  turismo:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        APP_DIR: apps/turismo
+        APP_PORT: 3005
+        <<: *app-env
+    container_name: rsv360-turismo
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '3005:3005'
+    environment:
+      <<: *app-env
+      PORT: 3005
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: rsv360-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: rsv360-alertmanager
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    ports:
+      - '9093:9093'
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+
+  grafana:
+    image: grafana/grafana-oss:11.1.5
+    container_name: rsv360-grafana
+    restart: unless-stopped
+    ports:
+      - '3007:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      prometheus:
+        condition: service_started
 
 volumes:
   rsv360_pgdata:
+    driver: local
+  rsv360_redisdata:
+    driver: local
+  prometheus_data:
+    driver: local
+  alertmanager_data:
+    driver: local
+  grafana_data:
     driver: local

@@ -1,0 +1,13 @@
+# RSV360 PMS/CRM — Reservei Viagens
+# Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
+# Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    isDefault: true
+    url: http://prometheus:9090
+    editable: true

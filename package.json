@@ -32,7 +32,11 @@
     "seed": "npm run seed --workspace=backend",
     "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
     "clean:install": "npm run clean && npm install",
-    "type-check": "npm run type-check --workspaces --if-present"
+    "type-check": "npm run type-check --workspaces --if-present",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f --tail=200",
+    "test:e2e": "node tests/e2e/infra-smoke.js"
   },
   "devDependencies": {
     "@alloc/quick-lru": "^5.2.0",

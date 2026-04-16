@@ -1,0 +1,51 @@
+# RSV360 PMS/CRM — Reservei Viagens
+# Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
+# Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+
+name: E2E Infra Smoke
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  infra-smoke:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: rsv360_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run E2E infra smoke
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+          MP_ACCESS_TOKEN: test-token
+          NODE_ENV: test
+          REDIS_DISABLED: 'true'

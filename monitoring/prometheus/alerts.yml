@@ -1,0 +1,24 @@
+# RSV360 PMS/CRM — Reservei Viagens
+# Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
+# Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+
+groups:
+  - name: rsv360-backend
+    rules:
+      - alert: RSV360BackendDown
+        expr: up{job="rsv360-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Backend RSV360 indisponível'
+          description: 'O job rsv360-backend parou de responder.'
+
+      - alert: RSV360BackendHighMemory
+        expr: process_resident_memory_bytes{job="rsv360-backend"} > 900000000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Uso de memória elevado no backend'
+          description: 'Consumo de memória acima de 900MB por 10 minutos.'

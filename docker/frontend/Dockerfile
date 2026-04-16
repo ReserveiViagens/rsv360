@@ -1,56 +1,62 @@
-# ============================================
-# RSV360 Frontend - Next.js Standalone Dockerfile
-# ============================================
+# RSV360 PMS/CRM — Reservei Viagens
+# Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
+# Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+# @author Douglas P. Figueiredo
+# @license UNLICENSED
 
-# --- Stage 1: Dependencies ---
 FROM node:22-alpine AS deps
-WORKDIR /app
+ARG APP_DIR
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_BACKEND_URL
+WORKDIR /workspace
 
-# Copiar apenas arquivos necessários para deps
-COPY apps/site-publico/package.json ./apps/site-publico/
-COPY package.json package-lock.json ./
+COPY . .
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+RUN cd "${APP_DIR}" && npm install --no-audit --no-fund
 
-# Instalar dependências
-RUN cd apps/site-publico && npm install --no-audit --no-fund
-
-# --- Stage 2: Builder ---
 FROM node:22-alpine AS builder
-WORKDIR /app
+ARG APP_DIR
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_BACKEND_URL
+WORKDIR /workspace
 
-# Copiar dependências instaladas
-COPY --from=deps /app/apps/site-publico/node_modules ./apps/site-publico/node_modules
+COPY --from=deps /workspace /workspace
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+RUN cd "${APP_DIR}" && npm run build
+RUN mkdir -p /workspace/.deploy \
+  && cp -R "${APP_DIR}/.next" /workspace/.deploy/.next \
+  && cp "${APP_DIR}/package.json" /workspace/.deploy/package.json \
+  && cp -R "${APP_DIR}/node_modules" /workspace/.deploy/node_modules \
+  && mkdir -p /workspace/.deploy/public \
+  && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." /workspace/.deploy/public/; fi
 
-# Copiar apenas arquivos necessários para build
-COPY apps/site-publico/package.json ./apps/site-publico/
-COPY apps/site-publico/next.config.js ./apps/site-publico/
-COPY apps/site-publico/tsconfig.json ./apps/site-publico/
-COPY apps/site-publico/src ./apps/site-publico/src
-COPY apps/site-publico/public ./apps/site-publico/public
+FROM node:22-alpine AS runtime
+ARG APP_DIR
+ARG APP_PORT=3000
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_BACKEND_URL
+WORKDIR /workspace
 
-# Build Next.js com standalone output
-RUN cd apps/site-publico && npm run build
-
-# --- Stage 3: Production ---
-FROM node:22-alpine AS production
-WORKDIR /app
-
-# Segurança: usuário não-root
+RUN apk add --no-cache wget
 RUN addgroup -S rsv360 && adduser -S rsv360 -G rsv360
 
-# Copiar standalone build
-COPY --from=builder /app/apps/site-publico/.next/standalone ./
-COPY --from=builder /app/apps/site-publico/.next/static ./.next/static
-COPY --from=builder /app/apps/site-publico/public ./public
-
-# Instalar wget para health check
-RUN apk add --no-cache wget
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-
-USER rsv360
-EXPOSE 3000
+COPY --from=builder /workspace/.deploy/.next ./.next
+COPY --from=builder /workspace/.deploy/public ./public
+COPY --from=builder /workspace/.deploy/package.json ./package.json
+COPY --from=builder /workspace/.deploy/node_modules ./node_modules
 
 ENV NODE_ENV=production
-CMD ["node", "server.js"]
+ENV PORT=${APP_PORT}
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${APP_PORT} || exit 1
+
+USER rsv360
+EXPOSE ${APP_PORT}
+
+CMD ["npm", "run", "start"]
