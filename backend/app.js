@@ -8,6 +8,8 @@ const { canonicalRedirect } = require('./src/middleware/canonical-redirect');
 const { infoRouter } = require('./src/routes/info.route');
 const { cloneAlertRouter } = require('./src/routes/clone-alert.route');
 const { trackingRouter } = require('./src/routes/tracking.route');
+const { metricsRouter, metricsMiddleware } = require('./src/routes/metrics.route');
+const { docsRouter, openApiSpec } = require('./src/routes/docs.route');
 
 async function createApp() {
   const app = express();
@@ -17,6 +19,7 @@ async function createApp() {
   app.use(cors());
   app.use(brandingHeaders);
   app.use(canonicalRedirect);
+  app.use(metricsMiddleware);
   app.use('/api/v1/payments/webhooks/stripe', express.raw({ type: 'application/json' }));
   app.use(express.json());
 
@@ -53,6 +56,11 @@ async function createApp() {
 
   SecurityConfig.setupHealthCheck(app);
   app.use('/api/info', infoRouter);
+  app.use('/api/docs', docsRouter);
+  app.get('/api/openapi.json', (_req, res) => {
+    res.json(openApiSpec);
+  });
+  app.use('/metrics', metricsRouter);
   app.use('/api/clone-alert', cloneAlertRouter);
   app.use('/api/tracking', trackingRouter);
   app.use('/api/v1/payments', paymentsRoutes);
