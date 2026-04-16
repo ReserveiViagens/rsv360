@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /portal/
+
+Sitemap: https://www.reserveiviagens.com.br/sitemap.xml
+Sitemap: https://www.rsv360.com/sitemap.xml

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /portal/
+
+Sitemap: https://www.rsv360.com.br/sitemap.xml

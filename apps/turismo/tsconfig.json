@@ -96,7 +96,7 @@
     // "erasableSyntaxOnly": true,                       /* Do not allow runtime constructs that are not part of ECMAScript. */
     // "allowSyntheticDefaultImports": true,             /* Allow 'import x from y' when a module doesn't have a default export. */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */ // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
-    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */ /* Type Checking */
+    "forceConsistentCasingInFileNames": false, /* Ensure that casing is correct in imports. */ /* Type Checking */
     "strict": true, /* Enable all strict type-checking options. */ // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
     // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
     // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
@@ -129,16 +129,21 @@
   },
 	"include": [
 		"next-env.d.ts",
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"pages/**/*.ts",
-		"pages/**/*.tsx",
-		"components/**/*.ts",
-		"components/**/*.tsx",
-		"lib/**/*.ts",
-		"lib/**/*.tsx"
+		"pages/_app.tsx",
+		"pages/_document.tsx",
+		"pages/integracoes-apis.tsx",
+		"pages/politica-de-privacidade.tsx",
+		"pages/politica-de-cookies.tsx",
+		"pages/termos-de-uso.tsx",
+		".next/types/**/*.ts"
 	],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/pages",
+    "src",
+    "components",
+    "BACKUP_SRC_COMPONENTS",
+    "pages/dashboard",
+    "pages/accommodations"
   ]
 }

@@ -22,7 +22,10 @@ class SecurityConfig {
         status: 'OK',
         timestamp: new Date().toISOString(),
         service: 'RSV360 Backend API',
-        security: 'Basic Security Active'
+        security: 'Basic Security Active',
+        author: 'Douglas P. Figueiredo',
+        copyright: '© 2024-2026 Reservei Viagens LTDA',
+        website: 'https://www.reserveiviagens.com.br'
       });
     });
   }
