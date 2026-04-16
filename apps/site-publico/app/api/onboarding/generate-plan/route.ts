@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (mode === 'openai' && process.env.OPENAI_API_KEY) {
       try {
-        const openaiModule = await import('openai').catch(() => null);
+        const openaiModule = await (new Function('return import("openai")')() as Promise<any>).catch(() => null);
         if (!openaiModule) throw new Error('openai package not installed');
         const OpenAI = openaiModule.default;
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

@@ -6,10 +6,15 @@ export default function Document() {
       <Head>
         {/* Meta tags básicas */}
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta name="author" content="Douglas P. Figueiredo" />
+        <meta name="copyright" content="© 2024-2026 Reservei Viagens LTDA" />
         
         {/* Preconnect para melhor performance */}
-        <link rel="preconnect" href="http://localhost:5000" />
-        <link rel="preconnect" href="https://localhost:5000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+        <link rel="dns-prefetch" href="https://analytics.tiktok.com" />
         
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />

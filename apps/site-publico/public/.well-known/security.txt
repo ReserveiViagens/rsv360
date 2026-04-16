@@ -1,0 +1,4 @@
+Contact: mailto:security@reserveiviagens.com.br
+Contact: mailto:douglas@reserveiviagens.com.br
+Preferred-Languages: pt, en
+Expires: 2027-12-31

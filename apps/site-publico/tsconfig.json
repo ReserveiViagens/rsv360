@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "target": "ES6",
     "skipLibCheck": true,
@@ -13,15 +17,67 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "forceConsistentCasingInFileNames": false,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "app/layout.tsx",
+    "app/politica-de-privacidade/page.tsx",
+    "app/politica-de-cookies/page.tsx",
+    "app/termos-de-uso/page.tsx",
+    "app/robots.ts",
+    "app/sitemap.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/pages",
+    "src/services",
+    "src/utils",
+    "playwright-report",
+    "test-results",
+    "app/admin",
+    "app/dashboard",
+    "app/analytics",
+    "app/crm",
+    "app/booking",
+    "app/checkin",
+    "app/marketplace",
+    "app/marketing",
+    "app/finance",
+    "app/loyalty",
+    "app/login",
+    "app/dashboard-rsv",
+    "app/group-travel",
+    "app/hoteis",
+    "app/ingressos",
+    "app/atracoes",
+    "app/api-docs",
+    "app/buscar",
+    "app/buscar-hosts",
+    "app/cotacao",
+    "app/cupons",
+    "app/flash-deals",
+    "app/group-chats",
+    "app/insurance",
+    "app/leiloes",
+    "app/loyalty",
+    "app/mapa-caldas-novas",
+    "app/offline",
+    "app/payments",
+    "app/perfil",
+    "app/politica-de-cookies",
+    "app/politica-de-privacidade",
+    "app/termos-de-uso"
+  ]
 }

@@ -1,0 +1,2 @@
+Equipe: Douglas P. Figueiredo
+Stack: Node.js / Next.js / React / TypeScript / PostgreSQL

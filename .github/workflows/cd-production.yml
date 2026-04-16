@@ -1,0 +1,250 @@
+name: CD - Production Deployment
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.2.3)'
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    environment:
+      name: production
+      url: https://yourdomain.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=${{ inputs.version }}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_clean=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for backend
+        id: backend-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=${{ steps.version.outputs.version_clean }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/backend/Dockerfile
+          push: true
+          tags: ${{ steps.backend-meta.outputs.tags }}
+          labels: ${{ steps.backend-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+
+      - name: Extract metadata for frontend
+        id: frontend-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=${{ steps.version.outputs.version_clean }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          push: true
+          tags: ${{ steps.frontend-meta.outputs.tags }}
+          labels: ${{ steps.frontend-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+
+      - name: Database backup
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            # Navigate to project directory
+            cd ${{ secrets.PRODUCTION_PATH }}
+
+            # Run database backup script
+            echo "Creating database backup before deployment..."
+            if [ -f "scripts/backup-db.sh" ]; then
+              bash scripts/backup-db.sh production ${{ steps.version.outputs.version }}
+            else
+              echo "⚠️  Backup script not found. Creating manual backup..."
+              docker-compose -f docker-compose.prod.yml exec -T postgres pg_dump -U $POSTGRES_USER $POSTGRES_DB > backups/db_backup_${{ steps.version.outputs.version }}_$(date +%Y%m%d_%H%M%S).sql
+            fi
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            # Navigate to project directory
+            cd ${{ secrets.PRODUCTION_PATH }}
+
+            # Create deployment backup
+            echo "Creating backup of current deployment..."
+            mkdir -p backups
+            cp -r docker-compose.prod.yml backups/docker-compose.prod.yml.$(date +%Y%m%d_%H%M%S)
+
+            # Update docker-compose.prod.yml with new image tags
+            sed -i 's|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest|g' docker-compose.prod.yml
+            sed -i 's|image: .*frontend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest|g' docker-compose.prod.yml
+
+            # Login to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+            # Pull new images
+            docker-compose -f docker-compose.prod.yml pull
+
+            # Blue-green deployment strategy
+            echo "Starting blue-green deployment..."
+
+            # Scale up new version alongside old version
+            docker-compose -f docker-compose.prod.yml up -d --scale backend=3
+
+            # Wait for new instances to be healthy
+            echo "Waiting for new instances to be healthy..."
+            sleep 60
+
+            # Health check validation
+            HEALTH_CHECK_URL="http://${{ secrets.PRODUCTION_HOST }}:80/health"
+            if curl -f --max-time 30 $HEALTH_CHECK_URL; then
+              echo "✅ Production deployment successful!"
+
+              # Scale down old instances
+              docker-compose -f docker-compose.prod.yml up -d --scale backend=2
+
+              # Wait and verify final health
+              sleep 30
+              if curl -f --max-time 30 $HEALTH_CHECK_URL; then
+                echo "✅ Final health check passed!"
+                echo "🌐 Application available at: https://yourdomain.com"
+
+                # Cleanup old images and containers
+                docker image prune -f
+                docker container prune -f
+
+                # Tag deployment as successful
+                echo "${{ steps.version.outputs.version }} $(date)" >> deployments.log
+              else
+                echo "❌ Final health check failed! Initiating rollback..."
+                exit 1
+              fi
+            else
+              echo "❌ Initial health check failed! Rolling back immediately..."
+
+              # Immediate rollback
+              docker-compose -f docker-compose.prod.yml down
+              cp backups/docker-compose.prod.yml.* docker-compose.prod.yml 2>/dev/null || true
+              docker-compose -f docker-compose.prod.yml up -d
+
+              echo "❌ Rollback completed. Deployment failed."
+              exit 1
+            fi
+
+      - name: Run post-deployment health checks
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            cd ${{ secrets.PRODUCTION_PATH }}
+
+            # Run comprehensive health check script
+            if [ -f "scripts/health-check.sh" ]; then
+              echo "Running comprehensive health checks..."
+              bash scripts/health-check.sh production
+            else
+              echo "Running basic health checks..."
+              # Basic health checks
+              curl -f http://localhost/health || exit 1
+              curl -f http://localhost:3002/health || exit 1
+              curl -f http://localhost:3000/api/health || exit 1
+            fi
+
+      - name: Notify deployment success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: "✅ Production deployment successful - ${{ steps.version.outputs.version }} - https://yourdomain.com"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+      - name: Notify deployment failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: "❌ Production deployment failed - ${{ steps.version.outputs.version }} - Rollback initiated"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+      - name: Create GitHub deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: '${{ github.ref }}',
+              environment: 'production',
+              description: 'Production deployment of ${{ steps.version.outputs.version }}'
+            });
+
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'success',
+              environment_url: 'https://yourdomain.com'
+            });

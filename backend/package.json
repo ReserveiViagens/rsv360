@@ -1,4 +1,12 @@
 {
+  "private": true,
+  "author": "Douglas P. Figueiredo <douglas@reserveiviagens.com.br>",
+  "license": "UNLICENSED",
+  "homepage": "https://www.reserveiviagens.com.br",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo"
+  },
   "scripts": {
     "dev": "tsx server.js",
     "seed": "tsx src/db/seed.ts",

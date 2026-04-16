@@ -1,0 +1,22 @@
+name: "RSV360 CodeQL Configuration"
+
+disable-default-queries: false
+
+queries:
+  - uses: security-and-quality
+  - uses: security-experimental
+
+paths-ignore:
+  - node_modules
+  - .next
+  - dist
+  - build
+  - coverage
+  - test-results
+  - playwright-report
+  - docker/nginx/ssl
+  - .github
+
+paths:
+  - backend
+  - apps/site-publico
