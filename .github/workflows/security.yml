@@ -42,10 +42,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build applications
-      run: |
-        npm run build --workspace=apps/site-publico
-        npx tsc --noEmit --project backend/tsconfig.json
+    - name: Build Next app (apps/site-publico)
+      run: npm run build --workspace=apps/site-publico
+
+    - name: TypeScript typecheck (backend)
+      run: npx tsc --noEmit --project backend/tsconfig.json
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
