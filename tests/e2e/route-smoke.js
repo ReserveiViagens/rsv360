@@ -1,462 +1,376 @@
+#!/usr/bin/env node
 /**
- * RSV360 PMS/CRM — Reservei Viagens
- * Route Smoke (Playwright)
+ * tests/e2e/route-smoke.js
  *
- * - Enumera rotas do Next (pages router + app router do site-publico) via filesystem
- * - Visita cada rota e captura:
- *   - console.error (com allowlist configurável)
- *   - pageerror (exceções de runtime)
- *   - falhas de navegação/timeout
- * - Rotas autenticadas podem redirecionar para /login (conta como OK)
- * - Rotas dinâmicas sem seed/env → SKIP explícito (não falha o job)
+ * Route smoke for RSV360 monorepo:
+ *   - Pages Router: arquivos em apps/<app>/pages com extensões ts, tsx, js ou jsx
+ *     excludes: _app, _document, _error, pages/api/**, any _*
+ *   - App Router: apps/site-publico/app pages em segmentos válidos com page.tsx
+ *     excludes: segments starting with _ and route groups (…)
+ *
+ * Dynamic segments require env seed; missing env -> SKIP (reason: dynamic-segment-no-seed):
+ *   [id]        -> RSV_SMOKE_ID
+ *   [slug]      -> RSV_SMOKE_SLUG
+ *   [...slug]   -> RSV_SMOKE_CATCHALL
+ *
+ * Other env:
+ *   RSV_SMOKE_CONSOLE_IGNORE  - "|"-separated substrings to ignore in console errors
+ *                               default: "chrome-extension://|ERR_BLOCKED_BY_CLIENT"
+ *
+ * Auth: redirect to /login is treated as OK and increments redirectedToLogin.
+ * Retry: 1x only on playwright.errors.TimeoutError.
+ * Exit: 0 if failed===0, else 1.
+ *
+ * Artifacts: tests/e2e/artifacts/route-smoke_<YYYYMMDD_HHMMSS>/report.{json,md}
  */
-const fs = require('fs');
-const path = require('path');
 
-function toBool(value, defaultValue) {
-  if (value == null) return defaultValue;
-  return ['1', 'true', 'yes', 'y', 'on'].includes(String(value).toLowerCase());
+"use strict";
+
+const fs = require("node:fs");
+const path = require("node:path");
+const { chromium, errors: pwErrors } = require("playwright");
+
+const ROOT = path.resolve(__dirname, "..", "..");
+const ARTIFACTS_DIR = path.resolve(ROOT, "tests", "e2e", "artifacts");
+
+const APPS = {
+	"site-publico": { baseUrl: "http://localhost:3000", routers: ["pages", "app"] },
+	admin:          { baseUrl: "http://localhost:3004", routers: ["pages"] },
+	turismo:        { baseUrl: "http://localhost:3005", routers: ["pages"] },
+	guest:          { baseUrl: "http://localhost:3006", routers: ["pages"] },
+};
+
+const RSV_SMOKE_ID = process.env.RSV_SMOKE_ID || "";
+const RSV_SMOKE_SLUG = process.env.RSV_SMOKE_SLUG || "";
+const RSV_SMOKE_CATCHALL = process.env.RSV_SMOKE_CATCHALL || "";
+
+const CONSOLE_IGNORE_RAW =
+	process.env.RSV_SMOKE_CONSOLE_IGNORE ||
+	"chrome-extension://|ERR_BLOCKED_BY_CLIENT";
+const CONSOLE_IGNORE = CONSOLE_IGNORE_RAW.split("|")
+	.map((s) => s.trim())
+	.filter(Boolean);
+
+const NAV_TIMEOUT_MS = 30_000;
+
+// ---------- enumeration ----------
+
+function walk(dir) {
+	const out = [];
+	if (!fs.existsSync(dir)) return out;
+	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+		const full = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			out.push(...walk(full));
+		} else if (entry.isFile()) {
+			out.push(full);
+		}
+	}
+	return out;
 }
 
-function normalizeSlashes(input) {
-  return input.replace(/\\/g, '/');
+function enumeratePagesRouter(appDir) {
+	const pagesDir = path.join(appDir, "pages");
+	if (!fs.existsSync(pagesDir)) return [];
+	const results = [];
+	for (const file of walk(pagesDir)) {
+		const rel = path.relative(pagesDir, file).replace(/\\/g, "/");
+		if (rel.startsWith("api/")) continue; // exclude pages/api/**
+		if (!/\.(tsx?|jsx?)$/.test(rel)) continue;
+		const base = rel.replace(/\.(tsx?|jsx?)$/, "");
+		const segments = base.split("/");
+		// Exclude any segment starting with _ (covers _app, _document, _error, and any _private)
+		if (segments.some((s) => s.startsWith("_"))) continue;
+		let routePath;
+		if (segments[segments.length - 1] === "index") {
+			segments.pop();
+			routePath = "/" + segments.join("/");
+		} else {
+			routePath = "/" + segments.join("/");
+		}
+		routePath = routePath.replace(/\/+$/, "") || "/";
+		results.push({ sourceFile: "pages/" + rel, routePath });
+	}
+	return results;
 }
 
-function ensureLeadingSlash(route) {
-  if (!route.startsWith('/')) return `/${route}`;
-  return route;
+function enumerateAppRouter(appDir) {
+	const appRouterDir = path.join(appDir, "app");
+	if (!fs.existsSync(appRouterDir)) return [];
+	const results = [];
+	for (const file of walk(appRouterDir)) {
+		const rel = path.relative(appRouterDir, file).replace(/\\/g, "/");
+		if (rel !== "page.tsx" && !rel.endsWith("/page.tsx")) continue;
+		const withoutPage = rel.replace(/\/?page\.tsx$/, "");
+		const segments = withoutPage.split("/").filter(Boolean);
+		if (segments.some((s) => s.startsWith("_"))) continue;
+		// Remove route groups like (marketing)
+		const urlSegments = segments.filter(
+			(s) => !(s.startsWith("(") && s.endsWith(")")),
+		);
+		const routePath = "/" + urlSegments.join("/");
+		results.push({
+			sourceFile: "app/" + rel,
+			routePath: routePath.replace(/\/+$/, "") || "/",
+		});
+	}
+	return results;
 }
 
-function withoutExtension(filePath) {
-  return filePath.replace(/\.(tsx|ts|jsx|js)$/i, '');
+// ---------- dynamic segment resolution ----------
+
+function resolveDynamicSegments(routePath) {
+	let out = routePath;
+	if (/\[\.\.\.[^\]]+\]/.test(out)) {
+		if (!RSV_SMOKE_CATCHALL)
+			return { resolved: null, skipReason: "dynamic-segment-no-seed" };
+		out = out.replace(/\[\.\.\.[^\]]+\]/g, RSV_SMOKE_CATCHALL);
+	}
+	if (/\[slug\]/.test(out)) {
+		if (!RSV_SMOKE_SLUG)
+			return { resolved: null, skipReason: "dynamic-segment-no-seed" };
+		out = out.replace(/\[slug\]/g, RSV_SMOKE_SLUG);
+	}
+	if (/\[id\]/.test(out)) {
+		if (!RSV_SMOKE_ID)
+			return { resolved: null, skipReason: "dynamic-segment-no-seed" };
+		out = out.replace(/\[id\]/g, RSV_SMOKE_ID);
+	}
+	if (/\[[^\]]+\]/.test(out)) {
+		// Any unresolved dynamic segment -> SKIP
+		return { resolved: null, skipReason: "dynamic-segment-no-seed" };
+	}
+	return { resolved: out, skipReason: null };
 }
 
-function isIgnoredPageFile(relPath) {
-  const normalized = normalizeSlashes(relPath);
-  const baseName = path.posix.basename(normalized);
-  if (baseName.startsWith('_')) return true;
-  if (normalized.startsWith('pages/api/')) return true;
-  return false;
+// ---------- visit ----------
+
+async function visitOnce(context, fullUrl) {
+	const page = await context.newPage();
+	const consoleErrors = [];
+	page.on("console", (msg) => {
+		if (msg.type() === "error") {
+			const text = msg.text();
+			if (!CONSOLE_IGNORE.some((sub) => text.includes(sub))) {
+				consoleErrors.push(text);
+			}
+		}
+	});
+	page.on("pageerror", (err) => {
+		consoleErrors.push(`[pageerror] ${err.message}`);
+	});
+	try {
+		const response = await page.goto(fullUrl, {
+			waitUntil: "domcontentloaded",
+			timeout: NAV_TIMEOUT_MS,
+		});
+		const httpStatus = response ? response.status() : 0;
+		const finalUrl = page.url();
+		const redirectedToLogin = /\/login(\?|\/|$)/.test(finalUrl);
+		return { httpStatus, finalUrl, consoleErrors, redirectedToLogin };
+	} finally {
+		await page.close().catch(() => {});
+	}
 }
 
-function toRouteFromPagesFile(relativePath) {
-  // relativePath example: pages/crm/campaigns/[id].tsx
-  const normalized = normalizeSlashes(relativePath);
-  const withoutExt = withoutExtension(normalized);
-  let route = withoutExt.replace(/^pages/, '');
-  route = route.replace(/\/index$/i, '/');
-  route = ensureLeadingSlash(route);
-  route = route.replace(/\/+/g, '/');
-  return route;
+async function visitWithRetry(context, fullUrl) {
+	try {
+		return await visitOnce(context, fullUrl);
+	} catch (err) {
+		if (err instanceof pwErrors.TimeoutError) {
+			return await visitOnce(context, fullUrl);
+		}
+		throw err;
+	}
 }
 
-function toRouteFromAppPageFile(relativePath) {
-  // relativePath example: app/dashboard/page.tsx
-  const normalized = normalizeSlashes(relativePath);
-  const route = normalized.replace(/^app/, '').replace(/\/page\.tsx$/i, '');
-  return ensureLeadingSlash(route || '/');
-}
+// ---------- main ----------
 
-function routeIsWorthVisiting(route) {
-  if (route.startsWith('/api/')) return false;
-  return !['/_app', '/_document', '/_error'].includes(route);
-}
-
-function walkFiles(rootDir, { includeName, excludeDirNames }) {
-  const results = [];
-  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
-  for (const entry of entries) {
-    if (excludeDirNames.has(entry.name)) continue;
-    const fullPath = path.join(rootDir, entry.name);
-    if (entry.isDirectory()) {
-      results.push(...walkFiles(fullPath, { includeName, excludeDirNames }));
-      continue;
-    }
-    if (!includeName(entry.name)) continue;
-    results.push(fullPath);
-  }
-  return results;
-}
-
-function uniqueSorted(list) {
-  return Array.from(new Set(list)).sort((a, b) => a.localeCompare(b));
-}
-
-function nowStamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}`;
-}
-
-function findDynamicSegments(route) {
-  const segments = [];
-  const re = /\[(\.\.\.)?([^\]]+)\]/g;
-  let match;
-  while ((match = re.exec(route)) !== null) {
-    segments.push({ isCatchAll: Boolean(match[1]), name: match[2] });
-  }
-  return segments;
-}
-
-function requiredEnvForDynamic(route) {
-  const segments = findDynamicSegments(route);
-  if (!segments.length) return null;
-
-  for (const segment of segments) {
-    if (segment.isCatchAll && segment.name === 'slug') return 'RSV_SMOKE_CATCHALL';
-    if (!segment.isCatchAll && segment.name === 'id') return 'RSV_SMOKE_ID';
-    if (!segment.isCatchAll && segment.name === 'slug') return 'RSV_SMOKE_SLUG';
-  }
-
-  // Unknown dynamic segment name → no deterministic mapping in this PR (skip)
-  return 'dynamic-unknown';
-}
-
-function replaceDynamicSegments(route, replacements) {
-  let output = route;
-  output = output.replace(/\[\.\.\.slug\]/g, encodeURIComponent(String(replacements.catchall)));
-  output = output.replace(/\[id\]/g, encodeURIComponent(String(replacements.id)));
-  output = output.replace(/\[slug\]/g, encodeURIComponent(String(replacements.slug)));
-  return output;
-}
-
-function compileConsoleIgnore() {
-  const raw = process.env.RSV_SMOKE_CONSOLE_IGNORE || 'chrome-extension://|ERR_BLOCKED_BY_CLIENT';
-  const parts = raw.split('|').map((p) => p.trim()).filter(Boolean);
-  const regexes = [];
-  for (const part of parts) {
-    try {
-      regexes.push(new RegExp(part));
-    } catch (error) {
-      console.error('[route-smoke] Invalid RSV_SMOKE_CONSOLE_IGNORE regex:', part);
-      console.error(String(error));
-      process.exit(2);
-    }
-  }
-  return { raw, regexes };
-}
-
-function consoleErrorIsIgnored(text, ignoreRegexes) {
-  return ignoreRegexes.some((re) => re.test(text));
+function timestamp() {
+	const d = new Date();
+	const pad = (n) => String(n).padStart(2, "0");
+	return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(
+		d.getHours(),
+	)}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
 }
 
 async function main() {
-  let playwright;
-  try {
-    playwright = require('playwright');
-  } catch {
-    console.error('[route-smoke] Playwright não encontrado.');
-    console.error('Instale no root do monorepo:');
-    console.error('  npm i -D playwright');
-    console.error('  npx playwright install --with-deps chromium');
-    process.exit(2);
-  }
+	const routes = [];
+	for (const [appName, cfg] of Object.entries(APPS)) {
+		const appDir = path.join(ROOT, "apps", appName);
+		if (cfg.routers.includes("pages")) {
+			for (const r of enumeratePagesRouter(appDir)) {
+				routes.push({ app: appName, baseUrl: cfg.baseUrl, ...r });
+			}
+		}
+		if (cfg.routers.includes("app")) {
+			for (const r of enumerateAppRouter(appDir)) {
+				routes.push({ app: appName, baseUrl: cfg.baseUrl, ...r });
+			}
+		}
+	}
 
-  const repoRoot = process.cwd();
+	console.log(`Found ${routes.length} routes across ${Object.keys(APPS).length} apps.`);
 
-  const baseUrls = {
-    'site-publico': process.env.RSV_SMOKE_SITE_PUBLICO_URL || 'http://localhost:3000',
-    admin: process.env.RSV_SMOKE_ADMIN_URL || 'http://localhost:3004',
-    turismo: process.env.RSV_SMOKE_TURISMO_URL || 'http://localhost:3005',
-    guest: process.env.RSV_SMOKE_GUEST_URL || 'http://localhost:3006',
-  };
+	const browser = await chromium.launch();
+	const context = await browser.newContext({ ignoreHTTPSErrors: true });
 
-  const apps = (process.env.RSV_SMOKE_APPS || 'site-publico,admin,turismo,guest')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+	const results = [];
+	const counters = {
+		total: 0,
+		ok: 0,
+		failed: 0,
+		skipped: 0,
+		redirectedToLogin: 0,
+	};
 
-  const dynamicReplacements = {
-    id: process.env.RSV_SMOKE_ID,
-    slug: process.env.RSV_SMOKE_SLUG,
-    catchall: process.env.RSV_SMOKE_CATCHALL,
-  };
+	for (const route of routes) {
+		counters.total++;
+		const { resolved, skipReason } = resolveDynamicSegments(route.routePath);
 
-  const headless = toBool(process.env.RSV_SMOKE_HEADLESS, true);
-  const timeoutMs = Number(process.env.RSV_SMOKE_TIMEOUT_MS || 60_000);
-  const maxFailures = Number(process.env.RSV_SMOKE_MAX_FAILURES || 50);
-  const concurrency = Number(process.env.RSV_SMOKE_CONCURRENCY || 4);
+		if (skipReason) {
+			counters.skipped++;
+			results.push({
+				app: route.app,
+				sourceFile: route.sourceFile,
+				routePath: route.routePath,
+				status: "skipped",
+				reason: skipReason,
+			});
+			console.log(`  SKIP  ${route.app.padEnd(14)} ${route.routePath}  (${skipReason})`);
+			continue;
+		}
 
-  const { raw: consoleIgnoreRaw, regexes: consoleIgnoreRegexes } = compileConsoleIgnore();
+		const fullUrl = route.baseUrl + resolved;
+		try {
+			const r = await visitWithRetry(context, fullUrl);
+			const okStatus = r.httpStatus >= 200 && r.httpStatus < 400;
+			const isOk = okStatus && r.consoleErrors.length === 0;
+			if (isOk) {
+				counters.ok++;
+				if (r.redirectedToLogin) counters.redirectedToLogin++;
+				results.push({
+					app: route.app,
+					sourceFile: route.sourceFile,
+					routePath: route.routePath,
+					resolvedPath: resolved,
+					fullUrl,
+					status: "ok",
+					httpStatus: r.httpStatus,
+					finalUrl: r.finalUrl,
+					redirectedToLogin: r.redirectedToLogin,
+				});
+				console.log(
+					`  OK    ${route.app.padEnd(14)} ${resolved}  → ${r.httpStatus}${
+						r.redirectedToLogin ? "  (→login)" : ""
+					}`,
+				);
+			} else {
+				counters.failed++;
+				results.push({
+					app: route.app,
+					sourceFile: route.sourceFile,
+					routePath: route.routePath,
+					resolvedPath: resolved,
+					fullUrl,
+					status: "failed",
+					httpStatus: r.httpStatus,
+					finalUrl: r.finalUrl,
+					redirectedToLogin: r.redirectedToLogin,
+					consoleErrors: r.consoleErrors,
+				});
+				console.log(
+					`  FAIL  ${route.app.padEnd(14)} ${resolved}  → ${
+						r.httpStatus
+					}  (${r.consoleErrors.length} console errors)` ,
+				);
+			}
+		} catch (err) {
+			counters.failed++;
+			results.push({
+				app: route.app,
+				sourceFile: route.sourceFile,
+				routePath: route.routePath,
+				resolvedPath: resolved,
+				fullUrl,
+				status: "failed",
+				error: err && err.message ? err.message : String(err),
+				errorType: err && err.name ? err.name : "Error",
+			});
+			console.log(
+				`  FAIL  ${route.app.padEnd(14)} ${resolved}  → ERROR ${err.name}: ${err.message}`,
+			);
+		}
+	}
 
-  const excludeDirNames = new Set(['node_modules', '.next', 'dist', 'build', 'out', '.git']);
-  const routesByApp = {};
+	await context.close();
+	await browser.close();
 
-  for (const app of apps) {
-    const appDir = path.join(repoRoot, 'apps', app);
-    const routes = [];
+	// Artifacts
+	const ts = timestamp();
+	const outDir = path.join(ARTIFACTS_DIR, `route-smoke_${ts}`);
+	fs.mkdirSync(outDir, { recursive: true });
 
-    const pagesDir = path.join(appDir, 'pages');
-    if (fs.existsSync(pagesDir)) {
-      const pageFiles = walkFiles(pagesDir, {
-        includeName: (name) => /\.(tsx|ts|jsx|js)$/i.test(name),
-        excludeDirNames,
-      });
-      for (const file of pageFiles) {
-        const relative = normalizeSlashes(path.relative(appDir, file));
-        if (isIgnoredPageFile(relative)) continue;
-        const route = toRouteFromPagesFile(relative);
-        if (routeIsWorthVisiting(route)) routes.push(route);
-      }
-    }
+	const report = {
+		timestamp: new Date().toISOString(),
+		env: {
+			RSV_SMOKE_ID: RSV_SMOKE_ID ? "(set)" : "(unset)",
+			RSV_SMOKE_SLUG: RSV_SMOKE_SLUG ? "(set)" : "(unset)",
+			RSV_SMOKE_CATCHALL: RSV_SMOKE_CATCHALL ? "(set)" : "(unset)",
+			RSV_SMOKE_CONSOLE_IGNORE: CONSOLE_IGNORE_RAW,
+		},
+		counters,
+		results,
+	};
+	fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 2));
 
-    if (app === 'site-publico') {
-      const appRouterDir = path.join(appDir, 'app');
-      if (fs.existsSync(appRouterDir)) {
-        const pageFiles = walkFiles(appRouterDir, {
-          includeName: (name) => /^page\.tsx$/i.test(name),
-          excludeDirNames,
-        });
-        for (const file of pageFiles) {
-          const relative = normalizeSlashes(path.relative(appDir, file));
-          const route = toRouteFromAppPageFile(relative);
-          if (routeIsWorthVisiting(route)) routes.push(route);
-        }
-      }
-    }
+	const md = [];
+	md.push(`# Route smoke report - ${ts}`);
+	md.push("");
+	md.push(`- total: **${counters.total}**`);
+	md.push(`- ok: **${counters.ok}**`);
+	md.push(`- failed: **${counters.failed}**`);
+	md.push(`- skipped: **${counters.skipped}**`);
+	md.push(`- redirectedToLogin: **${counters.redirectedToLogin}**`);
+	md.push("");
+	md.push("## Failures");
+	const failures = results.filter((r) => r.status === "failed");
+	if (failures.length === 0) {
+		md.push("_None._");
+	} else {
+		for (const f of failures) {
+			md.push(
+				`- **${f.app}** \`${f.routePath}\` -> ${f.httpStatus || "ERROR"} ${
+					f.error ? `\`${f.error}\`` : ""
+				}`,
+			);
+			if (f.consoleErrors && f.consoleErrors.length) {
+				for (const ce of f.consoleErrors) md.push(`    - \`${ce}\``);
+			}
+		}
+	}
+	md.push("");
+	md.push("## Skipped");
+	const skipped = results.filter((r) => r.status === "skipped");
+	if (skipped.length === 0) {
+		md.push("_None._");
+	} else {
+		for (const s of skipped) {
+			md.push(`- **${s.app}** \`${s.routePath}\` (${s.reason})`);
+		}
+	}
+	fs.writeFileSync(path.join(outDir, "report.md"), md.join("\n"));
 
-    routesByApp[app] = uniqueSorted(routes);
-  }
+	console.log("");
+	console.log(`Report: ${outDir}`);
+	console.log(
+		`Counters: total=${counters.total} ok=${counters.ok} failed=${counters.failed} skipped=${counters.skipped} redirectedToLogin=${counters.redirectedToLogin}`,
+	);
 
-  const runId = nowStamp();
-  const artifactsDir = path.join(repoRoot, 'tests', 'e2e', 'artifacts', `route-smoke_${runId}`);
-  fs.mkdirSync(artifactsDir, { recursive: true });
-
-  const browser = await playwright.chromium.launch({ headless });
-  const context = await browser.newContext({ ignoreHTTPSErrors: true });
-
-  const results = [];
-  const failures = [];
-  const skipped = [];
-
-  async function visit(app, route) {
-    const baseUrl = baseUrls[app];
-    const requiredEnv = requiredEnvForDynamic(route);
-
-    if (requiredEnv) {
-      if (requiredEnv === 'RSV_SMOKE_ID' && !dynamicReplacements.id) {
-        const item = { app, route, status: 'skipped', reason: 'dynamic-segment-no-seed' };
-        results.push(item);
-        skipped.push(item);
-        return;
-      }
-      if (requiredEnv === 'RSV_SMOKE_SLUG' && !dynamicReplacements.slug) {
-        const item = { app, route, status: 'skipped', reason: 'dynamic-segment-no-seed' };
-        results.push(item);
-        skipped.push(item);
-        return;
-      }
-      if (requiredEnv === 'RSV_SMOKE_CATCHALL' && !dynamicReplacements.catchall) {
-        const item = { app, route, status: 'skipped', reason: 'dynamic-segment-no-seed' };
-        results.push(item);
-        skipped.push(item);
-        return;
-      }
-      if (requiredEnv === 'dynamic-unknown') {
-        const item = { app, route, status: 'skipped', reason: 'dynamic-segment-no-seed' };
-        results.push(item);
-        skipped.push(item);
-        return;
-      }
-    }
-
-    const routeExpanded = replaceDynamicSegments(route, dynamicReplacements);
-    const url = `${baseUrl}${routeExpanded}`;
-
-    const page = await context.newPage();
-    const consoleErrors = [];
-    const consoleErrorsIgnored = [];
-    const pageErrors = [];
-    let mainStatus = null;
-    let finalUrl = null;
-
-    page.on('console', (msg) => {
-      if (msg.type() !== 'error') return;
-      const text = msg.text();
-      if (consoleErrorIsIgnored(text, consoleIgnoreRegexes)) {
-        consoleErrorsIgnored.push(text);
-      } else {
-        consoleErrors.push(text);
-      }
-    });
-
-    page.on('pageerror', (err) => {
-      pageErrors.push(String(err));
-    });
-
-    page.on('response', (resp) => {
-      try {
-        const respUrl = resp.url();
-        if (respUrl === url) mainStatus = resp.status();
-      } catch {
-        // ignore
-      }
-    });
-
-    const startedAt = Date.now();
-    let attempt = 0;
-
-    while (attempt < 2) {
-      attempt += 1;
-      try {
-        const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeoutMs });
-        mainStatus = mainStatus ?? (response ? response.status() : null);
-        await page.waitForTimeout(1000);
-        finalUrl = page.url();
-
-        const redirectedToLogin = /\/login(\b|\/|\?)/i.test(finalUrl);
-        const ok =
-          (mainStatus == null || (mainStatus >= 200 && mainStatus < 400) || redirectedToLogin) &&
-          pageErrors.length === 0 &&
-          consoleErrors.length === 0;
-
-        const durationMs = Date.now() - startedAt;
-        const item = {
-          app,
-          route,
-          routeExpanded,
-          url,
-          finalUrl,
-          mainStatus,
-          durationMs,
-          redirectedToLogin,
-          consoleErrors,
-          consoleErrorsIgnored,
-          pageErrors,
-          status: ok ? 'ok' : 'failed',
-        };
-
-        results.push(item);
-
-        if (!ok) {
-          const safeName = `${app}${routeExpanded}`.replace(/[^\w.-]+/g, '_').slice(0, 180);
-          const screenshotPath = path.join(artifactsDir, `${safeName}.png`);
-          await page.screenshot({ path: screenshotPath, fullPage: true }).catch(() => {});
-          failures.push({ ...item, screenshotPath });
-        }
-
-        return;
-      } catch (error) {
-        const isTimeout = playwright.errors && error instanceof playwright.errors.TimeoutError;
-        if (isTimeout && attempt < 2) {
-          continue;
-        }
-
-        const durationMs = Date.now() - startedAt;
-        const item = {
-          app,
-          route,
-          routeExpanded,
-          url,
-          finalUrl: finalUrl ?? null,
-          mainStatus,
-          durationMs,
-          redirectedToLogin: false,
-          consoleErrors,
-          consoleErrorsIgnored,
-          pageErrors: [...pageErrors, String(error)],
-          status: 'failed',
-        };
-
-        results.push(item);
-
-        const safeName = `${app}${routeExpanded}`.replace(/[^\w.-]+/g, '_').slice(0, 180);
-        const screenshotPath = path.join(artifactsDir, `${safeName}.png`);
-        await page.screenshot({ path: screenshotPath, fullPage: true }).catch(() => {});
-        failures.push({ ...item, screenshotPath });
-        return;
-      }
-    }
-  }
-
-  const queue = [];
-  for (const app of apps) {
-    for (const route of routesByApp[app] || []) {
-      queue.push({ app, route });
-    }
-  }
-
-  let index = 0;
-  async function worker() {
-    while (true) {
-      if (failures.length >= maxFailures) return;
-      const current = index++;
-      if (current >= queue.length) return;
-      const item = queue[current];
-      await visit(item.app, item.route);
-    }
-  }
-
-  const workers = Array.from({ length: Math.max(1, concurrency) }, () => worker());
-  await Promise.all(workers);
-
-  await context.close();
-  await browser.close();
-
-  const okCount = results.filter((r) => r.status === 'ok').length;
-  const failedCount = results.filter((r) => r.status === 'failed').length;
-  const skippedCount = results.filter((r) => r.status === 'skipped').length;
-  const redirectedToLoginCount = results.filter((r) => r.redirectedToLogin).length;
-
-  const summary = {
-    runId,
-    apps,
-    baseUrls,
-    consoleIgnore: consoleIgnoreRaw,
-    counts: {
-      total: queue.length,
-      ok: okCount,
-      failed: failedCount,
-      skipped: skippedCount,
-      redirectedToLogin: redirectedToLoginCount,
-    },
-    artifactsDir,
-  };
-
-  fs.writeFileSync(
-    path.join(artifactsDir, 'report.json'),
-    JSON.stringify({ summary, results, failures, skipped }, null, 2),
-  );
-
-  const md = [];
-  md.push(`# Route smoke report (${runId})`);
-  md.push('');
-  md.push(`- Total: ${summary.counts.total}`);
-  md.push(`- OK: ${summary.counts.ok}`);
-  md.push(`- Failed: ${summary.counts.failed}`);
-  md.push(`- Skipped: ${summary.counts.skipped}`);
-  md.push(`- Redirected to login: ${summary.counts.redirectedToLogin}`);
-  md.push('');
-
-  if (skipped.length) {
-    md.push('## Skipped');
-    md.push('');
-    for (const s of skipped.slice(0, 200)) {
-      md.push(`- [${s.app}] \`${s.route}\` → reason=${s.reason}`);
-    }
-    md.push('');
-  }
-
-  if (failures.length) {
-    md.push('## Failures');
-    md.push('');
-    for (const f of failures.slice(0, 200)) {
-      md.push(`- [${f.app}] \`${f.routeExpanded}\` → status=${f.mainStatus ?? 'n/a'} url=${f.url}`);
-      if (f.consoleErrors?.length) md.push(`  - console: ${f.consoleErrors[0]}`);
-      if (f.pageErrors?.length) md.push(`  - error: ${String(f.pageErrors[0]).slice(0, 200)}`);
-      if (f.screenshotPath) md.push(`  - screenshot: \`${normalizeSlashes(f.screenshotPath)}\``);
-    }
-    md.push('');
-  }
-
-  fs.writeFileSync(path.join(artifactsDir, 'report.md'), md.join('\n'));
-
-  console.log(JSON.stringify(summary, null, 2));
-  if (failedCount > 0) process.exitCode = 1;
+	process.exit(counters.failed === 0 ? 0 : 1);
 }
 
-main().catch((error) => {
-  console.error('[route-smoke] failed:', error);
-  process.exit(1);
+main().catch((err) => {
+	console.error("FATAL:", err);
+	process.exit(2);
 });
-
