@@ -36,12 +36,15 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f --tail=200",
-    "test:e2e": "node tests/e2e/infra-smoke.js"
+    "test:e2e": "node tests/e2e/infra-smoke.js",
+    "test:e2e:routes": "node tests/e2e/route-smoke.js",
+    "test:smoke": "npm run test:e2e && npm run test:e2e:routes"
   },
   "devDependencies": {
     "@alloc/quick-lru": "^5.2.0",
     "@types/nodemailer": "^8.0.0",
     "concurrently": "^8.2.2",
+    "playwright": "^1.55.0",
     "rimraf": "^5.0.5"
   },
   "dependencies": {
