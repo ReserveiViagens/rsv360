@@ -1,0 +1,94 @@
+name: route-smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'backend/**'
+      - 'docker-compose.yml'
+      - 'tests/e2e/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/route-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  route-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright (Chromium only)
+        run: npx playwright install --with-deps chromium
+
+      - name: Build & start Docker stack
+        run: docker compose up -d --build
+
+      - name: Wait for services (URL readiness)
+        run: |
+          urls=(
+            "http://localhost:3002/health"
+            "http://localhost:3000/"
+            "http://localhost:3004/"
+            "http://localhost:3005/"
+            "http://localhost:3006/"
+          )
+          deadline=$((SECONDS + 300))
+          for url in "${urls[@]}"; do
+            echo "Waiting for $url ..."
+            while ! curl -fsS --max-time 5 "$url" > /dev/null; do
+              if [ $SECONDS -gt $deadline ]; then
+                echo "Timeout waiting for $url" >&2
+                docker compose ps
+                exit 1
+              fi
+              sleep 5
+            done
+            echo "OK: $url"
+          done
+
+      - name: Run route smoke
+        env:
+          RSV_SMOKE_SITE_PUBLICO_URL: http://localhost:3000
+          RSV_SMOKE_ADMIN_URL: http://localhost:3004
+          RSV_SMOKE_TURISMO_URL: http://localhost:3005
+          RSV_SMOKE_GUEST_URL: http://localhost:3006
+        run: npm run test:e2e:routes
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: route-smoke-artifacts
+          path: tests/e2e/artifacts/**
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Dump compose ps on failure
+        if: failure()
+        run: docker compose ps > compose-ps.txt || true
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose logs --no-color > compose-logs.txt || true
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-failure-logs
+          path: |
+            compose-ps.txt
+            compose-logs.txt
+          if-no-files-found: ignore
+
