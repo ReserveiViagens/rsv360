@@ -71,9 +71,10 @@ jobs:
     - name: Build backend Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
+        context: .
         file: ./backend/Dockerfile
         push: false
+        load: true
         tags: rsv360-backend:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -89,6 +90,6 @@ jobs:
 
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
-      if: always()
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
         sarif_file: 'trivy-results.sarif'
