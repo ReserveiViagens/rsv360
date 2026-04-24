@@ -33,6 +33,10 @@ function getBookingIdentifier(row: Row | null) {
 }
 
 export class PortalRepository {
+  pickFirst<T>(values: Array<T | null | undefined>) {
+    return pickFirst(values);
+  }
+
   async query(text: string, values: any[] = []) {
     return pool.query(text, values);
   }

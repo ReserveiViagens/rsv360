@@ -1010,39 +1010,42 @@ export class RevenueRepository {
       status: 'clean',
     };
 
+    const roomAny = room as any;
     const updated = {
       ...room,
       status,
-      notes: notes ?? room.notes,
-      last_cleaned_at: status === 'clean' ? nowIso() : room.last_cleaned_at,
-      last_inspected_at: status === 'inspected' ? nowIso() : room.last_inspected_at,
+      notes: notes ?? roomAny.notes,
+      last_cleaned_at: status === 'clean' ? nowIso() : roomAny.last_cleaned_at,
+      last_inspected_at: status === 'inspected' ? nowIso() : roomAny.last_inspected_at,
     };
 
     const table = await this.getRoomsTable();
     if (table) {
       try {
+        const updatedAny = updated as any;
         await this.upsertRoom({
           ...updated,
           id,
-          room_type: updated.room_type,
-          floor: updated.floor,
-          property_id: updated.property_id,
+          room_type: updatedAny.room_type,
+          floor: updatedAny.floor,
+          property_id: updatedAny.property_id,
         });
       } catch {
         // ignore
       }
     } else {
       const index = this.memory.rooms.findIndex((entry) => Number(pickFirst([entry.id, entry.room_id, entry.accommodation_id])) === Number(id));
+      const updatedAny = updated as any;
       const memoryRow = {
         id,
         name: updated.name,
-        floor: updated.floor,
-        room_type: updated.room_type,
+        floor: updatedAny.floor,
+        room_type: updatedAny.room_type,
         status: updated.status,
         notes: updated.notes,
         last_cleaned_at: updated.last_cleaned_at,
         last_inspected_at: updated.last_inspected_at,
-        property_id: updated.property_id,
+        property_id: updatedAny.property_id,
       };
       if (index >= 0) {
         this.memory.rooms[index] = memoryRow;
@@ -1498,14 +1501,18 @@ export class RevenueRepository {
 
     const targetDate = dateKey(date);
     const activeBookings = bookings.filter((booking) => {
-      const checkIn = String(pickFirst([booking.check_in_date, booking.checkInDate]) || '');
-      const checkOut = String(pickFirst([booking.check_out_date, booking.checkOutDate]) || '');
+      const bookingAny = booking as any;
+      const checkIn = String(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || '');
+      const checkOut = String(pickFirst([bookingAny.check_out_date, bookingAny.checkOutDate]) || '');
       return (!checkIn || targetDate >= checkIn) && (!checkOut || targetDate < checkOut);
     });
 
     const matchingBookings = roomTypeId === undefined
       ? activeBookings
-      : activeBookings.filter((booking) => Number(pickFirst([booking.room_type_id, booking.roomTypeId, booking.accommodation_id])) === Number(roomTypeId));
+      : activeBookings.filter((booking) => {
+        const bookingAny = booking as any;
+        return Number(pickFirst([bookingAny.room_type_id, bookingAny.roomTypeId, bookingAny.accommodation_id])) === Number(roomTypeId);
+      });
 
     const totalRooms = Math.max(await this.getTotalRooms(), 1);
     return Math.min(100, Math.round((matchingBookings.length / totalRooms) * 100));
@@ -1524,14 +1531,18 @@ export class RevenueRepository {
     const bookings = await this.getBookings();
     const dates = dateRange(startDate, endDate);
     return dates.map((date) => {
-      const dailyRevenue = bookings
+      const dailyRevenue = (bookings as any[])
         .filter((booking) => {
-          const checkIn = String(pickFirst([booking.check_in_date, booking.checkInDate]) || '');
-          const checkOut = String(pickFirst([booking.check_out_date, booking.checkOutDate]) || '');
+          const bookingAny = booking as any;
+          const checkIn = String(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || '');
+          const checkOut = String(pickFirst([bookingAny.check_out_date, bookingAny.checkOutDate]) || '');
           const bookingDate = dateKey(date);
           return (!checkIn || bookingDate >= checkIn) && (!checkOut || bookingDate < checkOut);
         })
-        .reduce((sum, booking) => sum + Number(pickFirst([booking.amount, booking.total_amount, booking.totalAmount, booking.price]) || 0), 0);
+        .reduce((sum, booking) => {
+          const bookingAny = booking as any;
+          return sum + Number(pickFirst([bookingAny.amount, bookingAny.total_amount, bookingAny.totalAmount, bookingAny.price]) || 0);
+        }, 0);
       return { date, revenue: dailyRevenue };
     });
   }
@@ -1541,8 +1552,9 @@ export class RevenueRepository {
     const start = dateKey(startDate);
     const end = dateKey(endDate);
     return bookings.filter((booking) => {
-      const checkIn = String(pickFirst([booking.check_in_date, booking.checkInDate]) || '');
-      return (!start || checkIn >= start) && (!end || checkIn <= end) && ['confirmed', 'checked_in', 'checked_out', 'paid'].includes(String(booking.status || 'confirmed'));
+      const bookingAny = booking as any;
+      const checkIn = String(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || '');
+      return (!start || checkIn >= start) && (!end || checkIn <= end) && ['confirmed', 'checked_in', 'checked_out', 'paid'].includes(String(bookingAny.status || 'confirmed'));
     }).length;
   }
 
@@ -1552,12 +1564,14 @@ export class RevenueRepository {
     const end = dateKey(endDate);
     return bookings
       .filter((booking) => {
-        const checkIn = String(pickFirst([booking.check_in_date, booking.checkInDate]) || '');
+        const bookingAny = booking as any;
+        const checkIn = String(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || '');
         return (!start || checkIn >= start) && (!end || checkIn <= end);
       })
       .map((booking) => {
-        const createdAt = new Date(booking.created_at || booking.createdAt || Date.now());
-        const checkIn = new Date(pickFirst([booking.check_in_date, booking.checkInDate]) || booking.check_in || booking.checkInDate || Date.now());
+        const bookingAny = booking as any;
+        const createdAt = new Date(bookingAny.created_at || bookingAny.createdAt || Date.now());
+        const checkIn = new Date(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || bookingAny.check_in || bookingAny.checkInDate || Date.now());
         return Math.max(Math.round((checkIn.getTime() - createdAt.getTime()) / 86400000), 0);
       });
   }
@@ -1567,8 +1581,9 @@ export class RevenueRepository {
     const start = dateKey(startDate);
     const end = dateKey(endDate);
     return bookings.filter((booking) => {
-      const createdAt = dateKey(booking.created_at || booking.createdAt || '');
-      return (!start || createdAt >= start) && (!end || createdAt <= end) && ['cancelled', 'canceled'].includes(String(booking.status || '').toLowerCase());
+      const bookingAny = booking as any;
+      const createdAt = dateKey(bookingAny.created_at || bookingAny.createdAt || '');
+      return (!start || createdAt >= start) && (!end || createdAt <= end) && ['cancelled', 'canceled'].includes(String(bookingAny.status || '').toLowerCase());
     }).length;
   }
 
@@ -1578,12 +1593,14 @@ export class RevenueRepository {
     const end = dateKey(endDate);
     const stays = bookings
       .filter((booking) => {
-        const checkIn = String(pickFirst([booking.check_in_date, booking.checkInDate]) || '');
+        const bookingAny = booking as any;
+        const checkIn = String(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || '');
         return (!start || checkIn >= start) && (!end || checkIn <= end);
       })
       .map((booking) => {
-        const checkIn = new Date(pickFirst([booking.check_in_date, booking.checkInDate]) || Date.now());
-        const checkOut = new Date(pickFirst([booking.check_out_date, booking.checkOutDate]) || Date.now());
+        const bookingAny = booking as any;
+        const checkIn = new Date(pickFirst([bookingAny.check_in_date, bookingAny.checkInDate]) || Date.now());
+        const checkOut = new Date(pickFirst([bookingAny.check_out_date, bookingAny.checkOutDate]) || Date.now());
         return Math.max(Math.round((checkOut.getTime() - checkIn.getTime()) / 86400000), 0);
       })
       .filter((stay) => stay > 0);
@@ -1598,12 +1615,16 @@ export class RevenueRepository {
     const bookings = await this.getBookings();
     const start = dateKey(startDate);
     const end = dateKey(endDate);
-    return bookings
+    return (bookings as any[])
       .filter((booking) => {
-        const createdAt = dateKey(booking.created_at || booking.createdAt || '');
-        return (!start || createdAt >= start) && (!end || createdAt <= end) && ['confirmed', 'checked_in', 'checked_out', 'paid'].includes(String(booking.status || 'confirmed'));
+        const bookingAny = booking as any;
+        const createdAt = dateKey(bookingAny.created_at || bookingAny.createdAt || '');
+        return (!start || createdAt >= start) && (!end || createdAt <= end) && ['confirmed', 'checked_in', 'checked_out', 'paid'].includes(String(bookingAny.status || 'confirmed'));
       })
-      .reduce((sum, booking) => sum + Number(pickFirst([booking.amount, booking.total_amount, booking.totalAmount, booking.price]) || 0), 0);
+      .reduce((sum, booking) => {
+        const bookingAny = booking as any;
+        return sum + Number(pickFirst([bookingAny.amount, bookingAny.total_amount, bookingAny.totalAmount, bookingAny.price]) || 0);
+      }, 0);
   }
 
   async getRevenueByRoomType(startDate: string, endDate: string) {
@@ -1612,10 +1633,11 @@ export class RevenueRepository {
     const end = dateKey(endDate);
     const grouped = new Map<string, { roomType: string; revenue: number; bookings: number }>();
     for (const booking of bookings) {
-      const createdAt = dateKey(booking.created_at || booking.createdAt || '');
+      const bookingAny = booking as any;
+      const createdAt = dateKey(bookingAny.created_at || bookingAny.createdAt || '');
       if ((start && createdAt < start) || (end && createdAt > end)) continue;
-      const roomType = String(pickFirst([booking.room_type, booking.roomType, booking.accommodation_type, booking.accommodationType]) || 'default');
-      const revenue = Number(pickFirst([booking.amount, booking.total_amount, booking.totalAmount, booking.price]) || 0);
+      const roomType = String(pickFirst([bookingAny.room_type, bookingAny.roomType, bookingAny.accommodation_type, bookingAny.accommodationType]) || 'default');
+      const revenue = Number(pickFirst([bookingAny.amount, bookingAny.total_amount, bookingAny.totalAmount, bookingAny.price]) || 0);
       const entry = grouped.get(roomType) || { roomType, revenue: 0, bookings: 0 };
       entry.revenue += revenue;
       entry.bookings += 1;
@@ -1637,11 +1659,12 @@ export class RevenueRepository {
     const end = dateKey(endDate);
     const grouped = new Map<string, { channel: string; revenue: number; bookings: number; commission: number }>();
     for (const booking of bookings) {
-      const createdAt = dateKey(booking.created_at || booking.createdAt || '');
+      const bookingAny = booking as any;
+      const createdAt = dateKey(bookingAny.created_at || bookingAny.createdAt || '');
       if ((start && createdAt < start) || (end && createdAt > end)) continue;
-      const channel = String(pickFirst([booking.channel, booking.source, booking.booking_channel]) || 'direct');
-      const revenue = Number(pickFirst([booking.amount, booking.total_amount, booking.totalAmount, booking.price]) || 0);
-      const commission = Number(pickFirst([booking.commission, booking.commission_amount]) || 0);
+      const channel = String(pickFirst([bookingAny.channel, bookingAny.source, bookingAny.booking_channel]) || 'direct');
+      const revenue = Number(pickFirst([bookingAny.amount, bookingAny.total_amount, bookingAny.totalAmount, bookingAny.price]) || 0);
+      const commission = Number(pickFirst([bookingAny.commission, bookingAny.commission_amount]) || 0);
       const entry = grouped.get(channel) || { channel, revenue: 0, bookings: 0, commission: 0 };
       entry.revenue += revenue;
       entry.bookings += 1;
@@ -1662,7 +1685,7 @@ export class RevenueRepository {
     const start = dateKey(startDate);
     const end = dateKey(endDate);
     return bookings.filter((booking) => {
-      const createdAt = dateKey(booking.created_at || booking.createdAt || '');
+      const createdAt = dateKey(booking.created_at || (booking as any).createdAt || '');
       return (!start || createdAt >= start) && (!end || createdAt <= end);
     });
   }

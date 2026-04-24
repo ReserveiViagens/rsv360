@@ -16,17 +16,17 @@ function safeChange(current: number, previous: number) {
 export class RevenueKpisService {
   async getRevenueKPIs(startDate: string, endDate: string) {
     const periodDays = daysBetween(startDate, endDate);
-    const totalRooms = await revenueRepository.getTotalRooms();
+    const totalRooms = Number(await revenueRepository.getTotalRooms());
     const roomsAvailable = totalRooms * periodDays;
-    const totalRevenue = await revenueRepository.getTotalRevenue(startDate, endDate);
-    const roomsSold = await revenueRepository.getRoomsSold(startDate, endDate);
+    const totalRevenue = Number(await revenueRepository.getTotalRevenue(startDate, endDate));
+    const roomsSold = Number(await revenueRepository.getRoomsSold(startDate, endDate));
     const adr = roomsSold ? totalRevenue / roomsSold : 0;
     const occupancyRate = roomsAvailable ? (roomsSold / roomsAvailable) * 100 : 0;
     const revpar = roomsAvailable ? totalRevenue / roomsAvailable : 0;
-    const alos = await revenueRepository.getAverageLengthOfStay(startDate, endDate);
+    const alos = Number(await revenueRepository.getAverageLengthOfStay(startDate, endDate));
     const leadTimes = await revenueRepository.getBookingLeadTimes(startDate, endDate);
     const bookingLeadTime = leadTimes.length ? leadTimes.reduce((sum, value) => sum + value, 0) / leadTimes.length : 0;
-    const cancellationCount = await revenueRepository.getCancellationCount(startDate, endDate);
+    const cancellationCount = Number(await revenueRepository.getCancellationCount(startDate, endDate));
     const cancellationRate = (roomsSold + cancellationCount) ? (cancellationCount / (roomsSold + cancellationCount)) * 100 : 0;
 
     const currentStart = new Date(startDate);
@@ -34,8 +34,8 @@ export class RevenueKpisService {
     const previousStartDate = new Date(previousEndDate.getTime() - ((periodDays - 1) * 86400000));
     const previousStart = dateOnly(previousStartDate);
     const previousEnd = dateOnly(previousEndDate);
-    const previousRevenue = await revenueRepository.getTotalRevenue(previousStart, previousEnd);
-    const previousRoomsSold = await revenueRepository.getRoomsSold(previousStart, previousEnd);
+    const previousRevenue = Number(await revenueRepository.getTotalRevenue(previousStart, previousEnd));
+    const previousRoomsSold = Number(await revenueRepository.getRoomsSold(previousStart, previousEnd));
     const previousRoomsAvailable = totalRooms * daysBetween(previousStart, previousEnd);
     const previousAdr = previousRoomsSold ? previousRevenue / previousRoomsSold : 0;
     const previousOccupancyRate = previousRoomsAvailable ? (previousRoomsSold / previousRoomsAvailable) * 100 : 0;

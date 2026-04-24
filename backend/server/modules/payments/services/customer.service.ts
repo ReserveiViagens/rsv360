@@ -53,4 +53,12 @@ export class CustomerService {
   async deleteCustomer(id: string): Promise<void> {
     // Mock implementation for testing - just return void
   }
+
+  async findByEmail(email: string): Promise<CustomerResult | null> {
+    throw new Error('CustomerService.findByEmail not implemented');
+  }
+
+  async syncWithProvider(customerId: string): Promise<CustomerResult> {
+    throw new Error('CustomerService.syncWithProvider not implemented');
+  }
 }

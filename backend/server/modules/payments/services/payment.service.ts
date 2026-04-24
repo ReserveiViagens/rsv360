@@ -71,4 +71,16 @@ export class PaymentService {
       metadata: {},
     };
   }
+
+  async getPaymentsByBooking(bookingId: string): Promise<PaymentResult[]> {
+    throw new Error('PaymentService.getPaymentsByBooking not implemented');
+  }
+
+  async getPaymentsByCustomer(customerId: string): Promise<PaymentResult[]> {
+    throw new Error('PaymentService.getPaymentsByCustomer not implemented');
+  }
+
+  async getPaymentStats(enterpriseId: string): Promise<unknown> {
+    throw new Error('PaymentService.getPaymentStats not implemented');
+  }
 }

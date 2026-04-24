@@ -1,6 +1,6 @@
-const { pgTable, serial, varchar, text, timestamp, integer } = require('drizzle-orm/pg-core');
+import { pgTable, serial, varchar, text, timestamp, integer } from 'drizzle-orm/pg-core';
 
-const searchHistory = pgTable('search_history', {
+export const searchHistory = pgTable('search_history', {
   id: serial('id').primaryKey(),
   query: varchar('query', { length: 500 }).notNull(),
   category: varchar('category', { length: 50 }),
@@ -12,12 +12,10 @@ const searchHistory = pgTable('search_history', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-const popularSearches = pgTable('popular_searches', {
+export const popularSearches = pgTable('popular_searches', {
   id: serial('id').primaryKey(),
   term: varchar('term', { length: 255 }).notNull().unique(),
   searchCount: integer('search_count').default(0),
   category: varchar('category', { length: 50 }),
   lastSearchedAt: timestamp('last_searched_at').defaultNow(),
 });
-
-module.exports = { searchHistory, popularSearches };

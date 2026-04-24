@@ -150,6 +150,8 @@ export interface PIXResult {
   externalId: string;
   qrCode: string;
   qrCodeBase64: string;
+  amount?: number;
+  description?: string;
   expiresAt: Date;
   status: string;
   metadata?: Record<string, any>;
