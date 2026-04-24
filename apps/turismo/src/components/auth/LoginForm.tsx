@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
