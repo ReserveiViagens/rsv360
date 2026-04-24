@@ -1,37 +1,37 @@
-const { pgTable, uuid, varchar, text, numeric, integer, boolean, timestamp, jsonb, pgEnum } = require('drizzle-orm/pg-core');
+import { pgTable, uuid, varchar, text, numeric, integer, boolean, timestamp, jsonb, pgEnum } from 'drizzle-orm/pg-core';
 
 // Enums
-const paymentStatusEnum = pgEnum('payment_status', [
+export const paymentStatusEnum = pgEnum('payment_status', [
   'pending', 'processing', 'approved', 'rejected', 'cancelled',
   'refunded', 'partially_refunded', 'expired', 'in_mediation', 'charged_back'
 ]);
 
-const paymentMethodEnum = pgEnum('payment_method', [
+export const paymentMethodEnum = pgEnum('payment_method', [
   'credit_card', 'debit_card', 'pix', 'boleto', 'wallet', 'bank_transfer'
 ]);
 
-const paymentProviderEnum = pgEnum('payment_provider', [
+export const paymentProviderEnum = pgEnum('payment_provider', [
   'mercadopago', 'stripe', 'openfinance'
 ]);
 
-const subscriptionStatusEnum = pgEnum('subscription_status', [
+export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'active', 'paused', 'cancelled', 'past_due', 'trialing', 'unpaid'
 ]);
 
-const subscriptionIntervalEnum = pgEnum('subscription_interval', [
+export const subscriptionIntervalEnum = pgEnum('subscription_interval', [
   'daily', 'weekly', 'monthly', 'quarterly', 'semi_annual', 'annual'
 ]);
 
-const refundStatusEnum = pgEnum('refund_status', [
+export const refundStatusEnum = pgEnum('refund_status', [
   'pending', 'approved', 'rejected', 'processing'
 ]);
 
-const disputeStatusEnum = pgEnum('dispute_status', [
+export const disputeStatusEnum = pgEnum('dispute_status', [
   'opened', 'in_review', 'won', 'lost', 'accepted'
 ]);
 
 // Tabela 1: payment_customers
-const paymentCustomers = pgTable('payment_customers', {
+export const paymentCustomers = pgTable('payment_customers', {
   id: uuid('id').defaultRandom().primaryKey(),
   enterpriseId: uuid('enterprise_id').notNull(),
   email: varchar('email', { length: 255 }).notNull(),
@@ -47,7 +47,7 @@ const paymentCustomers = pgTable('payment_customers', {
 });
 
 // Tabela 2: payments
-const payments = pgTable('payments', {
+export const payments = pgTable('payments', {
   id: uuid('id').defaultRandom().primaryKey(),
   enterpriseId: uuid('enterprise_id').notNull(),
   customerId: uuid('customer_id').references(() => paymentCustomers.id),
@@ -78,7 +78,7 @@ const payments = pgTable('payments', {
 });
 
 // Tabela 3: payment_methods (cartões salvos, etc.)
-const paymentMethods = pgTable('payment_methods', {
+export const paymentMethods = pgTable('payment_methods', {
   id: uuid('id').defaultRandom().primaryKey(),
   customerId: uuid('customer_id').references(() => paymentCustomers.id).notNull(),
   provider: paymentProviderEnum('provider').notNull(),
@@ -94,7 +94,7 @@ const paymentMethods = pgTable('payment_methods', {
 });
 
 // Tabela 4: subscriptions
-const subscriptions = pgTable('subscriptions', {
+export const subscriptions = pgTable('subscriptions', {
   id: uuid('id').defaultRandom().primaryKey(),
   enterpriseId: uuid('enterprise_id').notNull(),
   customerId: uuid('customer_id').references(() => paymentCustomers.id).notNull(),
@@ -112,7 +112,7 @@ const subscriptions = pgTable('subscriptions', {
 });
 
 // Tabela 5: subscription_plans
-const subscriptionPlans = pgTable('subscription_plans', {
+export const subscriptionPlans = pgTable('subscription_plans', {
   id: uuid('id').defaultRandom().primaryKey(),
   enterpriseId: uuid('enterprise_id').notNull(),
   name: varchar('name', { length: 255 }).notNull(),
@@ -133,7 +133,7 @@ const subscriptionPlans = pgTable('subscription_plans', {
 });
 
 // Tabela 6: refunds
-const refunds = pgTable('refunds', {
+export const refunds = pgTable('refunds', {
   id: uuid('id').defaultRandom().primaryKey(),
   paymentId: uuid('payment_id').references(() => payments.id).notNull(),
   provider: paymentProviderEnum('provider').notNull(),
@@ -147,7 +147,7 @@ const refunds = pgTable('refunds', {
 });
 
 // Tabela 7: disputes (chargebacks)
-const disputes = pgTable('disputes', {
+export const disputes = pgTable('disputes', {
   id: uuid('id').defaultRandom().primaryKey(),
   paymentId: uuid('payment_id').references(() => payments.id).notNull(),
   provider: paymentProviderEnum('provider').notNull(),
@@ -163,7 +163,7 @@ const disputes = pgTable('disputes', {
 });
 
 // Tabela 8: webhook_events (idempotência)
-const webhookEvents = pgTable('webhook_events', {
+export const webhookEvents = pgTable('webhook_events', {
   id: uuid('id').defaultRandom().primaryKey(),
   provider: paymentProviderEnum('provider').notNull(),
   externalEventId: varchar('external_event_id', { length: 255 }).notNull().unique(),
@@ -176,20 +176,3 @@ const webhookEvents = pgTable('webhook_events', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-module.exports = {
-  paymentStatusEnum,
-  paymentMethodEnum,
-  paymentProviderEnum,
-  subscriptionStatusEnum,
-  subscriptionIntervalEnum,
-  refundStatusEnum,
-  disputeStatusEnum,
-  paymentCustomers,
-  payments,
-  paymentMethods,
-  subscriptions,
-  subscriptionPlans,
-  refunds,
-  disputes,
-  webhookEvents,
-};

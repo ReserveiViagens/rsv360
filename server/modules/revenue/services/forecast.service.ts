@@ -33,8 +33,9 @@ export class ForecastService {
     const monthlyTotals = Array.from({ length: 12 }, () => 0);
     const monthlyCounts = Array.from({ length: 12 }, () => 0);
     for (const booking of bookings) {
-      const month = monthIndex(String(booking.check_in_date || booking.checkInDate || booking.created_at || booking.createdAt || new Date().toISOString()));
-      monthlyTotals[month] += Number(booking.amount || booking.total_amount || booking.price || 0);
+      const bookingAny = booking as any;
+      const month = monthIndex(String(bookingAny.check_in_date || bookingAny.checkInDate || bookingAny.created_at || bookingAny.createdAt || new Date().toISOString()));
+      monthlyTotals[month] += Number(bookingAny.amount || bookingAny.total_amount || bookingAny.price || 0);
       monthlyCounts[month] += 1;
     }
     const overall = monthlyTotals.reduce((sum, value) => sum + value, 0) / Math.max(monthlyCounts.reduce((sum, value) => sum + value, 0), 1);
@@ -53,9 +54,10 @@ export class ForecastService {
     const totals = Array.from({ length: 7 }, () => 0);
     const counts = Array.from({ length: 7 }, () => 0);
     for (const booking of bookings) {
-      const date = String(booking.check_in_date || booking.checkInDate || booking.created_at || booking.createdAt || new Date().toISOString());
+      const bookingAny = booking as any;
+      const date = String(bookingAny.check_in_date || bookingAny.checkInDate || bookingAny.created_at || bookingAny.createdAt || new Date().toISOString());
       const index = dayOfWeek(date);
-      totals[index] += Number(booking.amount || booking.total_amount || booking.price || 0);
+      totals[index] += Number(bookingAny.amount || bookingAny.total_amount || bookingAny.price || 0);
       counts[index] += 1;
     }
     const overall = totals.reduce((sum, value) => sum + value, 0) / Math.max(counts.reduce((sum, value) => sum + value, 0), 1);
@@ -111,9 +113,13 @@ export class ForecastService {
   async getBookingPace(targetDate: string) {
     const bookings = await revenueRepository.getBookings();
     const target = dateOnly(targetDate);
-    const currentPace = bookings.filter((booking) => dateOnly(booking.check_in_date || booking.checkInDate || booking.created_at || booking.createdAt || target) === target).length;
+    const currentPace = bookings.filter((booking) => {
+      const bookingAny = booking as any;
+      return dateOnly(bookingAny.check_in_date || bookingAny.checkInDate || bookingAny.created_at || bookingAny.createdAt || target) === target;
+    }).length;
     const historicalPace = bookings.filter((booking) => {
-      const checkIn = new Date(booking.check_in_date || booking.checkInDate || booking.created_at || booking.createdAt || target);
+      const bookingAny = booking as any;
+      const checkIn = new Date(bookingAny.check_in_date || bookingAny.checkInDate || bookingAny.created_at || bookingAny.createdAt || target);
       checkIn.setUTCFullYear(checkIn.getUTCFullYear() - 1);
       return dateOnly(checkIn) === target;
     }).length;

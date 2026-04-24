@@ -1,6 +1,6 @@
-const { pgTable, serial, varchar, text, numeric, boolean, timestamp, integer, date } = require('drizzle-orm/pg-core');
+import { pgTable, serial, varchar, text, numeric, boolean, timestamp, integer, date } from 'drizzle-orm/pg-core';
 
-const travel = pgTable('travel_packages', {
+export const travel = pgTable('travel_packages', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).unique(),
@@ -29,5 +29,3 @@ const travel = pgTable('travel_packages', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
-
-module.exports = { travel };

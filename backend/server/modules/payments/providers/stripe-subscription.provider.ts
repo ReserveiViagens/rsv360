@@ -1,4 +1,4 @@
-import * as Stripe from 'stripe';
+import Stripe from 'stripe';
 import { SubscriptionProviderInterface, CreatePlanDTO, PlanResult, UpdatePlanDTO, CreateSubscriptionDTO, SubscriptionResult } from '../interfaces';
 
 export class StripeSubscriptionProvider implements SubscriptionProviderInterface {

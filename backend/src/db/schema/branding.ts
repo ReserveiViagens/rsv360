@@ -1,6 +1,6 @@
-const { pgTable, serial, varchar, text, boolean, timestamp } = require('drizzle-orm/pg-core');
+import { pgTable, serial, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-const branding = pgTable('branding', {
+export const branding = pgTable('branding', {
   id: serial('id').primaryKey(),
   companyName: varchar('company_name', { length: 255 }).notNull(),
   tagline: varchar('tagline', { length: 500 }),
@@ -20,5 +20,3 @@ const branding = pgTable('branding', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
-
-module.exports = { branding };

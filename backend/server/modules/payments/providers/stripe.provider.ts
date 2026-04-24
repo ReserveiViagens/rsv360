@@ -1,4 +1,4 @@
-import * as Stripe from 'stripe';
+import Stripe from 'stripe';
 import { PaymentProviderInterface, CreatePaymentDTO, PaymentResult, CreateRefundDTO, RefundResult, PaymentFilters, PaginatedResult } from '../interfaces';
 
 export class StripeProvider implements PaymentProviderInterface {

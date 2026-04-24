@@ -11,7 +11,7 @@ export class PIXService {
       qrCodeBase64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
       amount: data.amount,
       description: data.description,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     };
   }
 
@@ -25,7 +25,7 @@ export class PIXService {
       qrCodeBase64: 'mock_qr_base64',
       amount: 100.00,
       description: 'Mock PIX charge',
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     };
   }
 
@@ -39,7 +39,7 @@ export class PIXService {
       qrCodeBase64: 'mock_qr_base64',
       amount: 100.00,
       description: 'Cancelled PIX charge',
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     };
   }
 
@@ -63,7 +63,7 @@ export class PIXService {
       qrCodeBase64: 'mock_qr_base64',
       amount: 50.00,
       description: 'Mock PIX charge',
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     }];
   }
 }

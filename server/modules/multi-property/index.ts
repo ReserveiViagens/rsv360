@@ -4,7 +4,7 @@ import { createTenantMiddleware } from './middleware/tenant.middleware';
 import { propertyService } from './services';
 
 export async function registerMultiPropertyModule(app: any, _knex?: any) {
-  await propertyRepository.init(_knex);
+  await propertyRepository.init();
   app.use('/api/properties', propertiesRouter);
   const tenantMiddleware = createTenantMiddleware(propertyRepository);
   console.log('[MULTI-PROPERTY] Módulo Multi-property registrado ✓');

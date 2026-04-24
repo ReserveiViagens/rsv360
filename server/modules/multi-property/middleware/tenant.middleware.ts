@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
 import { PropertyRepository } from '../db/property.repository';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    propertyId?: number;
+declare global {
+  namespace Express {
+    interface Request {
+      propertyId?: number;
+    }
   }
 }
 
