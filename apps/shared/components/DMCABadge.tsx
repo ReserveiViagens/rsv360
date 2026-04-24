@@ -1,8 +1,6 @@
-import Link from 'next/link';
-
 export function DMCABadge() {
   return (
-    <Link
+    <a
       href="https://www.dmca.com/"
       target="_blank"
       rel="noreferrer"
@@ -10,6 +8,6 @@ export function DMCABadge() {
     >
       <span className="h-2 w-2 rounded-full bg-amber-500" />
       DMCA PROTEGIDO • ID PENDENTE
-    </Link>
+    </a>
   );
 }
