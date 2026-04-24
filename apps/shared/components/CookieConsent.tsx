@@ -2,7 +2,6 @@
 
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { initGoogleConsentMode, saveConsentMode, type ConsentSnapshot } from '../lib/tracking/consent-mode';
 
 const DEFAULT_CONSENT: ConsentSnapshot = {
@@ -85,13 +84,13 @@ export function CookieConsent() {
           <p className="text-sm font-semibold text-slate-900">Usamos cookies com respeito à LGPD</p>
           <p className="mt-1 text-sm text-slate-600">
             Ajuste suas preferências de privacidade. Consulte a nossa{' '}
-            <Link href="/politica-de-cookies" className="font-semibold text-slate-900 underline">
+            <a href="/politica-de-cookies" className="font-semibold text-slate-900 underline">
               Política de Cookies
-            </Link>{' '}
+            </a>{' '}
             e{' '}
-            <Link href="/politica-de-privacidade" className="font-semibold text-slate-900 underline">
+            <a href="/politica-de-privacidade" className="font-semibold text-slate-900 underline">
               Política de Privacidade
-            </Link>
+            </a>
             .
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
