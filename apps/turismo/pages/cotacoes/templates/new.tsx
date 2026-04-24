@@ -10,7 +10,7 @@ import { templateStorage } from '@/lib/template-storage';
 import { generateId } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/Textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MAIN_CATEGORIES, SUB_CATEGORIES } from '@/lib/budget-types';
