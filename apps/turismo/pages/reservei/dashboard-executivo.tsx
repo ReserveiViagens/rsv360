@@ -70,7 +70,13 @@ const DashboardExecutivo: React.FC = () => {
   const [periodoSelecionado, setPeriodoSelecionado] = useState('este_mes');
   const [departamentoSelecionado, setDepartamentoSelecionado] = useState('todos');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [ultimaAtualizacao, setUltimaAtualizacao] = useState(new Date().toISOString());
+  const [ultimaAtualizacao, setUltimaAtualizacao] = useState<string>("");
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setUltimaAtualizacao(new Date().toISOString());
+  }, []);
 
   // Dados mock
   const kpisMock: KPIMetrica[] = [
@@ -421,7 +427,7 @@ const DashboardExecutivo: React.FC = () => {
             </h1>
             <p className="text-gray-600 mt-2">Visão estratégica de KPIs e métricas empresariais</p>
             <div className="text-sm text-gray-500 mt-1">
-              Última atualização: {new Date(ultimaAtualizacao).toLocaleString()}
+              Última atualização: {isClient && ultimaAtualizacao ? new Date(ultimaAtualizacao).toLocaleString() : "—"}
             </div>
           </div>
           <div className="flex gap-3">
