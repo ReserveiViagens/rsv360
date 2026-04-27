@@ -1685,7 +1685,7 @@ export class RevenueRepository {
     const start = dateKey(startDate);
     const end = dateKey(endDate);
     return bookings.filter((booking) => {
-      const createdAt = dateKey(booking.created_at || (booking as any).createdAt || '');
+      const createdAt = dateKey(booking.created_at || '');
       return (!start || createdAt >= start) && (!end || createdAt <= end);
     });
   }
