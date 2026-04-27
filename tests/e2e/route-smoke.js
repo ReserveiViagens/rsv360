@@ -46,7 +46,14 @@ const RSV_SMOKE_CATCHALL = process.env.RSV_SMOKE_CATCHALL || "";
 
 const CONSOLE_IGNORE_RAW =
 	process.env.RSV_SMOKE_CONSOLE_IGNORE ||
-	"chrome-extension://|ERR_BLOCKED_BY_CLIENT";
+	[
+		"chrome-extension://",
+		"ERR_BLOCKED_BY_CLIENT",
+		// Chromium console noise in CI when optional endpoints return 4xx
+		"Failed to load resource: the server responded with a status of 400",
+		// Turismo uses WS notifications locally; CI stack doesn't expose it.
+		"ws://localhost:8000/ws/notifications",
+	].join("|");
 const CONSOLE_IGNORE = CONSOLE_IGNORE_RAW.split("|")
 	.map((s) => s.trim())
 	.filter(Boolean);
@@ -78,6 +85,9 @@ function enumeratePagesRouter(appDir) {
 		if (rel.startsWith("api/")) continue; // exclude pages/api/**
 		if (!/\.(tsx?|jsx?)$/.test(rel)) continue;
 		const base = rel.replace(/\.(tsx?|jsx?)$/, "");
+		// Exclude Next's special 404 page from route-smoke set.
+		// Visiting "/404" should return 404, not 200-399.
+		if (base === "404") continue;
 		const segments = base.split("/");
 		// Exclude any segment starting with _ (covers _app, _document, _error, and any _private)
 		if (segments.some((s) => s.startsWith("_"))) continue;
@@ -89,6 +99,8 @@ function enumeratePagesRouter(appDir) {
 			routePath = "/" + segments.join("/");
 		}
 		routePath = routePath.replace(/\/+$/, "") || "/";
+		// Filenames with spaces don't map to valid Next.js routes; ignore them.
+		if (/\s/.test(routePath)) continue;
 		results.push({ sourceFile: "pages/" + rel, routePath });
 	}
 	return results;
