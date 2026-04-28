@@ -7,10 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { submitVerificationRequest, getVerificationByProperty } from '@/lib/verification-service';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { propertyId: string } }
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ propertyId: string }> }) {
+  const params = await props.params;
   try {
     const { user, error } = await advancedAuthMiddleware(request);
 

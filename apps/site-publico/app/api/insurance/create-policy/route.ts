@@ -7,16 +7,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { createInsurancePolicy, getInsurancePolicyByBooking } from '@/lib/insurance-service';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { bookingId: string } }
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ bookingId: string }> }) {
+  const params = await props.params;
   try {
     const { user, error } = await advancedAuthMiddleware(request);
 
     if (error || !user) {
       return NextResponse.json(
-        { success: false, error: error || 'Não autenticado' },
+        { success: false, error: 'Não autenticado' },
         { status: 401 }
       );
     }

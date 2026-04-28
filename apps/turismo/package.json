@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "RSV 360° Ecosystem Frontend - Dashboard modular para Reservei Viagens",
   "private": true,
-  "author": "Douglas P. Figueiredo <douglas@reserveiviagens.com.br>",
-  "license": "UNLICENSED",
+  "author": {
+    "name": "Reservei Viagens",
+    "email": "reservas@reserveiviagens.com.br",
+    "url": "https://reserveiviagens.com.br"
+  },
+  "license": "MIT",
   "homepage": "https://www.reserveiviagens.com.br",
   "repository": {
     "type": "git",
@@ -44,7 +48,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.2",
     "lucide-react": "^0.542.0",
-    "next": "^15.5.2",
+    "next": "^15.5.15",
     "qrcode": "^1.5.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -65,7 +69,7 @@
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.55.0",
-    "eslint-config-next": "^14.0.0",
+    "eslint-config-next": "^15.5.15",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.3.0"
@@ -85,13 +89,7 @@
     "tourism",
     "booking"
   ],
-  "author": {
-    "name": "Reservei Viagens",
-    "email": "reservas@reserveiviagens.com.br",
-    "url": "https://reserveiviagens.com.br"
-  },
   "resolutions": {
     "webpack": "^5.95.0"
-  },
-  "license": "MIT"
+  }
 }
