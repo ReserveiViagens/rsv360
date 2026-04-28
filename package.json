@@ -50,7 +50,7 @@
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
     "handlebars": "^4.7.9",
-    "nodemailer": "^8.0.5",
+    "nodemailer": "^8.0.7",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "twilio": "^5.13.1"
