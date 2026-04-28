@@ -7,16 +7,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { approveVerification } from '@/lib/verification-service';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { requestId: string } }
-) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ requestId: string }> }) {
+  const params = await props.params;
   try {
     const { user, error } = await advancedAuthMiddleware(request);
 
     if (error || !user) {
       return NextResponse.json(
-        { success: false, error: error || 'Não autenticado' },
+        { success: false, error: 'Não autenticado' },
         { status: 401 }
       );
     }

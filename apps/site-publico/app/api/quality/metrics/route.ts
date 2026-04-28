@@ -5,19 +5,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
-import { getHostDashboard, getQualityMetrics, getHostRatings, getHostBadges, calculateHostScore, determineHostLevel } from '@/lib/top-host-service';
-import { getQualityMetricsQuerySchema } from '@/lib/schemas/top-host-schemas';
+import { getHostDashboard, determineHostLevel } from '@/lib/top-host-service';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { hostId: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ hostId: string }> }) {
+  const params = await props.params;
   const authResult = await requireAuth(request);
-  
+
   if (authResult instanceof NextResponse) {
     return authResult;
   }
-  
+
   const { user } = authResult;
 
   try {
