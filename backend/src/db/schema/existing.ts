@@ -3,7 +3,7 @@ import { pgTable, serial, varchar, text, numeric, boolean, timestamp, integer, t
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }),
-  email: varchar('email', { length: 255 }),
+  email: varchar('email', { length: 255 }).unique(),
   password: varchar('password', { length: 255 }),
   role: varchar('role', { length: 50 }),
   isActive: boolean('is_active').default(true),
