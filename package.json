@@ -55,6 +55,26 @@
     "react-dom": "^19.2.3",
     "twilio": "^5.13.1"
   },
+  "overrides": {
+    "fast-xml-parser": "^5.7.0",
+    "@aws-sdk/xml-builder": "^3.972.21",
+    "@aws-sdk/core": {
+      "fast-xml-parser": "^5.7.0",
+      "@aws-sdk/xml-builder": "^3.972.21"
+    },
+    "@aws-sdk/client-s3": {
+      "fast-xml-parser": "^5.7.0"
+    },
+    "@aws-sdk/client-sns": {
+      "fast-xml-parser": "^5.7.0"
+    },
+    "@aws-sdk/middleware-flexible-checksums": {
+      "fast-xml-parser": "^5.7.0"
+    },
+    "@aws-sdk/middleware-sdk-s3": {
+      "fast-xml-parser": "^5.7.0"
+    }
+  },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"

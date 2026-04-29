@@ -1,0 +1,53 @@
+{
+  "_doc": "Audit allowlist for known tech-debt vulnerabilities. Each entry MUST have severity, reason, and expires (YYYY-MM-DD). Expired entries become BLOCKING violations. See .github/scripts/audit-gate.py.",
+  "allow": {
+    "fast-xml-parser": {
+      "severity": "critical",
+      "reason": "Pinned transitively by AWS SDK (@aws-sdk/client-s3, client-sns, middleware-flexible-checksums, middleware-sdk-s3). Override blocked by exact-version pinning in AWS deps. Awaiting AWS SDK upstream bump.",
+      "tracking": "https://github.com/aws/aws-sdk-js-v3/issues",
+      "expires": "2026-07-31"
+    },
+    "@aws-sdk/xml-builder": {
+      "severity": "critical",
+      "reason": "Same chain as fast-xml-parser (depends on it). Resolves when AWS SDK updates.",
+      "tracking": "https://github.com/aws/aws-sdk-js-v3/issues",
+      "expires": "2026-07-31"
+    },
+    "xlsx": {
+      "severity": "high",
+      "reason": "SheetJS Prototype Pollution + ReDoS — no upstream fix available. Migration to alternative (exceljs) tracked separately as Issue #TBD.",
+      "tracking": "https://github.com/SheetJS/sheetjs",
+      "expires": "2026-07-31"
+    },
+    "glob": {
+      "severity": "high",
+      "reason": "Fix available; deferred to Phase 7-E sweep (transitive cascade impacts multiple deps; needs coordinated bump).",
+      "tracking": "Phase 7-E - audit allowlist cleanup",
+      "expires": "2026-05-28"
+    },
+    "minimatch": {
+      "severity": "high",
+      "reason": "Fix available; tied to glob chain. Deferred to Phase 7-E sweep.",
+      "tracking": "Phase 7-E - audit allowlist cleanup",
+      "expires": "2026-05-28"
+    },
+    "picomatch": {
+      "severity": "high",
+      "reason": "Fix available; transitive via micromatch. Deferred to Phase 7-E sweep.",
+      "tracking": "Phase 7-E - audit allowlist cleanup",
+      "expires": "2026-05-28"
+    },
+    "rollup": {
+      "severity": "high",
+      "reason": "Fix available; build tool transitive. Deferred to Phase 7-E sweep.",
+      "tracking": "Phase 7-E - audit allowlist cleanup",
+      "expires": "2026-05-28"
+    },
+    "socket.io-parser": {
+      "severity": "high",
+      "reason": "Fix available; via socket.io chain. Deferred to Phase 7-E sweep.",
+      "tracking": "Phase 7-E - audit allowlist cleanup",
+      "expires": "2026-05-28"
+    }
+  }
+}
