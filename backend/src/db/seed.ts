@@ -1,10 +1,55 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+import bcrypt from 'bcryptjs';
 import * as schema from './schema/index';
 import 'dotenv/config';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
+
+async function seedDeterministicTestUser() {
+  if (process.env.SEED_SKIP_TEST_USER === 'true') {
+    console.log('[seed] SEED_SKIP_TEST_USER=true -> skipping deterministic test user');
+    return;
+  }
+
+  const email = (process.env.SEED_TEST_USER_EMAIL ?? 'test@local.dev').toLowerCase();
+  const role = process.env.SEED_TEST_USER_ROLE ?? 'admin';
+  const password = process.env.SEED_TEST_USER_PASSWORD;
+
+  if (!password && process.env.NODE_ENV === 'production') {
+    throw new Error(
+      '[seed] SEED_TEST_USER_PASSWORD is required in production. Set the secret in GitHub or your env, or set SEED_SKIP_TEST_USER=true.'
+    );
+  }
+
+  if (!password) {
+    console.warn('[seed] SEED_TEST_USER_PASSWORD not set -> using dev fallback');
+  }
+
+  const effectivePassword = password ?? 'dev-only-fallback-do-not-use-in-prod';
+  const passwordHash = await bcrypt.hash(effectivePassword, 12);
+
+  await db
+    .insert(schema.users)
+    .values({
+      name: 'Test User',
+      email,
+      password: passwordHash,
+      role,
+      isActive: true,
+    })
+    .onConflictDoUpdate({
+      target: schema.users.email,
+      set: {
+        password: passwordHash,
+        role,
+        isActive: true,
+      },
+    });
+
+  console.log(`[seed] deterministic test user upserted: email=${email} role=${role}`);
+}
 
 async function seed() {
   console.log('🌱 Iniciando seed do RSV360...');
@@ -154,7 +199,7 @@ async function seed() {
       isActive: true,
       isFeatured: true
     },
-  ]);
+  ]).onConflictDoNothing({ target: schema.parks.slug });
 
   // 6. ATTRACTIONS
   console.log('🎭 Inserindo attractions...');
@@ -184,7 +229,7 @@ async function seed() {
       isActive: true,
       description: 'Feira noturna com artesanato, gastronomia e cultura regional'
     },
-  ]);
+  ]).onConflictDoNothing({ target: schema.attractions.slug });
 
   // 7. PROMOTIONS
   console.log('🏷️ Inserindo promotions...');
@@ -209,7 +254,7 @@ async function seed() {
       isActive: true,
       isFeatured: true
     },
-  ]);
+  ]).onConflictDoNothing({ target: schema.promotions.slug });
 
   // 8. TRAVEL PACKAGES
   console.log('✈️ Inserindo travel packages...');
@@ -230,7 +275,7 @@ async function seed() {
       isActive: true,
       isFeatured: true
     },
-  ]);
+  ]).onConflictDoNothing({ target: schema.travel.slug });
 
   // 9. RECOMMENDATIONS
   console.log('💡 Inserindo recommendations...');
@@ -256,7 +301,7 @@ async function seed() {
     { term: 'caldas novas', searchCount: 15000, category: 'destino' },
     { term: 'hot park', searchCount: 12000, category: 'parque' },
     { term: 'pacote família', searchCount: 7200, category: 'pacote' },
-  ]);
+  ]).onConflictDoNothing({ target: schema.popularSearches.term });
 
   // 11. LEADS
   console.log('📋 Inserindo leads...');
@@ -274,14 +319,28 @@ async function seed() {
 
   // 12. USERS
   console.log('👤 Inserindo users...');
-  await db.insert(schema.users).values([
-    {
-      name: 'Admin RSV360',
-      email: 'admin@rsv360.com.br',
-      role: 'admin',
-      isActive: true
-    },
-  ]);
+  await db
+    .insert(schema.users)
+    .values([
+      {
+        name: 'Admin RSV360',
+        email: 'admin@rsv360.com.br',
+        password: null,
+        role: 'admin',
+        isActive: true,
+      },
+    ])
+    .onConflictDoUpdate({
+      target: schema.users.email,
+      set: {
+        name: 'Admin RSV360',
+        password: null,
+        role: 'admin',
+        isActive: true,
+      },
+    });
+
+  await seedDeterministicTestUser();
 
   console.log('✅ Seed completo! Dados realistas inseridos.');
   await pool.end();
