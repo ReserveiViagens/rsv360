@@ -21,6 +21,8 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
+        with:
+          lfs: true
 
       - uses: actions/setup-node@v6
         with:
@@ -32,6 +34,30 @@ jobs:
 
       - name: Install Playwright (Chromium only)
         run: npx playwright install --with-deps chromium
+
+      - name: Start database services
+        run: docker compose up -d postgres redis
+
+      - name: Wait for database
+        run: |
+          until docker compose exec -T postgres pg_isready -U rsv360 -d rsv_360_ecosystem; do
+            sleep 5
+          done
+
+      - name: Run database migrations
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
+        run: npx drizzle-kit migrate
+
+      - name: Seed deterministic test user
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
+          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
+          SEED_TEST_USER_ROLE: admin
+        run: npm run seed
 
       - name: Build & start Docker stack
         run: docker compose up -d --build
@@ -93,4 +119,3 @@ jobs:
             compose-ps.txt
             compose-logs.txt
           if-no-files-found: ignore
-
