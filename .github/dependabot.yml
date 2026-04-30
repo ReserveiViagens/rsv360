@@ -11,11 +11,33 @@ updates:
     open-pull-requests-limit: 5
     labels: ["dependencies", "npm", "scope:root"]
     groups:
-      dev-deps:
+      dev-deps-safe:
         dependency-type: "development"
+        update-types: ["patch", "minor"]
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint-config-next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@testing-library/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/jest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jest-environment-jsdom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "concurrently"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/backend"
@@ -27,8 +49,9 @@ updates:
     open-pull-requests-limit: 5
     labels: ["dependencies", "npm", "scope:backend"]
     groups:
-      dev-deps:
+      dev-deps-safe:
         dependency-type: "development"
+        update-types: ["patch", "minor"]
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
@@ -43,8 +66,9 @@ updates:
     open-pull-requests-limit: 3
     labels: ["dependencies", "npm", "scope:site-publico"]
     groups:
-      dev-deps:
+      dev-deps-safe:
         dependency-type: "development"
+        update-types: ["patch", "minor"]
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
@@ -59,8 +83,9 @@ updates:
     open-pull-requests-limit: 3
     labels: ["dependencies", "npm", "scope:turismo"]
     groups:
-      dev-deps:
+      dev-deps-safe:
         dependency-type: "development"
+        update-types: ["patch", "minor"]
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
