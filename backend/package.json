@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "tsx server.js",
+    "migrate": "node scripts/migrate.mjs",
     "seed": "tsx src/db/seed.ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",

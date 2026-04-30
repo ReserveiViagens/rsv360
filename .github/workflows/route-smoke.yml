@@ -48,7 +48,7 @@ jobs:
         working-directory: backend
         env:
           DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
-        run: npx drizzle-kit migrate
+        run: npm run migrate
 
       - name: Seed deterministic test user
         working-directory: backend
