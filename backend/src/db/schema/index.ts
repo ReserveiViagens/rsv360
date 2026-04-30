@@ -5,6 +5,7 @@ export * from './attractions';
 export * from './promotions';
 export * from './travel';
 export * from './bookings';
+export * from './guestPortalTokens';
 export * from './recommendations';
 export * from './search-history';
 export * from './leads';
