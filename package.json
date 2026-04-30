@@ -30,6 +30,7 @@
     "migrate:new": "npm run migrate:new --workspace=backend",
     "migrate:rollback": "npm run migrate:rollback --workspace=backend",
     "seed": "npm run seed --workspace=backend",
+    "smoke:portal-booking": "npm run smoke:portal-booking --workspace=backend",
     "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
     "clean:install": "npm run clean && npm install",
     "type-check": "npm run type-check --workspaces --if-present",
