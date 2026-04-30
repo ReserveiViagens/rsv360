@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
@@ -49,6 +50,137 @@ async function seedDeterministicTestUser() {
     });
 
   console.log(`[seed] deterministic test user upserted: email=${email} role=${role}`);
+}
+
+async function seedBookings() {
+  const seedEmail = (process.env.SEED_TEST_USER_EMAIL ?? 'test@local.dev').toLowerCase();
+
+  const [seedUser] = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, seedEmail))
+    .limit(1);
+
+  if (!seedUser) {
+    console.warn(`[seed:bookings] user de seed nao encontrado (email=${seedEmail}) - pulando bookings`);
+    return;
+  }
+
+  const [accommodation] = await db.select().from(schema.accommodations).orderBy(schema.accommodations.id).limit(1);
+  const [travelPackage] = await db.select().from(schema.travel).orderBy(schema.travel.id).limit(1);
+
+  if (!accommodation || !travelPackage) {
+    console.warn('[seed:bookings] dependencia de produto ausente - pulando bookings');
+    return;
+  }
+
+  const customerName = seedUser.name ?? 'Test User';
+  const customerEmail = seedUser.email ?? seedEmail;
+  const customerPhone = '(62) 99999-0000';
+  const customerDocument = '000.000.000-00';
+
+  const fixtures = [
+    {
+      bookingCode: 'SEED-ACC-001',
+      bookingType: 'accommodation',
+      itemId: accommodation.id,
+      itemName: accommodation.name,
+      userId: seedUser.id,
+      customerName,
+      customerEmail,
+      customerPhone,
+      customerDocument,
+      startDate: new Date('2026-06-01T14:00:00Z'),
+      endDate: new Date('2026-06-05T11:00:00Z'),
+      adultsCount: 2,
+      childrenCount: 1,
+      infantsCount: 0,
+      guestsCount: 3,
+      subtotal: '1500.00',
+      discount: '0.00',
+      taxes: '0.00',
+      serviceFee: '0.00',
+      totalAmount: '1500.00',
+      currency: 'BRL',
+      paymentMethod: 'pix',
+      paymentStatus: 'paid',
+      paymentInfo: { method: 'pix', transactionId: 'SEED-ACC-001' },
+      status: 'confirmed',
+      confirmedAt: new Date('2026-05-20T12:00:00Z'),
+      specialRequests: 'Vista para a piscina',
+      notes: 'Seed deterministico de acomodacao',
+      metadata: { seed: true, source: 'phase-7-f2' },
+    },
+    {
+      bookingCode: 'SEED-PKG-001',
+      bookingType: 'package',
+      itemId: travelPackage.id,
+      itemName: travelPackage.title,
+      userId: seedUser.id,
+      customerName,
+      customerEmail,
+      customerPhone,
+      customerDocument,
+      startDate: new Date('2026-06-01T14:00:00Z'),
+      endDate: new Date('2026-06-05T11:00:00Z'),
+      adultsCount: 2,
+      childrenCount: 0,
+      infantsCount: 0,
+      guestsCount: 2,
+      subtotal: '3500.00',
+      discount: '0.00',
+      taxes: '0.00',
+      serviceFee: '0.00',
+      totalAmount: '3500.00',
+      currency: 'BRL',
+      paymentMethod: 'credit_card',
+      paymentStatus: 'pending',
+      paymentInfo: { method: 'credit_card', authorization: 'SEED-PKG-001' },
+      status: 'pending',
+      specialRequests: 'Check-in antecipado se disponivel',
+      notes: 'Seed deterministico de pacote',
+      metadata: { seed: true, source: 'phase-7-f2' },
+    },
+    {
+      bookingCode: 'SEED-ACC-002',
+      bookingType: 'accommodation',
+      itemId: accommodation.id,
+      itemName: accommodation.name,
+      userId: seedUser.id,
+      customerName,
+      customerEmail,
+      customerPhone,
+      customerDocument,
+      startDate: new Date('2026-07-01T14:00:00Z'),
+      endDate: new Date('2026-07-05T11:00:00Z'),
+      adultsCount: 1,
+      childrenCount: 0,
+      infantsCount: 0,
+      guestsCount: 1,
+      subtotal: '1200.00',
+      discount: '0.00',
+      taxes: '0.00',
+      serviceFee: '0.00',
+      totalAmount: '1200.00',
+      currency: 'BRL',
+      paymentMethod: 'pix',
+      paymentStatus: 'refunded',
+      paymentInfo: { method: 'pix', transactionId: 'SEED-ACC-002', refunded: true },
+      status: 'cancelled',
+      cancelledAt: new Date('2026-06-10T12:00:00Z'),
+      specialRequests: 'Quarto silencioso',
+      notes: 'Seed deterministico cancelado',
+      metadata: { seed: true, source: 'phase-7-f2' },
+    },
+  ];
+
+  const inserted = await db
+    .insert(schema.bookings)
+    .values(fixtures)
+    .onConflictDoNothing({ target: schema.bookings.bookingCode })
+    .returning({ id: schema.bookings.id });
+
+  console.log(`[seed:bookings] inseridas ${inserted.length} novas (de ${fixtures.length} fixtures)`);
 }
 
 async function seed() {
@@ -341,6 +473,7 @@ async function seed() {
     });
 
   await seedDeterministicTestUser();
+  await seedBookings();
 
   console.log('✅ Seed completo! Dados realistas inseridos.');
   await pool.end();
