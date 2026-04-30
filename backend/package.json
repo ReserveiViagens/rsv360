@@ -11,6 +11,7 @@
     "dev": "tsx server.js",
     "migrate": "node scripts/migrate.mjs",
     "seed": "tsx src/db/seed.ts",
+    "smoke:portal-booking": "tsx ../server/modules/guest-portal/portal-booking.smoke.ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",
     "test:ci": "jest --coverage --ci --runInBand"

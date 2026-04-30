@@ -18,7 +18,7 @@ function extractPortalToken(req: Request) {
     return null;
   }
 
-  return bearerToken;
+  return bearerToken.slice('portal_'.length).trim();
 }
 
 export async function portalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
