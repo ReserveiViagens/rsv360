@@ -15,6 +15,13 @@
       "when": 1777426797246,
       "tag": "0001_add_users_email_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777496340504,
+      "tag": "0002_create_bookings",
+      "breakpoints": true
     }
   ]
 }
