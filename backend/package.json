@@ -17,7 +17,7 @@
     "test:ci": "jest --coverage --ci --runInBand"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
+    "@types/bcryptjs": "^3.0.0",
     "@types/jest": "^29.5.14",
     "@types/qrcode": "^1.5.6",
     "@types/supertest": "^7.2.0",
