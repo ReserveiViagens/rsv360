@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate Drizzle journal consistency
+        run: cd backend && npm run db:validate-journal
+
       - name: Run backend tests (coverage)
         run: npm run test:ci --workspace=backend
         env:
