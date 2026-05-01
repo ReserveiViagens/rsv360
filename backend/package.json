@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "tsx server.js",
     "migrate": "node scripts/migrate.mjs",
+    "db:validate-journal": "node scripts/validate-drizzle-journal.mjs",
     "seed": "tsx src/db/seed.ts",
     "smoke:portal-booking": "tsx ../server/modules/guest-portal/portal-booking.smoke.ts",
     "test": "jest --runInBand",
