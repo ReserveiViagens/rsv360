@@ -92,6 +92,15 @@ jobs:
             echo "OK: $url"
           done
 
+      - name: Run guest E2E smoke (Phase 7-G.2)
+        working-directory: apps/guest
+        env:
+          DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5432/rsv_360_ecosystem
+          GUEST_BASE_URL: http://localhost:3006
+          PORTAL_TEST_BOOKING_CODE: SEED-ACC-001
+          PORTAL_TEST_PATH: /reservations
+        run: npx playwright test --reporter=list
+
       - name: Run route smoke
         env:
           RSV_SMOKE_SITE_PUBLICO_URL: http://localhost:3000
