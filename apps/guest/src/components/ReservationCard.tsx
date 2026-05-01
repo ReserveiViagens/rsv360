@@ -15,7 +15,7 @@ import { StatusBadge } from './StatusBadge';
 
 export function ReservationCard({ reservation }: { reservation: GuestReservation }) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-testid="reservation-card">
       <CardContent>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-3">
