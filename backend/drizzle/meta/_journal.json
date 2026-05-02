@@ -29,6 +29,13 @@
       "when": 1777556711516,
       "tag": "0003_secret_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777686643221,
+      "tag": "0004_create_portal_booking_audit",
+      "breakpoints": true
     }
   ]
 }

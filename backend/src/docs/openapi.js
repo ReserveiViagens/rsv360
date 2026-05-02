@@ -127,6 +127,16 @@ const openApiSpec = {
           200: { description: 'Dados da reserva' },
         },
       },
+      post: {
+        tags: ['Guest Portal'],
+        summary: 'Atualizar reserva ativa do hóspede',
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Reserva atualizada' },
+          400: { description: 'Validação inválida' },
+          401: { description: 'Token inválido ou expirado' },
+        },
+      },
     },
     '/api/portal/checkin': {
       post: {

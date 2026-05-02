@@ -95,6 +95,10 @@ export class PortalRepository {
     return this.resolveTable(['guest_portal_tokens', 'portal_tokens', 'guest_tokens']);
   }
 
+  async getPortalBookingAuditTable() {
+    return this.resolveTable(['portal_booking_audit']);
+  }
+
   async getRequestTable() {
     return this.resolveTable(['guest_requests', 'portal_requests', 'guest_portal_requests']);
   }
@@ -301,6 +305,54 @@ export class PortalRepository {
     }
 
     return this.updateRowById(table, bookingId, updates);
+  }
+
+  async updateBookingFromPortal(bookingId: string, payload: { specialRequests?: string }) {
+    const table = await this.getBookingTable();
+    if (!table) {
+      throw new Error('Tabela bookings não encontrada');
+    }
+
+    return this.updateRowById(table, bookingId, {
+      special_requests: payload.specialRequests,
+      updated_at: new Date(),
+    });
+  }
+
+  async recordPortalAudit(args: {
+    bookingId: string;
+    tokenId: string;
+    action: 'update';
+    fieldsChanged: string[];
+    beforePayload: unknown;
+    afterPayload: unknown;
+  }) {
+    const auditTable = await this.getPortalBookingAuditTable();
+    if (!auditTable) {
+      throw new Error('Tabela portal_booking_audit não encontrada');
+    }
+
+    return this.query(
+      `insert into ${quoteIdent(auditTable)} (
+         ${quoteIdent('booking_id')},
+         ${quoteIdent('token_id')},
+         ${quoteIdent('action')},
+         ${quoteIdent('fields_changed')},
+         ${quoteIdent('before_payload')},
+         ${quoteIdent('after_payload')},
+         ${quoteIdent('created_at')}
+       ) values ($1, $2, $3, $4::jsonb, $5::jsonb, $6::jsonb, $7)
+       returning *`,
+      [
+        args.bookingId,
+        args.tokenId,
+        args.action,
+        JSON.stringify(args.fieldsChanged),
+        JSON.stringify(args.beforePayload ?? null),
+        JSON.stringify(args.afterPayload ?? null),
+        new Date(),
+      ],
+    );
   }
 
   async upsertGuestForBooking(bookingId: string, guestData: Row, booking: Row | null) {
