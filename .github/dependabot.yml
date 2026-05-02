@@ -55,6 +55,9 @@ updates:
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/apps/site-publico"
@@ -72,6 +75,11 @@ updates:
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/apps/turismo"
@@ -89,6 +97,11 @@ updates:
       prod-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/apps/admin"
@@ -99,6 +112,11 @@ updates:
       timezone: "America/Sao_Paulo"
     open-pull-requests-limit: 3
     labels: ["dependencies", "npm", "scope:admin"]
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/apps/guest"
@@ -109,6 +127,11 @@ updates:
       timezone: "America/Sao_Paulo"
     open-pull-requests-limit: 3
     labels: ["dependencies", "npm", "scope:guest"]
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/packages/shared"
@@ -119,6 +142,9 @@ updates:
       timezone: "America/Sao_Paulo"
     open-pull-requests-limit: 3
     labels: ["dependencies", "npm", "scope:shared"]
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
