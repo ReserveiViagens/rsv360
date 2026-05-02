@@ -66,6 +66,13 @@ jobs:
           PORTAL_SMOKE_BOOKING_CODE: SEED-ACC-001
         run: npm run smoke:portal-booking
 
+      - name: Run portal booking write smoke
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5432/rsv_360_ecosystem
+          PORTAL_SMOKE_BOOKING_CODE: SEED-ACC-001
+        run: npx tsx ../server/modules/guest-portal/portal-booking-write.smoke.ts
+
       - name: Build & start Docker stack
         run: docker compose up -d --build
 
