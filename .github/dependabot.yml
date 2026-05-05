@@ -58,6 +58,8 @@ updates:
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/apps/site-publico"
@@ -78,7 +80,19 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@testing-library/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
@@ -100,7 +114,17 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
@@ -114,6 +138,14 @@ updates:
     labels: ["dependencies", "npm", "scope:admin"]
     ignore:
       - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
@@ -130,6 +162,14 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
 
@@ -144,6 +184,8 @@ updates:
     labels: ["dependencies", "npm", "scope:shared"]
     ignore:
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
