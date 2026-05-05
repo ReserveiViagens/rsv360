@@ -74,7 +74,8 @@
     },
     "@aws-sdk/middleware-sdk-s3": {
       "fast-xml-parser": "^5.7.0"
-    }
+    },
+    "axios": "^1.16.0"
   },
   "engines": {
     "node": ">=18.0.0",
