@@ -43,6 +43,37 @@ function extractToken(context: GetServerSidePropsContext<ParsedUrlQuery>) {
   return context.req.cookies.rsv360_guest_portal_token || context.query.token || null;
 }
 
+function getRequestPath(context: GetServerSidePropsContext<ParsedUrlQuery>) {
+  return context.resolvedUrl || context.req.url || '/';
+}
+
+function getRequestIp(context: GetServerSidePropsContext<ParsedUrlQuery>) {
+  const forwarded = context.req.headers['x-forwarded-for'];
+  const forwardedValue = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  const candidate = typeof forwardedValue === 'string' ? forwardedValue.split(',')[0]?.trim() : null;
+  return candidate || (typeof context.req.socket?.remoteAddress === 'string' ? context.req.socket.remoteAddress : null);
+}
+
+async function recordMissingTokenAudit(context: GetServerSidePropsContext<ParsedUrlQuery>) {
+  try {
+    await fetch(`${API_BASE}/api/portal/audit/auth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event: 'token_missing',
+        requestPath: getRequestPath(context),
+        ipAddress: getRequestIp(context),
+        userAgent: context.req.headers['user-agent'] || null,
+        reason: 'missing_cookie',
+      }),
+    });
+  } catch {
+    // best-effort only
+  }
+}
+
 async function fetchJson<T>(path: string, token: string, allow404 = false): Promise<T | null> {
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
@@ -110,6 +141,7 @@ export async function requirePortalToken(
 ): Promise<GetServerSidePropsResult<PortalBootstrap> | string> {
   const token = extractToken(context);
   if (!token || typeof token !== 'string') {
+    await recordMissingTokenAudit(context);
     return {
       redirect: {
         destination: '/login',

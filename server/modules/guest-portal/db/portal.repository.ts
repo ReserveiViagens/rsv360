@@ -1,6 +1,15 @@
 import { Pool } from 'pg';
 
 type Row = Record<string, any>;
+export type PortalTokenInspectionState = 'valid' | 'invalid' | 'expired' | 'revoked';
+export type PortalTokenInspection = {
+  state: PortalTokenInspectionState;
+  reason: string;
+  token: Row | null;
+  booking: Row | null;
+  guest: Row | null;
+  bookingRef: string | null;
+};
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const tableCache = new Map<string, string | null>();
@@ -99,6 +108,10 @@ export class PortalRepository {
     return this.resolveTable(['portal_booking_audit']);
   }
 
+  async getGuestPortalAuditTable() {
+    return this.resolveTable(['guest_portal_audit']);
+  }
+
   async getRequestTable() {
     return this.resolveTable(['guest_requests', 'portal_requests', 'guest_portal_requests']);
   }
@@ -186,8 +199,28 @@ export class PortalRepository {
   }
 
   async findValidToken(token: string) {
+    const inspection = await this.inspectToken(token);
+    if (inspection.state !== 'valid') return null;
+
+    return {
+      token: inspection.token,
+      booking: inspection.booking,
+      guest: inspection.guest,
+    };
+  }
+
+  async inspectToken(token: string): Promise<PortalTokenInspection> {
     const table = await this.getTokenTable();
-    if (!table) return null;
+    if (!table) {
+      return {
+        state: 'invalid',
+        reason: 'token_table_missing',
+        token: null,
+        booking: null,
+        guest: null,
+        bookingRef: null,
+      };
+    }
 
     const columns = await this.getColumns(table);
     const tokenColumn = this.pickColumn(columns, ['token']);
@@ -195,32 +228,75 @@ export class PortalRepository {
     const expiresColumn = this.pickColumn(columns, ['expires_at', 'expiresAt']);
     const bookingColumn = this.pickColumn(columns, ['booking_id']);
 
-    if (!tokenColumn) return null;
-
-    const conditions = [`${quoteIdent(tokenColumn)} = $1`];
-    const params = [token];
-
-    if (activeColumn) {
-      conditions.push(`${quoteIdent(activeColumn)} = true`);
-    }
-
-    if (expiresColumn) {
-      conditions.push(`(${quoteIdent(expiresColumn)} is null or ${quoteIdent(expiresColumn)} > now())`);
+    if (!tokenColumn) {
+      return {
+        state: 'invalid',
+        reason: 'token_column_missing',
+        token: null,
+        booking: null,
+        guest: null,
+        bookingRef: null,
+      };
     }
 
     const result = await this.query(
-      `select * from ${quoteIdent(table)} where ${conditions.join(' and ')} limit 1`,
-      params
+      `select * from ${quoteIdent(table)} where ${quoteIdent(tokenColumn)} = $1 limit 1`,
+      [token]
     );
 
     const tokenRow = result.rows[0];
-    if (!tokenRow) return null;
+    if (!tokenRow) {
+      return {
+        state: 'invalid',
+        reason: 'token_not_found',
+        token: null,
+        booking: null,
+        guest: null,
+        bookingRef: null,
+      };
+    }
 
     const bookingId = bookingColumn ? tokenRow[bookingColumn] : tokenRow.booking_id;
-    const booking = bookingId ? await this.getBookingById(String(bookingId)) : null;
-    const guest = booking ? await this.findGuestForBooking(booking, String(bookingId)) : null;
+    const bookingRef = bookingId !== undefined && bookingId !== null ? String(bookingId) : null;
+    const booking = bookingRef ? await this.getBookingById(bookingRef) : null;
+    const guest = booking ? await this.findGuestForBooking(booking, bookingRef || '') : null;
 
-    return { token: tokenRow, booking, guest };
+    if (expiresColumn) {
+      const expiresValue = tokenRow[expiresColumn];
+      if (expiresValue) {
+        const expiresAt = new Date(expiresValue);
+        if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() <= Date.now()) {
+          return {
+            state: 'expired',
+            reason: `expired_at:${expiresAt.toISOString()}`,
+            token: tokenRow,
+            booking,
+            guest,
+            bookingRef,
+          };
+        }
+      }
+    }
+
+    if (activeColumn && tokenRow[activeColumn] === false) {
+      return {
+        state: 'revoked',
+        reason: 'token_inactive',
+        token: tokenRow,
+        booking,
+        guest,
+        bookingRef,
+      };
+    }
+
+    return {
+      state: 'valid',
+      reason: 'token_valid',
+      token: tokenRow,
+      booking,
+      guest,
+      bookingRef,
+    };
   }
 
   async touchToken(token: string) {
@@ -353,6 +429,15 @@ export class PortalRepository {
         new Date(),
       ],
     );
+  }
+
+  async recordGuestPortalAudit(data: Row) {
+    const auditTable = await this.getGuestPortalAuditTable();
+    if (!auditTable) {
+      throw new Error('Tabela guest_portal_audit não encontrada');
+    }
+
+    return this.insertRow(auditTable, data);
   }
 
   async upsertGuestForBooking(bookingId: string, guestData: Row, booking: Row | null) {
