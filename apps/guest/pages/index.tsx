@@ -19,7 +19,8 @@ import { useBooking, useReservations } from '@/hooks/use-reservations';
 import { useCheckinStatus } from '@/hooks/use-checkin';
 import { useMessages } from '@/hooks/use-messages';
 import { formatCurrency, formatDate } from '@/lib/format';
-import { loadPortalBootstrap, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
+import { buildClearedPortalTokenCookie } from '@/lib/portal-session';
+import { loadPortalBootstrapOrRedirect, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
 import type { GuestReservation } from '@/types/auth';
 
 type DashboardProps = PortalBootstrap;
@@ -169,23 +170,16 @@ export default function GuestDashboardPage(props: DashboardProps) {
 export const getServerSideProps: GetServerSideProps<DashboardProps> = async (context) => {
   const tokenResult = await requirePortalToken(context);
   if (typeof tokenResult !== 'string') {
-    return tokenResult as any;
+    return tokenResult;
   }
 
-  try {
-    const bootstrap = await loadPortalBootstrap(tokenResult);
-    return {
-      props: bootstrap,
-    };
-  } catch {
-    return {
-      props: {
-        booking: null,
-        guest: null,
-        requests: [],
-        feedback: null,
-        checkinStatus: null,
-      },
-    };
+  const bootstrapResult = await loadPortalBootstrapOrRedirect(tokenResult);
+  if (bootstrapResult.kind === 'redirect') {
+    context.res.setHeader('Set-Cookie', buildClearedPortalTokenCookie());
+    return { redirect: bootstrapResult.redirect };
   }
+
+  return {
+    props: bootstrapResult.props,
+  };
 };

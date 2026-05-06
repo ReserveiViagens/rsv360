@@ -9,7 +9,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
 import type { GuestProfile, GuestReservation, PortalBookingStatus, PortalFeedback, PortalRequest } from '@/types/auth';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_BASE = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export type PortalBootstrap = {
   booking: GuestReservation | null;
@@ -18,6 +18,26 @@ export type PortalBootstrap = {
   feedback: PortalFeedback[] | null;
   checkinStatus: PortalBookingStatus | null;
 };
+
+export class PortalAuthError extends Error {
+  constructor(message = 'Invalid portal token') {
+    super(message);
+    this.name = 'PortalAuthError';
+  }
+}
+
+export type PortalBootstrapResult =
+  | {
+      kind: 'props';
+      props: PortalBootstrap;
+    }
+  | {
+      kind: 'redirect';
+      redirect: {
+        destination: '/login';
+        permanent: false;
+      };
+    };
 
 function extractToken(context: GetServerSidePropsContext<ParsedUrlQuery>) {
   return context.req.cookies.rsv360_guest_portal_token || context.query.token || null;
@@ -35,6 +55,10 @@ async function fetchJson<T>(path: string, token: string, allow404 = false): Prom
   if (!response.ok) {
     if (allow404 && response.status === 404) {
       return null;
+    }
+
+    if (response.status === 401 || response.status === 403) {
+      throw new PortalAuthError(`HTTP ${response.status}`);
     }
 
     throw new Error(`HTTP ${response.status}`);
@@ -60,9 +84,30 @@ export async function loadPortalBootstrap(token: string): Promise<PortalBootstra
   };
 }
 
+export async function loadPortalBootstrapOrRedirect(token: string): Promise<PortalBootstrapResult> {
+  try {
+    return {
+      kind: 'props',
+      props: await loadPortalBootstrap(token),
+    };
+  } catch (error) {
+    if (error instanceof PortalAuthError) {
+      return {
+        kind: 'redirect',
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+
+    throw error;
+  }
+}
+
 export async function requirePortalToken(
   context: GetServerSidePropsContext<ParsedUrlQuery>,
-): Promise<GetServerSidePropsResult<Record<string, never>> | string> {
+): Promise<GetServerSidePropsResult<PortalBootstrap> | string> {
   const token = extractToken(context);
   if (!token || typeof token !== 'string') {
     return {

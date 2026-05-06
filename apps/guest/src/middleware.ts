@@ -27,10 +27,6 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get(PORTAL_TOKEN_COOKIE)?.value;
   const isPublicRoute = publicRoutes.has(pathname);
 
-  if (pathname === '/login' && token) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
   if (isPublicRoute) {
     return NextResponse.next();
   }

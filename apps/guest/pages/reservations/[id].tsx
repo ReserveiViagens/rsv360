@@ -165,7 +165,7 @@ export default function ReservationDetailPage(props: ReservationDetailProps) {
 export const getServerSideProps: GetServerSideProps<ReservationDetailProps> = async (context) => {
   const tokenResult = await requirePortalToken(context);
   if (typeof tokenResult !== 'string') {
-    return tokenResult as any;
+    return tokenResult;
   }
 
   try {

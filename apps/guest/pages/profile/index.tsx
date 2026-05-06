@@ -16,7 +16,8 @@ import { Button } from '@/components/ui/button';
 import { useProfile, useProfileMutation } from '@/hooks/use-profile';
 import { useBooking } from '@/hooks/use-reservations';
 import type { GuestProfile } from '@/types/auth';
-import { loadPortalBootstrap, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
+import { buildClearedPortalTokenCookie } from '@/lib/portal-session';
+import { loadPortalBootstrapOrRedirect, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
 
 type ProfileProps = PortalBootstrap;
 
@@ -161,20 +162,14 @@ export default function ProfilePage(props: ProfileProps) {
 export const getServerSideProps: GetServerSideProps<ProfileProps> = async (context) => {
   const tokenResult = await requirePortalToken(context);
   if (typeof tokenResult !== 'string') {
-    return tokenResult as any;
+    return tokenResult;
   }
 
-  try {
-    return { props: await loadPortalBootstrap(tokenResult) };
-  } catch {
-    return {
-      props: {
-        booking: null,
-        guest: null,
-        requests: [],
-        feedback: null,
-        checkinStatus: null,
-      },
-    };
+  const bootstrapResult = await loadPortalBootstrapOrRedirect(tokenResult);
+  if (bootstrapResult.kind === 'redirect') {
+    context.res.setHeader('Set-Cookie', buildClearedPortalTokenCookie());
+    return { redirect: bootstrapResult.redirect };
   }
+
+  return { props: bootstrapResult.props };
 };
