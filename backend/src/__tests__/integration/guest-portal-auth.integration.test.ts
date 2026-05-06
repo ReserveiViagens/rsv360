@@ -1,6 +1,7 @@
 import request from 'supertest';
 import express from 'express';
 import { portalAuthMiddleware } from '../../../../server/modules/guest-portal/middleware/portal-auth.middleware';
+import portalRouter from '../../../../server/modules/guest-portal/routes/portal.routes';
 
 jest.mock('../../../../server/modules/guest-portal/services/token.service', () => ({
   tokenService: {
@@ -33,6 +34,13 @@ describe('guest portal auth middleware', () => {
     return app;
   }
 
+  function buildAuditApp() {
+    const app = express();
+    app.use(express.json());
+    app.use('/api/portal', portalRouter);
+    return app;
+  }
+
   it('audits missing token before returning 401', async () => {
     tokenService.validateToken.mockResolvedValue(null);
 
@@ -50,8 +58,8 @@ describe('guest portal auth middleware', () => {
   it('audits invalid token state before returning 401', async () => {
     tokenService.validateToken.mockResolvedValue(null);
     tokenService.inspectToken.mockResolvedValue({
-      state: 'expired',
-      reason: 'expired_at:2026-05-05T00:00:00.000Z',
+      state: 'invalid',
+      reason: 'not_found',
       token: { id: 1 },
       booking: { id: 42 },
       guest: { id: 7 },
@@ -60,14 +68,29 @@ describe('guest portal auth middleware', () => {
 
     const response = await request(buildApp())
       .get('/api/portal/booking')
-      .set('X-Portal-Token', 'expired-token');
+      .set('X-Portal-Token', 'portal_does_not_exist_xyz');
 
     expect(response.status).toBe(401);
+    expect(response.body.error).toContain('inválido');
     expect(guestPortalAuditService.recordAuthEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        event: 'token_expired',
-        token: 'expired-token',
+        event: 'token_invalid',
+        token: 'portal_does_not_exist_xyz',
         bookingRef: '42',
+      }),
+    );
+  });
+
+  it('accepts public audit auth post and records missing token event', async () => {
+    const response = await request(buildAuditApp()).post('/api/portal/audit/auth');
+
+    expect(response.status).toBe(204);
+    expect(response.text).toBe('');
+    expect(guestPortalAuditService.recordAuthEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'token_missing',
+        reason: 'missing_token',
+        requestPath: '/api/portal/audit/auth',
       }),
     );
   });
