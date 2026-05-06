@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { portalRepository, addDays } from '../db/portal.repository';
+import { portalRepository, addDays, type PortalTokenInspection } from '../db/portal.repository';
 
 export class TokenService {
   constructor(private repository = portalRepository) {}
@@ -46,6 +46,10 @@ export class TokenService {
       guest: result.guest,
       token: result.token,
     };
+  }
+
+  async inspectToken(token: string): Promise<PortalTokenInspection> {
+    return this.repository.inspectToken(token);
   }
 
   async revokeToken(bookingId: string) {

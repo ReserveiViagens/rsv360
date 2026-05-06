@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { portalAuthMiddleware } from '../middleware/portal-auth.middleware';
+import { guestPortalAuditService } from '../services/audit.service';
 import { checkInService } from '../services/checkin.service';
 import { checkOutService } from '../services/checkout.service';
 import { feedbackService } from '../services/feedback.service';
@@ -9,6 +10,22 @@ import { PortalBookingUpdateSchema } from '../schemas/portal-booking-write.schem
 import { z } from 'zod';
 
 const router = Router();
+
+router.post('/audit/auth', async (req, res) => {
+  try {
+    await guestPortalAuditService.recordAuthEvent({
+      event: 'token_missing',
+      requestPath: typeof req.body?.requestPath === 'string' ? req.body.requestPath : req.originalUrl,
+      ipAddress: typeof req.body?.ipAddress === 'string' ? req.body.ipAddress : null,
+      userAgent: typeof req.body?.userAgent === 'string' ? req.body.userAgent : null,
+      reason: typeof req.body?.reason === 'string' ? req.body.reason : 'missing_token',
+    });
+  } catch (error) {
+    console.warn('[guest-portal] audit endpoint failed:', (error as Error).message);
+  }
+
+  return res.status(204).end();
+});
 
 router.use(portalAuthMiddleware);
 
