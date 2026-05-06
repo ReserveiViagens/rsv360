@@ -166,15 +166,5 @@ export default function LoginPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = context.req.cookies.rsv360_guest_portal_token;
-  if (token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
   return { props: {} };
 };

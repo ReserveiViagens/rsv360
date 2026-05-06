@@ -44,15 +44,15 @@ test.describe('Phase 7-G.2 — Portal Booking smoke', () => {
     ).toBeTruthy()
   })
 
-  test('token inválido: renderiza EmptyState com 200', async ({ page }) => {
+  test('token inválido: redireciona para /login', async ({ page }) => {
     await page.goto('/')
     await setPortalCookie(page, 'invalid-token-xxx-7g2')
     const response = await page.goto(PORTAL_PATH, { waitUntil: 'networkidle' })
     const finalUrl = page.url()
     const status = response?.status() ?? 0
-    expect(status, `esperado HTTP 200 para EmptyState; got url=${finalUrl} status=${status}`).toBe(200)
-    expect(finalUrl).toContain(PORTAL_PATH)
-    await expect(page.getByText('Nenhuma reserva encontrada')).toBeVisible()
-    await expect(page.getByTestId('reservation-card')).toHaveCount(0)
+    expect(
+      finalUrl.includes('/login') || status === 401 || status === 403,
+      `esperado redirect para /login OU 401/403; got url=${finalUrl} status=${status}`
+    ).toBeTruthy()
   })
 })

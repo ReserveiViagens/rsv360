@@ -64,3 +64,7 @@ export function clearPortalSession() {
   window.localStorage.removeItem(PORTAL_GUEST_COOKIE);
   document.cookie = `${PORTAL_TOKEN_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
+
+export function buildClearedPortalTokenCookie() {
+  return `${PORTAL_TOKEN_COOKIE}=; path=/; max-age=0; samesite=lax`;
+}

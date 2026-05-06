@@ -11,7 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { EmptyState } from '@/components/EmptyState';
 import { ReservationCard } from '@/components/ReservationCard';
 import { useReservations } from '@/hooks/use-reservations';
-import { loadPortalBootstrap, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
+import { buildClearedPortalTokenCookie } from '@/lib/portal-session';
+import { loadPortalBootstrapOrRedirect, requirePortalToken, type PortalBootstrap } from '@/lib/ssr';
 
 export default function ReservationsPage(props: PortalBootstrap) {
   const reservationsQuery = useReservations(props.booking ? [props.booking] : undefined);
@@ -48,20 +49,14 @@ export default function ReservationsPage(props: PortalBootstrap) {
 export const getServerSideProps: GetServerSideProps<PortalBootstrap> = async (context) => {
   const tokenResult = await requirePortalToken(context);
   if (typeof tokenResult !== 'string') {
-    return tokenResult as any;
+    return tokenResult;
   }
 
-  try {
-    return { props: await loadPortalBootstrap(tokenResult) };
-  } catch {
-    return {
-      props: {
-        booking: null,
-        guest: null,
-        requests: [],
-        feedback: null,
-        checkinStatus: null,
-      },
-    };
+  const bootstrapResult = await loadPortalBootstrapOrRedirect(tokenResult);
+  if (bootstrapResult.kind === 'redirect') {
+    context.res.setHeader('Set-Cookie', buildClearedPortalTokenCookie());
+    return { redirect: bootstrapResult.redirect };
   }
+
+  return { props: bootstrapResult.props };
 };
