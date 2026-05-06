@@ -3,6 +3,15 @@ name: Fase 4 - Tests and Hardening
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'CODEOWNERS'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - '.github/copilot-instructions.md'
+      - '.github/dependabot.yml'
   push:
     branches: [main, develop]
 

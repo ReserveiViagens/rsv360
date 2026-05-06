@@ -5,6 +5,15 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'CODEOWNERS'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - '.github/copilot-instructions.md'
+      - '.github/dependabot.yml'
   schedule:
     - cron: '0 6 * * 1'  # Every Monday at 6 AM UTC
 
