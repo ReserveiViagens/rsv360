@@ -5,6 +5,15 @@ on:
     branches: [main, develop, upgrade/*]
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'CODEOWNERS'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - '.github/copilot-instructions.md'
+      - '.github/dependabot.yml'
 
 jobs:
   backend-tests:
