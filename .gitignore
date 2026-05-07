@@ -100,3 +100,5 @@ drizzle-kit-cli-windows*.log
 .cursor/
 .windsurfrules
 .clinerules
+.codex/
+.audit/
