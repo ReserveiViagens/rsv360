@@ -14,3 +14,10 @@
 
 Observacao: os arquivos 10-site-publico.md, 20-turismo.md, 30-admin.md,
 40-guest.md e 50-backend-e-qualidade.md ficam para F-023b..f.
+
+## F-023f - Status
+
+| Seção | Arquivo | Status |
+| --- | --- | --- |
+| F-023f | `50-backend-e-qualidade.md` | entregue |
+| PACR-Ampla | nao aplicado | arquivo ficou abaixo do teto |
