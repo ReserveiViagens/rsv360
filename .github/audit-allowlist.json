@@ -53,11 +53,6 @@
       "severity": "high",
       "reason": "F-027.b em curso — override transitivo planejado (GHSA-5wm8-gmm8-39j9 / CVE-2026-44665)",
       "expires": "2026-06-12"
-    },
-    "next": {
-      "severity": "high",
-      "reason": "GHSA-26hh-7cqf-hhc6 — fix em next@15.5.18; lock preso em 15.5.16. Bloqueio de upgrade identificado em F-027.a via EBADPLATFORM em @img/sharp-linuxmusl-x64 no regen total; F-027.s vai destravar o sharp e depois o bump sai natural.",
-      "expires": "2026-05-27"
     }
   }
 }

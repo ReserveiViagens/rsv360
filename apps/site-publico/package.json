@@ -89,7 +89,7 @@
     "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.294.0",
-    "next": "15.5.16",
+    "next": "^15.5.16",
     "nodemailer": "^8.0.7",
     "pg": "^8.11.0",
     "prom-client": "^15.0.0",
