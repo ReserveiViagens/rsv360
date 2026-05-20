@@ -1,33 +1,26 @@
 # `.github/scripts`
 
-Helper scripts for CI and local validation.
+Utility scripts used by CI and local validation.
 
-## `patch-sharp-optional.py`
+## `postinstall-patches.cjs`
 
-Marks `@img/sharp-linux-x64` and `@img/sharp-linuxmusl-x64` as
-`optional: true` in `package-lock.json`.
+Idempotent postinstall hook that:
 
-### Why this exists
+- patches `@jest/reporters` `CoverageReporter.js` to use the modern `glob` export shape
+- marks the Linux `sharp` variants as `optional: true` in `package-lock.json`
 
-`sharp@0.34.5` can leave the Linux platform binaries hard-required in a
-lockfile regenerated across libc boundaries. In this repo, that showed up
-as `EBADPLATFORM` when the lock was regenerated or replayed in WSL/glibc
-after a lock had been produced in an Alpine/musl context.
-
-### Usage
+Usage:
 
 ```bash
-python3 .github/scripts/patch-sharp-optional.py
-python3 .github/scripts/patch-sharp-optional.py path/to/package-lock.json
+node .github/scripts/postinstall-patches.cjs
 ```
 
-### Operational note
+## `postinstall-patches.smoke.cjs`
 
-Re-run the script after any `npm install --package-lock-only` or any lockfile
-regen that touches the sharp subtree. The script is idempotent.
+Runs the patch script twice and verifies that the second run is a no-op.
 
-### Tracking
+Usage:
 
-- F-027.s: initial application
-- F-027.t: revisit when sharp upstream makes the platform variants
-  optional by default
+```bash
+node .github/scripts/postinstall-patches.smoke.cjs
+```

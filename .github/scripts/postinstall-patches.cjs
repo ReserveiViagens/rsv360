@@ -1,82 +1,83 @@
 #!/usr/bin/env node
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const COVERAGE_REPORTER = path.join(
-  'node_modules',
-  '@jest',
-  'reporters',
-  'build',
-  'CoverageReporter.js'
-);
-const SHARP_TARGETS = [
-  'node_modules/@img/sharp-linux-x64',
-  'node_modules/@img/sharp-linuxmusl-x64',
-];
-
-function patchCoverageReporter() {
-  if (!fs.existsSync(COVERAGE_REPORTER)) {
-    console.warn(`[postinstall] skip missing ${COVERAGE_REPORTER}`);
-    return;
+function readText(file) {
+  try {
+    return fs.readFileSync(file, 'utf8');
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return null;
+    throw error;
   }
-
-  const oldSnippet = '_glob()\n                  .default.sync(absoluteThresholdGroup)';
-  const newSnippet = '_glob().glob.sync(absoluteThresholdGroup)';
-  const raw = fs.readFileSync(COVERAGE_REPORTER, 'utf8');
-
-  if (raw.includes(newSnippet)) {
-    console.log('[postinstall] CoverageReporter already patched');
-    return;
-  }
-
-  if (!raw.includes(oldSnippet)) {
-    console.warn('[postinstall] CoverageReporter patch target not found');
-    return;
-  }
-
-  fs.writeFileSync(COVERAGE_REPORTER, raw.replace(oldSnippet, newSnippet));
-  console.log('[postinstall] Patched CoverageReporter glob interop');
 }
 
-function patchSharpLock() {
-  const lockPath = path.join(process.cwd(), 'package-lock.json');
-  if (!fs.existsSync(lockPath)) {
-    console.warn('[postinstall] skip missing package-lock.json');
-    return;
-  }
+function writeTextIfChanged(file, before, after) {
+  if (before === after) return false;
+  fs.writeFileSync(file, after);
+  return true;
+}
 
-  const raw = fs.readFileSync(lockPath);
-  const eol = raw.includes(Buffer.from('\r\n')) ? '\r\n' : '\n';
-  const data = JSON.parse(raw.toString('utf8'));
-  const packages = data.packages || {};
+function patchCoverageReporter(rootDir) {
+  const file = path.join(
+    rootDir,
+    'node_modules',
+    '@jest',
+    'reporters',
+    'build',
+    'CoverageReporter.js',
+  );
+  const source = readText(file);
+  if (source == null) return false;
+
+  let next = source;
+  next = next.replace(/_glob\(\)\s*\.default\.sync\(/g, '_glob().glob.sync(');
+  next = next.replace(/_glob\.default\.sync\(/g, '_glob.glob.sync(');
+
+  return writeTextIfChanged(file, source, next);
+}
+
+function patchSharpOptional(rootDir) {
+  const file = path.join(rootDir, 'package-lock.json');
+  const raw = readText(file);
+  if (raw == null) return false;
+
+  const eol = raw.includes('\r\n') ? '\r\n' : '\n';
+  const lock = JSON.parse(raw);
+  const packages = lock.packages || {};
+  const targets = [
+    'node_modules/@img/sharp-linux-x64',
+    'node_modules/@img/sharp-linuxmusl-x64',
+  ];
 
   let changed = false;
-  for (const key of SHARP_TARGETS) {
-    const pkg = packages[key];
-    if (!pkg) {
-      continue;
-    }
-    if (pkg.optional === true) {
-      continue;
-    }
-    pkg.optional = true;
+  for (const target of targets) {
+    const entry = packages[target];
+    if (!entry) continue;
+    if (entry.optional === true) continue;
+    entry.optional = true;
     changed = true;
   }
 
-  if (!changed) {
-    console.log('[postinstall] sharp optional flags already present');
-    return;
-  }
+  if (!changed) return false;
 
-  let out = JSON.stringify(data, null, 2) + '\n';
-  if (eol === '\r\n') {
-    out = out.replace(/\n/g, '\r\n');
-  }
-  fs.writeFileSync(lockPath, out, 'utf8');
-  console.log('[postinstall] Re-applied sharp optional flags');
+  const next = JSON.stringify(lock, null, 2).replace(/\n/g, eol) + eol;
+  return writeTextIfChanged(file, raw, next);
 }
 
-patchCoverageReporter();
-patchSharpLock();
+function main() {
+  const rootDir = process.cwd();
+  const changes = [];
+
+  if (patchCoverageReporter(rootDir)) changes.push('CoverageReporter');
+  if (patchSharpOptional(rootDir)) changes.push('sharp-optional');
+
+  if (changes.length === 0) {
+    console.log('[postinstall-patches] no-op');
+  } else {
+    console.log(`[postinstall-patches] updated: ${changes.join(', ')}`);
+  }
+}
+
+main();
