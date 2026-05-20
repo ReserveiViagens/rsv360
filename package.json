@@ -33,6 +33,7 @@
     "smoke:portal-booking": "npm run smoke:portal-booking --workspace=backend",
     "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
     "clean:install": "npm run clean && npm install",
+    "postinstall": "node .github/scripts/postinstall-patches.cjs",
     "type-check": "npm run type-check --workspaces --if-present",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
@@ -76,7 +77,28 @@
       "fast-xml-parser": "^5.7.0"
     },
     "axios": "^1.16.0",
-    "fast-xml-builder": "1.2.0"
+    "fast-xml-builder": "1.2.0",
+    "glob": "10.5.0",
+    "minimatch": "9.0.7",
+    "picomatch": "2.3.2",
+    "@rollup/plugin-commonjs": {
+      "picomatch": "4.0.4"
+    },
+    "@rollup/pluginutils": {
+      "picomatch": "4.0.4"
+    },
+    "tinyglobby": {
+      "picomatch": "4.0.4"
+    },
+    "rollup": "4.59.0",
+    "@sentry/nextjs": {
+      "rollup": "4.59.0"
+    },
+    "socket.io-parser": "4.2.6",
+    "socket.io-client": {
+      "socket.io-parser": "4.2.6"
+    },
+    "test-exclude": "7.0.1"
   },
   "engines": {
     "node": ">=18.0.0",

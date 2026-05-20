@@ -9,6 +9,7 @@ WORKDIR /workspace
 
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/package.json
+COPY .github/scripts .github/scripts
 RUN npm ci --workspace=backend --include-workspace-root=false --no-audit --no-fund
 
 FROM node:22-alpine AS runtime

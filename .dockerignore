@@ -6,6 +6,8 @@
 
 .git
 .github
+!.github/scripts
+!.github/scripts/**
 **/.next
 **/node_modules
 **/coverage
