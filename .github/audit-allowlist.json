@@ -48,11 +48,6 @@
       "reason": "Fix available; via socket.io chain. Deferred to Phase 7-E sweep.",
       "tracking": "Phase 7-E - audit allowlist cleanup",
       "expires": "2026-05-28"
-    },
-    "fast-xml-builder": {
-      "severity": "high",
-      "reason": "F-027.b em curso — override transitivo planejado (GHSA-5wm8-gmm8-39j9 / CVE-2026-44665)",
-      "expires": "2026-06-12"
     }
   }
 }
