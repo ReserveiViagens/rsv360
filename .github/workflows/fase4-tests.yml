@@ -44,6 +44,11 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+
       - name: Install dependencies
         run: npm ci
 

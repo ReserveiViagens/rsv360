@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "RSV360 - Sistema Modular Monolith - Turismo Completo",
   "private": true,
+  "packageManager": "npm@10.9.7",
   "workspaces": [
     "apps/*",
     "packages/*",

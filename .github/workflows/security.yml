@@ -29,6 +29,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      # Keep per-language check names stable while analyzing both JS and TS.
       matrix:
         language: [ 'javascript', 'typescript' ]
 
@@ -47,6 +48,11 @@ jobs:
       with:
         node-version: '22'
         cache: 'npm'
+
+    - name: Enable Corepack
+      run: |
+        corepack enable
+        corepack prepare npm@10.9.7 --activate
 
     - name: Install dependencies
       run: npm ci

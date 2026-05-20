@@ -23,6 +23,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+
       - name: 📦 Install dependencies
         run: npm ci --workspaces
 
@@ -62,6 +67,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+
       - name: 📦 Install dependencies
         run: npm ci --workspaces
 
@@ -92,6 +102,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
 
       - name: 📦 Install dependencies
         run: npm ci --workspaces
