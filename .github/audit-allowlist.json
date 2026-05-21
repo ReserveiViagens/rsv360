@@ -1,11 +1,4 @@
 {
   "_doc": "Audit allowlist for known tech-debt vulnerabilities. Each entry MUST have severity, reason, and expires (YYYY-MM-DD). Expired entries become BLOCKING violations. See .github/scripts/audit-gate.py.",
-    "allow": {
-        "xlsx": {
-            "severity": "high",
-            "reason": "No upstream fix in public npm (SheetJS publishes patches only via Pro/CDN, not npm). Migration to exceljs tracked in issue #189.",
-            "tracking": "https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/189",
-            "expires": "2027-05-20"
-        }
-    }
+    "allow": {}
 }

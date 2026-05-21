@@ -10,7 +10,7 @@
 
 import { queryDatabase } from './db';
 import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export interface ReportOptions {
   format: 'pdf' | 'excel' | 'csv';
@@ -48,7 +48,7 @@ export async function exportBookingsReport(options: ReportOptions): Promise<Buff
     case 'pdf':
       return generateBookingsPDF(bookings, options);
     case 'excel':
-      return generateBookingsExcel(bookings, options);
+      return await generateBookingsExcel(bookings, options);
     case 'csv':
       return generateBookingsCSV(bookings);
     default:
@@ -129,7 +129,7 @@ function generateBookingsPDF(bookings: any[], options: ReportOptions): Buffer {
 /**
  * Gerar Excel de reservas
  */
-function generateBookingsExcel(bookings: any[], options: ReportOptions): Buffer {
+async function generateBookingsExcel(bookings: any[], options: ReportOptions): Promise<Buffer> {
   const data = bookings.map((booking) => ({
     'Código': booking.code || booking.id,
     'Propriedade': booking.property_name || '',
@@ -142,9 +142,13 @@ function generateBookingsExcel(bookings: any[], options: ReportOptions): Buffer 
     'Criado em': booking.created_at ? new Date(booking.created_at).toLocaleString('pt-BR') : '',
   }));
 
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Reservas');
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Reservas');
+  const columns = Object.keys(data[0] || {});
+  if (columns.length > 0) {
+    worksheet.columns = columns.map((key) => ({ header: key, key }));
+    worksheet.addRows(data);
+  }
 
   // Adicionar sheet de resumo
   const summary = [
@@ -152,10 +156,14 @@ function generateBookingsExcel(bookings: any[], options: ReportOptions): Buffer 
     { 'Métrica': 'Receita Total', 'Valor': bookings.reduce((sum, b) => sum + parseFloat(b.total_amount || 0), 0) },
     { 'Métrica': 'Ticket Médio', 'Valor': bookings.length > 0 ? bookings.reduce((sum, b) => sum + parseFloat(b.total_amount || 0), 0) / bookings.length : 0 },
   ];
-  const summarySheet = XLSX.utils.json_to_sheet(summary);
-  XLSX.utils.book_append_sheet(workbook, summarySheet, 'Resumo');
+  const summarySheet = workbook.addWorksheet('Resumo');
+  const summaryColumns = Object.keys(summary[0] || {});
+  if (summaryColumns.length > 0) {
+    summarySheet.columns = summaryColumns.map((key) => ({ header: key, key }));
+    summarySheet.addRows(summary);
+  }
 
-  return Buffer.from(XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }));
+  return Buffer.from(await workbook.xlsx.writeBuffer());
 }
 
 /**
@@ -207,7 +215,7 @@ export async function exportFinancialReport(options: ReportOptions): Promise<Buf
     case 'pdf':
       return generateFinancialPDF(data, options);
     case 'excel':
-      return generateFinancialExcel(data, options);
+      return await generateFinancialExcel(data, options);
     default:
       throw new Error('Formato não suportado para relatório financeiro');
   }
@@ -276,7 +284,7 @@ function generateFinancialPDF(data: any[], options: ReportOptions): Buffer {
   return Buffer.from(doc.output('arraybuffer'));
 }
 
-function generateFinancialExcel(data: any[], options: ReportOptions): Buffer {
+async function generateFinancialExcel(data: any[], options: ReportOptions): Promise<Buffer> {
   const excelData = data.map((row) => ({
     'Data': new Date(row.date).toLocaleDateString('pt-BR'),
     'Reservas': row.bookings || 0,
@@ -285,9 +293,13 @@ function generateFinancialExcel(data: any[], options: ReportOptions): Buffer {
     'Líquido': parseFloat(row.revenue || 0) - parseFloat(row.refunds || 0),
   }));
 
-  const worksheet = XLSX.utils.json_to_sheet(excelData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Financeiro');
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Financeiro');
+  const columns = Object.keys(excelData[0] || {});
+  if (columns.length > 0) {
+    worksheet.columns = columns.map((key) => ({ header: key, key }));
+    worksheet.addRows(excelData);
+  }
 
-  return Buffer.from(XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }));
+  return Buffer.from(await workbook.xlsx.writeBuffer());
 }
