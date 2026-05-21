@@ -102,3 +102,7 @@ drizzle-kit-cli-windows*.log
 .clinerules
 .codex/
 .audit/
+
+# Fase 3.A híbrida
+.fase3a-logs/
+*.bak.fase3a.*
