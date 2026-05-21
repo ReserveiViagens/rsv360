@@ -5,6 +5,7 @@
 
 import { queryDatabase } from './db';
 import { getRevenueByPeriod, getOccupancyRate, getBookingsByChannel, getCustomerAnalysis, getForecasts } from './analytics-service';
+import ExcelJS from 'exceljs';
 
 export interface ScheduledReport {
   id: number;
@@ -205,21 +206,18 @@ export async function generateExcelReport(
       recordCount,
     };
   } else {
-    // Excel (xlsx) usando biblioteca xlsx
-    const XLSX = await import('xlsx');
-    const workbook = XLSX.utils.book_new();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Relatório');
+    const rows = Array.isArray(data) ? data : [data];
+    const columns = Object.keys(rows[0] || {});
 
-    if (Array.isArray(data) && data.length > 0) {
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório');
-    } else {
-      // Se não for array, criar uma planilha com os dados
-      const worksheet = XLSX.utils.json_to_sheet([data]);
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório');
+    if (columns.length > 0) {
+      worksheet.columns = columns.map((key) => ({ header: key, key }));
+      worksheet.addRows(rows);
     }
 
     // Gerar buffer Excel
-    const excelBuffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    const excelBuffer = Buffer.from(await workbook.xlsx.writeBuffer());
     const filename = `report_${reportType}_${Date.now()}.xlsx`;
     const { saveFile } = await import('./storage-service');
     const saved = await saveFile(excelBuffer, filename, 'reports');
@@ -488,4 +486,3 @@ export async function getReportExecutions(
     [reportId, limit]
   ) as ReportExecution[];
 }
-

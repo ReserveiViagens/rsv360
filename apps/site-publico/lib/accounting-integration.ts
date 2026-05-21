@@ -8,7 +8,7 @@
  */
 
 import { queryDatabase } from './db';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export interface AccountingExport {
   format: 'csv' | 'xml' | 'json' | 'xlsx';
@@ -179,7 +179,7 @@ export async function exportAccountingData(options: AccountingExport): Promise<B
     // Gerar arquivo no formato solicitado
     switch (options.format) {
       case 'xlsx':
-        return generateAccountingExcel(data);
+        return await generateAccountingExcel(data);
       case 'csv':
         return generateAccountingCSV(data);
       case 'json':
@@ -195,11 +195,15 @@ export async function exportAccountingData(options: AccountingExport): Promise<B
   }
 }
 
-function generateAccountingExcel(data: any[]): Buffer {
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Contabilidade');
-  return Buffer.from(XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }));
+async function generateAccountingExcel(data: any[]): Promise<Buffer> {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Contabilidade');
+  const columns = Object.keys(data[0] || {});
+  if (columns.length > 0) {
+    worksheet.columns = columns.map((key) => ({ header: key, key }));
+    worksheet.addRows(data);
+  }
+  return Buffer.from(await workbook.xlsx.writeBuffer());
 }
 
 function generateAccountingCSV(data: any[]): string {
@@ -229,4 +233,3 @@ function generateAccountingXML(data: any[]): string {
 
   return xml;
 }
-
