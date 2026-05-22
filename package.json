@@ -34,7 +34,7 @@
     "smoke:portal-booking": "npm run smoke:portal-booking --workspace=backend",
     "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
     "clean:install": "npm run clean && npm install",
-    "postinstall": "node .github/scripts/postinstall-patches.cjs",
+    "postinstall": "node .github/scripts/postinstall-patches.cjs && node .github/scripts/install-husky.cjs",
     "type-check": "npm run type-check --workspaces --if-present",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
@@ -47,6 +47,7 @@
     "@alloc/quick-lru": "^5.2.0",
     "@types/nodemailer": "^8.0.0",
     "concurrently": "^8.2.2",
+    "husky": "9.1.7",
     "playwright": "^1.59.1",
     "rimraf": "^6.1.3"
   },

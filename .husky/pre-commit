@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+blocked_files="$(git diff --cached --name-only | grep -E '(^|/)\.env(\.|$)' || true)"
+if [ -n "$blocked_files" ]; then
+  echo "❌ .env files cannot be committed. Use .env.example with placeholders."
+  printf '%s\n' "$blocked_files"
+  exit 1
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact
+fi
