@@ -19,6 +19,11 @@ jobs:
   route-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      POSTGRES_USER: rsv360
+      POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
+      POSTGRES_DB: rsv_360_ecosystem
+      JWT_SECRET: ci_route_smoke_jwt_secret_minimum_32_chars
     steps:
       - uses: actions/checkout@v6
         with:
