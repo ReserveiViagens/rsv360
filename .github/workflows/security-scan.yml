@@ -44,6 +44,9 @@ jobs:
         corepack enable
         corepack prepare npm@10.9.7 --activate
 
+    - name: Validate lockfiles
+      run: bash .github/scripts/check-lockfiles.sh . backend
+
     - name: Install dependencies (root)
       run: npm ci
 
