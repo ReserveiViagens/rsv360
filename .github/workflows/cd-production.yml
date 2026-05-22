@@ -30,6 +30,20 @@ jobs:
         with:
           lfs: true
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+
+      - name: Validate lockfiles
+        run: bash .github/scripts/check-lockfiles.sh . backend
+
       - name: Extract version
         id: version
         run: |
