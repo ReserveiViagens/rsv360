@@ -260,6 +260,26 @@ SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle';
 - Email: management@rsv360.com
 - Phone: +55 11 77777-7777
 
+## Incident #198 Closure Plan
+
+### Order
+1. Close incident #198 with a final status comment.
+2. Run the post-rewrite sanity checks on `main`.
+3. Return repository visibility to public after the sanity checks pass.
+4. Triage the stale `BEHIND` PR backlog.
+5. Remove temporary audit artifacts from the local machine.
+
+### Stop Conditions
+- Do not move to the next step if the previous step fails.
+- Do not make the repository public until the incident is closed and the sanity checks pass.
+- Do not close the stale PR backlog before the incident closure is documented.
+- Do not remove audit artifacts until the final state is confirmed.
+
+### Safety Notes
+- Keep the pre-commit anti-secret hook enabled.
+- Keep the rewritten history validated before any visibility change.
+- Treat any regression in `main` or CI as a blocker.
+
 ---
 
 **Last Updated**: April 13, 2026
