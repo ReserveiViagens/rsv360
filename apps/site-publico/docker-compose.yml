@@ -52,6 +52,9 @@ services:
       NODE_ENV: ${NODE_ENV:-production}
       DATABASE_URL: postgresql://${POSTGRES_USER:-rsv_user}:${POSTGRES_PASSWORD:-rsv_password}@postgres:5432/${POSTGRES_DB:-rsv_db}
       REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_ENABLED: 'true'
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     ports:
