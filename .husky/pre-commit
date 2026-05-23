@@ -1,7 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-blocked_files="$(git diff --cached --name-only | grep -E '(^|/)\.env(\.|$)' || true)"
+blocked_files="$(
+  git diff --cached --name-only \
+    | grep -E '(^|/)\.env(\..+)?$' \
+    | grep -vE '(^|/)\.env\.(example|template|sample)$' \
+    || true
+)"
 if [ -n "$blocked_files" ]; then
   echo "❌ .env files cannot be committed. Use .env.example with placeholders."
   printf '%s\n' "$blocked_files"
