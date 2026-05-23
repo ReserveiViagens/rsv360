@@ -35,11 +35,20 @@ class RedisCacheService {
    */
   private async initializeRedis() {
     try {
+      const redisEnabled = process.env.REDIS_ENABLED === 'true';
+      const redisHost = process.env.REDIS_HOST?.trim();
+
+      if (!redisEnabled || !redisHost) {
+        console.info('⚠️ Redis desabilitado ou host ausente, usando cache em memória');
+        this.isRedisAvailable = false;
+        return;
+      }
+
       // Tentar importar e conectar ao Redis
       const Redis = (await import('ioredis')).default;
       
       const redisConfig = {
-        host: process.env.REDIS_HOST || 'localhost',
+        host: redisHost,
         port: parseInt(process.env.REDIS_PORT || '6379'),
         password: process.env.REDIS_PASSWORD,
         db: parseInt(process.env.REDIS_DB || '0'),
@@ -388,4 +397,3 @@ export const cacheClear = () => redisCache.clear();
 export const cacheExists = (key: string) => redisCache.exists(key);
 export const cacheGetOrSet = <T = any>(key: string, fetcher: () => Promise<T>, ttl?: number) =>
   redisCache.getOrSet<T>(key, fetcher, ttl);
-
