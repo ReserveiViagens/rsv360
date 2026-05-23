@@ -3,9 +3,10 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
 import * as schema from './schema/index';
+import { requireDatabaseUrl } from './connection';
 import 'dotenv/config';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: requireDatabaseUrl() });
 const db = drizzle(pool, { schema });
 
 async function seedDeterministicTestUser() {
