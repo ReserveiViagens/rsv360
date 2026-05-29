@@ -361,7 +361,7 @@ export default function N8NIntegration() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
-            <div className="mb-2 text-gray-400">// Exemplo de payload com dados de agendamento</div>
+            <div className="mb-2 text-gray-400">{/* Exemplo de payload com dados de agendamento */}</div>
             <pre>{`{
   "sessionId": "session_123456",
   "message": "Quero fazer uma reserva",
@@ -393,7 +393,7 @@ export default function N8NIntegration() {
           </div>
 
           <div className="bg-gray-900 text-blue-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
-            <div className="mb-2 text-gray-400">// Exemplo de resposta com confirmação de agendamento</div>
+            <div className="mb-2 text-gray-400">{/* Exemplo de resposta com confirmação de agendamento */}</div>
             <pre>{`{
   "reply": "✅ Agendamento criado com sucesso!",
   "isHuman": false,

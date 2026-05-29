@@ -194,7 +194,7 @@ export async function syncHospedinBidirectional(
 
   let created = 0;
   let updated = 0;
-  let conflicts = 0;
+  const conflicts = 0;
 
   for (const hospedinBooking of hospedinBookings) {
     // Verificar se já existe no nosso sistema

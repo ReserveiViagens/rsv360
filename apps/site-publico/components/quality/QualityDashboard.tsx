@@ -20,7 +20,8 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  Legend,
 } from 'recharts';
 import { 
   Star, 

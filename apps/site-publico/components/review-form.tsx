@@ -43,7 +43,7 @@ export function ReviewForm({ hostId, bookingId, propertyName, onSubmit, onCancel
       }
 
       // Upload de fotos (se houver)
-      let photoUrls: string[] = [];
+      const photoUrls: string[] = [];
       if (photos.length > 0) {
         // TODO: Implementar upload de fotos
         // Por enquanto, apenas enviar sem fotos

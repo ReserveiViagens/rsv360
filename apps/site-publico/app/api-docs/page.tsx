@@ -63,9 +63,9 @@ export default function APIDocsPage() {
               Como usar:
             </p>
             <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-              <li>1. Clique em "Abrir no Swagger UI" para visualização interativa</li>
-              <li>2. Use "Try it out" para testar endpoints diretamente</li>
-              <li>3. Autentique-se usando o botão "Authorize" no topo</li>
+              <li>1. Clique em &quot;Abrir no Swagger UI&quot; para visualização interativa</li>
+              <li>2. Use &quot;Try it out&quot; para testar endpoints diretamente</li>
+              <li>3. Autentique-se usando o botão &quot;Authorize&quot; no topo</li>
               <li>4. Explore todos os endpoints disponíveis</li>
             </ul>
           </div>

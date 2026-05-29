@@ -121,7 +121,7 @@ export function HotelReviewsManager({ reviews = [], onChange }: HotelReviewsMana
             <CardContent className="p-6 text-center text-gray-500">
               <MessageSquare className="w-12 h-12 mx-auto mb-2 text-gray-300" />
               <p>Nenhuma avaliação cadastrada</p>
-              <p className="text-sm">Clique em "Adicionar Avaliação" para começar</p>
+              <p className="text-sm">Clique em &quot;Adicionar Avaliação&quot; para começar</p>
             </CardContent>
           </Card>
         ) : (

@@ -110,18 +110,8 @@ export function AuctionMap({ auctions, onSelectAuction, selectedId, className = 
   const mapProvider = useMapProvider();
   const { isLoaded: mapReady, loadError } = useGoogleMaps();
 
-  // Se OpenStreetMap está configurado, usar diretamente
-  if (mapProvider === 'openstreetmap') {
-    const center =
-      auctions.length > 0
-        ? { lat: auctions[0].lat, lng: auctions[0].lng }
-        : CALDAS_NOVAS;
-    return (
-      <OpenStreetMapFallback auctions={auctions} center={center} className={className} />
-    );
-  }
-
   useEffect(() => {
+    if (mapProvider === 'openstreetmap') return;
     if (!mapReady || !mapRef.current || typeof window === 'undefined') return;
     setMapError(null);
     
@@ -153,9 +143,10 @@ export function AuctionMap({ auctions, onSelectAuction, selectedId, className = 
         ? 'Configure a API Key do Google Maps: ative faturamento e adicione este domínio nas restrições.'
         : err instanceof Error ? err.message : 'Erro ao criar mapa');
     }
-  }, [mapReady]);
+  }, [mapReady, mapProvider]);
 
   useEffect(() => {
+    if (mapProvider === 'openstreetmap') return;
     const map = mapInstanceRef.current as { setCenter: (c: object) => void; setZoom: (z: number) => void; fitBounds: (b: unknown, p?: number) => void } | null;
     const iw = infoWindowRef.current as { setContent: (c: string) => void; open: (m: unknown, marker: unknown) => void } | null;
     if (!map || !iw || typeof window === 'undefined' || !(window as { google?: { maps: unknown } }).google || !mapReady) return;
@@ -209,7 +200,17 @@ export function AuctionMap({ auctions, onSelectAuction, selectedId, className = 
         map.fitBounds(bounds, 40);
       }
     }
-  }, [mapReady, auctions, onSelectAuction]);
+  }, [mapReady, auctions, onSelectAuction, mapProvider]);
+
+  if (mapProvider === 'openstreetmap') {
+    const center =
+      auctions.length > 0
+        ? { lat: auctions[0].lat, lng: auctions[0].lng }
+        : CALDAS_NOVAS;
+    return (
+      <OpenStreetMapFallback auctions={auctions} center={center} className={className} />
+    );
+  }
 
   // Sem API Key do Google: usar OpenStreetMap (gratuito)
   if (!apiKey) {

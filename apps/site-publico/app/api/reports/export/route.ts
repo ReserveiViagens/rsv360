@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
 
     let file: Buffer | string;
     let filename: string;
-    let contentType: string;
 
     if (type === 'bookings') {
       file = await exportBookingsReport(options);
@@ -38,11 +37,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    contentType = format === 'excel' || format === 'csv'
-      ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      : format === 'csv'
-      ? 'text/csv'
-      : 'application/pdf';
+    const contentType =
+      format === 'excel'
+        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        : format === 'csv'
+          ? 'text/csv'
+          : 'application/pdf';
 
     return new NextResponse(file instanceof Buffer ? file : Buffer.from(file), {
       headers: {

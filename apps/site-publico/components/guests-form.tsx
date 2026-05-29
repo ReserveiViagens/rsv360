@@ -193,7 +193,7 @@ export function GuestsForm({ guests, onChange, totalGuests, responsibleName }: G
             </p>
             {canAddMore && (
               <p className="text-sm mt-2">
-                Clique em "Adicionar Hóspede" para incluir outros hóspedes.
+                Clique em &quot;Adicionar Hóspede&quot; para incluir outros hóspedes.
               </p>
             )}
           </div>

@@ -279,7 +279,7 @@ export async function listUserWishlists(
   const cacheKey = `rsv:wishlist:user:${userId || email || 'all'}`;
   
   return cacheGetOrSet(cacheKey, async () => {
-    let query = `
+    const query = `
       SELECT DISTINCT w.*
       FROM shared_wishlists w
       LEFT JOIN wishlist_members m ON w.id = m.wishlist_id
