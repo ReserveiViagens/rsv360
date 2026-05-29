@@ -38,6 +38,9 @@ Thumbs.db
 *.log.*
 logs/
 **/logs/
+# Versioned sprint evidence (override **/logs/ above)
+!docs/evidence/**/logs/
+!docs/evidence/**/logs/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
