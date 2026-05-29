@@ -23,6 +23,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - rsv360_pgdata:/var/lib/postgresql/data
+      - ./database/g4-auth-smoke-tables.sql:/docker-entrypoint-initdb.d/99-g4-auth-smoke-tables.sql:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U rsv360 -d rsv_360_ecosystem']
       interval: 10s
@@ -116,6 +117,8 @@ services:
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-site-publico
     restart: unless-stopped
     depends_on:
+      postgres:
+        condition: service_healthy
       backend:
         condition: service_healthy
     ports:
@@ -123,6 +126,12 @@ services:
     environment:
       <<: *app-env
       PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: '5432'
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
 
   turismo:
     build:

@@ -17,5 +17,6 @@ describe('SecurityConfig', () => {
       .map((layer: any) => layer.route.path);
 
     expect(routePaths).toContain('/health');
+    expect(routePaths).toContain('/health/security');
   });
 });
