@@ -90,7 +90,7 @@ export function PwaRegister() {
               <span>
                 <strong>Nova versão disponível!</strong>
                 <br />
-                Clique em "Atualizar" para carregar a versão mais recente.
+                Clique em &quot;Atualizar&quot; para carregar a versão mais recente.
               </span>
               <Button
                 size="sm"

@@ -301,7 +301,7 @@ export function TripInvitationManager({ bookingId, wishlistId }: { bookingId?: n
                     <Badge variant="outline">{invitation.invitation_type}</Badge>
                   </div>
                   {invitation.message && (
-                    <p className="text-sm italic">"{invitation.message}"</p>
+                    <p className="text-sm italic">&quot;{invitation.message}&quot;</p>
                   )}
                 </div>
               </CardContent>

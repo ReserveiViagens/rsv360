@@ -153,7 +153,7 @@ export async function applyPricingRules(
 
   for (const rule of rules) {
     let applied = false;
-    let priceChange = 0;
+    const priceChange = 0;
     let multiplier = 1.0;
     let discount = 0;
 

@@ -347,7 +347,7 @@ export async function calculatePricing(
     basePrice = rulesResult.finalPrice;
 
     // Calcular subtotal (preço base * noites)
-    let subtotal = basePrice * nights;
+    const subtotal = basePrice * nights;
 
     // Aplicar descontos
     let totalDiscountPercentage = 0;

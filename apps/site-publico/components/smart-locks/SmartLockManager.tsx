@@ -270,7 +270,7 @@ export function SmartLockManager({
               <Lock className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>Nenhum código de acesso encontrado</p>
               {bookingId && propertyId && checkIn && checkOut && (
-                <p className="text-sm mt-2">Clique em "Gerar Novo Código" para criar um</p>
+                <p className="text-sm mt-2">Clique em &quot;Gerar Novo Código&quot; para criar um</p>
               )}
             </div>
           )}

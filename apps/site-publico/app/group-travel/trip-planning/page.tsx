@@ -208,7 +208,7 @@ function TripPlanningContent() {
                 <div className="text-center py-8 text-muted-foreground">
                   <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>Nenhum participante adicionado ainda</p>
-                  <p className="text-sm">Use o botão "Convidar Participantes" para adicionar</p>
+                  <p className="text-sm">Use o botão &quot;Convidar Participantes&quot; para adicionar</p>
                 </div>
               ) : (
                 <div className="space-y-2">

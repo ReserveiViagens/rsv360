@@ -272,7 +272,7 @@ export default function RatingDisplay({ hostId, propertyId }: RatingDisplayProps
                 <div key={index} className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                   <MessageSquare className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-green-900 dark:text-green-100 flex-1">
-                    "{comment}"
+                    &quot;{comment}&quot;
                   </p>
                 </div>
               ))}
@@ -297,7 +297,7 @@ export default function RatingDisplay({ hostId, propertyId }: RatingDisplayProps
                 <div key={index} className="flex items-start gap-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                   <MessageSquare className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-red-900 dark:text-red-100 flex-1">
-                    "{comment}"
+                    &quot;{comment}&quot;
                   </p>
                 </div>
               ))}

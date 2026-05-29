@@ -60,7 +60,7 @@ export class AutoInsuranceSelector {
     }
 
     // Filtrar cotações baseado nos critérios
-    let filteredQuotes = this.filterQuotes(allQuotes, criteria);
+    const filteredQuotes = this.filterQuotes(allQuotes, criteria);
 
     if (filteredQuotes.length === 0) {
       return {

@@ -264,7 +264,7 @@ export async function getGroupTripStats(
     ) || 0;
 
     // Contar mensagens (se chatId disponível)
-    let chatMessages = 0;
+    const chatMessages = 0;
     // TODO: Implementar quando chatId estiver disponível
 
     // Contar split payments

@@ -1306,7 +1306,7 @@ export default function SiteManagement() {
               
               {(formData.slug === "hoteis" || formData.slug === "ingressos" || formData.slug === "atracoes" || formData.slug === "promocoes") && (
                 <p className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200">
-                  💡 <strong>Dica:</strong> Clique em "Importar Mídias dos Cards" para importar automaticamente todas as imagens e vídeos das galerias dos cards desta página (Hotéis, Ingressos, Atrações ou Promoções).
+                  💡 <strong>Dica:</strong> Clique em &quot;Importar Mídias dos Cards&quot; para importar automaticamente todas as imagens e vídeos das galerias dos cards desta página (Hotéis, Ingressos, Atrações ou Promoções).
                 </p>
               )}
               
