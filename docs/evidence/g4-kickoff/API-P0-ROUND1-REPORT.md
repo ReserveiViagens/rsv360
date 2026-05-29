@@ -40,5 +40,5 @@ Ver cabeçalhos em cada `logs/A*.log`.
 
 ## Próximo passo
 
-- PR `chore/g4-env-site-publico-database` (compose) + fix A2/A3, depois rodada 2.
-- Healthcheck Docker permanece PR paralela (não bloqueia esta análise).
+- Concluído em **rodada 2** — ver `API-P0-ROUND2-REPORT.md` e PR `chore/g4-api-p0-round2`.
+- Healthcheck Docker: PR [#242](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/pull/242) (paralela).
