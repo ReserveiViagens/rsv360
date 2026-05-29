@@ -1,5 +1,5 @@
 [ID] A4
-[TS] 2026-05-29T19:09:14-03:00
+[TS] 2026-05-29T19:46:06-03:00
 [METHOD] POST
 [URL] http://127.0.0.1:3000/api/auth/refresh
 [PAYLOAD] {}

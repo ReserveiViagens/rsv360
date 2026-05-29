@@ -28,6 +28,22 @@ class SecurityConfig {
         website: 'https://www.reserveiviagens.com.br'
       });
     });
+
+    app.get('/health/security', (req, res) => {
+      res.json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        service: 'RSV360 Backend API',
+        security: {
+          headers: 'active',
+          cors: 'configured',
+          shield: 'SecurityShield360 Phase 2',
+        },
+        author: 'Douglas P. Figueiredo',
+        copyright: '© 2024-2026 Reservei Viagens LTDA',
+        website: 'https://www.reserveiviagens.com.br',
+      });
+    });
   }
 
   static getCorsOptions() {
