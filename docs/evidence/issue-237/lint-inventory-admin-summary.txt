@@ -1,0 +1,5 @@
+
+# by_rule
+3	@typescript-eslint/no-empty-object-type
+
+# total_errors	3
