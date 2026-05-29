@@ -156,7 +156,7 @@ export async function listUserGroupChats(
   userId?: number,
   email?: string
 ): Promise<GroupChat[]> {
-  let query = `
+  const query = `
     SELECT DISTINCT gc.*
     FROM group_chats gc
     LEFT JOIN group_chat_members gcm ON gc.id = gcm.group_chat_id

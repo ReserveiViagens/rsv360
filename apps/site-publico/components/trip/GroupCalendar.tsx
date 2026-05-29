@@ -407,7 +407,7 @@ export function GroupCalendar({
               <p>Nenhum evento no calendário</p>
               {canEdit && (
                 <p className="text-sm mt-1">
-                  Clique em "Novo Evento" para adicionar
+                  Clique em &quot;Novo Evento&quot; para adicionar
                 </p>
               )}
             </div>

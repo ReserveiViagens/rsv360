@@ -1,0 +1,9 @@
+
+# by_rule
+40	react/no-unescaped-entities
+2	react-hooks/rules-of-hooks
+2	react/jsx-no-comment-textnodes
+1	prefer-const
+1	react/jsx-no-undef
+
+# total_errors	46

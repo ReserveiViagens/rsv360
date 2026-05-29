@@ -221,7 +221,7 @@ export function PhotoUploader({
         <div className="border-2 border-dashed rounded-lg p-8 text-center">
           <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
           <p className="text-sm text-muted-foreground">
-            Nenhuma foto selecionada. Clique em "Selecionar Fotos" para começar.
+            Nenhuma foto selecionada. Clique em &quot;Selecionar Fotos&quot; para começar.
           </p>
         </div>
       )}
