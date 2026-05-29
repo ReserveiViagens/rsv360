@@ -5,7 +5,7 @@
 
 import { queryDatabase } from './db';
 import { getRevenueByPeriod, getOccupancyRate, getBookingsByChannel, getCustomerAnalysis, getForecasts } from './analytics-service';
-import ExcelJS from 'exceljs';
+import { createExcelWorkbookBuffer } from './excel-workbook';
 
 export interface ScheduledReport {
   id: number;
@@ -206,18 +206,10 @@ export async function generateExcelReport(
       recordCount,
     };
   } else {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Relatório');
-    const rows = Array.isArray(data) ? data : [data];
-    const columns = Object.keys(rows[0] || {});
-
-    if (columns.length > 0) {
-      worksheet.columns = columns.map((key) => ({ header: key, key }));
-      worksheet.addRows(rows);
-    }
-
-    // Gerar buffer Excel
-    const excelBuffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    // Excel (xlsx) usando exceljs
+    const excelBuffer = await createExcelWorkbookBuffer([
+      { name: 'Relatório', data: Array.isArray(data) ? data : [data] },
+    ]);
     const filename = `report_${reportType}_${Date.now()}.xlsx`;
     const { saveFile } = await import('./storage-service');
     const saved = await saveFile(excelBuffer, filename, 'reports');
