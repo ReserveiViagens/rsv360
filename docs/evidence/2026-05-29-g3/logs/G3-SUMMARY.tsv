@@ -1,0 +1,16 @@
+step	status	detail	artifact
+freeze_g2_summary	PASS	G2 SUMMARY copiado	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/g2-summary-frozen.tsv
+s1_npm_audit	PASS	crit=0 high=0 mod=0	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S1/npm-audit.json
+s2_backend_npm_audit	PASS	crit=0 high=0 mod=6	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/backend-npm-audit.json
+s2_site_publico_npm_audit	PASS	crit=0 high=0 mod=8	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/site-publico-npm-audit.json
+s2_admin_npm_audit	PASS	crit=0 high=0 mod=2	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/admin-npm-audit.json
+s2_guest_npm_audit	PASS	crit=0 high=0 mod=2	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/guest-npm-audit.json
+s2_turismo_npm_audit	PASS	crit=0 high=0 mod=2	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/turismo-npm-audit.json
+s1_gitleaks	PASS	sem leaks reportados	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S1/gitleaks.json
+s2_gitleaks	WARN	gitleaks encontrou issues ou erro	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/S2/gitleaks.json
+smoke_s2_site_3000	PASS	HTTP 200	http://127.0.0.1:3000
+smoke_s2_backend_health	PASS	HTTP 200	http://127.0.0.1:3002/health
+smoke_s1_api_status	WARN	HTTP 000000 (servico pode estar parado)	http://127.0.0.1:5000/api/status
+smoke_s1_root_5000	WARN	HTTP 000000 (servico pode estar parado)	http://127.0.0.1:5000
+docker_ps	PASS	snapshot salvo	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/docker-ps.txt
+rollback_doc	PASS	template gerado	/mnt/c/Users/RSV 360/Documents/Sistema Reservei Viagens com todos os Servidores/docs/evidence/2026-05-29-g3/logs/ROLLBACK-READINESS.md

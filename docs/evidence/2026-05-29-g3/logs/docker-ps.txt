@@ -1,0 +1,19 @@
+NAMES                 STATUS                   PORTS
+rsv360-guest          Up 4 hours (unhealthy)   0.0.0.0:3006->3006/tcp, [::]:3006->3006/tcp
+rsv360-admin          Up 4 hours (unhealthy)   0.0.0.0:3004->3004/tcp, [::]:3004->3004/tcp
+rsv360-turismo        Up 4 hours (unhealthy)   0.0.0.0:3005->3005/tcp, [::]:3005->3005/tcp
+rsv360-site-publico   Up 4 hours (unhealthy)   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+rsv360-backend        Up 4 hours (healthy)     0.0.0.0:3002->3002/tcp, [::]:3002->3002/tcp
+rsv360-redis          Up 4 hours               0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+rsv360-postgres       Up 4 hours (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+inspiring_almeida     Up 4 hours (healthy)     3002/tcp
+gracious_kapitsa      Up 4 hours               6379/tcp
+ecstatic_hodgkin      Up 4 hours               9090/tcp
+eloquent_hodgkin      Up 4 hours               3000/tcp
+intelligent_faraday   Up 4 hours               9093/tcp
+friendly_newton       Up 4 hours               3000/tcp
+pedantic_darwin       Up 4 hours               9090/tcp
+determined_tesla      Up 4 hours               9093/tcp
+heuristic_bassi       Up 4 hours               6379/tcp
+charming_brown        Up 4 hours               80/tcp
+heuristic_bartik      Up 4 hours (healthy)     3002/tcp

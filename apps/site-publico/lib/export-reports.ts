@@ -10,7 +10,7 @@
 
 import { queryDatabase } from './db';
 import jsPDF from 'jspdf';
-import ExcelJS from 'exceljs';
+import { createExcelWorkbookBuffer } from './excel-workbook';
 
 export interface ReportOptions {
   format: 'pdf' | 'excel' | 'csv';
@@ -48,7 +48,7 @@ export async function exportBookingsReport(options: ReportOptions): Promise<Buff
     case 'pdf':
       return generateBookingsPDF(bookings, options);
     case 'excel':
-      return await generateBookingsExcel(bookings, options);
+      return generateBookingsExcel(bookings, options);
     case 'csv':
       return generateBookingsCSV(bookings);
     default:
@@ -142,28 +142,16 @@ async function generateBookingsExcel(bookings: any[], options: ReportOptions): P
     'Criado em': booking.created_at ? new Date(booking.created_at).toLocaleString('pt-BR') : '',
   }));
 
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Reservas');
-  const columns = Object.keys(data[0] || {});
-  if (columns.length > 0) {
-    worksheet.columns = columns.map((key) => ({ header: key, key }));
-    worksheet.addRows(data);
-  }
-
   // Adicionar sheet de resumo
   const summary = [
     { 'Métrica': 'Total de Reservas', 'Valor': bookings.length },
     { 'Métrica': 'Receita Total', 'Valor': bookings.reduce((sum, b) => sum + parseFloat(b.total_amount || 0), 0) },
     { 'Métrica': 'Ticket Médio', 'Valor': bookings.length > 0 ? bookings.reduce((sum, b) => sum + parseFloat(b.total_amount || 0), 0) / bookings.length : 0 },
   ];
-  const summarySheet = workbook.addWorksheet('Resumo');
-  const summaryColumns = Object.keys(summary[0] || {});
-  if (summaryColumns.length > 0) {
-    summarySheet.columns = summaryColumns.map((key) => ({ header: key, key }));
-    summarySheet.addRows(summary);
-  }
-
-  return Buffer.from(await workbook.xlsx.writeBuffer());
+  return createExcelWorkbookBuffer([
+    { name: 'Reservas', data },
+    { name: 'Resumo', data: summary },
+  ]);
 }
 
 /**
@@ -215,7 +203,7 @@ export async function exportFinancialReport(options: ReportOptions): Promise<Buf
     case 'pdf':
       return generateFinancialPDF(data, options);
     case 'excel':
-      return await generateFinancialExcel(data, options);
+      return generateFinancialExcel(data, options);
     default:
       throw new Error('Formato não suportado para relatório financeiro');
   }
@@ -293,13 +281,5 @@ async function generateFinancialExcel(data: any[], options: ReportOptions): Prom
     'Líquido': parseFloat(row.revenue || 0) - parseFloat(row.refunds || 0),
   }));
 
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Financeiro');
-  const columns = Object.keys(excelData[0] || {});
-  if (columns.length > 0) {
-    worksheet.columns = columns.map((key) => ({ header: key, key }));
-    worksheet.addRows(excelData);
-  }
-
-  return Buffer.from(await workbook.xlsx.writeBuffer());
+  return createExcelWorkbookBuffer([{ name: 'Financeiro', data: excelData }]);
 }
