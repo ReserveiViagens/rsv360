@@ -12,7 +12,7 @@ x-app-env: &app-env
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: rsv360-postgres
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-postgres
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -31,7 +31,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: rsv360-redis
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-redis
     restart: unless-stopped
     command: ['redis-server', '--appendonly', 'yes']
     ports:
@@ -43,7 +43,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: rsv360-backend
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-backend
     restart: unless-stopped
     depends_on:
       postgres:
@@ -75,7 +75,7 @@ services:
         APP_DIR: apps/admin
         APP_PORT: 3004
         <<: *app-env
-    container_name: rsv360-admin
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-admin
     restart: unless-stopped
     depends_on:
       backend:
@@ -94,7 +94,7 @@ services:
         APP_DIR: apps/guest
         APP_PORT: 3006
         <<: *app-env
-    container_name: rsv360-guest
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-guest
     restart: unless-stopped
     depends_on:
       backend:
@@ -113,7 +113,7 @@ services:
         APP_DIR: apps/site-publico
         APP_PORT: 3000
         <<: *app-env
-    container_name: rsv360-site-publico
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-site-publico
     restart: unless-stopped
     depends_on:
       backend:
@@ -132,7 +132,7 @@ services:
         APP_DIR: apps/turismo
         APP_PORT: 3005
         <<: *app-env
-    container_name: rsv360-turismo
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-turismo
     restart: unless-stopped
     depends_on:
       backend:
@@ -145,7 +145,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.54.1
-    container_name: rsv360-prometheus
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-prometheus
     restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -163,7 +163,7 @@ services:
 
   alertmanager:
     image: prom/alertmanager:v0.27.0
-    container_name: rsv360-alertmanager
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-alertmanager
     restart: unless-stopped
     command:
       - --config.file=/etc/alertmanager/alertmanager.yml
@@ -176,7 +176,7 @@ services:
 
   grafana:
     image: grafana/grafana-oss:11.1.5
-    container_name: rsv360-grafana
+    container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-grafana
     restart: unless-stopped
     ports:
       - '3007:3000'
