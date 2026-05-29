@@ -50,6 +50,9 @@ apps/turismo/logs/dev.log filter=lfs diff=lfs merge=lfs -text
 # G4 kickoff smoke logs — small text evidence, not LFS
 docs/evidence/g4-kickoff/logs/*.log -filter -diff
 
+# G4 auth smoke DDL — small SQL, must stay plain text for initdb
+database/g4-auth-smoke-tables.sql -filter -diff
+
 # Line endings
 *.sh text eol=lf
 *.ps1 text eol=crlf

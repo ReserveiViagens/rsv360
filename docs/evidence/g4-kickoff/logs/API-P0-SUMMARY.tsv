@@ -1,10 +1,10 @@
 id	method	url	http_code	verdict	note
 A1	GET	http://127.0.0.1:3002/health	200	OK	
-A2	GET	http://127.0.0.1:3002/health/security	404	GAP	
-A3	POST	http://127.0.0.1:3000/api/auth/login	500	FAIL	
+A2	GET	http://127.0.0.1:3002/health/security	200	OK	
+A3	POST	http://127.0.0.1:3000/api/auth/login	401	OK	
 A4	POST	http://127.0.0.1:3000/api/auth/refresh	400	OK	
 A5g	GET	http://127.0.0.1:3000/api/bookings	400	OK	
 A5p	POST	http://127.0.0.1:3000/api/bookings	400	OK	
-A6	GET	http://127.0.0.1:3000/api/admin/website/pages	500	GAP	
+A6	GET	http://127.0.0.1:3000/api/admin/website/pages	200	OK	
 A7g	GET	http://127.0.0.1:3002/api/v1/payments/payments?enterpriseId=ent_1	200	OK	
 A7p	POST	http://127.0.0.1:3002/api/v1/payments/payments	200	OK	
