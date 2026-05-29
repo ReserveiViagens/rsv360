@@ -65,8 +65,8 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${APP_PORT} || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget --no-verbose --tries=1 -O /dev/null http://127.0.0.1:${APP_PORT}/ || exit 1
 
 USER rsv360
 EXPOSE ${APP_PORT}
