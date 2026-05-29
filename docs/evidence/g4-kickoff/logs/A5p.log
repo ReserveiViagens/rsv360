@@ -1,0 +1,10 @@
+[ID] A5p
+[TS] 2026-05-29T19:09:14-03:00
+[METHOD] POST
+[URL] http://127.0.0.1:3000/api/bookings
+[PAYLOAD] {}
+[AUTH] <none>
+---
+[HTTP] 400
+--- body (max 2k) ---
+{"success":false,"error":"Campo obrigatório faltando: booking_type"}
