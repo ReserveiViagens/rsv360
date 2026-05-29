@@ -48,7 +48,7 @@ export function HotelWhyChooseManager({ reasons = [], onChange }: HotelWhyChoose
       <div>
         <Label className="text-base font-semibold">Por que escolher este hotel?</Label>
         <p className="text-sm text-gray-500 mt-1">
-          Adicione motivos que aparecem na seção "Por que escolher este hotel?" do modal
+          Adicione motivos que aparecem na seção &quot;Por que escolher este hotel?&quot; do modal
         </p>
       </div>
 

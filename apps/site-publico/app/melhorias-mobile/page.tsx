@@ -647,7 +647,7 @@ export default function MelhoriasMobilePage() {
                     />
                     <p className="text-lg font-bold text-blue-600">Reservei Viagens</p>
                   </div>
-                  <p className="italic text-blue-600 font-medium">"Parques, Hotéis & Atrações"</p>
+                  <p className="italic text-blue-600 font-medium">&quot;Parques, Hotéis &amp; Atrações&quot;</p>
                   <div className="space-y-3 text-sm">
                     <div>
                       <p className="font-semibold text-gray-800">Sede Caldas Novas:</p>

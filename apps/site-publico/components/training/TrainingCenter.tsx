@@ -207,7 +207,7 @@ const TrainingCenter: React.FC = () => {
                       <CheckCircle className="w-4 h-4 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">João Silva concluiu "Sistema RSV - Básico"</p>
+                      <p className="text-sm font-medium">João Silva concluiu &quot;Sistema RSV - Básico&quot;</p>
                       <p className="text-xs text-gray-500">2 horas atrás</p>
                     </div>
                   </div>
@@ -216,7 +216,7 @@ const TrainingCenter: React.FC = () => {
                       <Play className="w-4 h-4 text-green-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Maria Santos iniciou "Gestão de Clientes"</p>
+                      <p className="text-sm font-medium">Maria Santos iniciou &quot;Gestão de Clientes&quot;</p>
                       <p className="text-xs text-gray-500">1 hora atrás</p>
                     </div>
                   </div>
@@ -225,7 +225,7 @@ const TrainingCenter: React.FC = () => {
                       <Award className="w-4 h-4 text-purple-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Pedro Costa ganhou badge "Primeiro Curso"</p>
+                      <p className="text-sm font-medium">Pedro Costa ganhou badge &quot;Primeiro Curso&quot;</p>
                       <p className="text-xs text-gray-500">3 horas atrás</p>
                     </div>
                   </div>
