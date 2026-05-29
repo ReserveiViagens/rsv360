@@ -43,6 +43,8 @@ logs/
 !docs/evidence/**/logs/**
 !docs/evidence/issue-237/
 !docs/evidence/issue-237/**
+!docs/evidence/g4-kickoff/
+!docs/evidence/g4-kickoff/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

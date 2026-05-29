@@ -1,0 +1,10 @@
+[ID] A3
+[TS] 2026-05-29T19:09:14-03:00
+[METHOD] POST
+[URL] http://127.0.0.1:3000/api/auth/login
+[PAYLOAD] {"email":"g4-smoke@reserveiviagens.com.br","password":"invalid-password"}
+[AUTH] <none>
+---
+[HTTP] 500
+--- body (max 2k) ---
+{"success":false,"error":"Erro ao realizar login"}
