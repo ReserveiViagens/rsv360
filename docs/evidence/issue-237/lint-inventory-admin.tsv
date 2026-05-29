@@ -1,0 +1,4 @@
+file	line	col	rule
+./components/ui/input.tsx	5	18	@typescript-eslint/no-empty-object-type
+./components/ui/select.tsx	5	18	@typescript-eslint/no-empty-object-type
+./components/ui/textarea.tsx	5	18	@typescript-eslint/no-empty-object-type
