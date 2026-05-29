@@ -1,0 +1,236 @@
+=== Rollback drill 2026-05-29T12:36:00-03:00 ===
+backup_bytes=75496
+DROP DATABASE
+CREATE DATABASE
+pg_restore: error: could not execute query: ERROR:  relation "public.portal_booking_audit" does not exist
+Command was: ALTER TABLE ONLY public.portal_booking_audit DROP CONSTRAINT portal_booking_audit_booking_id_bookings_id_fk;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_portal_tokens" does not exist
+Command was: ALTER TABLE ONLY public.guest_portal_tokens DROP CONSTRAINT guest_portal_tokens_booking_id_bookings_id_fk;
+pg_restore: error: could not execute query: ERROR:  relation "public.bookings" does not exist
+Command was: ALTER TABLE ONLY public.bookings DROP CONSTRAINT bookings_user_id_users_id_fk;
+pg_restore: error: could not execute query: ERROR:  index "portal_booking_audit_created_at_idx" does not exist
+Command was: DROP INDEX public.portal_booking_audit_created_at_idx;
+pg_restore: error: could not execute query: ERROR:  index "portal_booking_audit_booking_idx" does not exist
+Command was: DROP INDEX public.portal_booking_audit_booking_idx;
+pg_restore: error: could not execute query: ERROR:  index "idx_guest_portal_tokens_token_unique" does not exist
+Command was: DROP INDEX public.idx_guest_portal_tokens_token_unique;
+pg_restore: error: could not execute query: ERROR:  index "idx_guest_portal_tokens_booking_id" does not exist
+Command was: DROP INDEX public.idx_guest_portal_tokens_booking_id;
+pg_restore: error: could not execute query: ERROR:  index "idx_guest_portal_tokens_active_expires" does not exist
+Command was: DROP INDEX public.idx_guest_portal_tokens_active_expires;
+pg_restore: error: could not execute query: ERROR:  index "guest_portal_audit_event_created_at_idx" does not exist
+Command was: DROP INDEX public.guest_portal_audit_event_created_at_idx;
+pg_restore: error: could not execute query: ERROR:  index "guest_portal_audit_created_at_idx" does not exist
+Command was: DROP INDEX public.guest_portal_audit_created_at_idx;
+pg_restore: error: could not execute query: ERROR:  index "guest_portal_audit_booking_ref_idx" does not exist
+Command was: DROP INDEX public.guest_portal_audit_booking_ref_idx;
+pg_restore: error: could not execute query: ERROR:  relation "public.users" does not exist
+Command was: ALTER TABLE ONLY public.users DROP CONSTRAINT users_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.users" does not exist
+Command was: ALTER TABLE ONLY public.users DROP CONSTRAINT users_email_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.travel_packages" does not exist
+Command was: ALTER TABLE ONLY public.travel_packages DROP CONSTRAINT travel_packages_slug_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.travel_packages" does not exist
+Command was: ALTER TABLE ONLY public.travel_packages DROP CONSTRAINT travel_packages_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.search_history" does not exist
+Command was: ALTER TABLE ONLY public.search_history DROP CONSTRAINT search_history_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.recommendations" does not exist
+Command was: ALTER TABLE ONLY public.recommendations DROP CONSTRAINT recommendations_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.properties" does not exist
+Command was: ALTER TABLE ONLY public.properties DROP CONSTRAINT properties_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.promotions" does not exist
+Command was: ALTER TABLE ONLY public.promotions DROP CONSTRAINT promotions_slug_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.promotions" does not exist
+Command was: ALTER TABLE ONLY public.promotions DROP CONSTRAINT promotions_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.portal_booking_audit" does not exist
+Command was: ALTER TABLE ONLY public.portal_booking_audit DROP CONSTRAINT portal_booking_audit_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.popular_searches" does not exist
+Command was: ALTER TABLE ONLY public.popular_searches DROP CONSTRAINT popular_searches_term_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.popular_searches" does not exist
+Command was: ALTER TABLE ONLY public.popular_searches DROP CONSTRAINT popular_searches_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.parks" does not exist
+Command was: ALTER TABLE ONLY public.parks DROP CONSTRAINT parks_slug_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.parks" does not exist
+Command was: ALTER TABLE ONLY public.parks DROP CONSTRAINT parks_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.marketing_campaigns" does not exist
+Command was: ALTER TABLE ONLY public.marketing_campaigns DROP CONSTRAINT marketing_campaigns_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_transactions" does not exist
+Command was: ALTER TABLE ONLY public.loyalty_transactions DROP CONSTRAINT loyalty_transactions_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_programs" does not exist
+Command was: ALTER TABLE ONLY public.loyalty_programs DROP CONSTRAINT loyalty_programs_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_members" does not exist
+Command was: ALTER TABLE ONLY public.loyalty_members DROP CONSTRAINT loyalty_members_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_members" does not exist
+Command was: ALTER TABLE ONLY public.loyalty_members DROP CONSTRAINT loyalty_members_member_number_key;
+pg_restore: error: could not execute query: ERROR:  relation "public.leads" does not exist
+Command was: ALTER TABLE ONLY public.leads DROP CONSTRAINT leads_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_segments" does not exist
+Command was: ALTER TABLE ONLY public.guest_segments DROP CONSTRAINT guest_segments_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_profiles" does not exist
+Command was: ALTER TABLE ONLY public.guest_profiles DROP CONSTRAINT guest_profiles_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_portal_tokens" does not exist
+Command was: ALTER TABLE ONLY public.guest_portal_tokens DROP CONSTRAINT guest_portal_tokens_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_portal_audit" does not exist
+Command was: ALTER TABLE ONLY public.guest_portal_audit DROP CONSTRAINT guest_portal_audit_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.enterprises" does not exist
+Command was: ALTER TABLE ONLY public.enterprises DROP CONSTRAINT enterprises_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.branding" does not exist
+Command was: ALTER TABLE ONLY public.branding DROP CONSTRAINT branding_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.bookings" does not exist
+Command was: ALTER TABLE ONLY public.bookings DROP CONSTRAINT bookings_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.bookings" does not exist
+Command was: ALTER TABLE ONLY public.bookings DROP CONSTRAINT bookings_booking_code_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.attractions" does not exist
+Command was: ALTER TABLE ONLY public.attractions DROP CONSTRAINT attractions_slug_unique;
+pg_restore: error: could not execute query: ERROR:  relation "public.attractions" does not exist
+Command was: ALTER TABLE ONLY public.attractions DROP CONSTRAINT attractions_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.accommodations" does not exist
+Command was: ALTER TABLE ONLY public.accommodations DROP CONSTRAINT accommodations_pkey;
+pg_restore: error: could not execute query: ERROR:  relation "public.users" does not exist
+Command was: ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.travel_packages" does not exist
+Command was: ALTER TABLE public.travel_packages ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.search_history" does not exist
+Command was: ALTER TABLE public.search_history ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.recommendations" does not exist
+Command was: ALTER TABLE public.recommendations ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.properties" does not exist
+Command was: ALTER TABLE public.properties ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.promotions" does not exist
+Command was: ALTER TABLE public.promotions ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.portal_booking_audit" does not exist
+Command was: ALTER TABLE public.portal_booking_audit ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.popular_searches" does not exist
+Command was: ALTER TABLE public.popular_searches ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.parks" does not exist
+Command was: ALTER TABLE public.parks ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.marketing_campaigns" does not exist
+Command was: ALTER TABLE public.marketing_campaigns ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_transactions" does not exist
+Command was: ALTER TABLE public.loyalty_transactions ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_programs" does not exist
+Command was: ALTER TABLE public.loyalty_programs ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.loyalty_members" does not exist
+Command was: ALTER TABLE public.loyalty_members ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.leads" does not exist
+Command was: ALTER TABLE public.leads ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_segments" does not exist
+Command was: ALTER TABLE public.guest_segments ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_profiles" does not exist
+Command was: ALTER TABLE public.guest_profiles ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_portal_tokens" does not exist
+Command was: ALTER TABLE public.guest_portal_tokens ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.guest_portal_audit" does not exist
+Command was: ALTER TABLE public.guest_portal_audit ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.enterprises" does not exist
+Command was: ALTER TABLE public.enterprises ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.branding" does not exist
+Command was: ALTER TABLE public.branding ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.bookings" does not exist
+Command was: ALTER TABLE public.bookings ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.attractions" does not exist
+Command was: ALTER TABLE public.attractions ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  relation "public.accommodations" does not exist
+Command was: ALTER TABLE public.accommodations ALTER COLUMN id DROP DEFAULT;
+pg_restore: error: could not execute query: ERROR:  sequence "users_id_seq" does not exist
+Command was: DROP SEQUENCE public.users_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "users" does not exist
+Command was: DROP TABLE public.users;
+pg_restore: error: could not execute query: ERROR:  sequence "travel_packages_id_seq" does not exist
+Command was: DROP SEQUENCE public.travel_packages_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "travel_packages" does not exist
+Command was: DROP TABLE public.travel_packages;
+pg_restore: error: could not execute query: ERROR:  sequence "search_history_id_seq" does not exist
+Command was: DROP SEQUENCE public.search_history_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "search_history" does not exist
+Command was: DROP TABLE public.search_history;
+pg_restore: error: could not execute query: ERROR:  sequence "recommendations_id_seq" does not exist
+Command was: DROP SEQUENCE public.recommendations_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "recommendations" does not exist
+Command was: DROP TABLE public.recommendations;
+pg_restore: error: could not execute query: ERROR:  sequence "properties_id_seq" does not exist
+Command was: DROP SEQUENCE public.properties_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "properties" does not exist
+Command was: DROP TABLE public.properties;
+pg_restore: error: could not execute query: ERROR:  sequence "promotions_id_seq" does not exist
+Command was: DROP SEQUENCE public.promotions_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "promotions" does not exist
+Command was: DROP TABLE public.promotions;
+pg_restore: error: could not execute query: ERROR:  sequence "portal_booking_audit_id_seq" does not exist
+Command was: DROP SEQUENCE public.portal_booking_audit_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "portal_booking_audit" does not exist
+Command was: DROP TABLE public.portal_booking_audit;
+pg_restore: error: could not execute query: ERROR:  sequence "popular_searches_id_seq" does not exist
+Command was: DROP SEQUENCE public.popular_searches_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "popular_searches" does not exist
+Command was: DROP TABLE public.popular_searches;
+pg_restore: error: could not execute query: ERROR:  sequence "parks_id_seq" does not exist
+Command was: DROP SEQUENCE public.parks_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "parks" does not exist
+Command was: DROP TABLE public.parks;
+pg_restore: error: could not execute query: ERROR:  sequence "marketing_campaigns_id_seq" does not exist
+Command was: DROP SEQUENCE public.marketing_campaigns_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "marketing_campaigns" does not exist
+Command was: DROP TABLE public.marketing_campaigns;
+pg_restore: error: could not execute query: ERROR:  sequence "loyalty_transactions_id_seq" does not exist
+Command was: DROP SEQUENCE public.loyalty_transactions_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "loyalty_transactions" does not exist
+Command was: DROP TABLE public.loyalty_transactions;
+pg_restore: error: could not execute query: ERROR:  sequence "loyalty_programs_id_seq" does not exist
+Command was: DROP SEQUENCE public.loyalty_programs_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "loyalty_programs" does not exist
+Command was: DROP TABLE public.loyalty_programs;
+pg_restore: error: could not execute query: ERROR:  sequence "loyalty_members_id_seq" does not exist
+Command was: DROP SEQUENCE public.loyalty_members_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "loyalty_members" does not exist
+Command was: DROP TABLE public.loyalty_members;
+pg_restore: error: could not execute query: ERROR:  sequence "leads_id_seq" does not exist
+Command was: DROP SEQUENCE public.leads_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "leads" does not exist
+Command was: DROP TABLE public.leads;
+pg_restore: error: could not execute query: ERROR:  sequence "guest_segments_id_seq" does not exist
+Command was: DROP SEQUENCE public.guest_segments_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "guest_segments" does not exist
+Command was: DROP TABLE public.guest_segments;
+pg_restore: error: could not execute query: ERROR:  sequence "guest_profiles_id_seq" does not exist
+Command was: DROP SEQUENCE public.guest_profiles_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "guest_profiles" does not exist
+Command was: DROP TABLE public.guest_profiles;
+pg_restore: error: could not execute query: ERROR:  sequence "guest_portal_tokens_id_seq" does not exist
+Command was: DROP SEQUENCE public.guest_portal_tokens_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "guest_portal_tokens" does not exist
+Command was: DROP TABLE public.guest_portal_tokens;
+pg_restore: error: could not execute query: ERROR:  sequence "guest_portal_audit_id_seq" does not exist
+Command was: DROP SEQUENCE public.guest_portal_audit_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "guest_portal_audit" does not exist
+Command was: DROP TABLE public.guest_portal_audit;
+pg_restore: error: could not execute query: ERROR:  sequence "enterprises_id_seq" does not exist
+Command was: DROP SEQUENCE public.enterprises_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "enterprises" does not exist
+Command was: DROP TABLE public.enterprises;
+pg_restore: error: could not execute query: ERROR:  sequence "branding_id_seq" does not exist
+Command was: DROP SEQUENCE public.branding_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "branding" does not exist
+Command was: DROP TABLE public.branding;
+pg_restore: error: could not execute query: ERROR:  sequence "bookings_id_seq" does not exist
+Command was: DROP SEQUENCE public.bookings_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "bookings" does not exist
+Command was: DROP TABLE public.bookings;
+pg_restore: error: could not execute query: ERROR:  sequence "attractions_id_seq" does not exist
+Command was: DROP SEQUENCE public.attractions_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "attractions" does not exist
+Command was: DROP TABLE public.attractions;
+pg_restore: error: could not execute query: ERROR:  sequence "accommodations_id_seq" does not exist
+Command was: DROP SEQUENCE public.accommodations_id_seq;
+pg_restore: error: could not execute query: ERROR:  table "accommodations" does not exist
+Command was: DROP TABLE public.accommodations;
+pg_restore: error: could not execute query: ERROR:  type "public.guest_portal_auth_event" does not exist
+Command was: DROP TYPE public.guest_portal_auth_event;
+pg_restore: warning: errors ignored on restore: 112
+ restore_ok 
+------------
+          1
+(1 row)
+
+DROP DATABASE
+RESULT=PASS
