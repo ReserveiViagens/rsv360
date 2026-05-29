@@ -47,6 +47,9 @@ backend/drizzle/**/*.bak !filter !diff !merge text
 apps/site-publico/logs/dev.log filter=lfs diff=lfs merge=lfs -text
 apps/turismo/logs/dev.log filter=lfs diff=lfs merge=lfs -text
 
+# G4 kickoff smoke logs — small text evidence, not LFS
+docs/evidence/g4-kickoff/logs/*.log -filter -diff
+
 # Line endings
 *.sh text eol=lf
 *.ps1 text eol=crlf

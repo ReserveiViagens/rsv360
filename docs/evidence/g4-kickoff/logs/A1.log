@@ -1,0 +1,10 @@
+[ID] A1
+[TS] 2026-05-29T19:09:14-03:00
+[METHOD] GET
+[URL] http://127.0.0.1:3002/health
+[PAYLOAD] <none>
+[AUTH] <none>
+---
+[HTTP] 200
+--- body (max 2k) ---
+{"status":"OK","timestamp":"2026-05-29T22:09:14.772Z","service":"RSV360 Backend API","message":"RSV360 Backend API Server","security":"SecurityShield360 Phase 2 Active","author":"Douglas P. Figueiredo","copyright":"© 2024-2026 Reservei Viagens LTDA","website":"https://www.reserveiviagens.com.br"}

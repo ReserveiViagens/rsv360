@@ -1,0 +1,10 @@
+[ID] A4
+[TS] 2026-05-29T19:09:14-03:00
+[METHOD] POST
+[URL] http://127.0.0.1:3000/api/auth/refresh
+[PAYLOAD] {}
+[AUTH] <none>
+---
+[HTTP] 400
+--- body (max 2k) ---
+{"success":false,"error":"refresh_token é obrigatório"}
