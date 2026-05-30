@@ -5,8 +5,8 @@
 
 | Campo | Valor |
 |-------|--------|
-| start_at | 2026-05-30T00:00:00-03:00 |
-| end_at | 2026-06-02T00:00:00-03:00 |
+| start_at (kickoff) | 2026-05-30T09:03:09-03:00 |
+| end_at (kickoff + 72h) | 2026-06-02T09:03:09-03:00 |
 | Branch | `ops/soak-72h-g4-final` |
 | Baseline | **OK** (sample-000) |
 | Amostras coletadas | 1 / 13 (baseline + 12 periódicas) |
@@ -26,6 +26,6 @@
 
 ## Próximas ações
 
-1. Amostra **001** ~2026-05-30 15:02 -03 (Task Scheduler ou manual).
-2. Ao fim da janela: `run-soak-final.ps1` + API P0 + `SOAK-72H-REPORT.md`.
-3. PR e promoção G4 completo se verde.
+1. Amostras **001–012** a cada 6h (Task `RSV360-Soak-72h-Sample` ou manual).
+2. Fechamento **após** `2026-06-02T09:03:09-03:00` — ver `SOAK-72H-CLOSE-CHECKLIST.md`.
+3. `run-soak-final.ps1` + API P0 8/8 → PR #249 → G4 completo se verde.

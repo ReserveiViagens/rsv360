@@ -418,7 +418,7 @@ npm run build --workspaces --if-present
 | Bloco | Status |
 |-------|--------|
 | **Trilha 0** | **GO** |
-| Soak 72h | **EM EXECUÇÃO** (2026-05-30 → 2026-06-02, branch `ops/soak-72h-g4-final`) |
+| Soak 72h | **EM EXECUÇÃO** (`09:03 30/05` → `09:03 02/06` -03, branch `ops/soak-72h-g4-final`) |
 | **G4 completo** | **NOGO** até soak encerrar verde |
 
 ---
@@ -431,7 +431,7 @@ npm run build --workspaces --if-present
 
 | Campo | Valor |
 |-------|--------|
-| start_at | 2026-05-30T00:00:00-03:00 |
-| end_at | 2026-06-02T00:00:00-03:00 |
+| start_at (kickoff) | 2026-05-30T09:03:09-03:00 |
+| end_at (kickoff + 72h) | 2026-06-02T09:03:09-03:00 |
 | Coleta | 6 h (Task `RSV360-Soak-72h-Sample`) |
 | G4 completo | **NOGO** até relatório final + API P0 |
