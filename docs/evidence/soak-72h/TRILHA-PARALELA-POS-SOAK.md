@@ -25,15 +25,30 @@ Aproveitar a janela de soak **sem invalidar** a evidência G4, preparando a fase
 | B3 | API contract matrix `g4-kickoff/API-CONTRACT-MATRIX.md` | Gap A2 histórico vs atual |
 | B4 | Lint/type-check local **sem** subir containers | `npm run lint` se não tocar rede |
 
-## Trilha C — Backlog pós-soak (issues / PR drafts)
+## Trilha C — Backlog pós-soak (issues GitHub)
 
-| # | Item | Prioridade pós-GO |
-|---|------|-------------------|
-| C1 | Unificar rede `docker compose -p rsv360` (eliminar `network connect` manual) | P1 |
-| C2 | Resolver Postgres duplo em :5432 (Sprint 0 §9) | P1 |
-| C3 | Frontends `guest`/`admin`/`turismo` unhealthy — investigar | P2 |
-| C4 | Soak contínuo 7d em staging (opcional) | P3 |
-| C5 | Promover G4 completo → PLANO-MESTRE fase seguinte | Gate |
+**Índice:** [`issues/ISSUES-POS-SOAK-INDEX.md`](./issues/ISSUES-POS-SOAK-INDEX.md)  
+**Label:** `post-soak-draft` — **não executar** até G4 completo GO + fim soak.
+
+| ID | Item | Prioridade | Issue |
+|----|------|------------|-------|
+| C1 | Unificar rede `docker compose -p rsv360` | P1 | [#250](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/250) |
+| C2 | Postgres duplo :5432 | P1 | [#251](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/251) |
+| C3 | Healthcheck guest/admin/turismo | P2 | [#252](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/252) |
+| C4 | Warnings lint (baseline → redução) | P2 | [#253](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/253) |
+| C5 | Observabilidade (5xx, alertas, runbook) | P2 | [#254](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/254) |
+| C6 | Hardening auth (401, demo token) | P1 | [#255](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/255) |
+| GATE | G4 completo → PLANO-MESTRE | P0 | [#256](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/256) |
+
+### Mapeamento tema → issue
+
+| Tema | Issues |
+|------|--------|
+| healthcheck / Docker | #250, #252 |
+| warnings lint | #253 |
+| observabilidade | #254 |
+| hardening auth | #255 |
+| infra / gate | #251, #256 |
 
 ## Trilha D — PRs seguros (merge permitido)
 
