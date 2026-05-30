@@ -45,6 +45,8 @@ logs/
 !docs/evidence/issue-237/**
 !docs/evidence/g4-kickoff/
 !docs/evidence/g4-kickoff/**
+!docs/evidence/g1-dual-system/
+!docs/evidence/g1-dual-system/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
