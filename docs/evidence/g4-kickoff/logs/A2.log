@@ -1,10 +1,7 @@
 [ID] A2
-[TS] 2026-05-29T19:46:06-03:00
+[TS] 2026-05-30T09:47:26.2937516-03:00
 [METHOD] GET
 [URL] http://127.0.0.1:3002/health/security
-[PAYLOAD] <none>
-[AUTH] <none>
 ---
-[HTTP] 200
---- body (max 2k) ---
-{"status":"OK","timestamp":"2026-05-29T22:46:06.940Z","service":"RSV360 Backend API","security":{"headers":"active","cors":"configured","shield":"SecurityShield360 Phase 2"},"author":"Douglas P. Figueiredo","copyright":"Â© 2024-2026 Reservei Viagens LTDA","website":"https://www.reserveiviagens.com.br"}
+--- body ---
+{"status":"OK","timestamp":"2026-05-30T12:47:24.866Z","service":"RSV360 Backend API","security":{"headers":"active","cors":"configured","shield":"SecurityShield360 Phase 2"},"author":"Douglas P. Figueiredo","copyright":"© 2024-2026 Reservei Viagens LTDA","website":"https://www.reserveiviagens.com.br"}
