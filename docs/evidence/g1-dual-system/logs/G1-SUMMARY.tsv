@@ -2,10 +2,10 @@
 G1-S2-01	S2	backend /health	200	OK	
 G1-S2-02	S2	backend /health/security	200	OK	
 G1-S2-03	S2	site-publico /	200	OK	
-G1-S1-01	S1	CRM root	0	SKIP	
-G1-S1-02	S1	CRM /health	0	SKIP	
-G1-S1-03	S1	CRM /api/status	0	SKIP	
+G1-S1-01	S1	CRM root	200	OK	
+G1-S1-02	S1	CRM /health	200	OK	
+G1-S1-03	S1	CRM /api/status	200	OK	
 G1-INFRA-01	infra	postgres healthy	healthy	OK	
 G1-INFRA-02	infra	site-publico health	healthy	OK	
-G1-INFRA-03	infra	docker network align	GAP	GAP	sp=[rsv360_default] pg=[rsv360-phase1_default]
-G1-INFRA-04	infra	redis up	Up 23 hours	OK	backend REDIS_DISABLED=true
+G1-INFRA-03	infra	docker network align	OK	OK	sp=[rsv360-phase1_default rsv360_default] pg=[rsv360-phase1_default]
+G1-INFRA-04	infra	redis up	Up 24 hours	OK	backend REDIS_DISABLED=true

@@ -4,6 +4,6 @@ T0-02	http://127.0.0.1:3000/	200	OK
 T0-h-postgres	health postgres	healthy	OK
 T0-h-backend	health backend	healthy	OK
 T0-h-site-publico	health site-publico	healthy	OK
-T0-net	network align	common=[]	GAP
-T2-prometheus	prometheus up		FAIL
-T2-grafana	grafana up		FAIL
+T0-net	network align	common=[rsv360-phase1_default]	OK
+T2-prometheus	prometheus up	Up 20 seconds	OK
+T2-grafana	grafana up	Up 19 seconds	OK

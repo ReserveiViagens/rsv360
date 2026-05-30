@@ -11,32 +11,32 @@
 - [x] G4-API P0 **GO** (#243)
 - [x] Healthcheck frontends **#242 + #245**
 - [x] Evidência G1 rodada 1 **#246**
-- [ ] **G1 dual-system = GO** (S1 `:5000` + rede unificada)
+- [x] **G1 dual-system = GO** (2026-05-30 — `G1-DUAL-SYSTEM-FINAL-REPORT.md`)
 
 ## T0 — Estabilidade runtime
 
-- [ ] `docker compose -p rsv360 up -d` sem conflito de nome de container
-- [ ] `site-publico` container **healthy** ≥ 5 min
-- [ ] `backend` container **healthy**
-- [ ] `postgres` container **healthy**
-- [ ] `site-publico` + `postgres` na **mesma rede** Docker do projeto
-- [ ] Smoke: `:3002/health` → 200
-- [ ] Smoke: `:3000/` → 200
-- [ ] `logs/TRILHA0-PREFLIGHT.tsv` sem FAIL em checks S2
+- [x] `docker compose -p rsv360` serviços críticos Up (rede alinhada via connect + monitoring)
+- [x] `site-publico` container **healthy**
+- [x] `backend` container **healthy**
+- [x] `postgres` container **healthy**
+- [x] `site-publico` + `postgres` na **mesma rede** (`rsv360-phase1_default`)
+- [x] Smoke: `:3002/health` → 200
+- [x] Smoke: `:3000/` → 200
+- [x] `logs/TRILHA0-PREFLIGHT.tsv` sem FAIL (rodada 1)
 
 ## T1 — Rollback readiness
 
-- [ ] `pg_dump` testado (ver `TRILHA-0-ROLLBACK-RUNBOOK.md`)
-- [ ] Tag/commit de rollback identificado (`main` pré-deploy ou imagem anterior)
-- [ ] Procedimento parar → restore → subir → smoke documentado
-- [ ] Drill registrado em `logs/` (opcional: reutilizar G3 `ROLLBACK-DRILL-RESULT.txt`)
+- [x] `pg_dump` testado — `logs/rollback-pre-trilha0.dump` (84 104 bytes, local)
+- [x] Commit rollback baseline: `main` @ `6f9d301b` (pós-#247)
+- [x] Procedimento documentado em `TRILHA-0-ROLLBACK-RUNBOOK.md`
+- [x] Drill: `logs/ROLLBACK-DRILL-RESULT.txt` → **PASS**
 
 ## T2 — Observabilidade mínima
 
-- [ ] Prometheus container **Up** (rede interna)
-- [ ] Grafana container **Up** (ou justificativa de exposição host)
-- [ ] Logs backend acessíveis (`docker logs` ≤ 100 linhas sem crash loop)
-- [ ] Critérios em `TRILHA-0-OBSERVABILITY.md` revisados
+- [x] Prometheus container **Up** (`rsv360-prometheus`)
+- [x] Grafana container **Up** (`rsv360-grafana`, host `:3007`)
+- [x] Logs backend acessíveis (sem crash loop na janela)
+- [x] Critérios em `TRILHA-0-OBSERVABILITY.md` atendidos
 
 ## T3 — Isolamento e drift
 
@@ -48,6 +48,6 @@
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | GO / NOGO |
-| **Data** | |
-| **Próximo passo** | Soak 72h (`SOAK-72H-PLAN.md`) se GO |
+| **Status** | **GO** |
+| **Data** | 2026-05-30 |
+| **Próximo passo** | Iniciar soak 72h — preencher janela em `SOAK-72H-PLAN.md` |

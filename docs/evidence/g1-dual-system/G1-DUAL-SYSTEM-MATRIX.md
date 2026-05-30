@@ -29,16 +29,23 @@
 | G1-INFRA-03 | Infra | `site-publico` + `postgres` mesma rede Docker | Sim |
 | G1-INFRA-04 | Infra | Redis `Up` (estado documentado) | Sim |
 
-## Veredito — rodada 1 (2026-05-30)
+## Veredito — rodada 2 (2026-05-30, pós-#247)
 
 | Bloco | Resultado |
 |-------|-----------|
 | S2 smoke | **3/3 OK** |
-| S1 smoke | **3/3 SKIP** (CRM não escutando em `:5000`) |
-| Infra | **3 OK**, **1 GAP** (rede Docker) |
+| S1 smoke | **3/3 OK** (CRM `npm run dev` em `:5000`) |
+| Infra | **4/4 OK** (rede: `docker network connect` + compose monitoring) |
 | **G1 S2 canônico** | **GO** |
-| **G1 dual-system (S1+S2)** | **NOGO** |
-| **Recomendação** | **GO condicional** até S1 + rede unificada |
+| **G1 dual-system (S1+S2)** | **GO** |
+
+## Veredito — rodada 1 (histórico)
+
+| Bloco | Resultado |
+|-------|-----------|
+| S1 smoke | **3/3 SKIP** |
+| Infra rede | **GAP** |
+| **G1 dual-system** | **NOGO** → resolvido na rodada 2 |
 
 ### Runbook S1 (quando SKIP)
 
