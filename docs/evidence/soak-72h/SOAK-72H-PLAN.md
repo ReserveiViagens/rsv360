@@ -6,12 +6,14 @@
 
 ## Janela (America/Sao_Paulo)
 
+> **Auditoria:** janela **operacional** = kickoff + 72h (não meia-noite do calendário).
+
 | Campo | Valor |
 |-------|--------|
-| **start_at** | `2026-05-30T00:00:00-03:00` |
-| **end_at** | `2026-06-02T00:00:00-03:00` |
-| **Duração** | 72 horas |
-| **Baseline operacional (kickoff)** | `2026-05-30T09:02:28-03:00` |
+| **start_at (kickoff)** | `2026-05-30T09:03:09-03:00` |
+| **end_at (kickoff + 72h)** | `2026-06-02T09:03:09-03:00` |
+| **Duração** | 72 horas exatas |
+| **Referência calendário** | 30/05 → 02/06/2026 (rótulo apenas) |
 | **Responsável** | Ops RSV360 / Sprint 0 |
 | **Compose project** | `rsv360` |
 
@@ -27,23 +29,23 @@
 | **Índice** | `logs/SOAK-SAMPLES.tsv` |
 | **Relatório final** | `SOAK-72H-REPORT.md` (ao encerrar) |
 
-### Slots esperados (a partir do kickoff 09:02 -03)
+### Slots esperados (kickoff `09:03:09`, intervalo 6h)
 
-| # | Horário aproximado (-03) |
-|---|--------------------------|
-| 000 | 2026-05-30 09:02 (baseline) |
-| 001 | 2026-05-30 15:02 |
-| 002 | 2026-05-30 21:02 |
-| 003 | 2026-05-31 03:02 |
-| 004 | 2026-05-31 09:02 |
-| 005 | 2026-05-31 15:02 |
-| 006 | 2026-05-31 21:02 |
-| 007 | 2026-06-01 03:02 |
-| 008 | 2026-06-01 09:02 |
-| 009 | 2026-06-01 15:02 |
-| 010 | 2026-06-01 21:02 |
-| 011 | 2026-06-02 03:02 |
-| 012 | 2026-06-02 09:02 (última amostra antes do fechamento) |
+| # | Horário alvo (-03) |
+|---|---------------------|
+| 000 | 2026-05-30 09:03 (baseline) |
+| 001 | 2026-05-30 15:03 |
+| 002 | 2026-05-30 21:03 |
+| 003 | 2026-05-31 03:03 |
+| 004 | 2026-05-31 09:03 |
+| 005 | 2026-05-31 15:03 |
+| 006 | 2026-05-31 21:03 |
+| 007 | 2026-06-01 03:03 |
+| 008 | 2026-06-01 09:03 |
+| 009 | 2026-06-01 15:03 |
+| 010 | 2026-06-01 21:03 |
+| 011 | 2026-06-02 03:03 |
+| 012 | 2026-06-02 09:03 (última periódica; fechamento após este horário) |
 
 ## Critérios de aprovação (soak)
 
@@ -73,10 +75,12 @@ Registrado em `logs/SOAK-BASELINE.tsv` e `logs/sample-000-baseline.log`.
 
 ## Encerramento
 
-1. Após `end_at`, executar `run-soak-final.ps1`.
-2. Preencher `SOAK-72H-REPORT.md` com veredito **GO** ou **NOGO**.
-3. Se **GO**: atualizar `docs/SPRINT-0-EVIDENCIA-OPERACIONAL.md` §14 → **G4 completo = GO**.
-4. Abrir PR com evidência; merge em `main`.
+Ver **`SOAK-72H-CLOSE-CHECKLIST.md`** (após `2026-06-02T09:03:09-03:00`).
+
+1. Validar **≥ 13** amostras em `SOAK-SAMPLES.tsv` (000 + 001–012).
+2. Executar `run-soak-final.ps1` → `SOAK-72H-REPORT.md`.
+3. API P0 final **8/8** (`run-api-p0-round1.sh`).
+4. Atualizar PR #249; se verde → **G4 completo = GO** + merge `main`.
 
 ## Referências
 
