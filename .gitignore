@@ -47,6 +47,8 @@ logs/
 !docs/evidence/g4-kickoff/**
 !docs/evidence/g1-dual-system/
 !docs/evidence/g1-dual-system/**
+!docs/evidence/trilha-0/
+!docs/evidence/trilha-0/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
