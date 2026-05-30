@@ -9,9 +9,13 @@
 | end_at (kickoff + 72h) | 2026-06-02T09:03:09-03:00 |
 | Branch | `ops/soak-72h-g4-final` |
 | Baseline | **OK** (sample-000) |
-| Amostras coletadas | 1 / 13 (baseline + 12 periódicas) |
+| Amostras coletadas | 2 / 13 (000 baseline, 001 manual/exec) |
+| Task coleta 6h | `RSV360-Soak-72h-Sample` (próx. ~15:03) |
+| Task fechamento | `RSV360-Soak-72h-Close` → **02/06 09:05** |
+| API P0 (pré-fechamento) | **8/8 OK** (30/05 09:47 — revalidar no fechamento) |
 | Veredito soak | _pendente_ |
 | G4 completo | **NOGO** (até encerramento verde) |
+| Modo Soak Safe | **ATIVO** — ver `CHECKLIST-SOAK-SAFE.md` |
 
 ## Baseline (000)
 
