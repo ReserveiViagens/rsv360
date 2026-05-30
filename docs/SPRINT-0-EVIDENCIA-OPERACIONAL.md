@@ -389,7 +389,22 @@ npm run build --workspaces --if-present
 
 ### 11.5 Pendências para próximo gate
 
-1. G1 dual-system com evidência atualizada no baseline.
+1. ~~G1 dual-system com evidência~~ → rodada 1 em `docs/evidence/g1-dual-system/` (**GO condicional**; ver §12).
 2. Trilha 0 (branch dedicada, critérios de estabilidade e rollback).
 3. Soak operacional de 72h com monitoramento.
 4. Somente após esses itens: promover **G4 completo = GO**.
+
+---
+
+## 12. Snapshot G1 dual-system (rodada 1 — 30/05/2026)
+
+**Evidência:** `docs/evidence/g1-dual-system/G1-DUAL-SYSTEM-REPORT.md`
+
+| Bloco | Status |
+|-------|--------|
+| G1 S2 (`:3002`, `:3000`, PG/Redis healthy) | **GO** |
+| G1 S1 (`:5000` CRM) | **SKIP** (offline) |
+| G1 rede Docker unificada | **GAP** |
+| **G1 dual-system completo** | **NOGO** |
+
+**Próximo:** subir S1 (`npm run dev` em `Crm-RSV-360`) + `docker compose -p rsv360 up -d --build` + re-smoke G1.
