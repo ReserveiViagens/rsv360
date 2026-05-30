@@ -50,6 +50,8 @@ logs/
 !docs/evidence/trilha-0/
 !docs/evidence/trilha-0/**
 docs/evidence/trilha-0/logs/*.dump
+!docs/evidence/soak-72h/
+!docs/evidence/soak-72h/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
