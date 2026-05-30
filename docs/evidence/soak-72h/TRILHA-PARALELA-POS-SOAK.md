@@ -12,9 +12,10 @@ Aproveitar a janela de soak **sem invalidar** a evidência G4, preparando a fase
 | # | Entrega | Branch sugerida | Impacto runtime |
 |---|---------|-----------------|-----------------|
 | A1 | Atualizar `SPRINT-0-EVIDENCIA-OPERACIONAL.md` (somente texto) | `docs/sprint0-*` | Nenhum |
-| A2 | Matriz de riscos pós-G4 (TITAN, PG duplo :5432, rede compose) | `docs/risk-*` | Nenhum |
-| A3 | Runbook rollout/rollback pós-promoção G4 (não executar) | `docs/ops-*` | Nenhum |
-| A4 | Consolidar `CHECKLIST-SOAK-SAFE.md` + observações em `logs/SOAK-SAFE-OBSERVATIONS.log` | `ops/soak-72h-g4-final` | Nenhum |
+| A2 | Matriz de riscos pós-G4 | [RISK-MATRIX-POS-SOAK.md](./RISK-MATRIX-POS-SOAK.md) | Nenhum |
+| A3 | Runbook rollback pós-G4 | [ROLLBACK-RUNBOOK-POST-G4.md](./ROLLBACK-RUNBOOK-POST-G4.md) | Nenhum |
+| A4 | Soak Safe + observações | `CHECKLIST-SOAK-SAFE.md`, `logs/SOAK-SAFE-OBSERVATIONS.log` | Nenhum |
+| A5 | Playbook execução pós-GO | [POST-SOAK-EXECUTION-PLAYBOOK.md](./POST-SOAK-EXECUTION-PLAYBOOK.md) | Nenhum |
 
 ## Trilha B — Revisão de código (leitura)
 
@@ -23,7 +24,7 @@ Aproveitar a janela de soak **sem invalidar** a evidência G4, preparando a fase
 | B1 | Healthcheck `/healthcheck.sh` (#245) | [TRILHA-B-252-healthcheck-evidence.md](./issues/TRILHA-B-252-healthcheck-evidence.md) | [#252](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/252) **ready** |
 | B2 | Auth demo / middleware | [TRILHA-B-255-auth-evidence.md](./issues/TRILHA-B-255-auth-evidence.md) | [#255](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/255) **ready** |
 | B3 | API contract matrix | Atualizar pós-#255 (A6 → 401) | #255 |
-| B4 | Lint/type-check local **sem** subir containers | Pendente | [#253](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/253) |
+| B4 | Lint/type-check local **sem** subir containers | [TRILHA-B-253-lint-inventory.md](./issues/TRILHA-B-253-lint-inventory.md) | [#253](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/253) |
 
 ## Trilha C — Backlog pós-soak (issues GitHub)
 

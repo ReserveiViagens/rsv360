@@ -4,6 +4,8 @@
 **Plano:** [SOAK-72H-PLAN.md](./SOAK-72H-PLAN.md)  
 **Soak Safe (Cursor + Codex):** [CHECKLIST-SOAK-SAFE.md](./CHECKLIST-SOAK-SAFE.md) · [TRILHA-PARALELA-POS-SOAK.md](./TRILHA-PARALELA-POS-SOAK.md)
 
+**Pós-GO (docs):** [POST-SOAK-EXECUTION-PLAYBOOK.md](./POST-SOAK-EXECUTION-PLAYBOOK.md) · [PR-DRAFT-INDEX.md](./issues/PR-DRAFT-INDEX.md)
+
 ## Início rápido
 
 ```powershell
