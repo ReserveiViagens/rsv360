@@ -1,14 +1,18 @@
-# Trilha 0 — Preflight rodada 0 (2026-05-30)
+# Trilha 0 — Preflight rodada 1 (2026-05-30)
 
-Captura automática antes de G1 GO completo e subida prometheus/grafana.
+Pós **G1 dual-system = GO** e subida prometheus/grafana.
 
 | ID | Verdicto | Nota |
 |----|----------|------|
 | T0-01 | OK | `:3002/health` |
 | T0-02 | OK | `:3000/` |
 | T0-h-* | OK | postgres, backend, site-publico **healthy** |
-| T0-net | **GAP** | redes divergentes (igual G1) |
-| T2-prometheus | **FAIL** | container não Up |
-| T2-grafana | **FAIL** | container não Up |
+| T0-net | **OK** | `rsv360-phase1_default` compartilhada |
+| T2-prometheus | **OK** | Up |
+| T2-grafana | **OK** | Up |
 
-**Trilha 0:** **NOGO** até `docker compose -p rsv360 up -d` unificado + observabilidade opcional conforme checklist.
+**Preflight:** **GO** (8/8 checks OK)
+
+## Rodada 0 (histórico)
+
+GAP rede + monitoring offline — corrigido antes desta rodada.
