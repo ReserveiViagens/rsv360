@@ -18,12 +18,12 @@ Aproveitar a janela de soak **sem invalidar** a evidência G4, preparando a fase
 
 ## Trilha B — Revisão de código (leitura)
 
-| # | Foco | Ação |
-|---|------|------|
-| B1 | Healthcheck `/healthcheck.sh` (#245) | Revisar Dockerfile sem rebuild |
-| B2 | Auth demo / middleware site-publico | Notas de débito técnico |
-| B3 | API contract matrix `g4-kickoff/API-CONTRACT-MATRIX.md` | Gap A2 histórico vs atual |
-| B4 | Lint/type-check local **sem** subir containers | `npm run lint` se não tocar rede |
+| # | Foco | Evidência | Issue |
+|---|------|-----------|-------|
+| B1 | Healthcheck `/healthcheck.sh` (#245) | [TRILHA-B-252-healthcheck-evidence.md](./issues/TRILHA-B-252-healthcheck-evidence.md) | [#252](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/252) **ready** |
+| B2 | Auth demo / middleware | [TRILHA-B-255-auth-evidence.md](./issues/TRILHA-B-255-auth-evidence.md) | [#255](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/255) **ready** |
+| B3 | API contract matrix | Atualizar pós-#255 (A6 → 401) | #255 |
+| B4 | Lint/type-check local **sem** subir containers | Pendente | [#253](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/253) |
 
 ## Trilha C — Backlog pós-soak (issues GitHub)
 
