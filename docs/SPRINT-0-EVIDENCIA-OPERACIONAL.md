@@ -405,6 +405,18 @@ npm run build --workspaces --if-present
 | G1 S2 (`:3002`, `:3000`, PG/Redis healthy) | **GO** |
 | G1 S1 (`:5000` CRM) | **SKIP** (offline) |
 | G1 rede Docker unificada | **GAP** |
-| **G1 dual-system completo** | **NOGO** |
+| **G1 dual-system completo** | **GO** (2026-05-30, `G1-DUAL-SYSTEM-FINAL-REPORT.md`) |
 
-**Próximo:** subir S1 (`npm run dev` em `Crm-RSV-360`) + `docker compose -p rsv360 up -d --build` + re-smoke G1.
+---
+
+## 13. Snapshot Trilha 0 (30/05/2026)
+
+**Evidência:** `docs/evidence/trilha-0/TRILHA-0-CHECKLIST.md`  
+**Preflight:** `logs/TRILHA0-PREFLIGHT.tsv` — **8/8 OK**  
+**Rollback drill:** `logs/ROLLBACK-DRILL-RESULT.txt` → **PASS**
+
+| Bloco | Status |
+|-------|--------|
+| **Trilha 0** | **GO** |
+| Soak 72h | **pendente** (ver `SOAK-72H-PLAN.md`) |
+| **G4 completo** | **NOGO** até soak |

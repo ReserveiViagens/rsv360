@@ -1,0 +1,7 @@
+RESULT=PASS
+DATE=2026-05-30T11:58-03:00
+DUMP=docs/evidence/trilha-0/logs/rollback-pre-trilha0.dump
+SIZE_BYTES=84104
+DB=rsv360
+USER=rsv360
+COMMAND=docker exec rsv360-postgres pg_dump -U rsv360 -d rsv360 --no-owner -Fc

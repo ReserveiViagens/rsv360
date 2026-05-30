@@ -49,6 +49,7 @@ logs/
 !docs/evidence/g1-dual-system/**
 !docs/evidence/trilha-0/
 !docs/evidence/trilha-0/**
+docs/evidence/trilha-0/logs/*.dump
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
