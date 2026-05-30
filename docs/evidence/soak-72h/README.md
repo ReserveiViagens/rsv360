@@ -1,7 +1,8 @@
 # Soak 72h — evidência G4 completo
 
 **Branch:** `ops/soak-72h-g4-final`  
-**Plano:** [SOAK-72H-PLAN.md](./SOAK-72H-PLAN.md)
+**Plano:** [SOAK-72H-PLAN.md](./SOAK-72H-PLAN.md)  
+**Soak Safe (Cursor + Codex):** [CHECKLIST-SOAK-SAFE.md](./CHECKLIST-SOAK-SAFE.md) · [TRILHA-PARALELA-POS-SOAK.md](./TRILHA-PARALELA-POS-SOAK.md)
 
 ## Início rápido
 
