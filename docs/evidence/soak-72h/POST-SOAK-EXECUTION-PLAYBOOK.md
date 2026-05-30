@@ -13,14 +13,27 @@
 | G2 | Atualizar `SPRINT-0-EVIDENCIA-OPERACIONAL.md` §14 | G4 completo = **GO** |
 | G3 | Remover/desativar Soak Safe (regra Cursor opcional) | `.cursor/rules/soak-safe-g4.mdc` |
 
-## 1. Infra (paralelo controlado)
+## 1. Go-live order (após soak GO — acordado)
 
-**Issues:** [#250](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/250) + [#251](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/251)
+| # | Passo | Referência |
+|---|--------|------------|
+| 1 | **#256** gate G4 | Pacote soak + API P0 + GO revisor |
+| 2 | **PR #250** rede unificada | [PR-DRAFT-250-COPY-PASTE.md](./issues/PR-DRAFT-250-COPY-PASTE.md) |
+| 3 | **#251** Postgres :5432 | Issue #251 |
+| 4 | **#252** healthcheck frontends | Issue #252 |
+| 5 | **#255** auth (3 PRs em sequência) | [PR-DRAFT-255-COPY-PASTE.md](./issues/PR-DRAFT-255-COPY-PASTE.md) |
+| 6 | **#253** ∥ **#254** | Lint + observabilidade (paralelo) |
 
-- Coordenar **uma** janela de manutenção (evitar dois restarts conflitantes).
-- Ordem sugerida: inventário PG (#251) → compose rede (#250) → re-smoke G1 + preflight.
+> Checklist operacional detalhado: a confirmar pelo revisor no fechamento (“go-live order”).
 
-## 2. Healthcheck frontends
+## 2. Infra (#250 + #251)
+
+**Issues:** [#250](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/250) · [#251](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/251)
+
+- **#250 primeiro** (draft pronto) — base estável para #252/#255.
+- #251 em seguida; coordenar restart PG na mesma janela se possível.
+
+## 3. Healthcheck frontends
 
 **Issue:** [#252](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/252)
 
@@ -31,21 +44,21 @@ docker compose -p rsv360 up -d --no-deps admin guest turismo
 
 Validar `Health.Status=healthy` e HTTP 200 em 3004/3005/3006.
 
-## 3. Auth hardening
+## 4. Auth hardening
 
 **Issue:** [#255](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/255)
 
 - PRs pequenos (lib → rotas admin → login).
 - API P0 final **8/8** com A6 = 401 sem token.
 
-## 4. Qualidade e ops (paralelo)
+## 5. Qualidade e ops (paralelo)
 
 | Issue | Foco |
 |-------|------|
 | [#253](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/253) | Lint warnings |
 | [#254](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/254) | Prometheus/Grafana/runbook |
 
-## 5. PLANO-MESTRE
+## 6. PLANO-MESTRE
 
 Após #250–#255 conforme prioridade do produto → iniciar fase documentada em `docs/integracao-v3/sprint-0/PLANO-MESTRE-v3-CONSOLIDADO.md` (somente com G0–G4 verdes).
 
