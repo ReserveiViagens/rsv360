@@ -65,8 +65,12 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
 
+# HEALTHCHECK não expande ARG/ENV na instrução CMD — porta fixada no build via script
+RUN printf '%s\n' '#!/bin/sh' "exec wget --no-verbose --tries=1 -O /dev/null http://127.0.0.1:${APP_PORT}/" > /healthcheck.sh \
+  && chmod +x /healthcheck.sh
+
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget --no-verbose --tries=1 -O /dev/null http://127.0.0.1:${APP_PORT}/ || exit 1
+  CMD /healthcheck.sh
 
 USER rsv360
 EXPOSE ${APP_PORT}
