@@ -132,11 +132,19 @@ Compose já injeta `JWT_SECRET` em `site-publico` (`docker-compose.yml` L134).
 
 ## Critérios de pronto (ready-to-implement)
 
-- [ ] Zero ocorrências de `admin-token-123` em rotas API fora de testes/dev flag.
-- [ ] `POST /api/auth/login` inválido → **401**; PG down → **503** (não 500).
-- [ ] `GET /api/admin/website/pages` sem auth → **401**.
-- [ ] API P0 re-smoke **8/8** com critérios atualizados.
-- [ ] `ADMIN_JWT_SECRET` obrigatório em compose (falha boot clara se ausente).
+**Admin API (2 asserts)**
+- [ ] Sem token válido → **401**
+- [ ] Com JWT admin válido → **200**
+
+**Login**
+- [ ] Credencial inválida → **401**
+- [ ] DB indisponível → **503** (nunca 500 no fluxo esperado)
+
+**Non-goals:** não refatorar UI/admin inteira; não mexer em S1.
+
+**Ordem:** bloqueada por fim soak + **#256** → **#252** → **#255**
+
+**Evidência PR:** `API-P0-SUMMARY.tsv`, `A3.log`/`A6.log`, lista de rotas migradas
 
 ## Arquivos tocados (estimativa)
 
