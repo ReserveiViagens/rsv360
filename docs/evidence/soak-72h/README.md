@@ -17,6 +17,9 @@ cd docs\evidence\soak-72h
 # Agendar coleta 6/6h (Admin)
 .\register-soak-scheduler.ps1
 
+# Agendar fechamento automático (02/06 09:05 -03)
+.\register-soak-close-scheduler.ps1
+
 # Encerramento (após 2026-06-02T09:03:09-03:00)
 .\run-soak-final.ps1
 # Checklist: SOAK-72H-CLOSE-CHECKLIST.md
