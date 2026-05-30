@@ -18,10 +18,11 @@
 
 ## Ordem de disparo sugerida (pós-GO)
 
-1. **#256** — fechar gate G4 (checklist C1–C16)
-2. **#250** + **#251** — infra estável (rede + PG)
-3. **#255** — auth hardening
-4. **#252** + **#253** + **#254** — qualidade e ops
+1. **#256** — gate G4 (checklist C1–C16)
+2. **#250** + **#251** — infra rede + PG (paralelo possível)
+3. **#252** — healthcheck frontends (**antes** de #255)
+4. **#255** — auth hardening
+5. **#253** + **#254** — lint + observabilidade
 
 ## Trilha B (próximo passo)
 

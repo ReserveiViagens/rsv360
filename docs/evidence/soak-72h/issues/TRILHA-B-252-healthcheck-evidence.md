@@ -88,10 +88,18 @@ Portas **não** são a causa do unhealthy; causa é probe legado.
 
 ## Critérios de pronto (ready-to-implement)
 
-- [ ] `guest`, `admin`, `turismo` com `CMD /healthcheck.sh` na imagem.
-- [ ] `docker inspect` → **healthy** ≥ 3 ciclos após start-period.
-- [ ] Sem regressão G1 `:3000` e apps nas portas 3004/3005/3006.
-- [ ] Evidência anexada em comentário na #252 (screenshot ou TSV).
+**Positivo**
+- [ ] `CMD /healthcheck.sh` na imagem dos 3 frontends
+- [ ] `Health.Status=healthy` após start-period
+- [ ] HTTP **200** em `:3004`, `:3005`, `:3006` (sem regressão)
+
+**Negativo**
+- [ ] Não permanece `${APP_PORT}` literal no HEALTHCHECK
+- [ ] Não unhealthy após 3 ciclos pós deploy
+
+**Ordem:** bloqueada por fim soak + **#256** → **#252** → **#255**
+
+**Rollback:** `docker compose -p rsv360 up -d --no-deps --force-recreate admin guest turismo` (imagem/tag anterior)
 
 ## Relacionados
 
