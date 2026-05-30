@@ -112,6 +112,8 @@ drizzle-kit-cli-windows*.log
 # .cursorrules is a per-dev convenience override; never commit it.
 .cursorrules
 .cursor/
+!.cursor/rules/
+!.cursor/rules/soak-safe-g4.mdc
 .windsurfrules
 .clinerules
 .codex/
