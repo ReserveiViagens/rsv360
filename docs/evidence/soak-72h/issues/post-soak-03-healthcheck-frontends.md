@@ -1,29 +1,38 @@
 ## Status
-**RASCUNHO pós-soak** — não executar durante soak 72h.
+**READY-TO-IMPLEMENT** (rascunho pós-soak) — **não executar** durante soak 72h.
 
-## Trilha paralela
-- **Ref:** [TRILHA-PARALELA-POS-SOAK.md — C3 / B1](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/ops/soak-72h-g4-final/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md)
-- **Tema:** healthcheck
+## Trilha
+- [TRILHA-PARALELA C3](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/ops/soak-72h-g4-final/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md)
+- **Evidência Trilha B:** `docs/evidence/soak-72h/issues/TRILHA-B-252-healthcheck-evidence.md`
 
-## Prioridade
-**P2**
+## Prioridade | Impacto
+**P2** | Falso `unhealthy` em 3 frontends; não afeta soak atual (site-publico OK).
 
-## Impacto
-- `rsv360-guest`, `rsv360-admin`, `rsv360-turismo` reportados **unhealthy** (não bloqueiam soak atual).
-- Melhora confiabilidade do perfil Docker completo e CI health gates.
+## Causa raiz (confirmada 30/05, leitura)
 
-## Contexto
-- Backend/site-publico/postgres: **healthy** (soak).
-- PR #242/#245: `${APP_PORT}` não expande no HEALTHCHECK → `/healthcheck.sh` no build.
+| Container | HEALTHCHECK em execução | App HTTP |
+|-----------|-------------------------|----------|
+| site-publico | `/healthcheck.sh` (PR #245) | OK |
+| guest/admin/turismo | `wget http://localhost:${APP_PORT}` **literal** | OK em `:3006/:3004/:3005` |
+
+Imagens guest/admin/turismo de **29/05** sem `/healthcheck.sh`. `wget` manual `127.0.0.1:PORT` → exit 0.
+
+## Implementação (pós `2026-06-02T09:03:09-03:00`)
+
+```powershell
+docker compose -p rsv360 build admin guest turismo
+docker compose -p rsv360 up -d --no-deps admin guest turismo
+```
+
+Validar: `docker inspect rsv360-guest --format '{{.Config.Healthcheck.Test}}'` → `[/healthcheck.sh]`.
 
 ## Critérios de aceite
-- [ ] Revisar Dockerfile/HEALTHCHECK dos 3 frontends (Trilha B1 — leitura).
-- [ ] `docker inspect` → **healthy** após `compose up --build` controlado.
-- [ ] Sem regressão em `:3000` smoke e G2 lint baseline.
-- [ ] Evidência em `docs/evidence/g4-kickoff/` ou ops.
+- [ ] guest, admin, turismo **healthy** após start-period
+- [ ] Sem alterar soak monitorado durante janela (rebuild só pós-soak)
+- [ ] G1/G4 smoke nas portas 3004–3006 sem regressão
 
-## Bloqueio
-Sem `docker compose up --build` nos containers monitorados até fim do soak.
+## Risco se não corrigir
+CI/CD e operação interpretam stack degradada; alertas ruidosos.
 
 ## Relacionadas
-- PR #245, #242
+#245 #242 #250
