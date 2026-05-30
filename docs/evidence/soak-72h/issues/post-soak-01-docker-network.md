@@ -1,31 +1,61 @@
 ## Status
-**RASCUNHO pós-soak** — não executar durante soak 72h (até `2026-06-02T09:03:09-03:00`).
+**READY-TO-IMPLEMENT** — executar somente **após** **#256** (G4 gate GO).
 
-## Trilha paralela
-- **Ref:** [TRILHA-PARALELA-POS-SOAK.md — C1](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/ops/soak-72h-g4-final/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md#trilha-c--backlog-pós-soak-issues--pr-drafts)
-- **Tema:** healthcheck / infra Docker
+## Trilha e evidência
+- [TRILHA-PARALELA-POS-SOAK.md — C1 (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md#trilha-c--backlog-pós-soak-github)
+- [ISSUES-POS-SOAK-INDEX.md (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/issues/ISSUES-POS-SOAK-INDEX.md)
+- **Tema:** infra Docker / rede compose
 
-## Prioridade
-**P1**
+## Prioridade | Impacto
+**P1** | Elimina `docker network connect` manual; reduz falha intermitente site↔postgres.
 
-## Impacto
-- Elimina workaround `docker network connect` entre `rsv360_default` e `rsv360-phase1_default`.
-- Reduz risco de falha intermitente site↔postgres durante smoke e soak.
-- Base para healthchecks estáveis em stack única.
+## Contexto (evidência existente)
+- G1 rodada 2: workaround `rsv360-phase1_default` ↔ `site-publico`.
+- Soak monitorou `rsv360-backend`, `rsv360-site-publico`, `rsv360-postgres` (verdes).
 
-## Contexto (evidência)
-- G1 rodada 2: rede corrigida manualmente; ideal unificar via `docker compose -p rsv360 up -d`.
-- Soak monitora: `rsv360-backend`, `rsv360-site-publico`, `rsv360-postgres`.
+## Dependência de ordem
 
-## Critérios de aceite
-- [ ] `docker compose -p rsv360 up -d` sobe stack sem `network connect` manual.
-- [ ] `site-publico` e `postgres` na mesma rede compose documentada.
-- [ ] Re-smoke G1 **10/10** e Trilha 0 preflight **8/8** após mudança.
-- [ ] Documentar em `CONFIGURACAO_SERVIDORES.md` ou evidência ops.
+| Regra | Detalhe |
+|-------|---------|
+| **Bloqueada por** | **#256** G4 GO + fim soak |
+| **Paralelo com** | **#251** (Postgres :5432) — mesma janela pós-GO, cuidado com restart |
+| **Antes de** | **#252**, **#255** (preferir rede estável antes de rebuild frontends/auth) |
+| **Durante soak** | Proibido `compose up --build` no ambiente monitorado |
 
-## Bloqueio
-Executar somente após **G4 completo = GO** e fim do soak 72h.
+## Implementação sugerida
+
+- Unificar `docker-compose.yml` / project `rsv360` para uma rede compose documentada.
+- `docker compose -p rsv360 up -d` sem `network connect` manual.
+- Documentar em `CONFIGURACAO_SERVIDORES.md` ou `docs/evidence/ops/`.
+
+## Critérios de aceite (positivo)
+
+- [ ] `site-publico` e `postgres` na **mesma rede** compose (inspect networks)
+- [ ] G1 re-smoke **10/10** OK
+- [ ] Trilha 0 preflight **8/8** OK
+- [ ] `:3000` e `:3002/health` → **200**
+
+## Critérios negativos (não pode)
+
+- [ ] Dependência permanente de `docker network connect` manual
+- [ ] Regressão G1 rede (T0-net GAP)
+- [ ] Smoke API P0 < 8/8 após mudança
+
+## Rollback (1 linha)
+
+```powershell
+docker network connect rsv360-phase1_default rsv360-site-publico
+# + documentar estado anterior no PR se rollback parcial
+```
+
+## Evidência obrigatória no PR
+
+| Artefato | Conteúdo |
+|----------|----------|
+| `g1-after-network.tsv` | Saída `run-g1-dual-system.ps1` 10/10 |
+| `docker-network-inspect.txt` | Networks de site-publico + postgres (comum) |
+| `trilha0-preflight.tsv` | 8/8 |
+| Diff compose | `docker-compose.yml` ou override documentado |
 
 ## Relacionadas
-- PR #245 (healthcheck backend)
-- Issue #197 (Redis/cache) — verificar se rede unificada resolve
+#251 #252 #197 #245 #256
