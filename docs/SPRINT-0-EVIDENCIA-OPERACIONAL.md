@@ -390,8 +390,8 @@ npm run build --workspaces --if-present
 ### 11.5 Pendências para próximo gate
 
 1. ~~G1 dual-system com evidência~~ → rodada 1 em `docs/evidence/g1-dual-system/` (**GO condicional**; ver §12).
-2. Trilha 0 (branch dedicada, critérios de estabilidade e rollback).
-3. Soak operacional de 72h com monitoramento.
+2. ~~Trilha 0 (prep)~~ → pacote base em `docs/evidence/trilha-0/` (branch `chore/trilha-0-prep`).
+3. Soak operacional de 72h — plano em `docs/evidence/trilha-0/SOAK-72H-PLAN.md` (após Trilha 0 GO).
 4. Somente após esses itens: promover **G4 completo = GO**.
 
 ---
