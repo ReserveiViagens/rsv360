@@ -3,9 +3,10 @@
 **Uso:** copiar título/corpo ao criar PR no GitHub após G4 GO.  
 **Branch sugerida:** `fix/post-soak-<issue>-<tema>`
 
-| Issue | Branch sugerida | Título PR draft |
-|-------|-----------------|-----------------|
-| #250 | `fix/post-soak-250-docker-network` | fix(docker): unificar rede compose rsv360 (remove network connect manual) |
+| Issue | Branch sugerida | Copiar/colar pronto |
+|-------|-----------------|---------------------|
+| #250 | `fix/post-soak-250-docker-network` | **[PR-DRAFT-250-COPY-PASTE.md](./PR-DRAFT-250-COPY-PASTE.md)** |
+| #255 | `fix/post-soak-255-auth-admin-api` (+ 2 PRs) | **[PR-DRAFT-255-COPY-PASTE.md](./PR-DRAFT-255-COPY-PASTE.md)** |
 | #251 | `fix/post-soak-251-postgres-5432` | fix(infra): resolver postgres duplo na porta 5432 |
 | #252 | `fix/post-soak-252-healthcheck` | fix(docker): healthcheck /healthcheck.sh em guest/admin/turismo |
 | #255 | `fix/post-soak-255-auth-api` | fix(auth): JWT admin API + login 401/503 (remove demo token) |
