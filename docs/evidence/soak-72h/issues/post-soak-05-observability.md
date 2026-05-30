@@ -1,30 +1,55 @@
 ## Status
-**RASCUNHO pós-soak** — não executar durante soak 72h.
+**READY-TO-IMPLEMENT** — executar somente **após** **#256** (G4 gate GO).
 
-## Trilha paralela
-- **Ref:** [TRILHA-PARALELA-POS-SOAK.md — C4 / Trilha 0 observability](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/ops/soak-72h-g4-final/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md)
-- **Tema:** observabilidade
+## Trilha e evidência
+- [TRILHA-PARALELA-POS-SOAK.md (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md)
+- [TRILHA-0-OBSERVABILITY.md (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/trilha-0/TRILHA-0-OBSERVABILITY.md)
+- [SOAK-72H-PLAN.md — F5 (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/SOAK-72H-PLAN.md)
 
-## Prioridade
-**P2**
-
-## Impacto
-- Critério F5 do soak: taxa 5xx via Prometheus (hoje `smoke-only`).
-- Suporte a soak 7d staging (C4 opcional) e TITAN.
+## Prioridade | Impacto
+**P2** | Formaliza métricas 5xx (hoje `smoke-only` no soak); suporte ops/TITAN.
 
 ## Contexto
 - `rsv360-prometheus`, `rsv360-grafana` Up no kickoff soak.
-- `TRILHA-0-OBSERVABILITY.md` — alinhar pós-G4.
+- Critério soak **F5**: taxa 5xx > 5% / 1h → investigar/abortar.
 
-## Critérios de aceite
-- [ ] Dashboard ou query documentada: 5xx rate backend + site BFF.
-- [ ] Alerta mínimo (Alertmanager) para health down > 15 min.
-- [ ] Runbook: onde ver logs/métricas em dev e staging.
-- [ ] Opcional: job amostragem soak 7d reutilizando `run-soak-sample.ps1`.
+## Dependência de ordem
 
-## Bloqueio
-Não reiniciar stack de monitoring durante soak; apenas docs/queries até GO G4.
+| Regra | Detalhe |
+|-------|---------|
+| **Bloqueada por** | **#256** G4 GO |
+| **Paralelo com** | **#253** (lint — sem conflito) |
+| **Após** | **#250–#252** (stack estável) |
+| **Durante soak** | Sem restart prometheus/grafana; só leitura |
+
+## Implementação sugerida
+
+1. Query PromQL documentada: 5xx backend (`:3002`) + BFF (`:3000`).
+2. Regra Alertmanager: health down > 15 min (alinhar SOAK hard stop F1).
+3. Runbook: links Grafana `:3007`, Prometheus `:9090`, logs Docker.
+4. Opcional: plano soak 7d staging (reuso `run-soak-sample.ps1`).
+
+## Critérios de aceite (positivo)
+
+- [ ] Query 5xx versionada em `monitoring/` ou doc ops
+- [ ] Alerta mínimo testado (fire drill ou screenshot silenced)
+- [ ] Runbook em `docs/evidence/trilha-0/` ou `monitoring/README`
+- [ ] F5 do soak mapeado para métrica real (não só smoke)
+
+## Critérios negativos (não pode)
+
+- [ ] Depender só de `curl` manual sem documentação
+- [ ] Alertas sem rota de escalonamento
+- [ ] Mudança de rede compose sem coordenar #250
+
+## Evidência obrigatória no PR
+
+| Artefato | Conteúdo |
+|----------|----------|
+| `promql-5xx.md` | Queries + interpretação |
+| `alertmanager-rule.diff` | Regra nova ou alterada |
+| `grafana-screenshot.png` | Painel ou explore (opcional) |
+| `runbook-observability.md` | Passo a passo dev/staging |
 
 ## Relacionadas
-- `docs/evidence/trilha-0/TRILHA-0-OBSERVABILITY.md`
-- `SOAK-72H-PLAN.md` critério F5
+#254 (esta) · #250 · SOAK F5 · #256
