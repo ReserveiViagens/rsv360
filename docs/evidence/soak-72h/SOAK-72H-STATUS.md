@@ -1,6 +1,6 @@
 # Soak 72h — status vivo
 
-**Última atualização:** 2026-05-30T09:47:27-03:00  
+**Última atualização:** 2026-05-30T10:53:07-03:00  
 **Estado:** **EM EXECUÇÃO**
 
 | Campo | Valor |
@@ -27,6 +27,22 @@
 | site-publico | healthy (restarts=0) |
 | postgres | healthy (restarts=0) |
 | error_rate | smoke-only (Prometheus up) |
+
+## Monitor Soak Safe (leitura)
+
+| Horário | Health :3002/:3000 | Tasks | Amostras |
+|---------|-------------------|-------|----------|
+| 10:13 | 200/200 | Sample/Close Ready | 2 |
+| 10:53 | 200/200 | Next sample **15:03**; Close **02/06 09:05** | 2 |
+
+Log: `logs/SOAK-SAFE-OBSERVATIONS.log`
+
+## Trilha paralela (docs)
+
+- [POST-SOAK-EXECUTION-PLAYBOOK.md](./POST-SOAK-EXECUTION-PLAYBOOK.md)
+- [RISK-MATRIX-POS-SOAK.md](./RISK-MATRIX-POS-SOAK.md)
+- [ROLLBACK-RUNBOOK-POST-G4.md](./ROLLBACK-RUNBOOK-POST-G4.md)
+- [PR-DRAFT-INDEX.md](./issues/PR-DRAFT-INDEX.md)
 
 ## Próximas ações
 
