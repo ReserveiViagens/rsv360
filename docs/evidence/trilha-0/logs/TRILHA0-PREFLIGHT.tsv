@@ -1,0 +1,9 @@
+﻿id	check	value	verdict
+T0-01	http://127.0.0.1:3002/health	200	OK
+T0-02	http://127.0.0.1:3000/	200	OK
+T0-h-postgres	health postgres	healthy	OK
+T0-h-backend	health backend	healthy	OK
+T0-h-site-publico	health site-publico	healthy	OK
+T0-net	network align	common=[]	GAP
+T2-prometheus	prometheus up		FAIL
+T2-grafana	grafana up		FAIL
