@@ -362,7 +362,7 @@ npm run build --workspaces --if-present
 | G2 estrito (S1+S2) | **GO** (21/21) |
 | G3 segurança baseline | **GO** |
 | G4-API P0 (smoke de contrato) | **GO** (rodada 2) |
-| G4 completo (Trilha 0 + G1 + soak 72h + critérios finais) | **NOGO** |
+| G4 completo (Trilha 0 + G1 + soak 72h + critérios finais) | **GO** (04/06/2026, C1–C16 PASS) |
 
 ### 11.3 Resultado API P0 (rodada 2)
 
@@ -418,20 +418,26 @@ npm run build --workspaces --if-present
 | Bloco | Status |
 |-------|--------|
 | **Trilha 0** | **GO** |
-| Soak 72h | **EM EXECUÇÃO** (`09:03 30/05` → `09:03 02/06` -03, branch `ops/soak-72h-g4-final`) |
-| **G4 completo** | **NOGO** até soak encerrar verde |
+| Soak 72h | **ENCERRADO GO** (`10:12 01/06` → `10:12 04/06` -03, 13/13 OK) |
+| **G4 completo** | **GO** |
 
 ---
 
-## 14. Soak 72h — kickoff (30/05/2026)
+## 14. Soak 72h — fechamento (04/06/2026)
 
 **Plano:** `docs/evidence/soak-72h/SOAK-72H-PLAN.md`  
 **Status:** `docs/evidence/soak-72h/SOAK-72H-STATUS.md`  
-**Baseline:** `logs/SOAK-BASELINE.tsv` — sample **000** **OK** (09:03 -03)
+**Relatório:** `docs/evidence/soak-72h/SOAK-72H-REPORT.md`  
+**Checklist:** `docs/evidence/soak-72h/SOAK-72H-CLOSE-CHECKLIST.md`  
+**Pacote revisor:** `docs/evidence/soak-72h/PACOTE-REVISOR-G4-COMPLETO.md`  
+**PR:** #249 · **Issue gate:** #256
 
 | Campo | Valor |
 |-------|--------|
-| start_at (kickoff) | 2026-05-30T09:03:09-03:00 |
-| end_at (kickoff + 72h) | 2026-06-02T09:03:09-03:00 |
-| Coleta | 6 h (Task `RSV360-Soak-72h-Sample`) |
-| G4 completo | **NOGO** até relatório final + API P0 |
+| start_at (kickoff) | 2026-06-01T10:12:40-03:00 |
+| end_at (kickoff + 72h) | 2026-06-04T10:12:40-03:00 |
+| Amostras | **13/13 OK** (000 + 001–012); linha `final` opcional |
+| Coleta | Task Scheduler `RSV360-Soak-72h-Sample-001` … `012` (Result 0) |
+| API P0 fechamento | **8/8 OK** (`g4-kickoff/logs/API-P0-SUMMARY.tsv`) |
+| Veredito soak | **GO** |
+| **G4 completo** | **GO** (merge PR #249) |

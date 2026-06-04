@@ -17,13 +17,16 @@ cd docs\evidence\soak-72h
 # Amostra manual
 .\run-soak-sample.ps1
 
-# Agendar coleta 6/6h (Admin)
-.\register-soak-scheduler.ps1
+# Agendar amostras 001–012 (horários exatos -03) + fechamento — PowerShell **Admin**
+.\register-soak-scheduler-slots.ps1
 
-# Agendar fechamento automático (02/06 09:05 -03)
+# (legado) repetição genérica 6/6h
+# .\register-soak-scheduler.ps1
+
+# Só fechamento (após 2026-06-04T10:12:40-03:00)
 .\register-soak-close-scheduler.ps1
 
-# Encerramento (após 2026-06-02T09:03:09-03:00)
+# Encerramento (após 2026-06-04T10:12:40-03:00)
 .\run-soak-final.ps1
 # Checklist: SOAK-72H-CLOSE-CHECKLIST.md
 ```
