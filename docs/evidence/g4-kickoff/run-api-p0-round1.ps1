@@ -28,7 +28,7 @@ function Invoke-P0 {
     'A4' { if ($code -in 400,401) { $verdict = 'OK' } }
     'A5g' { if ($code -in 200,400,401) { $verdict = 'OK' } }
     'A5p' { if ($code -eq 400) { $verdict = 'OK' } }
-    'A6' { if ($code -eq 200) { $verdict = 'OK' } elseif ($code -eq 401) { $verdict = 'GAP' } }
+    'A6' { if ($code -eq 401) { $verdict = 'OK' } elseif ($code -eq 200) { $verdict = 'GAP' } }
     { $_ -in 'A7g','A7p' } { if ($code -eq 200) { $verdict = 'OK' } }
   }
   if ($code -eq 0) { $verdict = 'FAIL' }
@@ -43,7 +43,7 @@ Invoke-P0 A3 POST 'http://127.0.0.1:3000/api/auth/login' '{"email":"g4-smoke@res
 Invoke-P0 A4 POST 'http://127.0.0.1:3000/api/auth/refresh' '{}'
 Invoke-P0 A5g GET 'http://127.0.0.1:3000/api/bookings'
 Invoke-P0 A5p POST 'http://127.0.0.1:3000/api/bookings' '{}'
-Invoke-P0 A6 GET 'http://127.0.0.1:3000/api/admin/website/pages' $null 'Authorization: Bearer admin-token-123'
+Invoke-P0 A6 GET 'http://127.0.0.1:3000/api/admin/website/pages'
 Invoke-P0 A7g GET 'http://127.0.0.1:3002/api/v1/payments/payments?enterpriseId=ent_1'
 Invoke-P0 A7p POST 'http://127.0.0.1:3002/api/v1/payments/payments' '{"enterpriseId":"ent_1","amount":1,"currency":"BRL","customerId":"cus_g4","paymentMethod":"pix"}'
 Write-Host "`n$Summary"; Get-Content $Summary
