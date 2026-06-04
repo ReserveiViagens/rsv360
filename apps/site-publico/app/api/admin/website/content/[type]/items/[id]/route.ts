@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { queryDatabase } from '@/lib/db';
 
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123';
-}
 
 // GET - Buscar item por ID ou content_id para importação
 export async function GET(
@@ -14,7 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ type: string; id: string }> }
 ) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     const { type, id } = await params;

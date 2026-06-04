@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { Pool } from 'pg';
 
 // Configuração do banco de dados (mesmo do backend)
@@ -11,18 +12,11 @@ const pool = new Pool({
 });
 
 // Função para verificar autenticação
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123' || token === 'admin-token-123';
-}
 
 // GET - Buscar header atual
 export async function GET(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json(
         { success: false, error: 'Não autorizado' },
         { status: 401 }
@@ -70,7 +64,7 @@ export async function GET(request: NextRequest) {
 // POST - Criar novo header
 export async function POST(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json(
         { success: false, error: 'Não autorizado' },
         { status: 401 }
@@ -190,7 +184,7 @@ export async function POST(request: NextRequest) {
 // PUT - Atualizar header existente
 export async function PUT(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json(
         { success: false, error: 'Não autorizado' },
         { status: 401 }
@@ -269,7 +263,7 @@ export async function PUT(request: NextRequest) {
 // DELETE - Resetar header para padrão
 export async function DELETE(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json(
         { success: false, error: 'Não autorizado' },
         { status: 401 }
