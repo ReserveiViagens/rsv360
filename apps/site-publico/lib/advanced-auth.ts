@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from './db';
+import { ensureAuthTables } from './ensure-auth-tables';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
 
@@ -50,6 +51,8 @@ export async function checkRateLimit(
   identifierType: 'ip' | 'email' | 'user_id',
   action: string
 ): Promise<{ allowed: boolean; remainingAttempts: number; blockedUntil?: Date }> {
+  await ensureAuthTables();
+
   const config = RATE_LIMIT_CONFIGS[action] || {
     maxAttempts: 10,
     windowMs: 60 * 1000,
@@ -151,6 +154,7 @@ export async function recordLoginAttempt(
   success: boolean,
   failureReason?: string
 ): Promise<void> {
+  await ensureAuthTables();
   await queryDatabase(
     `INSERT INTO login_attempts (email, ip_address, user_agent, success, failure_reason)
      VALUES ($1, $2, $3, $4, $5)`,

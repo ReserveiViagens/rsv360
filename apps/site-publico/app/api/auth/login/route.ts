@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
 import { checkRateLimit, resetRateLimit, recordLoginAttempt, getClientIP, getUserAgent } from '@/lib/advanced-auth';
+import { isPostgresInfrastructureError } from '@/lib/pg-infra-error';
 import { createRefreshToken } from '@/lib/refresh-token-service';
 
 async function loadBcrypt() {
@@ -151,14 +152,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error('Erro no login:', error);
-    const message = error instanceof Error ? error.message : String(error);
-    const code = (error as { code?: string })?.code;
-    const isInfra =
-      /ECONNREFUSED|ENOTFOUND|ETIMEDOUT|ECONNRESET/i.test(message) ||
-      /connect|timeout|database|postgres|pg_/i.test(message) ||
-      code === 'ECONNREFUSED' ||
-      code === '57P01' ||
-      code === '53300';
+    const isInfra = isPostgresInfrastructureError(error);
     return NextResponse.json(
       {
         success: false,
