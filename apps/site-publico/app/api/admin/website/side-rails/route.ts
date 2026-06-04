@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getHomeSideRailsFallback, type HomeSideRailsData } from '@/lib/home-side-rails';
 
 const pool = new Pool({
@@ -10,12 +11,6 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || '',
 });
 
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123';
-}
 
 function isValidSection(section: unknown): section is { title: string; description: string; items: unknown[] } {
   if (!section || typeof section !== 'object') return false;
@@ -76,7 +71,7 @@ async function ensureTable(): Promise<void> {
 
 export async function GET(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     try {
@@ -118,7 +113,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     const body = await request.json();

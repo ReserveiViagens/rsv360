@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { queryDatabase } from '@/lib/db';
 
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123';
-}
 
 const slugToPageType: Record<string, string> = {
   hoteis: 'hotels',
@@ -25,7 +20,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     const { slug } = await params;

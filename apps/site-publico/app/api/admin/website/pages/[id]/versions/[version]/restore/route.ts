@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123';
-}
 
 // POST - Restaurar versão (não implementado - retorna sucesso para não quebrar UI)
 export async function POST(
@@ -13,7 +8,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string; version: string }> }
 ) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     // Restaurar versão não implementado - retorna sucesso

@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getDbPool, queryDatabase } from '@/lib/db';
-
-function checkAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === 'admin-token-123';
-}
 
 async function ensurePagesTable() {
   const pool = getDbPool();
@@ -31,7 +25,7 @@ async function ensurePagesTable() {
 // GET - Listar páginas
 export async function GET(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     await ensurePagesTable();
@@ -66,7 +60,7 @@ export async function GET(request: NextRequest) {
 // POST - Criar página
 export async function POST(request: NextRequest) {
   try {
-    if (!checkAuth(request)) {
+    if (!(await verifyAdminApiRequest(request))) {
       return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
     }
     await ensurePagesTable();

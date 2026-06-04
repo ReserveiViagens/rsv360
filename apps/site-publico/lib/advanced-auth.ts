@@ -185,7 +185,10 @@ export async function advancedAuthMiddleware(
     // MODO DESENVOLVIMENTO: Verificar cookie admin_token
     // ============================================
     const adminToken = request.cookies.get('admin_token')?.value;
-    if (adminToken === 'admin-token-123') {
+    const allowDemoAdmin =
+      process.env.NODE_ENV === 'development' &&
+      process.env.ALLOW_DEMO_ADMIN === 'true';
+    if (allowDemoAdmin && adminToken === 'admin-token-123') {
       // Autenticação simples para desenvolvimento
       // Retornar usuário admin mockado
       return {
