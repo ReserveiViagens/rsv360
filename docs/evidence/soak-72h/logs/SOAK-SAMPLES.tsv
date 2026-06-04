@@ -1,0 +1,15 @@
+sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_restarts	site_restarts	postgres_restarts	error_rate_note	verdict
+000	2026-06-01T10:13:29-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+001	2026-06-01T16:12:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+002	2026-06-01T22:12:03-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+003	2026-06-02T04:12:01-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+004	2026-06-02T10:12:04-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+005	2026-06-02T16:12:01-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+006	2026-06-02T22:12:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+007	2026-06-03T04:12:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+008	2026-06-03T10:12:00-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+009	2026-06-03T16:11:59-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+010	2026-06-03T22:11:58-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+011	2026-06-04T04:11:58-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+012	2026-06-04T10:12:06-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
+final	2026-06-04T10:16:03-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK

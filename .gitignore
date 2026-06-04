@@ -50,6 +50,8 @@ logs/
 !docs/evidence/trilha-0/
 !docs/evidence/trilha-0/**
 docs/evidence/trilha-0/logs/*.dump
+!docs/evidence/soak-72h/
+!docs/evidence/soak-72h/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -109,7 +111,9 @@ drizzle-kit-cli-windows*.log
 # Canonical agent rules live in AGENTS.md and .github/copilot-instructions.md.
 # .cursorrules is a per-dev convenience override; never commit it.
 .cursorrules
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 .windsurfrules
 .clinerules
 .codex/

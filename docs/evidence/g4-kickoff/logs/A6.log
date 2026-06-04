@@ -1,10 +1,7 @@
 [ID] A6
-[TS] 2026-05-29T19:46:06-03:00
+[TS] 2026-05-30T09:47:26.2937516-03:00
 [METHOD] GET
 [URL] http://127.0.0.1:3000/api/admin/website/pages
-[PAYLOAD] <none>
-[AUTH] Authorization: Bearer admin-token-123
 ---
-[HTTP] 200
---- body (max 2k) ---
+--- body ---
 {"success":true,"data":[]}

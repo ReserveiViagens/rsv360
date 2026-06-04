@@ -1,10 +1,7 @@
 [ID] A5g
-[TS] 2026-05-29T19:46:06-03:00
+[TS] 2026-05-30T09:47:26.2937516-03:00
 [METHOD] GET
 [URL] http://127.0.0.1:3000/api/bookings
-[PAYLOAD] <none>
-[AUTH] <none>
 ---
 [HTTP] 400
---- body (max 2k) ---
-{"success":false,"error":"√â necess√°rio fornecer email, c√≥digo, booking_id ou id da reserva"}
+O servidor remoto retornou um erro: (400) SolicitaÁ„o Incorreta.
