@@ -22,3 +22,26 @@ groups:
         annotations:
           summary: 'Uso de memória elevado no backend'
           description: 'Consumo de memória acima de 900MB por 10 minutos.'
+
+      - alert: RSV360BackendDownExtended
+        expr: up{job="rsv360-backend"} == 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Backend down > 15 min (alinha soak F1)'
+          description: 'Job rsv360-backend indisponível por 15 minutos — ver promql-5xx.md runbook.'
+
+      - alert: RSV360BackendHigh5xxRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="rsv360-backend",status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{job="rsv360-backend"}[5m]))
+          ) > 0.05
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Taxa 5xx backend > 5% (1h)'
+          description: 'Alinhado ao critério F5 do soak 72h.'
