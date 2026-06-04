@@ -1,12 +1,12 @@
 # Índice — issues pós-soak (Trilha C)
 
-**Atualizado:** 2026-05-30  
+**Atualizado:** 2026-06-04  
 **Label GitHub:** `post-soak-draft`  
 **Status corpo:** **READY-TO-IMPLEMENT** (links **main**)
 
 **Governança:** [TRILHA-PARALELA-POS-SOAK.md (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md) · [CHECKLIST-SOAK-SAFE.md (main)](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/blob/main/docs/evidence/soak-72h/CHECKLIST-SOAK-SAFE.md)
 
-> Não iniciar implementação até **G4 completo = GO** (`#256`) e `>= 2026-06-02T09:03:09-03:00`.
+> **G4 completo = GO** (2026-06-04). Trilha ativa — ver [POST-SOAK-EXECUTION-STATUS.md](../POST-SOAK-EXECUTION-STATUS.md).
 
 ## Mapa de issues
 

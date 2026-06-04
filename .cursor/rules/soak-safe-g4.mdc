@@ -1,32 +1,15 @@
 ---
-description: Modo SOAK SAFE — ambiente congelado até 2026-06-02T09:03:09-03:00 (G4)
-alwaysApply: true
+description: Soak Safe ENCERRADO (G4 completo GO 2026-06-04) — regra inativa
+alwaysApply: false
 ---
 
-# MODO SOAK SAFE (obrigatório até 2026-06-02T09:03:09-03:00)
+# Soak Safe — ENCERRADO
 
-Referência: `docs/evidence/soak-72h/CHECKLIST-SOAK-SAFE.md`
+**Encerrado em:** 2026-06-04 (G4 completo GO, PR #249 merged)
 
-## Proibido (bloquear e oferecer alternativa segura)
+A regra ativa de congelamento foi desligada. Operacao normal e trilha pos-soak conforme:
 
-- `docker compose up --build` no ambiente monitorado (`rsv360`).
-- Reiniciar containers monitorados: `rsv360-backend`, `rsv360-site-publico`, `rsv360-postgres`, `rsv360-redis`.
-- Alterar `.env`, portas, rede Docker, banco, migrations.
-- Merge de PR com impacto em runtime do ambiente em soak.
-- Alterar agendamentos: `RSV360-Soak-72h-Sample`, `RSV360-Soak-72h-Close`.
+- `docs/evidence/soak-72h/POST-SOAK-EXECUTION-PLAYBOOK.md`
+- `docs/evidence/soak-72h/POST-SOAK-EXECUTION-STATUS.md`
 
-## Permitido
-
-- Leitura: health HTTP (`:3002/health`, `:3000/`), `docker ps`/`inspect`, logs, status de tasks.
-- Documentação, evidência, backlog, PR **docs-only**, revisão de código **sem deploy**.
-- Script seguro: `docs/evidence/soak-72h/run-soak-safe-monitor.ps1` (somente leitura).
-
-## Se o usuário pedir ação proibida
-
-1. Recusar execução no runtime.
-2. Explicar janela de soak e risco de invalidar 72h.
-3. Propor trilha paralela: `docs/evidence/soak-72h/TRILHA-PARALELA-POS-SOAK.md`.
-
-## Saída do modo
-
-Após fechamento oficial (`run-soak-close-scheduled.ps1`) e veredito GO/NOGO do G4 completo.
+Historico: `docs/evidence/soak-72h/CHECKLIST-SOAK-SAFE.md`
