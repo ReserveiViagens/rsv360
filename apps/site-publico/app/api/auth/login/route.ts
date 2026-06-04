@@ -149,14 +149,22 @@ export async function POST(request: NextRequest) {
         expires_in: 900, // 15 minutos em segundos
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erro no login:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    const code = (error as { code?: string })?.code;
+    const isInfra =
+      /ECONNREFUSED|ENOTFOUND|ETIMEDOUT|ECONNRESET/i.test(message) ||
+      /connect|timeout|database|postgres|pg_/i.test(message) ||
+      code === 'ECONNREFUSED' ||
+      code === '57P01' ||
+      code === '53300';
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Erro ao realizar login',
+        error: isInfra ? 'Serviço temporariamente indisponível' : 'Erro ao realizar login',
       },
-      { status: 500 }
+      { status: isInfra ? 503 : 500 }
     );
   }
 }

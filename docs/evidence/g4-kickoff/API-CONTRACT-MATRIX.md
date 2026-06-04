@@ -36,7 +36,7 @@
 | A4 | `/api/auth/refresh` | POST | site-publico | 400 | **OK** | `{}` → `refresh_token é obrigatório` |
 | A5g | `/api/bookings` | GET | site-publico | 400 | **OK** | Sem query → mensagem de contrato válida |
 | A5p | `/api/bookings` | POST | site-publico | 400 | **OK** | `{}` → validação de campos |
-| A6 | `/api/admin/website/pages` | GET | site-publico CMS | 200 | **OK** | `DB_HOST`/`DB_*` no compose `site-publico` |
+| A6 | `/api/admin/website/pages` | GET | site-publico CMS | **401** sem token; 200 com JWT admin | **OK** | Pós-#255: demo `admin-token-123` rejeitado |
 | A7g | `/api/v1/payments/payments?enterpriseId=ent_1` | GET | integrações | 200 | **OK** | Lista pagamentos mock |
 | A7p | `/api/v1/payments/payments` | POST | site-publico | 200 | **OK** | Payload mínimo PIX mock |
 | A8 | CRM S1 `:5000` | — | legado | — | **SKIP** | Fora do perfil canônico |

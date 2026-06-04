@@ -51,7 +51,7 @@ run() {
     A4) [[ "$code" == "400" || "$code" == "401" ]] && verdict="OK" ;;
     A5g) [[ "$code" == "200" || "$code" == "400" || "$code" == "401" ]] && verdict="OK" ;;
     A5p) [[ "$code" == "400" ]] && verdict="OK" ;;
-    A6) [[ "$code" == "200" ]] && verdict="OK"; [[ "$code" == "401" ]] && verdict="GAP" ;;
+    A6) [[ "$code" == "401" ]] && verdict="OK"; [[ "$code" == "200" ]] && verdict="GAP" ;;
     A7g|A7p) [[ "$code" == "200" ]] && verdict="OK" ;;
   esac
   if [[ "$code" == "000" ]]; then verdict="FAIL"; fi
@@ -70,7 +70,7 @@ run A3 POST "http://127.0.0.1:3000/api/auth/login" '{"email":"g4-smoke@reserveiv
 run A4 POST "http://127.0.0.1:3000/api/auth/refresh" '{}'
 run A5g GET "http://127.0.0.1:3000/api/bookings"
 run A5p POST "http://127.0.0.1:3000/api/bookings" '{}'
-run A6 GET "http://127.0.0.1:3000/api/admin/website/pages" "" "Authorization: Bearer admin-token-123"
+run A6 GET "http://127.0.0.1:3000/api/admin/website/pages"
 
 # Payments backend
 run A7g GET "http://127.0.0.1:3002/api/v1/payments/payments?enterpriseId=ent_1"
