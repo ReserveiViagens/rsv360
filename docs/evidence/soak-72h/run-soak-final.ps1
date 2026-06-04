@@ -4,8 +4,8 @@ $LogDir = Join-Path $Root 'logs'
 $Summary = Join-Path $LogDir 'SOAK-SAMPLES.tsv'
 $Report = Join-Path $Root 'SOAK-72H-REPORT.md'
 
-$Kickoff = '2026-05-30T09:03:09-03:00'
-$EndAt = '2026-06-02T09:03:09-03:00'
+$Kickoff = '2026-06-01T10:12:40-03:00'
+$EndAt = '2026-06-04T10:12:40-03:00'
 $ExpectedPeriodic = 12
 $ExpectedWithBaseline = 13
 
@@ -35,10 +35,10 @@ if ($fail -gt 0) { $verdict = 'NOGO'; $notes += "$fail amostra(s) com verdict FA
 if (-not $baseline) { $verdict = 'NOGO'; $notes += 'Baseline 000 ausente' }
 if ($periodicCount -lt $ExpectedPeriodic) {
   $verdict = 'NOGO'
-  $notes += "Periódicas insuficientes: $periodicCount / $ExpectedPeriodic (esperado 001-012)"
+  $notes += "Periodicas insuficientes: $periodicCount / $ExpectedPeriodic (esperado 001-012)"
 }
-if ($periodicHttpOk -lt $ExpectedPeriodic) { $notes += "S4 :3002 — $periodicHttpOk / $ExpectedPeriodic periódicas 200" }
-if ($periodicSiteOk -lt $ExpectedPeriodic) { $notes += "S5 :3000 — $periodicSiteOk / $ExpectedPeriodic periódicas 200" }
+if ($periodicHttpOk -lt $ExpectedPeriodic) { $notes += "S4 :3002 - $periodicHttpOk / $ExpectedPeriodic periodicas 200" }
+if ($periodicSiteOk -lt $ExpectedPeriodic) { $notes += "S5 :3000 - $periodicSiteOk / $ExpectedPeriodic periodicas 200" }
 if ($pgOk -lt $total) { $verdict = 'NOGO'; $notes += "Postgres healthy $pgOk / $total" }
 
 $pctOk = if ($total -gt 0) { [math]::Round(100 * $ok / $total, 1) } else { 0 }
@@ -47,7 +47,7 @@ $s4 = if ($periodicHttpOk -ge $ExpectedPeriodic) { 'PASS' } else { 'FAIL' }
 $s5 = if ($periodicSiteOk -ge $ExpectedPeriodic) { 'PASS' } else { 'FAIL' }
 $s3 = if ($pgOk -eq $total) { 'PASS' } else { 'FAIL' }
 
-$noteBlock = if ($notes.Count) { ($notes | ForEach-Object { "- $_" }) -join "`n" } else { '- Nenhuma exceção' }
+$noteBlock = if ($notes.Count) { ($notes | ForEach-Object { "- $_" }) -join "`n" } else { '- Nenhuma excecao' }
 
 $body = @"
 # Soak 72h — relatório final

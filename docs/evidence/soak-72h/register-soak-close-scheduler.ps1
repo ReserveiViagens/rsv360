@@ -1,8 +1,9 @@
-# Agenda fechamento automático em 2026-06-02 09:05 -03
+# Agenda fechamento automático em end_at + 2 minutos (janela atual)
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Script = Join-Path $Root 'run-soak-close-scheduled.ps1'
 $TaskName = 'RSV360-Soak-72h-Close'
-$At = [datetime]::ParseExact('2026-06-02T09:05:00', 'yyyy-MM-ddTHH:mm:ss', $null)
+# 2 min após amostra 012 e end_at (2026-06-04T10:12:40-03:00)
+$At = [datetime]::ParseExact('2026-06-04 10:14:40', 'yyyy-MM-dd HH:mm:ss', $null)
 
 $Action = New-ScheduledTaskAction -Execute 'powershell.exe' `
   -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Script`""
