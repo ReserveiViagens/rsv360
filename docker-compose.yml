@@ -9,10 +9,18 @@ x-app-env: &app-env
   NEXT_PUBLIC_BACKEND_URL: http://localhost:3002
   INTERNAL_API_URL: http://backend:3002
 
+# Rede unificada (#250) — todos os servicos na mesma rede (sem network connect manual)
+networks:
+  rsv360_net:
+    name: rsv360_internal
+    driver: bridge
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-postgres
+    networks:
+      - rsv360_net
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -33,6 +41,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-redis
+    networks:
+      - rsv360_net
     restart: unless-stopped
     command: ['redis-server', '--appendonly', 'yes']
     ports:
@@ -45,6 +55,8 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-backend
+    networks:
+      - rsv360_net
     restart: unless-stopped
     depends_on:
       postgres:
@@ -77,6 +89,8 @@ services:
         APP_PORT: 3004
         <<: *app-env
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-admin
+    networks:
+      - rsv360_net
     restart: unless-stopped
     depends_on:
       backend:
@@ -96,6 +110,8 @@ services:
         APP_PORT: 3006
         <<: *app-env
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-guest
+    networks:
+      - rsv360_net
     restart: unless-stopped
     depends_on:
       backend:
@@ -115,6 +131,8 @@ services:
         APP_PORT: 3000
         <<: *app-env
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-site-publico
+    networks:
+      - rsv360_net
     restart: unless-stopped
     depends_on:
       postgres:
@@ -142,6 +160,8 @@ services:
         APP_PORT: 3005
         <<: *app-env
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-turismo
+    networks:
+      - rsv360_net
     restart: unless-stopped
     depends_on:
       backend:
@@ -155,6 +175,8 @@ services:
   prometheus:
     image: prom/prometheus:v2.54.1
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-prometheus
+    networks:
+      - rsv360_net
     restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -173,6 +195,8 @@ services:
   alertmanager:
     image: prom/alertmanager:v0.27.0
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-alertmanager
+    networks:
+      - rsv360_net
     restart: unless-stopped
     command:
       - --config.file=/etc/alertmanager/alertmanager.yml
@@ -186,6 +210,8 @@ services:
   grafana:
     image: grafana/grafana-oss:11.1.5
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-grafana
+    networks:
+      - rsv360_net
     restart: unless-stopped
     ports:
       - '3007:3000'

@@ -63,6 +63,15 @@ Atue apenas em trilha paralela segura: docs, evidências, backlog, revisão em l
 ## Critério de saída
 - Só encerrar modo Soak Safe após o fechamento oficial (`run-soak-close-scheduled.ps1` / `run-soak-final.ps1`) e veredito final de promoção do G4 completo.
 
+## ENCERRADO (2026-06-04)
+
+| Item | Status |
+|------|--------|
+| G4 completo | **GO** |
+| PR #249 | **MERGED** |
+| Regra Cursor | `alwaysApply: false` em `.cursor/rules/soak-safe-g4.mdc` |
+| Trilha ativa | `POST-SOAK-EXECUTION-PLAYBOOK.md` |
+
 ## Pacote de fechamento (revisor)
 
 Enviar após `>= 2026-06-02T09:03:09-03:00`:

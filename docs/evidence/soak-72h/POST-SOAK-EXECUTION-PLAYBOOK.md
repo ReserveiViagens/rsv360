@@ -11,7 +11,7 @@
 | G0 | Revisor valida C1–C16 | `SOAK-SAMPLES.tsv`, `SOAK-72H-REPORT.md`, `API-P0-SUMMARY.tsv` |
 | G1 | Merge PR #249 em `main` | Commit em `main` |
 | G2 | Atualizar `SPRINT-0-EVIDENCIA-OPERACIONAL.md` §14 | G4 completo = **GO** |
-| G3 | Remover/desativar Soak Safe (regra Cursor opcional) | `.cursor/rules/soak-safe-g4.mdc` |
+| G3 | Remover/desativar Soak Safe (regra Cursor opcional) | `.cursor/rules/soak-safe-g4.mdc` — **DONE 2026-06-04** |
 
 ## 1. Go-live order (após soak GO — acordado)
 
@@ -31,6 +31,7 @@
 **Issues:** [#250](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/250) · [#251](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/251)
 
 - **#250 primeiro** (draft pronto) — base estável para #252/#255.
+- Rede canônica: `rsv360_internal` (`docker compose -p rsv360 up -d` — **sem** `docker network connect`).
 - #251 em seguida; coordenar restart PG na mesma janela se possível.
 
 ## 3. Healthcheck frontends

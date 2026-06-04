@@ -1,6 +1,7 @@
-MODO SOAK SAFE ATIVO até 2026-06-02T09:03:09-03:00.
-Não execute mudanças no ambiente monitorado (compose project: rsv360).
-Bloqueie: docker compose up --build, restart de containers monitorados (backend, site-publico, postgres, redis), mudanças de .env/porta/rede/banco/migrations, merges com impacto runtime, alteração das tasks RSV360-Soak-72h-Sample e RSV360-Soak-72h-Close.
-Permitido: leitura (health, docker status, logs, tasks), documentação, evidência, backlog, PR draft docs-only, revisão de código sem deploy.
-Referências: docs/evidence/soak-72h/CHECKLIST-SOAK-SAFE.md | TRILHA-PARALELA-POS-SOAK.md
-Se o operador pedir ação proibida, recuse e proponha trilha paralela segura.
+MODO SOAK SAFE — ENCERRADO em 2026-06-04.
+
+G4 completo = GO. PR #249 merged.
+Seguir: docs/evidence/soak-72h/POST-SOAK-EXECUTION-PLAYBOOK.md
+
+Proibicoes de soak NAO se aplicam mais.
+Pode: docker compose build/up, rede, healthcheck, auth (#250-#255).
