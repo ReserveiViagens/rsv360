@@ -214,7 +214,7 @@ grafana → depende prometheus
 | R3 | **Sem `package.json` raiz** | Workspaces/npm scripts oficiais quebrados | `Test-Path package.json` = false |
 | R4 | **Microserviços fantasma** | Planejamento baseado em 32 serviços inexistentes | `ONDE_PARAMOS.md` vs pasta ausente |
 | R5 | **Frontends Docker unhealthy** | Falso negativo em orquestração/CI local | docker inspect |
-| R6 | **Postgres duplo em 5432** | Migrations/schema imprevisíveis | netstat PID 12728 + 3904 |
+| R6 | **Postgres duplo em 5432** | Migrations/schema imprevisíveis | **Mitigado 2026-06-04** — ver `issues/POSTGRES-5432-INVENTORY.md` + `scripts/ensure-postgres-canonical-dev.ps1` |
 | R7 | **Git sem commits** | Sem baseline reprodutível | `git status` inicial |
 | R8 | **Centenas de MDs contraditórios** | Decisões erradas por doc obsoleta | raiz do repo |
 | R9 | **site-publico com PG direto + backend** | Dupla fonte de verdade de dados | inventário arquitetura |
@@ -232,7 +232,7 @@ Todos devem passar **no perfil canônico escolhido** (dev ou docker), com log ar
 - [ ] Primeiro commit baseline com hash registrado
 
 ### Gate G1 — Infra
-- [ ] Postgres único em 5432 (sem conflito de instância)
+- [x] Postgres único em 5432 no perfil Docker (script `ensure-postgres-canonical-dev.ps1`; Windows PG em :5433)
 - [ ] `GET /health` backend 200 na porta canônica
 - [ ] Redis: estado documentado (on/off) consistente com backend
 

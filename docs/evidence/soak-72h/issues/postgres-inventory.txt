@@ -1,25 +1,12 @@
-﻿=== POSTGRES :5432 inventory 2026-06-04T13:20:24.3645382-03:00 ===
---- Get-NetTCPConnection :5432 ---
+﻿=== ensure-postgres-canonical 2026-06-04T15:08:50.3680247-03:00 ===
 
-LocalAddress LocalPort RemoteAddress RemotePort State       AppliedSetting OwningProcess
------------- --------- ------------- ---------- -----       -------------- -------------
-::1          5432      ::1           50982      Established Internet       5040         
-::1          5432      ::1           50980      Established Internet       5040         
-::1          5432      ::1           50979      Established Internet       5040         
-::1          5432      ::1           50978      Established Internet       5040         
-::1          5432      ::1           50977      Established Internet       5040         
-::1          5432      ::1           50974      Established Internet       5040         
-::1          5432      ::1           50971      Established Internet       5040         
-::           5432      ::            0          Listen                     13404        
-0.0.0.0      5432      0.0.0.0       0          Listen                     5040         
+LocalAddress LocalPort RemoteAddress RemotePort State  AppliedSetting OwningProcess
+------------ --------- ------------- ---------- -----  -------------- -------------
+::           5432      ::            0          Listen                5040         
+0.0.0.0      5432      0.0.0.0       0          Listen                5040         
 
 
 
---- Get-NetTCPConnection :5433 ---
-
---- docker ps postgres ---
-NAMES             STATUS                PORTS
-rsv360-postgres   Up 3 days (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
---- docker port rsv360-postgres ---
-5432/tcp -> 0.0.0.0:5432
-5432/tcp -> [::]:5432
+5040 -> postgres C:\Program Files\PostgreSQL\18\bin\postgres.exe
+Windows service postgresql-x64-18: Running
+rsv360-postgres Up 11 minutes (healthy) 0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
