@@ -9,6 +9,10 @@ PROJECT="${RSV360_DOCKER_PROJECT:-rsv360}"
 TS="$(TZ=America/Sao_Paulo date -Iseconds)"
 SAMPLE_ID="${1:-$(printf '%03d' $(($(wc -l < "$LOG_DIR/SOAK-SAMPLES.tsv" 2>/dev/null || echo 1) - 1)))}"
 LABEL="${2:-periodic}"
+FORCE="${3:-}"
+KICKOFF="2026-06-01T10:12:40-03:00"
+INTERVAL_MIN=360
+TOLERANCE_MIN=20
 SUMMARY="$LOG_DIR/SOAK-SAMPLES.tsv"
 LOG_FILE="$LOG_DIR/sample-${SAMPLE_ID}-${LABEL}.log"
 
@@ -32,6 +36,22 @@ http_code() {
   echo "[TS] $TS"
   echo "---"
 } > "$LOG_FILE"
+
+# Guard: evita contaminação por tasks antigas fora dos slots da janela atual.
+if [[ "$LABEL" == "periodic" && "$FORCE" != "--force" ]]; then
+  delta_min=$(( ( $(date -d "$TS" +%s) - $(date -d "$KICKOFF" +%s) ) / 60 ))
+  if (( delta_min >= 0 )); then
+    mod=$(( delta_min % INTERVAL_MIN ))
+    if (( mod < 0 )); then mod=$((mod + INTERVAL_MIN)); fi
+    dist=$mod
+    if (( INTERVAL_MIN - mod < dist )); then dist=$((INTERVAL_MIN - mod)); fi
+    if (( dist > TOLERANCE_MIN )); then
+      echo "[SKIP] Fora do slot da janela atual (distancia=${dist} min; tolerancia=${TOLERANCE_MIN})." >> "$LOG_FILE"
+      echo "Soak sample $SAMPLE_ID @ $TS -> SKIP (fora do slot; use --force para sobrescrever)"
+      exit 0
+    fi
+  fi
+fi
 
 H2=$(http_code "http://127.0.0.1:3002/health")
 H0=$(http_code "http://127.0.0.1:3000/")
