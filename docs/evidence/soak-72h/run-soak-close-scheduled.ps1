@@ -1,6 +1,6 @@
 # Fechamento soak — executar após end_at (agendado ou manual)
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$EndAt = [DateTimeOffset]::Parse('2026-06-02T09:03:09-03:00')
+$EndAt = [DateTimeOffset]::Parse('2026-06-04T10:12:40-03:00')
 $Tz = [TimeZoneInfo]::FindSystemTimeZoneById('E. South America Standard Time')
 $Now = [TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $Tz)
 

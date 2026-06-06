@@ -1,2 +1,2 @@
-﻿sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_restarts	site_restarts	postgres_restarts	error_rate_note	verdict
-000	2026-05-30T09:03:09-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_restarts	site_restarts	postgres_restarts	error_rate_note	verdict
+000	2026-06-01T10:13:29-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK

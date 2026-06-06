@@ -1,0 +1,28 @@
+NAMES                 STATUS                        PORTS
+rsv360-grafana        Up 28 minutes                 0.0.0.0:3007->3000/tcp, [::]:3007->3000/tcp
+rsv360-prometheus     Up 28 minutes                 0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+rsv360-alertmanager   Up 28 minutes                 0.0.0.0:9093->9093/tcp, [::]:9093->9093/tcp
+rsv360-site-publico   Up 28 minutes (healthy)       0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+rsv360-backend        Exited (255) 28 minutes ago   0.0.0.0:3002->3002/tcp
+rsv360-guest          Up 28 minutes (unhealthy)     0.0.0.0:3006->3006/tcp, [::]:3006->3006/tcp
+rsv360-admin          Up 28 minutes (unhealthy)     0.0.0.0:3004->3004/tcp, [::]:3004->3004/tcp
+rsv360-turismo        Up 28 minutes (unhealthy)     0.0.0.0:3005->3005/tcp, [::]:3005->3005/tcp
+rsv360-redis          Up 28 minutes                 0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+rsv360-postgres       Up 28 minutes (healthy)       0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+inspiring_almeida     Up 28 minutes (healthy)       3002/tcp
+gracious_kapitsa      Up 28 minutes                 6379/tcp
+agitated_lalande      Exited (1) 28 minutes ago     
+upbeat_golick         Exited (1) 28 minutes ago     
+gifted_feynman        Exited (0) 28 minutes ago     
+objective_vaughan     Exited (1) 28 minutes ago     
+ecstatic_hodgkin      Up 28 minutes                 9090/tcp
+eloquent_hodgkin      Up 28 minutes                 3000/tcp
+intelligent_faraday   Up 28 minutes                 9093/tcp
+friendly_newton       Up 28 minutes                 3000/tcp
+pedantic_darwin       Up 28 minutes                 9090/tcp
+determined_tesla      Up 28 minutes                 9093/tcp
+heuristic_bassi       Up 28 minutes                 6379/tcp
+charming_brown        Up 28 minutes                 80/tcp
+heuristic_bartik      Up 28 minutes (healthy)       3002/tcp
+cool_hodgkin          Exited (0) 28 minutes ago     
+pedantic_bohr         Exited (1) 28 minutes ago     
