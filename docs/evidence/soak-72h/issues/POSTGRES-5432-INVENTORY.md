@@ -21,7 +21,8 @@
 
 ## Ações pendentes (#251 PR)
 
-- [ ] Parar ou desabilitar listener Windows em `:5432` (PID 5040) **ou** remapear Docker para `:5433` com doc única
+- [ ] Parar ou desabilitar listener Windows em `:5432` (PID 5040) **ou** remapear Docker para `:5433` com doc única — `.\scripts\ensure-postgres-canonical-dev.ps1 -Apply -StopWindowsService` **(Admin)**
+- [x] Smoke A3 (API P0) — após `.\scripts\sync-postgres-docker-dev.ps1` + `.env` com `rsv_360_ecosystem` (PR A3)
 - [ ] `pg_dump` contra `rsv360-postgres` + smoke A3 (API P0)
 - [ ] Atualizar `SPRINT-0-EVIDENCIA-OPERACIONAL.md` §9
 

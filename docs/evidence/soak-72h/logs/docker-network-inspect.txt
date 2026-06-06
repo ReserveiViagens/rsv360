@@ -1,0 +1,22 @@
+# Pos-merge PR #261 — rede rsv360_internal (2026-06-04)
+
+docker compose -p rsv360 down && docker rm -f (orphans) && docker compose -p rsv360 up -d
+
+## Resultado
+
+- Rede: rsv360_internal
+- Containers na mesma rede: postgres, redis, backend, site-publico, admin, guest, turismo, prometheus, grafana, alertmanager
+- site-publico + postgres: ambos em rsv360_internal (sem docker network connect manual)
+
+## Health (pos #252 rebuild)
+
+rsv360-site-publico: healthy
+rsv360-admin: healthy
+rsv360-guest: healthy
+rsv360-turismo: healthy
+rsv360-postgres: healthy
+rsv360-backend: healthy
+
+## HTTP
+
+3000, 3002, 3004, 3005, 3006 — validar com Invoke-WebRequest pos-deploy

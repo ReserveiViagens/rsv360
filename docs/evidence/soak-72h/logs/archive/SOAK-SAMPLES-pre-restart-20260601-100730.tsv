@@ -1,0 +1,11 @@
+﻿sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_restarts	site_restarts	postgres_restarts	error_rate_note	verdict
+000	2026-05-30T09:03:09-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+001	2026-05-30T09:47:20-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+002	2026-05-30T15:03:15-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+003	2026-05-30T21:03:16-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+004	2026-05-31T03:03:16-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+005	2026-05-31T09:03:15-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+006	2026-05-31T15:03:15-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+007	2026-05-31T21:03:16-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+008	2026-06-01T03:03:16-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+009	2026-06-01T09:03:15-03:00									smoke-only; prometheus optional	FAIL
