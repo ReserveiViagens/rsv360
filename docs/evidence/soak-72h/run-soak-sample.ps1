@@ -1,13 +1,17 @@
 # Soak 72h — amostra periódica (Windows)
 param(
   [string]$SampleId = '',
-  [string]$Label = 'periodic'
+  [string]$Label = 'periodic',
+  [switch]$Force
 )
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LogDir = Join-Path $Root 'logs'
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 $Project = if ($env:RSV360_DOCKER_PROJECT) { $env:RSV360_DOCKER_PROJECT } else { 'rsv360' }
+$Kickoff = [DateTimeOffset]::Parse('2026-06-01T10:12:40-03:00')
+$IntervalMinutes = 360
+$ToleranceMinutes = 20
 $Tz = [TimeZoneInfo]::FindSystemTimeZoneById('E. South America Standard Time')
 $Ts = [TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $Tz).ToString('yyyy-MM-ddTHH:mm:sszzz')
 
@@ -28,6 +32,21 @@ $LogFile = Join-Path $LogDir "sample-$SampleId-$Label.log"
   "[TS] $Ts"
   "---"
 ) | Set-Content $LogFile -Encoding utf8
+
+# Guard: evita contaminação por tasks antigas fora dos slots da janela atual.
+if (-not $Force -and $Label -eq 'periodic') {
+  $now = [DateTimeOffset]::Parse($Ts)
+  $delta = ($now - $Kickoff).TotalMinutes
+  if ($delta -ge 0) {
+    $mod = [Math]::Abs($delta % $IntervalMinutes)
+    $distance = [Math]::Min($mod, $IntervalMinutes - $mod)
+    if ($distance -gt $ToleranceMinutes) {
+      "[SKIP] Fora do slot da janela atual (distancia=$([Math]::Round($distance,2)) min; tolerancia=$ToleranceMinutes)." | Add-Content $LogFile
+      Write-Host "Soak sample $SampleId @ $Ts -> SKIP (fora do slot; use -Force para sobrescrever)"
+      exit 0
+    }
+  }
+}
 
 function Get-HttpCode($url) {
   try { return [int](Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 15).StatusCode }
