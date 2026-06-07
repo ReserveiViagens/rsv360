@@ -63,6 +63,8 @@ Validar `Health.Status=healthy` e HTTP 200 em 3004/3005/3006.
 
 Após #250–#255 conforme prioridade do produto → iniciar fase documentada em `docs/integracao-v3/sprint-0/PLANO-MESTRE-v3-CONSOLIDADO.md` (somente com G0–G4 verdes).
 
+**Integração S1↔S2 validada 2026-06-06** — próximos passos: workspace integração `03-PROXIMA-TRILHA-POS-INTEGRACAO.md` (G1 formal · G2 S1 · Segurança · G3 → Trilha 0).
+
 ## Referências
 
 - [CHECKLIST-SOAK-SAFE.md](./CHECKLIST-SOAK-SAFE.md)

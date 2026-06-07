@@ -441,3 +441,19 @@ npm run build --workspaces --if-present
 | API P0 fechamento | **8/8 OK** (`g4-kickoff/logs/API-P0-SUMMARY.tsv`) |
 | Veredito soak | **GO** |
 | **G4 completo** | **GO** (merge PR #249) |
+
+---
+
+## 15. Integração S1 ↔ S2 (06/06/2026)
+
+**Evidência (workspace integração):** `docs/evidence/2026-06-06/FECHAMENTO-INTEGRACAO-S1-S2.md` · commit `f7b7ebb`
+
+| Check | Resultado |
+|-------|-----------|
+| S1 `:5000/` + `/api/status` | **200** (Windows) |
+| S2 `:3000/` + `:3002/health` | **200** (Docker) |
+| Postgres S2 `:5432` | **OK** |
+| API P0 pós-fix A3 | **8/8** (PR #266/#267) |
+
+| Veredito | **Integração S1 ↔ S2 operacionalmente validada** |
+| Próxima trilha | G3 → Trilha 0 — ver `03-PROXIMA-TRILHA-POS-INTEGRACAO.md` (workspace integração) |
