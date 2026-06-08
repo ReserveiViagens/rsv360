@@ -2,7 +2,7 @@ campo	valor
 adr_id	ADR-0002
 titulo	Stack alvo monorepo S2 Trilha 0 T0.2
 data_proposta	2026-06-08
-status	PROPOSTO
+status	ACEITO
 supersede	ADR-0001
 piloto_t0.3	apps/guest
 fase_b_alvo	apps/site-publico React 19
@@ -10,5 +10,5 @@ node_alvo	24 LTS
 next_alvo	16.2.x
 react_alvo	19.2.x
 typescript_curto_prazo	5.9.x
-aprovador	_pendente_
-data_aprovacao	_pendente_
+aprovador	Operador RSV360 (T0.3 kickoff)
+data_aprovacao	2026-06-08

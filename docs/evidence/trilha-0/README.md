@@ -25,6 +25,7 @@
 | `SOAK-72H-PLAN.md` | Plano formal soak (pós Trilha 0) |
 | `T0.1-REACT-NEXT-INVENTORY.md` | Inventário React/Next (T0.1) |
 | `ADR-0002-T0.2-STACK-ALVO-MONOREPO.md` | ADR stack alvo — Trilha 0 T0.2 |
+| `T0.3-GUEST-PILOT.md` | Piloto guest Fase A (T0.3) |
 
 ## Executar preflight
 
