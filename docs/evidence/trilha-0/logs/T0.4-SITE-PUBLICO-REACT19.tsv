@@ -1,0 +1,13 @@
+gate	comando	resultado	notas
+G-A2_build	npm run build --workspace=apps/site-publico	PASS	196 rotas app
+G-A3_type-check	npm run type-check --workspace=apps/site-publico	GAP_PRE_EXISTENTE	nao regressao React 19
+G-A4_lint	npm run lint --workspace=apps/site-publico	PASS	warnings unused-vars pre-existentes
+G-A5_smoke	GET http://127.0.0.1:3000/	200	rsv360-site-publico
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8 OK
+G-A8_rollback_tag	pre-react19-site-publico	PASS	local tag
+react_antes	18.3.1		
+react_depois	19.2.5		
+react_dom_depois	19.2.5		
+next	15.5.18	unchanged
+gap_t01	FECHADO	monorepo React 19 unificado
+veredito	GO_CONDICIONAL	Fase B ADR-0002

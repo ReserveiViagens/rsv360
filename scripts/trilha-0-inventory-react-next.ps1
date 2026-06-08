@@ -10,7 +10,7 @@ $tsv = Join-Path $logDir 'T0.1-INVENTORY.tsv'
 $md = Join-Path $Root 'docs\evidence\trilha-0\T0.1-REACT-NEXT-INVENTORY.md'
 
 $meta = @{
-  'apps/site-publico' = @{ port = '3000'; next = '^15.5.18'; react = '^18.3.1' }
+  'apps/site-publico' = @{ port = '3000'; next = '^15.5.18'; react = '19.2.5' }
   'apps/admin'        = @{ port = '3004'; next = '^15.5.16'; react = '^19.2.3' }
   'apps/guest'        = @{ port = '3006'; next = '^15.5.16'; react = '^19.2.3' }
   'apps/turismo'      = @{ port = '3005'; next = '^15.5.16'; react = '^19.2.3' }
