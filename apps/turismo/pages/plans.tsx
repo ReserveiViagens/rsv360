@@ -75,7 +75,6 @@ import {
   CloudSnow,
   Sun,
   Moon,
-  Cloud,
   CloudOff,
   CloudDrizzle,
   CloudFog,
