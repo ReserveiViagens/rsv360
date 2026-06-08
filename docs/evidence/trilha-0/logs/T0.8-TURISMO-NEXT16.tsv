@@ -1,0 +1,11 @@
+gate	resultado	notas
+G-A2_build	npm run build --workspace=apps/turismo	PASS	175 rotas Next 16.2.7
+G-A3_type-check	tsc --noEmit	FAIL	842 erros TS pré-existentes
+G-A4_lint	eslint .	PASS	0 errors 8233 warnings
+G-A5_smoke	GET :3005	200	
+G-A2_docker	docker compose build turismo	PASS	next 16.2.7
+G-A8_tag	pre-next16-turismo	PASS	local @ deffbf67
+next_antes	15.5.x		
+next_depois	16.2.7		
+fix	imports Cloud/Thermometer duplicados; ToastContainer named import; images.remotePatterns	
+veredito	GO_CONDICIONAL	Fase D passo 3/4
