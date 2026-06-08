@@ -23,6 +23,8 @@
 | `run-trilha0-preflight.sh` | Preflight automatizado |
 | `run-trilha0-preflight.ps1` | Preflight Windows |
 | `SOAK-72H-PLAN.md` | Plano formal soak (pós Trilha 0) |
+| `T0.1-REACT-NEXT-INVENTORY.md` | Inventário React/Next (T0.1) |
+| `ADR-0002-T0.2-STACK-ALVO-MONOREPO.md` | ADR stack alvo — Trilha 0 T0.2 |
 
 ## Executar preflight
 
