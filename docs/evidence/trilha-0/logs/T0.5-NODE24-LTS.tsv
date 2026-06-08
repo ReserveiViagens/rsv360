@@ -1,0 +1,16 @@
+gate	resultado	notas
+G-A2_npm_ci	npm ci --ignore-scripts	PASS	host Node v22.22.0
+G-A2_build_guest	npm run build --workspace=apps/guest	PASS	
+G-A2_docker_backend	docker compose -p rsv360 build backend	PASS	node v24.16.0 na imagem
+G-A2_docker_guest	docker compose -p rsv360 build guest	PASS	node v24.16.0 na imagem
+G-A5_smoke_3002	GET :3002/health	200	stack existente
+G-A5_smoke_3000	GET :3000/	200	stack existente
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
+G-A8_rollback_tag	pre-node24-s2	PASS	
+engines_node	>=24.0.0 <25	package.json	
+nvmrc	24	repo root
+docker_base	node:24-alpine	3 Dockerfiles
+ci_node	24.x	patch local .github/ — push pendente workflow scope
+host_dev_gap	Node 22.22.0	operador: nvm use 24
+gap_t03	FECHADO	Docker/CI Node 24
+veredito	GO_CONDICIONAL	Fase C ADR-0002

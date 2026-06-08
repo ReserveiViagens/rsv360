@@ -4,7 +4,7 @@
 # @author Douglas P. Figueiredo
 # @license UNLICENSED
 
-FROM node:22-alpine AS deps
+FROM node:24-alpine AS deps
 ARG APP_DIR
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BACKEND_URL
@@ -22,7 +22,7 @@ RUN cd "${APP_DIR}" && npm install --no-audit --no-fund \
   && test -d /workspace/node_modules/react \
   && test -d /workspace/node_modules/react-dom
 
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 ARG APP_DIR
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BACKEND_URL
@@ -42,7 +42,7 @@ RUN mkdir -p /workspace/.deploy \
   && mkdir -p /workspace/.deploy/public \
   && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." /workspace/.deploy/public/; fi
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 ARG APP_DIR
 ARG APP_PORT=3000
 ARG NEXT_PUBLIC_API_URL
