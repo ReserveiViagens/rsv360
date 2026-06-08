@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
     externalDir: true,
+  },
+  turbopack: {
+    resolveAlias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   images: {
     remotePatterns: [
@@ -12,14 +19,6 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname, 'src'),
-    };
-
-    return config;
   },
 };
 
