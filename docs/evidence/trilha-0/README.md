@@ -29,6 +29,7 @@
 | `T0.4-SITE-PUBLICO-REACT19.md` | Fase B site-publico React 19 |
 | `T0.5-NODE24-LTS.md` | Fase C Node 24 LTS (Docker/CI) |
 | `T0.6-GUEST-NEXT16.md` | Fase D guest Next 16.2.7 |
+| `T0.7-ADMIN-NEXT16.md` | Fase D admin Next 16.2.7 |
 
 ## Executar preflight
 
