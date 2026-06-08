@@ -30,6 +30,8 @@
 | `T0.5-NODE24-LTS.md` | Fase C Node 24 LTS (Docker/CI) |
 | `T0.6-GUEST-NEXT16.md` | Fase D guest Next 16.2.7 |
 | `T0.7-ADMIN-NEXT16.md` | Fase D admin Next 16.2.7 |
+| `T0.8-TURISMO-NEXT16.md` | Fase D turismo Next 16.2.7 |
+| `T0.9-SITE-PUBLICO-NEXT16.md` | Fase D site-publico Next 16.2.7 — GAP-T04 fechado |
 
 ## Executar preflight
 

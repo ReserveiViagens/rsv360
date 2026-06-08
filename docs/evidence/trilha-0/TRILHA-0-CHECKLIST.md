@@ -55,7 +55,8 @@
 - [x] Fase C — Node 24 LTS **GO condicional** 2026-06-08 — `T0.5-NODE24-LTS.md` (GAP-T03 fechado Docker/CI)
 - [x] Fase D — guest Next 16 **GO condicional** 2026-06-08 — `T0.6-GUEST-NEXT16.md` (GAP-T04 parcial)
 - [x] Fase D — admin Next 16 **GO condicional** 2026-06-08 — `T0.7-ADMIN-NEXT16.md`
-- [ ] Fase D — turismo Next 16
+- [x] Fase D — turismo Next 16 **GO condicional** 2026-06-08 — `T0.8-TURISMO-NEXT16.md`
+- [x] Fase D — site-publico Next 16 **GO condicional** 2026-06-08 — `T0.9-SITE-PUBLICO-NEXT16.md` (**GAP-T04 fechado**)
 
 ## Decisão Trilha 0
 
