@@ -51,7 +51,8 @@
 - [x] Gaps documentados (site-publico React 18 vs apps React 19)
 - [x] ADR T0.2 **aprovado** — ADR-0002 status `Aceito` (2026-06-08)
 - [x] Piloto T0.3 Fase A — `apps/guest` **GO** 2026-06-08 — `T0.3-GUEST-PILOT.md`
-- [ ] Fase B — `site-publico` React 19 (ADR-0002)
+- [x] Fase B — `site-publico` React 19 **GO condicional** 2026-06-08 — `T0.4-SITE-PUBLICO-REACT19.md` (GAP-T01 fechado)
+- [ ] Fase C — Node 24 LTS (ADR-0002)
 
 ## Decisão Trilha 0
 
