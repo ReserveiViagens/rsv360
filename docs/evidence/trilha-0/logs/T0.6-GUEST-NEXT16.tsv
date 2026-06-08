@@ -1,0 +1,12 @@
+gate	resultado	notas
+G-A2_build	npm run build --workspace=apps/guest	PASS	Next 16.2.7 Turbopack
+G-A3_type-check	tsc --noEmit	PASS	
+G-A4_lint	eslint .	PASS	8 warnings set-state-in-effect
+G-A5_smoke	GET :3006	200	container existente
+G-A2_docker	docker compose build guest	PASS	next 16.2.7
+G-A8_tag	pre-next16-guest	PASS	
+next_antes	15.5.18		
+next_depois	16.2.7		
+react	19.2.5	unchanged
+gap_t04_parcial	guest_only	admin/turismo/site-publico pendente
+veredito	GO_CONDICIONAL	Fase D passo 1/4

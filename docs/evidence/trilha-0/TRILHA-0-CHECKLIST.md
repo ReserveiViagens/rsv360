@@ -53,7 +53,8 @@
 - [x] Piloto T0.3 Fase A — `apps/guest` **GO** 2026-06-08 — `T0.3-GUEST-PILOT.md`
 - [x] Fase B — `site-publico` React 19 **GO condicional** 2026-06-08 — `T0.4-SITE-PUBLICO-REACT19.md` (GAP-T01 fechado)
 - [x] Fase C — Node 24 LTS **GO condicional** 2026-06-08 — `T0.5-NODE24-LTS.md` (GAP-T03 fechado Docker/CI)
-- [ ] Fase D — Next.js 16 (ADR-0002)
+- [x] Fase D — guest Next 16 **GO condicional** 2026-06-08 — `T0.6-GUEST-NEXT16.md` (GAP-T04 parcial)
+- [ ] Fase D — admin Next 16
 
 ## Decisão Trilha 0
 
