@@ -3,7 +3,7 @@
 # ============================================
 
 # --- Stage 1: Builder ---
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 # Copiar package files
@@ -14,7 +14,7 @@ COPY package.json package-lock.json ./
 RUN cd backend && npm ci --no-audit --no-fund
 
 # --- Stage 2: Production ---
-FROM node:22-alpine AS production
+FROM node:24-alpine AS production
 WORKDIR /app
 
 # Segurança: usuário não-root

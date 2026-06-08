@@ -27,6 +27,7 @@
 | `ADR-0002-T0.2-STACK-ALVO-MONOREPO.md` | ADR stack alvo — Trilha 0 T0.2 |
 | `T0.3-GUEST-PILOT.md` | Piloto guest Fase A (T0.3) |
 | `T0.4-SITE-PUBLICO-REACT19.md` | Fase B site-publico React 19 |
+| `T0.5-NODE24-LTS.md` | Fase C Node 24 LTS (Docker/CI) |
 
 ## Executar preflight
 
