@@ -44,6 +44,14 @@
 - [ ] Sem segundo listener Postgres não documentado em `:5432` (ou GAP aceito)
 - [ ] `docs/DOCKER-ISOLATION.md` alinhado ao clone em uso
 
+## T0.1 — Inventário React/Next (execução stack upgrade)
+
+- [x] Script `scripts/trilha-0-inventory-react-next.ps1`
+- [x] Relatório `T0.1-REACT-NEXT-INVENTORY.md` + `logs/T0.1-INVENTORY.tsv`
+- [x] Gaps documentados (site-publico React 18 vs apps React 19)
+- [ ] ADR T0.2 stack alvo aprovado
+- [ ] Piloto T0.3 (guest ou site-publico)
+
 ## Decisão Trilha 0
 
 | Campo | Valor |
