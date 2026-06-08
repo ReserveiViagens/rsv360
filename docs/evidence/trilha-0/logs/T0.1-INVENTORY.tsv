@@ -1,6 +1,6 @@
-workspace	port	dev	next_decl	react_decl	next_resolved	react_resolved	react_dom_resolved	typescript_resolved
-root	-	-	-	^19.2.3	15.5.18	19.2.5	19.2.5	5.9.3
-apps/site-publico	3000	^15.5.18	^18.3.1	15.5.18	18.3.1	18.3.1	5.9.3
+﻿workspace	port	dev	next_decl	react_decl	next_resolved	react_resolved	react_dom_resolved	typescript_resolved
+root	-	-	-	19.2.5	15.5.18	19.2.5	19.2.5	5.9.3
+apps/site-publico	3000	^15.5.18	19.2.5	15.5.18	19.2.5	19.2.5	5.9.3
 apps/admin	3004	^15.5.16	^19.2.3	15.5.18	19.2.5	19.2.5	5.9.3
 apps/guest	3006	^15.5.16	^19.2.3	15.5.18	19.2.5	19.2.5	5.9.3
 apps/turismo	3005	^15.5.16	^19.2.3	15.5.18	19.2.5	19.2.5	5.9.3

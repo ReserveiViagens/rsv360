@@ -57,8 +57,8 @@
     "@sendgrid/mail": "^8.1.6",
     "handlebars": "^4.7.9",
     "nodemailer": "^8.0.7",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "twilio": "^5.13.1"
   },
   "overrides": {
@@ -102,7 +102,9 @@
     "socket.io-client": {
       "socket.io-parser": "4.2.6"
     },
-    "test-exclude": "7.0.1"
+    "test-exclude": "7.0.1",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "engines": {
     "node": ">=18.0.0",
