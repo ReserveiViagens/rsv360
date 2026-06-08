@@ -1,0 +1,11 @@
+gate	resultado	notas
+G-A2_build	npm run build --workspace=apps/site-publico	PASS	197 rotas Next 16.2.7
+G-A3_type-check	tsc --noEmit	GAP	1966 erros TS pré-existentes
+G-A4_lint	eslint .	PASS	0 errors 3218 warnings
+G-A5_smoke	GET :3000	200	
+G-A2_docker	docker compose build site-publico	PASS	next 16.2.7
+G-A8_tag	pre-next16-site-publico	PASS	local @ deffbf67
+next_antes	15.5.18		
+next_depois	16.2.7		
+fix	swagger static import; remove pages/_document legacy; turbopack alias; react-dom 19.2.5
+veredito	GO_CONDICIONAL	Fase D 4/4 GAP-T04 fechado
