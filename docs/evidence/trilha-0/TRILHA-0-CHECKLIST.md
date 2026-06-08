@@ -49,8 +49,9 @@
 - [x] Script `scripts/trilha-0-inventory-react-next.ps1`
 - [x] Relatório `T0.1-REACT-NEXT-INVENTORY.md` + `logs/T0.1-INVENTORY.tsv`
 - [x] Gaps documentados (site-publico React 18 vs apps React 19)
-- [ ] ADR T0.2 stack alvo aprovado
-- [ ] Piloto T0.3 (guest ou site-publico)
+- [x] ADR T0.2 redigido — `ADR-0002-T0.2-STACK-ALVO-MONOREPO.md` + `logs/T0.2-ADR-APPROVAL.tsv`
+- [ ] ADR T0.2 **aprovado** (assinatura tech lead — status `Aceito`)
+- [ ] Piloto T0.3 (`apps/guest` — Fase A do ADR-0002)
 
 ## Decisão Trilha 0
 
