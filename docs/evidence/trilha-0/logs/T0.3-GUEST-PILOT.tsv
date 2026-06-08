@@ -1,0 +1,11 @@
+gate	comando	resultado	notas
+G-A2_build	npm run build --workspace=apps/guest	PASS	2026-06-08
+G-A3_type-check	npm run type-check --workspace=apps/guest	PASS	2026-06-08
+G-A4_lint	npm run lint --workspace=apps/guest	PASS	warning auth.tsx exhaustive-deps
+G-A5_smoke	GET http://127.0.0.1:3006/	200	rsv360-guest healthy
+types_react_resolved	19.2.17	guest workspace	
+types_react_dom_resolved	19.2.3	guest workspace	
+types_node_resolved	22.19.20	guest workspace	
+react_runtime	19.2.5	unchanged	
+next_runtime	15.5.18	unchanged Fase A
+veredito	GO	Fase A ADR-0002	
