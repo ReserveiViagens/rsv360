@@ -26,6 +26,7 @@
 | `T0.1-REACT-NEXT-INVENTORY.md` | Inventário React/Next (T0.1) |
 | `ADR-0002-T0.2-STACK-ALVO-MONOREPO.md` | ADR stack alvo — Trilha 0 T0.2 |
 | `T0.3-GUEST-PILOT.md` | Piloto guest Fase A (T0.3) |
+| `T0.4-SITE-PUBLICO-REACT19.md` | Fase B site-publico React 19 |
 
 ## Executar preflight
 
