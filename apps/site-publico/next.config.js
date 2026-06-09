@@ -3,6 +3,7 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['pg', 'ioredis', 'sharp', 'nodemailer'],
   typescript: {
     ignoreBuildErrors: true,
   },

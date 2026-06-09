@@ -13,3 +13,4 @@ sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_r
 011	2026-06-04T04:11:58-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
 012	2026-06-04T10:12:06-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up	OK
 final	2026-06-04T10:16:03-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+000	2026-06-08T21:24:44-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
