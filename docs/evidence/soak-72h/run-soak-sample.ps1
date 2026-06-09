@@ -2,6 +2,7 @@
 param(
   [string]$SampleId = '',
   [string]$Label = 'periodic',
+  [string]$Note = '',
   [switch]$Force
 )
 
@@ -74,11 +75,13 @@ $rp = Get-Restarts 'postgres'
 
 docker ps --filter "name=${Project}-" --format '{{.Names}} {{.Status}}' 2>&1 | Add-Content $LogFile
 
-$errNote = 'smoke-only; prometheus optional'
-try {
-  $prom = Invoke-WebRequest 'http://127.0.0.1:9090/-/healthy' -UseBasicParsing -TimeoutSec 5
-  if ($prom.StatusCode -eq 200) { $errNote = 'prometheus_up; query 5xx in finalize' }
-} catch { }
+$errNote = if ($Note) { $Note } else { 'smoke-only; prometheus optional' }
+if (-not $Note) {
+  try {
+    $prom = Invoke-WebRequest 'http://127.0.0.1:9090/-/healthy' -UseBasicParsing -TimeoutSec 5
+    if ($prom.StatusCode -eq 200) { $errNote = 'prometheus_up; query 5xx in finalize' }
+  } catch { }
+}
 
 $verdict = 'OK'
 if ($h2 -ne 200 -or $h0 -ne 200) { $verdict = 'FAIL' }

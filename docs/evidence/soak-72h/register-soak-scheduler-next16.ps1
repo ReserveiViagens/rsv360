@@ -6,10 +6,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Wrapper = Join-Path $Root 'run-soak-sample-wsl.ps1'
+$SampleScript = Join-Path $Root 'run-soak-sample.ps1'
 $CloseScript = Join-Path $Root 'run-soak-close-scheduled.ps1'
 $KickoffDt = [DateTimeOffset]::Parse($Kickoff)
 $EndAt = $KickoffDt.AddHours(72)
+$Now = [DateTimeOffset]::Now
 
 $Settings = New-ScheduledTaskSettingsSet `
   -AllowStartIfOnBatteries `
@@ -37,11 +38,17 @@ $manifest = @(
 $ok = 0
 for ($i = 1; $i -le 12; $i++) {
   $id = '{0:D3}' -f $i
-  $at = $KickoffDt.AddHours(6 * $i).LocalDateTime
+  $atOffset = $KickoffDt.AddHours(6 * $i)
+  $at = $atOffset.LocalDateTime
   $atStr = $at.ToString('yyyy-MM-dd HH:mm:ss')
   $taskName = "RSV360-Soak-72h-Sample-$id"
+  if ($atOffset -lt $Now) {
+    Write-Host "SKIP $taskName -> $atStr (slot passado)" -ForegroundColor Yellow
+    $manifest += "| $taskName | $id | $atStr | SKIP (passado) |"
+    continue
+  }
   $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
-    -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Wrapper`" -SampleId $id"
+    -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$SampleScript`" -SampleId $id"
   $trigger = New-ScheduledTaskTrigger -Once -At $at
   try {
     Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger `

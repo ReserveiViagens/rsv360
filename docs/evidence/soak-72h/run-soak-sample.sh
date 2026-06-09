@@ -10,7 +10,7 @@ TS="$(TZ=America/Sao_Paulo date -Iseconds)"
 SAMPLE_ID="${1:-$(printf '%03d' $(($(wc -l < "$LOG_DIR/SOAK-SAMPLES.tsv" 2>/dev/null || echo 1) - 1)))}"
 LABEL="${2:-periodic}"
 FORCE="${3:-}"
-KICKOFF="2026-06-01T10:12:40-03:00"
+KICKOFF="2026-06-08T22:00:00-03:00"
 INTERVAL_MIN=360
 TOLERANCE_MIN=20
 SUMMARY="$LOG_DIR/SOAK-SAMPLES.tsv"
