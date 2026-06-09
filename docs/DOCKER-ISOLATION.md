@@ -28,6 +28,15 @@ RSV360_DOCKER_PROJECT=rsv360-wt-validate
 docker compose --env-file .env up -d
 ```
 
+### Worktree em uso (2026-06-08)
+
+| Campo | Valor |
+|-------|--------|
+| Pasta | `C:\Users\RSV 360\Documents\s2-pr232-validate` |
+| Git worktree | `.git\worktrees\s2-pr232-validate` |
+| Project Compose | **`rsv360`** (stack principal dev — não usar prefixo `-wt-validate` neste host) |
+| Evidência T3 | `docs/evidence/trilha-0/T3-ISOLAMENTO-DOCKER-CLOSE.md` |
+
 **Importante:** alterar `RSV360_DOCKER_PROJECT` cria containers novos; não recrie o stack principal sem necessidade.
 
 ## Portas
