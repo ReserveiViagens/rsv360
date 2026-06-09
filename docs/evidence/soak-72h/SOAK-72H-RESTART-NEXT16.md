@@ -1,7 +1,7 @@
 # Soak 72h — restart pós-Next 16 (Fase D completa)
 
-**Data kickoff:** 2026-06-08T20:50:00-03:00 (pós merge #278 + #279 + rebuild Docker)  
-**End_at (+72h):** 2026-06-11T20:50:00-03:00  
+**Data kickoff:** 2026-06-08T22:00:00-03:00 (pós merge #283 + rebuild Docker)  
+**End_at (+72h):** 2026-06-11T22:00:00-03:00  
 **Motivo restart:** stack Next **16.2.7** em guest, admin, turismo, site-publico; GAP-T04 fechado.
 
 ## Pré-requisitos desta janela
@@ -12,7 +12,7 @@
 | Merge #279 site-publico | **DONE** |
 | Smoke :3000/:3005/:3002 | **200** |
 | API P0 backend (A1,A2,A7) | **OK** |
-| API P0 site-publico (A3–A6) | **GAP** — pg/Turbopack Docker (hotfix `next build --webpack` em PR follow-up) |
+| API P0 site-publico (A3–A6) | **OK** (8/8 pós #283 webpack) |
 
 ## Baseline
 

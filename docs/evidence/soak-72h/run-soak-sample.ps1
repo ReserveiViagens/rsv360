@@ -9,7 +9,7 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LogDir = Join-Path $Root 'logs'
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 $Project = if ($env:RSV360_DOCKER_PROJECT) { $env:RSV360_DOCKER_PROJECT } else { 'rsv360' }
-$Kickoff = [DateTimeOffset]::Parse('2026-06-01T10:12:40-03:00')
+$Kickoff = [DateTimeOffset]::Parse('2026-06-08T22:00:00-03:00')
 $IntervalMinutes = 360
 $ToleranceMinutes = 20
 $Tz = [TimeZoneInfo]::FindSystemTimeZoneById('E. South America Standard Time')
