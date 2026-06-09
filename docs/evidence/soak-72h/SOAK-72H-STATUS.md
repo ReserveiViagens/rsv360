@@ -1,30 +1,34 @@
 # Soak 72h — status vivo
 
-**Ultima atualizacao:** 2026-06-04T10:16:08-03:00  
-**Estado:** **ENCERRADO — G4 COMPLETO GO (merge PR #249 em andamento)**
+**Ultima atualizacao:** 2026-06-08T22:00:45-03:00  
+**Estado:** **EM EXECUÇÃO — janela pós-Next 16 (#278+#279+#283)**
 
 | Campo | Valor |
 |-------|--------|
-| start_at (kickoff) | 2026-06-01T10:12:40-03:00 |
-| end_at (kickoff + 72h) | 2026-06-04T10:12:40-03:00 |
-| Branch | `ops/soak-72h-g4-final` |
-| PR | #249 |
-| Baseline | **OK** (`000` em `2026-06-01T10:13:29-03:00`) |
-| Amostras coletadas | **13 / 13** (000 + 001–012) + linha `final` |
-| Task coleta 6h | **OK** — `RSV360-Soak-72h-Sample-001` … `012` (Result 0) |
-| Task fechamento | `RSV360-Soak-72h-Close` agendada 10:14; relatorio via `run-soak-final.ps1` |
-| API P0 (fechamento) | **8/8 OK** (`API-P0-SUMMARY.tsv`) |
-| Veredito soak | **GO** |
-| G4 completo | **GO** (C1–C16 PASS, 2026-06-04) |
-| Modo Soak Safe | **pode encerrar** (pos-merge #249) |
+| start_at (kickoff) | **2026-06-08T22:00:00-03:00** |
+| end_at (kickoff + 72h) | **2026-06-11T22:00:00-03:00** |
+| Branch / base | `main` @ `5f3c1f62`+ (#283) |
+| Motivo restart | Stack Next **16.2.7** + hotfix webpack/pg Docker |
+| Baseline | **OK** (`000` `baseline-post-next16-v2`) |
+| API P0 (kickoff) | **8/8 OK** |
+| Amostras coletadas | **1 / 13** (000 baseline; 001–012 pendentes) |
+| Task coleta 6h | **OK** — `RSV360-Soak-72h-Sample-001` … `012` (manifest `SOAK-SCHEDULER-MANIFEST-NEXT16.md`) |
+| Task fechamento | **OK** — `RSV360-Soak-72h-Close` @ 2026-06-11 22:02 -03 |
+| Veredito soak | _pendente fim janela_ |
 
-## Fechamento
+## Comandos operacionais
 
-- Relatorio: `SOAK-72H-REPORT.md`
-- Checklist: `SOAK-72H-CLOSE-CHECKLIST.md` (C1–C13 PASS; C15–C16 pendentes revisor/merge)
-- Pacote revisor: `PACOTE-REVISOR-G4-COMPLETO.md`
+```powershell
+cd "C:\Users\RSV 360\Documents\s2-pr232-validate"
+$env:RSV360_DOCKER_PROJECT = "rsv360"
+.\docs\evidence\soak-72h\run-soak-sample.ps1 -SampleId "001" -Force   # manual entre slots
+.\docs\evidence\soak-72h\run-soak-close-scheduled.ps1                 # após end_at
+```
 
-## Incidente (janela anterior)
+## Janela anterior (encerrada GO)
 
-- Janela anterior abortada: `INCIDENT-2026-06-01-BACKEND-DOWN.md`
-- Nova janela (01/06–04/06): **13/13 OK**, sem hard stop
+- 2026-06-01 → 2026-06-04 — **GO** — `SOAK-72H-REPORT.md`, PR #249
+
+## Plano desta janela
+
+`SOAK-72H-RESTART-NEXT16.md` + `SOAK-SCHEDULER-MANIFEST-NEXT16.md`
