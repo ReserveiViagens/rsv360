@@ -40,9 +40,9 @@
 
 ## T3 — Isolamento e drift
 
-- [ ] `RSV360_DOCKER_PROJECT` / `COMPOSE_PROJECT_NAME` documentados no `.env`
-- [ ] Sem segundo listener Postgres não documentado em `:5432` (ou GAP aceito)
-- [ ] `docs/DOCKER-ISOLATION.md` alinhado ao clone em uso
+- [x] `RSV360_DOCKER_PROJECT` / `COMPOSE_PROJECT_NAME` documentados no `.env.example` — `T3-ISOLAMENTO-DOCKER-CLOSE.md`
+- [x] Segundo listener Postgres `:5432` — **GAP aceito** (Windows PG + Docker; inventário #251)
+- [x] `docs/DOCKER-ISOLATION.md` alinhado ao clone em uso (`s2-pr232-validate`)
 
 ## T0.1 — Inventário React/Next (execução stack upgrade)
 
@@ -56,11 +56,7 @@
 - [x] Fase D — guest Next 16 **GO condicional** 2026-06-08 — `T0.6-GUEST-NEXT16.md` (GAP-T04 parcial)
 - [x] Fase D — admin Next 16 **GO condicional** 2026-06-08 — `T0.7-ADMIN-NEXT16.md`
 - [x] Fase D — turismo Next 16 **GO condicional** 2026-06-08 — `T0.8-TURISMO-NEXT16.md`
-<<<<<<< HEAD
 - [x] Fase D — site-publico Next 16 **GO condicional** 2026-06-08 — `T0.9-SITE-PUBLICO-NEXT16.md` (**GAP-T04 fechado**)
-=======
-- [ ] Fase D — site-publico Next 16
->>>>>>> origin/main
 
 ## Decisão Trilha 0
 
@@ -68,4 +64,4 @@
 |-------|--------|
 | **Status** | **GO** |
 | **Data** | 2026-05-30 |
-| **Próximo passo** | Iniciar soak 72h — preencher janela em `SOAK-72H-PLAN.md` |
+| **Próximo passo** | Soak 72h restart pós-Next 16 — `docs/evidence/soak-72h/SOAK-72H-RESTART-NEXT16.md` |
