@@ -1,2 +1,4 @@
 ﻿sample_id	ts_sp	h3002	h3000	backend_health	site_health	postgres_health	backend_restarts	site_restarts	postgres_restarts	error_rate_note	verdict
 000	2026-06-08T22:00:45-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+001	2026-06-09T11:49:08-03:00	200	200	healthy	healthy	healthy	0	0	0	recovery; scheduler-wsl-exit-1; slot perdido	OK
+002	2026-06-09T11:49:09-03:00	200	200	healthy	healthy	healthy	0	0	0	recovery; scheduler-wsl-exit-1; slot perdido	OK
