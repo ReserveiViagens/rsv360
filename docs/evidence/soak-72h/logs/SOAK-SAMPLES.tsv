@@ -2,3 +2,7 @@
 000	2026-06-08T22:00:45-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
 001	2026-06-09T11:49:08-03:00	200	200	healthy	healthy	healthy	0	0	0	recovery; scheduler-wsl-exit-1; slot perdido	OK
 002	2026-06-09T11:49:09-03:00	200	200	healthy	healthy	healthy	0	0	0	recovery; scheduler-wsl-exit-1; slot perdido	OK
+003	2026-06-09T16:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+004	2026-06-09T22:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+005	2026-06-10T04:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+006	2026-06-10T10:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
