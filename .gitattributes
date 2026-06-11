@@ -50,6 +50,9 @@ apps/turismo/logs/dev.log filter=lfs diff=lfs merge=lfs -text
 # G4 kickoff smoke logs — small text evidence, not LFS
 docs/evidence/g4-kickoff/logs/*.log -filter -diff
 
+# Soak 72h evidence logs — small text, avoid LFS push friction
+docs/evidence/soak-72h/logs/*.log -filter -diff
+
 # G1 dual-system smoke logs
 docs/evidence/g1-dual-system/logs/*.log -filter -diff
 

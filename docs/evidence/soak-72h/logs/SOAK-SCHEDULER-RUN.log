@@ -1,3 +1,53 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d28edd734a5a87aacfb355a7e174f9709514634b47daa08e0bfed7ea54067bbd
-size 2733
+﻿[2026-06-01 16:12:02] START sample=001 label=periodic
+[2026-06-01 16:12:03] END sample=001 exit=0
+[2026-06-01 16:12:03] TAIL recorded in scheduler log
+[2026-06-01 22:12:03] START sample=002 label=periodic
+[2026-06-01 22:12:03] END sample=002 exit=0
+[2026-06-01 22:12:03] TAIL recorded in scheduler log
+[2026-06-02 04:12:02] START sample=003 label=periodic
+[2026-06-02 04:12:03] END sample=003 exit=0
+[2026-06-02 04:12:03] TAIL recorded in scheduler log
+[2026-06-02 10:12:03] START sample=004 label=periodic
+[2026-06-02 10:12:04] END sample=004 exit=0
+[2026-06-02 10:12:04] TAIL recorded in scheduler log
+[2026-06-02 16:12:02] START sample=005 label=periodic
+[2026-06-02 16:12:03] END sample=005 exit=0
+[2026-06-02 16:12:03] TAIL recorded in scheduler log
+[2026-06-02 22:12:02] START sample=006 label=periodic
+[2026-06-02 22:12:03] END sample=006 exit=0
+[2026-06-02 22:12:03] TAIL recorded in scheduler log
+[2026-06-03 04:12:01] START sample=007 label=periodic
+[2026-06-03 04:12:02] END sample=007 exit=0
+[2026-06-03 04:12:02] TAIL recorded in scheduler log
+[2026-06-03 10:12:02] START sample=008 label=periodic
+[2026-06-03 10:12:02] END sample=008 exit=0
+[2026-06-03 10:12:02] TAIL recorded in scheduler log
+[2026-06-03 16:12:02] START sample=009 label=periodic
+[2026-06-03 16:12:03] END sample=009 exit=0
+[2026-06-03 16:12:03] TAIL recorded in scheduler log
+[2026-06-03 22:12:02] START sample=010 label=periodic
+[2026-06-03 22:12:03] END sample=010 exit=0
+[2026-06-03 22:12:03] TAIL recorded in scheduler log
+[2026-06-04 04:12:02] START sample=011 label=periodic
+[2026-06-04 04:12:03] END sample=011 exit=0
+[2026-06-04 04:12:03] TAIL recorded in scheduler log
+[2026-06-04 10:12:05] START sample=012 label=periodic
+[2026-06-04 10:12:06] END sample=012 exit=0
+[2026-06-04 10:12:06] TAIL recorded in scheduler log
+[2026-06-09 04:00:02] START sample=001 label=periodic
+[2026-06-09 04:00:33] END sample=001 exit=-1
+[2026-06-09 04:00:33] TAIL recorded in scheduler log
+[2026-06-09 10:00:01] START sample=002 label=periodic
+[2026-06-09 10:00:31] END sample=002 exit=-1
+[2026-06-09 10:00:31] TAIL recorded in scheduler log
+[2026-06-09 11:45:56] START sample=002 label=periodic
+[2026-06-09 11:45:56] END sample=002 exit=0
+[2026-06-09 11:45:56] TAIL recorded in scheduler log
+[2026-06-09 11:49:21] FIX scheduler: trocado WSL -> run-soak-sample.ps1 (Windows nativo)
+[2026-06-09 11:49:21] FIX run-soak-sample.sh kickoff -> 2026-06-08T22:00:00-03:00
+[2026-06-09 11:49:21] RECOVERY sample=001 label=recovery-wsl-fix exit=0 verdict=OK
+[2026-06-09 11:49:21] RECOVERY sample=002 label=recovery-wsl-fix exit=0 verdict=OK
+[2026-06-09 11:49:21] RE-REGISTER tasks 003-012 nativas; 001-002 SKIP (passado)
+[2026-06-10 23:30:44] INCIDENT sample=008 slot=22:00 verdict=FAIL (host empty-reply; docker healthy)
+[2026-06-10 23:30:44] FIX docker compose -p rsv360 restart
+[2026-06-10 23:30:44] RECOVERY sample=008 label=recovery-host-net exit=0 verdict=OK
