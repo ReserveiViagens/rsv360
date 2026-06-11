@@ -10,3 +10,5 @@
 008	2026-06-10T22:00:02-03:00			healthy	healthy	healthy	0	0	0	smoke-only; prometheus optional	FAIL
 008	2026-06-10T23:30:32-03:00	200	200	healthy	healthy	healthy	0	0	0	recovery; host empty-reply pos-restart 18:45; docker compose restart 23:30	OK
 009	2026-06-11T04:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+010	2026-06-11T10:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+011	2026-06-11T16:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
