@@ -1,0 +1,17 @@
+﻿[SAMPLE] 008
+[LABEL] recovery-host-net
+[TS] 2026-06-10T23:30:32-03:00
+---
+HTTP :3002/health = 200
+HTTP :3000/ = 200
+rsv360-site-publico Up About a minute (healthy)
+rsv360-backend Up About a minute (healthy)
+rsv360-turismo Up About a minute (healthy)
+rsv360-postgres Up About a minute (healthy)
+rsv360-grafana Up About a minute
+rsv360-admin Up About a minute (healthy)
+rsv360-prometheus Up About a minute
+rsv360-guest Up About a minute (healthy)
+rsv360-redis Up About a minute
+rsv360-alertmanager Up About a minute
+VERDICT=OK

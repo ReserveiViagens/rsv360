@@ -1,43 +1,35 @@
 # Soak 72h — status vivo
 
-**Ultima atualizacao:** 2026-06-09T11:49:09-03:00  
+**Ultima atualizacao:** 2026-06-10T23:30:32-03:00  
 **Estado:** **EM EXECUÇÃO — janela pós-Next 16 (#278+#279+#283)**
 
 | Campo | Valor |
 |-------|--------|
 | start_at (kickoff) | **2026-06-08T22:00:00-03:00** |
 | end_at (kickoff + 72h) | **2026-06-11T22:00:00-03:00** |
-| Branch / base | `main` @ `8be4da84`+ |
-| Motivo restart | Stack Next **16.2.7** + hotfix webpack/pg Docker |
-| Baseline | **OK** (`000` `baseline-post-next16-v2`) |
-| API P0 (kickoff) | **8/8 OK** |
-| Amostras coletadas | **3 / 13** (000 baseline; 001–002 recuperadas; 003–012 pendentes) |
-| Task coleta 6h | **CORRIGIDO** — `run-soak-sample.ps1` nativo (003–012); 001–002 SKIP passado |
+| Branch / base | `main` @ `b2772b52`+ |
+| Baseline | **OK** (`000`) |
+| Amostras | **10 linhas TSV** — 000–007 OK; 008 FAIL+recovery OK; 009–012 pendentes |
+| Task coleta 6h | **OK** — `run-soak-sample.ps1` nativo (009–012) |
 | Task fechamento | **OK** — `RSV360-Soak-72h-Close` @ 2026-06-11 22:02 -03 |
 | Veredito soak | _pendente fim janela_ |
 
-## Incidente scheduler (09/06 ~04:00–10:00)
+## Incidente host networking (10/06 22:00)
 
-- Tasks 001 e 002 falharam (`exit=-1`) via wrapper WSL.
-- **Correção:** `register-soak-scheduler-next16.ps1` passou a usar `run-soak-sample.ps1` (Windows).
-- **Kickoff alinhado** em `run-soak-sample.sh` → `2026-06-08T22:00:00-03:00`.
-- **Recuperação:** amostras 001 e 002 coletadas manualmente (`recovery-wsl-fix`, `-Force`).
-- **Próximo slot automático:** 003 @ **2026-06-09 16:00** -03.
+- Amostra **008** @ 22:00: **FAIL** — Docker healthy, HTTP host `empty reply`.
+- Restart Docker ~18:45; port forwarding host quebrado até ~23:30.
+- **Correção:** `docker compose -p rsv360 restart` + recovery 008 (`recovery-host-net`) **OK**.
+- **Próximo slot:** 009 @ **2026-06-11 04:00** -03.
+
+## Incidente scheduler (09/06 — encerrado)
+
+- 001/002 falharam via WSL; corrigido para script Windows; recovery OK.
 
 ## Comandos operacionais
 
 ```powershell
 cd "C:\Users\RSV 360\Documents\s2-pr232-validate"
 $env:RSV360_DOCKER_PROJECT = "rsv360"
-.\docs\evidence\soak-72h\run-soak-sample.ps1 -SampleId "003" -Force   # manual entre slots
-.\docs\evidence\soak-72h\register-soak-scheduler-next16.ps1             # re-registrar se necessário
-.\docs\evidence\soak-72h\run-soak-close-scheduled.ps1                 # após end_at
+.\docs\evidence\soak-72h\run-soak-sample.ps1 -SampleId "009" -Force
+.\docs\evidence\soak-72h\run-soak-close-scheduled.ps1
 ```
-
-## Janela anterior (encerrada GO)
-
-- 2026-06-01 → 2026-06-04 — **GO** — `SOAK-72H-REPORT.md`, PR #249
-
-## Plano desta janela
-
-`SOAK-72H-RESTART-NEXT16.md` + `SOAK-SCHEDULER-MANIFEST-NEXT16.md`

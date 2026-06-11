@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6b5a81b198e5d3a6100c6160756b31e1753d225b599e7959fde499230313a92f
-size 419
+﻿[SAMPLE] 007
+[LABEL] periodic
+[TS] 2026-06-10T16:00:04-03:00
+---
+HTTP :3002/health = 200
+HTTP :3000/ = 200
+rsv360-site-publico Up 28 hours (healthy)
+rsv360-backend Up 28 hours (healthy)
+rsv360-turismo Up 28 hours (healthy)
+rsv360-postgres Up 28 hours (healthy)
+rsv360-grafana Up 28 hours
+rsv360-admin Up 28 hours (healthy)
+rsv360-prometheus Up 28 hours
+rsv360-guest Up 28 hours (healthy)
+rsv360-redis Up 28 hours
+rsv360-alertmanager Up 28 hours
+VERDICT=OK
