@@ -1,0 +1,26 @@
+﻿ M "NTX + OTAS LEIL\303\224ES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.pdf"
+ M "NTX + OTAS LEIL\303\224ES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.zip"
+ M docs/evidence/g4-kickoff/logs/A1.log
+ M docs/evidence/g4-kickoff/logs/A2.log
+ M docs/evidence/g4-kickoff/logs/A3.log
+ M docs/evidence/g4-kickoff/logs/A4.log
+ M docs/evidence/g4-kickoff/logs/A5g.log
+ M docs/evidence/g4-kickoff/logs/A5p.log
+ M docs/evidence/g4-kickoff/logs/A6.log
+ M docs/evidence/g4-kickoff/logs/A7g.log
+ M docs/evidence/g4-kickoff/logs/A7p.log
+ M docs/evidence/soak-72h/logs/SOAK-KICKOFF-API-P0.log
+ M docs/evidence/soak-72h/logs/SOAK-SAFE-OBSERVATIONS.log
+ M docs/evidence/soak-72h/logs/sample-000-baseline-post-next16-v2.log
+ M docs/evidence/soak-72h/logs/sample-000-baseline-post-next16.log
+ M docs/evidence/soak-72h/logs/sample-000-baseline.log
+ M docs/evidence/soak-72h/logs/sample-001-periodic.log
+ M docs/evidence/soak-72h/logs/sample-001-recovery-wsl-fix.log
+ M docs/evidence/soak-72h/logs/sample-002-periodic.log
+ M docs/evidence/soak-72h/logs/sample-002-recovery-wsl-fix.log
+ M docs/evidence/soak-72h/logs/sample-003-periodic.log
+ M docs/evidence/soak-72h/logs/sample-004-periodic.log
+ M docs/evidence/soak-72h/logs/sample-005-periodic.log
+ M docs/evidence/soak-72h/logs/sample-006-periodic.log
+?? docs/evidence/trilha-0/logs/t0.5-push-blocked-workflow-scope.log
+?? docs/evidence/trilha-wt/logs/t-wt-rest-baseline-dirty-status.txt
