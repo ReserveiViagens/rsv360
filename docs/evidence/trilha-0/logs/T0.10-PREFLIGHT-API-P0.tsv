@@ -1,0 +1,10 @@
+﻿id	method	url	http_code	verdict	note
+A1	GET	http://127.0.0.1:3002/health	200	OK	post-fix 2026-06-12
+A2	GET	http://127.0.0.1:3002/health/security	200	OK	post-fix 2026-06-12
+A3	POST	http://127.0.0.1:3000/api/auth/login	401	OK	post-fix 2026-06-12
+A4	POST	http://127.0.0.1:3000/api/auth/refresh	400	OK	post-fix 2026-06-12
+A5g	GET	http://127.0.0.1:3000/api/bookings	400	OK	post-fix 2026-06-12
+A5p	POST	http://127.0.0.1:3000/api/bookings	400	OK	post-fix 2026-06-12
+A6	GET	http://127.0.0.1:3000/api/admin/website/pages	401	OK	post-fix 2026-06-12
+A7g	GET	http://127.0.0.1:3002/api/v1/payments/payments?enterpriseId=ent_1	200	OK	post-fix 2026-06-12
+A7p	POST	http://127.0.0.1:3002/api/v1/payments/payments	200	OK	post-fix 2026-06-12
