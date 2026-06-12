@@ -4,8 +4,8 @@ $LogDir = Join-Path $Root 'logs'
 $Summary = Join-Path $LogDir 'SOAK-SAMPLES.tsv'
 $Report = Join-Path $Root 'SOAK-72H-REPORT.md'
 
-$Kickoff = '2026-06-01T10:12:40-03:00'
-$EndAt = '2026-06-04T10:12:40-03:00'
+$Kickoff = '2026-06-08T22:00:00-03:00'
+$EndAt = '2026-06-11T22:00:00-03:00'
 $ExpectedPeriodic = 12
 $ExpectedWithBaseline = 13
 

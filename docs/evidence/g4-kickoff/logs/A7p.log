@@ -1,7 +1,7 @@
 [ID] A7p
-[TS] 2026-06-04T16:24:05.7258379-03:00
+[TS] 2026-06-11T22:02:02.6430021-03:00
 [METHOD] POST
 [URL] http://127.0.0.1:3002/api/v1/payments/payments
 ---
 --- body ---
-{"id":"pay_mock_1780601045649","externalId":"pay_mp_1780601045649","status":"approved","amount":1,"currency":"BRL","qrCode":"mock_qr_code","qrCodeBase64":"mock_qr_base64","boletoUrl":"https://mock.boleto.url","boletoBarcode":"mock_barcode","expiresAt":"2026-06-05T19:24:05.649Z","metadata":{}}
+{"id":"pay_mock_1781226121494","externalId":"pay_mp_1781226121494","status":"approved","amount":1,"currency":"BRL","qrCode":"mock_qr_code","qrCodeBase64":"mock_qr_base64","boletoUrl":"https://mock.boleto.url","boletoBarcode":"mock_barcode","expiresAt":"2026-06-13T01:02:01.494Z","metadata":{}}

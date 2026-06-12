@@ -12,3 +12,5 @@
 009	2026-06-11T04:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
 010	2026-06-11T10:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
 011	2026-06-11T16:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+012	2026-06-11T22:00:02-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK
+final	2026-06-11T22:02:01-03:00	200	200	healthy	healthy	healthy	0	0	0	prometheus_up; query 5xx in finalize	OK

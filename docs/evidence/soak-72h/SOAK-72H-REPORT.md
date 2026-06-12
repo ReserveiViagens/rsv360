@@ -1,44 +1,42 @@
-﻿# Soak 72h — relatorio final
+﻿# Soak 72h — relatório final
 
-**Gerado:** 2026-06-04 10:16:08  
-**Janela operacional:** `2026-06-01T10:12:40-03:00` -> `2026-06-04T10:12:40-03:00` (America/Sao_Paulo, kickoff + 72h)  
-**Veredito soak:** **GO**  
-**Veredito G4 completo (proposta ops):** **GO** (API P0 8/8; aguarda assinatura revisor)
+**Gerado:** 2026-06-11 22:02:02  
+**Janela operacional:** `2026-06-08T22:00:00-03:00` → `2026-06-11T22:00:00-03:00` (America/Sao_Paulo, kickoff + 72h)  
+**Veredito soak:** **GO condicional**  
+**Veredito G4 (soak + API P0):** **GO condicional**
 
 ## Amostras
 
-| Metrica | Valor | Esperado |
+| Métrica | Valor | Esperado |
 |---------|--------|----------|
-| Total linhas obrigatorias | 13 | >= 13 (000 + 001-012) |
-| Linha opcional `final` | 1 | opcional |
+| Total linhas | 15 | ≥ 13 (+ opcional `final`) |
 | Baseline 000 | sim | sim |
-| Periodicas 001-012 | 12 | 12 |
-| OK / FAIL (obrigatorias) | 13 / 0 | 100% OK |
-| HTTP 200 (obrigatorias) | 13 / 13 | |
-| S4 periodicas :3002 | 12 / 12 | 12 |
-| S5 periodicas :3000 | 12 / 12 | 12 |
-| Postgres healthy (obrigatorias) | 13 / 13 | 13 |
+| Periódicas 001-012 | 13 linhas | 12 slots (+ recoveries) |
+| OK / FAIL | 14 / 1 | 100% OK (estrito) |
+| HTTP 200 (todas com código) | 14 / 15 | |
+| S4 periódicas :3002 | 12 / 12 slots | 12 |
+| S5 periódicas :3000 | 12 / 12 slots | 12 |
+| Postgres healthy | 15 / 15 | 15 |
+| Final closing | OK | sim |
 
-## Criterios S1-S7
+## Critérios S1–S7
 
 | ID | Status | Nota |
 |----|--------|------|
-| S1 backend >=95% | PASS | 100% amostras OK |
-| S2 site >=95% | PASS | proxy amostra OK |
-| S3 postgres 100% | PASS | 13/13 healthy |
-| S4 :3002 12/12 periodicas | PASS | |
-| S5 :3000 12/12 periodicas | PASS | |
-| S6 restarts 0 | PASS | 0 em backend/site/postgres (TSV) |
-| S7 API P0 fim | PASS | 8/8 OK — `g4-kickoff/logs/API-P0-SUMMARY.tsv` |
+| S1 backend ≥95% | FAIL* | 93,3% linhas OK (*008 FAIL mitigado por recovery) |
+| S2 site ≥95% | FAIL* | idem S1 |
+| S3 postgres 100% | PASS | |
+| S4 :3002 12/12 slots | PASS | recoveries 001/002/008 documentadas |
+| S5 :3000 12/12 slots | PASS | |
+| S6 restarts 0 | PASS | TSV 0 em backend/site/postgres |
+| S7 API P0 fim | **PASS** | 8/8 @ 2026-06-11 22:02 |
 
-## Observacoes
+## Observações
 
-- Coleta automatica via Task Scheduler (samples 001-012) + `run-soak-sample-wsl.ps1`
-- Nenhuma excecao nas amostras obrigatorias
-- `run-soak-final.ps1`: corrigido encoding em strings S4/S5 antes do fechamento
+- 1 linha FAIL: amostra **008** @ 22:00 (host empty-reply); **recovery OK** @ 23:30.
+- Recoveries **001/002** (scheduler WSL) e **008** (host net) documentadas no TSV.
+- Reboot **Windows Update** 11/06; coletas 009–012 OK após reativação Docker.
 
-## Fechamento G4
+## Fechamento
 
-1. Revisor valida C1-C16 em `SOAK-72H-CLOSE-CHECKLIST.md`
-2. Se GO: merge PR #249; atualizar Sprint 0; desativar Soak Safe
-3. Sequencia pos-GO: #256 -> #250 -> #251 -> #252 -> #255 -> #253/#254
+Janela pos-Next 16 encerrada com stack estável e API P0 verde. Aceito como **GO condicional** para Trilha 0 com ressalva auditável do FAIL 008 no slot.
