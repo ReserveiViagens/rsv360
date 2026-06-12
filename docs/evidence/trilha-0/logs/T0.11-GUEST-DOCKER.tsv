@@ -1,0 +1,5 @@
+gate	resultado	notas
+docker_build	guest image	PASS
+smoke_3006	GET http://127.0.0.1:3006/	200
+health_guest	docker inspect rsv360-guest	healthy
+env_note	.env copiado localmente de s2-pr232-validate	nao commitado
