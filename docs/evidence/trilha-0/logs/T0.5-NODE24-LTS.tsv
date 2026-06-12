@@ -13,4 +13,4 @@ docker_base	node:24-alpine	3 Dockerfiles
 ci_node	24.x	patch local .github/ â€” push pendente workflow scope
 host_dev_gap	Node 22.22.0	operador: nvm use 24
 gap_t03	FECHADO	Docker/CI Node 24
-veredito	GO_CONDICIONAL	Fase C ADR-0002
+veredito	GO	Fase C ADR-0002 — CI GHA fechado 2026-06-12
