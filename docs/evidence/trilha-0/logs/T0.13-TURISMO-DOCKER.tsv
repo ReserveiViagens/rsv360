@@ -1,0 +1,5 @@
+gate	resultado	notas
+docker_build	compose -p rsv360 up -d --build turismo	PASS
+G-A5_smoke_3005	GET http://127.0.0.1:3005/	200
+G-A5_health_turismo	docker inspect rsv360-turismo	healthy
+veredito_docker	GO	turismo TS6 em container
