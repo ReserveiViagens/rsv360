@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # Run manually only — ci.yml handles push/PR CI
 
 env:
-  NODE_VERSION: '22.x'
+  NODE_VERSION: '24.x'
   NODE_ENV: 'test'
 
 jobs:
