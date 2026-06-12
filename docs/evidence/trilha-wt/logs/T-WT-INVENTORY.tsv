@@ -1,0 +1,46 @@
+﻿path	status_git	categoria	acao_proposta	notas
+NTX + OTAS LEILOES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.pdf	M	binario	manter_fora_git	mover para storage local ou gitignore futuro
+NTX + OTAS LEILOES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.zip	M	binario	manter_fora_git	idem PDF
+apps/site-publico/lib/migrations/create-onboarding-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/add-oauth-fields-to-users.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/add-payment-status-column.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-2fa-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-audit-logs-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-bookings-table-minimal.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-bookings-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-calendar-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-checkin-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-credentials-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-database-indexes.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-database.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-group-chat-polls-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-group-chat-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-lgpd-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-logs-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-notification-queue-table.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-notifications-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+apps/site-publico/scripts/create-payment-splits-tables.sql	M	sql_migration	diff_e_pr_dedicado	revisar vs main
+docker/postgres/init.sql	M	runtime_config	diff_alinhar_sql	PR dedicado se intencional
+docs/evidence/g4-kickoff/logs/A1.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A2.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A3.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A4.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A5g.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A5p.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A6.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A7g.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/g4-kickoff/logs/A7p.log	M	logs_evidencia	nao_commitar	regeneravel
+docs/evidence/soak-72h/logs/SOAK-KICKOFF-API-P0.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/SOAK-SAFE-OBSERVATIONS.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-000-baseline-post-next16-v2.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-000-baseline-post-next16.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-000-baseline.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-001-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-001-recovery-wsl-fix.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-002-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-002-recovery-wsl-fix.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-003-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-004-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-005-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/soak-72h/logs/sample-006-periodic.log	M	logs_evidencia	nao_commitar	soak encerrado GO condicional
+docs/evidence/trilha-0/logs/t0.5-push-blocked-workflow-scope.log	??	desconhecido	apagar_ou_arquivar_local	T0.5 mergeada PR 287
