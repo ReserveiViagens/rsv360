@@ -1,0 +1,5 @@
+gate	resultado	notas
+docker_build	compose -p rsv360 up -d --build admin	PASS
+G-A5_smoke_3004	GET http://127.0.0.1:3004/	200
+G-A5_health_admin	docker inspect rsv360-admin	healthy
+veredito_docker	GO	admin TS6 em container
