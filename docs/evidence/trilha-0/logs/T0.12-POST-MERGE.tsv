@@ -1,0 +1,12 @@
+gate	resultado	notas
+merge_pr	PR #302 merge commit	PASS	c0ab14299
+pull_main	s2-fase-e-clean @ origin/main	PASS	c0ab14299
+G-A2_typecheck	admin tsc --noEmit	PASS	npm@10.9.7
+G-A2_build	admin next build --webpack	PASS
+G-A5_smoke_3004	GET http://127.0.0.1:3004/	200
+G-A5_health_admin	docker inspect rsv360-admin	healthy
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
+docker_rebuild	compose up -d --build admin	PASS
+veredito	GO pos-merge	T0.12 piloto TS6 admin encerrado
+proximo_marco	PR documental pos-merge T0.12	NOGO ate registro entrar na main
+proximo_app_ts6	nao iniciado	escolher apos carimbo documental
