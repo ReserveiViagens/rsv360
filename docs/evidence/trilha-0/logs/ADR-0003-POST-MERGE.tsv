@@ -1,0 +1,8 @@
+gate	resultado	notas
+merge_pr	PR #297 merge commit	PASS	f7186aa95
+pull_main	s2-fase-e-clean	PASS	fast-forward pos-merge
+index_lock	nao presente	PASS	
+worktree_status	clean pos-pull	PASS	
+adr_0003_status	Aceito	PASS	merge #297 2026-06-12
+t0_11_branch	chore/trilha-0-t0.11-typescript6-guest	criada	implementacao TS6 pendente
+veredito	GO pos-merge ADR-0003	T0.11 proxima PR implementacao
