@@ -1,0 +1,26 @@
+﻿path	status_git	categoria	acao_proposta	notas
+NTX + OTAS LEILOES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.pdf	M	binario	manter_fora_git_ou_gitignore_futuro	asset design LFS
+NTX + OTAS LEILOES+ FLASHDEALS/SIDE-SLIDER CIRCLE MENU RSV GEN 2.zip	M	binario	manter_fora_git_ou_gitignore_futuro	idem
+docs/evidence/g4-kickoff/logs/A1.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A2.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A3.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A4.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A5g.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A5p.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A6.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A7g.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/g4-kickoff/logs/A7p.log	M	logs_evidencia	nao_commitar	regeneravel g4-kickoff
+docs/evidence/soak-72h/logs/SOAK-KICKOFF-API-P0.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/SOAK-SAFE-OBSERVATIONS.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-000-baseline-post-next16-v2.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-000-baseline-post-next16.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-000-baseline.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-001-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-001-recovery-wsl-fix.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-002-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-002-recovery-wsl-fix.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-003-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-004-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-005-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/soak-72h/logs/sample-006-periodic.log	M	logs_evidencia	nao_commitar	soak GO condicional encerrado
+docs/evidence/trilha-0/logs/t0.5-push-blocked-workflow-scope.log	??	desconhecido	apagar_ou_arquivar_local	T0.5 mergeada PR 287
