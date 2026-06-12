@@ -1,40 +1,60 @@
 # T-WT-REST — Fechamento decisões humanas
 
 **Data:** 2026-06-12  
-**PR inventário:** #292 **MERGED** (`cb77d3202`)  
 **Soak:** GO condicional mantido  
 **Regras:** sem restore/reset/clean; sem commit de binários/logs
 
-## Decisões aplicadas (somente movimentação física)
+## PRs mergeadas
 
-| Grupo | Decisão | Ação | Destino |
-|-------|---------|------|---------|
-| binário (2) | Mover fora do repo | **MOVIDO** | `C:\Users\RSV 360\Documents\RSV360-ARQUIVOS-LOCAIS-FORA-DO-GIT\trilha-wt-rest\2026-06-12\binarios-NTX\` |
-| | | `SIDE-SLIDER CIRCLE MENU RSV GEN 2.pdf` | idem |
-| | | `SIDE-SLIDER CIRCLE MENU RSV GEN 2.zip` | idem |
-| logs/evidência (22) | Não commitar; manter local | **MANTIDO** | worktree `s2-pr232-validate` (deltas locais) |
-| desconhecido (1) | Mover para notas pessoal | **MOVIDO** | `...\trilha-wt-rest\2026-06-12\notas-evidencia\t0.5-push-blocked-workflow-scope.log` |
+| PR | Conteúdo |
+|----|----------|
+| #292 | Inventário 25 paths |
+| #293 | Fechamento decisões iniciais |
+| #294 | README storage externo + remoção binários Git |
 
-## Git status pós-ação (esperado)
+## Decisões por grupo
 
-- **22 logs** — ainda `M` (mantidos localmente, não commitados)
-- **2 binários** — ` D` (deletados do worktree após move; **não** restaurados do Git)
-- **t0.5 log** — removido do untracked (movido para fora)
+### binários (2) — **DONE** (#294)
+
+| Ação | Detalhe |
+|------|---------|
+| Removidos do Git | PDF/ZIP `SIDE-SLIDER CIRCLE MENU RSV GEN 2.*` |
+| README | `NTX + OTAS LEILÔES+ FLASHDEALS/README-ASSETS-EXTERNOS.md` |
+| Storage externo | `C:\Users\RSV 360\Documents\RSV360-ARQUIVOS-LOCAIS-FORA-DO-GIT\trilha-wt-rest\2026-06-12\binarios-NTX\` |
+
+**Worktree pós #294:** sem `D/M` em binários.
+
+### desconhecido (1) — **DONE**
+
+`t0.5-push-blocked-workflow-scope.log` → movido para `...\notas-evidencia\` (T0.5 mergeada #287).
+
+### logs/evidência (22) — **DECIDIDO: manter fora de PR**
+
+| Subgrupo | Qtd | Decisão | Ação |
+|----------|-----|---------|------|
+| g4-kickoff | 9 | **A** — fora de PR | Deltas locais preservados |
+| soak-72h | 13 | **A** — fora de PR | Deltas locais preservados |
+
+**Justificativa:** soak encerrado GO condicional; API P0 e relatório final consolidados no `main`. Logs locais são regeneráveis/duplicatas — **não commitar**, **sem PR de logs**, limpeza manual futura se aprovada.
+
+## Estado worktree (2026-06-12 pós #294)
+
+| Categoria | Git status | Notas |
+|-----------|------------|-------|
+| SQL/init | limpo | T-WT-SQL #291 |
+| binários | limpo | T-WT-REST #294 |
+| logs | **22× `M`** | intencional — preservados localmente |
+| untracked | 0 | t0.5 log movido |
 
 ## Veredito T-WT-REST
 
-| Fase | Status |
-|------|--------|
-| Inventário #292 | **DONE** |
-| Decisão binários | **DONE** — preservados fora do Git |
-| Decisão logs | **ADIADO** — limpeza manual futura |
-| Decisão t0.5 log | **DONE** — arquivado fora do repo |
-
-**Próximo (opcional):** limpeza manual dos 22 logs quando aprovado; PR futuro `.gitignore` para pasta NTX se necessário.
+**ENCERRADO** — inventariado e decidido. Limpeza manual de logs: **opcional futura**.
 
 ## T-WT completo
 
-| Trilha | Veredito |
-|--------|----------|
-| T-WT-SQL | Correção atributos Git/LFS (#291) — sem schema |
-| T-WT-REST | Inventário + decisões (#292) — binários/log t0.5 movidos |
+| Trilha | Veredito | PR |
+|--------|----------|-----|
+| T-WT-SQL | Atributos Git/LFS, sem schema | #291 |
+| T-WT-REST binários | README + remoção Git | #294 |
+| T-WT-REST logs | Fora de PR, local preservado | — |
+| **T-WT geral** | **ENCERRADO** | #289–#294 |
