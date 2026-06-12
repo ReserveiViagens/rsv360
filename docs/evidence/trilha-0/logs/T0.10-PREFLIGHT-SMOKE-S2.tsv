@@ -1,0 +1,9 @@
+﻿timestamp	service	url	http_code	phase
+2026-06-12T13:51:04	site-publico	http://127.0.0.1:3000	200	pre-fix
+2026-06-12T13:51:04	backend	http://127.0.0.1:3002/health	200	pre-fix
+2026-06-12T13:51:04	admin	http://127.0.0.1:3004	500	pre-fix
+2026-06-12T13:51:04	turismo	http://127.0.0.1:3005	200	pre-fix
+2026-06-12T13:51:04	guest	http://127.0.0.1:3006	500	pre-fix
+2026-06-12T13:51:04	grafana	http://127.0.0.1:3007	200	pre-fix
+2026-06-12T14:22:25	admin	http://127.0.0.1:3004	200	post-fix
+2026-06-12T14:22:25	guest	http://127.0.0.1:3006	200	post-fix

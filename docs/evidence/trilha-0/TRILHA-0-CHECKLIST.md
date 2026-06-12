@@ -58,6 +58,7 @@
 - [x] Fase D — turismo Next 16 **GO condicional** 2026-06-08 — `T0.8-TURISMO-NEXT16.md`
 - [x] Fase D — site-publico Next 16 **GO condicional** 2026-06-08 — `T0.9-SITE-PUBLICO-NEXT16.md` (**GAP-T04 fechado**)
 - [x] T0.5 CI Node 24 **GO** 2026-06-12 — PR #287 — `T0.5-CI-NODE24.md` (9 workflows raiz 22→24, checks verdes)
+- [x] T0.10 guest+admin Docker **GO** 2026-06-12 — `T0.10-GUEST-ADMIN-DOCKER-STAB.md` (Turbopack/react-query fix)
 
 ## Decisão Trilha 0
 
@@ -66,4 +67,4 @@
 | **Status** | **GO** |
 | **Data** | 2026-05-30 |
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
-| **Próximo passo** | Trilha T-WT — inventário worktree sujo — `docs/evidence/trilha-wt/` |
+| **Próximo passo** | **Fase E** — ADR-0003 (TS 6 / Tailwind 4 / Express 5) após merge T0.10 |

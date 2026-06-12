@@ -3,6 +3,7 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['@tanstack/react-query', '@tanstack/query-core'],
   experimental: {
     externalDir: true,
   },

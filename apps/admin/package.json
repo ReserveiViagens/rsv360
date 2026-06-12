@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "next dev -p 3004",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start -p 3004",
     "type-check": "tsc --noEmit",
     "lint": "eslint ."
