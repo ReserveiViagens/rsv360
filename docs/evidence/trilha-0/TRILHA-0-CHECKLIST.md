@@ -57,6 +57,7 @@
 - [x] Fase D — admin Next 16 **GO condicional** 2026-06-08 — `T0.7-ADMIN-NEXT16.md`
 - [x] Fase D — turismo Next 16 **GO condicional** 2026-06-08 — `T0.8-TURISMO-NEXT16.md`
 - [x] Fase D — site-publico Next 16 **GO condicional** 2026-06-08 — `T0.9-SITE-PUBLICO-NEXT16.md` (**GAP-T04 fechado**)
+- [x] T0.5 CI Node 24 **GO** 2026-06-12 — PR #287 — `T0.5-CI-NODE24.md` (9 workflows raiz 22→24, checks verdes)
 
 ## Decisão Trilha 0
 
@@ -64,4 +65,5 @@
 |-------|--------|
 | **Status** | **GO** |
 | **Data** | 2026-05-30 |
-| **Próximo passo** | Soak 72h restart pós-Next 16 — `docs/evidence/soak-72h/SOAK-72H-RESTART-NEXT16.md` |
+| **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
+| **Próximo passo** | Trilha T-WT — inventário worktree sujo — `docs/evidence/trilha-wt/` |
