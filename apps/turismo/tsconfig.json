@@ -125,7 +125,8 @@
       "esnext"
     ],
     "moduleResolution": "node",
-    "incremental": true
+    "incremental": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "next-env.d.ts",
