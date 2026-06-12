@@ -1,0 +1,12 @@
+gate	resultado	notas
+merge_pr	PR #304 merge commit	PASS	43d966921
+pull_main	s2-fase-e-clean @ origin/main	PASS	43d966921
+G-A2_typecheck	turismo tsc --noEmit	PASS	npm@10.9.7 pre-build sem .next/types
+G-A2_build	turismo next build	PASS	Turbopack
+G-A5_smoke_3005	GET http://127.0.0.1:3005/	200
+G-A5_health_turismo	docker inspect rsv360-turismo	healthy
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
+docker_rebuild	compose up -d --build turismo	PASS
+veredito	GO pos-merge	T0.13 piloto TS6 turismo encerrado
+proximo_marco	PR documental pos-merge T0.13	NOGO ate registro entrar na main
+proximo_app_ts6	site-publico	nao iniciado ultimo da rodada TS6
