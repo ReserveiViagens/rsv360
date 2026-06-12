@@ -33,6 +33,8 @@
 | `T0.8-TURISMO-NEXT16.md` | Fase D turismo Next 16.2.7 |
 | `T0.9-SITE-PUBLICO-NEXT16.md` | Fase D site-publico Next 16.2.7 — GAP-T04 fechado |
 | `T0.10-GUEST-ADMIN-DOCKER-STAB.md` | Estabilização Docker guest+admin pós-Next 16 |
+| `ADR-0003-FASE-E-STACK-RESIDUAL.md` | Fase E — TS6 / Tailwind 4 / Express 5 (Proposto) |
+| `T0.11-TYPESCRIPT6-GUEST-PLAN.md` | Plano piloto TS6 guest (sem implementação) |
 
 ## Executar preflight
 
@@ -48,6 +50,10 @@ cd "C:\Users\RSV 360\Documents\s2-pr232-validate"
 $env:RSV360_DOCKER_PROJECT = "rsv360"
 .\docs\evidence\trilha-0\run-trilha0-preflight.ps1
 ```
+
+**Pré-requisito Fase E:** [T0.10-GUEST-ADMIN-DOCKER-STAB.md](./T0.10-GUEST-ADMIN-DOCKER-STAB.md) = **GO pós-merge** (#296).
+
+**Worktree Fase E:** `C:\Users\RSV 360\Documents\s2-fase-e-clean` — não usar `s2-pr232-validate` (drift local).
 
 ## Veredito Trilha 0
 
