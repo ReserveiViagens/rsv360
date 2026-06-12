@@ -62,8 +62,8 @@
 
 ## Fase E — stack residual (ADR-0003)
 
-- [ ] ADR-0003 Fase E — **Proposto** — `ADR-0003-FASE-E-STACK-RESIDUAL.md` (worktree `s2-fase-e-clean`)
-- [ ] T0.11 TS6 piloto guest — **planejamento only** — `T0.11-TYPESCRIPT6-GUEST-PLAN.md` (**implementação NOGO** até ADR Aceito)
+- [x] ADR-0003 Fase E — **Aceito** 2026-06-12 — PR #297 @ `f7186aa95` — `ADR-0003-FASE-E-STACK-RESIDUAL.md`
+- [ ] T0.11 TS6 piloto guest — **autorizado** — branch `chore/trilha-0-t0.11-typescript6-guest` (implementação em PR separada)
 
 ## Decisão Trilha 0
 
@@ -72,4 +72,4 @@
 | **Status** | **GO** |
 | **Data** | 2026-05-30 |
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
-| **Próximo passo** | Aprovar **ADR-0003** → então T0.11 TS6 piloto guest (worktree `s2-fase-e-clean`) |
+| **Próximo passo** | **T0.11** TS6 piloto guest — branch `chore/trilha-0-t0.11-typescript6-guest` (worktree `s2-fase-e-clean`) |
