@@ -1,0 +1,12 @@
+﻿gate	resultado	notas
+G-A2_build_guest	npm run build --workspace=apps/guest	PASS	webpack
+G-A2_build_admin	npm run build --workspace=apps/admin	PASS	webpack
+G-A3_typecheck_guest	tsc --noEmit	PASS	
+G-A3_typecheck_admin	tsc --noEmit	PASS	
+G-A5_smoke_3004	GET http://127.0.0.1:3004/	200	pós-fix 2026-06-12
+G-A5_smoke_3006	GET http://127.0.0.1:3006/	200	pós-fix 2026-06-12
+G-A5_health_admin	docker inspect rsv360-admin	healthy	
+G-A5_health_guest	docker inspect rsv360-guest	healthy	
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8 pós-fix
+dockerfile_changed	NAO	dependencias presentes em runtime node_modules
+veredito	GO	T0.10 estabilizacao Docker guest+admin
