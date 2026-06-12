@@ -1,9 +1,10 @@
 # ADR-0003: Fase E — stack residual (Trilha 0)
 
-**Status:** Proposto  
+**Status:** Aceito  
 **Data:** 2026-06-12  
-**Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean` — branch `chore/adr-0003-fase-e-plan`  
-**Base:** `main` @ `0b900d8c2` (pós-merge PR #296 — T0.10)  
+**Merge:** PR **#297** @ `f7186aa95` (2026-06-12)  
+**Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean` — branch `chore/trilha-0-t0.11-typescript6-guest`  
+**Base:** `main` @ `f7186aa95` (pós-merge PR #297 — ADR-0003)  
 **Supersede:** nenhum (complementa [ADR-0002](./ADR-0002-T0.2-STACK-ALVO-MONOREPO.md) §Fase E)  
 **Referência:** PLANO-MESTRE-v3-CONSOLIDADO §2 (repo integração)
 
@@ -137,8 +138,8 @@ flowchart LR
 
 | Papel | Nome | Data | Decisão |
 |-------|------|------|---------|
-| Tech lead / master_owner | _pendente_ | — | ☐ Aprovado |
-| Operador S2 | _pendente_ | — | ☐ Aprovado |
+| Tech lead / master_owner | Operador RSV360 (merge #297) | 2026-06-12 | ☑ Aprovado |
+| Operador S2 | Auto (gates documentais) | 2026-06-12 | ☑ Aprovado |
 
 Após aprovação: alterar **Status** para `Aceito` e atualizar [TRILHA-0-CHECKLIST.md](./TRILHA-0-CHECKLIST.md).
 
