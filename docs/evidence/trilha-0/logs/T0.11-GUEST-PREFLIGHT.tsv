@@ -1,0 +1,8 @@
+gate	resultado	notas
+git_status	clean preflight	PASS
+head	4beeed644	PASS
+node	v24.14.0	host
+npm_host	11.9.0	registrado — install via npx npm@10.9.7
+npm_install	npx -y npm@10.9.7	PASS
+typescript_npm	6.0.3	estavel
+typescript_guest	^6.0.3	apps/guest only
