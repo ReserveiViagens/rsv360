@@ -1,0 +1,12 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS	C:\Users\RSV 360\Documents\s2-fase-e-clean
+branch	chore/trilha-0-t0.12-e2-plan	PASS
+base_commit	8c3c7fb93	PASS	main @ PR #300 T0.11 docs
+git_status	clean apos restore g4-kickoff logs	PASS	9 logs locais restaurados preflight
+node	v24.14.0	PASS
+npm_host	11.9.0	PASS	registrado
+npm_install	npm@10.9.7 via npx	PASS	packageManager repo
+typescript_registry	6.0.3	PASS	npm view typescript version
+admin_ts_before	^5.3.0	PASS	apps/admin/package.json
+admin_baseUrl	presente	PASS	TS5101 esperado pos-upgrade
+preflight_veredito	GO	T0.12/E2 piloto admin
