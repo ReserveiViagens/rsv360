@@ -1,5 +1,5 @@
 gate	resultado	notas
-script	run-api-p0-round1.ps1	PASS	baseline pre-TS6
+script	run-api-p0-round1.ps1	PASS
 A1	GET /health	200 OK
 A2	GET /health/security	200 OK
 A3	POST /api/auth/login	401 OK
