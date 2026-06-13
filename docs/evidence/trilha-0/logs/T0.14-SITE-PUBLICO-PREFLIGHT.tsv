@@ -1,22 +1,14 @@
 gate	resultado	notas
-worktree	s2-fase-e-clean	PASS	C:\Users\RSV 360\Documents\s2-fase-e-clean
-branch	chore/trilha-0-t0.14-site-publico-plan	PASS
-base_commit	aa6e618e2	PASS	main @ T0.13 docs #306
+worktree	s2-fase-e-clean	PASS
+branch	chore/trilha-0-t0.14-typescript6-site-publico	PASS
+base_commit	793698201	PASS	HITL T0.14 GO condicional
 git_status	clean preflight	PASS
 node	v24.14.0	PASS
-npm_host	11.9.0	PASS	registrado
-npm_install	npm@10.9.7 via npx	PASS	packageManager repo
-typescript_registry	6.0.3	PASS	alvo futuro piloto
-site_ts_atual	^5.0.0 dependencies	PASS	nao devDependencies
-site_next	16.2.7	PASS
-site_react	19.2.5	PASS
-site_build_script	next build --webpack	PASS
-G-A2_typecheck_prebuild	tsc sem .next	PASS	exit 0
-G-A2_typecheck_postbuild_obs	tsc com .next/types	FAIL	1964 erros baseline observacao
-G-A2_build	next build --webpack	PASS	ignoreBuildErrors true
-G-A5_smoke_3000	GET http://127.0.0.1:3000/	200
-G-A5_health_site	docker inspect rsv360-site-publico	healthy
-G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
-docker_rebuild	compose up -d --build site-publico	PASS
-veredito_plan	GO	T0.14 preflight baseline operacional verde
-veredito_impl_ts6	NOGO	aguarda aprovacao HITL deste plano
+npm_host	11.9.0	PASS
+npm_install	npm@10.9.7 via npx	PASS
+typescript_registry	6.0.3	PASS
+site_ts_before	^5.0.0 dependencies	PASS
+site_ts_after	^6.0.3 dependencies	PASS	mantido em dependencies
+tsconfig_include_exclude	inalterado	PASS
+ignoreBuildErrors	inalterado	PASS
+preflight_veredito	GO	implementacao T0.14 E4
