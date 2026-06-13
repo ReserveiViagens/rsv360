@@ -1,0 +1,54 @@
+{
+  "pr_321": {
+    "state": "MERGED",
+    "merge_commit": "6de6a70d5"
+  },
+  "alert_83": {
+    "state": "fixed"
+  },
+  "dependabot_open": {
+    "total": 8,
+    "alerts": [
+      {
+        "number": 140,
+        "severity": "high",
+        "package": "esbuild"
+      },
+      {
+        "number": 139,
+        "severity": "low",
+        "package": "esbuild"
+      },
+      {
+        "number": 138,
+        "severity": "high",
+        "package": "esbuild"
+      },
+      {
+        "number": 137,
+        "severity": "low",
+        "package": "esbuild"
+      },
+      {
+        "number": 124,
+        "severity": "medium",
+        "package": "uuid"
+      },
+      {
+        "number": 122,
+        "severity": "medium",
+        "package": "uuid"
+      },
+      {
+        "number": 35,
+        "severity": "medium",
+        "package": "esbuild"
+      },
+      {
+        "number": 32,
+        "severity": "medium",
+        "package": "esbuild"
+      }
+    ]
+  }
+}
