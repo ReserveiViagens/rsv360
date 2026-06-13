@@ -1,0 +1,10 @@
+gate	result	notes
+PR_323	MERGED	merge commit 3f7de5ab2
+esbuild_alerts_32_35_137_138_139_140	fixed	
+dependabot_open_total	2	uuid only
+dependabot_open_critical	0	
+dependabot_open_high	0	
+dependabot_open_medium	2	uuid #122 #124
+npm_audit_root_total	6	0 high
+SEC-05_verdict	GO pos-merge	
+next_trail	SEC-06 uuid	PR isolada
