@@ -1,0 +1,10 @@
+gate	result	detail	artifact
+G-A2_build	PASS	next build --webpack exit 0	local + Docker builder
+G-A3_typecheck	PASS	tsc --noEmit	logs/t0.15-tw4-guest-typecheck.log
+G-A5a_docker_guest	PASS	healthy	docker compose ps
+G-A5b_http_3006	PASS	HTTP 200	smoke
+G-A5c_http_3004	PASS	HTTP 200 admin regressao T0.10	smoke
+G-A6_api_p0	PASS	8/8 OK	logs/t0.15-tw4-guest-api-p0-summary.tsv
+npm_audit_guest	PASS	0 vulnerabilities	npm audit workspace
+tailwind_version	PASS	4.3.1	npm ls
+veredito	T0.15_GO_condicional	rollback base 8fb40853d
