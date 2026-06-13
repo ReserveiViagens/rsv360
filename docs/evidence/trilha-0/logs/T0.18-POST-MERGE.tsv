@@ -1,0 +1,12 @@
+gate	resultado	notas
+merge_pr_impl	PR #335 pendente	aguarda merge em main
+revalidacao_branch	chore/site-publico-next-types-handlers @ ba8a27ec	proxy pre-carimbo
+G-A2_typecheck_prebuild	tsc sem .next	PASS exit 0
+G-A2_typecheck_postbuild	tsc com .next/types	FAIL 1963 baseline pos-handlers
+validator_ts2344_direto	0	PASS	era 5 pre T0.18
+G-A2_build_webpack	next build --webpack	PASS	T0.18 impl
+G-A5_http_3000	GET http://127.0.0.1:3000/	200
+G-A5_health_site_publico	docker inspect rsv360-site-publico	healthy
+G-A6_api_p0	run-api-p0-round1.ps1	PASS 8/8
+veredito	GO pos-merge condicional	merge apos PR #335
+proximo_marco	T0.19 TS2786 preflight	HITL
