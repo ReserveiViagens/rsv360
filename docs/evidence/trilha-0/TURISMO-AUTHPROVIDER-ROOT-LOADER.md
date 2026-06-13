@@ -50,7 +50,20 @@ Artefato: [logs/TURISMO-AUTHPROVIDER-BROWSER.tsv](./logs/TURISMO-AUTHPROVIDER-BR
 
 ## Veredito
 
-**GO** — bugfix isolado; pronto para PR separada do T0.14 / TS6 site-publico.
+**GO pós-merge** — PR **#308** mergeada em `main` @ `31e20e478` (2026-06-13). Loader infinito encerrado.
+
+## Pós-merge (2026-06-13)
+
+| Item | Resultado |
+|------|-----------|
+| Merge | PR #308 — merge commit `31e20e478` |
+| Pull `origin/main` | s2-fase-e-clean @ `31e20e478` |
+| Docker rebuild turismo | **PASS** |
+| `:3005/login` / health | **200** / **healthy** |
+| `/` sem sessão | redirect **`/login`** (navegador pós-hidratação) |
+| `/` com `demo-token` | redirect **`/dashboard`** (fluxo esperado `index.tsx`) |
+
+Artefato: [logs/TURISMO-AUTHPROVIDER-POST-MERGE.tsv](./logs/TURISMO-AUTHPROVIDER-POST-MERGE.tsv)
 
 ## Rollback
 
