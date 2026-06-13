@@ -69,7 +69,8 @@
 - [x] T0.14 TS6 site-publico — **GO pós-merge** — impl #310, docs #312 — `T0.14-TYPESCRIPT6-SITE-PUBLICO-RESULT.md`
 - [x] **Rodada TS6 Fase E — concluída** — `FASE-E-TS6-CLOSEOUT.md`
 - [x] T0.15 TW4 guest — **GO pós-merge** — impl #330, carimbo #331 — `T0.15-TAILWIND4-GUEST-POST-MERGE.md`
-- [x] T0.16 TW4 admin — impl **GO** #332 @ `1bf052bd5`; carimbo **PR pendente** — `T0.16-TAILWIND4-ADMIN-POST-MERGE.md`
+- [x] T0.16 TW4 admin — **GO pós-merge** — impl #332, carimbo #333 @ `1686f757b` — `T0.16-TAILWIND4-ADMIN-POST-MERGE.md`
+- [ ] T0.17 preflight `.next/types` site-publico — **PR pendente** — `T0.17-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md`
 
 ## Decisão Trilha 0
 
@@ -80,6 +81,7 @@
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
 | **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
-| **Fase E / TW4 admin** | **GO impl** #332 — carimbo pendente |
-| **Piloto TW4 guest+admin** | **GO** (pós-carimbo T0.16) |
-| **Próximo passo** | HITL turismo/site-publico TW4 ou `.next/types` |
+| **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
+| **Piloto TW4 guest+admin** | **GO** |
+| **Montanha `.next/types` site-publico** | T0.17 preflight — PR pendente |
+| **Próximo passo** | Merge T0.17 → HITL T0.18 (5 handlers) → TW4 site-publico/turismo depois |

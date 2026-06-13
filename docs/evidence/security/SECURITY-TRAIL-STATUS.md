@@ -1,8 +1,8 @@
 # Security Trail — Status e handoff (Cursor + Codex)
 
-**Última atualização:** 2026-06-13  
+**Última atualização:** 2026-06-02  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `1bf052bd5` (T0.16 TW4 admin #332)
+**`main`:** `1686f757b` (T0.16 TW4 admin carimbo #333)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -28,12 +28,12 @@
 | Item | Status |
 |------|--------|
 | T0.15 impl + carimbo guest | **GO** (#330 + #331) |
-| T0.16 impl TW4 admin | **GO** (#332 @ `1bf052bd5`) |
-| T0.16 carimbo admin | **PR pendente** — [T0.16-TAILWIND4-ADMIN-POST-MERGE.md](../trilha-0/T0.16-TAILWIND4-ADMIN-POST-MERGE.md) |
+| T0.16 impl + carimbo TW4 admin | **GO** (#332 + #333 @ `1686f757b`) |
+| T0.17 preflight `.next/types` site-publico | **PR pendente** — [T0.17-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md](../trilha-0/T0.17-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md) |
 
-**Piloto TW4 guest+admin:** **GO** após merge deste carimbo.
+**Piloto TW4 guest+admin:** **GO**.
 
-**Próximo HITL:** turismo / site-publico TW4 ou `.next/types` — montanha separada.
+**Montanha ativa:** `.next/types` site-publico (T0.17 → T0.18 handlers → T0.19 JSX → …). **TW4 site-publico/turismo depois.**
 
 ## Linha do tempo Security — CONCLUÍDA
 
@@ -60,9 +60,9 @@
 
 ## Próxima HITL (fora security deps)
 
-1. Revalidar G2/G3 formal  
-2. `.next/types` site-publico  
-3. Express 5 / Tailwind 4 — **NOGO** até decisão
+1. Merge T0.17 preflight `.next/types` (docs)  
+2. HITL → T0.18 (5 route handlers)  
+3. TW4 turismo / site-publico — **após** saneamento `.next/types`
 
 Ver opções A–D em [SECURITY-TRAIL-CLOSEOUT.md §8](./SECURITY-TRAIL-CLOSEOUT.md#8-próxima-decisão-hitl).
 
