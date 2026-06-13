@@ -1,0 +1,11 @@
+﻿NAME                  IMAGE                        COMMAND                  SERVICE        CREATED        STATUS                 PORTS
+rsv360-admin          rsv360-admin                 "docker-entrypoint.sÔÇª"   admin          20 hours ago   Up 5 hours (healthy)   0.0.0.0:3004->3004/tcp, [::]:3004->3004/tcp
+rsv360-alertmanager   prom/alertmanager:v0.27.0    "/bin/alertmanager -ÔÇª"   alertmanager   9 days ago     Up 5 hours             0.0.0.0:9093->9093/tcp, [::]:9093->9093/tcp
+rsv360-backend        rsv360-backend               "docker-entrypoint.sÔÇª"   backend        16 hours ago   Up 5 hours (healthy)   0.0.0.0:3002->3002/tcp, [::]:3002->3002/tcp
+rsv360-grafana        grafana/grafana-oss:11.1.5   "/run.sh"                grafana        9 days ago     Up 5 hours             0.0.0.0:3007->3000/tcp, [::]:3007->3000/tcp
+rsv360-guest          rsv360-guest                 "docker-entrypoint.sÔÇª"   guest          22 hours ago   Up 5 hours (healthy)   0.0.0.0:3006->3006/tcp, [::]:3006->3006/tcp
+rsv360-postgres       postgres:16-alpine           "docker-entrypoint.sÔÇª"   postgres       23 hours ago   Up 5 hours (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+rsv360-prometheus     prom/prometheus:v2.54.1      "/bin/prometheus --cÔÇª"   prometheus     9 days ago     Up 5 hours             0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+rsv360-redis          redis:7-alpine               "docker-entrypoint.sÔÇª"   redis          9 days ago     Up 5 hours             0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+rsv360-site-publico   rsv360-site-publico          "docker-entrypoint.sÔÇª"   site-publico   16 hours ago   Up 5 hours (healthy)   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+rsv360-turismo        rsv360-turismo               "docker-entrypoint.sÔÇª"   turismo        17 hours ago   Up 5 hours (healthy)   0.0.0.0:3005->3005/tcp, [::]:3005->3005/tcp
