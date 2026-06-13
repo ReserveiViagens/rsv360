@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 8,
+      "high": 3,
+      "critical": 0,
+      "total": 11
+    },
+    "dependencies": {
+      "prod": 748,
+      "dev": 1100,
+      "optional": 193,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1932
+    }
+  },
+  "collected_at": "2026-06-13T16:57:37.310Z"
+}
