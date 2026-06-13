@@ -68,6 +68,7 @@
 - [x] T0.13 TS6 turismo — **GO pós-merge** — impl #304, docs #306 — `T0.13-TYPESCRIPT6-TURISMO-RESULT.md`
 - [x] T0.14 TS6 site-publico — **GO pós-merge** — impl #310, docs #312 — `T0.14-TYPESCRIPT6-SITE-PUBLICO-RESULT.md`
 - [x] **Rodada TS6 Fase E — concluída** — `FASE-E-TS6-CLOSEOUT.md`
+- [ ] T0.15 TW4 guest — impl **GO** #330 @ `a8d9955ae`; carimbo **PR pendente** — `T0.15-TAILWIND4-GUEST-POST-MERGE.md`
 
 ## Decisão Trilha 0
 
@@ -77,4 +78,5 @@
 | **Data** | 2026-05-30 |
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
 | **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
-| **Próximo passo** | **Trilha security** — inventário Dependabot (#314+) → quick wins SEC-01+ — ver `docs/evidence/security/DEPENDABOT-INVENTORY.md` |
+| **Fase E / TW4 guest** | **GO impl** #330 — carimbo pendente — `T0.15-TAILWIND4-GUEST-POST-MERGE.md` |
+| **Próximo passo** | **T0.16** TW4 piloto admin — preflight + impl |
