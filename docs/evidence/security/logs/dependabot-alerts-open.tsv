@@ -1,0 +1,16 @@
+number	severity	package	manifest	range	cve	summary	first_patched
+140	high	esbuild	package-lock.json	>= 0.17.0, < 0.28.1	GHSA-gv7w-rqvm-qjhr	esbuild: Missing binary integrity verification in Deno module enables remote code execution via NPM_CONFIG_REGISTRY	0.28.1
+139	low	esbuild	package-lock.json	>= 0.27.3, < 0.28.1	GHSA-g7r4-m6w7-qqqr	esbuild allows arbitrary file read when running the development server on Windows	0.28.1
+138	high	esbuild	backend/package-lock.json	>= 0.17.0, < 0.28.1	GHSA-gv7w-rqvm-qjhr	esbuild: Missing binary integrity verification in Deno module enables remote code execution via NPM_CONFIG_REGISTRY	0.28.1
+137	low	esbuild	backend/package-lock.json	>= 0.27.3, < 0.28.1	GHSA-g7r4-m6w7-qqqr	esbuild allows arbitrary file read when running the development server on Windows	0.28.1
+136	medium	joi	package-lock.json	< 17.13.4	CVE-2026-48038	joi has an uncaught RangeError on deeply nested input through recursive `link()` schemas	17.13.4
+132	critical	shell-quote	package-lock.json	>= 1.1.0, <= 1.8.3	CVE-2026-9277	shell-quote quote() does not escape newlines in object .op values	1.8.4
+131	medium	nodemailer	package-lock.json	<= 8.0.4	GHSA-vvjj-xcjg-gr5g	Nodemailer Vulnerable to SMTP Command Injection via CRLF in Transport name Option (EHLO/HELO) 	8.0.5
+130	low	nodemailer	package-lock.json	< 8.0.4	GHSA-c7w3-x93f-qmm8	Nodemailer has SMTP command injection due to unsanitized `envelope.size` parameter	8.0.4
+129	medium	nodemailer	apps/site-publico/package.json	<= 8.0.4	GHSA-vvjj-xcjg-gr5g	Nodemailer Vulnerable to SMTP Command Injection via CRLF in Transport name Option (EHLO/HELO) 	8.0.5
+128	low	nodemailer	apps/site-publico/package.json	< 8.0.4	GHSA-c7w3-x93f-qmm8	Nodemailer has SMTP command injection due to unsanitized `envelope.size` parameter	8.0.4
+124	medium	uuid	package-lock.json	< 11.1.1	CVE-2026-41907	uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided	11.1.1
+122	medium	uuid	backend/package-lock.json	< 11.1.1	CVE-2026-41907	uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided	11.1.1
+83	medium	postcss	package-lock.json	< 8.5.10	CVE-2026-41305	PostCSS has XSS via Unescaped </style> in its CSS Stringify Output	8.5.10
+35	medium	esbuild	package-lock.json	<= 0.24.2	GHSA-67mh-4wv8-2f99	esbuild enables any website to send any requests to the development server and read the response	0.25.0
+32	medium	esbuild	backend/package-lock.json	<= 0.24.2	GHSA-67mh-4wv8-2f99	esbuild enables any website to send any requests to the development server and read the response	0.25.0
