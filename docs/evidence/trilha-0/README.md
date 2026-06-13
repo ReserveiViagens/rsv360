@@ -33,8 +33,13 @@
 | `T0.8-TURISMO-NEXT16.md` | Fase D turismo Next 16.2.7 |
 | `T0.9-SITE-PUBLICO-NEXT16.md` | Fase D site-publico Next 16.2.7 — GAP-T04 fechado |
 | `T0.10-GUEST-ADMIN-DOCKER-STAB.md` | Estabilização Docker guest+admin pós-Next 16 |
-| `ADR-0003-FASE-E-STACK-RESIDUAL.md` | Fase E — TS6 / Tailwind 4 / Express 5 (Proposto) |
-| `T0.11-TYPESCRIPT6-GUEST-PLAN.md` | Plano piloto TS6 guest (sem implementação) |
+| `ADR-0003-FASE-E-STACK-RESIDUAL.md` | Fase E — TS6 / Tailwind 4 / Express 5 (Aceito) |
+| `FASE-E-TS6-CLOSEOUT.md` | Closeout rodada TS6 — guest, admin, turismo, site-publico |
+| `T0.11-TYPESCRIPT6-GUEST-PLAN.md` | Plano piloto TS6 guest |
+| `T0.11-TYPESCRIPT6-GUEST-RESULT.md` | Resultado TS6 guest (T0.11 / E1) |
+| `T0.12-TYPESCRIPT6-ADMIN-RESULT.md` | Resultado TS6 admin (T0.12 / E2) |
+| `T0.13-TYPESCRIPT6-TURISMO-RESULT.md` | Resultado TS6 turismo (T0.13 / E3) |
+| `T0.14-TYPESCRIPT6-SITE-PUBLICO-RESULT.md` | Resultado TS6 site-publico (T0.14 / E4) |
 
 ## Executar preflight
 
