@@ -1,0 +1,14 @@
+gate	resultado	notas
+merge_pr_impl	PR #338 merge commit b0996112c	PASS
+pull_main	s2-fase-e-clean @ origin/main	PASS
+lucide_react_lock	0.542.0	PASS
+G-A2_typecheck_prebuild	tsc sem .next	PASS exit 0
+G-A2_build_webpack	next build --webpack	PASS exit 0
+G-A2_typecheck_postbuild	tsc com .next/types	FAIL 1067 baseline pos T0.19
+ts2786_pos_merge	251	delta -896 vs pre T0.19 1147
+validator_ts2344	0	PASS
+G-A5_http_3000	GET http://127.0.0.1:3000/	200
+G-A5_health_site_publico	docker inspect rsv360-site-publico	healthy
+G-A6_api_p0	run-api-p0-round1.ps1	PASS 8/8
+veredito	GO pos-merge	T0.19 Lucide encerrado
+proximo_marco	T0.19b radix ou T0.20 residual	HITL
