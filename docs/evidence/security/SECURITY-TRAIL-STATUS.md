@@ -28,8 +28,8 @@
 | SEC-01 shell-quote + joi | #315 | #316 | **GO pós-merge** |
 | SEC-02 nodemailer root | #317 | #318 | **GO pós-merge** |
 | SEC-03 nodemailer site-publico | #319 | #320 | **GO pós-merge** |
-| SEC-04 postcss 8.5.15 | #321 | *(carimbo pendente)* | **GO impl** |
-| **SEC-05 esbuild** | *(em andamento)* | — | **Próximo** |
+| SEC-04 postcss | #321 | #322 | **GO pós-merge** |
+| **SEC-05 esbuild** | *(PR pendente)* | — | **Em andamento** |
 | SEC-06 uuid | — | — | Pendente |
 
 **Dependabot open (pós SEC-04):** **8** (0 critical, 2 high, 4 medium, 2 low)  
