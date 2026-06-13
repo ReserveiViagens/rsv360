@@ -1,0 +1,12 @@
+gate	resultado	notas
+merge_pr	PR #308 merge commit	PASS	31e20e478
+pull_main	s2-fase-e-clean @ origin/main	PASS	31e20e478
+docker_rebuild	compose up -d --build turismo	PASS
+G-A5_login_3005	GET http://127.0.0.1:3005/login	200
+G-A5_health_turismo	docker inspect rsv360-turismo	healthy
+B1_root_sem_auth	/ redireciona /login pos-hidratacao	PASS	apos logout localStorage
+B2_sem_loader_infinito	sem Carregando RSV 360 preso	PASS
+B3_formulario_login	Email Senha visiveis	PASS
+B4_botao_entrar	Entrar habilitado	PASS
+B5_auth_persistente	/ com demo-token vai /dashboard	PASS	comportamento esperado
+veredito	GO pos-merge	bugfix AuthProvider turismo encerrado
