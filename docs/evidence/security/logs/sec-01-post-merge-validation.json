@@ -1,0 +1,30 @@
+{
+  "collected_at": "2026-06-13T03:52:49.320Z",
+  "pr_315": {
+    "state": "MERGED",
+    "merge_commit": "b320b0543"
+  },
+  "alerts_closed": [
+    {
+      "number": 132,
+      "package": "shell-quote",
+      "state": "fixed",
+      "severity": "critical"
+    },
+    {
+      "number": 136,
+      "package": "joi",
+      "state": "fixed",
+      "severity": "medium"
+    }
+  ],
+  "dependabot_open": {
+    "total": 13,
+    "by_severity": {
+      "critical": 0,
+      "high": 2,
+      "medium": 7,
+      "low": 4
+    }
+  }
+}

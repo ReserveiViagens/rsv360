@@ -134,7 +134,7 @@ Histórico total no API: 134 alertas (inclui `fixed` / `dismissed`).
 
 | PR | Escopo | Gates sugeridos |
 |----|--------|-----------------|
-| **SEC-01** | override `shell-quote@1.8.4` (+ opcional joi 17.13.4) | `npm audit` root; Dependabot → critical=0 |
+| **SEC-01** | override `shell-quote@1.8.4` (+ joi 17.13.4) | **GO pós-merge** #315 — alertas #132/#136 fixed |
 | **SEC-02** | nodemailer root 8.0.11 | smoke backend mail paths; API P0 8/8 |
 | **SEC-03** | nodemailer site-publico 7→8 | build site-publico; Docker :3000; fluxo contato/email |
 | **SEC-04** | postcss override ou Next bump patch | type-check pré-build; build 4 apps; visual smoke |
@@ -161,11 +161,13 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 
 | Item | Status |
 |------|--------|
-| Inventário Dependabot/security | **GO** — coleta concluída |
-| Aplicar correções | **NOGO** — aguarda PRs SEC-01+ aprovados |
+| Inventário Dependabot/security | **GO** — #314 mergeada |
+| **SEC-01** (shell-quote + joi) | **GO pós-merge** — #315 @ `b320b0543`; alertas #132/#136 **fixed** — ver [SEC-01-POST-MERGE.md](./SEC-01-POST-MERGE.md) |
+| Dependabot open (pós SEC-01) | **13** (0 critical, 2 high, 7 medium, 4 low) |
+| **SEC-02** nodemailer root patch | **Próximo** — PR separada |
 | Tailwind 4 / Express 5 / `.next/types` | **NOGO** — trilhas separadas |
 
-**Próxima decisão HITL sugerida:** aprovar **SEC-01** (shell-quote + joi) como primeiro PR de correção.
+**Próxima decisão HITL sugerida:** **SEC-02** — nodemailer root `8.0.7` → `8.0.11`.
 
 ---
 
@@ -182,5 +184,8 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 | [logs/npm-audit-apps-admin.json](./logs/npm-audit-apps-admin.json) | Audit JSON admin |
 | [logs/npm-audit-apps-guest.json](./logs/npm-audit-apps-guest.json) | Audit JSON guest |
 | [logs/npm-audit-packages-shared.json](./logs/npm-audit-packages-shared.json) | Audit JSON shared (0 vulns) |
+| [SEC-01-SHELL-QUOTE-JOI.md](./SEC-01-SHELL-QUOTE-JOI.md) | Correção SEC-01 (#315) |
+| [SEC-01-POST-MERGE.md](./SEC-01-POST-MERGE.md) | Carimbo pós-merge SEC-01 |
+| [logs/sec-01-post-merge-summary.tsv](./logs/sec-01-post-merge-summary.tsv) | Gates pós-merge SEC-01 |
 
 *Documento de inventário — não altera `package.json`, lockfiles, código, Docker ou workflows.*
