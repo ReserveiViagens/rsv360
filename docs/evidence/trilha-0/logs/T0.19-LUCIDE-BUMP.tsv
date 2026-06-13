@@ -1,0 +1,15 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.19-lucide-bump	PASS
+base_main	55a97082e pos T0.18 carimbo	PASS
+lucide_react_antes	0.294.0	PASS
+lucide_react_depois	0.542.0	PASS	espelha guest/admin
+G-A2_typecheck_prebuild	PASS exit 0
+G-A2_build_webpack	PASS exit 0
+G-A2_typecheck_postbuild	FAIL 1067 erros	delta -896 vs 1963
+ts2786_antes	1147	baseline T0.19 preflight
+ts2786_depois	251	delta -896
+validator_ts2344	0	PASS
+G-A5_http_3000	200	smoke
+G-A6_api_p0	8/8 OK	T0.19-LUCIDE-API-P0.tsv
+veredito	T0.19_GO_condicional	carimbo pos-merge pendente
