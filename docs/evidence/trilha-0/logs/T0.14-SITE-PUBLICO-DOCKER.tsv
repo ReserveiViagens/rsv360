@@ -1,0 +1,5 @@
+gate	resultado	notas
+docker_build	compose -p rsv360 up -d --build site-publico	PASS
+G-A5_smoke_3000	GET http://127.0.0.1:3000/	200
+G-A5_health_site	docker inspect rsv360-site-publico	healthy
+veredito_docker	GO	baseline pre-TS6
