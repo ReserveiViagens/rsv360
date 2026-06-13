@@ -1,0 +1,6 @@
+﻿service	url	code	status
+site-publico	http://127.0.0.1:3000	200	PASS
+backend-health	http://127.0.0.1:3002/health	200	PASS
+admin	http://127.0.0.1:3004	200	PASS
+turismo	http://127.0.0.1:3005	200	PASS
+guest	http://127.0.0.1:3006	200	PASS
