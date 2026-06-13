@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-13  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `a8d9955ae` (T0.15 TW4 guest #330)
+**`main`:** `818070a3e` (T0.15 carimbo #331)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -27,11 +27,10 @@
 
 | Item | Status |
 |------|--------|
-| T0.15 preflight guest | **GO** (#329) |
-| T0.15 impl TW4 guest | **GO** (#330 @ `a8d9955ae`) |
-| T0.15 carimbo guest | **PR pendente** — [T0.15-TAILWIND4-GUEST-POST-MERGE.md](../trilha-0/T0.15-TAILWIND4-GUEST-POST-MERGE.md) |
+| T0.15 impl + carimbo guest | **GO** (#330 + #331) |
+| T0.16 preflight + impl admin | **PR pendente** — [T0.16-TAILWIND4-ADMIN-RESULT.md](../trilha-0/T0.16-TAILWIND4-ADMIN-RESULT.md) |
 
-**Próximo passo:** merge carimbo → **T0.16** TW4 piloto admin.
+**Próximo passo:** merge impl T0.16 admin → carimbo.
 
 ## Linha do tempo Security — CONCLUÍDA
 
