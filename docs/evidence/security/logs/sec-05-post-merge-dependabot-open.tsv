@@ -1,0 +1,3 @@
+number	severity	package	manifest
+122	medium	uuid	backend/package-lock.json
+124	medium	uuid	package-lock.json
