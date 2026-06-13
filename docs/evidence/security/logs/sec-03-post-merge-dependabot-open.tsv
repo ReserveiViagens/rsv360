@@ -1,0 +1,10 @@
+﻿number	severity	package	manifest	state
+140	high	esbuild	package-lock.json	open
+139	low	esbuild	package-lock.json	open
+138	high	esbuild	backend/package-lock.json	open
+137	low	esbuild	backend/package-lock.json	open
+124	medium	uuid	package-lock.json	open
+122	medium	uuid	backend/package-lock.json	open
+83	medium	postcss	package-lock.json	open
+35	medium	esbuild	package-lock.json	open
+32	medium	esbuild	backend/package-lock.json	open

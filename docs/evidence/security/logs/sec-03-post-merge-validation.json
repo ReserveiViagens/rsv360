@@ -1,0 +1,82 @@
+﻿{
+    "collectedAt":  "2026-06-13T14:39:52Z",
+    "branch":  "codex/security-sec-03-post-merge-docs",
+    "base":  {
+                 "ref":  "origin/main",
+                 "shortSha":  "9f11d7d3b"
+             },
+    "sec03":  {
+                  "implementationPr":  319,
+                  "mergeCommit":  "9f11d7d3bb1597e2a81c0cf8fb0c0ebead656e66",
+                  "bugbot":  "SUCCESS",
+                  "state":  "MERGED"
+              },
+    "lockfile":  {
+                     "sitePublicoPackage":  "^8.0.11",
+                     "lockWorkspaceSpec":  "^8.0.11",
+                     "sitePublicoLockExists":  false,
+                     "rootLockVersion":  "8.0.11"
+                 },
+    "npmAuditSitePublico":  {
+                                "vulnerabilities":  {
+                                                        "info":  0,
+                                                        "low":  0,
+                                                        "moderate":  7,
+                                                        "high":  0,
+                                                        "critical":  0,
+                                                        "total":  7
+                                                    },
+                                "nodemailerPresent":  false,
+                                "vulnerabilityNames":  [
+                                                           "@ngneat/falso",
+                                                           "artillery",
+                                                           "artillery-plugin-fake-data",
+                                                           "exceljs",
+                                                           "next",
+                                                           "postcss",
+                                                           "uuid"
+                                                       ]
+                            },
+    "dependabotOpen":  {
+                           "total":  9,
+                           "critical":  0,
+                           "high":  2,
+                           "medium":  5,
+                           "low":  2,
+                           "nodemailerOpen":  0
+                       },
+    "nodemailerAlerts":  [
+                             {
+                                 "number":  128,
+                                 "state":  "fixed",
+                                 "manifest":  "apps/site-publico/package.json",
+                                 "package":  "nodemailer",
+                                 "severity":  "low",
+                                 "fixedAt":  "2026-06-13T14:37:09Z"
+                             },
+                             {
+                                 "number":  129,
+                                 "state":  "fixed",
+                                 "manifest":  "apps/site-publico/package.json",
+                                 "package":  "nodemailer",
+                                 "severity":  "medium",
+                                 "fixedAt":  "2026-06-13T14:37:09Z"
+                             },
+                             {
+                                 "number":  130,
+                                 "state":  "fixed",
+                                 "manifest":  "package-lock.json",
+                                 "package":  "nodemailer",
+                                 "severity":  "low",
+                                 "fixedAt":  "2026-06-13T14:37:09Z"
+                             },
+                             {
+                                 "number":  131,
+                                 "state":  "fixed",
+                                 "manifest":  "package-lock.json",
+                                 "package":  "nodemailer",
+                                 "severity":  "medium",
+                                 "fixedAt":  "2026-06-13T14:37:09Z"
+                             }
+                         ]
+}
