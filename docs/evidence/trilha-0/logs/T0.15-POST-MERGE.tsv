@@ -1,0 +1,11 @@
+gate	resultado	notas
+merge_pr	PR #330 merge commit	PASS	a8d9955ae
+pull_main	s2-fase-e-clean @ origin/main	PASS	a8d9955ae
+G-A3_typecheck	guest tsc --noEmit	PASS	npm@10.9.7
+G-A5_smoke_3006	GET http://127.0.0.1:3006/	200
+G-A5_smoke_3004	GET http://127.0.0.1:3004/	200 admin regressao T0.10
+G-A5_health_guest	docker inspect rsv360-guest	healthy
+tailwind_lock	tailwindcss + @tailwindcss/postcss	4.3.1
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
+veredito	GO pos-merge	T0.15 piloto TW4 guest encerrado
+proximo_marco	T0.16 TW4 admin	preflight + impl — PR separada
