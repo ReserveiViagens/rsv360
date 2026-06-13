@@ -1,0 +1,8 @@
+gate	status	detail
+express_version	GO	5.2.1 lock + Docker
+static_scan_deprecated_apis	GO	0 hits backend+server/modules
+api_p0	GO	8/8 OK
+jest_unit	GO	7/7 suites PASS
+jest_integration	DEBT	5 fail DATABASE_URL local (pre-existing)
+legacy_express4_turismo_pages	OUT_OF_SCOPE	ADR-0003
+montanha_D	GO_condicional	proxima montanha C Tailwind 4 guest/admin
