@@ -103,6 +103,8 @@
       "socket.io-parser": "4.2.6"
     },
     "test-exclude": "7.0.1",
+    "shell-quote": "1.8.4",
+    "joi": "17.13.4",
     "react": "19.2.5",
     "react-dom": "19.2.5"
   },
