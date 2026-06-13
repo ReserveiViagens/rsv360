@@ -1,0 +1,18 @@
+item	value	source
+base_main	818070a3e	merge PR331 T0.15 carimbo
+tailwindcss_decl	^3.3.0	package.json
+tailwindcss_resolved	3.4.19	npm ls pre-impl
+postcss	8.5.15 override	npm ls
+autoprefixer	10.5.0	package.json pre-impl
+next	16.2.7	package.json
+typescript	^6.0.3	package.json
+build_cmd	next build --webpack	package.json
+ts_source_files	121	count pages+components+src
+custom_theme_tokens	0	theme.extend empty
+apply_in_css	1 line body	globals.css
+tailwind_plugins	0	none
+shared_content_paths	no	admin nao importa @shared
+docker_admin_http	200	smoke :3004
+type_check_baseline	PASS	G2G3 capture
+build_baseline	PASS	G2G3 capture
+recharts_ssg_warnings	yes	pre-existente T0.12

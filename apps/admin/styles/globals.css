@@ -1,6 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../pages/**/*.{ts,tsx}';
+@source '../components/**/*.{ts,tsx}';
+@source '../src/**/*.{ts,tsx}';
 
 html,
 body,
@@ -15,4 +19,3 @@ body {
 * {
   box-sizing: border-box;
 }
-
