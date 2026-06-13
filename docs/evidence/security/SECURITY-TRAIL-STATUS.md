@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-02  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `1686f757b` (T0.16 TW4 admin carimbo #333)
+**`main`:** `55a97082e` (T0.18 carimbo #336)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -23,17 +23,24 @@
 | Express lock + Docker | **5.2.1** |
 | API P0 | **8/8 OK** |
 
-## Montanha C — Tailwind 4 (em andamento)
+## Montanha C — Tailwind 4
 
 | Item | Status |
 |------|--------|
 | T0.15 impl + carimbo guest | **GO** (#330 + #331) |
-| T0.16 impl + carimbo TW4 admin | **GO** (#332 + #333 @ `1686f757b`) |
-| T0.17 preflight `.next/types` site-publico | **PR pendente** — [T0.17-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md](../trilha-0/T0.17-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md) |
+| T0.16 impl + carimbo TW4 admin | **GO** (#332 + #333) |
 
-**Piloto TW4 guest+admin:** **GO**.
+## Montanha `.next/types` site-publico
 
-**Montanha ativa:** `.next/types` site-publico (T0.17 → T0.18 handlers → T0.19 JSX → …). **TW4 site-publico/turismo depois.**
+| Item | Status |
+|------|--------|
+| T0.17 preflight | **GO** (#334) |
+| T0.18 impl handlers | **GO** (#335) |
+| T0.18 carimbo | **GO** (#336) |
+| T0.19 preflight TS2786 | **GO** (docs nesta branch) |
+| T0.19 impl Lucide bump | **em andamento** |
+
+**Próximo HITL:** T0.19 impl → T0.19b radix residual → TW4 site-publico **depois**.
 
 ## Linha do tempo Security — CONCLUÍDA
 
@@ -49,20 +56,11 @@
 
 **Closeout formal:** [SECURITY-TRAIL-CLOSEOUT.md](./SECURITY-TRAIL-CLOSEOUT.md)
 
-## Resultado inventário → closeout
-
-| Métrica | Inventário (#314) | Pós SEC-06 |
-|---------|-------------------|------------|
-| Dependabot open | 15 | **0** |
-| critical | 1 | **0** |
-| npm audit root | 15+ | **0** |
-| npm audit backend | 7 | **0** |
-
 ## Próxima HITL (fora security deps)
 
-1. Merge T0.17 preflight `.next/types` (docs)  
-2. HITL → T0.18 (5 route handlers)  
-3. TW4 turismo / site-publico — **após** saneamento `.next/types`
+1. T0.19 impl `lucide-react` bump  
+2. T0.19b radix residual (se necessário)  
+3. TW4 site-publico/turismo — **depois** saneamento `.next/types`
 
 Ver opções A–D em [SECURITY-TRAIL-CLOSEOUT.md §8](./SECURITY-TRAIL-CLOSEOUT.md#8-próxima-decisão-hitl).
 
