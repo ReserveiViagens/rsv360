@@ -77,4 +77,4 @@
 | **Data** | 2026-05-30 |
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
 | **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
-| **Próximo passo** | **HITL:** Tailwind 4, Express 5, `.next/types`, ou Dependabot — **NOGO** até decisão explícita |
+| **Próximo passo** | **Trilha security** — inventário Dependabot (#314+) → quick wins SEC-01+ — ver `docs/evidence/security/DEPENDABOT-INVENTORY.md` |

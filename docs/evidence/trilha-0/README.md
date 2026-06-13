@@ -35,6 +35,7 @@
 | `T0.10-GUEST-ADMIN-DOCKER-STAB.md` | Estabilização Docker guest+admin pós-Next 16 |
 | `ADR-0003-FASE-E-STACK-RESIDUAL.md` | Fase E — TS6 / Tailwind 4 / Express 5 (Aceito) |
 | `FASE-E-TS6-CLOSEOUT.md` | Closeout rodada TS6 — guest, admin, turismo, site-publico |
+| `../security/DEPENDABOT-INVENTORY.md` | Inventário Dependabot/security (HITL — sem correções) |
 | `T0.11-TYPESCRIPT6-GUEST-PLAN.md` | Plano piloto TS6 guest |
 | `T0.11-TYPESCRIPT6-GUEST-RESULT.md` | Resultado TS6 guest (T0.11 / E1) |
 | `T0.12-TYPESCRIPT6-ADMIN-RESULT.md` | Resultado TS6 admin (T0.12 / E2) |

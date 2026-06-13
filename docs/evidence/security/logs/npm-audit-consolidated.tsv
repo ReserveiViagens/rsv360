@@ -1,0 +1,23 @@
+workspace	package	severity	direct	via	range	fix_package	fix_version	fix_major
+backend	@esbuild-kit/core-utils	moderate	false	esbuild	*	drizzle-kit	0.19.1	true
+backend	@esbuild-kit/esm-loader	moderate	false	@esbuild-kit/core-utils	*	drizzle-kit	0.19.1	true
+backend	drizzle-kit	high	false	@esbuild-kit/esm-loader;esbuild	0.17.5-6b7793f - 0.17.5-e5944eb || 0.18.1-065de38 - 0.18.1-f3800bf || >=0.19.0-07024c4	drizzle-kit	0.19.1	true
+backend	esbuild	high	false		<=0.28.0	drizzle-kit	0.19.1	true
+backend	mercadopago	moderate	false	uuid	1.0.0 - 3.0.0	mercadopago	3.1.0	true
+backend	tsx	high	false	esbuild	3.13.0 - 4.21.1			false
+backend	uuid	moderate	false		<11.1.1	mercadopago	3.1.0	true
+apps/site-publico	@ngneat/falso	moderate	false	uuid	>=2.0.0-beta.0	artillery	1.7.9	true
+apps/site-publico	artillery	moderate	true	artillery-plugin-fake-data	>=2.0.0-0	artillery	1.7.9	true
+apps/site-publico	artillery-plugin-fake-data	moderate	false	@ngneat/falso	*	artillery	1.7.9	true
+apps/site-publico	exceljs	moderate	true	uuid	>=3.5.0	exceljs	3.4.0	true
+apps/site-publico	joi	moderate	false		<17.13.4			false
+apps/site-publico	next	moderate	true	postcss	9.3.4-canary.0 - 16.3.0-canary.5	next	9.3.3	true
+apps/site-publico	nodemailer	moderate	true		<=8.0.4	nodemailer	8.0.11	true
+apps/site-publico	postcss	moderate	false		<8.5.10	next	9.3.3	true
+apps/site-publico	uuid	moderate	false		<11.1.1	exceljs	3.4.0	true
+apps/turismo	next	moderate	true	postcss	9.3.4-canary.0 - 16.3.0-canary.5	next	9.3.3	true
+apps/turismo	postcss	moderate	false		<8.5.10	next	9.3.3	true
+apps/admin	next	moderate	true	postcss	9.3.4-canary.0 - 16.3.0-canary.5	next	9.3.3	true
+apps/admin	postcss	moderate	false		<8.5.10	next	9.3.3	true
+apps/guest	next	moderate	true	postcss	9.3.4-canary.0 - 16.3.0-canary.5	next	9.3.3	true
+apps/guest	postcss	moderate	false		<8.5.10	next	9.3.3	true
