@@ -105,6 +105,10 @@
     "test-exclude": "7.0.1",
     "shell-quote": "1.8.4",
     "joi": "17.13.4",
+    "postcss": "8.5.15",
+    "next": {
+      "postcss": "8.5.15"
+    },
     "react": "19.2.5",
     "react-dom": "19.2.5"
   },

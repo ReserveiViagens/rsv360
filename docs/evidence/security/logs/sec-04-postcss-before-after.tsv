@@ -1,0 +1,6 @@
+path	versao_antes	versao_depois	status
+apps/admin/node_modules/next/node_modules/postcss	8.4.31	(deduped)	OK
+apps/guest/node_modules/next/node_modules/postcss	8.4.31	(deduped)	OK
+apps/site-publico/node_modules/next/node_modules/postcss	8.4.31	(deduped)	OK
+apps/turismo/node_modules/next/node_modules/postcss	8.4.31	(deduped)	OK
+node_modules/postcss	8.5.13	8.5.15	OK
