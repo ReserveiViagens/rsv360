@@ -1,0 +1,17 @@
+﻿gate	result	notes
+PR_317	MERGED	merge commit 714078a4
+bugbot	SUCCESS	pre-merge PR check
+root_package_json_nodemailer	^8.0.11	expected ^8.0.11
+root_lock_nodemailer	8.0.11	expected 8.0.11
+site_publico_nodemailer	7.0.13	unchanged by SEC-02
+dependabot_open_total	13	unchanged from SEC-01 snapshot
+dependabot_open_critical	0	-
+dependabot_open_high	2	-
+dependabot_open_medium	7	-
+dependabot_open_low	4	-
+alert_130_nodemailer_package_lock	open	still open in GitHub API
+alert_131_nodemailer_package_lock	open	still open in GitHub API
+npm_audit_root_total	14	same total as SEC-01
+npm_audit_root_nodemailer_nodes	apps/site-publico/node_modules/nodemailer	apps/site-publico only
+SEC-02_verdict	GO implementation / HOLD dependabot closure	root patch merged; Dependabot closure not proven
+next_trail	SEC-03 nodemailer site-publico	major 7 -> 8, separate HITL

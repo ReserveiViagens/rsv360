@@ -164,10 +164,10 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 | Inventário Dependabot/security | **GO** — #314 mergeada |
 | **SEC-01** (shell-quote + joi) | **GO pós-merge** — #315 @ `b320b0543`; alertas #132/#136 **fixed** — ver [SEC-01-POST-MERGE.md](./SEC-01-POST-MERGE.md) |
 | Dependabot open (pós SEC-01) | **13** (0 critical, 2 high, 7 medium, 4 low) |
-| **SEC-02** nodemailer root patch | **Próximo** — PR separada |
+| **SEC-02** nodemailer root patch | **MERGED** — #317 @ `714078a4`; root `nodemailer` em `8.0.11`; fechamento Dependabot **HOLD** (#130/#131 ainda `open`) — ver [SEC-02-POST-MERGE.md](./SEC-02-POST-MERGE.md) |
 | Tailwind 4 / Express 5 / `.next/types` | **NOGO** — trilhas separadas |
 
-**Próxima decisão HITL sugerida:** **SEC-02** — nodemailer root `8.0.7` → `8.0.11`.
+**Próxima decisão HITL sugerida:** **SEC-03** — nodemailer `apps/site-publico` `7.0.13` → `8.x` em PR separada, ou rechecagem posterior do Dependabot para #130/#131.
 
 ---
 
@@ -187,5 +187,7 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 | [SEC-01-SHELL-QUOTE-JOI.md](./SEC-01-SHELL-QUOTE-JOI.md) | Correção SEC-01 (#315) |
 | [SEC-01-POST-MERGE.md](./SEC-01-POST-MERGE.md) | Carimbo pós-merge SEC-01 |
 | [logs/sec-01-post-merge-summary.tsv](./logs/sec-01-post-merge-summary.tsv) | Gates pós-merge SEC-01 |
+| [SEC-02-POST-MERGE.md](./SEC-02-POST-MERGE.md) | Carimbo pós-merge SEC-02 |
+| [logs/sec-02-post-merge-summary.tsv](./logs/sec-02-post-merge-summary.tsv) | Gates pós-merge SEC-02 |
 
 *Documento de inventário — não altera `package.json`, lockfiles, código, Docker ou workflows.*
