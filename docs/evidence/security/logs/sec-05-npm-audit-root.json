@@ -1,0 +1,157 @@
+﻿{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@ngneat/falso": {
+      "name": "@ngneat/falso",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [
+        "artillery-plugin-fake-data"
+      ],
+      "range": ">=2.0.0-beta.0",
+      "nodes": [
+        "node_modules/@ngneat/falso"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "artillery": {
+      "name": "artillery",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "artillery-plugin-fake-data"
+      ],
+      "effects": [],
+      "range": ">=2.0.0-0",
+      "nodes": [
+        "node_modules/artillery"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "artillery-plugin-fake-data": {
+      "name": "artillery-plugin-fake-data",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@ngneat/falso"
+      ],
+      "effects": [
+        "artillery"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/artillery-plugin-fake-data"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "exceljs": {
+      "name": "exceljs",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "uuid"
+      ],
+      "effects": [],
+      "range": ">=3.5.0",
+      "nodes": [
+        "node_modules/exceljs"
+      ],
+      "fixAvailable": {
+        "name": "exceljs",
+        "version": "3.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "mercadopago": {
+      "name": "mercadopago",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [],
+      "range": "1.0.0 - 3.0.0",
+      "nodes": [
+        "node_modules/mercadopago"
+      ],
+      "fixAvailable": {
+        "name": "mercadopago",
+        "version": "3.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "uuid": {
+      "name": "uuid",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119441,
+          "name": "uuid",
+          "dependency": "uuid",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-787",
+            "CWE-1285"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<11.1.1"
+        }
+      ],
+      "effects": [
+        "@ngneat/falso",
+        "exceljs",
+        "mercadopago"
+      ],
+      "range": "<11.1.1",
+      "nodes": [
+        "node_modules/@ngneat/falso/node_modules/uuid",
+        "node_modules/exceljs/node_modules/uuid",
+        "node_modules/uuid"
+      ],
+      "fixAvailable": {
+        "name": "exceljs",
+        "version": "3.4.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 6,
+      "high": 0,
+      "critical": 0,
+      "total": 6
+    },
+    "dependencies": {
+      "prod": 749,
+      "dev": 1022,
+      "optional": 119,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1855
+    }
+  }
+}
