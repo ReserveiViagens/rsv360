@@ -1,0 +1,8 @@
+gate	resultado	notas
+metodo	navegador pos-hidratacao	PASS	nao usar curl / como prova principal
+B1_abrir_root	GET http://127.0.0.1:3005/	PASS
+B2_sem_loader_infinito	sem Carregando RSV 360 preso	PASS
+B3_redirect_login	URL final /login	PASS	http://127.0.0.1:3005/login
+B4_formulario_login	Email Senha visiveis	PASS
+B5_botao_entrar	Entrar habilitado	PASS	sem disabled eterno
+veredito_browser	GO	redirect client-side confirmado
