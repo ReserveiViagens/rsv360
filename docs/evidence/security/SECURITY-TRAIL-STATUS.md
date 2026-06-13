@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-13  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `934917b5c` (closeout security #326)
+**`main`:** `d845e65e8` (montanha A #327 + closeout security #326)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -15,7 +15,16 @@
 | G2 operacional | **GO** |
 | G2 estrito lint | **NOGO condicional** (#237 + eslint hoist local) |
 
-**Próxima montanha recomendada:** **D** Express 5 verify → **C** Tailwind 4 piloto guest/admin.
+## Montanha D — Express 5 backend verify
+
+| Item | Status |
+|------|--------|
+| Verificação ADR E4 | **GO condicional** — [E5-EXPRESS5-BACKEND-VERIFY.md](../trilha-0/E5-EXPRESS5-BACKEND-VERIFY.md) |
+| Express lock + Docker | **5.2.1** |
+| API P0 | **8/8 OK** |
+| Scan APIs deprecated | **0 hits** |
+
+**Próxima montanha:** **C** Tailwind 4 piloto guest/admin.
 
 ## Linha do tempo Security — CONCLUÍDA
 

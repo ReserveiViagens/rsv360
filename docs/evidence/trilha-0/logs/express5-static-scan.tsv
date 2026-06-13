@@ -1,0 +1,6 @@
+﻿pattern	scope	hits	verdict
+app\.del\(	backend+server/modules	0	PASS
+req\.param\(	backend+server/modules	0	PASS
+app\.configure\(	backend+server/modules	0	PASS
+res\.send\(\s*\d{3}	backend+server/modules	0	PASS
+express_4_manifest	apps/turismo/pages/**	3	OUT_OF_SCOPE
