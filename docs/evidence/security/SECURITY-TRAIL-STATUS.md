@@ -2,29 +2,38 @@
 
 **Última atualização:** 2026-06-13  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `3f7de5ab2` (SEC-05 impl #323)
+**`main`:** `98c21c531` (+ SEC-06 PR pendente)
 
 > **Leia este arquivo primeiro** ao retomar.
 
-## Linha do tempo Security
+## Linha do tempo Security — COMPLETA (impl)
 
 | Etapa | PR impl | PR carimbo | Status |
 |-------|---------|------------|--------|
 | Inventário | — | #314 | GO |
-| SEC-01 | #315 | #316 | GO pós-merge |
-| SEC-02 | #317 | #318 | GO pós-merge |
-| SEC-03 | #319 | #320 | GO pós-merge |
-| SEC-04 | #321 | #322 | GO pós-merge |
-| SEC-05 esbuild | #323 | *(carimbo pendente)* | GO impl |
-| **SEC-06 uuid** | em andamento | — | #122, #124 open |
+| SEC-01 shell-quote + joi | #315 | #316 | GO |
+| SEC-02 nodemailer root | #317 | #318 | GO |
+| SEC-03 nodemailer site-publico | #319 | #320 | GO |
+| SEC-04 postcss | #321 | #322 | GO |
+| SEC-05 esbuild | #323 | #324 | GO |
+| **SEC-06 uuid** | *(PR pendente)* | — | GO condicional |
 
-**Dependabot open:** **2** (uuid medium) — pós SEC-05
+## Resultado inventário original
 
-## SEC-06 — uuid (em andamento)
+| Métrica | Inventário (#314) | Pós SEC-06 (esperado) |
+|---------|-------------------|------------------------|
+| Dependabot open | 15 | **0** |
+| critical | 1 | **0** |
+| npm audit root | 15+ | **0** |
 
-- Override `"uuid": "11.1.1"` — sem mercadopago@3.x, sem downgrade exceljs
-- Instâncias VULN: root `9.0.1`, backend `9.0.1`, nested `8.3.2` (exceljs, falso)
+## Próxima HITL (fora security deps)
 
-## NOGO sem HITL
+1. Revalidar G2/G3 formal  
+2. `.next/types` site-publico  
+3. Express 5 / Tailwind 4 — **NOGO** até decisão
 
-Tailwind 4, Express 5, `.next/types`
+## Artefatos
+
+- [DEPENDABOT-INVENTORY.md](./DEPENDABOT-INVENTORY.md)
+- [SEC-06-UUID-RESULT.md](./SEC-06-UUID-RESULT.md)
+- [SEC-05-POST-MERGE.md](./SEC-05-POST-MERGE.md)
