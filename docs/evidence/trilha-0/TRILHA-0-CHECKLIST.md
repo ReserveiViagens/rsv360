@@ -72,8 +72,8 @@
 - [x] T0.16 TW4 admin — **GO pós-merge** #332/#333
 - [x] T0.17 preflight `.next/types` — **GO** #334
 - [x] T0.18 handlers — **GO** #335 + carimbo #336
-- [x] T0.19 preflight TS2786 — **GO** (docs)
-- [ ] T0.19 impl Lucide bump — **em andamento**
+- [x] T0.19 impl Lucide bump — **GO** #338 @ `b0996112c`
+- [ ] T0.19 carimbo — **PR pendente**
 
 ## Decisão Trilha 0
 
@@ -85,5 +85,5 @@
 | **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
-| **Montanha `.next/types`** | T0.18 **GO**; T0.19 impl Lucide em andamento |
-| **Próximo passo** | T0.19 impl → T0.19b radix → TW4 site-publico depois |
+| **Montanha `.next/types`** | T0.19 Lucide **GO** (#338); carimbo pendente |
+| **Próximo passo** | T0.19b radix ou T0.20 → TW4 site-publico depois |
