@@ -1,0 +1,15 @@
+﻿step	status	workdir	detail	log_file
+s2_packages_shared_build	PASS	packages\shared	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_packages_shared_build.log
+s2_packages_shared_typecheck	PASS	packages\shared	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_packages_shared_typecheck.log
+s2_apps_guest_lint	FAIL	apps\guest	exit=2	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_guest_lint.log
+s2_apps_guest_typecheck	PASS	apps\guest	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_guest_typecheck.log
+s2_apps_guest_build	PASS	apps\guest	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_guest_build.log
+s2_apps_admin_lint	DEBT	apps\admin	exit=2	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_admin_lint.log
+s2_apps_admin_typecheck	PASS	apps\admin	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_admin_typecheck.log
+s2_apps_admin_build	PASS	apps\admin	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_admin_build.log
+s2_apps_turismo_lint	FAIL	apps\turismo	exit=2	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_turismo_lint.log
+s2_apps_turismo_typecheck	DEBT	apps\turismo	exit=1	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_turismo_typecheck.log
+s2_apps_turismo_build	PASS	apps\turismo	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_turismo_build.log
+s2_apps_site-publico_lint	DEBT	apps\site-publico	exit=2	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_site_publico_lint.log
+s2_apps_site-publico_typecheck	DEBT	apps\site-publico	exit=1	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_site_publico_typecheck.log
+s2_apps_site-publico_build	PASS	apps\site-publico	exit=0	C:\Users\RSV 360\Documents\s2-fase-e-clean\docs\evidence\g2g3-post-security\logs\g2_s2_apps_site_publico_build.log

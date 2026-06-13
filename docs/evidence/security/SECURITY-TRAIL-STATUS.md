@@ -2,9 +2,20 @@
 
 **Última atualização:** 2026-06-13  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `6abaf520e` (merge SEC-06 #325)
+**`main`:** `934917b5c` (closeout security #326)
 
 > **Leia este arquivo primeiro** ao retomar.
+
+## Montanha A — G2/G3 pós-security
+
+| Item | Status |
+|------|--------|
+| Revalidação formal | **GO condicional** — [G2G3-POST-SECURITY-REVALIDATION.md](../g2g3-post-security/G2G3-POST-SECURITY-REVALIDATION.md) |
+| G3 (API P0 + audit + Dependabot) | **GO** |
+| G2 operacional | **GO** |
+| G2 estrito lint | **NOGO condicional** (#237 + eslint hoist local) |
+
+**Próxima montanha recomendada:** **D** Express 5 verify → **C** Tailwind 4 piloto guest/admin.
 
 ## Linha do tempo Security — CONCLUÍDA
 
@@ -16,7 +27,7 @@
 | SEC-03 nodemailer site-publico | #319 | #320 | GO |
 | SEC-04 postcss | #321 | #322 | GO |
 | SEC-05 esbuild | #323 | #324 | GO |
-| **SEC-06 uuid** | #325 | *(PR closeout pendente)* | **GO** |
+| **SEC-06 uuid** | #325 | #326 | GO |
 
 **Closeout formal:** [SECURITY-TRAIL-CLOSEOUT.md](./SECURITY-TRAIL-CLOSEOUT.md)
 

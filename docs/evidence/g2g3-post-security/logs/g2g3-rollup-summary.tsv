@@ -1,0 +1,5 @@
+gate	status	detail
+G2_operational	GO	build 5/5 PASS; type-check guest+admin PASS; smoke 5/5 HTTP 200
+G2_strict	NOGO_condicional	lint local bloqueado (eslint hoist) + debito #237 admin/site-publico; type-check DEBT turismo/site-publico
+G3_security	GO	API P0 8/8; npm audit 0 (6 escopos); Dependabot open 0; Docker healthy
+veredito_montanha_A	GO_condicional	pos-security trail SEC-01..06 + TS6; proxima montanha D Express 5 verify

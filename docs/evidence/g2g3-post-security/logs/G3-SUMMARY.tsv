@@ -1,0 +1,15 @@
+﻿step	status	detail	artifact
+smoke_site-publico	PASS	HTTP 200	http://127.0.0.1:3000
+smoke_backend-health	PASS	HTTP 200	http://127.0.0.1:3002/health
+smoke_admin	PASS	HTTP 200	http://127.0.0.1:3004
+smoke_turismo	PASS	HTTP 200	http://127.0.0.1:3005
+smoke_guest	PASS	HTTP 200	http://127.0.0.1:3006
+docker_ps	PASS	snapshot rsv360	docs\evidence\g2g3-post-security\logs\docker-ps.txt
+npm_audit_root	PASS	total=0	npm-audit-root.json
+npm_audit_backend	PASS	total=0	npm-audit-backend.json
+npm_audit_site_publico	PASS	total=0	npm-audit-site-publico.json
+npm_audit_admin	PASS	total=0	npm-audit-admin.json
+npm_audit_guest	PASS	total=0	npm-audit-guest.json
+npm_audit_turismo	PASS	total=0	npm-audit-turismo.json
+dependabot_open	PASS	open=0	dependabot-open-count.json
+api_p0	PASS	8/8 OK	API-P0-SUMMARY.tsv
