@@ -1,0 +1,6 @@
+fase	id	escopo	alteracao_esperada	erros_alvo	gates	hard_stop
+0	T0.19 preflight	docs inventario TS2786	0	1147	documentado	-
+1	T0.19 impl lucide	bump lucide-react ^0.542.0 + lock	~1001 TS2786	pre pos-build delta build Docker API P0	nao TW4
+2	T0.19b impl radix	se TS2786 residual radix	ui components ou overrides	~146	pos-build delta	nao refactor massivo UI
+3	T0.20 residual	TS2322 TS2339 etc	ajustes pontuais	~800+	incremental	-
+4	T0.21 tsconfig	decisao ignoreBuildErrors	pos zerar pos-build	0	HITL	-

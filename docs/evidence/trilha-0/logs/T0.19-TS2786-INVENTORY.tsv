@@ -1,0 +1,8 @@
+categoria	count	percent	notas
+TS2786_total	1147	58.3	React 19 JSX incompativel
+TS2786_lucide_heuristica	1001	87.3	LucideIcon vs ReactNode duplicado
+TS2786_radix_shadcn_heuristica	146	12.7	Select SelectValue Dialog etc
+lucide_react_declarado	^0.294.0	-	site-publico
+lucide_react_resolvido	0.294.0	-	npm ls
+lucide_guest_admin	^0.542.0	-	referencia apps verdes TW4
+mensagem_raiz	LucideIcon not valid JSX element type	-	dual @types/react paths
