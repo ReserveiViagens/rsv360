@@ -1,0 +1,9 @@
+gate	resultado	notas	artefato
+worktree	s2-fase-e-clean	PASS
+branch	chore/site-publico-next-types-jsx19-preflight	PASS
+base_handlers	ba8a27ec pos T0.18 impl	PASS
+baseline_pos_build_total	1963 erros	FAIL esperado
+baseline_ts2786	1147	58% do total
+lucide_site_publico	0.294.0 vs guest/admin 0.542.0	GAP principal
+G-A2_typecheck_prebuild	PASS	sem .next
+veredito_preflight	GO documental	aguarda merge #335 + HITL impl
