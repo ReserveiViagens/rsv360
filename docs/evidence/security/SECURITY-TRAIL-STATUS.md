@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-13  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `818070a3e` (T0.15 carimbo #331)
+**`main`:** `1bf052bd5` (T0.16 TW4 admin #332)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -28,9 +28,12 @@
 | Item | Status |
 |------|--------|
 | T0.15 impl + carimbo guest | **GO** (#330 + #331) |
-| T0.16 preflight + impl admin | **PR pendente** — [T0.16-TAILWIND4-ADMIN-RESULT.md](../trilha-0/T0.16-TAILWIND4-ADMIN-RESULT.md) |
+| T0.16 impl TW4 admin | **GO** (#332 @ `1bf052bd5`) |
+| T0.16 carimbo admin | **PR pendente** — [T0.16-TAILWIND4-ADMIN-POST-MERGE.md](../trilha-0/T0.16-TAILWIND4-ADMIN-POST-MERGE.md) |
 
-**Próximo passo:** merge impl T0.16 admin → carimbo.
+**Piloto TW4 guest+admin:** **GO** após merge deste carimbo.
+
+**Próximo HITL:** turismo / site-publico TW4 ou `.next/types` — montanha separada.
 
 ## Linha do tempo Security — CONCLUÍDA
 
