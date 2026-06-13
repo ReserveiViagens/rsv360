@@ -1,0 +1,9 @@
+gate	resultado	notas
+branch	fix/turismo-authprovider-root-loader	PASS
+base_commit	05d2e3499	PASS	main pos-merge #307
+patch	AuthProvider em pages/_app.tsx	PASS
+G-A2_typecheck	turismo tsc --noEmit	PASS	pre-build
+G-A2_build	turismo next build	PASS
+G-A5_login_3005	GET http://127.0.0.1:3005/login	200
+G-A5_health_turismo	docker inspect rsv360-turismo	healthy
+veredito_docker	GO	container turismo pos-fix
