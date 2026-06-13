@@ -1,0 +1,303 @@
+﻿{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@esbuild-kit/core-utils": {
+      "name": "@esbuild-kit/core-utils",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "esbuild"
+      ],
+      "effects": [
+        "@esbuild-kit/esm-loader"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@esbuild-kit/core-utils"
+      ],
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.19.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@esbuild-kit/esm-loader": {
+      "name": "@esbuild-kit/esm-loader",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@esbuild-kit/core-utils"
+      ],
+      "effects": [
+        "drizzle-kit"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@esbuild-kit/esm-loader"
+      ],
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.19.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@ngneat/falso": {
+      "name": "@ngneat/falso",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [
+        "artillery-plugin-fake-data"
+      ],
+      "range": ">=2.0.0-beta.0",
+      "nodes": [
+        "node_modules/@ngneat/falso"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "artillery": {
+      "name": "artillery",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "artillery-plugin-fake-data"
+      ],
+      "effects": [],
+      "range": ">=2.0.0-0",
+      "nodes": [
+        "node_modules/artillery"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "artillery-plugin-fake-data": {
+      "name": "artillery-plugin-fake-data",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@ngneat/falso"
+      ],
+      "effects": [
+        "artillery"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/artillery-plugin-fake-data"
+      ],
+      "fixAvailable": {
+        "name": "artillery",
+        "version": "1.7.9",
+        "isSemVerMajor": true
+      }
+    },
+    "drizzle-kit": {
+      "name": "drizzle-kit",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@esbuild-kit/esm-loader",
+        "esbuild"
+      ],
+      "effects": [],
+      "range": "0.17.5-6b7793f - 0.17.5-e5944eb || 0.18.1-065de38 - 0.18.1-f3800bf || >=0.19.0-07024c4",
+      "nodes": [
+        "node_modules/drizzle-kit"
+      ],
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.19.1",
+        "isSemVerMajor": true
+      }
+    },
+    "esbuild": {
+      "name": "esbuild",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102341,
+          "name": "esbuild",
+          "dependency": "esbuild",
+          "title": "esbuild enables any website to send any requests to the development server and read the response",
+          "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-346"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=0.24.2"
+        },
+        {
+          "source": 1120679,
+          "name": "esbuild",
+          "dependency": "esbuild",
+          "title": "esbuild: Missing binary integrity verification in Deno module enables remote code execution via NPM_CONFIG_REGISTRY",
+          "url": "https://github.com/advisories/GHSA-gv7w-rqvm-qjhr",
+          "severity": "high",
+          "cwe": [
+            "CWE-426",
+            "CWE-494"
+          ],
+          "cvss": {
+            "score": 8.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          },
+          "range": ">=0.17.0 <0.28.1"
+        },
+        {
+          "source": 1120680,
+          "name": "esbuild",
+          "dependency": "esbuild",
+          "title": "esbuild allows arbitrary file read when running the development server on Windows",
+          "url": "https://github.com/advisories/GHSA-g7r4-m6w7-qqqr",
+          "severity": "low",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 2.5,
+            "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=0.27.3 <0.28.1"
+        }
+      ],
+      "effects": [
+        "@esbuild-kit/core-utils",
+        "drizzle-kit",
+        "tsx"
+      ],
+      "range": "<=0.28.0",
+      "nodes": [
+        "backend/node_modules/esbuild",
+        "node_modules/@esbuild-kit/core-utils/node_modules/esbuild",
+        "node_modules/esbuild",
+        "node_modules/tsx/node_modules/esbuild"
+      ],
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.19.1",
+        "isSemVerMajor": true
+      }
+    },
+    "exceljs": {
+      "name": "exceljs",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "uuid"
+      ],
+      "effects": [],
+      "range": ">=3.5.0",
+      "nodes": [
+        "node_modules/exceljs"
+      ],
+      "fixAvailable": {
+        "name": "exceljs",
+        "version": "3.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "mercadopago": {
+      "name": "mercadopago",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [],
+      "range": "1.0.0 - 3.0.0",
+      "nodes": [
+        "node_modules/mercadopago"
+      ],
+      "fixAvailable": {
+        "name": "mercadopago",
+        "version": "3.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "tsx": {
+      "name": "tsx",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "esbuild"
+      ],
+      "effects": [],
+      "range": "3.13.0 - 4.21.1",
+      "nodes": [
+        "node_modules/tsx"
+      ],
+      "fixAvailable": true
+    },
+    "uuid": {
+      "name": "uuid",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119441,
+          "name": "uuid",
+          "dependency": "uuid",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-787",
+            "CWE-1285"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<11.1.1"
+        }
+      ],
+      "effects": [
+        "@ngneat/falso",
+        "exceljs",
+        "mercadopago"
+      ],
+      "range": "<11.1.1",
+      "nodes": [
+        "node_modules/@ngneat/falso/node_modules/uuid",
+        "node_modules/exceljs/node_modules/uuid",
+        "node_modules/uuid"
+      ],
+      "fixAvailable": {
+        "name": "exceljs",
+        "version": "3.4.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 8,
+      "high": 3,
+      "critical": 0,
+      "total": 11
+    },
+    "dependencies": {
+      "prod": 748,
+      "dev": 1100,
+      "optional": 193,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1932
+    }
+  }
+}
