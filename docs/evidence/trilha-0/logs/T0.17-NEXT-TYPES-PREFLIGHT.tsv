@@ -1,0 +1,17 @@
+gate	resultado	notas	artefato
+worktree	s2-fase-e-clean	PASS	canonical
+branch	chore/site-publico-next-types-preflight	PASS
+base_commit	1686f757b	PASS	T0.16 carimbo #333
+node	v24.14.0	PASS
+npm_install	npm@10.9.7 via npx	PASS
+typescript	6.0.3 dependencies	PASS	T0.14 E4
+tsconfig_include	legal + layout + robots + sitemap + .next/types	PASS	escopo restrito
+tsconfig_exclude	40+ rotas app/*	PASS	debito oculto documentado
+ignoreBuildErrors	true inalterado	PASS
+G-A2_typecheck_sem_next	PASS exit 0	site-publico-typecheck-no-next.log
+G-A2_typecheck_com_next	FAIL 1968 erros	site-publico-typecheck-postbuild.log
+G-A2_typecheck_prebuild_com_next_presente	FAIL 1968	site-publico-typecheck-prebuild.log — .next ja existia
+G-A2_build_webpack	PASS Skipping validation of types	site-publico-build-preflight.log
+validator_ts_erros_diretos	5 TS2344	PASS	T0.17-NEXT-TYPES-ROUTE-HANDLERS.tsv
+erros_transitivos_via_validator	1963	PASS	T0.17-NEXT-TYPES-ERROR-CODES.tsv
+veredito_preflight	GO documental	aguarda HITL fase 1 handlers
