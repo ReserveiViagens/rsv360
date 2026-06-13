@@ -1,0 +1,14 @@
+gate	resultado	notas
+merge_pr	PR #310 merge commit	PASS	aba6e4a56
+pull_main	s2-fase-e-clean @ origin/main	PASS	aba6e4a56
+G-A2_typecheck_prebuild	site-publico tsc sem .next	PASS	npm@10.9.7
+G-A2_build	site-publico next build --webpack	PASS
+G-A2_typecheck_postbuild_obs	tsc com .next/types	FAIL baseline	1968 erros nao corrigidos
+G-A5_smoke_3000	GET http://127.0.0.1:3000/	200
+G-A5_health_site	docker inspect rsv360-site-publico	healthy
+G-A6_api_p0	run-api-p0-round1.ps1	PASS	8/8
+docker_rebuild	compose up -d --build site-publico	PASS
+veredito	GO pos-merge	T0.14 piloto TS6 site-publico encerrado
+rodada_ts6_fase_e	ultimo app concluido	aguarda PR documental pos-merge T0.14
+proximo_marco	PR documental T0.14	NOGO ate registro entrar na main
+tailwind4_express5	nao iniciado	NOGO
