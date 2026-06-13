@@ -1,6 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../pages/**/*.{ts,tsx}';
+@source '../src/**/*.{ts,tsx}';
+@source '../../../packages/shared/components/**/*.{ts,tsx}';
+@source '../../../packages/shared/lib/**/*.{ts,tsx}';
+
+@theme {
+  --color-brand-50: #f8fafc;
+  --color-brand-100: #e2e8f0;
+  --color-brand-200: #cbd5e1;
+  --color-brand-300: #94a3b8;
+  --color-brand-400: #64748b;
+  --color-brand-500: #334155;
+  --color-brand-600: #1e293b;
+  --color-brand-700: #0f172a;
+  --color-brand-800: #0b1120;
+  --color-brand-900: #020617;
+  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
 
 html {
   scroll-behavior: smooth;

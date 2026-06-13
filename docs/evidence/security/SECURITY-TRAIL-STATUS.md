@@ -27,10 +27,10 @@
 
 | Item | Status |
 |------|--------|
-| T0.15 preflight guest | **PR pendente** — [T0.15-TAILWIND4-GUEST-PREFLIGHT.md](../trilha-0/T0.15-TAILWIND4-GUEST-PREFLIGHT.md) |
-| TW4 impl guest | **NOGO** até PR dedicada pós-HITL preflight |
+| T0.15 preflight guest | **GO** (#329) |
+| T0.15 impl TW4 guest | **PR pendente** — [T0.15-TAILWIND4-GUEST-RESULT.md](../trilha-0/T0.15-TAILWIND4-GUEST-RESULT.md) |
 
-**Próximo passo:** merge preflight → branch `chore/trilha-0-t0.15-tailwind4-guest` (impl).
+**Próximo passo:** merge impl TW4 guest → carimbo → **T0.16** admin.
 
 ## Linha do tempo Security — CONCLUÍDA
 
