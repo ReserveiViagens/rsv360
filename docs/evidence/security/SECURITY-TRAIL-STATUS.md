@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-02  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `55a97082e` (T0.18 carimbo #336)
+**`main`:** `b0996112c` (T0.19 Lucide #338)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -37,10 +37,10 @@
 | T0.17 preflight | **GO** (#334) |
 | T0.18 impl handlers | **GO** (#335) |
 | T0.18 carimbo | **GO** (#336) |
-| T0.19 preflight TS2786 | **GO** (docs nesta branch) |
-| T0.19 impl Lucide bump | **em andamento** |
+| T0.19 preflight + impl Lucide | **GO** (#338 @ `b0996112c`) |
+| T0.19 carimbo | **PR pendente** |
 
-**Próximo HITL:** T0.19 impl → T0.19b radix residual → TW4 site-publico **depois**.
+**Próximo HITL:** T0.19b radix **ou** T0.20 residual → TW4 site-publico **depois**.
 
 ## Linha do tempo Security — CONCLUÍDA
 
@@ -58,8 +58,8 @@
 
 ## Próxima HITL (fora security deps)
 
-1. T0.19 impl `lucide-react` bump  
-2. T0.19b radix residual (se necessário)  
+1. Merge carimbo T0.19  
+2. HITL T0.19b radix ou T0.20 residual  
 3. TW4 site-publico/turismo — **depois** saneamento `.next/types`
 
 Ver opções A–D em [SECURITY-TRAIL-CLOSEOUT.md §8](./SECURITY-TRAIL-CLOSEOUT.md#8-próxima-decisão-hitl).
