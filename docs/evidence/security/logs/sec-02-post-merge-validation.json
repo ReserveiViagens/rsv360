@@ -1,0 +1,63 @@
+﻿{
+    "collected_at":  "2026-06-13T14:14:06.8307426Z",
+    "pr_317":  {
+                   "state":  "MERGED",
+                   "merged_at":  "2026-06-13T14:10:02Z",
+                   "merge_commit":  "714078a4",
+                   "bugbot":  "SUCCESS"
+               },
+    "package_versions":  {
+                             "packageJson":  "^8.0.11",
+                             "lockRootSpec":  "^8.0.11",
+                             "lockRootVersion":  "8.0.11",
+                             "sitePublicoVersion":  "7.0.13"
+                         },
+    "dependabot_open":  {
+                            "total":  13,
+                            "by_severity":  {
+                                                "critical":  0,
+                                                "high":  2,
+                                                "medium":  7,
+                                                "low":  4
+                                            }
+                        },
+    "nodemailer_alerts":  [
+                              {
+                                  "number":  128,
+                                  "state":  "open",
+                                  "severity":  "low",
+                                  "manifest_path":  "apps/site-publico/package.json",
+                                  "fixed_at":  null
+                              },
+                              {
+                                  "number":  129,
+                                  "state":  "open",
+                                  "severity":  "medium",
+                                  "manifest_path":  "apps/site-publico/package.json",
+                                  "fixed_at":  null
+                              },
+                              {
+                                  "number":  130,
+                                  "state":  "open",
+                                  "severity":  "low",
+                                  "manifest_path":  "package-lock.json",
+                                  "fixed_at":  null
+                              },
+                              {
+                                  "number":  131,
+                                  "state":  "open",
+                                  "severity":  "medium",
+                                  "manifest_path":  "package-lock.json",
+                                  "fixed_at":  null
+                              }
+                          ],
+    "npm_audit_root":  {
+                           "total":  14,
+                           "critical":  0,
+                           "high":  3,
+                           "moderate":  11,
+                           "low":  0,
+                           "nodemailer_nodes":  "apps/site-publico/node_modules/nodemailer"
+                       },
+    "verdict":  "SEC-02 implementation merged; root package updated; Dependabot nodemailer alerts still open and require SEC-03/site-publico follow-up or GitHub reclassification."
+}
