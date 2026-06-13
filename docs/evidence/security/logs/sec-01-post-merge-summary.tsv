@@ -1,0 +1,15 @@
+gate	result	notes
+PR_315	MERGED	merge commit b320b0543
+alert_132_shell_quote	fixed	critical
+alert_136_joi	fixed	medium
+dependabot_open_total	13	was 15 pre SEC-01
+dependabot_open_critical	0	was 1
+dependabot_open_high	2	
+dependabot_open_medium	7	was 8
+dependabot_open_low	4	
+npm_audit_root_critical	0	
+npm_audit_root_total	14	was 15 pre SEC-01
+SEC-01_verdict	GO pos-merge	
+next_trail	SEC-02 nodemailer root patch	PR separada
+typecheck_turismo	baseline FAIL	nao regressao SEC-01
+typecheck_site_publico	baseline FAIL	nao regressao SEC-01
