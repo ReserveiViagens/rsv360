@@ -167,12 +167,17 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 | **SEC-02** nodemailer root patch | **MERGED** — #317 @ `714078a4`; root `nodemailer` em `8.0.11`; fechamento Dependabot **HOLD** (#130/#131 ainda `open` antes da SEC-03) — ver [SEC-02-POST-MERGE.md](./SEC-02-POST-MERGE.md) |
 | **SEC-03** nodemailer site-publico major | **GO pos-merge** — #319 @ `9f11d7d3`; `apps/site-publico` `nodemailer` em `8.0.11`; alertas #128/#129/#130/#131 **fixed** — ver [SEC-03-POST-MERGE.md](./SEC-03-POST-MERGE.md) |
 | Dependabot open (pos SEC-03) | **9** (0 critical, 2 high, 5 medium, 2 low) |
-| **SEC-04** postcss override | **Em andamento** — branch `chore/security-sec-04-postcss` |
+| **SEC-04** postcss override | **GO pós-merge** — #321/#322; alerta #83 **fixed** |
+| **SEC-05** esbuild | **GO pós-merge** — #323/#324; alertas esbuild **fixed** |
+| **SEC-06** uuid | **GO pós-merge** — #325 + carimbo; alertas #122/#124 **fixed** |
+| Dependabot open (pós SEC-06) | **0** |
 | Tailwind 4 / Express 5 / `.next/types` | **NOGO** — trilhas separadas |
 
 **Handoff vivo:** [SECURITY-TRAIL-STATUS.md](./SECURITY-TRAIL-STATUS.md)
 
-**Próxima decisão HITL:** merge SEC-04 → carimbo → **SEC-05** esbuild.
+**Closeout trilha:** [SECURITY-TRAIL-CLOSEOUT.md](./SECURITY-TRAIL-CLOSEOUT.md)
+
+**Próxima decisão HITL:** G2/G3, `.next/types`, Tailwind 4 ou Express 5 — ver closeout §8.
 
 ---
 
@@ -199,5 +204,10 @@ Após quick wins + high/critical: **revalidar G2/G3** antes de `.next/types`, Ex
 | [SECURITY-TRAIL-STATUS.md](./SECURITY-TRAIL-STATUS.md) | **Handoff vivo Cursor + Codex** |
 | [SEC-04-POSTCSS-PLAN.md](./SEC-04-POSTCSS-PLAN.md) | Plano HITL SEC-04 |
 | [SEC-04-POSTCSS-RESULT.md](./SEC-04-POSTCSS-RESULT.md) | Resultado impl SEC-04 |
+| [SEC-04-POST-MERGE.md](./SEC-04-POST-MERGE.md) | Carimbo pós-merge SEC-04 |
+| [SEC-05-POST-MERGE.md](./SEC-05-POST-MERGE.md) | Carimbo pós-merge SEC-05 |
+| [SEC-06-UUID-RESULT.md](./SEC-06-UUID-RESULT.md) | Resultado impl SEC-06 |
+| [SEC-06-POST-MERGE.md](./SEC-06-POST-MERGE.md) | Carimbo pós-merge SEC-06 |
+| [SECURITY-TRAIL-CLOSEOUT.md](./SECURITY-TRAIL-CLOSEOUT.md) | Fechamento formal trilha security |
 
 *Documento de inventário — não altera `package.json`, lockfiles, código, Docker ou workflows.*
