@@ -1,0 +1,21 @@
+﻿{
+    "auditReportVersion":  2,
+    "vulnerabilities":  {
+                            "info":  0,
+                            "low":  0,
+                            "moderate":  7,
+                            "high":  0,
+                            "critical":  0,
+                            "total":  7
+                        },
+    "nodemailerPresent":  false,
+    "vulnerabilityNames":  [
+                               "@ngneat/falso",
+                               "artillery",
+                               "artillery-plugin-fake-data",
+                               "exceljs",
+                               "next",
+                               "postcss",
+                               "uuid"
+                           ]
+}
