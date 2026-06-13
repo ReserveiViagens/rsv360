@@ -1,0 +1,12 @@
+gate	resultado	notas
+script	run-api-p0-round1.ps1	PASS	baseline pre-TS6
+A1	GET /health	200 OK
+A2	GET /health/security	200 OK
+A3	POST /api/auth/login	401 OK
+A4	POST /api/auth/refresh	400 OK
+A5g	GET /api/bookings	400 OK
+A5p	POST /api/bookings	400 OK
+A6	GET /api/admin/website/pages	401 OK
+A7g	GET payments	200 OK
+A7p	POST payments	200 OK
+G-A6_api_p0	8/8	PASS
