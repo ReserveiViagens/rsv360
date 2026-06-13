@@ -1,0 +1,9 @@
+gate	status	detail	artifact
+G-A2_build	PASS	next build --webpack local + Docker
+G-A3_typecheck	PASS	tsc --noEmit	logs/t0.16-tw4-admin-typecheck.log
+G-A5a_docker_admin	PASS	healthy	docker compose ps
+G-A5b_http_3004	PASS	HTTP 200	smoke
+G-A5c_http_3006	PASS	HTTP 200 guest regressao T0.10	smoke
+G-A6_api_p0	PASS	8/8 OK	logs/t0.16-tw4-admin-api-p0-summary.tsv
+tailwind_version	PASS	4.3.1	npm ls
+veredito	T0.16_GO_condicional	rollback base 818070a3e
