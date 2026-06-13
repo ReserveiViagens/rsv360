@@ -1,0 +1,21 @@
+item	value	source
+base_main	685d6bd9a	merge PR328 montanha D
+tailwindcss_decl	^3.3.0	package.json
+tailwindcss_resolved	3.4.19	npm ls
+postcss	8.5.15 override	npm ls
+autoprefixer	10.5.0	npm ls
+next	16.2.7	package.json
+typescript	^6.0.3	package.json
+build_cmd	next build --webpack	package.json
+ts_source_files	56	count pages+src
+className_usages	~32 files	grep estimate
+custom_tokens	brand-50..900 shadow-soft	tailwind.config.ts
+apply_in_css	2 lines	globals.css body+a
+tailwind_plugins	0	none
+dark_mode	class	tailwind.config.ts
+shared_content_paths	yes	../shared/components lib
+shared_tailwind_classes	0	packages/shared scan
+docker_guest_http	200	smoke :3006
+type_check_baseline	PASS	G2G3 capture
+build_baseline	PASS	G2G3 capture
+lint_baseline	FAIL eslint hoist	G2G3 capture
