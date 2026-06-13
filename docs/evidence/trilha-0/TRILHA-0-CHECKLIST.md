@@ -63,7 +63,11 @@
 ## Fase E — stack residual (ADR-0003)
 
 - [x] ADR-0003 Fase E — **Aceito** 2026-06-12 — PR #297 @ `f7186aa95` — `ADR-0003-FASE-E-STACK-RESIDUAL.md`
-- [ ] T0.11 TS6 piloto guest — **autorizado** — branch `chore/trilha-0-t0.11-typescript6-guest` (implementação em PR separada)
+- [x] T0.11 TS6 guest — **GO pós-merge** — impl #299, docs #300 — `T0.11-TYPESCRIPT6-GUEST-RESULT.md`
+- [x] T0.12 TS6 admin — **GO pós-merge** — impl #302, docs #303 — `T0.12-TYPESCRIPT6-ADMIN-RESULT.md`
+- [x] T0.13 TS6 turismo — **GO pós-merge** — impl #304, docs #306 — `T0.13-TYPESCRIPT6-TURISMO-RESULT.md`
+- [x] T0.14 TS6 site-publico — **GO pós-merge** — impl #310, docs #312 — `T0.14-TYPESCRIPT6-SITE-PUBLICO-RESULT.md`
+- [x] **Rodada TS6 Fase E — concluída** — `FASE-E-TS6-CLOSEOUT.md`
 
 ## Decisão Trilha 0
 
@@ -72,4 +76,5 @@
 | **Status** | **GO** |
 | **Data** | 2026-05-30 |
 | **Soak pós-Next 16** | **GO condicional** (encerrado — não reabrir) |
-| **Próximo passo** | **T0.11** TS6 piloto guest — branch `chore/trilha-0-t0.11-typescript6-guest` (worktree `s2-fase-e-clean`) |
+| **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
+| **Próximo passo** | **HITL:** Tailwind 4, Express 5, `.next/types`, ou Dependabot — **NOGO** até decisão explícita |
