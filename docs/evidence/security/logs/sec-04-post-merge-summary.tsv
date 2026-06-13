@@ -1,0 +1,11 @@
+gate	result	notes
+PR_321	MERGED	merge commit 6de6a70d5
+alert_83_postcss	fixed	medium
+dependabot_open_total	8	was 9 pos SEC-03
+dependabot_open_critical	0	
+dependabot_open_high	2	
+dependabot_open_medium	4	was 5
+dependabot_open_low	2	
+npm_audit_root_total	11	no postcss
+SEC-04_verdict	GO pos-merge	
+next_trail	SEC-05 esbuild backend	PR isolada
