@@ -1,0 +1,11 @@
+{
+  "pr_325": {
+    "state": "MERGED",
+    "merge_commit": "6abaf520e"
+  },
+  "uuid_alerts": {
+    "122": "fixed",
+    "124": "fixed"
+  },
+  "dependabot_open": 0
+}

@@ -1,0 +1,8 @@
+gate	result	detail
+PR_325	MERGED	merge commit 6abaf520e
+dependabot_open	0	pos SEC-06
+alert_122	fixed	uuid backend lock
+alert_124	fixed	uuid root lock
+npm_audit_root	0	vulnerabilities
+npm_audit_backend	0	vulnerabilities
+API_P0	8/8_OK	evidence sec-06-api-p0-summary.tsv (impl PR)
