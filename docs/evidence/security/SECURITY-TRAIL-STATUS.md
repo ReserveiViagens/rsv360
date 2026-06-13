@@ -19,12 +19,18 @@
 
 | Item | Status |
 |------|--------|
-| Verificação ADR E4 | **GO condicional** — [E5-EXPRESS5-BACKEND-VERIFY.md](../trilha-0/E5-EXPRESS5-BACKEND-VERIFY.md) |
+| Verificação ADR E4 | **GO condicional** — [E5-EXPRESS5-BACKEND-VERIFY.md](../trilha-0/E5-EXPRESS5-BACKEND-VERIFY.md) (#328) |
 | Express lock + Docker | **5.2.1** |
 | API P0 | **8/8 OK** |
-| Scan APIs deprecated | **0 hits** |
 
-**Próxima montanha:** **C** Tailwind 4 piloto guest/admin.
+## Montanha C — Tailwind 4 (em andamento)
+
+| Item | Status |
+|------|--------|
+| T0.15 preflight guest | **PR pendente** — [T0.15-TAILWIND4-GUEST-PREFLIGHT.md](../trilha-0/T0.15-TAILWIND4-GUEST-PREFLIGHT.md) |
+| TW4 impl guest | **NOGO** até PR dedicada pós-HITL preflight |
+
+**Próximo passo:** merge preflight → branch `chore/trilha-0-t0.15-tailwind4-guest` (impl).
 
 ## Linha do tempo Security — CONCLUÍDA
 
