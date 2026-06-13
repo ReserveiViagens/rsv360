@@ -1,0 +1,14 @@
+code	count	percent	categoria provavel
+TS2786	1147	58.3	React 19 JSX — icones lucide / componentes ForwardRef incompatíveis
+TS2322	387	19.7	Atribuicao de tipos — props/state/API responses
+TS2339	127	6.5	Propriedade inexistente no tipo
+TS2559	85	4.3	Excesso de propriedades / spread incompativel
+TS2344	51	2.6	Constraint generica — 5 em validator.ts (handlers); resto Radix UI
+TS2345	41	2.1	Argumento incompativel
+TS7016	29	1.5	Modulo sem declaracao de tipos
+TS7006	28	1.4	Parametro implicitamente any
+TS2304	16	0.8	Nome nao encontrado
+TS2367	10	0.5	Comparacao sem overlap de tipos
+TS2554	7	0.4	Argumentos incorretos em chamada
+outros	40	2.0	TS18047 TS2769 TS18048 TS2741 TS2307 etc
+TOTAL	1968	100.0	baseline pos-build @ main 1686f757b

@@ -1,0 +1,6 @@
+rank	route_path	arquivo	handler_erro	codigo	hipotese_correcao
+1	/api/insurance/create-policy	app/api/insurance/create-policy/route.ts	POST params Promise bookingId vs path estatico	TS2344	Alinhar segmento dinamico [bookingId] ou assinatura RouteHandlerConfig
+2	/api/insurance/file-claim	app/api/insurance/file-claim/route.ts	POST assinatura handler	TS2344	Idem — params/context Next 16
+3	/api/quality/incentives	app/api/quality/incentives/route.ts	GET/POST assinatura handler	TS2344	Idem
+4	/api/quality/metrics	app/api/quality/metrics/route.ts	GET assinatura handler	TS2344	Idem
+5	/api/verification/approve	app/api/verification/approve/route.ts	POST assinatura handler	TS2344	Idem

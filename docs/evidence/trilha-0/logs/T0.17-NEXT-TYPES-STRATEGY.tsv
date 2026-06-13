@@ -1,0 +1,6 @@
+fase	id	branch_sugerida	escopo	erros_alvo	gates_obrigatorios	hard_stop
+0	T0.17	chore/site-publico-next-types-preflight	docs only — inventario tsconfig estrategia	0	build PASS pre-build PASS pos-build FAIL baseline	documentado
+1	T0.18	chore/site-publico-next-types-handlers	5 route handlers validator.ts	5 diretos + possivel reducao transitiva	type-check pos-build delta handlers build Docker API P0	nao ampliar tsconfig include
+2	T0.19	chore/site-publico-next-types-jsx19	TS2786 lucide radix shadcn ui	~1147	type-check pos-build delta build Docker API P0	nao misturar TW4
+3	T0.20	chore/site-publico-next-types-residual	TS2322 TS2339 TS2559 demais	~600	reducao incremental pos-build	build verde operacional
+4	T0.21	chore/site-publico-next-types-tsconfig-decision	manter ou remover .next/types do include pos zerar erros	0 pos-build PASS	HITL explicito desligar ignoreBuildErrors	nao desligar ignoreBuildErrors antes pos-build PASS
