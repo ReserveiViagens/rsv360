@@ -62,6 +62,8 @@
     "twilio": "^5.13.1"
   },
   "overrides": {
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "fast-xml-parser": "^5.7.0",
     "@aws-sdk/xml-builder": "^3.972.21",
     "@aws-sdk/core": {
@@ -112,7 +114,11 @@
     "esbuild": "0.28.1",
     "uuid": "11.1.1",
     "react": "19.2.5",
-    "react-dom": "19.2.5"
+    "react-dom": "19.2.5",
+    "@testing-library/react": {
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3"
+    }
   },
   "engines": {
     "node": ">=24.0.0 <25",
