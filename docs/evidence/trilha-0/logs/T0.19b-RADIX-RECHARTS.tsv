@@ -1,0 +1,17 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.19b-radix-recharts	PASS
+base_main	c7cc148eb pos T0.19 carimbo	PASS
+recharts_antes	2.15.4	PASS
+recharts_depois	3.8.1	PASS	espelha admin ^3.1.2
+testing_library	14.3.1 -> 16.3.2	PASS
+types_react	19.2.17 pin	PASS	site-publico + root override
+G-A2_typecheck_prebuild	PASS exit 0
+G-A2_build_webpack	PASS exit 0
+G-A2_typecheck_postbuild	FAIL 971 erros	delta -96 vs 1067 pos T0.19
+ts2786_antes	251	PASS
+ts2786_depois	150	delta -101 recharts zerado
+recharts_ts2786	0	PASS
+radix_residual	Select SelectValue Tabs Dialog ~150	HITL T0.20
+G-A6_api_p0	8/8 OK	T0.19b-API-P0.tsv
+veredito	T0.19b_GO_condicional	carimbo pos-merge pendente
