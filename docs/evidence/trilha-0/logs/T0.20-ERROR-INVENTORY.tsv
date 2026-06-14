@@ -1,0 +1,18 @@
+code	count	percent	categoria
+TS2322	390	40.2	atribuicao tipos — maior volume
+TS2786	150	15.5	radix shadcn + react-leaflet
+TS2339	128	13.2	propriedade inexistente
+TS2559	85	8.8	spread/props excesso
+TS2344	46	4.7	radix generics ui
+TS2345	41	4.2	argumentos
+outros	131	13.5	TS7016 TS7006 etc
+TOTAL	971	100.0	pos T0.19b @ 558bfd5a8
+
+ts2786_breakdown
+Select	36
+SelectValue	36
+Tabs	17
+Dialog	8
+Popover	8
+react-leaflet	3
+outros	42
