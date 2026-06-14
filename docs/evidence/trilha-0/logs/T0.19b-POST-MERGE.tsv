@@ -1,0 +1,13 @@
+gate	resultado	notas
+merge_pr_impl	PR #340 @ 558bfd5a8	PASS
+pull_main	s2-fase-e-clean @ origin/main	PASS
+recharts_lock	3.8.1	PASS
+G-A2_typecheck_prebuild	PASS exit 0
+G-A2_build_webpack	PASS exit 0
+G-A2_typecheck_postbuild	FAIL 971 erros
+ts2786_pos_merge	150	delta -101 vs T0.19
+G-A5_http_3000	200
+G-A5_health_site_publico	healthy
+G-A6_api_p0	8/8 OK
+veredito	GO pos-merge	T0.19b encerrado
+proximo_marco	T0.20 preflight	HITL
