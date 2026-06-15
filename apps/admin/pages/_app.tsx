@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryProvider } from '@/src/lib/query-client';
+import { TenantProvider } from '@/lib/tenant/TenantProvider';
 import { AppShell } from '@/components/AppShell';
 import '@/styles/globals.css';
 import { SEOHead } from '../../shared/components/SEOHead';
@@ -22,9 +23,11 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <MetadataBoot />
       <QueryProvider>
-        <AppShell>
-          <Component {...pageProps} />
-        </AppShell>
+        <TenantProvider>
+          <AppShell>
+            <Component {...pageProps} />
+          </AppShell>
+        </TenantProvider>
       </QueryProvider>
       <CookieConsent />
     </>

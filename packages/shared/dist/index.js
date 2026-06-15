@@ -17,6 +17,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types
 __exportStar(require("./types/index.js"), exports);
+__exportStar(require("./types/tenant.js"), exports);
 // Validators
 __exportStar(require("./validators/checkout.validator.js"), exports);
 __exportStar(require("./validators/booking.validator.js"), exports);
