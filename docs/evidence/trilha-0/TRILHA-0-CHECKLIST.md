@@ -101,6 +101,7 @@
 - [x] T0.23b TS2322/2339 turismo — **GO** *(esta PR)* — `T0.23b-TS2322-2339-RESULT.md` — TS2322/TS2339 **→ 0**
 - [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
 - [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
+- [x] Lint #237 site-publico — **GO** — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md` — exit **0**
 
 ## Decisão Trilha 0
 
