@@ -157,6 +157,33 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
   };
 }
 
+async function revokeAllUserTokens(userId, reason) {
+  await queryDatabase(
+    `UPDATE refresh_tokens
+     SET revoked_at = CURRENT_TIMESTAMP, revoked_reason = $1
+     WHERE user_id = $2 AND revoked_at IS NULL`,
+    [reason || 'Logout do usuário', userId]
+  );
+}
+
+async function revokeRefreshTokenByJwt(refreshToken, reason) {
+  if (!refreshToken) return false;
+
+  const refreshSecret =
+    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'refresh-secret-key';
+  const { verifyRefreshToken } = require('./jwt-verify');
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(refreshToken, refreshSecret);
+  } catch {
+    return false;
+  }
+
+  if (!decoded?.tokenFamily) return false;
+  await revokeTokenFamily(decoded.tokenFamily, reason || 'Logout do usuário');
+  return true;
+}
+
 function isDbRefreshEnabled() {
   return Boolean(process.env.DATABASE_URL);
 }
@@ -166,4 +193,7 @@ module.exports = {
   verifyAndRotateRefreshToken,
   createRefreshToken,
   queryDatabase,
+  revokeAllUserTokens,
+  revokeRefreshTokenByJwt,
+  revokeTokenFamily,
 };
