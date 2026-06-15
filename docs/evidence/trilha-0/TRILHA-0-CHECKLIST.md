@@ -102,10 +102,11 @@
 - [x] T0.23b carimbo — **GO pós-merge** #371 — `T0.23b-TURISMO-TS2322-POST-MERGE.md`
 - [x] T0.23c TS2305/TS2724 turismo — **GO** #372 — `T0.23c-TURISMO-RESIDUAL-RESULT.md` — TS2305/TS2724 **→ 0**
 - [x] T0.23c carimbo — **GO pós-merge** #373 — `T0.23c-TURISMO-RESIDUAL-POST-MERGE.md`
-- [x] T1.2 auth/session piloto — **GO** *(esta PR)* — `T1.2-AUTH-SESSION-RESULT.md`
+- [x] T1.2 auth/session piloto — **GO** #374 — `T1.2-AUTH-SESSION-RESULT.md`
 - [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
 - [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
 - [x] Lint #237 site-publico — **GO** #369 — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md`
+- [x] Lint #237 admin/guest/turismo — **GO** *(esta PR)* #375 — `issue-237/LINT-237-ADMIN-GUEST-TURISMO-POST-T0.24.md`
 - [x] T1.1 piloto tenant/auth — **GO condicional** *(esta PR)* — `T1.1-PILOTO-TENANT-AUTH-RESULT.md`
 
 ## Decisão Trilha 0
@@ -126,4 +127,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T1.2 auth session | lint admin/guest/turismo | débito TS turismo 125 |
+| **Próximo passo** | T1.3 tenant routing | débito TS turismo 125 | redução warnings turismo |
