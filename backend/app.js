@@ -38,6 +38,8 @@ async function createApp() {
   }
 
   app.use('/api', tenantMiddleware);
+  const { enterpriseContextMiddleware } = require('./src/middleware/enterprise-context');
+  app.use('/api/v1', enterpriseContextMiddleware);
 
   const paymentsRoutes = require('./server/modules/payments/routes');
 
@@ -66,6 +68,8 @@ async function createApp() {
   app.use('/api/v1/payments', paymentsRoutes);
   const { authRouter } = require('./src/api/v1/auth/routes');
   app.use('/api/v1/auth', authRouter);
+  const { tenantRouter } = require('./src/api/v1/tenant/routes');
+  app.use('/api/v1/tenant', tenantRouter);
   app.use('/api/portal', portalRouter);
   app.use('/api/admin/portal', adminRouter);
 

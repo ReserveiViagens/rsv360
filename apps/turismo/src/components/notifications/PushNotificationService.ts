@@ -111,6 +111,11 @@ export class PushNotificationService {
     };
   }
 
+  private encodePushKey(key: ArrayBuffer | null): string {
+    if (!key) return '';
+    return btoa(String.fromCharCode(...Array.from(new Uint8Array(key))));
+  }
+
   public async subscribeToPush(): Promise<PushSubscription | null> {
     if (!this.swRegistration || !this.isSupported) {
       console.warn('Service Worker não registrado ou push não suportado');
@@ -126,8 +131,8 @@ export class PushNotificationService {
       return {
         endpoint: subscription.endpoint,
         keys: {
-          p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh') || []))),
-          auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth') || [])))
+          p256dh: this.encodePushKey(subscription.getKey('p256dh')),
+          auth: this.encodePushKey(subscription.getKey('auth'))
         }
       };
     } catch (error) {
@@ -347,8 +352,8 @@ export class PushNotificationService {
       return {
         endpoint: subscription.endpoint,
         keys: {
-          p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh') || []))),
-          auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth') || [])))
+          p256dh: this.encodePushKey(subscription.getKey('p256dh')),
+          auth: this.encodePushKey(subscription.getKey('auth'))
         }
       };
     } catch (error) {

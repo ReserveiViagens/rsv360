@@ -22,7 +22,8 @@ import {
   Star,
   UserCheck,
   MapPin,
-  Utensils
+  Utensils,
+  FileText
 } from 'lucide-react';
 import { TourSelector } from '@/components/TourSelector';
 import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';

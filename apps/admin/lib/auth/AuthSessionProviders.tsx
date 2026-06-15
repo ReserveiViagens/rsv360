@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { TenantProvider } from '@/lib/tenant/TenantProvider';
+import { TenantRoutingSync } from '@/lib/tenant/TenantRoutingSync';
 import { SessionProvider, useSession } from '@/lib/auth/SessionProvider';
 
 function TenantSessionBridge({ children }: { children: ReactNode }) {
@@ -13,7 +14,7 @@ function TenantSessionBridge({ children }: { children: ReactNode }) {
       initialEnterpriseId={user?.enterpriseId ?? session?.enterpriseId ?? 'ent_1'}
       initialSession={session}
     >
-      {children}
+      <TenantRoutingSync>{children}</TenantRoutingSync>
     </TenantProvider>
   );
 }

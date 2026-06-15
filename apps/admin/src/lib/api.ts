@@ -7,14 +7,17 @@ function getBrowserStorage(key: string, fallback = '') {
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const propertyId = getBrowserStorage('propertyId', '1');
-  const token = getBrowserStorage('token', '');
+  const enterpriseId = getBrowserStorage('rsv360_enterprise_id', 'ent_1');
+  const token =
+    getBrowserStorage('rsv360_access_token', '') || getBrowserStorage('token', '');
 
   const headers = new Headers(options.headers);
   if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
-  headers.set('Authorization', `Bearer ${token}`);
+  if (token) headers.set('Authorization', `Bearer ${token}`);
   headers.set('X-Property-Id', propertyId);
+  headers.set('X-Enterprise-Id', enterpriseId);
 
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
