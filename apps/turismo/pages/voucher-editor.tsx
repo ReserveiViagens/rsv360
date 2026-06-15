@@ -1,158 +1,22 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { 
-  CreditCard, 
-  Upload, 
-  Download, 
-  Save, 
+import {
+  Download,
+  Save,
   Eye,
   Palette,
-  Type,
-  Image as ImageComponent,
-  Settings,
   Trash2,
   Copy,
   QrCode,
   FileText,
-  Calendar,
-  MapPin,
-  User,
   Building,
-  DollarSign,
   CheckCircle,
   XCircle,
-  ArrowLeft,
-  Home,
   Plus,
-  Edit,
   EyeOff,
-  RefreshCw,
-  Star,
-  Award,
-  Gift,
-  Camera,
-  Palette as PaletteIcon,
-  Type as TypeIcon,
   Image as ImageIcon,
-  Settings as SettingsIcon,
   Link,
-  FileText as FileTextIcon,
-  Shield,
-  AlertCircle,
-  Info,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  Layout,
-  Layers,
-  Grid,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Quote,
-  Code,
-  Minus,
-  Maximize2,
-  Minimize2,
-  Move,
-  RotateCw,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-  Lock,
-  Unlock,
-  Eye as EyeIcon,
-  EyeOff as EyeOffIcon,
-  Copy as CopyIcon,
-  Scissors,
-  Crop,
-  Filter,
-  Sliders,
-  ToggleLeft,
-  ToggleRight,
-  CheckSquare,
-  Square,
-  Circle,
-  Hexagon,
-  Triangle,
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  MessageSquare,
-  Phone,
-  Mail,
-  Globe,
-  Map,
-  Navigation,
-  Compass,
-  Target,
-  Crosshair,
-  Zap,
-  Battery,
-  Wifi,
-  Signal,
-  Volume2,
-  VolumeX,
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  Monitor,
-  Smartphone,
-  Tablet,
-  Watch,
-  Headphones,
-  Speaker,
-  Radio,
-  Tv,
-  Projector,
-  Printer,
-  Keyboard,
-  Mouse,
-  HardDrive,
-  Database,
-  Server,
-  Cloud,
-  CloudOff,
-  CloudRain,
-  CloudSnow,
-  CloudLightning,
-  Sun,
-  Moon,
-  Cloudy,
-  Umbrella,
-  Droplets,
-  Thermometer,
-  Wind,
-  Snowflake,
-  Sunrise,
-  Sunset,
-  Activity,
-  TrendingUp,
-  TrendingDown,
-  BarChart,
-  BarChart2,
-  BarChart3,
-  PieChart,
-  LineChart,
-  AreaChart,
-  Gauge,
-  Timer,
-  Clock,
-  Calendar as CalendarIcon,
-  CalendarDays,
-  CalendarCheck,
-  CalendarX,
-  CalendarMinus,
-  CalendarPlus,
-  CalendarRange,
-  CalendarOff
+  ExternalLink
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 import QRCode from 'qrcode';
@@ -1325,20 +1189,13 @@ const FooterEditorStable = React.memo(({
 });
 
 export default function VoucherEditor() {
-  const [voucherData, setVoucherData] = useState<VoucherData | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [showLogoUpload, setShowLogoUpload] = useState(false);
+  const [, setShowTemplateModal] = useState(false);
   const [selectedElement, setSelectedElement] = useState<VoucherElement | null>(null);
-  const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
-  
-  // Estados para seções específicas
-  const [activeSection, setActiveSection] = useState<'header' | 'body' | 'footer' | 'elements'>('header');
   const [showHeaderEditor, setShowHeaderEditor] = useState(false);
   const [showBodyEditor, setShowBodyEditor] = useState(false);
   const [showFooterEditor, setShowFooterEditor] = useState(false);
-  const [showLinksEditor, setShowLinksEditor] = useState(false);
   const [headerSaved, setHeaderSaved] = useState(false);
   const [bodySaved, setBodySaved] = useState(false);
   const [footerSaved, setFooterSaved] = useState(false);
@@ -2571,10 +2428,6 @@ export default function VoucherEditor() {
       }
 
       // Ajustar coordenadas dos links baseado no tamanho real do PDF
-      // Converter de pixels para mm (considerando o tamanho do canvas e do PDF)
-      const scaleX = imgWidth / canvas.width;
-      const scaleY = imgHeight / canvas.height;
-      
       linkData.forEach((link) => {
         // Ajustar coordenadas para o tamanho do PDF (em mm)
         link.x = (link.x / canvas.width) * imgWidth;
@@ -2631,13 +2484,6 @@ export default function VoucherEditor() {
     try {
       // Gerar PDF primeiro
       await handleExportVoucher();
-      
-      // Opções de compartilhamento
-      const shareOptions = [
-        { label: 'Copiar Link', action: 'copy' },
-        { label: 'Enviar por Email', action: 'email' },
-        { label: 'Compartilhar via WhatsApp', action: 'whatsapp' }
-      ];
 
       const choice = prompt(
         'Escolha uma opção de compartilhamento:\n' +
