@@ -1,13 +1,20 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Router,
@@ -15,87 +22,33 @@ import {
   Network,
   Activity,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   Zap,
   Target,
-  Gauge,
   Clock,
-  Cpu,
-  Memory,
-  HardDrive,
   Globe,
   Cloud,
   Settings,
   Eye,
-  EyeOff,
   Play,
   Pause,
-  Stop,
-  RefreshCw,
   Plus,
   Edit,
-  Trash2,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Warning,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  Copy,
   Archive,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Code,
-  FileText,
-  Folder,
-  Users,
-  User,
-  Building,
-  MapPin,
-  Phone,
-  Mail,
-  Calendar,
-  Timer,
-  Layers,
-  ExternalLink,
-  Share,
-  Link,
-  Star,
-  Heart,
-  Bookmark,
-  Maximize,
-  Minimize,
-  RotateCcw,
-  Wifi,
-  WifiOff
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
+  History
+} from 'lucide-react';
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart
+  Pie
 } from 'recharts'
 
 // Tipos para Load Balancer
@@ -266,7 +219,6 @@ interface FailoverConfig {
 
 const LoadBalancer: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedBalancer, setSelectedBalancer] = useState<LoadBalancer | null>(null)
   const [isRuleModalOpen, setIsRuleModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -637,14 +589,6 @@ const LoadBalancer: React.FC = () => {
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('pt-BR').format(num)
-  }
-
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
   const formatPercentage = (num: number) => {
@@ -1187,7 +1131,7 @@ const LoadBalancer: React.FC = () => {
 
                 <div className="space-y-3">
                   {loadBalancers.flatMap(lb => 
-                    lb.targets.map((target, index) => {
+                    lb.targets.map((target, _index) => {
                       const TargetIcon = getTargetTypeIcon(target.type)
                       
                       return (

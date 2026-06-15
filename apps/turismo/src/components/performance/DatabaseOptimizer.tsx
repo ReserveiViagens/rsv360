@@ -1,99 +1,51 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Database,
-  Server,
   Activity,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   Zap,
   Clock,
-  Cpu,
-  Memory,
-  HardDrive,
   Target,
-  Gauge,
   Settings,
   Eye,
-  EyeOff,
   Play,
   Pause,
-  Stop,
   RefreshCw,
   Plus,
   Edit,
   Trash2,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  Copy,
-  Archive,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Warning,
-  Code,
-  FileText,
-  Folder,
-  FolderOpen,
-  Calendar,
-  Timer,
-  Users,
-  User,
-  Building,
-  MapPin,
-  Network,
-  Globe,
-  Cloud,
-  Router,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Layers,
-  ExternalLink,
-  Share,
-  Link,
-  Star,
-  Heart,
-  Bookmark,
-  Maximize,
-  Minimize,
-  RotateCcw,
-  Mail,
-  Phone
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
+  Copy
+} from 'lucide-react';
+import {
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  Bar,
+  BarChart,
+  PieChart,
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
   ComposedChart
 } from 'recharts'
 
@@ -207,7 +159,7 @@ interface OptimizationRule {
   }[]
   actions: {
     type: 'reindex' | 'vacuum' | 'analyze' | 'cache_clear' | 'config_update' | 'alert'
-    parameters: Record<string, any>
+    parameters: Record<string, unknown>
     rollbackPossible: boolean
   }[]
   schedule?: {
@@ -262,7 +214,6 @@ interface MaintenanceTask {
 
 const DatabaseOptimizer: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedDatabase, setSelectedDatabase] = useState<DatabaseInstance | null>(null)
   const [isOptimizationModalOpen, setIsOptimizationModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -756,7 +707,7 @@ const DatabaseOptimizer: React.FC = () => {
     }
   }
 
-  const getDbTypeIcon = (type: string) => {
+  const getDbTypeIcon = (_type: string) => {
     return Database // Todos usam o ícone de database por simplicidade
   }
 

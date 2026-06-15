@@ -1,13 +1,20 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Activity,
@@ -17,7 +24,6 @@ import {
   HardDrive,
   Memory,
   Network,
-  Zap,
   TrendingUp,
   TrendingDown,
   Clock,
@@ -27,75 +33,28 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Info,
-  Warning,
-  Search,
-  Filter,
   RefreshCw,
   Settings,
   Download,
-  Upload,
   Play,
   Pause,
-  Stop,
-  RotateCcw,
-  Target,
   Layers,
-  Globe,
-  Router,
-  Cloud,
-  Wifi,
-  WifiOff,
-  Timer,
-  Thermometer,
-  Battery,
-  Signal,
   Eye,
-  EyeOff,
-  Calendar,
-  User,
-  Users,
-  Building,
-  MapPin,
-  Phone,
-  Mail,
-  FileText,
   Code,
-  ExternalLink,
   Plus,
-  Edit,
-  Trash2,
-  Archive,
-  Bookmark,
-  Star,
-  Heart,
-  Share,
-  Copy,
-  Link,
-  Lock,
-  Unlock
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+  Edit
+} from 'lucide-react';
+import {
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  Bar,
+  BarChart,
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Performance Center
@@ -194,7 +153,7 @@ interface OptimizationRule {
   }[]
   actions: {
     type: 'scale' | 'cache' | 'redirect' | 'optimize' | 'alert'
-    parameters: Record<string, any>
+    parameters: Record<string, unknown>
   }[]
   schedule?: {
     enabled: boolean
@@ -240,7 +199,6 @@ interface PerformanceAlert {
 
 const PerformanceCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedMetric, setSelectedMetric] = useState<PerformanceMetric | null>(null)
   const [isTestModalOpen, setIsTestModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -644,10 +602,6 @@ const PerformanceCenter: React.FC = () => {
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('pt-BR').format(num)
-  }
-
-  const formatPercentage = (num: number) => {
-    return `${num.toFixed(1)}%`
   }
 
   const getStatusColor = (status: string) => {

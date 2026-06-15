@@ -1,13 +1,19 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   BarChart3,
@@ -15,84 +21,32 @@ import {
   TrendingUp,
   TrendingDown,
   Gauge,
-  Target,
-  Zap,
-  Clock,
-  Cpu,
-  Memory,
-  HardDrive,
-  Network,
-  Database,
-  Server,
-  Cloud,
   Globe,
-  Users,
   Eye,
-  EyeOff,
   Settings,
   RefreshCw,
   Download,
-  Upload,
-  Search,
-  Filter,
   Plus,
   Edit,
-  Trash2,
-  Copy,
   Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
-  Play,
-  Pause,
-  Stop,
-  RotateCcw,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Warning,
-  Calendar,
-  Timer,
-  MapPin,
-  Building,
-  Phone,
-  Mail,
-  User,
-  Code,
-  FileText,
-  Folder,
-  Archive,
-  Layers,
-  Router,
-  Shield,
-  Lock,
-  Key,
-  Star,
-  Heart,
-  Bookmark
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
+  AlertTriangle
+} from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Metrics Dashboard
@@ -108,7 +62,7 @@ interface MetricWidget {
     timeRange: string
     refreshInterval: number
     aggregation: 'avg' | 'sum' | 'min' | 'max' | 'count'
-    filters?: Record<string, any>
+    filters?: Record<string, unknown>
     thresholds?: {
       warning: number
       critical: number
@@ -163,7 +117,7 @@ interface AlertRule {
 interface MetricData {
   timestamp: string
   value: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 interface PerformanceMetric {
@@ -184,7 +138,6 @@ interface PerformanceMetric {
 
 const MetricsDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedDashboard, setSelectedDashboard] = useState<Dashboard | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
 
   // Dados mock para demonstração
@@ -492,18 +445,6 @@ const MetricsDashboard: React.FC = () => {
       case 'business': return 'bg-purple-100 text-purple-800'
       case 'custom': return 'bg-orange-100 text-orange-800'
       default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getWidgetTypeIcon = (type: string) => {
-    switch (type) {
-      case 'kpi': return Target
-      case 'line_chart': return TrendingUp
-      case 'bar_chart': return BarChart3
-      case 'pie_chart': return Activity
-      case 'gauge': return Gauge
-      case 'table': return FileText
-      default: return Activity
     }
   }
 
@@ -1009,7 +950,7 @@ const MetricsDashboard: React.FC = () => {
 
                 <div className="grid gap-4">
                   {dashboards.flatMap(dashboard => 
-                    dashboard.alerts.rules.map((alert, index) => (
+                    dashboard.alerts.rules.map((alert, _index) => (
                       <Card key={`${dashboard.id}-${alert.id}`} className="border">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-3">
