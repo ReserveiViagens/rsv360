@@ -48,7 +48,9 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
   const loadEnterprises = async () => {
     try {
       setLoading(true);
-      const response = await enterprisesApi.list(enterpriseId ? { id: enterpriseId } : {});
+      const response = enterpriseId
+        ? await enterprisesApi.getById(enterpriseId)
+        : await enterprisesApi.list({});
       if (response.success && response.data) {
         const data = Array.isArray(response.data) ? response.data : [response.data];
         setEnterprises(data);
@@ -68,9 +70,14 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
     try {
       const response = await enterprisesApi.getProperties(enterpriseId);
       if (response.success && response.data) {
+        const list: Property[] = Array.isArray(response.data)
+          ? response.data
+          : response.data
+            ? [response.data]
+            : [];
         setProperties(prev => ({
           ...prev,
-          [enterpriseId]: Array.isArray(response.data) ? response.data : [response.data]
+          [enterpriseId]: list,
         }));
       }
     } catch (error) {
@@ -82,9 +89,14 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
     try {
       const response = await propertiesApi.getAccommodations(propertyId);
       if (response.success && response.data) {
+        const list: Accommodation[] = Array.isArray(response.data)
+          ? response.data
+          : response.data
+            ? [response.data]
+            : [];
         setAccommodations(prev => ({
           ...prev,
-          [propertyId]: Array.isArray(response.data) ? response.data : [response.data]
+          [propertyId]: list,
         }));
       }
     } catch (error) {

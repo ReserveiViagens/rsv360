@@ -358,7 +358,7 @@ export default function AdvancedReportBuilder() {
                   <Save className="h-4 w-4 mr-2" />
                   Salvar
                 </Button>
-                <Select value={currentReport.category} onValueChange={(value) => 
+                <Select value={currentReport.category} onValueChange={(value: string) => 
                   setCurrentReport(prev => prev ? { ...prev, category: value } : null)
                 }>
                   <SelectTrigger className="w-40">
@@ -501,8 +501,10 @@ export default function AdvancedReportBuilder() {
                       setCurrentReport(prev => prev ? {
                         ...prev,
                         schedule: {
-                          ...prev.schedule,
-                          enabled: checked
+                          enabled: checked,
+                          frequency: prev.schedule?.frequency ?? 'daily',
+                          time: prev.schedule?.time ?? '09:00',
+                          recipients: prev.schedule?.recipients ?? [],
                         }
                       } : null);
                     }}

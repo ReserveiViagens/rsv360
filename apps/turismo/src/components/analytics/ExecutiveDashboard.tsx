@@ -419,7 +419,7 @@ export default function ExecutiveDashboard() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="sales"
@@ -482,7 +482,7 @@ export default function ExecutiveDashboard() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Intervalo (segundos)</label>
-                  <Select value={refreshInterval.toString()} onValueChange={(value) => setRefreshInterval(Number(value))}>
+                  <Select value={refreshInterval.toString()} onValueChange={(value: string) => setRefreshInterval(Number(value))}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

@@ -120,7 +120,7 @@ class WebSocketService {
     callback: WebSocketEvents[K]
   ): void {
     if (this.socket) {
-      this.socket.on(event, callback);
+      this.socket.on(event, callback as never);
     }
   }
 
@@ -129,7 +129,7 @@ class WebSocketService {
     callback: WebSocketEvents[K]
   ): void {
     if (this.socket) {
-      this.socket.off(event, callback);
+      this.socket.off(event, callback as never);
     }
   }
 

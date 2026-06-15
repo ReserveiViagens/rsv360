@@ -87,7 +87,7 @@ export default function AffiliatesPage() {
         api.get<Payout[]>(`/api/v1/affiliates/${affiliateId}/payouts`).catch(() => []),
       ])
 
-      setAffiliate(affiliateRes)
+      setAffiliate(affiliateRes.data ?? null)
       setReferrals(Array.isArray(referralsRes) ? referralsRes : [])
       setCommissions(Array.isArray(commissionsRes) ? commissionsRes : [])
       setPayouts(Array.isArray(payoutsRes) ? payoutsRes : [])

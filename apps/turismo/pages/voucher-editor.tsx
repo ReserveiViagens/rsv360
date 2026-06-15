@@ -1862,10 +1862,8 @@ export default function VoucherEditor() {
   // Funções para QR Code
   const generateQRCode = async (data: string) => {
     try {
-      const options = {
+      const options: QRCode.QRCodeToDataURLOptions = {
         errorCorrectionLevel: qrCodeErrorLevel,
-        type: 'image/png',
-        quality: 0.92,
         margin: 1,
         color: {
           dark: qrCodeColor,
