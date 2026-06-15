@@ -63,12 +63,23 @@ router.post('/refresh', async (req, res) => {
 
   if (isDbRefreshEnabled()) {
     try {
-      const ipAddress =
-        (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress;
+      const { getClientIp, checkRateLimit } = require('./rate-limit.service');
+      const ipAddress = getClientIp(req);
+      const userAgent = req.get('user-agent');
+
+      const ipRefreshCheck = await checkRateLimit(ipAddress, 'ip', 'refresh');
+      if (!ipRefreshCheck.allowed) {
+        return res.status(429).json({
+          success: false,
+          error: 'Muitas tentativas. Tente novamente mais tarde.',
+          blocked_until: ipRefreshCheck.blockedUntil?.toISOString(),
+        });
+      }
+
       const result = await verifyAndRotateRefreshToken(
         refreshToken,
         ipAddress,
-        req.get('user-agent')
+        userAgent
       );
 
       if (!result) {
@@ -167,20 +178,42 @@ router.post('/login', async (req, res) => {
 
   if (isDbLoginEnabled()) {
     try {
-      const ipAddress =
-        (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress;
+      const {
+        enforceLoginRateLimit,
+        resetLoginRateLimit,
+        recordLoginAttempt,
+        getClientIp,
+      } = require('./rate-limit.service');
+      const ipAddress = getClientIp(req);
+      const userAgent = req.get('user-agent');
+      const normalizedEmail = email.toLowerCase();
+
+      const rateLimitCheck = await enforceLoginRateLimit(normalizedEmail, ipAddress);
+      if (!rateLimitCheck.allowed) {
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Rate limit excedido');
+        return res.status(429).json({
+          success: false,
+          error: 'Muitas tentativas. Tente novamente mais tarde.',
+          blocked_until: rateLimitCheck.blockedUntil?.toISOString(),
+        });
+      }
+
       const result = await loginWithDatabase(email, password, {
         ipAddress,
-        userAgent: req.get('user-agent'),
+        userAgent,
       });
 
       if (result?.error === 'invalid_credentials') {
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Senha inválida');
         return res.status(401).json({ success: false, error: 'Credenciais inválidas' });
       }
       if (result?.error === 'account_disabled') {
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Conta desativada');
         return res.status(403).json({ success: false, error: 'Conta desativada' });
       }
       if (result) {
+        await resetLoginRateLimit(normalizedEmail, ipAddress);
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, true);
         return res.json({
           success: true,
           message: 'Login realizado',
