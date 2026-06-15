@@ -155,7 +155,7 @@ async function uploadToCloudinary(
         use_filename: true,
         unique_filename: true,
       },
-      (error, result) => {
+      (error: Error | undefined, result: { secure_url?: string } | undefined) => {
         if (error) {
           reject(error);
         } else {
@@ -202,7 +202,7 @@ export async function uploadFile(
 
   // Comprimir imagem se solicitado
   if (options.compress && file.type.startsWith('image/')) {
-    buffer = await compressImage(buffer);
+    buffer = Buffer.from(await compressImage(buffer));
   }
 
   // Gerar nome único

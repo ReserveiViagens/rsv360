@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     };
     const filename = `exportacao-contabil-${new Date().toISOString().split('T')[0]}.${extensions[format]}`;
 
-    return new NextResponse(file instanceof Buffer ? file : Buffer.from(String(file)), {
+    return new NextResponse(new Uint8Array(file instanceof Buffer ? file : Buffer.from(String(file))), {
       headers: {
         'Content-Type': contentTypes[format],
         'Content-Disposition': `attachment; filename="${filename}"`,

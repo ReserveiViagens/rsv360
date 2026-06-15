@@ -279,6 +279,7 @@ export async function processWebhookEvent(
  * Processa webhook de pagamento
  */
 export async function processPaymentWebhook(eventData: any) {
+  const webhookId = eventData?.id ?? eventData?.data?.id;
   const paymentId = eventData.data?.id;
   if (!paymentId) {
     return { processed: false, reason: 'Payment ID not found' };

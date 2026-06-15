@@ -135,17 +135,10 @@ export const CustomerProfileSchema = z.object({
 
 export const CreateCustomerProfileSchema = CustomerProfileSchema.omit({
   id: true,
-  created_at: true,
-  updated_at: true
-}).partial({
-  preferences: true,
-  metadata: true
 });
 
 export const UpdateCustomerProfileSchema = CustomerProfileSchema.partial().omit({
   id: true,
-  created_at: true,
-  updated_at: true
 });
 
 // ============================================

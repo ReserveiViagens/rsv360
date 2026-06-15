@@ -1,5 +1,23 @@
 "use client"
 
+declare global {
+  interface Window {
+    google?: {
+      maps: {
+        Map: new (element: HTMLElement, options?: Record<string, unknown>) => unknown;
+        event: { removeListener: (listener: unknown) => void };
+        Marker: new (options?: Record<string, unknown>) => unknown;
+        InfoWindow: new (options?: Record<string, unknown>) => unknown;
+        LatLng: new (lat: number, lng: number) => unknown;
+        LatLngBounds: new () => { extend: (latLng: unknown) => void };
+        Size: new (w: number, h: number) => unknown;
+        Point: new (x: number, y: number) => unknown;
+        SymbolPath: { CIRCLE: number };
+      };
+    };
+  }
+}
+
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -107,7 +125,8 @@ export function ResponsiveHotelMap({
   }
 
   const addHotelMarkers = (mapInstance: any) => {
-    if (!window.google) return
+    const googleMaps = window.google?.maps;
+    if (!googleMaps) return
     
     const newMarkers: any[] = []
 
@@ -120,7 +139,7 @@ export function ResponsiveHotelMap({
         </div>
       `
       
-      const marker = new window.google.maps.Marker({
+      const marker = new googleMaps.Marker({
         position: hotel.coordinates,
         map: mapInstance,
         title: hotel.name,
@@ -135,11 +154,11 @@ export function ResponsiveHotelMap({
           scaledSize: { width: 40, height: 40 },
           anchor: { x: 20, y: 40 }
         }
-      })
+      }) as { addListener: (event: string, handler: (event: any) => void) => void };
 
-      const infoWindow = new window.google.maps.InfoWindow({
+      const infoWindow = new googleMaps.InfoWindow({
         content: createInfoWindowContent(hotel)
-      })
+      }) as { close: () => void };
 
       // Evento de hover para tooltip
       marker.addListener('mouseover', (event: any) => {
@@ -182,7 +201,7 @@ export function ResponsiveHotelMap({
         })
         
         // Fechar infoWindow se estiver aberto
-        if (infoWindow && typeof infoWindow.close === 'function') {
+        if (typeof infoWindow.close === 'function') {
           infoWindow.close()
         }
         

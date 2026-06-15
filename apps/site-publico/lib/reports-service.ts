@@ -111,12 +111,12 @@ export async function generatePDFReport(
     const colWidth = (pageWidth - 2 * margin) / headers.length;
 
     // Cabeçalho
-    doc.setFont(undefined, 'bold');
+    doc.setFont('helvetica', 'bold');
     headers.forEach((header, i) => {
       doc.text(header, margin + i * colWidth, yPos);
     });
     yPos += 8;
-    doc.setFont(undefined, 'normal');
+    doc.setFont('helvetica', 'normal');
 
     // Linhas
     data.forEach((row: any) => {
@@ -415,10 +415,10 @@ export async function executeScheduledReport(
       const { readFile } = await import('./storage-service');
       const reportFile = await readFile(result.filePath);
       await sendEmailNotification(
-        scheduledReport.user_id,
-        scheduledReport.recipient_email || '',
-        `Relatório Agendado: ${scheduledReport.report_name}`,
-        `Segue em anexo o relatório "${scheduledReport.report_name}" gerado automaticamente.`,
+        report.created_by ?? 0,
+        report.recipients[0] || '',
+        `Relatório Agendado: ${report.name}`,
+        `Segue em anexo o relatório "${report.name}" gerado automaticamente.`,
         undefined,
         {
           attachments: [{

@@ -23,4 +23,4 @@ export type {
   AccommodationSearchFilters,
   AccommodationSearchResult,
   PriceCalculation
-} from '../../../turismo/src/types/accommodations';
+} from '../../turismo/src/types/accommodations';

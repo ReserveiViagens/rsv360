@@ -122,6 +122,8 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.20.0",
     "@types/qrcode": "^1.5.5",
     "artillery": "^2.0.0",
     "autoprefixer": "^10.4.23",

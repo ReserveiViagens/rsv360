@@ -25,7 +25,7 @@ interface EnhancedGroupChatUIProps {
 }
 
 export function EnhancedGroupChatUI({ groupChatId, userId, userEmail }: EnhancedGroupChatUIProps) {
-  const { toast } = useToast();
+  const { error: showError } = useToast();
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [replyTo, setReplyTo] = useState<number | null>(null);
@@ -79,11 +79,7 @@ export function EnhancedGroupChatUI({ groupChatId, userId, userEmail }: Enhanced
         throw new Error(data.error);
       }
     } catch (error: any) {
-      toast({
-        title: 'Erro',
-        description: error.message || 'Erro ao enviar mensagem',
-        variant: 'destructive',
-      });
+      showError(error.message || 'Erro ao enviar mensagem');
     }
   };
 

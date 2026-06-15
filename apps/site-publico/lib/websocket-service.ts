@@ -4,7 +4,7 @@
  */
 
 export interface WebSocketMessage {
-  type: 'message' | 'typing' | 'read' | 'user_joined' | 'user_left' | 'error';
+  type: 'message' | 'typing' | 'read' | 'user_joined' | 'user_left' | 'error' | 'ping' | 'pong';
   data: any;
   timestamp: string;
 }

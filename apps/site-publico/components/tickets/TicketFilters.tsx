@@ -85,7 +85,7 @@ export function TicketFilters({ filters, onFiltersChange, onReset }: TicketFilte
                 <label className="text-sm font-medium">Status</label>
                 <Select
                   value={filters.status || 'all'}
-                  onValueChange={(value) => handleFilterChange('status', value)}
+                  onValueChange={(value: string) => handleFilterChange('status', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos os status" />
@@ -107,7 +107,7 @@ export function TicketFilters({ filters, onFiltersChange, onReset }: TicketFilte
                 <label className="text-sm font-medium">Prioridade</label>
                 <Select
                   value={filters.priority || 'all'}
-                  onValueChange={(value) => handleFilterChange('priority', value)}
+                  onValueChange={(value: string) => handleFilterChange('priority', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todas as prioridades" />
@@ -127,7 +127,7 @@ export function TicketFilters({ filters, onFiltersChange, onReset }: TicketFilte
                 <label className="text-sm font-medium">Categoria</label>
                 <Select
                   value={filters.category || 'all'}
-                  onValueChange={(value) => handleFilterChange('category', value)}
+                  onValueChange={(value: string) => handleFilterChange('category', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todas as categorias" />

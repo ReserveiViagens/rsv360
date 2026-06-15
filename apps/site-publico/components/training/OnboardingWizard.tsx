@@ -50,7 +50,6 @@ import {
   EyeOff,
   Settings,
   Info,
-  Warning,
   AlertTriangle,
   CheckSquare,
   Square,
@@ -527,7 +526,18 @@ const OnboardingWizard: React.FC = () => {
         difficulty: plan.difficulty,
         prerequisites: [],
         outcomes: [],
-        resources: (plan.resources || []).map((r) => ({ id: r.title, title: r.title, type: r.type, url: '', duration: r.duration, difficulty: '', description: '', tags: [] })),
+        resources: (plan.resources || []).map((r) => ({
+          id: r.title,
+          title: r.title,
+          type: (r.type === 'video' || r.type === 'document' || r.type === 'quiz' || r.type === 'interactive' || r.type === 'simulation')
+            ? r.type
+            : 'document' as const,
+          url: '',
+          duration: r.duration,
+          difficulty: '',
+          description: '',
+          tags: [],
+        })),
         milestones: [],
         aiRecommendations: [],
       });
@@ -609,7 +619,7 @@ const OnboardingWizard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Cargo/Função</label>
-                <Select value={profile.role || ''} onValueChange={(v) => setProfile((p) => ({ ...p, role: v }))}>
+                <Select value={profile.role || ''} onValueChange={(v: string) => setProfile((p) => ({ ...p, role: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione seu cargo" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Agente de Viagens">Agente de Viagens</SelectItem>
@@ -623,7 +633,7 @@ const OnboardingWizard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
-                <Select value={profile.department || ''} onValueChange={(v) => setProfile((p) => ({ ...p, department: v }))}>
+                <Select value={profile.department || ''} onValueChange={(v: string) => setProfile((p) => ({ ...p, department: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione seu departamento" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Vendas">Vendas</SelectItem>
@@ -638,7 +648,7 @@ const OnboardingWizard: React.FC = () => {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Experiência no Setor</label>
-                <Select value={profile.experience || ''} onValueChange={(v) => setProfile((p) => ({ ...p, experience: v }))}>
+                <Select value={profile.experience || ''} onValueChange={(v: string) => setProfile((p) => ({ ...p, experience: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione sua experiência" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Iniciante (0-1 anos)">Iniciante (0-1 anos)</SelectItem>
@@ -726,7 +736,7 @@ const OnboardingWizard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4 max-w-xl mx-auto">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Estilo de Aprendizado</label>
-                <Select value={prefs.learningStyle || ''} onValueChange={(v) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), learningStyle: v } }))}>
+                <Select value={prefs.learningStyle || ''} onValueChange={(v: string) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), learningStyle: v } }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Visual">Visual</SelectItem>
@@ -739,7 +749,7 @@ const OnboardingWizard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tempo Disponível por Semana</label>
-                <Select value={prefs.timeAvailability || ''} onValueChange={(v) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), timeAvailability: v } }))}>
+                <Select value={prefs.timeAvailability || ''} onValueChange={(v: string) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), timeAvailability: v } }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1-2 horas">1-2 horas</SelectItem>
@@ -751,7 +761,7 @@ const OnboardingWizard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Dispositivo Preferido</label>
-                <Select value={prefs.devicePreference || ''} onValueChange={(v) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), devicePreference: v } }))}>
+                <Select value={prefs.devicePreference || ''} onValueChange={(v: string) => setAnswers((a) => ({ ...a, preferences: { ...(a.preferences || {}), devicePreference: v } }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Desktop">Desktop</SelectItem>

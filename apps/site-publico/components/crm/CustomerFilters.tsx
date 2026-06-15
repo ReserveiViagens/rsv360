@@ -100,7 +100,7 @@ export function CustomerFilters({ filters, onFiltersChange, onReset }: CustomerF
               <Label htmlFor="loyalty_tier">Tier de Fidelidade</Label>
               <Select
                 value={filters.loyalty_tier || 'all'}
-                onValueChange={(value) => 
+                onValueChange={(value: string) => 
                   handleFilterChange('loyalty_tier', value === 'all' ? undefined : value)
                 }
               >

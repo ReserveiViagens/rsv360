@@ -8,7 +8,7 @@ export default function AdminLoginPage() {
   const router = useRouter()
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const from = searchParams.get("from") || "/admin/cms"
+  const from = searchParams?.get("from") || "/admin/cms"
 
   useEffect(() => {
     const checkSession = async () => {

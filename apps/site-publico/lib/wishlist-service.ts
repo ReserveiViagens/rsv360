@@ -53,6 +53,10 @@ export interface WishlistItem {
   item_title?: string;
   item_image?: string;
   item_url?: string;
+  property_id?: number;
+  item_name?: string;
+  item_description?: string;
+  user_vote?: 'up' | 'down' | 'maybe' | null;
 }
 
 export interface WishlistVote {

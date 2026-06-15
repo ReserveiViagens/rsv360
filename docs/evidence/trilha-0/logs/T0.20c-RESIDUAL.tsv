@@ -1,0 +1,19 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.20c-residual	PASS
+base	t0.20b 347 erros pos-build	PASS
+alteracao	radixCreate interno ui + residual TS2339/TS2559/TS2786 + libs/API	PASS
+G-A2_typecheck_prebuild	PASS
+G-A2_build_webpack	PASS
+G-A2_typecheck_postbuild	PASS 0 erros
+ts2786_antes	33 interno ui	PASS
+ts2786_depois	0	PASS
+ts2559_antes	2	PASS
+ts2559_depois	0	PASS
+ts2339_antes	85	PASS
+ts2339_depois	0	PASS
+ts2322_antes	42	PASS
+ts2322_depois	0	PASS
+ref_never	0	PASS mantido
+delta_total	347 -> 0	-347
+veredito	T0.20c_GO	PR pendente merge apos 351/352

@@ -197,8 +197,8 @@ export function LoyaltyPointsDisplay({ userId, className }: LoyaltyPointsDisplay
   // Calcular progresso para próximo tier
   const progressToNextTier = nextTier
     ? Math.min(
-        ((points.current_points - currentTier?.min_points || 0) / 
-         (nextTier.min_points - (currentTier?.min_points || 0))) * 100,
+        ((points.current_points - (currentTier?.min_points ?? 0)) / 
+         (nextTier.min_points - (currentTier?.min_points ?? 0))) * 100,
         100
       )
     : 100;

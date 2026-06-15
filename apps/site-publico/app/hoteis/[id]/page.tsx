@@ -158,7 +158,7 @@ export default function EnterpriseDetailPage() {
             </div>
             <div className="shrink-0 w-full lg:w-[320px]">
               <HotelBookingWidget
-                enterpriseId={enterprise.id}
+                enterpriseId={String(enterprise.id)}
                 enterpriseName={enterprise.name}
                 pricePerNight={properties[0]?.basePricePerNight ?? undefined}
               />
@@ -338,8 +338,8 @@ export default function EnterpriseDetailPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Mapa</h3>
               <HotelMapPin
-                lat={getCoordinatesByHotelName(enterprise.id).lat}
-                lng={getCoordinatesByHotelName(enterprise.id).lng}
+                lat={getCoordinatesByHotelName(String(enterprise.id)).lat}
+                lng={getCoordinatesByHotelName(String(enterprise.id)).lng}
                 title={enterprise.name}
               />
             </div>

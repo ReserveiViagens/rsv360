@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
-import { CustomerProfileQuerySchema } from '@/lib/schemas/crm-schemas';
+import { CustomerProfileQuerySchema, CreateCustomerProfileSchema, type CreateCustomerProfile } from '@/lib/schemas/crm-schemas';
 
 // GET /api/crm/customers - Listar perfis de clientes
 export async function GET(request: NextRequest) {
@@ -216,8 +216,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validar com schema Zod
-    const { CreateCustomerProfileSchema } = await import('@/lib/schemas/crm-schemas');
-    const validatedData = CreateCustomerProfileSchema.parse(body);
+    const validatedData: CreateCustomerProfile = CreateCustomerProfileSchema.parse(body);
 
     // Inserir perfil
     const result = await queryDatabase(

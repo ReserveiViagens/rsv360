@@ -1,0 +1,19 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.20b-ts2322	PASS
+base_main	06463c53f pos T0.20a merge	PASS
+alteracao	radix-jsx radixRoot/radixUiExport + ui shadcn + hooks/API TS2339	PASS
+G-A2_typecheck_prebuild	PASS
+G-A2_build_webpack	PASS
+G-A2_typecheck_postbuild	FAIL 347 erros
+ts2322_antes	390	PASS inventario T0.20
+ts2322_depois	42	PASS -348
+ts2339_antes	128	PASS
+ts2339_depois	85	PASS -43
+ts2786_antes	0 pos T0.20a	PASS
+ts2786_depois	33	interno components/ui apenas
+ref_never_antes	802	PASS
+ref_never_depois	0	PASS
+delta_total	1001 -> 347	-654
+delta_baseline_971	971 -> 347	-624
+veredito	T0.20b_GO	carimbo pos-merge pendente

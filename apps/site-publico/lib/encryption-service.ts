@@ -57,7 +57,7 @@ export class EncryptionService {
 
     switch (algorithm) {
       case 'aes-256-gcm':
-        const cipherGCM = crypto.createCipheriv(algorithm, key, iv);
+        const cipherGCM = crypto.createCipheriv(algorithm, key as unknown as crypto.CipherKey, iv);
         encrypted = Buffer.concat([
           cipherGCM.update(data, 'utf8'),
           cipherGCM.final(),
@@ -66,7 +66,7 @@ export class EncryptionService {
         break;
 
       case 'aes-256-cbc':
-        const cipherCBC = crypto.createCipheriv(algorithm, key, iv);
+        const cipherCBC = crypto.createCipheriv(algorithm, key as unknown as crypto.CipherKey, iv);
         encrypted = Buffer.concat([
           cipherCBC.update(data, 'utf8'),
           cipherCBC.final(),
@@ -74,7 +74,7 @@ export class EncryptionService {
         break;
 
       case 'chacha20-poly1305':
-        const cipherChaCha = crypto.createCipheriv(algorithm, key, iv);
+        const cipherChaCha = crypto.createCipheriv(algorithm, key as unknown as crypto.CipherKey, iv);
         encrypted = Buffer.concat([
           cipherChaCha.update(data, 'utf8'),
           cipherChaCha.final(),

@@ -136,9 +136,9 @@ export class MultiInsuranceService {
     const results = await Promise.all(quotePromises);
     
     // Filtrar resultados nulos e adicionar ao array
-    results.forEach((quote, index) => {
+    results.forEach((quote) => {
       if (quote) {
-        quotes.push(quote);
+        quotes.push(...quote);
       }
     });
 

@@ -164,7 +164,7 @@ export function TicketForm({ onSuccess, onCancel }: TicketFormProps) {
               <Label htmlFor="category">Categoria *</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => handleInputChange('category', value)}
+                onValueChange={(value: string) => handleInputChange('category', value)}
               >
                 <SelectTrigger id="category">
                   <SelectValue placeholder="Selecione" />
@@ -187,7 +187,7 @@ export function TicketForm({ onSuccess, onCancel }: TicketFormProps) {
               <Label htmlFor="priority">Prioridade *</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value) => handleInputChange('priority', value)}
+                onValueChange={(value: string) => handleInputChange('priority', value)}
               >
                 <SelectTrigger id="priority">
                   <SelectValue placeholder="Selecione" />
@@ -206,7 +206,7 @@ export function TicketForm({ onSuccess, onCancel }: TicketFormProps) {
               <Label htmlFor="source">Origem</Label>
               <Select
                 value={formData.source}
-                onValueChange={(value) => handleInputChange('source', value)}
+                onValueChange={(value: string) => handleInputChange('source', value)}
               >
                 <SelectTrigger id="source">
                   <SelectValue placeholder="Selecione" />

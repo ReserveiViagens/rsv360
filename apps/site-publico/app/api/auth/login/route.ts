@@ -122,9 +122,9 @@ export async function POST(request: NextRequest) {
     // Gerar refresh token
     const { refreshToken } = await createRefreshToken(
       user.id,
-      { ip: ipAddress, userAgent: getUserAgent(request) },
+      { ip: ipAddress, userAgent: getUserAgent(request) ?? undefined },
       ipAddress,
-      getUserAgent(request)
+      getUserAgent(request) ?? undefined
     );
 
     // Resetar rate limit após sucesso

@@ -38,7 +38,17 @@ interface PricingConfigProps {
 export default function PricingConfig({ propertyId, config, isLoading }: PricingConfigProps) {
   const queryClient = useQueryClient();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    minPrice: number;
+    maxPrice: number;
+    basePrice: number;
+    aggressiveMode: boolean;
+    autoAdjust: boolean;
+    priceAdjustmentRate: number;
+    eventMultiplier: number;
+    weatherImpact: boolean;
+    competitorTracking: boolean;
+  }>({
     minPrice: config?.minPrice || 0,
     maxPrice: config?.maxPrice || 0,
     basePrice: config?.basePrice || 0,

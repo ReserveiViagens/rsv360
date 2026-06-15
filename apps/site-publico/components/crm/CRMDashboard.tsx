@@ -293,10 +293,10 @@ export function CRMDashboard({ className, onViewCustomer }: CRMDashboardProps) {
                 <div className="space-y-4">
                   {metrics.top_segments.map((segment, index) => {
                     const maxCount = Math.max(
-                      ...metrics.top_segments!.map(s => parseInt(s.customer_count || '0')),
+                      ...metrics.top_segments!.map(s => parseInt(String(s.customer_count ?? 0), 10)),
                       1
                     );
-                    const customerCount = parseInt(segment.customer_count || '0');
+                    const customerCount = parseInt(String(segment.customer_count ?? 0), 10);
                     const percentage = (customerCount / maxCount) * 100;
 
                     return (

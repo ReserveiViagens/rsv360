@@ -217,7 +217,7 @@ export class RealtimeLocationService {
   /**
    * Enviar atualização de localização
    */
-  private async sendLocationUpdate(
+  async sendLocationUpdate(
     groupId: string,
     location: LocationUpdate
   ): Promise<void> {

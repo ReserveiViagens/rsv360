@@ -34,14 +34,15 @@ export default function PWADemoPage() {
 
   // PWA features simplified for demo
   const pushSupported = false;
-  const pushPermission = 'denied';
+  const getDemoPushPermission = (): NotificationPermission => 'denied';
+  const pushPermission = getDemoPushPermission();
   const subscription = null;
   const requestPermission = () => {};
   const subscribeToPush = () => {};
   const unsubscribeFromPush = () => {};
 
   const cacheSize = 0;
-  const cacheKeys = [];
+  const cacheKeys: string[] = [];
   const clearCache = () => {};
   const getCacheInfo = () => ({});
 
