@@ -74,10 +74,10 @@
 - [x] T0.18 handlers — **GO** #335 + carimbo #336
 - [x] T0.19 Lucide — **GO** #338 + carimbo #339
 - [x] T0.19b Recharts — **GO** #340 + carimbo #341
-- [x] T0.20a Radix/leaflet — **GO** #350
-- [ ] T0.20a carimbo pós-merge — **PR pendente**
-- [x] T0.20b TS2322/TS2339 — **GO** branch `chore/t0.20b-ts2322` — `T0.20b-TS2322-2339-RESULT.md`
-- [x] T0.20c residual — **GO pós-merge** #353 + carimbo *(esta PR)* — `T0.20c-RESIDUAL-RESULT.md` (347 → 0 erros)
+- [x] T0.20a Radix/leaflet — **GO** #350 + carimbo #351 — `T0.20a-RADIX-LEAFLET-POST-MERGE.md`
+- [x] T0.20b TS2322/TS2339 — **GO** #352 — `T0.20b-TS2322-2339-RESULT.md`
+- [x] T0.20c residual — **GO pós-merge** #353 + carimbo #354 — `T0.20c-RESIDUAL-POST-MERGE.md` (347 → 0 erros)
+- [x] **Rodada T0.20 `.next/types` — encerrada** (a→b→c + carimbos)
 
 ## Decisão Trilha 0
 
