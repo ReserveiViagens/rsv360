@@ -94,7 +94,7 @@
 ## Pós-Fase E — débito técnico / PLANO-MESTRE
 
 - [x] HITL pós-Fase E — **GO** — `HITL-POST-FASE-E.md`
-- [x] ADR-0004 PLANO-MESTRE Fase 1 — **Proposto** — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
+- [x] ADR-0004 PLANO-MESTRE Fase 1 — **Aceito** *(esta PR)* — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
 - [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
 - [x] T0.23a Radix turismo impl — **GO condicional** #362 — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
 - [x] T0.23a Radix turismo carimbo — **GO pós-merge** #363 — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
@@ -118,5 +118,5 @@
 | **Fase E / ADR-0003** | **GO / encerrada** — `FASE-E-CLOSEOUT.md` |
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
-| **ADR-0004** | **Proposto** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | ADR-0004 Aceito → T0.23b TS2322/2339 ou redução lint #237 |
+| **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
+| **Próximo passo** | T1.x piloto tenant/auth (issue #256) ou T0.23b TS2322/2339 / redução lint #237 |
