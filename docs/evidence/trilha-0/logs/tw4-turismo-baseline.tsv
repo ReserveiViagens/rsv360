@@ -1,0 +1,22 @@
+item	value	source
+base_main	d97c2f2da	merge PR357 carimbo T0.21
+tailwindcss_decl	^3.3.0	package.json
+tailwindcss_resolved	3.4.19	npm ls
+postcss	8.5.15 override	npm ls
+autoprefixer	10.5.0	npm ls
+next	16.2.7	package.json
+typescript	^6.0.3	package.json
+build_cmd	next build Turbopack	package.json no --webpack
+ts_source_files	659	count pages+components+src+lib
+tailwind_config_lines	309	tailwind.config.js
+apply_in_css	0	globals.css scan
+tailwind_plugins	0	none
+dark_mode	class	tailwind.config.js
+entry_css	@tailwind base/components/utilities	styles/globals.css
+postcss	tailwindcss postcss.config.js
+router	Pages Router	pages/_app.tsx
+ignoreBuildErrors	true	next.config.js
+type_check_full	FAIL 842 erros	débito legado Radix/JSX
+docker_turismo_http	200	smoke :3005
+docker_turismo_health	healthy	docker inspect
+build_baseline	PASS	T0.22 preflight capture

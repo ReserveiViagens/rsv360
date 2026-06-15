@@ -82,8 +82,10 @@
 - [x] Fase E HITL pós-T0.20 — **GO** — `FASE-E-HITL-POST-T0.20.md`
 - [x] T0.21 TW4 site-publico preflight — **GO condicional** — `T0.21-TAILWIND4-SITE-PUBLICO-PREFLIGHT.md`
 - [x] T0.21 TW4 site-publico impl — **GO pós-merge** #356 — `T0.21-TAILWIND4-SITE-PUBLICO-RESULT.md`
-- [x] T0.21 TW4 site-publico carimbo — **GO pós-merge** *(esta PR)* — `T0.21-TAILWIND4-SITE-PUBLICO-POST-MERGE.md`
-- [x] **Fase E TW4 — encerrada** (guest + admin + site-publico; carimbos #331/#333 + T0.21)
+- [x] T0.21 TW4 site-publico carimbo — **GO pós-merge** #357 — `T0.21-TAILWIND4-SITE-PUBLICO-POST-MERGE.md`
+- [x] **Fase E TW4 (guest+admin+site-publico) — encerrada** — `FASE-E-TW4-CLOSEOUT.md`
+- [x] Fase E HITL pós-T0.21 — **GO** — `FASE-E-HITL-POST-T0.21.md`
+- [x] T0.22 TW4 turismo preflight — **GO condicional** — `T0.22-TAILWIND4-TURISMO-PREFLIGHT.md`
 
 ## Decisão Trilha 0
 
@@ -96,5 +98,8 @@
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
 | **Montanha `.next/types`** | T0.20c **GO pós-merge** (#353); **0** erros pos-build |
-| **Fase E / TW4 site-publico** | T0.21 **GO pós-merge** (#356 + carimbo) — Fase E TW4 **encerrada** |
-| **Próximo passo** | HITL próxima montanha Fase E (turismo TW4, Dependabot ou ADR pendente) |
+| **Fase E / TW4 site-publico** | T0.21 **GO pós-merge** (#356/#357) |
+| **Fase E / TW4 (3 apps canônicos)** | **Encerrada** — `FASE-E-TW4-CLOSEOUT.md` |
+| **Fase E / TW4 turismo** | T0.22 **preflight GO condicional** |
+| **Dependabot** | **Encerrado** — SEC-01→SEC-06; 0 alertas open |
+| **Próximo passo** | T0.22 impl TW4 turismo (`chore/t0.22-tw4-turismo`) |
