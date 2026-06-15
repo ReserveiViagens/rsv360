@@ -1,99 +1,56 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Layers,
   Database,
-  Zap,
-  Clock,
-  Activity,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   RefreshCw,
   Trash2,
   Settings,
   Eye,
-  EyeOff,
-  Download,
-  Upload,
-  Search,
-  Filter,
   Plus,
   Edit,
   Copy,
   Archive,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Warning,
   Server,
-  HardDrive,
   Memory,
-  Network,
-  Cpu,
-  Timer,
   Target,
-  Gauge,
-  Router,
   Cloud,
   Globe,
-  Lock,
-  Unlock,
-  Key,
-  Shield,
   Code,
   FileText,
   Folder,
-  FolderOpen,
-  Calendar,
-  User,
-  Users,
-  Building,
-  MapPin,
-  Phone,
-  Mail,
-  ExternalLink,
-  Share,
-  Link,
-  Star,
-  Heart,
-  Bookmark,
-  Play,
-  Pause,
-  Stop,
-  RotateCcw,
-  Maximize,
-  Minimize
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
+  Play
+} from 'lucide-react';
+import {
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  Bar,
+  BarChart,
+  PieChart,
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
   ComposedChart
 } from 'recharts'
 
@@ -216,40 +173,8 @@ interface CacheStrategy {
   }
 }
 
-interface CacheAnalytics {
-  timeRange: string
-  totalHits: number
-  totalMisses: number
-  hitRate: number
-  avgLatency: number
-  peakLatency: number
-  memoryEfficiency: number
-  costSavings: number
-  topKeys: {
-    key: string
-    hits: number
-    size: number
-    namespace: string
-  }[]
-  patterns: {
-    pattern: string
-    frequency: number
-    hitRate: number
-    avgSize: number
-  }[]
-  recommendations: {
-    type: 'optimization' | 'configuration' | 'strategy' | 'capacity'
-    priority: 'low' | 'medium' | 'high' | 'critical'
-    title: string
-    description: string
-    impact: string
-    effort: string
-  }[]
-}
-
 const CacheManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedInstance, setSelectedInstance] = useState<CacheInstance | null>(null)
   const [isRuleModalOpen, setIsRuleModalOpen] = useState(false)
 
   // Dados mock para demonstração
