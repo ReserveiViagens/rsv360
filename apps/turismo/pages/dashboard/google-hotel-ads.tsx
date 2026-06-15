@@ -70,7 +70,7 @@ export default function GoogleHotelAdsPage() {
     setLoading(true)
     try {
       const feedsResponse = await api.get<{ feeds: Feed[] }>('/api/v1/google-hotel-ads/feeds')
-      setFeeds(feedsResponse.feeds || [])
+      setFeeds(feedsResponse.data?.feeds || feedsResponse.feeds || [])
 
       const campaignsResponse = await api.get<Campaign[]>('/api/v1/google-hotel-ads/campaigns')
       setCampaigns(Array.isArray(campaignsResponse) ? campaignsResponse : [])

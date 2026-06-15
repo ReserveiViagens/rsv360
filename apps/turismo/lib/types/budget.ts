@@ -344,6 +344,7 @@ export interface BudgetTemplate {
   // Metadados (mantidos para compatibilidade)
   category?: string; // Mantido para compatibilidade (mapear para mainCategory)
   type?: BudgetType; // Mantido para compatibilidade
+  isDefault?: boolean;
   defaultItems?: Omit<BudgetItem, 'id'>[]; // Mantido para compatibilidade (mapear para items)
   defaultTerms?: string; // Mantido para compatibilidade
   defaultNotes?: string; // Mantido para compatibilidade
