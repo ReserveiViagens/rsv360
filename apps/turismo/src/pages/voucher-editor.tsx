@@ -202,27 +202,10 @@ interface VoucherElement {
   margin?: number;
 }
 
-interface VoucherData {
-  id: string;
-  code: string;
-  clientName: string;
-  destination: string;
-  startDate: string;
-  endDate: string;
-  value: number;
-  agency: string;
-  agent: string;
-  benefits: string[];
-  validity: string;
-  observations: string;
-  template: VoucherTemplate;
-}
-
 export default function VoucherEditor() {
   const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [, setShowTemplateModal] = useState(false);
-  const [selectedElement, setSelectedElement] = useState<VoucherElement | null>(null);
   const [showHeaderEditor, setShowHeaderEditor] = useState(false);
   const [showBodyEditor, setShowBodyEditor] = useState(false);
   const [showFooterEditor, setShowFooterEditor] = useState(false);
@@ -1153,47 +1136,6 @@ export default function VoucherEditor() {
     // Carregar template padrão
     setSelectedTemplate(defaultTemplates[0]);
   }, []);
-
-  const handleTemplateSelect = (template: VoucherTemplate) => {
-    setSelectedTemplate(template);
-    setShowTemplateModal(false);
-  };
-
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && selectedTemplate) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const logoUrl = e.target?.result as string;
-        const updatedTemplate = {
-          ...selectedTemplate,
-          logo: logoUrl,
-          elements: selectedTemplate.elements.map(el => 
-            el.type === 'logo' ? { ...el, content: logoUrl } : el
-          )
-        };
-        setSelectedTemplate(updatedTemplate);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleElementEdit = (element: VoucherElement) => {
-    setSelectedElement(element);
-  };
-
-  const handleElementUpdate = (updatedElement: VoucherElement) => {
-    if (selectedTemplate) {
-      const updatedElements = selectedTemplate.elements.map(el =>
-        el.id === updatedElement.id ? updatedElement : el
-      );
-      setSelectedTemplate({
-        ...selectedTemplate,
-        elements: updatedElements
-      });
-    }
-    setSelectedElement(null);
-  };
 
   const handleSaveVoucher = () => {
     if (selectedTemplate) {
