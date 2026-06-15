@@ -121,7 +121,7 @@
 - [x] T1.2d login DB — **GO** *(PR #378)* — `T1.2d-LOGIN-DB-RESULT.md` + smoke `T1.2d-STAGING-SMOKE-RESULT.md`
 - [x] T0.23g build smoke turismo — **GO** *(esta PR)* — `T0.23g-BUILD-SMOKE-RESULT.md`
 - [x] Lint #237 turismo full quiet — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-FULL-QUIET-RESULT.md` — **0 erros**
-- [x] T1.5 rate limit auth — **GO** *(esta PR)* — `T1.5-RATE-LIMIT-AUTH-RESULT.md`
+- [x] T1.5 rate limit auth — **GO** *(PR #379)* — `T1.5-RATE-LIMIT-AUTH-RESULT.md` + smoke `T1.5-STAGING-SMOKE-RESULT.md`
 
 ## Decisão Trilha 0
 
