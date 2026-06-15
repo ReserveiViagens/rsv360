@@ -63,7 +63,7 @@ Artefatos: [logs/T0.22-POST-MERGE.tsv](./logs/T0.22-POST-MERGE.tsv)
 | **Montanha `.next/types`** | **GO** (T0.20c) |
 | **Security trail** | **GO** (SEC-06) |
 
-**Próximo HITL:** fora do escopo ADR-0003 — lint #237, saneamento TS turismo, ou nova ADR conforme PLANO-MESTRE.
+**Próximo HITL:** [HITL-POST-FASE-E.md](./HITL-POST-FASE-E.md) → T0.23 TS turismo; ADR-0004 Proposto.
 
 ## 6. Referências
 

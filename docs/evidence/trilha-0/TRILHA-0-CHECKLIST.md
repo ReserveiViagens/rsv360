@@ -91,6 +91,12 @@
 - [x] **Fase E TW4 — encerrada** (4/4 apps Next em 4.3.1)
 - [x] **Fase E ADR-0003 — encerrada** — `FASE-E-CLOSEOUT.md`
 
+## Pós-Fase E — débito técnico / PLANO-MESTRE
+
+- [x] HITL pós-Fase E — **GO** — `HITL-POST-FASE-E.md`
+- [x] ADR-0004 PLANO-MESTRE Fase 1 — **Proposto** — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
+- [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
+
 ## Decisão Trilha 0
 
 | Campo | Valor |
@@ -107,4 +113,6 @@
 | **Fase E / TW4** | **GO / encerrada** — 4/4 apps em **4.3.1** |
 | **Fase E / ADR-0003** | **GO / encerrada** — `FASE-E-CLOSEOUT.md` |
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
-| **Próximo passo** | HITL fora ADR-0003 (lint #237, TS turismo, nova ADR) |
+| **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
+| **ADR-0004** | **Proposto** — PLANO-MESTRE Fase 1 |
+| **Próximo passo** | T0.23a impl Radix turismo (`chore/t0.23a-turismo-radix`); T0.24 eslint hoist → lint #237 |
