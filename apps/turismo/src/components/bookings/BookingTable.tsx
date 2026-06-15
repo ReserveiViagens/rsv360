@@ -235,16 +235,16 @@ const BookingTable: React.FC<BookingTableProps> = ({
     }).format(value);
   };
 
-  const getStatusVariant = (status: BookingTableData['status']) => {
+  const getStatusVariant = (status: BookingTableData['status']): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
       case 'pending':
-        return 'warning';
+        return 'secondary';
       case 'confirmed':
-        return 'success';
+        return 'default';
       case 'cancelled':
-        return 'error';
+        return 'destructive';
       case 'completed':
-        return 'info';
+        return 'outline';
       default:
         return 'default';
     }
@@ -308,12 +308,15 @@ const BookingTable: React.FC<BookingTableProps> = ({
       {/* Filtros */}
       <div className="border-b border-neutral-200 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Input
-            placeholder="Buscar reservas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            leftIcon={<Search className="h-4 w-4" />}
-          />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Buscar reservas..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
           
           <Select
             options={statusOptions}

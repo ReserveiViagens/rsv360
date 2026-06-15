@@ -19,9 +19,11 @@ export interface NotificationAction {
   icon?: string;
 }
 
-export interface NotificationPermission {
+export type BrowserNotificationPermission = 'granted' | 'denied' | 'default';
+
+export interface NotificationPermissionStatus {
   granted: boolean;
-  permission: NotificationPermission;
+  permission: BrowserNotificationPermission;
 }
 
 export interface PushSubscription {
@@ -80,32 +82,32 @@ export class PushNotificationService {
     }
   }
 
-  public async requestPermission(): Promise<NotificationPermission> {
+  public async requestPermission(): Promise<NotificationPermissionStatus> {
     if (!this.isSupported) {
-      return { granted: false, permission: 'denied' as NotificationPermission };
+      return { granted: false, permission: 'denied' };
     }
 
     try {
       const permission = await Notification.requestPermission();
       return {
         granted: permission === 'granted',
-        permission
+        permission,
       };
     } catch (error) {
       console.error('Erro ao solicitar permissão:', error);
-      return { granted: false, permission: 'denied' as NotificationPermission };
+      return { granted: false, permission: 'denied' };
     }
   }
 
-  public async getCurrentPermission(): Promise<NotificationPermission> {
+  public async getCurrentPermission(): Promise<NotificationPermissionStatus> {
     if (!this.isSupported) {
-      return { granted: false, permission: 'denied' as NotificationPermission };
+      return { granted: false, permission: 'denied' };
     }
 
     const permission = Notification.permission;
     return {
       granted: permission === 'granted',
-      permission
+      permission,
     };
   }
 
@@ -118,7 +120,7 @@ export class PushNotificationService {
     try {
       const subscription = await this.swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '')
+        applicationServerKey: this.urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '') as BufferSource
       });
 
       return {

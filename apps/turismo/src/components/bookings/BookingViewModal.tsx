@@ -26,20 +26,9 @@ import {
 // TIPOS E INTERFACES
 // ===================================================================
 
-interface Booking {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  destination: string;
-  checkIn: Date;
-  checkOut: Date;
-  value: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  paymentStatus: 'paid' | 'pending' | 'failed';
-  guests: number;
-  notes?: string;
-}
+import type { BookingCalendarItem } from './BookingCalendar';
+
+type Booking = BookingCalendarItem;
 
 interface BookingViewModalProps {
   isOpen: boolean;

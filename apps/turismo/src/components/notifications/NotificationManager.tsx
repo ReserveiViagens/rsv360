@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 import PushNotificationService, { 
   NotificationPayload, 
   NotificationAction,
-  NotificationPermission 
+  NotificationPermissionStatus,
 } from './PushNotificationService';
 
 interface NotificationTemplate {
@@ -57,7 +57,7 @@ interface ScheduledNotification {
 export default function NotificationManager() {
   const [notificationService] = useState(() => PushNotificationService.getInstance());
   const [isInitialized, setIsInitialized] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>({ granted: false, permission: 'denied' });
+  const [permission, setPermission] = useState<NotificationPermissionStatus>({ granted: false, permission: 'denied' });
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   

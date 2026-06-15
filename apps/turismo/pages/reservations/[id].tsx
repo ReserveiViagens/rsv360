@@ -239,7 +239,7 @@ export default function ReservationDetailPage() {
             <BookingModal
               isOpen={isEditModalOpen}
               onClose={handleCloseEditModal}
-              onSave={handleSaveBooking}
+              onSave={(booking) => handleSaveBooking({ ...booking, id: booking.id ?? String(id) })}
               booking={booking}
               mode="edit"
             />

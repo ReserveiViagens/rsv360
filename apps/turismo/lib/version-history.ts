@@ -360,8 +360,9 @@ export class VersionHistoryManager {
         versions: allVersions.filter(v => v.templateId === id).length
       }));
 
-      const mostVersioned = versionCounts.reduce((max, current) => 
-        current.versions > (max?.versions || 0) ? current : max, null
+      const mostVersioned = versionCounts.reduce<typeof versionCounts[number] | null>(
+        (max, current) => (current.versions > (max?.versions ?? 0) ? current : max),
+        null
       );
 
       const recentVersions = allVersions

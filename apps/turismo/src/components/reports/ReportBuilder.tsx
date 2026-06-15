@@ -561,7 +561,7 @@ const ReportBuilder: React.FC = () => {
                           <tr key={index} className="hover:bg-gray-50">
                             {reportConfig.fields.map(fieldId => {
                               const field = selectedTemplate.fields.find(f => f.id === fieldId);
-                              const value = row[fieldId as keyof typeof row];
+                              const value = row[fieldId as keyof typeof row] as unknown;
                               
                               return field ? (
                                 <td key={fieldId} className="border border-gray-300 px-4 py-2 text-gray-700">
@@ -569,7 +569,9 @@ const ReportBuilder: React.FC = () => {
                                     ? `R$ ${value.toLocaleString('pt-BR')}`
                                     : field.type === 'percentage' && typeof value === 'number'
                                     ? `${value}%`
-                                    : value?.toString() || '-'
+                                    : value != null
+                                    ? String(value)
+                                    : '-'
                                   }
                                 </td>
                               ) : null;

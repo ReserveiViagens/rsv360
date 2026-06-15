@@ -57,7 +57,7 @@ import {
 // TIPOS E INTERFACES
 // ===================================================================
 
-interface Booking {
+export interface BookingCalendarItem {
   id: string;
   customerName: string;
   customerEmail?: string;
@@ -70,8 +70,13 @@ interface Booking {
   paymentStatus: 'paid' | 'pending' | 'failed';
   guests: number;
   notes?: string;
-  color: string;
+  enterpriseId?: number;
+  propertyId?: number;
+  accommodationId?: number;
+  color?: string;
 }
+
+type Booking = BookingCalendarItem;
 
 interface CalendarDay {
   date: Date;
@@ -221,10 +226,10 @@ const SortableBookingItem: React.FC<SortableBookingItemProps> = ({
 
 interface BookingCalendarProps {
   bookings?: Booking[];
-  onBookingsChange?: (bookings: Booking[]) => void;
+  onBookingsChange?: React.Dispatch<React.SetStateAction<Booking[]>> | ((bookings: Booking[]) => void);
   onView?: (booking: Booking) => void;
   onEdit?: (booking: Booking) => void;
-  onDelete?: (booking: Booking) => void;
+  onDelete?: (booking: Booking | string) => void;
 }
 
 const BookingCalendar: React.FC<BookingCalendarProps> = ({
