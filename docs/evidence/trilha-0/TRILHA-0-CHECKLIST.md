@@ -127,7 +127,8 @@
 - [x] Lint warnings turismo −303 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-WARNINGS-REDUCTION.md`
 - [x] T1.7 wire turismo AuthContext → `/api/v1/auth/*` — **GO** *(esta PR)* — `T1.7-AUTH-V1-WIRE-RESULT.md`
 - [x] Lint AITutor −92 — **GO condicional** *(PR #381)* — `issue-237/LINT-237-TURISMO-AITUTOR-WARNINGS.md`
-- [x] Lint voucher-editor + validation −503 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-VOUCHER-VALIDATION-WARNINGS.md`
+- [x] Lint voucher-editor + validation −503 — **GO condicional** *(PR #382)* — `issue-237/LINT-237-TURISMO-VOUCHER-VALIDATION-WARNINGS.md`
+- [x] Lint voucher-editor dead code −66 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-VOUCHER-DEAD-CODE.md`
 
 ## Decisão Trilha 0
 
