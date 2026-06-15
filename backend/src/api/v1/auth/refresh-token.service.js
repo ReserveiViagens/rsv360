@@ -77,6 +77,16 @@ async function revokeTokenFamily(tokenFamily, reason) {
   );
 }
 
+function isUserActive(user) {
+  if (user.status != null) {
+    return user.status === 'active';
+  }
+  if (user.is_active != null) {
+    return user.is_active === true;
+  }
+  return true;
+}
+
 async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
   const db = getPool();
   if (!db) return null;
@@ -115,14 +125,11 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
     return null;
   }
 
-  const users = await queryDatabase(
-    `SELECT id, email, name, role, status FROM users WHERE id = $1`,
-    [userId]
-  );
+  const users = await queryDatabase(`SELECT * FROM users WHERE id = $1`, [userId]);
   if (!users || users.length === 0) return null;
 
   const user = users[0];
-  if (user.status !== 'active') return null;
+  if (!isUserActive(user)) return null;
 
   await revokeRefreshToken(token.id, 'Rotação de token');
   const newRefresh = await createRefreshToken(
