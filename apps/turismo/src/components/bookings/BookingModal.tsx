@@ -23,6 +23,7 @@ import {
   Home,
   Bed
 } from 'lucide-react';
+import type { BookingCalendarItem } from './BookingCalendar';
 
 // ===================================================================
 // SCHEMA DE VALIDAÇÃO
@@ -48,21 +49,17 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-// ===================================================================
-// TIPOS E INTERFACES
-// ===================================================================
-
-import type { BookingCalendarItem } from './BookingCalendar';
-
 type Booking = BookingCalendarItem;
 
-interface BookingModalProps {
+export interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (booking: Booking) => void;
   booking?: Booking | null;
   mode: 'create' | 'edit';
 }
+
+export type { BookingFormData };
 
 // ===================================================================
 // DADOS MOCK

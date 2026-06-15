@@ -1,0 +1,12 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.23c-turismo-residual	PASS
+base_main	62b71f494 pos carimbo #371	PASS
+G-A2_build_turbopack	PASS
+G-A3_typecheck_postbuild	FAIL 125 erros
+ts2305_antes	80	PASS
+ts2724_antes	30	PASS
+ts2305_depois	0	PASS
+ts2724_depois	0	PASS
+delta_total	236 -> 125	-111 track C
+veredito	T0.23c_GO	carimbo opcional
