@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, withAuth } from '@/lib/api-auth';
 import { createVerificationRequest } from '@/lib/verification-service';
 
-export const POST = withAuth(async (request: NextRequest, { user }) => {
+export const POST = withAuth(async (request: NextRequest, user) => {
   try {
     const formData = await request.formData();
     const propertyId = parseInt(formData.get('property_id') as string);

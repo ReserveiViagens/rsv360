@@ -2,34 +2,25 @@
 
 import * as React from "react"
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+import type { RadioGroupItemProps, RadioGroupProps } from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { asRadixComponent } from "@/lib/radix-jsx"
+import { asRadix, radixUiExport } from "@/lib/radix-jsx"
 
-const RadioGroupRoot = asRadixComponent(RadioGroupPrimitive.Root)
-const RadioGroupItemEl = asRadixComponent(RadioGroupPrimitive.Item)
-const RadioGroupIndicator = asRadixComponent(RadioGroupPrimitive.Indicator)
+const RadioGroupRootEl = asRadix(RadioGroupPrimitive.Root)
+const RadioGroupItemEl = asRadix(RadioGroupPrimitive.Item)
+const RadioGroupIndicatorEl = asRadix(RadioGroupPrimitive.Indicator)
 
-const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupRoot
-      className={cn("grid gap-2", className)}
-      {...props}
-      ref={ref}
-    />
-  )
-})
+const RadioGroup = radixUiExport<RadioGroupProps, HTMLDivElement>(
+  React.forwardRef<HTMLDivElement, RadioGroupProps>(({ className, ...props }, ref) => (
+    <RadioGroupRootEl className={cn("grid gap-2", className)} {...props} ref={ref} />
+  )) as React.FC<RadioGroupProps & React.RefAttributes<HTMLDivElement>>
+)
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
-const RadioGroupItem = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
->(({ className, ...props }, ref) => {
-  return (
+const RadioGroupItem = radixUiExport<RadioGroupItemProps, HTMLButtonElement>(
+  React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(({ className, ...props }, ref) => (
     <RadioGroupItemEl
       ref={ref}
       className={cn(
@@ -38,12 +29,12 @@ const RadioGroupItem = React.forwardRef<
       )}
       {...props}
     >
-      <RadioGroupIndicator className="flex items-center justify-center">
+      <RadioGroupIndicatorEl className="flex items-center justify-center">
         <Circle className="h-2.5 w-2.5 fill-current text-current" />
-      </RadioGroupIndicator>
+      </RadioGroupIndicatorEl>
     </RadioGroupItemEl>
-  )
-})
+  )) as React.FC<RadioGroupItemProps & React.RefAttributes<HTMLButtonElement>>
+)
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
 
 export { RadioGroup, RadioGroupItem }

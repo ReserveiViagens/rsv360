@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Registrar novo sinistro
-export const POST = withAuth(async (request: NextRequest, { user }) => {
+export const POST = withAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json();
     

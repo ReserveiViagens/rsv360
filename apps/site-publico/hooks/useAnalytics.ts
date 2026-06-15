@@ -86,6 +86,7 @@ export function useAnalytics() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [report, setReport] = useState<GeneratedReport | null>(null);
 
   // URL base das APIs
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -203,6 +204,44 @@ export function useAnalytics() {
     loadAnalyticsData();
   }, []);
 
+  const data = {
+    overview: {
+      totalContent: content.popularHotels.length + content.popularAttractions.length,
+      totalUsers: users.newUsers + users.returningUsers,
+      activeUsers: overview.activeUsers,
+      uptime: Math.round(performance.avgSessionDuration / 60),
+    },
+    content: {
+      trends: trends.bookings,
+      byType: content.popularHotels.map((h) => ({ name: h.name, value: h.bookings })),
+    },
+    users: {
+      trends: trends.revenue,
+      byRole: [
+        { name: 'Novos', value: users.newUsers },
+        { name: 'Retorno', value: users.returningUsers },
+      ],
+    },
+    performance: {
+      apiCalls: overview.totalBookings,
+      responseTime: Math.round(performance.pageLoadTime),
+      errorRate: performance.bounceRate / 100,
+    },
+  };
+
+  const health = {
+    healthScore: Math.max(0, 100 - Math.round(performance.bounceRate)),
+    status: performance.bounceRate < 50 ? ('healthy' as const) : ('degraded' as const),
+    message: error ?? 'Sistema operacional',
+    uptime: `${Math.round(performance.avgSessionDuration)}s`,
+  };
+
+  const loadFullReport = async () => {
+    const generated = await generateReport({ period: 'month', metrics: ['overview', 'trends'] });
+    setReport(generated);
+    return generated;
+  };
+
   return {
     // Estados
     overview,
@@ -210,6 +249,9 @@ export function useAnalytics() {
     content,
     users,
     performance,
+    data,
+    health,
+    report,
     loading,
     error,
 
@@ -219,5 +261,6 @@ export function useAnalytics() {
     exportData,
     getFilteredData,
     getDerivedMetrics,
+    loadFullReport,
   };
 }
