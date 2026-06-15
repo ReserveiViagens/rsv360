@@ -1,0 +1,12 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.21-tw4-site-publico	PASS
+base_main	c5dd6d696 preflight T0.21	PASS
+tailwindcss	4.3.1	PASS
+tw_animate_css	1.4.0	substitui tailwindcss-animate
+G-A2_build_webpack	PASS exit 0
+G-A3_typecheck_postbuild	PASS 0 erros
+G-A6_api_p0	8/8 OK
+webpack_css_url_false	next.config.js fix @source
+veredito	T0.21_GO	impl TW4 site-publico
+proximo_marco	carimbo pos-merge T0.21	HITL
