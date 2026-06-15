@@ -16,7 +16,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '../../utils/cn';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { Select, SelectOption } from '../ui/Select';
+import { Select, SelectOption } from '../ui/legacy-select';
 import { Badge } from '../ui/Badge';
 import { useUIStore } from '../../stores/useUIStore';
 
@@ -586,3 +586,4 @@ const BookingTable: React.FC<BookingTableProps> = ({
 };
 
 export { BookingTable };
+export default BookingTable;
