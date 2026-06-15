@@ -1,102 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  QrCode, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle,
+import React, { useState } from 'react';
+import {
+  QrCode,
+  CheckCircle,
+  XCircle,
   Search,
-  Filter,
-  Download,
-  Printer,
-  Share2,
   Eye,
-  Clock,
-  Calendar,
-  User,
-  CreditCard,
-  MapPin,
-  Phone,
-  Mail,
-  FileText,
-  BarChart3,
-  PieChart,
   Activity,
   TrendingUp,
-  Users,
-  DollarSign,
-  Percent,
-  Star,
-  MessageSquare,
   Camera,
-  Scan,
-  Smartphone,
-  Tablet,
-  Monitor,
-  Wifi,
-  WifiOff,
-  RefreshCw,
-  History,
-  Archive,
-  Trash2,
-  Edit,
-  Plus,
-  Settings,
-  Bell,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon,
-  Star as StarIcon,
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  Smile,
-  Frown,
-  Meh,
-  Thermometer,
-  Droplet,
-  Umbrella,
-  CloudRain,
-  CloudLightning,
-  CloudSnow,
-  Sun,
-  Moon,
-  CloudOff,
-  CloudDrizzle,
-  CloudFog,
-  Wind,
-  Snowflake,
-  ThermometerSun,
-  ThermometerSnowflake,
-  Droplet as DropletIcon,
-  Umbrella as UmbrellaIcon,
-  CloudRain as CloudRainIcon,
-  CloudLightning as CloudLightningIcon,
-  CloudSnow as CloudSnowIcon,
-  Sun as SunIcon,
-  Moon as MoonIcon,
-  CloudOff as CloudOffIcon,
-  CloudDrizzle as CloudDrizzleIcon,
-  CloudFog as CloudFogIcon,
-  Wind as WindIcon,
-  Snowflake as SnowflakeIcon,
-  ThermometerSun as ThermometerSunIcon,
-  ThermometerSnowflake as ThermometerSnowflakeIcon
+  Scan
 } from 'lucide-react';
 
 interface Voucher {
@@ -279,19 +191,6 @@ const ValidationPage: React.FC = () => {
     cancelled: 'bg-gray-100 text-gray-800'
   };
 
-  const validationStatusColors = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    valid: 'bg-green-100 text-green-800',
-    invalid: 'bg-red-100 text-red-800',
-    expired: 'bg-orange-100 text-orange-800'
-  };
-
-  const priorityColors = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800'
-  };
-
   const filteredVouchers = vouchers.filter(voucher => {
     const matchesStatus = filterStatus === 'all' || voucher.status === filterStatus;
     const matchesSearch = voucher.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -323,24 +222,26 @@ const ValidationPage: React.FC = () => {
         ));
         
         // Add to validation log
-        const newLog: ValidationLog = {
-          id: `LOG${Date.now()}`,
-          voucherId: voucher.id,
-          voucherCode: voucher.code,
-          validationStatus: 'success',
-          validatedAt: new Date().toISOString(),
-          validatedBy: 'Sistema',
-          location: 'São Paulo, SP',
-          device: 'Scanner',
-          ipAddress: '192.168.1.100',
-          userAgent: 'Validation System',
-          notes: 'Validação realizada com sucesso',
-          amount: voucher.totalAmount,
-          customerName: voucher.customerName,
-          serviceType: voucher.serviceType
-        };
-        setValidationLogs(prev => [newLog, ...prev]);
-        
+        setValidationLogs((prev) => {
+          const newLog: ValidationLog = {
+            id: `LOG${voucher.id}-${prev.length + 1}`,
+            voucherId: voucher.id,
+            voucherCode: voucher.code,
+            validationStatus: 'success',
+            validatedAt: new Date().toISOString(),
+            validatedBy: 'Sistema',
+            location: 'São Paulo, SP',
+            device: 'Scanner',
+            ipAddress: '192.168.1.100',
+            userAgent: 'Validation System',
+            notes: 'Validação realizada com sucesso',
+            amount: voucher.totalAmount,
+            customerName: voucher.customerName,
+            serviceType: voucher.serviceType,
+          };
+          return [newLog, ...prev];
+        });
+
         alert('✅ Voucher válido! Validação realizada com sucesso.');
       } else if (voucher.status === 'used') {
         alert('❌ Voucher já foi utilizado!');

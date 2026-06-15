@@ -126,7 +126,8 @@
 - [x] T1.6 logout/revoke tokens — **GO** *(esta PR)* — `T1.6-LOGOUT-REVOKE-RESULT.md` + smoke
 - [x] Lint warnings turismo −303 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-WARNINGS-REDUCTION.md`
 - [x] T1.7 wire turismo AuthContext → `/api/v1/auth/*` — **GO** *(esta PR)* — `T1.7-AUTH-V1-WIRE-RESULT.md`
-- [x] Lint AITutor −92 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-AITUTOR-WARNINGS.md`
+- [x] Lint AITutor −92 — **GO condicional** *(PR #381)* — `issue-237/LINT-237-TURISMO-AITUTOR-WARNINGS.md`
+- [x] Lint voucher-editor + validation −503 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-VOUCHER-VALIDATION-WARNINGS.md`
 
 ## Decisão Trilha 0
 
@@ -146,4 +147,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | warnings por módulo (ex.: `voucher-editor`, `validation`) |
+| **Próximo passo** | warnings por módulo (ex.: `pages/validation` feito; próx. clusters `no-explicit-any` ou páginas médias) |
