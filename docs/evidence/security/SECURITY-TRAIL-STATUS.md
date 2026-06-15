@@ -2,7 +2,7 @@
 
 **Última atualização:** 2026-06-02  
 **Worktree:** `C:\Users\RSV 360\Documents\s2-fase-e-clean`  
-**`main`:** `b0996112c` (T0.19 Lucide #338)
+**`main`:** `558bfd5a8` (T0.19b Recharts #340)
 
 > **Leia este arquivo primeiro** ao retomar.
 
@@ -37,10 +37,11 @@
 | T0.17 preflight | **GO** (#334) |
 | T0.18 impl handlers | **GO** (#335) |
 | T0.18 carimbo | **GO** (#336) |
-| T0.19 preflight + impl Lucide | **GO** (#338 @ `b0996112c`) |
-| T0.19 carimbo | **PR pendente** |
+| T0.19 impl + carimbo Lucide | **GO** (#338 + #339) |
+| T0.19b impl Recharts | **GO** (#340) |
+| T0.19b carimbo + T0.20 preflight | **PR pendente** |
 
-**Próximo HITL:** T0.19b radix **ou** T0.20 residual → TW4 site-publico **depois**.
+**Próximo HITL:** T0.20a Radix **ou** T0.20b TS2322 — ver [T0.20 preflight](../trilha-0/T0.20-NEXT-TYPES-SITE-PUBLICO-PREFLIGHT.md).
 
 ## Linha do tempo Security — CONCLUÍDA
 
@@ -58,9 +59,9 @@
 
 ## Próxima HITL (fora security deps)
 
-1. Merge carimbo T0.19  
-2. HITL T0.19b radix ou T0.20 residual  
-3. TW4 site-publico/turismo — **depois** saneamento `.next/types`
+1. Merge carimbo T0.19b + preflight T0.20  
+2. HITL escolha **T0.20a** (Radix) ou **T0.20b** (TS2322)  
+3. TW4 site-publico — **depois**
 
 Ver opções A–D em [SECURITY-TRAIL-CLOSEOUT.md §8](./SECURITY-TRAIL-CLOSEOUT.md#8-próxima-decisão-hitl).
 
