@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import {
   Download,
   Save,
@@ -202,8 +203,419 @@ interface VoucherElement {
   margin?: number;
 }
 
+
+const VOUCHER_DEFAULT_TEMPLATES: VoucherTemplate[] = [
+    {
+      id: '1',
+      name: 'Template Clássico',
+      header: {
+        logo: '/logos/classic-logo.png',
+        companyName: 'Empresa A',
+        companyAddress: 'Rua Principal, 123',
+        companyPhone: '(11) 1234-5678',
+        companyEmail: 'info@empresa.com',
+        companyWebsite: 'www.empresa.com',
+        backgroundColor: '#ffffff',
+        textColor: '#000000',
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
+        alignment: 'left',
+        showLogo: true,
+        showCompanyInfo: true,
+        customText: '',
+        links: [
+          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#1e40af', fontSize: 12, isActive: true }
+        ]
+      },
+      body: {
+        title: 'VOUCHER DE VIAGEM',
+        subtitle: 'Seu voucher de viagem único',
+        clientInfo: {
+          name: 'Nome do Cliente',
+          email: 'email@cliente.com',
+          phone: '(11) 98765-4321',
+          document: '123.456.789-00',
+          address: 'Endereço do Cliente',
+          showEmail: true,
+          showPhone: true,
+          showDocument: true,
+          showAddress: true
+        },
+        reservationInfo: {
+          code: 'VCH-2025-001',
+          destination: 'Destino da Viagem',
+          startDate: '2025-01-01',
+          endDate: '2025-01-10',
+          value: 1500.00,
+          currency: 'R$',
+          agency: 'Agência RSV',
+          agent: 'Agente RSV',
+          status: 'active',
+          validity: '30 dias',
+          showCode: true,
+          showDestination: true,
+          showDates: true,
+          showValue: true,
+          showAgency: true,
+          showAgent: true,
+          showStatus: true,
+          showValidity: true
+        },
+        benefits: [
+          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#1e40af', isActive: true },
+          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#1e40af', isActive: true },
+          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#1e40af', isActive: true }
+        ],
+        observations: 'Observações do voucher',
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+        fontSize: 16,
+        fontFamily: 'Inter, sans-serif',
+        layout: 'vertical',
+        spacing: 10,
+        padding: 20,
+        borderStyle: 'none',
+        borderColor: '#3b82f6',
+        borderWidth: 2,
+        borderRadius: 8,
+        shadow: true,
+        shadowColor: '#cbd5e1',
+        shadowBlur: 10,
+        shadowOffsetX: 0,
+        shadowOffsetY: 5
+      },
+      footer: {
+        termsAndConditions: [
+          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#1e40af', fontSize: 12, isActive: true },
+          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#1e40af', fontSize: 12, isActive: true }
+        ],
+        contactInfo: {
+          phone: '(11) 1234-5678',
+          email: 'info@empresa.com',
+          website: 'www.empresa.com',
+          address: 'Endereço da Empresa',
+          showPhone: true,
+          showEmail: true,
+          showWebsite: true,
+          showAddress: true
+        },
+        socialMedia: [
+          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#1e40af', isActive: true },
+          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#1e40af', isActive: true },
+          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#1e40af', isActive: true }
+        ],
+        customText: 'Fale conosco para mais informações!',
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+        fontSize: 14,
+        fontFamily: 'Inter, sans-serif',
+        alignment: 'center',
+        showTerms: true,
+        showContact: true,
+        showSocial: true,
+        showCustomText: true,
+        borderTop: true,
+        borderTopColor: '#3b82f6',
+        borderTopWidth: 1,
+        borderTopStyle: 'solid'
+      },
+      backgroundColor: '#ffffff',
+      textColor: '#000000',
+      borderColor: '#1e40af',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '14px',
+      layout: 'classic',
+      elements: [
+        { id: '1', type: 'logo', content: '/logos/classic-logo.png', x: 50, y: 30, width: 120, height: 60 },
+        { id: '2', type: 'text', content: 'VOUCHER', x: 200, y: 50, width: 200, height: 30, fontSize: 24, fontColor: '#1e40af', fontFamily: 'Arial, sans-serif' },
+        { id: '3', type: 'text', content: 'Código:', x: 50, y: 120, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
+        { id: '4', type: 'text', content: 'Cliente:', x: 50, y: 150, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
+        { id: '5', type: 'text', content: 'Destino:', x: 50, y: 180, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
+        { id: '6', type: 'text', content: 'Valor:', x: 50, y: 210, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
+        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 400, y: 120, width: 80, height: 80 },
+        { id: '8', type: 'stamp', content: 'VALIDADO', x: 350, y: 250, width: 100, height: 40, fontSize: 12, fontColor: '#059669', fontFamily: 'Arial, sans-serif' }
+      ]
+    },
+    {
+      id: '2',
+      name: 'Template Moderno',
+      header: {
+        logo: '/logos/modern-logo.png',
+        companyName: 'Empresa B',
+        companyAddress: 'Av. Principal, 456',
+        companyPhone: '(11) 98765-4321',
+        companyEmail: 'contato@empresa.com',
+        companyWebsite: 'www.empresa.com',
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+        fontSize: 16,
+        fontFamily: 'Inter, sans-serif',
+        alignment: 'left',
+        showLogo: true,
+        showCompanyInfo: true,
+        customText: '',
+        links: [
+          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#3b82f6', fontSize: 12, isActive: true }
+        ]
+      },
+      body: {
+        title: 'VOUCHER DE VIAGEM',
+        subtitle: 'Seu voucher de viagem único',
+        clientInfo: {
+          name: 'Nome do Cliente',
+          email: 'email@cliente.com',
+          phone: '(11) 98765-4321',
+          document: '123.456.789-00',
+          address: 'Endereço do Cliente',
+          showEmail: true,
+          showPhone: true,
+          showDocument: true,
+          showAddress: true
+        },
+        reservationInfo: {
+          code: 'VCH-2025-001',
+          destination: 'Destino da Viagem',
+          startDate: '2025-01-01',
+          endDate: '2025-01-10',
+          value: 1500.00,
+          currency: 'R$',
+          agency: 'Agência RSV',
+          agent: 'Agente RSV',
+          status: 'active',
+          validity: '30 dias',
+          showCode: true,
+          showDestination: true,
+          showDates: true,
+          showValue: true,
+          showAgency: true,
+          showAgent: true,
+          showStatus: true,
+          showValidity: true
+        },
+        benefits: [
+          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#3b82f6', isActive: true },
+          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#3b82f6', isActive: true },
+          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#3b82f6', isActive: true }
+        ],
+        observations: 'Observações do voucher',
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+        fontSize: 16,
+        fontFamily: 'Inter, sans-serif',
+        layout: 'vertical',
+        spacing: 10,
+        padding: 20,
+        borderStyle: 'none',
+        borderColor: '#3b82f6',
+        borderWidth: 2,
+        borderRadius: 8,
+        shadow: true,
+        shadowColor: '#cbd5e1',
+        shadowBlur: 10,
+        shadowOffsetX: 0,
+        shadowOffsetY: 5
+      },
+      footer: {
+        termsAndConditions: [
+          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#3b82f6', fontSize: 12, isActive: true },
+          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#3b82f6', fontSize: 12, isActive: true }
+        ],
+        contactInfo: {
+          phone: '(11) 98765-4321',
+          email: 'contato@empresa.com',
+          website: 'www.empresa.com',
+          address: 'Av. Principal, 456',
+          showPhone: true,
+          showEmail: true,
+          showWebsite: true,
+          showAddress: true
+        },
+        socialMedia: [
+          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#3b82f6', isActive: true },
+          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#3b82f6', isActive: true },
+          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#3b82f6', isActive: true }
+        ],
+        customText: 'Fale conosco para mais informações!',
+        backgroundColor: '#f8fafc',
+        textColor: '#1e293b',
+        fontSize: 14,
+        fontFamily: 'Inter, sans-serif',
+        alignment: 'center',
+        showTerms: true,
+        showContact: true,
+        showSocial: true,
+        showCustomText: true,
+        borderTop: true,
+        borderTopColor: '#3b82f6',
+        borderTopWidth: 1,
+        borderTopStyle: 'solid'
+      },
+      backgroundColor: '#f8fafc',
+      textColor: '#1e293b',
+      borderColor: '#3b82f6',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '16px',
+      layout: 'modern',
+      elements: [
+        { id: '1', type: 'logo', content: '/logos/modern-logo.png', x: 40, y: 40, width: 100, height: 50 },
+        { id: '2', type: 'text', content: 'VOUCHER DE VIAGEM', x: 160, y: 60, width: 250, height: 30, fontSize: 20, fontColor: '#3b82f6', fontFamily: 'Inter, sans-serif' },
+        { id: '3', type: 'text', content: 'Código:', x: 40, y: 130, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
+        { id: '4', type: 'text', content: 'Cliente:', x: 40, y: 160, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
+        { id: '5', type: 'text', content: 'Destino:', x: 40, y: 190, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
+        { id: '6', type: 'text', content: 'Valor:', x: 40, y: 220, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
+        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 380, y: 130, width: 90, height: 90 },
+        { id: '8', type: 'watermark', content: 'ONION RSV 360', x: 200, y: 280, width: 150, height: 20, fontSize: 10, fontColor: '#cbd5e1', fontFamily: 'Inter, sans-serif', opacity: 0.3 }
+      ]
+    },
+    {
+      id: '3',
+      name: 'Template Premium',
+      header: {
+        logo: '/logos/premium-logo.png',
+        companyName: 'Empresa C',
+        companyAddress: 'Rua Secundária, 789',
+        companyPhone: '(11) 1122-3344',
+        companyEmail: 'suporte@empresa.com',
+        companyWebsite: 'www.empresa.com',
+        backgroundColor: '#1e293b',
+        textColor: '#f8fafc',
+        fontSize: 18,
+        fontFamily: 'Playfair Display, serif',
+        alignment: 'center',
+        showLogo: true,
+        showCompanyInfo: true,
+        customText: '',
+        links: [
+          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#f59e0b', fontSize: 12, isActive: true }
+        ]
+      },
+      body: {
+        title: 'VOUCHER EXCLUSIVO',
+        subtitle: 'Seu voucher de viagem único',
+        clientInfo: {
+          name: 'Nome do Cliente',
+          email: 'email@cliente.com',
+          phone: '(11) 1122-3344',
+          document: '123.456.789-00',
+          address: 'Endereço do Cliente',
+          showEmail: true,
+          showPhone: true,
+          showDocument: true,
+          showAddress: true
+        },
+        reservationInfo: {
+          code: 'VCH-2025-001',
+          destination: 'Destino da Viagem',
+          startDate: '2025-01-01',
+          endDate: '2025-01-10',
+          value: 1500.00,
+          currency: 'R$',
+          agency: 'Agência RSV',
+          agent: 'Agente RSV',
+          status: 'active',
+          validity: '30 dias',
+          showCode: true,
+          showDestination: true,
+          showDates: true,
+          showValue: true,
+          showAgency: true,
+          showAgent: true,
+          showStatus: true,
+          showValidity: true
+        },
+        benefits: [
+          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#f59e0b', isActive: true },
+          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#f59e0b', isActive: true },
+          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#f59e0b', isActive: true }
+        ],
+        observations: 'Observações do voucher',
+        backgroundColor: '#1e293b',
+        textColor: '#f8fafc',
+        fontSize: 18,
+        fontFamily: 'Playfair Display, serif',
+        layout: 'vertical',
+        spacing: 10,
+        padding: 20,
+        borderStyle: 'none',
+        borderColor: '#f59e0b',
+        borderWidth: 2,
+        borderRadius: 8,
+        shadow: true,
+        shadowColor: '#f59e0b',
+        shadowBlur: 10,
+        shadowOffsetX: 0,
+        shadowOffsetY: 5
+      },
+      footer: {
+        termsAndConditions: [
+          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#f59e0b', fontSize: 12, isActive: true },
+          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#f59e0b', fontSize: 12, isActive: true }
+        ],
+        contactInfo: {
+          phone: '(11) 1122-3344',
+          email: 'suporte@empresa.com',
+          website: 'www.empresa.com',
+          address: 'Rua Secundária, 789',
+          showPhone: true,
+          showEmail: true,
+          showWebsite: true,
+          showAddress: true
+        },
+        socialMedia: [
+          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#f59e0b', isActive: true },
+          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#f59e0b', isActive: true },
+          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#f59e0b', isActive: true }
+        ],
+        customText: 'Fale conosco para mais informações!',
+        backgroundColor: '#1e293b',
+        textColor: '#f8fafc',
+        fontSize: 14,
+        fontFamily: 'Playfair Display, serif',
+        alignment: 'center',
+        showTerms: true,
+        showContact: true,
+        showSocial: true,
+        showCustomText: true,
+        borderTop: true,
+        borderTopColor: '#f59e0b',
+        borderTopWidth: 1,
+        borderTopStyle: 'solid'
+      },
+      backgroundColor: '#1e293b',
+      textColor: '#f8fafc',
+      borderColor: '#f59e0b',
+      fontFamily: 'Playfair Display, serif',
+      fontSize: '18px',
+      layout: 'premium',
+      elements: [
+        { id: '1', type: 'logo', content: '/logos/premium-logo.png', x: 50, y: 50, width: 140, height: 70 },
+        { id: '2', type: 'text', content: 'VOUCHER EXCLUSIVO', x: 220, y: 80, width: 280, height: 40, fontSize: 28, fontColor: '#f59e0b', fontFamily: 'Playfair Display, serif' },
+        { id: '3', type: 'text', content: 'Código:', x: 60, y: 150, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
+        { id: '4', type: 'text', content: 'Cliente:', x: 60, y: 185, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
+        { id: '5', type: 'text', content: 'Destino:', x: 60, y: 220, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
+        { id: '6', type: 'text', content: 'Valor:', x: 60, y: 255, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
+        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 400, y: 150, width: 100, height: 100 },
+        { id: '8', type: 'stamp', content: 'PREMIUM', x: 350, y: 280, width: 120, height: 50, fontSize: 14, fontColor: '#f59e0b', fontFamily: 'Playfair Display, serif' }
+      ]
+    }
+];
 export default function VoucherEditor() {
-  const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(() => VOUCHER_DEFAULT_TEMPLATES[0]);
   const [showPreview, setShowPreview] = useState(false);
   const [, setShowTemplateModal] = useState(false);
   const [showHeaderEditor, setShowHeaderEditor] = useState(false);
@@ -721,422 +1133,6 @@ export default function VoucherEditor() {
   };
 
   // Templates pré-definidos
-  const defaultTemplates: VoucherTemplate[] = [
-    {
-      id: '1',
-      name: 'Template Clássico',
-      header: {
-        logo: '/logos/classic-logo.png',
-        companyName: 'Empresa A',
-        companyAddress: 'Rua Principal, 123',
-        companyPhone: '(11) 1234-5678',
-        companyEmail: 'info@empresa.com',
-        companyWebsite: 'www.empresa.com',
-        backgroundColor: '#ffffff',
-        textColor: '#000000',
-        fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
-        alignment: 'left',
-        showLogo: true,
-        showCompanyInfo: true,
-        customText: '',
-        links: [
-          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#1e40af', fontSize: 12, isActive: true }
-        ]
-      },
-      body: {
-        title: 'VOUCHER DE VIAGEM',
-        subtitle: 'Seu voucher de viagem único',
-        clientInfo: {
-          name: 'Nome do Cliente',
-          email: 'email@cliente.com',
-          phone: '(11) 98765-4321',
-          document: '123.456.789-00',
-          address: 'Endereço do Cliente',
-          showEmail: true,
-          showPhone: true,
-          showDocument: true,
-          showAddress: true
-        },
-        reservationInfo: {
-          code: 'VCH-2025-001',
-          destination: 'Destino da Viagem',
-          startDate: '2025-01-01',
-          endDate: '2025-01-10',
-          value: 1500.00,
-          currency: 'R$',
-          agency: 'Agência RSV',
-          agent: 'Agente RSV',
-          status: 'active',
-          validity: '30 dias',
-          showCode: true,
-          showDestination: true,
-          showDates: true,
-          showValue: true,
-          showAgency: true,
-          showAgent: true,
-          showStatus: true,
-          showValidity: true
-        },
-        benefits: [
-          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#1e40af', isActive: true },
-          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#1e40af', isActive: true },
-          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#1e40af', isActive: true }
-        ],
-        observations: 'Observações do voucher',
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-        fontSize: 16,
-        fontFamily: 'Inter, sans-serif',
-        layout: 'vertical',
-        spacing: 10,
-        padding: 20,
-        borderStyle: 'none',
-        borderColor: '#3b82f6',
-        borderWidth: 2,
-        borderRadius: 8,
-        shadow: true,
-        shadowColor: '#cbd5e1',
-        shadowBlur: 10,
-        shadowOffsetX: 0,
-        shadowOffsetY: 5
-      },
-      footer: {
-        termsAndConditions: [
-          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#1e40af', fontSize: 12, isActive: true },
-          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#1e40af', fontSize: 12, isActive: true }
-        ],
-        contactInfo: {
-          phone: '(11) 1234-5678',
-          email: 'info@empresa.com',
-          website: 'www.empresa.com',
-          address: 'Endereço da Empresa',
-          showPhone: true,
-          showEmail: true,
-          showWebsite: true,
-          showAddress: true
-        },
-        socialMedia: [
-          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#1e40af', isActive: true },
-          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#1e40af', isActive: true },
-          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#1e40af', isActive: true }
-        ],
-        customText: 'Fale conosco para mais informações!',
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-        fontSize: 14,
-        fontFamily: 'Inter, sans-serif',
-        alignment: 'center',
-        showTerms: true,
-        showContact: true,
-        showSocial: true,
-        showCustomText: true,
-        borderTop: true,
-        borderTopColor: '#3b82f6',
-        borderTopWidth: 1,
-        borderTopStyle: 'solid'
-      },
-      backgroundColor: '#ffffff',
-      textColor: '#000000',
-      borderColor: '#1e40af',
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '14px',
-      layout: 'classic',
-      elements: [
-        { id: '1', type: 'logo', content: '/logos/classic-logo.png', x: 50, y: 30, width: 120, height: 60 },
-        { id: '2', type: 'text', content: 'VOUCHER', x: 200, y: 50, width: 200, height: 30, fontSize: 24, fontColor: '#1e40af', fontFamily: 'Arial, sans-serif' },
-        { id: '3', type: 'text', content: 'Código:', x: 50, y: 120, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
-        { id: '4', type: 'text', content: 'Cliente:', x: 50, y: 150, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
-        { id: '5', type: 'text', content: 'Destino:', x: 50, y: 180, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
-        { id: '6', type: 'text', content: 'Valor:', x: 50, y: 210, width: 100, height: 20, fontSize: 14, fontColor: '#374151', fontFamily: 'Arial, sans-serif' },
-        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 400, y: 120, width: 80, height: 80 },
-        { id: '8', type: 'stamp', content: 'VALIDADO', x: 350, y: 250, width: 100, height: 40, fontSize: 12, fontColor: '#059669', fontFamily: 'Arial, sans-serif' }
-      ]
-    },
-    {
-      id: '2',
-      name: 'Template Moderno',
-      header: {
-        logo: '/logos/modern-logo.png',
-        companyName: 'Empresa B',
-        companyAddress: 'Av. Principal, 456',
-        companyPhone: '(11) 98765-4321',
-        companyEmail: 'contato@empresa.com',
-        companyWebsite: 'www.empresa.com',
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-        fontSize: 16,
-        fontFamily: 'Inter, sans-serif',
-        alignment: 'left',
-        showLogo: true,
-        showCompanyInfo: true,
-        customText: '',
-        links: [
-          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#3b82f6', fontSize: 12, isActive: true }
-        ]
-      },
-      body: {
-        title: 'VOUCHER DE VIAGEM',
-        subtitle: 'Seu voucher de viagem único',
-        clientInfo: {
-          name: 'Nome do Cliente',
-          email: 'email@cliente.com',
-          phone: '(11) 98765-4321',
-          document: '123.456.789-00',
-          address: 'Endereço do Cliente',
-          showEmail: true,
-          showPhone: true,
-          showDocument: true,
-          showAddress: true
-        },
-        reservationInfo: {
-          code: 'VCH-2025-001',
-          destination: 'Destino da Viagem',
-          startDate: '2025-01-01',
-          endDate: '2025-01-10',
-          value: 1500.00,
-          currency: 'R$',
-          agency: 'Agência RSV',
-          agent: 'Agente RSV',
-          status: 'active',
-          validity: '30 dias',
-          showCode: true,
-          showDestination: true,
-          showDates: true,
-          showValue: true,
-          showAgency: true,
-          showAgent: true,
-          showStatus: true,
-          showValidity: true
-        },
-        benefits: [
-          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#3b82f6', isActive: true },
-          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#3b82f6', isActive: true },
-          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#3b82f6', isActive: true }
-        ],
-        observations: 'Observações do voucher',
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-        fontSize: 16,
-        fontFamily: 'Inter, sans-serif',
-        layout: 'vertical',
-        spacing: 10,
-        padding: 20,
-        borderStyle: 'none',
-        borderColor: '#3b82f6',
-        borderWidth: 2,
-        borderRadius: 8,
-        shadow: true,
-        shadowColor: '#cbd5e1',
-        shadowBlur: 10,
-        shadowOffsetX: 0,
-        shadowOffsetY: 5
-      },
-      footer: {
-        termsAndConditions: [
-          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#3b82f6', fontSize: 12, isActive: true },
-          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#3b82f6', fontSize: 12, isActive: true }
-        ],
-        contactInfo: {
-          phone: '(11) 98765-4321',
-          email: 'contato@empresa.com',
-          website: 'www.empresa.com',
-          address: 'Av. Principal, 456',
-          showPhone: true,
-          showEmail: true,
-          showWebsite: true,
-          showAddress: true
-        },
-        socialMedia: [
-          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#3b82f6', isActive: true },
-          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#3b82f6', isActive: true },
-          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#3b82f6', isActive: true }
-        ],
-        customText: 'Fale conosco para mais informações!',
-        backgroundColor: '#f8fafc',
-        textColor: '#1e293b',
-        fontSize: 14,
-        fontFamily: 'Inter, sans-serif',
-        alignment: 'center',
-        showTerms: true,
-        showContact: true,
-        showSocial: true,
-        showCustomText: true,
-        borderTop: true,
-        borderTopColor: '#3b82f6',
-        borderTopWidth: 1,
-        borderTopStyle: 'solid'
-      },
-      backgroundColor: '#f8fafc',
-      textColor: '#1e293b',
-      borderColor: '#3b82f6',
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '16px',
-      layout: 'modern',
-      elements: [
-        { id: '1', type: 'logo', content: '/logos/modern-logo.png', x: 40, y: 40, width: 100, height: 50 },
-        { id: '2', type: 'text', content: 'VOUCHER DE VIAGEM', x: 160, y: 60, width: 250, height: 30, fontSize: 20, fontColor: '#3b82f6', fontFamily: 'Inter, sans-serif' },
-        { id: '3', type: 'text', content: 'Código:', x: 40, y: 130, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
-        { id: '4', type: 'text', content: 'Cliente:', x: 40, y: 160, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
-        { id: '5', type: 'text', content: 'Destino:', x: 40, y: 190, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
-        { id: '6', type: 'text', content: 'Valor:', x: 40, y: 220, width: 80, height: 20, fontSize: 12, fontColor: '#64748b', fontFamily: 'Inter, sans-serif' },
-        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 380, y: 130, width: 90, height: 90 },
-        { id: '8', type: 'watermark', content: 'ONION RSV 360', x: 200, y: 280, width: 150, height: 20, fontSize: 10, fontColor: '#cbd5e1', fontFamily: 'Inter, sans-serif', opacity: 0.3 }
-      ]
-    },
-    {
-      id: '3',
-      name: 'Template Premium',
-      header: {
-        logo: '/logos/premium-logo.png',
-        companyName: 'Empresa C',
-        companyAddress: 'Rua Secundária, 789',
-        companyPhone: '(11) 1122-3344',
-        companyEmail: 'suporte@empresa.com',
-        companyWebsite: 'www.empresa.com',
-        backgroundColor: '#1e293b',
-        textColor: '#f8fafc',
-        fontSize: 18,
-        fontFamily: 'Playfair Display, serif',
-        alignment: 'center',
-        showLogo: true,
-        showCompanyInfo: true,
-        customText: '',
-        links: [
-          { id: '1', text: 'Contrato', url: '#', type: 'contract', icon: '📄', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '2', text: 'Termos', url: '#', type: 'terms', icon: '📜', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '3', text: 'Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '4', text: 'Suporte', url: '#', type: 'support', icon: '💬', color: '#f59e0b', fontSize: 12, isActive: true }
-        ]
-      },
-      body: {
-        title: 'VOUCHER EXCLUSIVO',
-        subtitle: 'Seu voucher de viagem único',
-        clientInfo: {
-          name: 'Nome do Cliente',
-          email: 'email@cliente.com',
-          phone: '(11) 1122-3344',
-          document: '123.456.789-00',
-          address: 'Endereço do Cliente',
-          showEmail: true,
-          showPhone: true,
-          showDocument: true,
-          showAddress: true
-        },
-        reservationInfo: {
-          code: 'VCH-2025-001',
-          destination: 'Destino da Viagem',
-          startDate: '2025-01-01',
-          endDate: '2025-01-10',
-          value: 1500.00,
-          currency: 'R$',
-          agency: 'Agência RSV',
-          agent: 'Agente RSV',
-          status: 'active',
-          validity: '30 dias',
-          showCode: true,
-          showDestination: true,
-          showDates: true,
-          showValue: true,
-          showAgency: true,
-          showAgent: true,
-          showStatus: true,
-          showValidity: true
-        },
-        benefits: [
-          { id: '1', text: 'Passagem aérea', icon: '✈️', color: '#f59e0b', isActive: true },
-          { id: '2', text: 'Hotel 4 estrelas', icon: '🏨', color: '#f59e0b', isActive: true },
-          { id: '3', text: 'Alimentação', icon: '🍽️', color: '#f59e0b', isActive: true }
-        ],
-        observations: 'Observações do voucher',
-        backgroundColor: '#1e293b',
-        textColor: '#f8fafc',
-        fontSize: 18,
-        fontFamily: 'Playfair Display, serif',
-        layout: 'vertical',
-        spacing: 10,
-        padding: 20,
-        borderStyle: 'none',
-        borderColor: '#f59e0b',
-        borderWidth: 2,
-        borderRadius: 8,
-        shadow: true,
-        shadowColor: '#f59e0b',
-        shadowBlur: 10,
-        shadowOffsetX: 0,
-        shadowOffsetY: 5
-      },
-      footer: {
-        termsAndConditions: [
-          { id: '1', text: 'Termos de Uso', url: '#', type: 'terms', icon: '📜', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '2', text: 'Condições de Cancelamento', url: '#', type: 'cancellation', icon: '⚠️', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '3', text: 'Política de Privacidade', url: '#', type: 'privacy', icon: '🔒', color: '#f59e0b', fontSize: 12, isActive: true },
-          { id: '4', text: 'Política de Reembolso', url: '#', type: 'refund', icon: '💰', color: '#f59e0b', fontSize: 12, isActive: true }
-        ],
-        contactInfo: {
-          phone: '(11) 1122-3344',
-          email: 'suporte@empresa.com',
-          website: 'www.empresa.com',
-          address: 'Rua Secundária, 789',
-          showPhone: true,
-          showEmail: true,
-          showWebsite: true,
-          showAddress: true
-        },
-        socialMedia: [
-          { id: '1', platform: 'facebook', url: 'https://facebook.com', icon: '👍', color: '#f59e0b', isActive: true },
-          { id: '2', platform: 'instagram', url: 'https://instagram.com', icon: '👀', color: '#f59e0b', isActive: true },
-          { id: '3', platform: 'twitter', url: 'https://twitter.com', icon: '🐦', color: '#f59e0b', isActive: true }
-        ],
-        customText: 'Fale conosco para mais informações!',
-        backgroundColor: '#1e293b',
-        textColor: '#f8fafc',
-        fontSize: 14,
-        fontFamily: 'Playfair Display, serif',
-        alignment: 'center',
-        showTerms: true,
-        showContact: true,
-        showSocial: true,
-        showCustomText: true,
-        borderTop: true,
-        borderTopColor: '#f59e0b',
-        borderTopWidth: 1,
-        borderTopStyle: 'solid'
-      },
-      backgroundColor: '#1e293b',
-      textColor: '#f8fafc',
-      borderColor: '#f59e0b',
-      fontFamily: 'Playfair Display, serif',
-      fontSize: '18px',
-      layout: 'premium',
-      elements: [
-        { id: '1', type: 'logo', content: '/logos/premium-logo.png', x: 50, y: 50, width: 140, height: 70 },
-        { id: '2', type: 'text', content: 'VOUCHER EXCLUSIVO', x: 220, y: 80, width: 280, height: 40, fontSize: 28, fontColor: '#f59e0b', fontFamily: 'Playfair Display, serif' },
-        { id: '3', type: 'text', content: 'Código:', x: 60, y: 150, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
-        { id: '4', type: 'text', content: 'Cliente:', x: 60, y: 185, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
-        { id: '5', type: 'text', content: 'Destino:', x: 60, y: 220, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
-        { id: '6', type: 'text', content: 'Valor:', x: 60, y: 255, width: 100, height: 25, fontSize: 16, fontColor: '#cbd5e1', fontFamily: 'Playfair Display, serif' },
-        { id: '7', type: 'qr-code', content: 'VCH-2025-001', x: 400, y: 150, width: 100, height: 100 },
-        { id: '8', type: 'stamp', content: 'PREMIUM', x: 350, y: 280, width: 120, height: 50, fontSize: 14, fontColor: '#f59e0b', fontFamily: 'Playfair Display, serif' }
-      ]
-    }
-  ];
-
-  useEffect(() => {
-    // Carregar template padrão
-    setSelectedTemplate(defaultTemplates[0]);
-  }, []);
-
   const handleSaveVoucher = () => {
     if (selectedTemplate) {
       // Aqui implementaria a lógica de salvamento
@@ -1688,7 +1684,7 @@ export default function VoucherEditor() {
                 <div className="flex-1">
                   <select
                     value={social.platform}
-                    onChange={(e) => handleSocialMediaUpdate(social.id, { platform: e.target.value as any })}
+                    onChange={(e) => handleSocialMediaUpdate(social.id, { platform: e.target.value as SocialMedia['platform'] })}
                     name={`footer-social-platform-${social.id}`}
                     className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                   >
@@ -1800,7 +1796,7 @@ export default function VoucherEditor() {
               </label>
               <select
                 value={qrCodeErrorLevel}
-                onChange={(e) => setQrCodeErrorLevel(e.target.value as any)}
+                onChange={(e) => setQrCodeErrorLevel(e.target.value as 'L' | 'M' | 'Q' | 'H')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="L">Baixo (7%)</option>
@@ -1839,9 +1835,12 @@ export default function VoucherEditor() {
           <div>
             <h4 className="text-md font-medium text-gray-700 mb-4">Preview</h4>
             <div className="flex flex-col items-center space-y-4">
-              <img 
-                src={qrCodeUrl} 
-                alt="QR Code" 
+              <Image
+                src={qrCodeUrl}
+                alt="QR Code"
+                width={200}
+                height={200}
+                unoptimized
                 className="border border-gray-300 rounded-lg"
               />
               <div className="flex space-x-2">
