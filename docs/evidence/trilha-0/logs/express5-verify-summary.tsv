@@ -5,4 +5,4 @@ api_p0	GO	8/8 OK
 jest_unit	GO	7/7 suites PASS
 jest_integration	DEBT	5 fail DATABASE_URL local (pre-existing)
 legacy_express4_turismo_pages	OUT_OF_SCOPE	ADR-0003
-montanha_D	GO_condicional	proxima montanha C Tailwind 4 guest/admin
+montanha_D	GO	pos-T0.20 reverify E5-EXPRESS5-POST-T0.20-REVERIFY.md

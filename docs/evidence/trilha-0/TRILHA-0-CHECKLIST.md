@@ -78,6 +78,9 @@
 - [x] T0.20b TS2322/TS2339 — **GO** #352 — `T0.20b-TS2322-2339-RESULT.md`
 - [x] T0.20c residual — **GO pós-merge** #353 + carimbo #354 — `T0.20c-RESIDUAL-POST-MERGE.md` (347 → 0 erros)
 - [x] **Rodada T0.20 `.next/types` — encerrada** (a→b→c + carimbos)
+- [x] E5 Express 5 revalidação pós-T0.20 — **GO** — `E5-EXPRESS5-POST-T0.20-REVERIFY.md`
+- [x] Fase E HITL pós-T0.20 — **GO** — `FASE-E-HITL-POST-T0.20.md`
+- [x] T0.21 TW4 site-publico preflight — **GO condicional** — `T0.21-TAILWIND4-SITE-PUBLICO-PREFLIGHT.md`
 
 ## Decisão Trilha 0
 
@@ -90,4 +93,6 @@
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
 | **Montanha `.next/types`** | T0.20c **GO pós-merge** (#353); **0** erros pos-build |
-| **Próximo passo** | Encerramento rodada T0.20 / HITL Fase E (TW4 site-publico ou ADR) |
+| **Fase E / TW4 site-publico** | T0.21 preflight **GO condicional** — impl pendente |
+| **Montanha D Express 5** | **GO** revalidado pós-T0.20 (#328 + E5 reverify) |
+| **Próximo passo** | T0.21 impl TW4 `site-publico` (PR dedicada) |
