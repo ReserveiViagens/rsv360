@@ -96,7 +96,8 @@
 - [x] HITL pós-Fase E — **GO** — `HITL-POST-FASE-E.md`
 - [x] ADR-0004 PLANO-MESTRE Fase 1 — **Proposto** — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
 - [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
-- [x] T0.23a Radix turismo impl — **GO condicional** *(esta PR)* — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
+- [x] T0.23a Radix turismo impl — **GO condicional** #362 — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
+- [x] T0.23a Radix turismo carimbo — **GO pós-merge** *(esta PR)* — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
 
 ## Decisão Trilha 0
 
