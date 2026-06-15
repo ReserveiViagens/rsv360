@@ -371,7 +371,7 @@ const EmailMarketing: React.FC<EmailMarketingProps> = ({
                           <Eye className="w-4 h-4" />
                         </Button>
                         {!template.isDefault && (
-                          <Button size="sm" variant="outline" variant="destructive">
+                          <Button size="sm" variant="destructive">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         )}

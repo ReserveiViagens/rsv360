@@ -258,7 +258,7 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
                       <Button size="sm" variant="outline">
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button size="sm" variant="outline" variant="destructive">
+                      <Button size="sm" variant="destructive">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -326,7 +326,7 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
                           <Edit className="w-4 h-4" />
                         </Button>
                         {!template.isDefault && (
-                          <Button size="sm" variant="outline" variant="destructive">
+                          <Button size="sm" variant="destructive">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         )}

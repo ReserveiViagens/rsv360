@@ -52,11 +52,49 @@ router.get('/session', (req, res) => {
   return res.json(body);
 });
 
-/** POST /api/v1/auth/refresh — renova access token (piloto JWT; produção usa site-publico + DB). */
-router.post('/refresh', (req, res) => {
+/** POST /api/v1/auth/refresh — renova access token (DB com rotação ou piloto JWT). */
+router.post('/refresh', async (req, res) => {
   const { refresh_token: refreshToken } = req.body || {};
   if (!refreshToken) {
     return res.status(400).json({ success: false, error: 'refresh_token é obrigatório' });
+  }
+
+  const { isDbRefreshEnabled, verifyAndRotateRefreshToken } = require('./refresh-token.service');
+
+  if (isDbRefreshEnabled()) {
+    try {
+      const ipAddress =
+        (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress;
+      const result = await verifyAndRotateRefreshToken(
+        refreshToken,
+        ipAddress,
+        req.get('user-agent')
+      );
+
+      if (!result) {
+        return res.status(401).json({ success: false, error: 'Refresh token inválido ou expirado' });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Tokens renovados',
+        data: {
+          access_token: result.newAccessToken,
+          refresh_token: result.newRefreshToken,
+          expires_in: 900,
+          user: {
+            id: String(result.user.id),
+            email: result.user.email,
+            name: result.user.name,
+            role: result.user.role,
+            enterpriseId: 'ent_1',
+          },
+        },
+      });
+    } catch (error) {
+      console.error('[AUTH] refresh DB error:', error.message);
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
   }
 
   const refreshSecret =

@@ -437,7 +437,7 @@ export default function NotificationSettings() {
                               <label className="text-sm font-medium">Prioridade</label>
                               <Select
                                 value={channel.priority}
-                                onValueChange={(value) => updateChannel(channel.id, { priority: value as any })}
+                                onValueChange={(value: string) => updateChannel(channel.id, { priority: value as any })}
                               >
                                 <SelectTrigger className="w-32">
                                   <SelectValue />
@@ -595,7 +595,7 @@ export default function NotificationSettings() {
                         <label className="text-sm font-medium">Fuso Horário</label>
                         <Select
                           value={preferences.timezone}
-                          onValueChange={(value) => updatePreference('timezone', value)}
+                                onValueChange={(value: string) => updatePreference('timezone', value)}
                         >
                           <SelectTrigger className="mt-1">
                             <SelectValue />
@@ -621,7 +621,7 @@ export default function NotificationSettings() {
                       <label className="text-sm font-medium">Frequência</label>
                       <Select
                         value={preferences.frequency}
-                        onValueChange={(value) => updatePreference('frequency', value)}
+                        onValueChange={(value: string) => updatePreference('frequency', value)}
                       >
                         <SelectTrigger className="mt-1">
                           <SelectValue />
