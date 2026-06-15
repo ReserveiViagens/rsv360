@@ -4,17 +4,20 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  DndContext,
+  DndContext as DndContextPrimitive,
   closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverlay,
+  DragOverlay as DragOverlayPrimitive,
   DragStartEvent,
   UniqueIdentifier
 } from '@dnd-kit/core';
+import { radixRoot } from '@/lib/radix-jsx';
+const DndContext = radixRoot(DndContextPrimitive);
+const DragOverlay = radixRoot(DragOverlayPrimitive);
 import {
   arrayMove,
   SortableContext,
