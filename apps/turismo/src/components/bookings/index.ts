@@ -1,5 +1,5 @@
 // Componentes de Reservas
-export { default as BookingCalendar } from './BookingCalendar';
+export { default as BookingCalendar, type BookingCalendarItem } from './BookingCalendar';
 export { default as BookingModal } from './BookingModal';
 export { default as BookingViewModal } from './BookingViewModal';
 export { default as BookingTable } from './BookingTable';

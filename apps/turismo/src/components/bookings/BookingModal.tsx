@@ -52,24 +52,9 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 // TIPOS E INTERFACES
 // ===================================================================
 
-interface Booking {
-  id?: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  destination: string;
-  checkIn: Date;
-  checkOut: Date;
-  value: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  paymentStatus: 'paid' | 'pending' | 'failed';
-  guests: number;
-  notes?: string;
-  // Campos de multi-acomodações
-  enterpriseId?: number;
-  propertyId?: number;
-  accommodationId?: number;
-}
+import type { BookingCalendarItem } from './BookingCalendar';
+
+type Booking = BookingCalendarItem;
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -310,7 +295,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const onSubmit = (data: BookingFormData) => {
     const bookingData: Booking = {
-      id: mode === 'edit' ? booking?.id : undefined,
+      id: mode === 'edit' && booking?.id ? booking.id : `booking-${Date.now()}`,
       customerName: data.customerName,
       customerEmail: data.customerEmail,
       customerPhone: data.customerPhone,

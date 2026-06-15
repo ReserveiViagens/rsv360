@@ -6,11 +6,13 @@ interface User {
   id: number;
   email: string;
   full_name: string;
+  name?: string;
   firstName?: string;
   lastName?: string;
   role?: string;
   is_active: boolean;
   permissions: string[];
+  token?: string;
   created_at: string;
   last_login?: string;
 }
@@ -25,6 +27,7 @@ interface AuthContextType {
   refreshToken: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<boolean>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -241,11 +244,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           id: u.id,
           email: u.email,
           full_name: u.name || u.full_name || '',
+          name: u.name || u.full_name || '',
           firstName: u.name?.split?.(' ')[0],
           lastName: u.name?.split?.(' ').slice(1).join?.(' ') || '',
           role: u.role,
           is_active: u.status === 'active',
           permissions: u.role ? [u.role] : [],
+          token: token,
           created_at: u.created_at || new Date().toISOString(),
           last_login: u.last_login,
         });
@@ -480,6 +485,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const hasPermission = (permission: string): boolean => {
+    return user?.permissions?.includes(permission) ?? false;
+  };
+
   const value: AuthContextType = {
     user,
     login,
@@ -490,6 +499,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshToken: () => refreshToken ? refreshAccessToken(refreshToken) : Promise.resolve(),
     updateUser,
     changePassword,
+    hasPermission,
   };
 
   console.log('[AuthContext] Renderizando Provider com value:', {
@@ -527,6 +537,7 @@ export function useAuth(): AuthContextType {
       refreshToken: async () => {},
       updateUser: async () => false,
       changePassword: async () => false,
+      hasPermission: () => false,
     };
   }
   

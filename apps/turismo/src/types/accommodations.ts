@@ -122,6 +122,7 @@ export interface Enterprise {
   // Relacionamentos (opcionais, carregados sob demanda)
   properties?: Property[];
   propertiesCount?: number;
+  accommodationsCount?: number;
 }
 
 // ===================================================================

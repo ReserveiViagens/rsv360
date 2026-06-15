@@ -123,6 +123,15 @@ export interface ApiResponse<T = any> {
   message?: string;
   data?: T;
   errors?: any[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  /** Campos legados no root (alguns endpoints backend) */
+  auctions?: any[];
+  feeds?: any[];
 }
 
 // Generic API methods

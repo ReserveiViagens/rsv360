@@ -308,7 +308,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
               />
               <Bar 
                 dataKey="growth" 
-                fill={(entry: any) => getColorByValue(entry.growth, 30)}
+                fill="#3B82F6"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

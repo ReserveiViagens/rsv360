@@ -86,6 +86,9 @@ export interface UIActions {
   
   // Reset
   resetUI: () => void;
+
+  // Alias legado (componentes de notificação)
+  showNotification: (message: string, type?: Notification['type']) => void;
 }
 
 export type UIStore = UIState & UIActions;
@@ -257,7 +260,15 @@ export const useUIStore = create<UIStore>()(
       // Reset
       resetUI: () => {
         set(initialState);
-      }
+      },
+
+      showNotification: (message, type = 'info') => {
+        get().addNotification({
+          title: message,
+          message,
+          type,
+        });
+      },
     }),
     {
       name: 'ui-storage',
