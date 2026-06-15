@@ -145,7 +145,10 @@ export function usePWA() {
     if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
       try {
         const registration = await navigator.serviceWorker.ready;
-        await registration.sync.register('background-sync');
+        const syncManager = (registration as ServiceWorkerRegistration & {
+          sync: { register: (tag: string) => Promise<void> };
+        }).sync;
+        await syncManager.register('background-sync');
         return true;
       } catch (error) {
         console.error('Erro ao sincronizar dados offline:', error);

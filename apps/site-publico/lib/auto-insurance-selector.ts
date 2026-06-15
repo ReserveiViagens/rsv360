@@ -5,6 +5,8 @@
 
 import { type InsuranceQuote, multiInsuranceService, type QuoteRequest } from './multi-insurance-service';
 
+export type { QuoteRequest };
+
 export interface SelectionCriteria {
   priority: 'price' | 'rating' | 'coverage' | 'value' | 'balanced';
   maxPrice?: number;
@@ -114,7 +116,7 @@ export class AutoInsuranceSelector {
 
     // Filtrar por preço máximo
     if (criteria.maxPrice !== undefined) {
-      filtered = filtered.filter(q => q.premiumAmount <= criteria.maxPrice);
+      filtered = filtered.filter(q => q.premiumAmount <= criteria.maxPrice!);
     }
 
     // Filtrar por avaliação mínima

@@ -199,7 +199,7 @@ export default function LoginPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-            <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); setError(""); }}>
+            <Tabs value={activeTab} onValueChange={(v: string) => { setActiveTab(v); setError(""); }}>
               <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-gray-100 dark:bg-gray-700 rounded-xl mb-6">
                 <TabsTrigger value="login" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 data-[state=active]:shadow-sm">
                   Entrar

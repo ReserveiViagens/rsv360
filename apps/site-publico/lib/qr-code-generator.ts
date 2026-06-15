@@ -63,7 +63,13 @@ export async function generateCheckinQRCode(
 
   try {
     // Gerar QR code como base64
-    const qrCode = await QRCode.toDataURL(qrData, defaultOptions);
+    const qrCode = await QRCode.toDataURL(qrData, {
+      errorCorrectionLevel: defaultOptions.errorCorrectionLevel || 'M',
+      type: 'image/png',
+      margin: defaultOptions.margin,
+      color: defaultOptions.color,
+      width: defaultOptions.width,
+    });
     
     // Gerar QR code como SVG (para melhor qualidade)
     const qrCodeSvg = await QRCode.toString(qrData, {
@@ -113,7 +119,13 @@ export async function generateAccessQRCode(
   };
 
   try {
-    const qrCode = await QRCode.toDataURL(qrData, defaultOptions);
+    const qrCode = await QRCode.toDataURL(qrData, {
+      errorCorrectionLevel: defaultOptions.errorCorrectionLevel || 'M',
+      type: 'image/png',
+      margin: defaultOptions.margin,
+      color: defaultOptions.color,
+      width: defaultOptions.width,
+    });
     const qrCodeSvg = await QRCode.toString(qrData, {
       type: 'svg',
       errorCorrectionLevel: defaultOptions.errorCorrectionLevel || 'H',

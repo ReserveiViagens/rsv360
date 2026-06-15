@@ -9,6 +9,9 @@ import { approveVerification, rejectVerification } from '@/lib/verification-serv
 import { reviewVerificationSchema } from '@/lib/schemas/verification-schemas';
 
 export const POST = withAuth(async (request: NextRequest, user) => {
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'Não autenticado' }, { status: 401 });
+  }
   // Verificar se é admin
   if (user.role !== 'admin') {
     return NextResponse.json(

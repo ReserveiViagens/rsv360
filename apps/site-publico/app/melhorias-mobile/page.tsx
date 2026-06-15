@@ -130,7 +130,8 @@ export default function MelhoriasMobilePage() {
   useEffect(() => {
     setVoiceSupported(
       typeof window !== "undefined" &&
-        !!(window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition)
+        !!((window as Window & { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown }).SpeechRecognition
+          || (window as Window & { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition)
     )
   }, [])
 

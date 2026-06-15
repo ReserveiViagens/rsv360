@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let codes = [];
+    let codes: Array<Record<string, unknown>> = [];
 
     if (bookingId) {
       // Buscar PINs ativos da reserva

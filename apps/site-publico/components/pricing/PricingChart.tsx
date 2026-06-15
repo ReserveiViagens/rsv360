@@ -200,12 +200,12 @@ export default function PricingChart({ propertyId, data, isLoading }: PricingCha
               tickFormatter={(value) => `R$ ${value.toFixed(0)}`}
             />
             <Tooltip
-              formatter={(value: number, name: string) => {
+              formatter={((value: number, name: string) => {
                 if (name === 'precoReal') return [`R$ ${value.toFixed(2)}`, 'Preço Real'];
                 if (name === 'precoSugerido') return [`R$ ${value.toFixed(2)}`, 'Preço Sugerido'];
                 if (name === 'demanda') return [`${value.toFixed(0)}%`, 'Demanda'];
                 return [value, name];
-              }}
+              }) as any}
               labelFormatter={(label) => `Data: ${label}`}
             />
             <Legend 

@@ -153,11 +153,11 @@ export default function DemandForecast({ propertyId, data, isLoading }: DemandFo
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip
-                formatter={(value: number, name: string) => {
+                formatter={((value: number, name: string) => {
                   if (name === 'demanda') return [`${value.toFixed(1)}%`, 'Demanda Prevista'];
                   if (name === 'confianca') return [`${value.toFixed(1)}%`, 'Confiança'];
                   return [value, name];
-                }}
+                }) as any}
                 labelFormatter={(label, payload) => {
                   if (payload && payload[0]) {
                     const item = payload[0].payload;

@@ -241,7 +241,7 @@ function PropertyVerificationContent() {
             <CardContent className="space-y-4">
               <Select
                 value={verificationRequest.verification_level}
-                onValueChange={(value) => setVerificationRequest({
+                onValueChange={(value: string) => setVerificationRequest({
                   ...verificationRequest,
                   verification_level: value as any,
                 })}

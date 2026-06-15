@@ -5,6 +5,7 @@ import {
   fetchDecolarBookings,
   syncDecolarBidirectional,
 } from '@/lib/decolar-service';
+import type { DecolarConfig } from '@/lib/decolar-service';
 import { getCredential } from '@/lib/credentials-service';
 
 // POST: Autenticar ou sincronizar
@@ -69,10 +70,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const config = {
-      api_key: await getCredential('decolar', `api_key_${propertyId}`),
-      api_secret: await getCredential('decolar', `api_secret_${propertyId}`),
-      access_token: await getCredential('decolar', `access_token_${propertyId}`),
+    const config: DecolarConfig = {
+      api_key: (await getCredential('decolar', `api_key_${propertyId}`)) ?? '',
+      api_secret: (await getCredential('decolar', `api_secret_${propertyId}`)) ?? '',
+      access_token: (await getCredential('decolar', `access_token_${propertyId}`)) ?? '',
       property_id: propertyId,
     };
 

@@ -187,15 +187,14 @@ export async function processParticipantPayment(
   
   if (paymentMethod === 'pix') {
     // Integrar com MercadoPago PIX
-    const { createPixPayment } = await import('./mercadopago-enhanced');
-    const pixResult = await createPixPayment({
-      amount: participant[0].amount,
-      description: `Split Payment - Participante ${participantId}`,
-      payer: {
-        email: participant[0].email,
-        name: participant[0].name || participant[0].email,
-      },
-    });
+    const { processPixPayment } = await import('./mercadopago-enhanced');
+    const pixResult = await processPixPayment(
+      splitPaymentId,
+      `split-${participantId}`,
+      participant[0].amount,
+      participant[0].email,
+      participant[0].name || participant[0].email,
+    );
     paymentSuccess = pixResult.status === 'pending' || pixResult.status === 'approved';
   } else if (paymentMethod === 'credit_card') {
     // Integrar com Stripe ou MercadoPago

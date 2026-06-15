@@ -15,6 +15,7 @@ export interface Hotel {
   status: 'active' | 'inactive' | 'draft';
   images: string[];
   features?: string[];
+  amenities?: string[];
   maxGuests?: number;
   distanceFromCenter?: number;
   reviewCount?: number;
@@ -37,6 +38,7 @@ export interface Promotion {
   discount: number;
   validUntil: string;
   status: 'active' | 'inactive';
+  images?: string[];
   metadata?: any;
   seo_data?: any;
 }
@@ -49,6 +51,7 @@ export interface Attraction {
   price: number;
   location: string;
   status: 'active' | 'inactive';
+  images?: string[];
   metadata?: any;
   seo_data?: any;
 }

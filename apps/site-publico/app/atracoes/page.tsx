@@ -63,7 +63,7 @@ export default function AtracoesPage() {
       category: "Aventura",
       highlights: ["Passeios de barco", "Jet ski", "Pesca esportiva", "Vista panorâmica"],
       rating: 4.6,
-      price: null, // Special case for "ver disponibilidade"
+      price: undefined, // Special case for "ver disponibilidade"
     },
     {
       id: "monumento-aguas",
@@ -103,7 +103,7 @@ export default function AtracoesPage() {
       category: "Ecoturismo",
       highlights: ["Trilhas ecológicas", "Cachoeiras", "Vista panorâmica", "Flora e fauna"],
       rating: 4.9,
-      price: null, // Changed to "ver disponibilidade"
+      price: undefined, // Changed to "ver disponibilidade"
     },
     {
       id: "centro-historico",

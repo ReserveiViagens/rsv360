@@ -179,7 +179,7 @@ export function CampaignList({
           <div className="flex items-center gap-2 mb-4">
             <Select
               value={filters.status || 'all'}
-              onValueChange={(value) => setFilters({ ...filters, status: value === 'all' ? undefined : value })}
+              onValueChange={(value: string) => setFilters({ ...filters, status: value === 'all' ? '' : (value ?? '') })}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
@@ -196,7 +196,7 @@ export function CampaignList({
             </Select>
             <Select
               value={filters.campaign_type || 'all'}
-              onValueChange={(value) => setFilters({ ...filters, campaign_type: value === 'all' ? undefined : value })}
+              onValueChange={(value: string) => setFilters({ ...filters, campaign_type: value === 'all' ? '' : (value ?? '') })}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Tipo" />

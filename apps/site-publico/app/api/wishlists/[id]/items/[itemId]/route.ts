@@ -3,12 +3,12 @@
  * GET /api/wishlists/[id]/items/[itemId] - Buscar item específico
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { listWishlistItems } from '@/lib/wishlist-service';
-import { withAuth, AuthRequest } from '@/lib/api-auth';
+import { withAuth, AuthRequest, AuthenticatedUser } from '@/lib/api-auth';
 
 export const GET = withAuth(
-  async (request: AuthRequest) => {
+  async (request: AuthRequest, _user: AuthenticatedUser | null): Promise<NextResponse> => {
     try {
       const pathParts = request.nextUrl.pathname.split('/');
       const wishlistId = parseInt(pathParts[pathParts.length - 3], 10); // wishlists/[id]/items/[itemId]
@@ -34,9 +34,9 @@ export const GET = withAuth(
         );
       }
 
-      const votesUp = parseInt(item.votes_up || 0);
-      const votesDown = parseInt(item.votes_down || 0);
-      const votesMaybe = parseInt(item.votes_maybe || 0);
+      const votesUp = Number(item.votes_up ?? 0);
+      const votesDown = Number(item.votes_down ?? 0);
+      const votesMaybe = Number(item.votes_maybe ?? 0);
       const totalVotes = votesUp + votesDown + votesMaybe;
 
       const mappedItem = {

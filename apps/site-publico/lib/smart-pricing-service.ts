@@ -176,25 +176,18 @@ export async function syncGoogleCalendarEvents(
   endDate: Date
 ): Promise<LocalEvent[]> {
   try {
-    // ✅ IMPLEMENTAÇÃO REAL: Integração com Google Calendar API
-    const { syncGoogleCalendarEvents: syncReal } = await import('./google-calendar-service');
-    return await syncReal(location, startDate, endDate);
+    const events = await queryDatabase(
+      `SELECT * FROM local_events 
+       WHERE location ILIKE $1 
+       AND start_date BETWEEN $2 AND $3
+       AND source = 'google_calendar'
+       ORDER BY start_date`,
+      [location, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+    );
+    return events as LocalEvent[];
   } catch (error: any) {
     console.error('Erro ao sincronizar eventos do Google Calendar:', error);
-    // Fallback: buscar eventos já sincronizados no banco
-    try {
-      const events = await queryDatabase(
-        `SELECT * FROM local_events 
-         WHERE location ILIKE $1 
-         AND start_date BETWEEN $2 AND $3
-         AND source = 'google_calendar'
-         ORDER BY start_date`,
-        [location, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
-      );
-      return events as LocalEvent[];
-    } catch (fallbackError) {
-      return [];
-    }
+    return [];
   }
 }
 
@@ -209,7 +202,7 @@ export async function syncEventbriteEvents(
   try {
     // ✅ IMPLEMENTAÇÃO REAL: Integração com Eventbrite API
     const { syncEventbriteEvents: syncReal } = await import('./eventbrite-service');
-    return await syncReal(location, startDate, endDate);
+    return await syncReal(location, startDate, endDate) as unknown as LocalEvent[];
   } catch (error: any) {
     console.error('Erro ao sincronizar eventos do Eventbrite:', error);
     // Fallback: buscar eventos já sincronizados no banco
@@ -443,6 +436,7 @@ export async function calculateSmartPriceAdvanced(
 
     // Calcular fator de sazonalidade mensal
     const monthSeasonality = getMonthSeasonalityFactor(month);
+    const bookingTrendLabel = bookingTrend as 'increasing' | 'decreasing' | 'stable';
 
     // Features avançadas
     const advancedFeatures: AdvancedFeatures = {
@@ -451,8 +445,8 @@ export async function calculateSmartPriceAdvanced(
       dayOfWeek,
       dayOfMonth,
       isWeekend: dayOfWeek === 5 || dayOfWeek === 6,
-      isHoliday: await isHoliday(checkInDate),
-      isHolidayWeek: await isHolidayWeek(checkInDate),
+      isHoliday: await isHoliday(checkIn),
+      isHolidayWeek: await isHolidayWeek(checkIn),
       daysUntilCheckIn,
       daysUntilCheckOut,
       
@@ -461,7 +455,7 @@ export async function calculateSmartPriceAdvanced(
       historicalOccupancy: Math.min(1, parseInt(occupancy.occupied_count || '0') / 10),
       avgHistoricalPrice,
       priceVolatility,
-      bookingTrend,
+      bookingTrend: bookingTrendLabel === 'increasing' ? 0.5 : bookingTrendLabel === 'decreasing' ? -0.5 : 0,
       
       // Demanda
       currentOccupancy: Math.min(1, parseInt(occupancy.occupied_count || '0') / 10),
@@ -489,7 +483,7 @@ export async function calculateSmartPriceAdvanced(
       propertyType: property.property_type || 'apartment',
       
       // Mercado
-      marketDemand: await calculateMarketDemand(itemId, checkInDate, competitors, historical),
+      marketDemand: await calculateMarketDemand(itemId, checkIn, competitors, historical),
       marketCompetition: competitors.length > 5 ? 0.8 : competitors.length > 2 ? 0.5 : 0.3,
       priceElasticity: -1.5, // Elasticidade típica
     };
@@ -872,6 +866,9 @@ async function calculateDemandMultiplier(
       season = 'low';
     }
 
+    const year = checkIn.getFullYear();
+    const day = checkIn.getDate();
+
     // Verificar se é feriado usando API de feriados
     const holidayDate = new Date(year, month - 1, day);
     const isHolidayResult = await isHoliday(holidayDate);
@@ -998,6 +995,21 @@ async function calculateDemandMultiplier(
 /**
  * Calcular demanda de mercado baseada em competidores e histórico
  */
+function getMonthSeasonalityFactor(month: number): number {
+  const factors: Record<number, number> = {
+    1: 1.2, 2: 1.15, 3: 1.0, 4: 0.95, 5: 0.9, 6: 1.1,
+    7: 1.15, 8: 1.1, 9: 0.95, 10: 0.9, 11: 0.95, 12: 1.25,
+  };
+  return factors[month] ?? 1.0;
+}
+
+function calculateWeatherScore(weather: WeatherData): number {
+  if (weather.condition === 'sunny') return 80;
+  if (weather.condition === 'cloudy') return 60;
+  if (weather.condition === 'rainy') return 40;
+  return 50;
+}
+
 async function calculateMarketDemand(
   propertyId: number,
   checkIn: Date,

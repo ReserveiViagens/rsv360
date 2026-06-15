@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
           ? 'text/csv'
           : 'application/pdf';
 
-    return new NextResponse(file instanceof Buffer ? file : Buffer.from(file), {
+    return new NextResponse(new Uint8Array(file instanceof Buffer ? file : Buffer.from(file)), {
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${filename}"`,
