@@ -1,8 +1,8 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URLs
-  API_BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
-  WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000',
+  API_BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002',
+  WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002',
   
   // Timeouts
   API_TIMEOUT: 30000, // 30 seconds
@@ -35,12 +35,13 @@ export const API_CONFIG = {
   ENDPOINTS: {
     // Auth
     AUTH: {
-      LOGIN: '/api/auth/login',
+      LOGIN: '/api/v1/auth/login',
       REGISTER: '/api/auth/register',
-      LOGOUT: '/api/auth/logout',
-      REFRESH: '/api/auth/refresh',
-      VERIFY: '/api/auth/verify-token',
-      ME: '/api/auth/me',
+      LOGOUT: '/api/v1/auth/logout',
+      REFRESH: '/api/v1/auth/refresh',
+      SESSION: '/api/v1/auth/session',
+      VERIFY: '/api/v1/auth/session',
+      ME: '/api/v1/auth/session',
       FORGOT_PASSWORD: '/api/auth/forgot-password',
       RESET_PASSWORD: '/api/auth/reset-password',
       SETUP_2FA: '/api/auth/2fa/setup',

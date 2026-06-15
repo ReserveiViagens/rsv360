@@ -1,121 +1,35 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
-import { 
+import {
   Brain,
-  MessageCircle,
-  Send,
-  User,
-  Bot,
   Lightbulb,
-  BookOpen,
   Target,
-  TrendingUp,
-  Star,
-  Award,
-  Zap,
-  Activity,
-  BarChart3,
-  PieChart,
   Eye,
-  EyeOff,
-  Play,
-  Pause,
-  RotateCcw,
-  Settings,
-  Download,
-  Upload,
-  Calendar,
-  Users,
-  Rocket,
-  Shield,
-  Code,
-  Database,
-  Globe,
-  Smartphone,
-  Monitor,
-  Tablet,
-  Laptop,
-  Wifi,
-  Mail,
-  Phone,
-  Building,
-  MapPin,
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
-  Info,
-  Warning,
-  AlertTriangle,
-  CheckCircle,
-  CheckCircle2,
-  XCircle,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  ChevronLeft,
+  HelpCircle,
+  BookOpen,
   ArrowRight,
-  ArrowLeft,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
-  Timer,
+  Archive,
+  Settings,
   ThumbsUp,
   ThumbsDown,
-  HelpCircle,
   Bookmark,
-  BookmarkCheck,
-  FileText,
+  Send,
   Video,
-  Headphones,
-  Image,
-  Link,
-  Layers,
-  Compass,
-  Navigation,
-  Flag,
-  FlagTriangle,
-  Trophy,
-  Medal,
-  Crown,
-  Sparkles,
-  TrendingDown,
-  FlashIcon,
-  Flame,
-  Mountain,
-  TreePine,
-  Waves,
-  Clock,
-  Mic,
-  MicOff,
+  FileText,
+  Code,
   Volume2,
-  VolumeX,
-  Camera,
-  CameraOff,
-  Screen,
-  ScreenShare,
-  Maximize2,
-  Minimize2,
-  MoreVertical,
-  Archive,
+  Download,
+  Share,
   Save,
-  Loader2
+  Calculator,
 } from 'lucide-react'
 
 // Tipos para AI Tutor
@@ -239,18 +153,17 @@ interface QuickAction {
   id: string
   label: string
   description: string
-  icon: React.ComponentType<any>
+  icon: React.ComponentType<{ className?: string }>
   action: () => void
   category: 'learning' | 'practice' | 'help' | 'tools'
 }
 
 const AITutor: React.FC = () => {
-  const [activeSession, setActiveSession] = useState<AITutorSession | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [currentMessage, setCurrentMessage] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [selectedPersonality, setSelectedPersonality] = useState('adaptive')
-  const [learningContext, setLearningContext] = useState<LearningContext>({
+  const [learningContext] = useState<LearningContext>({
     currentTopic: 'Sistema RSV - Fundamentos',
     previousTopics: ['Navegação básica', 'Cadastros'],
     userLevel: 6,
