@@ -97,7 +97,9 @@
 - [x] ADR-0004 PLANO-MESTRE Fase 1 — **Proposto** — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
 - [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
 - [x] T0.23a Radix turismo impl — **GO condicional** #362 — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
-- [x] T0.23a Radix turismo carimbo — **GO pós-merge** *(esta PR)* — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
+- [x] T0.23a Radix turismo carimbo — **GO pós-merge** #363 — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
+- [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
+- [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
 
 ## Decisão Trilha 0
 
@@ -117,4 +119,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Proposto** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T0.23a carimbo pós-merge → T0.24 eslint hoist → lint #237 → ADR-0004 Aceito |
+| **Próximo passo** | ADR-0004 Aceito → T0.23b TS2322/2339 ou redução lint #237 |
