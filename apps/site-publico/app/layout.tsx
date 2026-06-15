@@ -1,6 +1,6 @@
 /// <reference path="../types/third-party.d.ts" />
 import type React from 'react';
-import './globals.css';
+import '../styles/globals.css';
 
 export const dynamic = 'force-dynamic';
 
