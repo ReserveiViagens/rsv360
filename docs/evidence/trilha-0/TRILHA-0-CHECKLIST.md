@@ -99,6 +99,7 @@
 - [x] T0.23a Radix turismo impl — **GO condicional** #362 — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
 - [x] T0.23a Radix turismo carimbo — **GO pós-merge** #363 — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
 - [x] T0.23b TS2322/2339 turismo — **GO** #368 — `T0.23b-TS2322-2339-RESULT.md` — TS2322/TS2339 **→ 0**
+- [x] T0.23b carimbo — **GO pós-merge** *(esta PR)* — `T0.23b-TURISMO-TS2322-POST-MERGE.md`
 - [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
 - [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
 - [x] Lint #237 site-publico — **GO** #369 — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md`
