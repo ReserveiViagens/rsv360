@@ -36,7 +36,9 @@ Após [T0.20-RODADA-ENCERRAMENTO.md](./T0.20-RODADA-ENCERRAMENTO.md) (`.next/typ
 
 ## Veredito
 
-**Fase E HITL pós-T0.20 = GO** — próxima execução: **T0.21 impl Tailwind 4 site-publico**.
+**Fase E TW4 = GO encerrada** — guest, admin e site-publico em Tailwind 4.3.1.
+
+**Próximo:** carimbo pós-merge T0.21.
 
 ---
 

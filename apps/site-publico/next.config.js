@@ -54,6 +54,32 @@ const nextConfig = {
       '@': path.resolve(__dirname, '.'),
     },
   },
+  webpack(config) {
+    const patchCssLoader = (rules) => {
+      if (!rules) return;
+      for (const rule of rules) {
+        if (rule.oneOf) patchCssLoader(rule.oneOf);
+        const uses = rule.use
+          ? Array.isArray(rule.use)
+            ? rule.use
+            : [rule.use]
+          : [];
+        for (const use of uses) {
+          if (
+            use &&
+            typeof use === 'object' &&
+            use.loader &&
+            String(use.loader).includes('css-loader') &&
+            use.options
+          ) {
+            use.options.url = false;
+          }
+        }
+      }
+    };
+    patchCssLoader(config.module.rules);
+    return config;
+  },
 };
 
 module.exports = nextConfig;
