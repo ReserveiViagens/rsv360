@@ -3,7 +3,7 @@
 // ===================================================================
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -108,7 +108,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     watch,
     setValue
   } = useForm<BookingFormData>({
-    resolver: zodResolver(bookingSchema),
+    resolver: zodResolver(bookingSchema as never) as Resolver<BookingFormData>,
     defaultValues: {
       customerName: '',
       customerEmail: '',

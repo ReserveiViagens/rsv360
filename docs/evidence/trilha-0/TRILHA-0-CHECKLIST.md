@@ -116,6 +116,9 @@
 - [x] Lint #237 admin/guest/turismo — **GO** #375 — `issue-237/LINT-237-ADMIN-GUEST-TURISMO-POST-T0.24.md`
 - [x] Lint #237 turismo api module — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-API-MODULE.md`
 - [x] T1.1 piloto tenant/auth — **GO condicional** *(esta PR)* — `T1.1-PILOTO-TENANT-AUTH-RESULT.md`
+- [x] T0.23f TS turismo residual — **GO** *(esta PR)* — `T0.23f-TURISMO-TS-RESULT.md` — **49 → 0**
+- [x] Lint #237 turismo cotacoes — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-COTACOES-MODULE.md`
+- [x] T1.2d login DB — **GO** *(esta PR)* — `T1.2d-LOGIN-DB-RESULT.md`
 
 ## Decisão Trilha 0
 
@@ -135,4 +138,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T0.23f TS turismo (~49) | lint pages/cotacoes | refresh login DB |
+| **Próximo passo** | Lint #237 módulos restantes turismo | build smoke turismo | T1.5 rate limit auth |

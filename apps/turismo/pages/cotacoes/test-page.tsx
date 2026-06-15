@@ -102,7 +102,7 @@ export default function TestPage() {
 
   const passedCount = testResults.filter(r => r.passed).length;
   const totalCount = testResults.length;
-  const successRate = totalCount > 0 ? ((passedCount / totalCount) * 100).toFixed(0) : 0;
+  const successRate = totalCount > 0 ? ((passedCount / totalCount) * 100).toFixed(0) : '0';
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

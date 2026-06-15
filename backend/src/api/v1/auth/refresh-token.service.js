@@ -158,4 +158,5 @@ module.exports = {
   isDbRefreshEnabled,
   verifyAndRotateRefreshToken,
   createRefreshToken,
+  queryDatabase,
 };

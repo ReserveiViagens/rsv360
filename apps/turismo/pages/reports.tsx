@@ -969,12 +969,13 @@ export default function ReportsPage() {
     // Simular geração de PDF
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    const periodText = {
+    const periodLabels = {
       daily: 'Diário',
       weekly: 'Semanal',
       monthly: 'Mensal',
       annual: 'Anual'
-    }[pdfPeriod as keyof typeof periodText] || 'Geral';
+    } as const;
+    const periodText = periodLabels[pdfPeriod as keyof typeof periodLabels] || 'Geral';
     
     const categoryText = pdfCategory === 'all' ? 'Todas as Categorias' : pdfCategory;
     const searchText = pdfSearchTerm ? `_${pdfSearchTerm.replace(/[^a-zA-Z0-9]/g, '')}` : '';

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
-import { leiloesApi } from '../../../src/services/api/leiloesApi'
+import { leiloesApi, type RelatorioFilters } from '../../../src/services/api/leiloesApi'
 import { BarChart3, DollarSign, TrendingUp, FileDown } from 'lucide-react'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
 
@@ -13,7 +13,7 @@ export default function RelatoriosPage() {
     start_date: '',
     end_date: '',
     status: '',
-    type: '',
+    type: '' as '' | RelatorioFilters['type'],
   })
 
   useEffect(() => {
@@ -23,7 +23,10 @@ export default function RelatoriosPage() {
   const loadRelatorios = async () => {
     try {
       setLoading(true)
-      const data = await leiloesApi.getRelatorios(filters)
+      const data = await leiloesApi.getRelatorios({
+        ...filters,
+        type: filters.type || undefined,
+      })
       setRelatorios(data)
     } catch (error) {
       console.error('Erro ao carregar relatórios:', error)

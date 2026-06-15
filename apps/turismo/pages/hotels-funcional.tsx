@@ -250,7 +250,9 @@ export default function HotelsFuncional() {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof Hotel],
+          ...(typeof prev[parent as keyof Hotel] === 'object' && prev[parent as keyof Hotel] !== null
+            ? (prev[parent as keyof Hotel] as object)
+            : {}),
           [child]: value
         }
       }));

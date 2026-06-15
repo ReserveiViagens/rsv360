@@ -166,7 +166,7 @@ export default function TemplatesPage() {
     // Criar nova cotação baseada no template
     const newBudget: Budget = {
       ...template.budget,
-      id: budgetStorage.generateId(),
+      id: budgetStorage.createId(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: 'draft'

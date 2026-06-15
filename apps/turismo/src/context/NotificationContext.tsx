@@ -169,7 +169,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     if (user?.id) {
       const connectWebSocket = async () => {
         try {
-          await webSocketService.connect(user.id, user.token || '');
+          await webSocketService.connect(String(user.id), user.token || '');
           dispatch({ type: 'SET_CONNECTION_STATUS', payload: true });
           
           // Configurar listeners

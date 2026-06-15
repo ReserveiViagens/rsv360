@@ -165,7 +165,7 @@ export function HotelSelector({
         <Label className="text-sm text-gray-600">Hotel</Label>
         <Select 
           value={value?.hotelId || ""} 
-          onValueChange={(hotelId) => {
+          onValueChange={(hotelId: string) => {
             const hotel = filteredHotels.find(h => h.id === hotelId)
             if (hotel) {
               handleHotelSelect(hotel)
