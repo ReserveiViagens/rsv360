@@ -62,7 +62,7 @@ const BookingsListTab: React.FC<BookingsListTabProps> = ({ bookings, onEdit, onD
       const matchesSearch = 
         booking.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         booking.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+        (booking.customerEmail ?? '').toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
       const matchesPayment = paymentFilter === 'all' || booking.paymentStatus === paymentFilter;

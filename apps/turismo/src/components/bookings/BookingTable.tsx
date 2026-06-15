@@ -156,9 +156,9 @@ const BookingTable: React.FC<BookingTableProps> = ({
       }
       
       if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
+        return (aValue ?? '') > (bValue ?? '') ? 1 : -1;
       } else {
-        return aValue < bValue ? 1 : -1;
+        return (aValue ?? '') < (bValue ?? '') ? 1 : -1;
       }
     });
 

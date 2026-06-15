@@ -447,8 +447,14 @@ export default function CustomersComplete() {
 
       if (sortBy.includes('.')) {
         const keys = sortBy.split('.');
-        aValue = keys.reduce((obj, key) => obj[key], a);
-        bValue = keys.reduce((obj, key) => obj[key], b);
+        let aNested: any = a;
+        let bNested: any = b;
+        for (const key of keys) {
+          aNested = aNested?.[key];
+          bNested = bNested?.[key];
+        }
+        aValue = aNested;
+        bValue = bNested;
       } else {
         aValue = a[sortBy as keyof Customer];
         bValue = b[sortBy as keyof Customer];

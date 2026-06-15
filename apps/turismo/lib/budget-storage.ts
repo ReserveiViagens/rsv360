@@ -198,6 +198,10 @@ class BudgetStorage {
     localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(budgets));
   }
 
+  createId(): string {
+    return this.generateId();
+  }
+
   private generateId(): string {
     // Fallback para ambientes que não suportam crypto.randomUUID()
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {

@@ -339,7 +339,7 @@ export default function TemplatesGalleryPage() {
         )}
 
         {/* Dialog de Confirmação de Exclusão */}
-        <Dialog open={!!templateToDelete} onOpenChange={(open) => !open && setTemplateToDelete(null)}>
+        <Dialog open={!!templateToDelete} onOpenChange={(open: boolean) => !open && setTemplateToDelete(null)}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Confirmar Exclusão</DialogTitle>

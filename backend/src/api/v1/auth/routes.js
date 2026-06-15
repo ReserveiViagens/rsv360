@@ -156,17 +156,47 @@ router.post('/refresh', async (req, res) => {
   });
 });
 
-/** POST /api/v1/auth/login — piloto dev (sem DB); produção usa site-publico */
-router.post('/login', (req, res) => {
+/** POST /api/v1/auth/login — DB (produção) ou piloto dev */
+router.post('/login', async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ success: false, error: 'E-mail e senha são obrigatórios' });
   }
 
+  const { loginWithDatabase, isDbLoginEnabled } = require('./login.service');
+
+  if (isDbLoginEnabled()) {
+    try {
+      const ipAddress =
+        (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress;
+      const result = await loginWithDatabase(email, password, {
+        ipAddress,
+        userAgent: req.get('user-agent'),
+      });
+
+      if (result?.error === 'invalid_credentials') {
+        return res.status(401).json({ success: false, error: 'Credenciais inválidas' });
+      }
+      if (result?.error === 'account_disabled') {
+        return res.status(403).json({ success: false, error: 'Conta desativada' });
+      }
+      if (result) {
+        return res.json({
+          success: true,
+          message: 'Login realizado',
+          data: result,
+        });
+      }
+    } catch (error) {
+      console.error('[AUTH] login DB error:', error.message);
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
+  }
+
   if (process.env.AUTH_PILOT_ENABLED !== 'true') {
     return res.status(501).json({
       success: false,
-      error: 'Login piloto desabilitado. Use site-publico /api/auth/login.',
+      error: 'Login indisponível. Configure DATABASE_URL ou AUTH_PILOT_ENABLED.',
     });
   }
 

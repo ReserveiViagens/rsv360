@@ -107,7 +107,7 @@ export default function GoogleHotelAdsPage() {
   const loadCampaignMetrics = async (campaignId: number) => {
     try {
       const metrics = await api.get<Campaign>(`/api/v1/google-hotel-ads/campaigns/${campaignId}/metrics`)
-      setSelectedCampaign(metrics)
+      setSelectedCampaign(metrics.data ?? null)
     } catch (error) {
       console.error('Failed to load campaign metrics:', error)
       toast.error('Erro ao carregar métricas da campanha.')

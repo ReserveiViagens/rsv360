@@ -52,7 +52,10 @@ export default function WishlistsPage() {
     }
 
     try {
-      await viagensGrupoApi.addWishlistItem(grupoId, newItem)
+      await viagensGrupoApi.addWishlistItem(grupoId, {
+        ...newItem,
+        user_id: 'user_local',
+      })
       toast.success('Item adicionado à wishlist!')
       setNewItem({ item_tipo: '', descricao: '' })
       setShowAddForm(false)
