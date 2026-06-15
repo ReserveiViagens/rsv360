@@ -1,0 +1,7 @@
+track	id	escopo	erros_alvo	prioridade	rationale
+A	T0.20a	radix shadcn ui select tabs dialog + leaflet	~150 TS2786	1	fecha TS2786 residual; baixo risco se limitado a components/ui
+B	T0.20b	TS2322 TS2339 por modulo analytics crm loyalty	~518	2	maior volume; debito app excluido tsconfig
+C	T0.20c	TS2559 TS2344 ui generics	~131	3	apos A/B
+D	T0.21	tsconfig / ignoreBuildErrors	HITL	4	somente pos reducao sustentada
+
+recomendacao	HITL	T0.20a primeiro se meta TS2786 zero; T0.20b se meta reducao total maxima
