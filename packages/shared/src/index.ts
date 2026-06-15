@@ -3,6 +3,7 @@
 // Types
 export * from './types/index.js';
 export * from './types/tenant.js';
+export * from './auth/session.js';
 
 // Validators
 export * from './validators/checkout.validator.js';
