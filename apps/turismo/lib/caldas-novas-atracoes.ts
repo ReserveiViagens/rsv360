@@ -1,7 +1,7 @@
 // Templates de Atrações em Caldas Novas conforme documentação (linha 704-721)
 // 9 templates de atrações turísticas conforme documento
 
-import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, ContactInfo } from './types/budget';
+import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, ContactInfo, DayItinerary, AccommodationDetail } from './types/budget';
 import { generateId } from './utils';
 
 /**

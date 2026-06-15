@@ -1,0 +1,10 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t1.3-tenant-routing	PASS
+T1.3_shared_build	PASS
+T1.3_admin_typecheck	PASS
+T1.3_tenant_test	2/2	PASS
+T1.2b_refresh_test	2/2	PASS
+T0.23d_ts_total	125 -> 76	-49
+T0.23d_build	PASS
+lint_api_module	exit_0	PASS

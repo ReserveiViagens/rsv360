@@ -454,7 +454,16 @@ export class CollaborationManager {
     read: boolean;
     actionUrl?: string;
   }[] {
-    const notifications = [];
+    type NotificationItem = {
+      id: string;
+      type: 'mention' | 'share' | 'comment' | 'workspace_invite';
+      title: string;
+      message: string;
+      createdAt: string;
+      read: boolean;
+      actionUrl?: string;
+    };
+    const notifications: NotificationItem[] = [];
     
     // Notificações de menções em comentários
     const comments = this.getAllComments();
