@@ -13,6 +13,15 @@ function buildAuthApp() {
 
 describe('auth v1 refresh', () => {
   const app = buildAuthApp();
+  const originalDbUrl = process.env.DATABASE_URL;
+
+  afterEach(() => {
+    if (originalDbUrl === undefined) {
+      delete process.env.DATABASE_URL;
+    } else {
+      process.env.DATABASE_URL = originalDbUrl;
+    }
+  });
 
   it('returns 400 without refresh_token', async () => {
     const response = await request(app).post('/api/v1/auth/refresh').send({});
@@ -20,6 +29,7 @@ describe('auth v1 refresh', () => {
   });
 
   it('returns new access token for valid refresh JWT', async () => {
+    delete process.env.DATABASE_URL;
     const refreshSecret =
       process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
     const refreshToken = signJwt(
