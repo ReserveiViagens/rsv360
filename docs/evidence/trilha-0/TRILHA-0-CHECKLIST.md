@@ -86,7 +86,10 @@
 - [x] **Fase E TW4 (guest+admin+site-publico) — encerrada** — `FASE-E-TW4-CLOSEOUT.md`
 - [x] Fase E HITL pós-T0.21 — **GO** — `FASE-E-HITL-POST-T0.21.md`
 - [x] T0.22 TW4 turismo preflight — **GO condicional** — `T0.22-TAILWIND4-TURISMO-PREFLIGHT.md`
-- [x] T0.22 TW4 turismo impl — **GO** branch `chore/t0.22-tw4-turismo` — `T0.22-TAILWIND4-TURISMO-RESULT.md`
+- [x] T0.22 TW4 turismo impl — **GO pós-merge** #359 — `T0.22-TAILWIND4-TURISMO-RESULT.md`
+- [x] T0.22 TW4 turismo carimbo — **GO pós-merge** *(esta PR)* — `T0.22-TAILWIND4-TURISMO-POST-MERGE.md`
+- [x] **Fase E TW4 — encerrada** (4/4 apps Next em 4.3.1)
+- [x] **Fase E ADR-0003 — encerrada** — `FASE-E-CLOSEOUT.md`
 
 ## Decisão Trilha 0
 
@@ -101,5 +104,7 @@
 | **Montanha `.next/types`** | T0.20c **GO pós-merge** (#353); **0** erros pos-build |
 | **Fase E / TW4 site-publico** | T0.21 **GO pós-merge** (#356/#357) |
 | **Fase E / TW4 (3 apps canônicos)** | **Encerrada** — `FASE-E-TW4-CLOSEOUT.md` |
-| **Fase E / TW4 turismo** | T0.22 **GO** (#impl) — último app Next |
-| **Próximo passo** | Carimbo pós-merge T0.22 + FASE-E-CLOSEOUT global |
+| **Fase E / TW4** | **GO / encerrada** — 4/4 apps em **4.3.1** |
+| **Fase E / ADR-0003** | **GO / encerrada** — `FASE-E-CLOSEOUT.md` |
+| **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
+| **Próximo passo** | HITL fora ADR-0003 (lint #237, TS turismo, nova ADR) |

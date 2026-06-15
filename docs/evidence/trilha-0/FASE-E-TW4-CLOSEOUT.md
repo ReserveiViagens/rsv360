@@ -40,8 +40,8 @@ Todos migrados para **Tailwind CSS 4.3.1** com configuração **CSS-first**, bui
 | Item | Resultado |
 |------|-----------|
 | **Fase E / TW4 (guest+admin+site-publico)** | **GO / encerrada** |
-| **Próximo TW4** | `apps/turismo` — T0.22 preflight |
+| **turismo** | **GO pós-merge** T0.22 (#359) — ver [FASE-E-CLOSEOUT.md](./FASE-E-CLOSEOUT.md) |
 
 ---
 
-*Documento de fechamento — não altera código, dependências, Docker ou runtime.*
+*Closeout parcial (3 apps App Router). TW4 turismo encerrado em FASE-E-CLOSEOUT.md.*
