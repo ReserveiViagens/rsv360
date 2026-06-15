@@ -130,6 +130,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "types/lucide-legacy.d.ts",
     "pages/_app.tsx",
     "pages/_document.tsx",
     "pages/integracoes-apis.tsx",
