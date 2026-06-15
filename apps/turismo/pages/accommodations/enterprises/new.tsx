@@ -8,7 +8,7 @@ import { useAuth } from '../../../src/context/AuthContext';
 import ProtectedRoute from '../../../src/components/ProtectedRoute';
 import { EnterpriseForm } from '../../../src/components/accommodations/EnterpriseForm';
 import { enterprisesApi } from '../../../src/services/api/accommodationsApi';
-import type { Enterprise } from '../../src/types/accommodations';
+import type { Enterprise } from '../../../src/types/accommodations';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';

@@ -232,7 +232,7 @@ export function AttractionSelector({ value, onChange, required = false }: Attrac
             <Label htmlFor="attraction-select">Atração</Label>
             <Select 
               value={value?.attraction?.id || ""} 
-              onValueChange={(attractionId) => {
+              onValueChange={(attractionId: string) => {
                 const attraction = availableAttractions.find(a => a.id === attractionId)
                 if (attraction) handleAttractionChange(attraction)
               }}
@@ -272,7 +272,7 @@ export function AttractionSelector({ value, onChange, required = false }: Attrac
       {value?.attraction && (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
           <h4 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-            <span>{attractionTypes.find(t => t.value === value.attraction.type)?.label.split(' ')[0]}</span>
+            <span>{attractionTypes.find(t => t.value === value?.attraction?.type)?.label.split(' ')[0]}</span>
             <span>{value.attraction.name}</span>
           </h4>
           

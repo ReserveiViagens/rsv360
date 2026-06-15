@@ -15,7 +15,7 @@ function base64UrlEncode(buffer) {
 }
 
 /** Verifica JWT HS256 (compatível com site-publico jsonwebtoken). */
-function verifyAccessToken(token, secret) {
+function verifyJwt(token, secret, options = {}) {
   if (!token || typeof token !== 'string') return null;
 
   const parts = token.split('.');
@@ -34,6 +34,9 @@ function verifyAccessToken(token, secret) {
 
   try {
     const payload = JSON.parse(base64UrlDecode(encodedPayload).toString('utf8'));
+    if (options.requireType && payload.type !== options.requireType) {
+      return null;
+    }
     if (payload.exp && Date.now() / 1000 >= payload.exp) {
       return null;
     }
@@ -41,6 +44,24 @@ function verifyAccessToken(token, secret) {
   } catch {
     return null;
   }
+}
+
+function verifyAccessToken(token, secret) {
+  return verifyJwt(token, secret);
+}
+
+function verifyRefreshToken(token, secret) {
+  return verifyJwt(token, secret, { requireType: 'refresh' });
+}
+
+function signJwt(payload, secret, expiresInSeconds) {
+  const header = base64UrlEncode(Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
+  const bodyPayload = { ...payload, exp: Math.floor(Date.now() / 1000) + expiresInSeconds };
+  const encodedPayload = base64UrlEncode(Buffer.from(JSON.stringify(bodyPayload)));
+  const signature = base64UrlEncode(
+    crypto.createHmac('sha256', secret).update(`${header}.${encodedPayload}`).digest()
+  );
+  return `${header}.${encodedPayload}.${signature}`;
 }
 
 function extractBearerToken(req) {
@@ -52,4 +73,9 @@ function extractBearerToken(req) {
   return token || null;
 }
 
-module.exports = { verifyAccessToken, extractBearerToken };
+module.exports = {
+  verifyAccessToken,
+  verifyRefreshToken,
+  signJwt,
+  extractBearerToken,
+};

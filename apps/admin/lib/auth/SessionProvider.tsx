@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   AUTH_ACCESS_TOKEN_KEY,
+  AUTH_REFRESH_TOKEN_KEY,
   type AuthSessionResponse,
   type SessionUser,
   type TenantSession,
@@ -40,6 +41,35 @@ async function fetchSession(token: string): Promise<AuthSessionResponse> {
   return response.json() as Promise<AuthSessionResponse>;
 }
 
+async function tryRefreshAccessToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+
+  const refreshToken = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+  if (!refreshToken) return null;
+
+  const response = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  });
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as {
+    success?: boolean;
+    data?: { access_token?: string; refresh_token?: string };
+  };
+
+  if (!payload.success || !payload.data?.access_token) return null;
+
+  window.localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.data.access_token);
+  if (payload.data.refresh_token) {
+    window.localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, payload.data.refresh_token);
+  }
+
+  return payload.data.access_token;
+}
+
 export interface SessionProviderProps {
   children: ReactNode;
   initialToken?: string | null;
@@ -65,8 +95,12 @@ export function SessionProvider({ children, initialToken = null }: SessionProvid
       return;
     }
 
-    const token =
+    let token =
       initialToken ?? window.localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
+
+    if (!token) {
+      token = await tryRefreshAccessToken();
+    }
 
     if (!token) {
       setUser(null);
@@ -77,10 +111,20 @@ export function SessionProvider({ children, initialToken = null }: SessionProvid
 
     setLoading(true);
     try {
-      const body = await fetchSession(token);
+      let body = await fetchSession(token);
+      if (!body.authenticated) {
+        const refreshed = await tryRefreshAccessToken();
+        if (refreshed) {
+          token = refreshed;
+          body = await fetchSession(token);
+        }
+      }
       const parsed = parseAuthSessionResponse(body);
       setUser(parsed.user);
       setSession(parsed.session);
+      if (parsed.user) {
+        setAccessToken(token);
+      }
     } catch {
       setUser(null);
       setSession(null);
