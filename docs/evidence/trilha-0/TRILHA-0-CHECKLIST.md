@@ -118,7 +118,7 @@
 - [x] T1.1 piloto tenant/auth — **GO condicional** *(esta PR)* — `T1.1-PILOTO-TENANT-AUTH-RESULT.md`
 - [x] T0.23f TS turismo residual — **GO** *(esta PR)* — `T0.23f-TURISMO-TS-RESULT.md` — **49 → 0**
 - [x] Lint #237 turismo cotacoes — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-COTACOES-MODULE.md`
-- [x] T1.2d login DB — **GO** *(esta PR)* — `T1.2d-LOGIN-DB-RESULT.md`
+- [x] T1.2d login DB — **GO** *(PR #378)* — `T1.2d-LOGIN-DB-RESULT.md` + smoke `T1.2d-STAGING-SMOKE-RESULT.md`
 
 ## Decisão Trilha 0
 
