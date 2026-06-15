@@ -81,6 +81,8 @@
 - [x] E5 Express 5 revalidação pós-T0.20 — **GO** — `E5-EXPRESS5-POST-T0.20-REVERIFY.md`
 - [x] Fase E HITL pós-T0.20 — **GO** — `FASE-E-HITL-POST-T0.20.md`
 - [x] T0.21 TW4 site-publico preflight — **GO condicional** — `T0.21-TAILWIND4-SITE-PUBLICO-PREFLIGHT.md`
+- [x] T0.21 TW4 site-publico impl — **GO** branch `chore/t0.21-tw4-site-publico` — `T0.21-TAILWIND4-SITE-PUBLICO-RESULT.md`
+- [x] **Fase E TW4 — encerrada** (guest + admin + site-publico)
 
 ## Decisão Trilha 0
 
@@ -93,6 +95,5 @@
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
 | **Montanha `.next/types`** | T0.20c **GO pós-merge** (#353); **0** erros pos-build |
-| **Fase E / TW4 site-publico** | T0.21 preflight **GO condicional** — impl pendente |
-| **Montanha D Express 5** | **GO** revalidado pós-T0.20 (#328 + E5 reverify) |
-| **Próximo passo** | T0.21 impl TW4 `site-publico` (PR dedicada) |
+| **Fase E / TW4 site-publico** | T0.21 **GO** (#impl) — Fase E TW4 **encerrada** |
+| **Próximo passo** | Carimbo pós-merge T0.21; HITL próxima montanha (turismo TW4 ou Dependabot) |
