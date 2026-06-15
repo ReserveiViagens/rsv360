@@ -1,0 +1,9 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+base_main	fa12bd97c pos merge #362	PASS
+G-A2_build_turbopack	PASS
+G-A3_typecheck_postbuild	FAIL 302 erros
+ts2786	0	PASS	meta T0.23a
+G-A5_smoke_3005	200 OK
+G-A6_api_p0	8/8 OK
+veredito	T0.23a_GO_pos_merge	T0.24 proximo
