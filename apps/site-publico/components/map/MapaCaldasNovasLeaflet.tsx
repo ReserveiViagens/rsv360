@@ -1,7 +1,7 @@
 'use client';
 
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from '@/components/map/leaflet-ui';
 import L from 'leaflet';
 import type { CaldasNovasOSMItem } from '@/lib/caldas-novas-osm';
 import Link from 'next/link';
