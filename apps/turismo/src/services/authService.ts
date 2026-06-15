@@ -1,6 +1,11 @@
 import { api, tokenManager, ApiResponse } from './apiClient';
 import { wsClient } from './websocketClient';
 import { toast } from 'react-hot-toast';
+import {
+  AUTH_V1,
+  AuthV1SessionResponse,
+  mapAuthV1User,
+} from '../lib/auth-v1';
 
 // Types
 export interface User {
@@ -67,7 +72,7 @@ export const authService = {
   // Login
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await api.post<LoginResponse>('/api/auth/login', credentials);
+      const response = await api.post<LoginResponse>(AUTH_V1.LOGIN, credentials);
       
       if (response.success && response.data) {
         if (response.data.requiresTwoFactor) {
@@ -136,7 +141,8 @@ export const authService = {
   // Logout
   async logout(): Promise<void> {
     try {
-      await api.post('/api/auth/logout');
+      const refreshToken = tokenManager.getRefreshToken();
+      await api.post(AUTH_V1.LOGOUT, { refresh_token: refreshToken });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -150,13 +156,25 @@ export const authService = {
   // Get current user
   async getCurrentUser(): Promise<User> {
     try {
-      const response = await api.get<User>('/api/auth/me');
-      
-      if (response.success && response.data) {
-        return response.data;
+      const response = await api.get<AuthV1SessionResponse>(AUTH_V1.SESSION);
+
+      if (response.authenticated && response.user) {
+        const mapped = mapAuthV1User(response.user);
+
+        return {
+          id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+          name: mapped.name,
+          email: mapped.email,
+          role: (mapped.role || 'user') as User['role'],
+          status: mapped.is_active ? 'active' : 'inactive',
+          two_factor_enabled: false,
+          created_at: mapped.created_at,
+          updated_at: mapped.created_at,
+          last_login: mapped.last_login,
+        };
       }
-      
-      throw new Error(response.message || 'Erro ao obter dados do usuário');
+
+      throw new Error('Sessão inválida ou expirada');
     } catch (error: any) {
       console.error('Get current user error:', error);
       throw error;
@@ -171,9 +189,12 @@ export const authService = {
         throw new Error('No refresh token available');
       }
 
-      const response = await api.post<{ access_token: string; refresh_token: string }>('/api/auth/refresh', {
-        refresh_token: refreshToken,
-      });
+      const response = await api.post<{ access_token: string; refresh_token: string }>(
+        AUTH_V1.REFRESH,
+        {
+          refresh_token: refreshToken,
+        }
+      );
       
       if (response.success && response.data) {
         tokenManager.setTokens(response.data.access_token, response.data.refresh_token);
@@ -297,8 +318,8 @@ export const authService = {
   // Verify token
   async verifyToken(): Promise<boolean> {
     try {
-      const response = await api.post('/api/auth/verify-token');
-      return response.success;
+      const response = await api.get<AuthV1SessionResponse>(AUTH_V1.SESSION);
+      return response.authenticated === true;
     } catch (error) {
       return false;
     }

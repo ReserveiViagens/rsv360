@@ -1,6 +1,14 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  AUTH_V1,
+  DEFAULT_API_URL,
+  AuthV1SessionResponse,
+  mapAuthV1User,
+  parseAuthV1LoginResponse,
+  parseAuthV1RefreshResponse,
+} from '../lib/auth-v1';
 
 interface User {
   id: number;
@@ -44,7 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = DEFAULT_API_URL;
 
   console.log('[AuthContext] AuthProvider renderizado, isLoading:', isLoading);
 
@@ -206,15 +214,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const verifyToken = async (token: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-      
-      return response.ok;
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data = (await response.json()) as AuthV1SessionResponse;
+      return data.authenticated === true;
     } catch (error) {
       console.error('Erro ao verificar token:', error);
       return false;
@@ -223,14 +236,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchUserData = async (token: string) => {
     try {
-      // Timeout de 5 segundos para evitar travamento
-      const timeoutPromise = new Promise<Response>((_, reject) => 
+      const timeoutPromise = new Promise<Response>((_, reject) =>
         setTimeout(() => reject(new Error('Timeout ao buscar dados do usuário')), 5000)
       );
-      
-      const fetchPromise = fetch(`${API_BASE_URL}/api/auth/me`, {
+
+      const fetchPromise = fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -238,27 +250,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (response.ok) {
-        const userData = await response.json();
-        const u = userData.user || userData;
-        setUser({
-          id: u.id,
-          email: u.email,
-          full_name: u.name || u.full_name || '',
-          name: u.name || u.full_name || '',
-          firstName: u.name?.split?.(' ')[0],
-          lastName: u.name?.split?.(' ').slice(1).join?.(' ') || '',
-          role: u.role,
-          is_active: u.status === 'active',
-          permissions: u.role ? [u.role] : [],
-          token: token,
-          created_at: u.created_at || new Date().toISOString(),
-          last_login: u.last_login,
-        });
-        setIsLoading(false);
-        console.log('[AuthContext] Dados do usuário carregados com sucesso');
-      } else {
-        throw new Error('Falha ao buscar dados do usuário');
+        const data = (await response.json()) as AuthV1SessionResponse;
+        if (data.authenticated && data.user) {
+          const mapped = mapAuthV1User(data.user, token);
+          setUser({
+            ...mapped,
+            id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+          } as User);
+          setIsLoading(false);
+          console.log('[AuthContext] Dados do usuário carregados com sucesso');
+          return;
+        }
       }
+
+      throw new Error('Falha ao buscar dados do usuário');
     } catch (error) {
       console.error('[AuthContext] Erro ao buscar dados do usuário:', error);
       // Se falhar, limpar autenticação mas garantir que isLoading seja false
@@ -269,22 +274,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshAccessToken = async (refreshTokenValue: string): Promise<void> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.REFRESH}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ refreshToken: refreshTokenValue }),
+        body: JSON.stringify({ refresh_token: refreshTokenValue }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        const newAccess = data.token || data.access_token;
-        setAccessToken(newAccess);
-        localStorage.setItem('access_token', newAccess);
-        if (data.refresh_token || data.refreshToken) {
-          setRefreshToken(data.refresh_token || data.refreshToken);
-          localStorage.setItem('refresh_token', data.refresh_token || data.refreshToken);
+        const data = parseAuthV1RefreshResponse(await response.json());
+        if (!data) {
+          throw new Error('Resposta de refresh inválida');
+        }
+        setAccessToken(data.access_token);
+        localStorage.setItem('access_token', data.access_token);
+        if (data.refresh_token) {
+          setRefreshToken(data.refresh_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
         }
       } else {
         throw new Error('Falha ao renovar token');
@@ -340,8 +347,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return true;
       }
 
-      // Tentar login real com backend (/api/auth/login)
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      // Login canônico v1 (/api/v1/auth/login)
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.LOGIN}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -350,34 +357,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        const access = data.token || data.access_token;
-        const refresh = data.refreshToken || data.refresh_token;
-        setAccessToken(access);
-        setRefreshToken(refresh);
-        localStorage.setItem('access_token', access);
-        localStorage.setItem('refresh_token', refresh);
-        if (data.user) {
-          const u = data.user;
+        const loginPayload = parseAuthV1LoginResponse(await response.json());
+        if (!loginPayload) {
+          throw new Error('Resposta de login inválida');
+        }
+
+        setAccessToken(loginPayload.access_token);
+        setRefreshToken(loginPayload.refresh_token);
+        localStorage.setItem('access_token', loginPayload.access_token);
+        localStorage.setItem('refresh_token', loginPayload.refresh_token);
+
+        if (loginPayload.user) {
+          const mapped = mapAuthV1User(loginPayload.user, loginPayload.access_token);
           setUser({
-            id: u.id,
-            email: u.email,
-            full_name: u.name || u.full_name || '',
-            firstName: u.name?.split?.(' ')[0],
-            lastName: u.name?.split?.(' ').slice(1).join?.(' ') || '',
-            role: u.role,
-            is_active: u.status === 'active',
-            permissions: u.role ? [u.role] : [],
-            created_at: u.created_at || new Date().toISOString(),
-            last_login: u.last_login,
-          });
+            ...mapped,
+            id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+          } as User);
         } else {
-          await fetchUserData(access);
+          await fetchUserData(loginPayload.access_token);
         }
         return true;
       } else {
         const err = await response.json().catch(() => ({}));
-        throw new Error(err?.message || 'Credenciais inválidas');
+        throw new Error(err?.error || err?.message || 'Credenciais inválidas');
       }
     } catch (error) {
       console.error('Erro no login:', error);
@@ -408,6 +410,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
+    const token =
+      accessToken ||
+      (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null);
+    const storedRefresh =
+      refreshToken ||
+      (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
+
+    if (
+      token &&
+      storedRefresh &&
+      token !== 'demo-token' &&
+      token !== 'admin-token'
+    ) {
+      void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: storedRefresh }),
+      }).catch((error) => {
+        console.error('[AuthContext] Erro ao revogar sessão no servidor:', error);
+      });
+    }
+
     clearAuth();
     // Redirecionar para login usando window.location (funciona em SSR)
     if (typeof window !== 'undefined') {
