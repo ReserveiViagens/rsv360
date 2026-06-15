@@ -8,7 +8,7 @@ import { requireAuth, withAuth } from '@/lib/api-auth';
 import { approveVerification, rejectVerification } from '@/lib/verification-service';
 import { reviewVerificationSchema } from '@/lib/schemas/verification-schemas';
 
-export const POST = withAuth(async (request: NextRequest, { user }) => {
+export const POST = withAuth(async (request: NextRequest, user) => {
   // Verificar se é admin
   if (user.role !== 'admin') {
     return NextResponse.json(

@@ -224,6 +224,8 @@ export function usePWA() {
 
   return {
     ...pwaState,
+    isUpdateAvailable: pwaState.updateAvailable,
+    updateServiceWorker: updatePWA,
     installPWA,
     updatePWA,
     requestNotificationPermission,

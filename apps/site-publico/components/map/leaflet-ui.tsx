@@ -7,12 +7,7 @@ import {
   Marker as MarkerPrimitive,
   Popup as PopupPrimitive,
 } from 'react-leaflet';
-import { asRadixComponent } from '@/lib/radix-jsx';
-
-const MapContainerEl = asRadixComponent(MapContainerPrimitive);
-const TileLayerEl = asRadixComponent(TileLayerPrimitive);
-const MarkerEl = asRadixComponent(MarkerPrimitive);
-const PopupEl = asRadixComponent(PopupPrimitive);
+import { radixCreate } from '@/lib/radix-jsx';
 
 type MapContainerProps = ComponentProps<typeof MapContainerPrimitive>;
 type TileLayerProps = ComponentProps<typeof TileLayerPrimitive>;
@@ -20,17 +15,17 @@ type MarkerProps = ComponentProps<typeof MarkerPrimitive>;
 type PopupProps = ComponentProps<typeof PopupPrimitive>;
 
 export function MapContainer(props: MapContainerProps): ReactElement {
-  return <MapContainerEl {...props} />;
+  return radixCreate(MapContainerPrimitive, props) as ReactElement;
 }
 
 export function TileLayer(props: TileLayerProps): ReactElement {
-  return <TileLayerEl {...props} />;
+  return radixCreate(TileLayerPrimitive, props) as ReactElement;
 }
 
 export function Marker(props: MarkerProps): ReactElement {
-  return <MarkerEl {...props} />;
+  return radixCreate(MarkerPrimitive, props) as ReactElement;
 }
 
 export function Popup(props: PopupProps): ReactElement {
-  return <PopupEl {...props} />;
+  return radixCreate(PopupPrimitive, props) as ReactElement;
 }
