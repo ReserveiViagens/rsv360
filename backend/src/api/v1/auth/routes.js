@@ -52,6 +52,28 @@ router.get('/session', (req, res) => {
   return res.json(body);
 });
 
+/** POST /api/v1/auth/logout — revoga refresh tokens (DB) ou confirma logout piloto */
+router.post('/logout', async (req, res) => {
+  const token = extractBearerToken(req);
+  if (!token) {
+    return res.status(401).json({ success: false, error: 'Token ausente' });
+  }
+
+  const { refresh_token: refreshToken } = req.body || {};
+  const { logoutUser } = require('./logout.service');
+
+  try {
+    const result = await logoutUser(token, refreshToken);
+    if (result?.error) {
+      return res.status(result.status).json({ success: false, error: 'Token inválido ou expirado' });
+    }
+    return res.json({ success: true, message: 'Logout realizado com sucesso' });
+  } catch (error) {
+    console.error('[AUTH] logout error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
 /** POST /api/v1/auth/refresh — renova access token (DB com rotação ou piloto JWT). */
 router.post('/refresh', async (req, res) => {
   const { refresh_token: refreshToken } = req.body || {};

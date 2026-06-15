@@ -19,7 +19,11 @@ const config = [
   },
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-require-imports': 'warn',
       '@typescript-eslint/no-unsafe-declaration-merging': 'warn',
