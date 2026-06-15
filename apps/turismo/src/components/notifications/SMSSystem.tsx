@@ -468,7 +468,7 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
                           <Eye className="w-4 h-4" />
                         </Button>
                         {!template.isDefault && (
-                          <Button size="sm" variant="outline" variant="destructive">
+                          <Button size="sm" variant="destructive">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         )}
@@ -595,7 +595,7 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
             placeholder="Mensagem do template (use {variavel} para variáveis)"
           />
           <div className="text-sm text-gray-600">
-            <p>Variáveis disponíveis: {destino}, {data}, {nome}, {desconto}</p>
+            <p>Variáveis disponíveis: {'{destino}'}, {'{data}'}, {'{nome}'}, {'{desconto}'}</p>
           </div>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setShowTemplateModal(false)}>
