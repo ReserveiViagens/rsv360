@@ -98,10 +98,11 @@
 - [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
 - [x] T0.23a Radix turismo impl — **GO condicional** #362 — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
 - [x] T0.23a Radix turismo carimbo — **GO pós-merge** #363 — `T0.23a-TURISMO-RADIX-POST-MERGE.md`
-- [x] T0.23b TS2322/2339 turismo — **GO** *(esta PR)* — `T0.23b-TS2322-2339-RESULT.md` — TS2322/TS2339 **→ 0**
+- [x] T0.23b TS2322/2339 turismo — **GO** #368 — `T0.23b-TS2322-2339-RESULT.md` — TS2322/TS2339 **→ 0**
 - [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
 - [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
-- [x] Lint #237 site-publico — **GO** — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md` — exit **0**
+- [x] Lint #237 site-publico — **GO** #369 — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md`
+- [x] T1.1 piloto tenant/auth — **GO condicional** *(esta PR)* — `T1.1-PILOTO-TENANT-AUTH-RESULT.md`
 
 ## Decisão Trilha 0
 
@@ -121,4 +122,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T1.x piloto tenant/auth (issue #256) ou T0.23b TS2322/2339 / redução lint #237 |
+| **Próximo passo** | T0.23b carimbo / T0.23c TS2305 | T1.2 auth session | lint admin/guest |
