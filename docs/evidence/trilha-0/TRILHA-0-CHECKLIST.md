@@ -77,7 +77,7 @@
 - [x] T0.20a Radix/leaflet — **GO** #350
 - [ ] T0.20a carimbo pós-merge — **PR pendente**
 - [x] T0.20b TS2322/TS2339 — **GO** branch `chore/t0.20b-ts2322` — `T0.20b-TS2322-2339-RESULT.md`
-- [x] T0.20c residual — **GO** branch `chore/t0.20c-residual` — `T0.20c-RESIDUAL-RESULT.md` (347 → 0 erros)
+- [x] T0.20c residual — **GO pós-merge** #353 + carimbo *(esta PR)* — `T0.20c-RESIDUAL-RESULT.md` (347 → 0 erros)
 
 ## Decisão Trilha 0
 
@@ -89,5 +89,5 @@
 | **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
-| **Montanha `.next/types`** | T0.19b **GO** (#340); 971 erros pos-build |
-| **Próximo passo** | Merge #351 → #352 → PR T0.20c; carimbo pós-merge |
+| **Montanha `.next/types`** | T0.20c **GO pós-merge** (#353); **0** erros pos-build |
+| **Próximo passo** | Encerramento rodada T0.20 / HITL Fase E (TW4 site-publico ou ADR) |

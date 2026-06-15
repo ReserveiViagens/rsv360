@@ -1,0 +1,15 @@
+gate	resultado	notas
+merge_pr_impl	PR #353 @ 92871f082	PASS
+pull_main	s2-fase-e-clean @ origin/main	PASS
+G-A2_typecheck_prebuild	PASS 0 erros
+G-A2_build_webpack	PASS exit 0
+G-A2_typecheck_postbuild	PASS 0 erros
+ts2786	0	PASS meta T0.20c
+ts2559	0	PASS
+ts2339	0	PASS
+ts2322	0	PASS
+ref_never	0	PASS
+delta_total	347 -> 0	PASS
+G-A6_api_p0	8/8 OK	run-api-p0-round1.ps1
+veredito	T0.20c_GO_pos_merge	carimbo documental
+proximo_marco	T0.20 encerramento	HITL Fase E
