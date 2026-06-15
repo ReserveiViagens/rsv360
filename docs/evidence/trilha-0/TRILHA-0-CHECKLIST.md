@@ -122,6 +122,9 @@
 - [x] T0.23g build smoke turismo — **GO** *(esta PR)* — `T0.23g-BUILD-SMOKE-RESULT.md`
 - [x] Lint #237 turismo full quiet — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-FULL-QUIET-RESULT.md` — **0 erros**
 - [x] T1.5 rate limit auth — **GO** *(PR #379)* — `T1.5-RATE-LIMIT-AUTH-RESULT.md` + smoke `T1.5-STAGING-SMOKE-RESULT.md`
+- [x] Carimbo pós-#379 — **GO** *(esta PR)* — `T379-POST-MERGE-CARIMBO.md`
+- [x] T1.6 logout/revoke tokens — **GO** *(esta PR)* — `T1.6-LOGOUT-REVOKE-RESULT.md` + smoke
+- [x] Lint warnings turismo −303 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-WARNINGS-REDUCTION.md`
 
 ## Decisão Trilha 0
 
@@ -141,4 +144,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | Carimbo pós-#378 | lint warnings turismo (cosmético) | T1.6 logout/revoke tokens |
+| **Próximo passo** | T1.7 wire turismo AuthContext → `/api/v1/auth/*` | warnings por módulo (ModernSidebar feito) |
