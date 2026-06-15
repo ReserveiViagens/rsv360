@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import {
   Download,
@@ -372,7 +372,7 @@ const FooterLinkInputStable = React.memo(({ link, onUpdate, onDelete }: { link: 
 
 const SocialMediaInputStable = React.memo(({ social, onUpdate, onDelete }: { social: SocialMedia; onUpdate: (id: string, updates: Partial<SocialMedia>) => void; onDelete: (id: string) => void }) => {
   const handlePlatformChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(social.id, { platform: e.target.value as any });
+    onUpdate(social.id, { platform: e.target.value as SocialMedia['platform'] });
   }, [social.id, onUpdate]);
   
   const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -497,11 +497,13 @@ const HeaderEditorStable = React.memo(({
                   <div className="flex flex-col items-center justify-center space-y-4">
                     {headerData.logo ? (
                       <div className="relative">
-                        <img
+                        <Image
                           src={headerData.logo}
                           alt="Logo da Empresa"
+                          width={120}
+                          height={120}
+                          unoptimized
                           className="object-contain max-w-full max-h-32 rounded-lg border border-gray-200"
-                          style={{ width: '120px', height: '120px' }}
                         />
                         <button
                           onClick={onLogoRemove}
@@ -1180,516 +1182,48 @@ HeaderEditorStable.displayName = 'HeaderEditorStable';
 BodyEditorStable.displayName = 'BodyEditorStable';
 FooterEditorStable.displayName = 'FooterEditorStable';
 
-export default function VoucherEditor() {
-  const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [, setShowTemplateModal] = useState(false);
-  const [showHeaderEditor, setShowHeaderEditor] = useState(false);
-  const [showBodyEditor, setShowBodyEditor] = useState(false);
-  const [showFooterEditor, setShowFooterEditor] = useState(false);
-  const [headerSaved, setHeaderSaved] = useState(false);
-  const [bodySaved, setBodySaved] = useState(false);
-  const [footerSaved, setFooterSaved] = useState(false);
-  const voucherPreviewRef = useRef<HTMLDivElement | null>(null);
-  
-  // Estados para QR Code
-  const [qrCodeData, setQrCodeData] = useState('');
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
-  const [showQrCodeModal, setShowQrCodeModal] = useState(false);
-  const [qrCodeSize, setQrCodeSize] = useState(200);
-  const [qrCodeColor, setQrCodeColor] = useState('#000000');
-  const [qrCodeBgColor, setQrCodeBgColor] = useState('#FFFFFF');
-  const [qrCodeErrorLevel, setQrCodeErrorLevel] = useState<'L' | 'M' | 'Q' | 'H'>('M');
-  
-  // Estados para Header
-  const [headerData, setHeaderData] = useState<VoucherHeader>({
-    logo: '',
-    companyName: 'Reservei Viagens',
-    companyAddress: 'Rua das Viagens, 123 - Centro',
-    companyPhone: '(11) 99999-9999',
-    companyEmail: 'contato@reserveiviagens.com',
-    companyWebsite: 'www.reserveiviagens.com',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    alignment: 'center',
-    showLogo: true,
-    showCompanyInfo: true,
-    customText: '',
-    links: [
-      {
-        id: '1',
-        text: 'Contrato',
-        url: '/contrato',
-        type: 'contract',
-        icon: 'FileText',
-        color: '#2563eb',
-        fontSize: 12,
-        isActive: true
-      },
-      {
-        id: '2',
-        text: 'Termos e Condições',
-        url: '/termos',
-        type: 'terms',
-        icon: 'Shield',
-        color: '#059669',
-        fontSize: 12,
-        isActive: true
-      },
-      {
-        id: '3',
-        text: 'Política de Privacidade',
-        url: '/privacidade',
-        type: 'privacy',
-        icon: 'Lock',
-        color: '#7c3aed',
-        fontSize: 12,
-        isActive: true
-      }
-    ]
-  });
+type PersistedVoucherPayload = {
+  header?: Partial<VoucherHeader>;
+  body?: Partial<VoucherBody>;
+  footer?: Partial<VoucherFooter>;
+};
 
-  // Estados para Body
-  const [bodyData, setBodyData] = useState<VoucherBody>({
-    title: 'Voucher de Reserva',
-    subtitle: 'Confirmação de Reserva',
-    clientInfo: {
-      name: '',
-      email: '',
-      phone: '',
-      document: '',
-      address: '',
-      showEmail: true,
-      showPhone: true,
-      showDocument: true,
-      showAddress: true
-    },
-    reservationInfo: {
-      code: '',
-      destination: '',
-      startDate: '',
-      endDate: '',
-      value: 0,
-      currency: 'BRL',
-      agency: '',
-      agent: '',
-      status: 'active',
-      validity: '',
-      showCode: true,
-      showDestination: true,
-      showDates: true,
-      showValue: true,
-      showAgency: true,
-      showAgent: true,
-      showStatus: true,
-      showValidity: true
-    },
-    benefits: [
-      {
-        id: '1',
-        text: 'Wi-Fi gratuito',
-        icon: 'Wifi',
-        color: '#059669',
-        isActive: true
-      },
-      {
-        id: '2',
-        text: 'Café da manhã',
-        icon: 'Coffee',
-        color: '#d97706',
-        isActive: true
-      },
-      {
-        id: '3',
-        text: 'Transfer aeroporto',
-        icon: 'Car',
-        color: '#2563eb',
-        isActive: true
-      }
-    ],
-    observations: '',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    layout: 'vertical',
-    spacing: 16,
-    padding: 20,
-    borderStyle: 'solid',
-    borderColor: '#e5e7eb',
-    borderWidth: 1,
-    borderRadius: 8,
-    shadow: true,
-    shadowColor: '#000000',
-    shadowBlur: 10,
-    shadowOffsetX: 0,
-    shadowOffsetY: 4
-  });
+function loadPersistedVoucherSection<K extends keyof PersistedVoucherPayload>(
+  section: K
+): PersistedVoucherPayload[K] | undefined {
+  if (typeof window === 'undefined') return undefined;
+  try {
+    const parsed = JSON.parse(
+      localStorage.getItem('voucher-editor-data') || 'null'
+    ) as PersistedVoucherPayload | null;
+    return parsed?.[section];
+  } catch {
+    return undefined;
+  }
+}
 
-  // Estados para Footer
-  const [footerData, setFooterData] = useState<VoucherFooter>({
-    termsAndConditions: [
-      {
-        id: '1',
-        text: 'Termos e Condições',
-        url: '/termos-condicoes',
-        type: 'terms',
-        icon: 'FileText',
-        color: '#059669',
-        fontSize: 12,
-        isActive: true
-      },
-      {
-        id: '2',
-        text: 'Política de Cancelamento',
-        url: '/cancelamento',
-        type: 'cancellation',
-        icon: 'XCircle',
-        color: '#dc2626',
-        fontSize: 12,
-        isActive: true
-      },
-      {
-        id: '3',
-        text: 'Política de Reembolso',
-        url: '/reembolso',
-        type: 'refund',
-        icon: 'DollarSign',
-        color: '#059669',
-        fontSize: 12,
-        isActive: true
-      },
-      {
-        id: '4',
-        text: 'Suporte ao Cliente',
-        url: '/suporte',
-        type: 'support',
-        icon: 'MessageCircle',
-        color: '#2563eb',
-        fontSize: 12,
-        isActive: true
-      }
-    ],
-    contactInfo: {
-      phone: '(11) 99999-9999',
-      email: 'suporte@reserveiviagens.com',
-      website: 'www.reserveiviagens.com',
-      address: 'Rua das Viagens, 123 - Centro, São Paulo - SP',
-      showPhone: true,
-      showEmail: true,
-      showWebsite: true,
-      showAddress: true
-    },
-    socialMedia: [
-      {
-        id: '1',
-        platform: 'whatsapp',
-        url: 'https://wa.me/5511999999999',
-        icon: 'MessageCircle',
-        color: '#25d366',
-        isActive: true
-      },
-      {
-        id: '2',
-        platform: 'instagram',
-        url: 'https://instagram.com/reserveiviagens',
-        icon: 'Camera',
-        color: '#e4405f',
-        isActive: true
-      },
-      {
-        id: '3',
-        platform: 'facebook',
-        url: 'https://facebook.com/reserveiviagens',
-        icon: 'MessageSquare',
-        color: '#1877f2',
-        isActive: true
-      }
-    ],
-    customText: 'Obrigado por escolher a Reservei Viagens!',
-    backgroundColor: '#f8fafc',
-    textColor: '#64748b',
-    fontSize: 12,
-    fontFamily: 'Poppins',
-    alignment: 'center',
-    showTerms: true,
-    showContact: true,
-    showSocial: true,
-    showCustomText: true,
-    borderTop: true,
-    borderTopColor: '#e2e8f0',
-    borderTopWidth: 1,
-    borderTopStyle: 'solid'
-  });
+type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
 
-  // Carregar dados salvos do localStorage ao montar o componente
-  useEffect(() => {
-    try {
-      const savedData = localStorage.getItem('voucher-editor-data');
-      if (savedData) {
-        const parsed = JSON.parse(savedData);
-        if (parsed.header) {
-          setHeaderData(parsed.header);
-        }
-        if (parsed.body) {
-          setBodyData(parsed.body);
-        }
-        if (parsed.footer) {
-          setFooterData(parsed.footer);
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados salvos:', error);
-    }
-  }, []);
+interface QRCodeGeneratorPanelProps {
+  qrCodeData: string;
+  onQrCodeDataChange: (value: string) => void;
+  qrCodeSize: number;
+  onQrCodeSizeChange: (value: number) => void;
+  qrCodeErrorLevel: QrErrorLevel;
+  onQrCodeErrorLevelChange: (value: QrErrorLevel) => void;
+  qrCodeColor: string;
+  onQrCodeColorChange: (value: string) => void;
+  qrCodeBgColor: string;
+  onQrCodeBgColorChange: (value: string) => void;
+  qrCodeUrl: string;
+  onClose: () => void;
+  onGenerate: () => void;
+  onDownload: () => void;
+  onCopy: () => void;
+  onAddToVoucher: () => void;
+}
 
-  // Funções para Header
-  const handleHeaderUpdate = useCallback((updates: Partial<VoucherHeader>) => {
-    setHeaderData(prev => ({ ...prev, ...updates }));
-  }, []);
-
-  const handleHeaderLinkAdd = () => {
-    const newLink: HeaderLink = {
-      id: Date.now().toString(),
-      text: 'Novo Link',
-      url: '/novo-link',
-      type: 'custom',
-      icon: 'Link',
-      color: '#6b7280',
-      fontSize: 12,
-      isActive: true
-    };
-    setHeaderData(prev => ({
-      ...prev,
-      links: [...prev.links, newLink]
-    }));
-  };
-
-  const handleHeaderLinkUpdate = useCallback((linkId: string, updates: Partial<HeaderLink>) => {
-    setHeaderData(prev => ({
-      ...prev,
-      links: prev.links.map(link => 
-        link.id === linkId ? { ...link, ...updates } : link
-      )
-    }));
-  }, []);
-
-  const handleHeaderLinkDelete = (linkId: string) => {
-    setHeaderData(prev => ({
-      ...prev,
-      links: prev.links.filter(link => link.id !== linkId)
-    }));
-  };
-
-  // Funções para Body
-  const handleBodyUpdate = useCallback((updates: Partial<VoucherBody>) => {
-    setBodyData(prev => ({ ...prev, ...updates }));
-  }, []);
-
-  const handleClientInfoUpdate = useCallback((updates: Partial<ClientInfo>) => {
-    setBodyData(prev => ({
-      ...prev,
-      clientInfo: { ...prev.clientInfo, ...updates }
-    }));
-  }, []);
-
-  const handleReservationInfoUpdate = useCallback((updates: Partial<ReservationInfo>) => {
-    setBodyData(prev => ({
-      ...prev,
-      reservationInfo: { ...prev.reservationInfo, ...updates }
-    }));
-  }, []);
-
-  const handleBenefitAdd = () => {
-    const newBenefit: Benefit = {
-      id: Date.now().toString(),
-      text: 'Novo Benefício',
-      icon: 'Star',
-      color: '#f59e0b',
-      isActive: true
-    };
-    setBodyData(prev => ({
-      ...prev,
-      benefits: [...prev.benefits, newBenefit]
-    }));
-  };
-
-  const handleBenefitUpdate = useCallback((benefitId: string, updates: Partial<Benefit>) => {
-    setBodyData(prev => ({
-      ...prev,
-      benefits: prev.benefits.map(benefit => 
-        benefit.id === benefitId ? { ...benefit, ...updates } : benefit
-      )
-    }));
-  }, []);
-
-  const handleBenefitDelete = (benefitId: string) => {
-    setBodyData(prev => ({
-      ...prev,
-      benefits: prev.benefits.filter(benefit => benefit.id !== benefitId)
-    }));
-  };
-
-  // Funções para Footer
-  const handleFooterUpdate = useCallback((updates: Partial<VoucherFooter>) => {
-    setFooterData(prev => ({ ...prev, ...updates }));
-  }, []);
-
-  const handleFooterLinkAdd = () => {
-    const newLink: FooterLink = {
-      id: Date.now().toString(),
-      text: 'Novo Link',
-      url: '/novo-link',
-      type: 'custom',
-      icon: 'Link',
-      color: '#6b7280',
-      fontSize: 12,
-      isActive: true
-    };
-    setFooterData(prev => ({
-      ...prev,
-      termsAndConditions: [...prev.termsAndConditions, newLink]
-    }));
-  };
-
-  const handleFooterLinkUpdate = useCallback((linkId: string, updates: Partial<FooterLink>) => {
-    setFooterData(prev => ({
-      ...prev,
-      termsAndConditions: prev.termsAndConditions.map(link => 
-        link.id === linkId ? { ...link, ...updates } : link
-      )
-    }));
-  }, []);
-
-  const handleFooterLinkDelete = (linkId: string) => {
-    setFooterData(prev => ({
-      ...prev,
-      termsAndConditions: prev.termsAndConditions.filter(link => link.id !== linkId)
-    }));
-  };
-
-  const handleContactInfoUpdate = useCallback((updates: Partial<ContactInfo>) => {
-    setFooterData(prev => ({
-      ...prev,
-      contactInfo: { ...prev.contactInfo, ...updates }
-    }));
-  }, []);
-
-  const handleSocialMediaAdd = () => {
-    const newSocial: SocialMedia = {
-      id: Date.now().toString(),
-      platform: 'whatsapp',
-      url: 'https://wa.me/5511999999999',
-      icon: 'MessageCircle',
-      color: '#25d366',
-      isActive: true
-    };
-    setFooterData(prev => ({
-      ...prev,
-      socialMedia: [...prev.socialMedia, newSocial]
-    }));
-  };
-
-  const handleSocialMediaUpdate = useCallback((socialId: string, updates: Partial<SocialMedia>) => {
-    setFooterData(prev => ({
-      ...prev,
-      socialMedia: prev.socialMedia.map(social => 
-        social.id === socialId ? { ...social, ...updates } : social
-      )
-    }));
-  }, []);
-
-  const handleSocialMediaDelete = (socialId: string) => {
-    setFooterData(prev => ({
-      ...prev,
-      socialMedia: prev.socialMedia.filter(social => social.id !== socialId)
-    }));
-  };
-
-  // Funções para QR Code
-  const generateQRCode = async (data: string) => {
-    try {
-      const options: QRCode.QRCodeToDataURLOptions = {
-        errorCorrectionLevel: qrCodeErrorLevel,
-        margin: 1,
-        color: {
-          dark: qrCodeColor,
-          light: qrCodeBgColor
-        },
-        width: qrCodeSize
-      };
-
-      const url = await QRCode.toDataURL(data, options);
-      setQrCodeUrl(url);
-      return url;
-    } catch (error) {
-      console.error('Erro ao gerar QR Code:', error);
-      alert('Erro ao gerar QR Code. Tente novamente.');
-      return null;
-    }
-  };
-
-  const handleGenerateQRCode = async () => {
-    if (!qrCodeData.trim()) {
-      alert('Por favor, insira dados para gerar o QR Code.');
-      return;
-    }
-
-    const url = await generateQRCode(qrCodeData);
-    if (url) {
-      setShowQrCodeModal(true);
-    }
-  };
-
-  const handleDownloadQRCode = () => {
-    if (qrCodeUrl) {
-      const link = document.createElement('a');
-      link.href = qrCodeUrl;
-      link.download = 'voucher-qrcode.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
-  const handleCopyQRCode = () => {
-    if (qrCodeUrl) {
-      navigator.clipboard.writeText(qrCodeData).then(() => {
-        alert('Dados do QR Code copiados para a área de transferência!');
-      }).catch(() => {
-        alert('Erro ao copiar dados do QR Code.');
-      });
-    }
-  };
-
-  const handleAddQRCodeToVoucher = () => {
-    if (qrCodeUrl && selectedTemplate) {
-      const newElement: VoucherElement = {
-        id: Date.now().toString(),
-        type: 'qr-code',
-        content: qrCodeData,
-        x: 50,
-        y: 50,
-        width: qrCodeSize,
-        height: qrCodeSize,
-        url: qrCodeUrl
-      };
-
-      const updatedElements = [...selectedTemplate.elements, newElement];
-      setSelectedTemplate({
-        ...selectedTemplate,
-        elements: updatedElements
-      });
-
-      setShowQrCodeModal(false);
-      alert('QR Code adicionado ao voucher!');
-    }
-  };
-
-  // Templates pré-definidos
-  const defaultTemplates: VoucherTemplate[] = [
+const VOUCHER_DEFAULT_TEMPLATES: VoucherTemplate[] = [
     {
       id: '1',
       name: 'Template Clássico',
@@ -2098,12 +1632,600 @@ export default function VoucherEditor() {
         { id: '8', type: 'stamp', content: 'PREMIUM', x: 350, y: 280, width: 120, height: 50, fontSize: 14, fontColor: '#f59e0b', fontFamily: 'Playfair Display, serif' }
       ]
     }
-  ];
+];
 
-  useEffect(() => {
-    // Carregar template padrão
-    setSelectedTemplate(defaultTemplates[0]);
+function QRCodeGeneratorPanel({
+  qrCodeData,
+  onQrCodeDataChange,
+  qrCodeSize,
+  onQrCodeSizeChange,
+  qrCodeErrorLevel,
+  onQrCodeErrorLevelChange,
+  qrCodeColor,
+  onQrCodeColorChange,
+  qrCodeBgColor,
+  onQrCodeBgColorChange,
+  qrCodeUrl,
+  onClose,
+  onGenerate,
+  onDownload,
+  onCopy,
+  onAddToVoucher,
+}: QRCodeGeneratorPanelProps) {
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-900">Gerador de QR Code</h3>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <XCircle className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Dados do QR Code</label>
+          <textarea
+            value={qrCodeData}
+            onChange={(e) => onQrCodeDataChange(e.target.value)}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Insira os dados para gerar o QR Code (URL, texto, etc.)"
+          />
+        </div>
+        <div>
+          <h4 className="text-md font-medium text-gray-700 mb-4">Configurações</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tamanho</label>
+              <input
+                type="number"
+                value={qrCodeSize}
+                onChange={(e) => onQrCodeSizeChange(parseInt(e.target.value, 10))}
+                min="100"
+                max="500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nível de Correção de Erro</label>
+              <select
+                value={qrCodeErrorLevel}
+                onChange={(e) => onQrCodeErrorLevelChange(e.target.value as QrErrorLevel)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="L">Baixo (7%)</option>
+                <option value="M">Médio (15%)</option>
+                <option value="Q">Alto (25%)</option>
+                <option value="H">Muito Alto (30%)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Cor do QR Code</label>
+              <input type="color" value={qrCodeColor} onChange={(e) => onQrCodeColorChange(e.target.value)} className="w-full h-10 border border-gray-300 rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Cor de Fundo</label>
+              <input type="color" value={qrCodeBgColor} onChange={(e) => onQrCodeBgColorChange(e.target.value)} className="w-full h-10 border border-gray-300 rounded-lg" />
+            </div>
+          </div>
+        </div>
+        {qrCodeUrl && (
+          <div>
+            <h4 className="text-md font-medium text-gray-700 mb-4">Preview</h4>
+            <div className="flex flex-col items-center space-y-4">
+              <Image src={qrCodeUrl} alt="QR Code" width={200} height={200} unoptimized className="border border-gray-300 rounded-lg" />
+              <div className="flex space-x-2">
+                <button onClick={onDownload} className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                  <Download className="w-4 h-4 mr-2" /> Baixar
+                </button>
+                <button onClick={onCopy} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  <Copy className="w-4 h-4 mr-2" /> Copiar Dados
+                </button>
+                <button onClick={onAddToVoucher} className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                  <Plus className="w-4 h-4 mr-2" /> Adicionar ao Voucher
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="flex justify-center">
+          <button onClick={onGenerate} className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+            <QrCode className="w-5 h-5 mr-2" /> Gerar QR Code
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function VoucherEditor() {
+  const [selectedTemplate, setSelectedTemplate] = useState<VoucherTemplate | null>(() => VOUCHER_DEFAULT_TEMPLATES[0]);
+  const [showPreview, setShowPreview] = useState(false);
+  const [, setShowTemplateModal] = useState(false);
+  const [showHeaderEditor, setShowHeaderEditor] = useState(false);
+  const [showBodyEditor, setShowBodyEditor] = useState(false);
+  const [showFooterEditor, setShowFooterEditor] = useState(false);
+  const [headerSaved, setHeaderSaved] = useState(false);
+  const [bodySaved, setBodySaved] = useState(false);
+  const [footerSaved, setFooterSaved] = useState(false);
+  const voucherPreviewRef = useRef<HTMLDivElement | null>(null);
+  
+  // Estados para QR Code
+  const [qrCodeData, setQrCodeData] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [showQrCodeModal, setShowQrCodeModal] = useState(false);
+  const [qrCodeSize, setQrCodeSize] = useState(200);
+  const [qrCodeColor, setQrCodeColor] = useState('#000000');
+  const [qrCodeBgColor, setQrCodeBgColor] = useState('#FFFFFF');
+  const [qrCodeErrorLevel, setQrCodeErrorLevel] = useState<'L' | 'M' | 'Q' | 'H'>('M');
+  
+  // Estados para Header
+  const [headerData, setHeaderData] = useState<VoucherHeader>(() => ({
+    logo: '',
+    companyName: 'Reservei Viagens',
+    companyAddress: 'Rua das Viagens, 123 - Centro',
+    companyPhone: '(11) 99999-9999',
+    companyEmail: 'contato@reserveiviagens.com',
+    companyWebsite: 'www.reserveiviagens.com',
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    alignment: 'center',
+    showLogo: true,
+    showCompanyInfo: true,
+    customText: '',
+    links: [
+      {
+        id: '1',
+        text: 'Contrato',
+        url: '/contrato',
+        type: 'contract',
+        icon: 'FileText',
+        color: '#2563eb',
+        fontSize: 12,
+        isActive: true
+      },
+      {
+        id: '2',
+        text: 'Termos e Condições',
+        url: '/termos',
+        type: 'terms',
+        icon: 'Shield',
+        color: '#059669',
+        fontSize: 12,
+        isActive: true
+      },
+      {
+        id: '3',
+        text: 'Política de Privacidade',
+        url: '/privacidade',
+        type: 'privacy',
+        icon: 'Lock',
+        color: '#7c3aed',
+        fontSize: 12,
+        isActive: true
+      }
+    ],
+    ...loadPersistedVoucherSection('header'),
+  }));
+
+  // Estados para Body
+  const [bodyData, setBodyData] = useState<VoucherBody>(() => ({
+    title: 'Voucher de Reserva',
+    subtitle: 'Confirmação de Reserva',
+    clientInfo: {
+      name: '',
+      email: '',
+      phone: '',
+      document: '',
+      address: '',
+      showEmail: true,
+      showPhone: true,
+      showDocument: true,
+      showAddress: true
+    },
+    reservationInfo: {
+      code: '',
+      destination: '',
+      startDate: '',
+      endDate: '',
+      value: 0,
+      currency: 'BRL',
+      agency: '',
+      agent: '',
+      status: 'active',
+      validity: '',
+      showCode: true,
+      showDestination: true,
+      showDates: true,
+      showValue: true,
+      showAgency: true,
+      showAgent: true,
+      showStatus: true,
+      showValidity: true
+    },
+    benefits: [
+      {
+        id: '1',
+        text: 'Wi-Fi gratuito',
+        icon: 'Wifi',
+        color: '#059669',
+        isActive: true
+      },
+      {
+        id: '2',
+        text: 'Café da manhã',
+        icon: 'Coffee',
+        color: '#d97706',
+        isActive: true
+      },
+      {
+        id: '3',
+        text: 'Transfer aeroporto',
+        icon: 'Car',
+        color: '#2563eb',
+        isActive: true
+      }
+    ],
+    observations: '',
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    layout: 'vertical',
+    spacing: 16,
+    padding: 20,
+    borderStyle: 'solid',
+    borderColor: '#e5e7eb',
+    borderWidth: 1,
+    borderRadius: 8,
+    shadow: true,
+    shadowColor: '#000000',
+    shadowBlur: 10,
+    shadowOffsetX: 0,
+    shadowOffsetY: 4,
+    ...loadPersistedVoucherSection('body'),
+  }));
+
+  // Estados para Footer
+  const [footerData, setFooterData] = useState<VoucherFooter>(() => ({
+    termsAndConditions: [
+      {
+        id: '1',
+        text: 'Termos e Condições',
+        url: '/termos-condicoes',
+        type: 'terms',
+        icon: 'FileText',
+        color: '#059669',
+        fontSize: 12,
+        isActive: true
+      },
+      {
+        id: '2',
+        text: 'Política de Cancelamento',
+        url: '/cancelamento',
+        type: 'cancellation',
+        icon: 'XCircle',
+        color: '#dc2626',
+        fontSize: 12,
+        isActive: true
+      },
+      {
+        id: '3',
+        text: 'Política de Reembolso',
+        url: '/reembolso',
+        type: 'refund',
+        icon: 'DollarSign',
+        color: '#059669',
+        fontSize: 12,
+        isActive: true
+      },
+      {
+        id: '4',
+        text: 'Suporte ao Cliente',
+        url: '/suporte',
+        type: 'support',
+        icon: 'MessageCircle',
+        color: '#2563eb',
+        fontSize: 12,
+        isActive: true
+      }
+    ],
+    contactInfo: {
+      phone: '(11) 99999-9999',
+      email: 'suporte@reserveiviagens.com',
+      website: 'www.reserveiviagens.com',
+      address: 'Rua das Viagens, 123 - Centro, São Paulo - SP',
+      showPhone: true,
+      showEmail: true,
+      showWebsite: true,
+      showAddress: true
+    },
+    socialMedia: [
+      {
+        id: '1',
+        platform: 'whatsapp',
+        url: 'https://wa.me/5511999999999',
+        icon: 'MessageCircle',
+        color: '#25d366',
+        isActive: true
+      },
+      {
+        id: '2',
+        platform: 'instagram',
+        url: 'https://instagram.com/reserveiviagens',
+        icon: 'Camera',
+        color: '#e4405f',
+        isActive: true
+      },
+      {
+        id: '3',
+        platform: 'facebook',
+        url: 'https://facebook.com/reserveiviagens',
+        icon: 'MessageSquare',
+        color: '#1877f2',
+        isActive: true
+      }
+    ],
+    customText: 'Obrigado por escolher a Reservei Viagens!',
+    backgroundColor: '#f8fafc',
+    textColor: '#64748b',
+    fontSize: 12,
+    fontFamily: 'Poppins',
+    alignment: 'center',
+    showTerms: true,
+    showContact: true,
+    showSocial: true,
+    showCustomText: true,
+    borderTop: true,
+    borderTopColor: '#e2e8f0',
+    borderTopWidth: 1,
+    borderTopStyle: 'solid',
+    ...loadPersistedVoucherSection('footer'),
+  }));
+
+  // Funções para Header
+  const handleHeaderUpdate = useCallback((updates: Partial<VoucherHeader>) => {
+    setHeaderData(prev => ({ ...prev, ...updates }));
   }, []);
+
+  const handleHeaderLinkAdd = () => {
+    const newLink: HeaderLink = {
+      id: Date.now().toString(),
+      text: 'Novo Link',
+      url: '/novo-link',
+      type: 'custom',
+      icon: 'Link',
+      color: '#6b7280',
+      fontSize: 12,
+      isActive: true
+    };
+    setHeaderData(prev => ({
+      ...prev,
+      links: [...prev.links, newLink]
+    }));
+  };
+
+  const handleHeaderLinkUpdate = useCallback((linkId: string, updates: Partial<HeaderLink>) => {
+    setHeaderData(prev => ({
+      ...prev,
+      links: prev.links.map(link => 
+        link.id === linkId ? { ...link, ...updates } : link
+      )
+    }));
+  }, []);
+
+  const handleHeaderLinkDelete = (linkId: string) => {
+    setHeaderData(prev => ({
+      ...prev,
+      links: prev.links.filter(link => link.id !== linkId)
+    }));
+  };
+
+  // Funções para Body
+  const handleBodyUpdate = useCallback((updates: Partial<VoucherBody>) => {
+    setBodyData(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  const handleClientInfoUpdate = useCallback((updates: Partial<ClientInfo>) => {
+    setBodyData(prev => ({
+      ...prev,
+      clientInfo: { ...prev.clientInfo, ...updates }
+    }));
+  }, []);
+
+  const handleReservationInfoUpdate = useCallback((updates: Partial<ReservationInfo>) => {
+    setBodyData(prev => ({
+      ...prev,
+      reservationInfo: { ...prev.reservationInfo, ...updates }
+    }));
+  }, []);
+
+  const handleBenefitAdd = () => {
+    const newBenefit: Benefit = {
+      id: Date.now().toString(),
+      text: 'Novo Benefício',
+      icon: 'Star',
+      color: '#f59e0b',
+      isActive: true
+    };
+    setBodyData(prev => ({
+      ...prev,
+      benefits: [...prev.benefits, newBenefit]
+    }));
+  };
+
+  const handleBenefitUpdate = useCallback((benefitId: string, updates: Partial<Benefit>) => {
+    setBodyData(prev => ({
+      ...prev,
+      benefits: prev.benefits.map(benefit => 
+        benefit.id === benefitId ? { ...benefit, ...updates } : benefit
+      )
+    }));
+  }, []);
+
+  const handleBenefitDelete = (benefitId: string) => {
+    setBodyData(prev => ({
+      ...prev,
+      benefits: prev.benefits.filter(benefit => benefit.id !== benefitId)
+    }));
+  };
+
+  // Funções para Footer
+  const handleFooterUpdate = useCallback((updates: Partial<VoucherFooter>) => {
+    setFooterData(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  const handleFooterLinkAdd = () => {
+    const newLink: FooterLink = {
+      id: Date.now().toString(),
+      text: 'Novo Link',
+      url: '/novo-link',
+      type: 'custom',
+      icon: 'Link',
+      color: '#6b7280',
+      fontSize: 12,
+      isActive: true
+    };
+    setFooterData(prev => ({
+      ...prev,
+      termsAndConditions: [...prev.termsAndConditions, newLink]
+    }));
+  };
+
+  const handleFooterLinkUpdate = useCallback((linkId: string, updates: Partial<FooterLink>) => {
+    setFooterData(prev => ({
+      ...prev,
+      termsAndConditions: prev.termsAndConditions.map(link => 
+        link.id === linkId ? { ...link, ...updates } : link
+      )
+    }));
+  }, []);
+
+  const handleFooterLinkDelete = (linkId: string) => {
+    setFooterData(prev => ({
+      ...prev,
+      termsAndConditions: prev.termsAndConditions.filter(link => link.id !== linkId)
+    }));
+  };
+
+  const handleContactInfoUpdate = useCallback((updates: Partial<ContactInfo>) => {
+    setFooterData(prev => ({
+      ...prev,
+      contactInfo: { ...prev.contactInfo, ...updates }
+    }));
+  }, []);
+
+  const handleSocialMediaAdd = () => {
+    const newSocial: SocialMedia = {
+      id: Date.now().toString(),
+      platform: 'whatsapp',
+      url: 'https://wa.me/5511999999999',
+      icon: 'MessageCircle',
+      color: '#25d366',
+      isActive: true
+    };
+    setFooterData(prev => ({
+      ...prev,
+      socialMedia: [...prev.socialMedia, newSocial]
+    }));
+  };
+
+  const handleSocialMediaUpdate = useCallback((socialId: string, updates: Partial<SocialMedia>) => {
+    setFooterData(prev => ({
+      ...prev,
+      socialMedia: prev.socialMedia.map(social => 
+        social.id === socialId ? { ...social, ...updates } : social
+      )
+    }));
+  }, []);
+
+  const handleSocialMediaDelete = (socialId: string) => {
+    setFooterData(prev => ({
+      ...prev,
+      socialMedia: prev.socialMedia.filter(social => social.id !== socialId)
+    }));
+  };
+
+  // Funções para QR Code
+  const generateQRCode = async (data: string) => {
+    try {
+      const options: QRCode.QRCodeToDataURLOptions = {
+        errorCorrectionLevel: qrCodeErrorLevel,
+        margin: 1,
+        color: {
+          dark: qrCodeColor,
+          light: qrCodeBgColor
+        },
+        width: qrCodeSize
+      };
+
+      const url = await QRCode.toDataURL(data, options);
+      setQrCodeUrl(url);
+      return url;
+    } catch (error) {
+      console.error('Erro ao gerar QR Code:', error);
+      alert('Erro ao gerar QR Code. Tente novamente.');
+      return null;
+    }
+  };
+
+  const handleGenerateQRCode = async () => {
+    if (!qrCodeData.trim()) {
+      alert('Por favor, insira dados para gerar o QR Code.');
+      return;
+    }
+
+    const url = await generateQRCode(qrCodeData);
+    if (url) {
+      setShowQrCodeModal(true);
+    }
+  };
+
+  const handleDownloadQRCode = () => {
+    if (qrCodeUrl) {
+      const link = document.createElement('a');
+      link.href = qrCodeUrl;
+      link.download = 'voucher-qrcode.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleCopyQRCode = () => {
+    if (qrCodeUrl) {
+      navigator.clipboard.writeText(qrCodeData).then(() => {
+        alert('Dados do QR Code copiados para a área de transferência!');
+      }).catch(() => {
+        alert('Erro ao copiar dados do QR Code.');
+      });
+    }
+  };
+
+  const handleAddQRCodeToVoucher = () => {
+    if (qrCodeUrl && selectedTemplate) {
+      const newElement: VoucherElement = {
+        id: Date.now().toString(),
+        type: 'qr-code',
+        content: qrCodeData,
+        x: 50,
+        y: 50,
+        width: qrCodeSize,
+        height: qrCodeSize,
+        url: qrCodeUrl
+      };
+
+      const updatedElements = [...selectedTemplate.elements, newElement];
+      setSelectedTemplate({
+        ...selectedTemplate,
+        elements: updatedElements
+      });
+
+      setShowQrCodeModal(false);
+      alert('QR Code adicionado ao voucher!');
+    }
+  };
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -2388,144 +2510,6 @@ export default function VoucherEditor() {
     }
   };
 
-  // Componente para gerar QR Code
-  const QRCodeGenerator = () => (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Gerador de QR Code</h3>
-        <button
-          onClick={() => setShowQrCodeModal(false)}
-          className="text-gray-400 hover:text-gray-600"
-        >
-          <XCircle className="w-5 h-5" />
-        </button>
-      </div>
-
-      <div className="space-y-6">
-        {/* Dados do QR Code */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Dados do QR Code
-          </label>
-          <textarea
-            value={qrCodeData}
-            onChange={(e) => setQrCodeData(e.target.value)}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Insira os dados para gerar o QR Code (URL, texto, etc.)"
-          />
-        </div>
-
-        {/* Configurações do QR Code */}
-        <div>
-          <h4 className="text-md font-medium text-gray-700 mb-4">Configurações</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tamanho
-              </label>
-              <input
-                type="number"
-                value={qrCodeSize}
-                onChange={(e) => setQrCodeSize(parseInt(e.target.value))}
-                min="100"
-                max="500"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nível de Correção de Erro
-              </label>
-              <select
-                value={qrCodeErrorLevel}
-                onChange={(e) => setQrCodeErrorLevel(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="L">Baixo (7%)</option>
-                <option value="M">Médio (15%)</option>
-                <option value="Q">Alto (25%)</option>
-                <option value="H">Muito Alto (30%)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cor do QR Code
-              </label>
-              <input
-                type="color"
-                value={qrCodeColor}
-                onChange={(e) => setQrCodeColor(e.target.value)}
-                className="w-full h-10 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cor de Fundo
-              </label>
-              <input
-                type="color"
-                value={qrCodeBgColor}
-                onChange={(e) => setQrCodeBgColor(e.target.value)}
-                className="w-full h-10 border border-gray-300 rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Preview do QR Code */}
-        {qrCodeUrl && (
-          <div>
-            <h4 className="text-md font-medium text-gray-700 mb-4">Preview</h4>
-            <div className="flex flex-col items-center space-y-4">
-              <Image 
-                src={qrCodeUrl} 
-                alt="QR Code" 
-                width={200}
-                height={200}
-                className="border border-gray-300 rounded-lg"
-              />
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleDownloadQRCode}
-                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Baixar
-                </button>
-                <button
-                  onClick={handleCopyQRCode}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copiar Dados
-                </button>
-                <button
-                  onClick={handleAddQRCodeToVoucher}
-                  className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar ao Voucher
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Botão Gerar */}
-        <div className="flex justify-center">
-          <button
-            onClick={handleGenerateQRCode}
-            className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-          >
-            <QrCode className="w-5 h-5 mr-2" />
-            Gerar QR Code
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -2670,11 +2654,13 @@ export default function VoucherEditor() {
                   {headerData.showLogo && (
                     <div className="mb-4 flex justify-center">
                       {headerData.logo ? (
-                        <img
+                        <Image
                           src={headerData.logo}
                           alt="Logo da Empresa"
+                          width={80}
+                          height={80}
+                          unoptimized
                           className="object-contain max-w-full max-h-20 rounded-lg"
-                          style={{ width: '80px', height: '80px' }}
                         />
                       ) : (
                         <RSVLogo width={80} height={80} className="mx-auto" />
@@ -2907,7 +2893,24 @@ export default function VoucherEditor() {
       {showQrCodeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <QRCodeGenerator />
+            <QRCodeGeneratorPanel
+              qrCodeData={qrCodeData}
+              onQrCodeDataChange={setQrCodeData}
+              qrCodeSize={qrCodeSize}
+              onQrCodeSizeChange={setQrCodeSize}
+              qrCodeErrorLevel={qrCodeErrorLevel}
+              onQrCodeErrorLevelChange={setQrCodeErrorLevel}
+              qrCodeColor={qrCodeColor}
+              onQrCodeColorChange={setQrCodeColor}
+              qrCodeBgColor={qrCodeBgColor}
+              onQrCodeBgColorChange={setQrCodeBgColor}
+              qrCodeUrl={qrCodeUrl}
+              onClose={() => setShowQrCodeModal(false)}
+              onGenerate={handleGenerateQRCode}
+              onDownload={handleDownloadQRCode}
+              onCopy={handleCopyQRCode}
+              onAddToVoucher={handleAddQRCodeToVoucher}
+            />
           </div>
         </div>
       )}
