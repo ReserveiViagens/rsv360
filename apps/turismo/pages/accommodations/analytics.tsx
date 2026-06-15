@@ -189,20 +189,22 @@ export default function AccommodationsAnalyticsPage() {
                 Distribuição por Tipo de Empreendimento
               </h3>
               <div className="space-y-3">
-                {Object.entries(stats.enterprisesByType).map(([type, count]) => (
+                {Object.entries(stats.enterprisesByType).map(([type, count]) => {
+                  const countNum = count as number
+                  return (
                   <div key={type} className="flex items-center justify-between">
                     <span className="text-sm text-gray-700 capitalize">{type.replace('_', ' ')}</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${(count / stats.totalEnterprises) * 100}%` }}
+                          style={{ width: `${(countNum / stats.totalEnterprises) * 100}%` }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-900 w-8 text-right">{count}</span>
+                      <span className="text-sm font-medium text-gray-900 w-8 text-right">{countNum}</span>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             </div>
 

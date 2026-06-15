@@ -10,7 +10,7 @@ interface Campanha {
   nome: string;
   tipo: 'email' | 'whatsapp' | 'sms' | 'social' | 'google-ads' | 'facebook-ads';
   status: 'ativa' | 'pausada' | 'concluida' | 'rascunho' | 'agendada';
-  objetivo: 'vendas' | 'leads' | 'engajamento' | 'retencao' | 'promocao';
+  objetivo: 'vendas' | 'leads' | 'engajamento' | 'retencao' | 'promocao' | 'conversao';
   publico: string;
   segmento: string[];
   dataInicio: string;

@@ -271,16 +271,16 @@ const DraggableBooking: React.FC<DraggableBookingProps> = ({
     transition,
   };
 
-  const getStatusVariant = (status: CalendarBooking['status']) => {
+  const getStatusVariant = (status: CalendarBooking['status']): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
       case 'pending':
-        return 'warning';
+        return 'secondary';
       case 'confirmed':
-        return 'success';
+        return 'default';
       case 'cancelled':
-        return 'error';
+        return 'destructive';
       case 'completed':
-        return 'info';
+        return 'outline';
       default:
         return 'default';
     }

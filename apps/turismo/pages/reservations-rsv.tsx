@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { NotificationProvider } from '../src/context/NotificationContext';
 import { NotificationBell, NotificationToastContainer } from '../src/components/notifications';
-import { BookingCalendar, BookingModal, BookingViewModal } from '../src/components/bookings';
+import { BookingCalendar, BookingModal, BookingViewModal, type BookingCalendarItem } from '../src/components/bookings';
 import {
   ArrowLeft,
   Calendar,
@@ -39,24 +39,7 @@ import {
 // TIPOS
 // ===================================================================
 
-interface Booking {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  destination: string;
-  checkIn: Date;
-  checkOut: Date;
-  value: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  paymentStatus: 'paid' | 'pending' | 'failed';
-  guests: number;
-  notes?: string;
-  // Novos campos para multi-acomodações
-  enterpriseId?: number;
-  propertyId?: number;
-  accommodationId?: number;
-}
+type Booking = BookingCalendarItem;
 
 // ===================================================================
 // COMPONENTE DE LISTA DE RESERVAS

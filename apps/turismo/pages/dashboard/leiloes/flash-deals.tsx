@@ -15,6 +15,7 @@ export default function FlashDealsPage() {
     page: 1,
     limit: 12,
     status: 'active' as string | undefined,
+    search: undefined as string | undefined,
   })
   const [pagination, setPagination] = useState({
     page: 1,
@@ -53,7 +54,7 @@ export default function FlashDealsPage() {
   }
 
   const handleClearFilters = () => {
-    setFilters({ page: 1, limit: 12, status: 'active' })
+    setFilters({ page: 1, limit: 12, status: 'active', search: undefined })
   }
 
   const handlePageChange = (page: number) => {

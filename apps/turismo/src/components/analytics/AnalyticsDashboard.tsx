@@ -394,11 +394,11 @@ const AnalyticsDashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={data.customers}
+                data={data.customers as Array<{ segment: string; count: number; color: string }>}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ segment, percentage }) => `${segment} (${percentage}%)`}
+                label={({ name, percent }) => `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="count"

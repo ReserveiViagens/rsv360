@@ -1,6 +1,7 @@
 export interface Hotel {
   id: string;
   name: string;
+  displayName?: string;
   city: string;
   state: string;
 }
