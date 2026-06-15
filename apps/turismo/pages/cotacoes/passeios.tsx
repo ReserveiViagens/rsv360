@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { TourSelector } from '@/components/TourSelector';
 import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';
+import { patchBudgetItemField } from '@/lib/cotacoes/patch-budget-item';
 import { budgetStorage } from '@/lib/budget-storage';
 import { generateId } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -118,18 +119,7 @@ export default function PasseiosPage() {
 
   const updateItem = (index: number, field: string, value: any) => {
     const newItems = [...budget.items!];
-    if (field.includes('.')) {
-      const [parentField, childField] = field.split('.');
-      newItems[index] = {
-        ...newItems[index],
-        [parentField]: {
-          ...(newItems[index][parentField] || {}),
-          [childField]: value,
-        },
-      };
-    } else {
-      newItems[index] = { ...newItems[index], [field]: value };
-    }
+    newItems[index] = patchBudgetItemField(newItems[index], field, value);
     
     // Recalcular preço total do item
     if (field === 'quantity' || field === 'unitPrice') {

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
+import apiClient from '../src/services/apiClient'
 import {
   FileText,
   Upload,
@@ -141,11 +142,11 @@ export default function DocumentsPage() {
       uploadFormData.append('category', formData.category || 'Geral')
       uploadFormData.append('tags', JSON.stringify(formData.tags))
 
-      const response = await api.post('/api/v1/documents/upload', uploadFormData, {
+      const response = await apiClient.post('/api/v1/documents/upload', uploadFormData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: { loaded: number; total?: number }) => {
           if (progressEvent.total) {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
             setUploadProgress(percentCompleted)

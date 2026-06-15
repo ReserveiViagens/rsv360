@@ -55,6 +55,7 @@ export default function PagamentosPage() {
       await viagensGrupoApi.createPagamentoDividido(grupoId, {
         descricao: newPagamento.descricao,
         valor_total: parseFloat(newPagamento.valor_total),
+        status: 'pendente',
       })
       toast.success('Pagamento dividido criado!')
       setNewPagamento({ descricao: '', valor_total: '' })

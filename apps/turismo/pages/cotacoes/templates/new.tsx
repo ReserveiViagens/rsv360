@@ -128,7 +128,7 @@ export default function NewTemplatePage() {
               </div>
               <div>
                 <Label htmlFor="mainCategory">Categoria Principal *</Label>
-                <Select value={template.mainCategory || 'Hotéis'} onValueChange={(value) => {
+                <Select value={template.mainCategory || 'Hotéis'} onValueChange={(value: string) => {
                   updateTemplate('mainCategory', value);
                   updateTemplate('subCategory', ''); // Reset subcategoria
                 }}>
@@ -146,7 +146,7 @@ export default function NewTemplatePage() {
                 <Label htmlFor="subCategory">Subcategoria</Label>
                 <Select 
                   value={template.subCategory || ''} 
-                  onValueChange={(value) => updateTemplate('subCategory', value)}
+                  onValueChange={(value: string) => updateTemplate('subCategory', value)}
                   disabled={!template.mainCategory || !SUB_CATEGORIES[template.mainCategory]}
                 >
                   <SelectTrigger id="subCategory">

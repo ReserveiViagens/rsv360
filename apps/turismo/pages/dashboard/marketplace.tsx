@@ -75,12 +75,12 @@ export default function MarketplacePage() {
     setLoading(true)
     try {
       const [listingsRes, ordersRes, commissionsRes] = await Promise.all([
-        api.get<{ data: Listing[] }>('/api/v1/marketplace/listings', { status: filters.status === 'all' ? undefined : filters.status }),
+        api.get<Listing[]>('/api/v1/marketplace/listings', { status: filters.status === 'all' ? undefined : filters.status }),
         api.get<Order[]>('/api/v1/marketplace/orders'),
         api.get<Commission[]>('/api/v1/marketplace/commissions'),
       ])
 
-      setListings(listingsRes.data || [])
+      setListings(listingsRes.data ?? [])
       setOrders(Array.isArray(ordersRes) ? ordersRes : [])
       setCommissions(Array.isArray(commissionsRes) ? commissionsRes : [])
     } catch (error) {

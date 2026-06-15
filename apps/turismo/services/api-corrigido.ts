@@ -331,8 +331,8 @@ export const testConnectivity = async () => {
       const response = await api.client.get(api.endpoint);
       results.apis.push({ name: api.name, status: 'OK', response });
     } catch (error) {
-      results.apis.push({ name: api.name, status: 'ERROR', error: error.message });
-      results.errors.push(`${api.name}: ${error.message}`);
+      results.apis.push({ name: api.name, status: 'ERROR', error: (error as Error).message });
+      results.errors.push(`${api.name}: ${(error as Error).message}`);
     }
   }
 
