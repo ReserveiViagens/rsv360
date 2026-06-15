@@ -64,6 +64,8 @@ async function createApp() {
   app.use('/api/clone-alert', cloneAlertRouter);
   app.use('/api/tracking', trackingRouter);
   app.use('/api/v1/payments', paymentsRoutes);
+  const { authRouter } = require('./src/api/v1/auth/routes');
+  app.use('/api/v1/auth', authRouter);
   app.use('/api/portal', portalRouter);
   app.use('/api/admin/portal', adminRouter);
 
