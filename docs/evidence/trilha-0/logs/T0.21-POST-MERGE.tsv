@@ -1,0 +1,14 @@
+gate	resultado	notas
+merge_pr_impl	PR #356 @ 35a5aa1c7	PASS
+pull_main	s2-fase-e-clean @ origin/main	PASS
+G-A2_typecheck_prebuild	PASS 0 erros
+G-A2_build_webpack	PASS exit 0
+G-A2_typecheck_postbuild	PASS 0 erros
+G-A5_smoke_3000	GET http://127.0.0.1:3000/	200
+G-A5_smoke_3004	GET http://127.0.0.1:3004/	200 admin regressao
+G-A5_smoke_3006	GET http://127.0.0.1:3006/	200 guest regressao
+G-A5_health_site_publico	docker inspect rsv360-site-publico	healthy
+tailwind_lock	tailwindcss + @tailwindcss/postcss	4.3.1
+G-A6_api_p0	8/8 OK	run-api-p0-round1.ps1
+veredito	T0.21_GO_pos_merge	Fase E TW4 encerrada (guest+admin+site-publico)
+proximo_marco	HITL Fase E	proxima montanha (turismo TW4 ou Dependabot)
