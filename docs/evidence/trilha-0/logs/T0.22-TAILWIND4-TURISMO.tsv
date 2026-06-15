@@ -1,0 +1,12 @@
+gate	resultado	notas
+base_main	b8a4a50ca	PASS	preflight #358
+G-A2_build_turismo	PASS	Turbopack next build
+G-A3_typecheck	DEBT	fora escopo TW4
+G-A5_smoke_3005	200	turismo
+G-A5_smoke_3000	200	site-publico regressao
+G-A5_smoke_3004	200	admin regressao
+G-A5_smoke_3006	200	guest regressao
+G-A6_api_p0	8/8 OK	run-api-p0-round1.ps1
+tailwind_lock	4.3.1	tailwindcss + @tailwindcss/postcss + tw-animate-css
+veredito	T0.22_GO	ultimo app Next TW4
+proximo_marco	carimbo pos-merge + FASE-E-CLOSEOUT	HITL
