@@ -1,0 +1,8 @@
+gate	resultado	notas
+T0.23e_ts_total	76 -> 49	-27
+T0.23e_hotels_complete	0	PASS
+T0.23e_notifications_cluster	0	PASS
+lint_notifications_exit0	PASS	91 warnings scoped
+T1.4_admin_typecheck	PASS
+T1.2c_auth_tests	4/4	PASS
+turismo_build	PASS
