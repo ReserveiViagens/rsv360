@@ -44,7 +44,7 @@ export function QuoteStepProducts({
   const hasAny =
     state.hotelIds.length > 0 || state.ticketIds.length > 0 || state.attractionIds.length > 0;
 
-  const filter = (list: { title: string }[], q: string) =>
+  const filter = <T extends { title: string }>(list: T[], q: string): T[] =>
     !q.trim()
       ? list
       : list.filter((i) => i.title.toLowerCase().includes(q.toLowerCase()));

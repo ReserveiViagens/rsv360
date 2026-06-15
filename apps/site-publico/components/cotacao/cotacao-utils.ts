@@ -13,11 +13,11 @@ function normalize(s: string): string {
 
 export function getHotelEligibleAddOns(hotel: Hotel): { cafeDaManha: boolean; roupaDeCama: boolean; almoco: boolean } {
   const features = hotel.features ?? hotel.metadata?.features ?? hotel.metadata?.amenities ?? [];
-  const normalized = features.map((f) => normalize(String(f)));
+  const normalized = features.map((f: string) => normalize(String(f)));
   return {
-    cafeDaManha: CAFE_TERMS.some((term) => normalized.some((f) => f.includes(normalize(term)))),
-    roupaDeCama: ROUPA_TERMS.some((term) => normalized.some((f) => f.includes(normalize(term)))),
-    almoco: ALMOCO_TERMS.some((term) => normalized.some((f) => f.includes(normalize(term)))),
+    cafeDaManha: CAFE_TERMS.some((term) => normalized.some((f: string) => f.includes(normalize(term)))),
+    roupaDeCama: ROUPA_TERMS.some((term) => normalized.some((f: string) => f.includes(normalize(term)))),
+    almoco: ALMOCO_TERMS.some((term) => normalized.some((f: string) => f.includes(normalize(term)))),
   };
 }
 

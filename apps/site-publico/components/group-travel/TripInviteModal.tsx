@@ -162,7 +162,7 @@ export function TripInviteModal({
             <Label>Tipo de Convite</Label>
             <Select
               value={formData.invitation_type}
-              onValueChange={(value) => setFormData({ ...formData, invitation_type: value as any })}
+              onValueChange={(value: string) => setFormData({ ...formData, invitation_type: value as any })}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -236,7 +236,7 @@ export function TripInviteModal({
             </Label>
             <Select
               value={formData.expires_in_days.toString()}
-              onValueChange={(value) => setFormData({ ...formData, expires_in_days: parseInt(value) })}
+              onValueChange={(value: string) => setFormData({ ...formData, expires_in_days: parseInt(value) })}
             >
               <SelectTrigger>
                 <SelectValue />

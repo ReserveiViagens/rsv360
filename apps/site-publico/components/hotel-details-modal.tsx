@@ -455,7 +455,7 @@ export function HotelDetailsModal({ hotel, isOpen, onClose, allHotels, onCompare
                 <h3 className="text-lg font-semibold text-gray-900">Benefícios Inclusos</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {benefits.filter(b => b.free).map((benefit, index) => (
+                {benefits.filter((b: { free?: boolean }) => b.free).map((benefit: { name?: string; title?: string; description?: string; icon?: string }, index: number) => (
                   <Card key={index} className="border-green-200 bg-green-50">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">

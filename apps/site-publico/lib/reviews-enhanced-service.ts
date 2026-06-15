@@ -24,6 +24,7 @@ export interface ReviewModeration {
   moderated_by?: number;
   moderation_notes?: string;
   auto_moderated?: boolean;
+  previous_status?: string;
 }
 
 export interface ReviewResponse {

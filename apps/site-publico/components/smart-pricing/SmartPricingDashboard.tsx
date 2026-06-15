@@ -186,8 +186,8 @@ export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
 
   const chartData = history.slice(0, 30).reverse().map((item) => ({
     date: new Date(item.date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }),
-    base: parseFloat(item.base_price),
-    final: parseFloat(item.final_price),
+    base: parseFloat(String(item.base_price)),
+    final: parseFloat(String(item.final_price)),
   }));
 
   return (
@@ -475,9 +475,9 @@ export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
                       {history.slice(0, 10).map((item, idx) => (
                         <tr key={idx} className="border-b">
                           <td className="p-2">{new Date(item.date).toLocaleDateString('pt-BR')}</td>
-                          <td className="text-right p-2">R$ {parseFloat(item.base_price).toFixed(2)}</td>
+                          <td className="text-right p-2">R$ {parseFloat(String(item.base_price)).toFixed(2)}</td>
                           <td className="text-right p-2 font-semibold">
-                            R$ {parseFloat(item.final_price).toFixed(2)}
+                            R$ {parseFloat(String(item.final_price)).toFixed(2)}
                           </td>
                           <td className="text-center p-2">
                             <Badge variant="outline">{item.demand_level || 'medium'}</Badge>

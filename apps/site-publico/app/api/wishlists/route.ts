@@ -83,6 +83,9 @@ export const GET = withAuth(
 // POST /api/wishlists - Criar wishlist
 export const POST = withAuth(
   async (request: AuthRequest, user) => {
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Não autenticado' }, { status: 401 });
+    }
     try {
       const body = await request.json();
       

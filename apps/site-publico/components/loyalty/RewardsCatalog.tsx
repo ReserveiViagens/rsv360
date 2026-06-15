@@ -136,7 +136,7 @@ export function RewardsCatalog({ userId, onRedeem, className }: RewardsCatalogPr
     if (!userPoints) return false;
     if (!reward.is_active) return false;
     if (reward.points_required > userPoints.current_points) return false;
-    if (reward.stock_quantity !== null && reward.stock_quantity <= 0) return false;
+    if (reward.stock_quantity != null && reward.stock_quantity <= 0) return false;
     
     // Verificar validade
     const now = new Date();
@@ -209,7 +209,7 @@ export function RewardsCatalog({ userId, onRedeem, className }: RewardsCatalogPr
             </div>
             <Select
               value={filters.reward_type || 'all'}
-              onValueChange={(value) => setFilters({ ...filters, reward_type: value === 'all' ? undefined : value })}
+              onValueChange={(value: string) => setFilters({ ...filters, reward_type: value === 'all' ? '' : (value ?? '') })}
             >
               <SelectTrigger>
                 <Filter className="h-4 w-4 mr-2" />
@@ -296,9 +296,9 @@ export function RewardsCatalog({ userId, onRedeem, className }: RewardsCatalogPr
                   </div>
 
                   {/* Estoque */}
-                  {reward.stock_quantity !== null && (
+                  {reward.stock_quantity != null && (
                     <div className="text-sm text-gray-500">
-                      {reward.stock_quantity > 0 
+                      {(reward.stock_quantity ?? 0) > 0 
                         ? `${reward.stock_quantity} disponíveis`
                         : 'Esgotado'
                       }

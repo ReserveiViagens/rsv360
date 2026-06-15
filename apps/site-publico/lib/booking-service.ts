@@ -5,6 +5,14 @@
 
 import { queryDatabase } from './db';
 
+async function getIntegrationConfig(integrationConfigId: number): Promise<any | null> {
+  const result = await queryDatabase(
+    'SELECT * FROM integration_configs WHERE id = $1',
+    [integrationConfigId]
+  );
+  return result[0] ?? null;
+}
+
 export interface BookingComConfig {
   username: string;
   password: string;

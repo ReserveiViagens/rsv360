@@ -6,7 +6,7 @@ import { DateRange } from '@/types/auction';
 
 interface DateRangePickerProps {
   dateRange?: DateRange;
-  onChange: (dateRange: { checkIn?: Date; checkOut?: Date }) => void;
+  onChange: (dateRange: { checkIn?: Date | null; checkOut?: Date | null }) => void;
 }
 
 export function DateRangePicker({ dateRange, onChange }: DateRangePickerProps) {
@@ -28,7 +28,7 @@ export function DateRangePicker({ dateRange, onChange }: DateRangePickerProps) {
     }
     onChange({
       ...dateRange,
-      [field]: date || undefined,
+      [field]: date,
     });
   };
 
@@ -50,7 +50,7 @@ export function DateRangePicker({ dateRange, onChange }: DateRangePickerProps) {
           />
           {dateRange?.checkIn && (
             <button
-              onClick={() => onChange({ ...dateRange, checkIn: undefined })}
+              onClick={() => onChange({ ...dateRange, checkIn: null })}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <X className="w-4 h-4" />
@@ -69,7 +69,7 @@ export function DateRangePicker({ dateRange, onChange }: DateRangePickerProps) {
           />
           {dateRange?.checkOut && (
             <button
-              onClick={() => onChange({ ...dateRange, checkOut: undefined })}
+              onClick={() => onChange({ ...dateRange, checkOut: null })}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <X className="w-4 h-4" />

@@ -5,6 +5,7 @@ import {
   fetchVRBOBookings,
   syncVRBOBidirectional,
 } from '@/lib/vrbo-service';
+import type { VRBOConfig } from '@/lib/vrbo-service';
 import { getCredential } from '@/lib/credentials-service';
 
 // POST: Autenticar ou sincronizar
@@ -69,10 +70,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const config = {
-      api_key: await getCredential('vrbo', `api_key_${propertyId}`),
-      api_secret: await getCredential('vrbo', `api_secret_${propertyId}`),
-      access_token: await getCredential('vrbo', `access_token_${propertyId}`),
+    const config: VRBOConfig = {
+      api_key: (await getCredential('vrbo', `api_key_${propertyId}`)) ?? '',
+      api_secret: (await getCredential('vrbo', `api_secret_${propertyId}`)) ?? '',
+      access_token: (await getCredential('vrbo', `access_token_${propertyId}`)) ?? '',
       property_id: propertyId,
     };
 

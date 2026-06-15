@@ -49,7 +49,7 @@ export function getDbPool(): Pool {
     pool = new Pool(dbConfig);
     
     // Handle connection errors
-    pool.on('error', (err) => {
+    pool.on('error', (err: Error) => {
       console.error('❌ Erro no pool de conexões:', err);
     });
   }

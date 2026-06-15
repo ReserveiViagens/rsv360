@@ -200,7 +200,7 @@ export class GDPRService {
       );
 
       // Registrar acesso
-      await this.logDataAccess(userId, 'export', userId, {
+      await this.logDataAccess(userId, 'user_data', 'export', userId, {
         exportId,
         format,
       });
@@ -374,7 +374,7 @@ export class GDPRService {
       );
 
       // Registrar acesso
-      await this.logDataAccess(userId, 'delete', userId, {
+      await this.logDataAccess(userId, 'user_data', 'delete', userId, {
         deletionRequestId: requestId,
       });
 

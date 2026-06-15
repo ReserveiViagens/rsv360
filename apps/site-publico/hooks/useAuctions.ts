@@ -110,7 +110,9 @@ export function useAuctionsQuery(filters?: AuctionFilters) {
         const mapRes = await fetch(`${API_BASE_URL}/api/v1/auctions/map-data`, { headers: getAuthHeaders() });
         if (mapRes.ok) {
           const mapData = await mapRes.json();
-          const mapDataMap = new Map(mapData.map((item: any) => [item.id, item]));
+          const mapDataMap = new Map<number, { lat?: number; lng?: number }>(
+            mapData.map((item: { id: number; lat?: number; lng?: number }) => [item.id, item])
+          );
           
           // Enriquecer auctions com coordenadas
           return auctionsList.map((auction: any) => {

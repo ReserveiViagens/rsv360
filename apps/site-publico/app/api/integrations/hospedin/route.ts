@@ -6,6 +6,7 @@ import {
   fetchHospedinAvailability,
   syncHospedinBidirectional,
 } from '@/lib/hospedin-service';
+import type { HospedinConfig } from '@/lib/hospedin-service';
 import { getCredential } from '@/lib/credentials-service';
 
 // POST: Autenticar
@@ -70,10 +71,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const config = {
-      api_key: await getCredential('hospedin', `api_key_${propertyId}`),
-      api_secret: await getCredential('hospedin', `api_secret_${propertyId}`),
-      access_token: await getCredential('hospedin', `access_token_${propertyId}`),
+    const config: HospedinConfig = {
+      api_key: (await getCredential('hospedin', `api_key_${propertyId}`)) ?? '',
+      api_secret: (await getCredential('hospedin', `api_secret_${propertyId}`)) ?? '',
+      access_token: (await getCredential('hospedin', `access_token_${propertyId}`)) ?? '',
       property_id: propertyId,
     };
 

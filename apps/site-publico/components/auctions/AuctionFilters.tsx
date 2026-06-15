@@ -40,8 +40,14 @@ export function AuctionFilters({ filters, onFiltersChange, onClearFilters }: Auc
     onFiltersChange({ ...filters, propertyType: types });
   };
 
-  const handleDateRangeChange = (dateRange: { checkIn?: Date; checkOut?: Date }) => {
-    onFiltersChange({ ...filters, dateRange });
+  const handleDateRangeChange = (dateRange: { checkIn?: Date | null; checkOut?: Date | null }) => {
+    onFiltersChange({
+      ...filters,
+      dateRange: {
+        checkIn: dateRange.checkIn ?? undefined,
+        checkOut: dateRange.checkOut ?? undefined,
+      },
+    });
   };
 
   const handlePriceRangeChange = (minPrice: number, maxPrice: number) => {
@@ -141,7 +147,10 @@ export function AuctionFilters({ filters, onFiltersChange, onClearFilters }: Auc
 
         {/* Date Range Picker */}
         <DateRangePicker
-          dateRange={filters.dateRange}
+          dateRange={filters.dateRange ? {
+            checkIn: filters.dateRange.checkIn ?? null,
+            checkOut: filters.dateRange.checkOut ?? null,
+          } : undefined}
           onChange={handleDateRangeChange}
         />
 

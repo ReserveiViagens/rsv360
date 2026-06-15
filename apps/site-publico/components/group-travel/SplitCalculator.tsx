@@ -176,7 +176,7 @@ export function SplitCalculator({
         {/* Tipo de Divisão */}
         <div className="space-y-2">
           <Label>Tipo de Divisão</Label>
-          <Select value={splitType} onValueChange={(value) => setSplitType(value as SplitType)} disabled={readOnly}>
+          <Select value={splitType} onValueChange={(value: string) => setSplitType(value as SplitType)} disabled={readOnly}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
