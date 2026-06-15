@@ -8,7 +8,7 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface LegacySelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+export interface LegacySelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'onChange' | 'size'> {
   label?: string;
   error?: string;
   helperText?: string;

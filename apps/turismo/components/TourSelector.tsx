@@ -257,7 +257,7 @@ export function TourSelector({ value, onChange, required = false }: TourSelector
             <Label htmlFor="tour-select">Passeio</Label>
             <Select 
               value={value?.tour?.id || ""} 
-              onValueChange={(tourId) => {
+              onValueChange={(tourId: string) => {
                 const tour = availableTours.find(t => t.id === tourId)
                 if (tour) handleTourChange(tour)
               }}
@@ -300,7 +300,7 @@ export function TourSelector({ value, onChange, required = false }: TourSelector
       {value?.tour && (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
           <h4 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-            <span>{tourTypes.find(t => t.value === value.tour.type)?.label.split(' ')[0]}</span>
+            <span>{tourTypes.find(t => t.value === value?.tour?.type)?.label.split(' ')[0]}</span>
             <span>{value.tour.name}</span>
           </h4>
           

@@ -11,6 +11,8 @@
  * Todos os imports são dinâmicos inline para evitar erros no SSR
  */
 
+import type { BudgetTemplate } from './types/budget';
+
 export interface TestResult {
   name: string;
   passed: boolean;
@@ -77,10 +79,10 @@ export function testTemplateLoading(): TestResult {
           total: templates.length,
           version,
           porCategoria: {
-            hotéis: templates.filter(t => t.mainCategory === 'Hotéis').length,
-            parques: templates.filter(t => t.mainCategory === 'Parques').length,
-            atrações: templates.filter(t => t.mainCategory === 'Atrações').length,
-            passeios: templates.filter(t => t.mainCategory === 'Passeios').length,
+            hotéis: templates.filter((t: BudgetTemplate) => t.mainCategory === 'Hotéis').length,
+            parques: templates.filter((t: BudgetTemplate) => t.mainCategory === 'Parques').length,
+            atrações: templates.filter((t: BudgetTemplate) => t.mainCategory === 'Atrações').length,
+            passeios: templates.filter((t: BudgetTemplate) => t.mainCategory === 'Passeios').length,
           }
         }
       };
@@ -128,7 +130,7 @@ export function testCreateBudgetFromTemplate(): TestResult {
     }
 
     // Pegar primeiro template de hotel
-    const hotelTemplate = templates.find(t => t.mainCategory === 'Hotéis');
+    const hotelTemplate = templates.find((t: BudgetTemplate) => t.mainCategory === 'Hotéis');
     if (!hotelTemplate) {
       return {
         name: 'Criação de Orçamento a partir de Template',

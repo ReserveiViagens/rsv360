@@ -2,7 +2,7 @@
 // 52 templates de parques aquáticos conforme documento
 // Função helper createParkTemplate() para gerar templates
 
-import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, ContactInfo } from './types/budget';
+import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, ContactInfo, DayItinerary, AccommodationDetail } from './types/budget';
 import { generateId } from './utils';
 
 /**

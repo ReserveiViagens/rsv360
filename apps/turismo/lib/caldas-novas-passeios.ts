@@ -1,7 +1,7 @@
 // Templates de Passeios em Caldas Novas conforme documentação (linha 722-728)
 // 6 templates de passeios turísticos conforme documento
 
-import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, DayItinerary, ContactInfo } from './types/budget';
+import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote, DayItinerary, ContactInfo, AccommodationDetail } from './types/budget';
 import { generateId } from './utils';
 
 /**

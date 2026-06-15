@@ -1,4 +1,5 @@
 import apiClient, { api } from '../apiClient';
+import { unwrapApiData } from './unwrapApiData';
 
 // Tipos para Viagens em Grupo
 export interface Grupo {
@@ -103,19 +104,19 @@ export const viagensGrupoApi = {
   // Buscar grupo por ID
   getGrupoById: async (id: string): Promise<Grupo> => {
     const response = await api.get<{ data: Grupo }>(`/api/v1/viagens-grupo/${id}`);
-    return response.data?.data || response.data as Grupo;
+    return unwrapApiData<Grupo>(response.data);
   },
 
   // Criar novo grupo
   createGrupo: async (data: Omit<Grupo, 'id' | 'created_at' | 'updated_at'>): Promise<Grupo> => {
     const response = await api.post<{ data: Grupo }>('/api/v1/viagens-grupo', data);
-    return response.data?.data || response.data as Grupo;
+    return unwrapApiData<Grupo>(response.data);
   },
 
   // Atualizar grupo
   updateGrupo: async (id: string, data: Partial<Grupo>): Promise<Grupo> => {
     const response = await api.put<{ data: Grupo }>(`/api/v1/viagens-grupo/${id}`, data);
-    return response.data?.data || response.data as Grupo;
+    return unwrapApiData<Grupo>(response.data);
   },
 
   // Deletar grupo
@@ -142,7 +143,7 @@ export const viagensGrupoApi = {
   // Adicionar item à wishlist
   addWishlistItem: async (grupoId: string, item: Omit<WishlistItem, 'id' | 'grupo_id' | 'votos' | 'created_at'>): Promise<WishlistItem> => {
     const response = await api.post<{ data: WishlistItem }>(`/api/v1/viagens-grupo/${grupoId}/wishlists`, item);
-    return response.data?.data || response.data as WishlistItem;
+    return unwrapApiData<WishlistItem>(response.data);
   },
 
   // Listar pagamentos divididos de um grupo
@@ -164,7 +165,7 @@ export const viagensGrupoApi = {
   // Criar pagamento dividido
   createPagamentoDividido: async (grupoId: string, data: Omit<PagamentoDividido, 'id' | 'grupo_id' | 'created_at'>): Promise<PagamentoDividido> => {
     const response = await api.post<{ data: PagamentoDividido }>(`/api/v1/viagens-grupo/${grupoId}/pagamentos`, data);
-    return response.data?.data || response.data as PagamentoDividido;
+    return unwrapApiData<PagamentoDividido>(response.data);
   },
 };
 

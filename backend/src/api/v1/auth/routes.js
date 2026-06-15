@@ -1,5 +1,6 @@
 const express = require('express');
-const { verifyAccessToken, extractBearerToken } = require('./jwt-verify');
+const crypto = require('crypto');
+const { verifyAccessToken, verifyRefreshToken, signJwt, extractBearerToken } = require('./jwt-verify');
 
 const router = express.Router();
 
@@ -51,6 +52,72 @@ router.get('/session', (req, res) => {
   return res.json(body);
 });
 
+/** POST /api/v1/auth/refresh — renova access token (piloto JWT; produção usa site-publico + DB). */
+router.post('/refresh', (req, res) => {
+  const { refresh_token: refreshToken } = req.body || {};
+  if (!refreshToken) {
+    return res.status(400).json({ success: false, error: 'refresh_token é obrigatório' });
+  }
+
+  const refreshSecret =
+    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'refresh-secret-key';
+  const accessSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+  const payload = verifyRefreshToken(refreshToken, refreshSecret);
+  if (!payload) {
+    return res.status(401).json({ success: false, error: 'Refresh token inválido ou expirado' });
+  }
+
+  const userId = payload.userId ?? payload.sub;
+  if (!userId) {
+    return res.status(401).json({ success: false, error: 'Payload inválido' });
+  }
+
+  const accessToken = signJwt(
+    {
+      userId,
+      email: payload.email ?? '',
+      name: payload.name ?? payload.email ?? 'Usuário',
+      role: payload.role ?? 'user',
+      enterpriseId: payload.enterpriseId ?? payload.enterprise_id ?? 'ent_1',
+    },
+    accessSecret,
+    900
+  );
+
+  let newRefreshToken = refreshToken;
+  if (process.env.AUTH_PILOT_ENABLED === 'true') {
+    const tokenFamily = payload.tokenFamily ?? crypto.randomBytes(8).toString('hex');
+    newRefreshToken = signJwt(
+      {
+        userId,
+        tokenFamily,
+        type: 'refresh',
+        enterpriseId: payload.enterpriseId ?? 'ent_1',
+      },
+      refreshSecret,
+      60 * 60 * 24 * 30
+    );
+  }
+
+  return res.json({
+    success: true,
+    message: 'Tokens renovados',
+    data: {
+      access_token: accessToken,
+      refresh_token: newRefreshToken,
+      expires_in: 900,
+      user: {
+        id: String(userId),
+        email: payload.email ?? '',
+        name: payload.name ?? 'Usuário',
+        role: payload.role ?? 'user',
+        enterpriseId: payload.enterpriseId ?? 'ent_1',
+      },
+    },
+  });
+});
+
 /** POST /api/v1/auth/login — piloto dev (sem DB); produção usa site-publico */
 router.post('/login', (req, res) => {
   const { email, password } = req.body || {};
@@ -82,6 +149,22 @@ router.post('/login', (req, res) => {
   );
   const accessToken = `${header}.${payload}.${signature}`;
 
+  const refreshSecret =
+    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'refresh-secret-key';
+  const refreshToken = signJwt(
+    {
+      userId: payloadObj.userId,
+      tokenFamily: crypto.randomBytes(8).toString('hex'),
+      type: 'refresh',
+      enterpriseId: payloadObj.enterpriseId,
+      email: payloadObj.email,
+      name: payloadObj.name,
+      role: payloadObj.role,
+    },
+    refreshSecret,
+    60 * 60 * 24 * 30
+  );
+
   return res.json({
     success: true,
     message: 'Login piloto (dev)',
@@ -94,6 +177,7 @@ router.post('/login', (req, res) => {
         enterpriseId: payloadObj.enterpriseId,
       },
       access_token: accessToken,
+      refresh_token: refreshToken,
       expires_in: 900,
     },
   });

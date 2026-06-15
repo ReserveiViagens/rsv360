@@ -1,4 +1,5 @@
 import apiClient, { api } from '../apiClient';
+import { unwrapApiData } from './unwrapApiData';
 
 // Tipos para Excursões
 export interface Excursao {
@@ -97,19 +98,19 @@ export const excursoesApi = {
   // Buscar excursão por ID
   getExcursaoById: async (id: string): Promise<Excursao> => {
     const response = await api.get<{ data: Excursao }>(`/api/v1/excursoes/${id}`);
-    return response.data?.data || response.data as Excursao;
+    return unwrapApiData<Excursao>(response.data);
   },
 
   // Criar nova excursão
   createExcursao: async (data: Omit<Excursao, 'id' | 'created_at' | 'updated_at'>): Promise<Excursao> => {
     const response = await api.post<{ data: Excursao }>('/api/v1/excursoes', data);
-    return response.data?.data || response.data as Excursao;
+    return unwrapApiData<Excursao>(response.data);
   },
 
   // Atualizar excursão
   updateExcursao: async (id: string, data: Partial<Excursao>): Promise<Excursao> => {
     const response = await api.put<{ data: Excursao }>(`/api/v1/excursoes/${id}`, data);
-    return response.data?.data || response.data as Excursao;
+    return unwrapApiData<Excursao>(response.data);
   },
 
   // Deletar/Cancelar excursão
@@ -126,7 +127,7 @@ export const excursoesApi = {
   // Adicionar participante
   addParticipante: async (excursaoId: string, userId: string): Promise<Participante> => {
     const response = await api.post<{ data: Participante }>(`/api/v1/excursoes/${excursaoId}/participantes`, { user_id: userId });
-    return response.data?.data || response.data as Participante;
+    return unwrapApiData<Participante>(response.data);
   },
 
   // Remover participante
@@ -143,7 +144,7 @@ export const excursoesApi = {
   // Criar roteiro
   createRoteiro: async (excursaoId: string, data: Omit<Roteiro, 'id' | 'excursao_id' | 'created_at'>): Promise<Roteiro> => {
     const response = await api.post<{ data: Roteiro }>(`/api/v1/excursoes/${excursaoId}/roteiros`, data);
-    return response.data?.data || response.data as Roteiro;
+    return unwrapApiData<Roteiro>(response.data);
   },
 };
 

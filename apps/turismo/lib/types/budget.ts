@@ -72,10 +72,7 @@ export interface Budget {
   attractionId?: string;
   attractionName?: string;
   attractionType?: 'museu' | 'monumento' | 'parque_natural' | 'centro_historico' | 'mirante' | 'show' | 'tour' | 'experiencia';
-  visitDate?: string;
   visitTime?: string;
-  groupSize?: number;
-  hasGroupDiscount?: boolean;
   hasScheduledTour?: boolean;
   tourGuideIncluded?: boolean;
   duration?: string;
@@ -176,11 +173,6 @@ export interface BudgetItem {
           language?: string;
           groupSize?: number;
           specialRequests?: string;
-    
-    // Para passeios
-    duration?: string;
-    includes?: string[];
-    excludes?: string[];
   };
 }
 

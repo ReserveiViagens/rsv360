@@ -259,7 +259,7 @@ class BudgetStorage {
             totalPrice: 240,
             details: {
               date: '',
-              ageGroup: 'Adulto',
+              ageGroup: 'adulto',
             }
           },
           {
@@ -271,7 +271,7 @@ class BudgetStorage {
             totalPrice: 80,
             details: {
               date: '',
-              ageGroup: 'Criança',
+              ageGroup: 'crianca',
             }
           }
         ],
@@ -282,7 +282,7 @@ class BudgetStorage {
         isActive: true,
         usageCount: 0,
       }
-    ];
+    ] as BudgetTemplate[];
   }
 
   // Dados de exemplo
@@ -355,7 +355,7 @@ class BudgetStorage {
             totalPrice: 2400,
             details: {
               date: '2024-03-10',
-              ageGroup: 'Estudante',
+              ageGroup: 'estudante',
             }
           }
         ],
