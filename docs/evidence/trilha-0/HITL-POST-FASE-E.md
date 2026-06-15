@@ -64,7 +64,7 @@ Artefatos: [logs/T0.23-turismo-ts-baseline.log](./logs/T0.23-turismo-ts-baseline
 |---------|---------------|
 | **T0.23 TS turismo** | [T0.23 preflight](./T0.23-TURISMO-TS-RADIX-PREFLIGHT.md) → T0.23a Radix impl → T0.23b/c |
 | Lint #237 | **T0.24** eslint hoist — depois retomar #237 |
-| PLANO-MESTRE Fase 1 | ADR-0004 **Proposto** — aprovação HITL separada |
+| PLANO-MESTRE Fase 1 | ADR-0004 **Aceito** — impl T1.x após war room |
 
 **Não misturar** T0.23 com lint, TW4, PLANO-MESTRE impl ou `tsconfig` include na mesma PR.
 
