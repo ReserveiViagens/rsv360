@@ -6,6 +6,7 @@ import { calculatePricing, validateStayRules } from '@/lib/pricing-service';
 import { triggerWebhook, WEBHOOK_EVENTS } from '@/lib/webhook-service';
 import { createCheckinRequest } from '@/lib/checkin-service';
 import { sendCheckinCreatedNotification } from '@/lib/checkin-notifications';
+import { logStatusChange } from '@/lib/booking-status-service';
 
 // POST /api/bookings - Criar nova reserva
 export async function POST(request: NextRequest) {

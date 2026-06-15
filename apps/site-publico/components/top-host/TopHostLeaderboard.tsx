@@ -189,7 +189,7 @@ export function TopHostLeaderboard() {
               <Label htmlFor="tier">Tier</Label>
               <Select
                 value={filters.tier || 'all'}
-                onValueChange={(value) => setFilters({ ...filters, tier: value, page: 1 })}
+                onValueChange={(value: string) => setFilters({ ...filters, tier: value, page: 1 })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos os tiers" />

@@ -175,14 +175,14 @@ export function requireRole(allowedRoles: string[]) {
  * Helper para usar em API routes
  * Wrapper que executa handler com autenticação
  */
-export function withAuth<T = any>(
-  handler: (request: AuthRequest, user: AuthenticatedUser | null, context?: any) => Promise<NextResponse<T>>,
+export function withAuth(
+  handler: (request: AuthRequest, user: AuthenticatedUser | null, context?: any) => Promise<NextResponse<any>>,
   options?: {
     required?: boolean;
     roles?: string[];
   }
 ) {
-  return async (request: NextRequest, context?: any): Promise<NextResponse<T>> => {
+  return async (request: NextRequest, context?: any): Promise<NextResponse<any>> => {
     const { required = true, roles } = options || {};
     
     // Autenticação obrigatória

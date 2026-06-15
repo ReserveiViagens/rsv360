@@ -3,7 +3,7 @@
  * Sincronização bidirecional entre RSV e Google Calendar
  */
 
-import { google } from 'googleapis';
+import { google, calendar_v3 } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { queryDatabase } from './db';
 
@@ -55,14 +55,14 @@ export async function exchangeCodeForTokens(code: string): Promise<CalendarCrede
   return {
     access_token: tokens.access_token || '',
     refresh_token: tokens.refresh_token || '',
-    expiry_date: tokens.expiry_date,
+    expiry_date: tokens.expiry_date ?? undefined,
   };
 }
 
 /**
  * ✅ Atualizar credenciais e obter cliente autenticado
  */
-async function getAuthenticatedClient(credentials: CalendarCredentials): Promise<typeof google.calendar> {
+async function getAuthenticatedClient(credentials: CalendarCredentials): Promise<calendar_v3.Calendar> {
   oauth2Client.setCredentials({
     access_token: credentials.access_token,
     refresh_token: credentials.refresh_token,

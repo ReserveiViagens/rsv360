@@ -141,22 +141,9 @@ export async function validateCoupon(
   } else if (coupon.discount_type === 'fixed') {
     discountAmount = Math.min(coupon.discount_value, amount);
   } else if (coupon.discount_type === 'free_night') {
-    // Lógica de noite grátis
-    if (coupon.discount_type === 'free_night') {
-      // Para noite grátis, calcular baseado no número de noites
-      const nights = Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24));
-      if (nights >= coupon.discount_value) {
-        // Desconto equivalente ao valor de uma noite
-        const nightlyRate = amount / nights;
-        discountAmount = nightlyRate * coupon.discount_value;
-      } else {
-        return {
-          valid: false,
-          error: `É necessário pelo menos ${coupon.discount_value} noites para usar este cupom`,
-        };
-      }
-    }
-    discountAmount = 0; // Placeholder
+    const nights = Math.max(coupon.discount_value, 1);
+    const nightlyRate = amount / nights;
+    discountAmount = nightlyRate * Math.min(nights, coupon.discount_value);
   }
 
   return {

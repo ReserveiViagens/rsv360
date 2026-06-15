@@ -5,6 +5,7 @@
 import { queryDatabase } from './db';
 
 export interface LoyaltyPoints {
+  id?: number;
   user_id: number;
   current_points: number;
   lifetime_points: number;

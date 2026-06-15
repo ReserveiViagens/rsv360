@@ -200,7 +200,7 @@ export function CampaignForm({
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({ ...formData, status: value })
                     }
                   >
@@ -241,7 +241,7 @@ export function CampaignForm({
                   <Label htmlFor="campaign_type">Tipo de Campanha *</Label>
                   <Select
                     value={formData.campaign_type}
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({ ...formData, campaign_type: value })
                     }
                   >
@@ -263,7 +263,7 @@ export function CampaignForm({
                   <Label htmlFor="channel">Canal *</Label>
                   <Select
                     value={formData.channel}
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({ ...formData, channel: value })
                     }
                   >
@@ -291,7 +291,7 @@ export function CampaignForm({
                 <Label htmlFor="target_segment_id">Segmento Alvo</Label>
                 <Select
                   value={formData.target_segment_id?.toString() || 'none'}
-                  onValueChange={(value) =>
+                  onValueChange={(value: string) =>
                     setFormData({
                       ...formData,
                       target_segment_id: value === 'none' ? undefined : parseInt(value),

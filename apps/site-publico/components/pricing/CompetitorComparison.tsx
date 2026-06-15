@@ -265,11 +265,11 @@ export default function CompetitorComparison({
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip
-                formatter={(value: number, name: string) => {
+                formatter={((value: number, name: string) => {
                   if (name === 'preco') return [`R$ ${value.toFixed(2)}`, 'Preço Médio'];
                   if (name === 'ocupacao') return [`${value.toFixed(1)}%`, 'Ocupação'];
                   return [value, name];
-                }}
+                }) as any}
               />
               <Legend />
               <Bar 

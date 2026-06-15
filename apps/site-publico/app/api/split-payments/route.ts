@@ -107,7 +107,11 @@ export async function POST(request: NextRequest) {
       booking_id,
       total_amount,
       split_type,
-      participants,
+      participants.map((p) => ({
+        ...p,
+        user_id: p.user_id ?? undefined,
+        name: p.name ?? undefined,
+      })),
       created_by || user.id
     );
 

@@ -126,7 +126,7 @@ export default function N8NIntegration() {
         setConfig((prev) => ({ ...prev, status: "error" }))
       }
     } catch (error) {
-      alert(`❌ Erro de conexão: ${error.message}`)
+      alert(`❌ Erro de conexão: ${error instanceof Error ? error.message : String(error)}`)
       setConfig((prev) => ({ ...prev, status: "error" }))
     } finally {
       setIsLoading(false)

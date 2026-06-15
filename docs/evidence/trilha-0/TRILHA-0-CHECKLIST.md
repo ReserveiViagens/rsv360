@@ -77,6 +77,7 @@
 - [x] T0.20a Radix/leaflet — **GO** #350
 - [ ] T0.20a carimbo pós-merge — **PR pendente**
 - [x] T0.20b TS2322/TS2339 — **GO** branch `chore/t0.20b-ts2322` — `T0.20b-TS2322-2339-RESULT.md`
+- [x] T0.20c residual — **GO** branch `chore/t0.20c-residual` — `T0.20c-RESIDUAL-RESULT.md` (347 → 0 erros)
 
 ## Decisão Trilha 0
 
@@ -89,4 +90,4 @@
 | **Fase E / TW4 guest** | **GO pós-merge** #330/#331 |
 | **Fase E / TW4 admin** | **GO pós-merge** #332/#333 |
 | **Montanha `.next/types`** | T0.19b **GO** (#340); 971 erros pos-build |
-| **Próximo passo** | HITL T0.20a Radix ou T0.20b TS2322 |
+| **Próximo passo** | Merge #351 → #352 → PR T0.20c; carimbo pós-merge |

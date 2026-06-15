@@ -1,6 +1,5 @@
 import {
   createElement,
-  type ComponentProps,
   type ComponentType,
   type FC,
   type ForwardRefExoticComponent,
@@ -24,15 +23,16 @@ export function radixUiExport<P, T extends HTMLElement>(
  * Root Radix consumido como JSX em páginas (React 19 TS2786).
  * createElement preserva props; não usar dentro de forwardRef.
  */
-export function radixRoot<P>(Component: ComponentType<P>): (props: P) => ReactElement {
-  const Root = (props: P) => createElement(Component, props);
-  if ('displayName' in Component && typeof Component.displayName === 'string') {
-    Root.displayName = Component.displayName;
+export function radixRoot(Component: any): any {
+  const Root = (props: any) => createElement(Component, props);
+  const named = Component as { displayName?: string };
+  if (typeof named.displayName === 'string') {
+    Root.displayName = named.displayName;
   }
   return Root;
 }
 
-/** react-leaflet / primitivos em módulos dedicados (ex.: leaflet-ui). */
-export function radixCreate<P>(Component: ComponentType<P>, props: P) {
+/** createElement para primitivos Radix/leaflet (evita TS2786 interno). */
+export function radixCreate(Component: any, props: any): ReactElement {
   return createElement(Component, props);
 }

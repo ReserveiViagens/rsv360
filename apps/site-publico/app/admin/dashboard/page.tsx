@@ -9,7 +9,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Download, BarChart3, Users, FileText, Activity, Sparkles } from 'lucide-react';
+import { RefreshCw, Download, BarChart3, Users, FileText, Activity, Sparkles, PieChart as PieChartIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function DashboardPage() {
@@ -198,7 +198,7 @@ export default function DashboardPage() {
               score={health.healthScore}
               status={health.status}
               message={health.message}
-              uptime={health.uptime}
+              uptime={typeof health.uptime === 'string' ? parseInt(health.uptime, 10) || 0 : health.uptime}
             />
           </motion.div>
         )}
@@ -280,7 +280,10 @@ export default function DashboardPage() {
             >
               <TrendChart
                 title=""
-                data={data.content.trends}
+                data={data.content.trends.map((t) => ({
+                  date: t.date ?? t.month ?? '',
+                  hotels: t.value,
+                }))}
                 type="content"
               />
             </GlassCard>
@@ -293,7 +296,10 @@ export default function DashboardPage() {
             >
               <TrendChart
                 title=""
-                data={data.users.trends}
+                data={data.users.trends.map((t) => ({
+                  date: t.date ?? t.month ?? '',
+                  logins: t.value,
+                }))}
                 type="users"
               />
             </GlassCard>
@@ -310,12 +316,14 @@ export default function DashboardPage() {
           {data?.content?.byType && (
             <GlassCard
               title="Distribuição por Tipo de Conteúdo"
-              icon={<PieChart className="h-5 w-5" />}
+              icon={<PieChartIcon className="h-5 w-5" />}
               delay={0.1}
             >
               <PieChart
                 title=""
-                data={data.content.byType}
+                data={Object.fromEntries(
+                  data.content.byType.map((item) => [item.name, item.value])
+                )}
               />
             </GlassCard>
           )}
@@ -327,7 +335,9 @@ export default function DashboardPage() {
             >
               <PieChart
                 title=""
-                data={data.users.byRole}
+                data={Object.fromEntries(
+                  data.users.byRole.map((item) => [item.name, item.value])
+                )}
               />
             </GlassCard>
           )}

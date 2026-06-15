@@ -39,9 +39,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ reque
     await approveVerification(
       requestId,
       user.id,
-      body.review_notes,
-      body.badge,
-      body.badge_expires_at
+      body.review_notes
     );
 
     return NextResponse.json({

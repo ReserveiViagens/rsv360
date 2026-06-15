@@ -147,7 +147,7 @@ export function RevenueForecast({ propertyId, className }: RevenueForecastProps)
               Previsão de Receita
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Select value={months.toString()} onValueChange={(v) => setMonths(parseInt(v))}>
+              <Select value={months.toString()} onValueChange={(v: string) => setMonths(parseInt(v))}>
                 <SelectTrigger className="w-[120px]">
                   <SelectValue />
                 </SelectTrigger>

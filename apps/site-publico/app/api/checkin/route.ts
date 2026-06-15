@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { generatePin } from '@/lib/smartlock-integration';
 import { sendCheckinInstructions } from '@/lib/whatsapp';
-import { sendCheckinInstructions as sendEmailCheckin } from '@/lib/email';
+import { sendCheckInInstructions as sendEmailCheckin } from '@/lib/email';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',

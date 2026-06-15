@@ -161,7 +161,7 @@ export default function PricingDashboardPage() {
   
   // States
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
-    searchParams.get('propertyId') || null
+    searchParams?.get('propertyId') || null
   );
   const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 dias atrás
@@ -323,7 +323,7 @@ export default function PricingDashboardPage() {
             {/* View Mode Toggle */}
             <div>
               <label className="text-sm font-medium mb-2 block">Visualização</label>
-              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
+              <Tabs value={viewMode} onValueChange={(v: string) => setViewMode(v as any)}>
                 <TabsList className="w-full">
                   <TabsTrigger value="calendar" className="flex-1">
                     <Calendar className="h-4 w-4 mr-2" />
@@ -485,7 +485,7 @@ export default function PricingDashboardPage() {
                 {viewMode === 'config' && (
                   <PricingConfig
                     propertyId={selectedPropertyId}
-                    config={pricingConfig}
+                    config={pricingConfig ?? null}
                     isLoading={isLoadingConfig}
                   />
                 )}

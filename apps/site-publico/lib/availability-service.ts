@@ -153,7 +153,7 @@ export async function checkAvailability(
     return {
       available,
       conflictingBookings: conflicts.length,
-      conflictingBookingIds: conflicts.map(c => c.id),
+      conflictingBookingIds: conflicts.map(c => c.bookingId),
       reason: !available 
         ? conflicts.length > 0 
           ? `Conflito com ${conflicts.length} reserva(s) existente(s)`

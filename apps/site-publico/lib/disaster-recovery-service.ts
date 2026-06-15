@@ -169,7 +169,7 @@ export class DisasterRecoveryService {
         lastExecuted: new Date(),
       });
 
-      return await this.getRecoveryExecution(execution.id!);
+      return await this.getRecoveryExecution(execution.id!) as RecoveryExecution;
     } catch (error: any) {
       // Marcar como falha
       await this.updateRecoveryExecution(execution.id!, {
@@ -351,9 +351,15 @@ export class DisasterRecoveryService {
     }
 
     // Determinar saúde geral
-    if (health.database === 'down' || health.cache === 'down' || health.storage === 'down' || health.api === 'down') {
+    const componentStatuses: Array<SystemHealth['database']> = [
+      health.database,
+      health.cache,
+      health.storage,
+      health.api,
+    ];
+    if (componentStatuses.some((status) => status === 'down')) {
       health.overall = 'down';
-    } else if (health.database === 'degraded' || health.cache === 'degraded' || health.storage === 'degraded' || health.api === 'degraded') {
+    } else if (componentStatuses.some((status) => status === 'degraded')) {
       health.overall = 'degraded';
     }
 
@@ -433,7 +439,7 @@ export class DisasterRecoveryService {
         lastTested: new Date(),
       });
 
-      return await this.getRecoveryExecution(execution.id!);
+      return await this.getRecoveryExecution(execution.id!) as RecoveryExecution;
     } catch (error: any) {
       await this.updateRecoveryExecution(execution.id!, {
         status: 'failed',

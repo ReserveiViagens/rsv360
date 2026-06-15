@@ -8,6 +8,9 @@ import { requireAuth, withAuth } from '@/lib/api-auth';
 import { syncBookingToCalendar, updateCalendarEvent, deleteCalendarEvent } from '@/lib/google-calendar-service';
 
 export const POST = withAuth(async (request: NextRequest, user) => {
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'Não autenticado' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { booking_id, action } = body;

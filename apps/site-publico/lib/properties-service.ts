@@ -55,11 +55,26 @@ export interface Owner {
   email: string;
   phone?: string;
   mobile_phone?: string;
+  address_street?: string;
+  address_number?: string;
+  address_complement?: string;
+  address_neighborhood?: string;
+  address_city?: string;
+  address_state?: string;
+  address_zip_code?: string;
+  address_country?: string;
+  bank_name?: string;
+  bank_agency?: string;
+  bank_account?: string;
+  bank_account_type?: string;
+  pix_key?: string;
   status: string;
   verification_status: string;
   commission_rate: number;
   payment_method: string;
   payment_terms: number;
+  notes?: string;
+  metadata?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }

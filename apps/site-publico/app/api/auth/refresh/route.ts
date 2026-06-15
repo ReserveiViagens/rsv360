@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const result = await verifyAndRotateRefreshToken(
       refresh_token,
       ipAddress,
-      userAgent
+      userAgent ?? undefined
     );
 
     if (!result) {

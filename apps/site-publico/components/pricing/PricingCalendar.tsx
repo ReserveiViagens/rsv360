@@ -240,7 +240,7 @@ export default function PricingCalendar({
       </div>
 
       {/* Modal de Detalhes */}
-      <Dialog open={!!selectedDate} onOpenChange={(open) => !open && setSelectedDate(null)}>
+      <Dialog open={!!selectedDate} onOpenChange={(open: boolean) => !open && setSelectedDate(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>

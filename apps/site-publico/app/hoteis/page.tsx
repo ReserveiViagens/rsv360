@@ -524,7 +524,7 @@ export default function HoteisPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {hotel.features.slice(0, 3).map((feature) => (
+                    {hotel.features.slice(0, 3).map((feature: string) => (
                       <Badge key={feature} variant="secondary" className="text-xs">
                         {feature}
                       </Badge>

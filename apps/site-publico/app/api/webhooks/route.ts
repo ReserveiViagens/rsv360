@@ -32,6 +32,9 @@ const updateWebhookSchema = z.object({
  */
 export const GET = withAuth(
   async (request: NextRequest, user) => {
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Não autenticado' }, { status: 401 });
+    }
     try {
       const subscriptions = await listWebhookSubscriptions(user.id);
       
@@ -60,6 +63,9 @@ export const GET = withAuth(
  */
 export const POST = withAuth(
   async (request: NextRequest, user) => {
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Não autenticado' }, { status: 401 });
+    }
     try {
       const body = await request.json();
       const validated = createWebhookSchema.parse(body);

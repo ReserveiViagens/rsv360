@@ -148,7 +148,11 @@ export class BackupService {
       // Limpar backups antigos
       await this.cleanupOldBackups(configId, config.retentionDays);
 
-      return await this.getBackupRecord(backupRecord.id!);
+      const record = await this.getBackupRecord(backupRecord.id!);
+      if (!record) {
+        throw new Error('Backup record not found after completion');
+      }
+      return record;
     } catch (error: any) {
       // Atualizar registro com erro
       await this.updateBackupRecord(backupRecord.id!, {

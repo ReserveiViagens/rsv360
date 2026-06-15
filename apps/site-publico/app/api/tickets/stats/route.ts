@@ -121,7 +121,11 @@ export async function GET(request: NextRequest) {
     );
 
     // Métricas de SLA
-    const slaMetrics = await calculateSLAMetrics(validatedFilter);
+    const slaMetrics = await calculateSLAMetrics({
+      dateFrom: validatedFilter.date_from ? new Date(validatedFilter.date_from) : undefined,
+      dateTo: validatedFilter.date_to ? new Date(validatedFilter.date_to) : undefined,
+      assignedTo: validatedFilter.assigned_to,
+    });
 
     // Top 5 usuários que mais criam tickets
     const topUsers = await queryDatabase(

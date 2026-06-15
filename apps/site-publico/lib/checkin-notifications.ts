@@ -3,7 +3,7 @@
  * Envia notificações por email e WebSocket para eventos de check-in
  */
 
-import { sendBookingConfirmation } from './email';
+import { sendEmail } from './email';
 import { queryDatabase } from './db';
 
 export interface CheckinNotificationData {
@@ -73,7 +73,7 @@ export async function sendCheckinCreatedNotification(data: CheckinNotificationDa
       <p>Obrigado por usar o RSV Gen 2!</p>
     `;
 
-    await sendBookingConfirmation(user.email, emailSubject, emailBody);
+    await sendEmail(user.email, emailSubject, emailBody);
 
     // Em produção, também enviar via WebSocket
     // await sendWebSocketNotification(userId, { type: 'checkin_created', data });
@@ -110,7 +110,7 @@ export async function sendDocumentsVerifiedNotification(data: CheckinNotificatio
       <p>Você está pronto para fazer check-in na propriedade!</p>
     `;
 
-    await sendBookingConfirmation(user.email, emailSubject, emailBody);
+    await sendEmail(user.email, emailSubject, emailBody);
 
   } catch (error) {
     console.error('Erro ao enviar notificação de documentos verificados:', error);
@@ -154,7 +154,7 @@ export async function sendCheckinCompletedNotification(data: CheckinNotification
       <p>Tenha uma ótima estadia!</p>
     `;
 
-    await sendBookingConfirmation(user.email, emailSubject, emailBody);
+    await sendEmail(user.email, emailSubject, emailBody);
 
     // Notificar host/proprietário também
     // await notifyHost(data.propertyId, { type: 'guest_checked_in', data });
@@ -190,7 +190,7 @@ export async function sendCheckoutCompletedNotification(data: CheckinNotificatio
       <p>Obrigado por escolher o RSV Gen 2. Esperamos vê-lo novamente em breve!</p>
     `;
 
-    await sendBookingConfirmation(user.email, emailSubject, emailBody);
+    await sendEmail(user.email, emailSubject, emailBody);
 
   } catch (error) {
     console.error('Erro ao enviar notificação de check-out realizado:', error);
@@ -234,7 +234,7 @@ export async function notifyHostAboutCheckin(propertyId: number, checkinData: Ch
       <p>Acompanhe o check-in em: <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/checkins/${checkinData.checkinId}">Ver Check-in</a></p>
     `;
 
-    await sendBookingConfirmation(owner.email, emailSubject, emailBody);
+    await sendEmail(owner.email, emailSubject, emailBody);
 
   } catch (error) {
     console.error('Erro ao notificar host sobre check-in:', error);

@@ -114,19 +114,25 @@ export async function generateQRCodeForCheckin(
   const checkin = checkins[0];
 
   // Gerar QR code
-  const qrResult = await generateCheckinQRCode(checkinId, checkin.check_in_code);
+  const qrResult = await generateCheckinQRCode(
+    checkinId,
+    checkin.check_in_code,
+    checkin.booking_id,
+    checkin.property_id,
+    checkin.user_id
+  );
 
   // Atualizar check-in com QR code
   await queryDatabase(
     `UPDATE digital_checkins 
      SET qr_code = $1, qr_code_url = $2, updated_at = CURRENT_TIMESTAMP
      WHERE id = $3`,
-    [qrResult.dataUrl, qrResult.dataUrl, checkinId]
+    [qrResult.qrCode, qrResult.qrCodeUrl, checkinId]
   );
 
   return {
-    qrCode: qrResult.dataUrl,
-    qrCodeUrl: qrResult.dataUrl
+    qrCode: qrResult.qrCode,
+    qrCodeUrl: qrResult.qrCodeUrl
   };
 }
 
@@ -208,24 +214,29 @@ export async function verifyCheckinDocuments(
   let allVerified = true;
   let totalConfidence = 0;
 
-  for (let i = 0; i < unverifiedDocs.length; i++) {
-    const doc = unverifiedDocs[i];
-    const result = verificationResults[i];
+  for (const doc of unverifiedDocs) {
+    const result = verificationResults.get(doc.document_url);
+    if (!result) {
+      allVerified = false;
+      continue;
+    }
 
     await queryDatabase(
       `UPDATE checkin_documents 
        SET is_verified = $1, verified_at = CURRENT_TIMESTAMP, verified_by = $2
        WHERE id = $3`,
-      [result.verified, verifiedBy || null, doc.id]
+      [result.isValid, verifiedBy || null, doc.id]
     );
 
-    if (!result.verified) {
+    if (!result.isValid) {
       allVerified = false;
     }
     totalConfidence += result.confidence;
   }
 
-  const avgConfidence = Math.round(totalConfidence / verificationResults.length);
+  const avgConfidence = unverifiedDocs.length > 0
+    ? Math.round(totalConfidence / unverifiedDocs.length)
+    : 0;
 
   // Atualizar check-in
   await queryDatabase(
@@ -252,12 +263,13 @@ export async function processCheckIn(
   data: ProcessCheckin
 ): Promise<DigitalCheckin> {
   const checkin = await getCheckinById(data.checkin_id);
+  const statusBeforeCheckIn = checkin.status;
 
-  if (checkin.status === 'checked_in') {
+  if (statusBeforeCheckIn === 'checked_in') {
     throw new Error('Check-in já foi realizado');
   }
 
-  if (checkin.status === 'cancelled') {
+  if (statusBeforeCheckIn === 'cancelled') {
     throw new Error('Check-in foi cancelado');
   }
 
@@ -325,16 +337,14 @@ export async function processCheckIn(
   }
 
   // Registrar métrica de check-in completado
-  if (checkin.status !== 'checked_in') {
-    checkinsCompletedTotal.inc();
+  checkinsCompletedTotal.inc();
 
-    // Calcular duração do processo de check-in
-    const durationSeconds = result[0].check_in_at
-      ? (new Date(result[0].check_in_at).getTime() - new Date(checkin.created_at).getTime()) / 1000
-      : 0;
-    
-    checkinDuration.observe(durationSeconds);
-  }
+  // Calcular duração do processo de check-in
+  const durationSeconds = result[0].check_in_at
+    ? (new Date(result[0].check_in_at).getTime() - new Date(checkin.created_at).getTime()) / 1000
+    : 0;
+  
+  checkinDuration.observe(durationSeconds);
 
   return result[0];
 }
@@ -553,15 +563,15 @@ export async function scanQRCode(qrData: string): Promise<{
 }> {
   const decoded = decodeQRCodeData(qrData);
 
-  if (decoded.type === 'unknown') {
+  if (!decoded) {
     throw new Error('QR code inválido');
   }
 
-  const checkin = await getCheckinById(decoded.checkinId!);
+  const checkin = await getCheckinById(decoded.checkinId);
 
   return {
     checkin,
-    type: decoded.type
+    type: 'checkin' as const
   };
 }
 
