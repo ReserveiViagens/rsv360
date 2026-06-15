@@ -1,0 +1,18 @@
+gate	item	value
+tailwindcss_declared	^3.4.19	apps/site-publico/package.json
+tailwindcss_resolved	3.4.19	npm ls
+postcss	8.5.15	override root SEC-04
+tailwindcss_animate	1.0.7	plugin tailwind.config.ts
+autoprefixer	10.5.0	postcss.config.js
+entry_css	@tailwind base/components/utilities	app/globals.css
+postcss_plugins	tailwindcss + autoprefixer	postcss.config.js
+config_js	tailwind.config.ts	darkMode class shadcn theme
+apply_rules	0	em codigo TS/CSS
+plugins_tw	1	tailwindcss-animate
+tsx_ts_files	1030	app components src
+shadcn_tokens	primary secondary muted accent destructive card chart sidebar	CSS vars + tailwind extend
+custom_css_leaflet	globals.css linhas 74+	nao tailwind
+docker_3000	200	smoke
+typecheck_prebuild	0 erros	T0.21 log
+typecheck_postbuild	0 erros	T0.21 log
+build_webpack	PASS	T0.21 log

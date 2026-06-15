@@ -1,3 +1,2 @@
 5.2.1
-local: backend/node_modules/express
-docker: rsv360-backend container (2026-06-13)
+5.2.1

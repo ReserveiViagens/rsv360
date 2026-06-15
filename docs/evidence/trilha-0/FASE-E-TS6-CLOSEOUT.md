@@ -58,22 +58,20 @@ Cada app seguiu o padrão **PR de implementação + PR documental pós-merge** (
 
 | Item | Resultado |
 |------|-----------|
-| **Fase E / TS6** | **GO / concluída** |
-| **Tailwind 4** | **NOGO** até nova decisão HITL |
-| **Express 5** | **NOGO** até nova decisão HITL |
+| **Fase E / TS6** | **GO / concluída** (2026-06-13) — ver `FASE-E-TS6-CLOSEOUT.md` |
+| **Tailwind 4** | guest/admin **GO**; site-publico **preflight GO** (T0.21) |
+| **Express 5** | **GO** — montanha D #328 + revalidação pós-T0.20 |
 
 ## 6. Próxima decisão HITL
 
-Escolher **uma** direção antes de abrir nova rodada:
+**Resolvida 2026-06-02** — ver [FASE-E-HITL-POST-T0.20.md](./FASE-E-HITL-POST-T0.20.md).
 
-| Opção | Descrição |
-|-------|-----------|
-| **A** | **Tailwind 4** por app — começar por guest/admin (piloto incremental, espelho TS6) |
-| **B** | **Express 5 / backend verification** — sub-fase E do ADR-0003 no backend |
-| **C** | **Saneamento type-check `.next/types`** — foco `apps/site-publico` (e turismo se ampliar escopo) |
-| **D** | **Auditoria / security Dependabot** — triagem dos alertas reportados no repositório |
-
-**Recomendação operacional:** não misturar opções na mesma PR; cada montanha = branch + evidência + HITL próprio.
+| Opção | Status |
+|-------|--------|
+| **A** Tailwind 4 site-publico | **Preflight GO** → [T0.21](./T0.21-TAILWIND4-SITE-PUBLICO-PREFLIGHT.md) |
+| **B** Express 5 | **GO** encerrado |
+| **C** `.next/types` | **GO** encerrado (T0.20) |
+| **D** Dependabot | débito separado |
 
 ---
 
