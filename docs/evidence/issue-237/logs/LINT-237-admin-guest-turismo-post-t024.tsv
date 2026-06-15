@@ -1,0 +1,5 @@
+app	eslint_quiet_errors	eslint_quiet_exit	warnings_full	veredito
+admin	0	0	8	GO
+guest	0	0	8	GO
+turismo	0	0	8277	GO_condicional
+baseline	T0.24 eslint hoist	main pos T0.23c	PASS
