@@ -1,0 +1,13 @@
+gate	resultado	notas
+worktree	s2-fase-e-clean	PASS
+branch	chore/t0.23a-turismo-radix	PASS
+base_main	8a96efc47 pos HITL pos-Fase E #361	PASS
+alteracao	radix-jsx helper + ui components + dnd-kit roots	PASS
+G-A2_build_turbopack	PASS
+G-A3_typecheck_postbuild	FAIL 302 erros
+ts2786_antes	150	PASS
+ts2786_depois	0	PASS	meta T0.23a
+delta_total	842 -> 302	-540 erros
+G-A5_smoke_3005	200 OK
+G-A6_api_p0	8/8 OK
+veredito	T0.23a_GO_condicional	carimbo pendente

@@ -96,6 +96,7 @@
 - [x] HITL pós-Fase E — **GO** — `HITL-POST-FASE-E.md`
 - [x] ADR-0004 PLANO-MESTRE Fase 1 — **Proposto** — `ADR-0004-PLANO-MESTRE-FASE1-PROPOSTA.md`
 - [x] T0.23 TS turismo preflight — **GO condicional** — `T0.23-TURISMO-TS-RADIX-PREFLIGHT.md`
+- [x] T0.23a Radix turismo impl — **GO condicional** *(esta PR)* — `T0.23a-TURISMO-RADIX-RESULT.md` — TS2786 **150 → 0**
 
 ## Decisão Trilha 0
 
@@ -115,4 +116,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Proposto** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T0.23a impl Radix turismo (`chore/t0.23a-turismo-radix`); T0.24 eslint hoist → lint #237 |
+| **Próximo passo** | T0.23a carimbo pós-merge → T0.24 eslint hoist → lint #237 → ADR-0004 Aceito |
