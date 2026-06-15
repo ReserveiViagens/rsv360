@@ -103,9 +103,13 @@
 - [x] T0.23c TS2305/TS2724 turismo — **GO** #372 — `T0.23c-TURISMO-RESIDUAL-RESULT.md` — TS2305/TS2724 **→ 0**
 - [x] T0.23c carimbo — **GO pós-merge** #373 — `T0.23c-TURISMO-RESIDUAL-POST-MERGE.md`
 - [x] T1.2 auth/session piloto — **GO** #374 — `T1.2-AUTH-SESSION-RESULT.md`
-- [x] T1.3 tenant routing — **GO** *(esta PR)* — `T1.3-TENANT-ROUTING-RESULT.md`
-- [x] T1.2b refresh backend — **GO** *(esta PR)* — `T1.2b-REFRESH-BACKEND-RESULT.md`
-- [x] T0.23d TS turismo débito — **GO** *(esta PR)* — `T0.23d-TURISMO-TS-DEBT-RESULT.md`
+- [x] T1.3 tenant routing — **GO** #376 — `T1.3-TENANT-ROUTING-RESULT.md`
+- [x] T1.2b refresh backend — **GO** #376 — `T1.2b-REFRESH-BACKEND-RESULT.md`
+- [x] T0.23d TS turismo débito — **GO** #376 — `T0.23d-TURISMO-TS-DEBT-RESULT.md`
+- [x] T0.23e TS clusters turismo — **GO** *(esta PR)* — `T0.23e-TURISMO-TS-CLUSTERS-RESULT.md`
+- [x] T1.4 PropertySwitcher — **GO** *(esta PR)* — `T1.4-PROPERTY-SWITCHER-RESULT.md`
+- [x] T1.2c refresh DB — **GO** *(esta PR)* — `T1.2c-REFRESH-DB-RESULT.md`
+- [x] Lint #237 turismo notifications — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-NOTIFICATIONS-MODULE.md`
 - [x] T0.24 eslint hoist — **GO** *(esta PR)* — `T0.24-ESLINT-HOIST-RESULT.md`
 - [x] Lint #237 retomada — **baseline capturado** — `LINT-237-RETOMADA-POS-T0.24.md`
 - [x] Lint #237 site-publico — **GO** #369 — `issue-237/LINT-237-SITE-PUBLICO-POST-T0.24.md`
@@ -131,4 +135,4 @@
 | **Dependabot** | **Encerrado** — SEC-01→SEC-06 |
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
-| **Próximo passo** | T0.23e TS turismo (~78) | lint turismo notifications | T1.4 property switcher |
+| **Próximo passo** | T0.23f TS turismo (~49) | lint pages/cotacoes | refresh login DB |

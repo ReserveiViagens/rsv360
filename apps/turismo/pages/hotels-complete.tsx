@@ -363,17 +363,15 @@ export default function HotelsComplete() {
       return matchesSearch && matchesCategory && matchesStatus;
     })
     .sort((a, b) => {
-      let aValue = a[sortBy as keyof Hotel];
-      let bValue = b[sortBy as keyof Hotel];
-
-      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
-      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+      const aRaw = a[sortBy as keyof Hotel];
+      const bRaw = b[sortBy as keyof Hotel];
+      const aValue = typeof aRaw === 'string' ? aRaw.toLowerCase() : aRaw ?? '';
+      const bValue = typeof bRaw === 'string' ? bRaw.toLowerCase() : bRaw ?? '';
 
       if (sortOrder === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     });
 
   const getStatusColor = (status: string) => {

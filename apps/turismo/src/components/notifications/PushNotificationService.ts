@@ -169,13 +169,10 @@ export class PushNotificationService {
         body: payload.body,
         icon: payload.icon || '/favicon.ico',
         badge: payload.badge || '/badge.png',
-        image: payload.image,
         tag: payload.tag,
-        data: payload.data,
-        actions: payload.actions,
+        data: payload.image ? { ...payload.data, image: payload.image } : payload.data,
         requireInteraction: payload.requireInteraction || false,
         silent: payload.silent || false,
-        timestamp: payload.timestamp || Date.now()
       });
 
       // Configurar listeners para ações
@@ -204,13 +201,10 @@ export class PushNotificationService {
         body: payload.body,
         icon: payload.icon || '/favicon.ico',
         badge: payload.badge || '/badge.png',
-        image: payload.image,
         tag: payload.tag,
-        data: payload.data,
-        actions: payload.actions,
+        data: payload.image ? { ...payload.data, image: payload.image } : payload.data,
         requireInteraction: payload.requireInteraction || false,
         silent: payload.silent || false,
-        timestamp: payload.timestamp || Date.now()
       });
     } catch (error) {
       console.error('Erro ao enviar notificação para service worker:', error);

@@ -436,7 +436,7 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
                           <Eye className="w-4 h-4" />
                         </Button>
                         {!template.isDefault && (
-                          <Button size="sm" variant="outline" variant="destructive">
+                          <Button size="sm" variant="destructive">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         )}
@@ -579,7 +579,7 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
             placeholder="Mensagem do template (use {variavel} para variáveis)"
           />
           <div className="text-sm text-gray-600">
-            <p>Variáveis disponíveis: {tipo}, {mensagem}, {desconto}, {destino}</p>
+            <p>Variáveis disponíveis: {'{tipo}'}, {'{mensagem}'}, {'{desconto}'}, {'{destino}'}</p>
           </div>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setShowTemplateModal(false)}>

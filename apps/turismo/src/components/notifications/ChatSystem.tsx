@@ -374,7 +374,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                       {!currentConversation?.agentId && (
                         <Select
                           value=""
-                          onChange={(e) => e.target.value && handleAssignAgent(selectedConversation, e.target.value)}
+                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => e.target.value && handleAssignAgent(selectedConversation, e.target.value)}
                         >
                           <option value="">Atribuir Agente</option>
                           {agents.filter(a => a.status === 'online').map(agent => (
