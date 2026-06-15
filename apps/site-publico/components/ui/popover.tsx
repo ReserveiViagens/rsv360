@@ -4,17 +4,27 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { asRadixComponent } from "@/lib/radix-jsx"
 
-const Popover = PopoverPrimitive.Root
+const PopoverRoot = asRadixComponent(PopoverPrimitive.Root)
+const PopoverTriggerEl = asRadixComponent(PopoverPrimitive.Trigger)
+const PopoverPortalEl = asRadixComponent(PopoverPrimitive.Portal)
+const PopoverContentEl = asRadixComponent(PopoverPrimitive.Content)
 
-const PopoverTrigger = PopoverPrimitive.Trigger
+function Popover(props: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+  return <PopoverRoot {...props} />
+}
+
+function PopoverTrigger(props: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+  return <PopoverTriggerEl {...props} />
+}
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
 >(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
+  <PopoverPortalEl>
+    <PopoverContentEl
       ref={ref}
       align={align}
       sideOffset={sideOffset}
@@ -24,7 +34,7 @@ const PopoverContent = React.forwardRef<
       )}
       {...props}
     />
-  </PopoverPrimitive.Portal>
+  </PopoverPortalEl>
 ))
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
