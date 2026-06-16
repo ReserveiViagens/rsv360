@@ -8,30 +8,20 @@ import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
 import { Progress } from '@/components/ui/Progress';
 import {
   Server,
-  Database,
   HardDrive,
   Cpu,
   MemoryStick,
-  Network,
   Activity,
   AlertTriangle,
-  CheckCircle,
   RefreshCw,
   Settings,
   Shield,
-  Clock,
   Monitor,
-  Wifi,
-  Cloud,
-  FileText,
-  Zap,
-  Globe,
-  Lock
+  Zap
 } from 'lucide-react';
 
 interface SystemHealth {
@@ -152,19 +142,7 @@ export default function ConfiguracoesSistema() {
   const [hasChanges, setHasChanges] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadSettings();
-    loadSystemHealth();
-
-    // Atualizar saúde do sistema a cada 30 segundos
-    const interval = setInterval(() => {
-      loadSystemHealth();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadSettings = async () => {
+  async function loadSettings() {
     try {
       const savedSettings = localStorage.getItem('system_settings');
       if (savedSettings) {
@@ -173,12 +151,11 @@ export default function ConfiguracoesSistema() {
     } catch (error) {
       console.error('Erro ao carregar configurações:', error);
     }
-  };
+  }
 
-  const loadSystemHealth = async () => {
+  async function loadSystemHealth() {
     setRefreshing(true);
     try {
-      // Simular dados em tempo real
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const newHealth = {
@@ -196,7 +173,19 @@ export default function ConfiguracoesSistema() {
     } finally {
       setRefreshing(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial mock system settings load
+    loadSettings();
+    loadSystemHealth();
+
+    const interval = setInterval(() => {
+      loadSystemHealth();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const saveSettings = async () => {
     setIsSaving(true);
@@ -213,7 +202,11 @@ export default function ConfiguracoesSistema() {
     }
   };
 
-  const updateSetting = (section: keyof SystemSettings, field: string, value: any) => {
+  const updateSetting = (
+    section: keyof SystemSettings,
+    field: string,
+    value: string | number | boolean | string[]
+  ) => {
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -272,12 +265,6 @@ export default function ConfiguracoesSistema() {
       default:
         return 'text-gray-600';
     }
-  };
-
-  const getUsageColor = (usage: number) => {
-    if (usage < 50) return 'bg-green-500';
-    if (usage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
   };
 
   return (
