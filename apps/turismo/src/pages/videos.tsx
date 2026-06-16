@@ -1,64 +1,20 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import {
-  ArrowLeft,
   Video,
   Play,
   Eye,
   Download,
   Upload,
-  Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
   Tag,
   Heart,
-  Share,
-  Edit,
-  Trash2,
-  RefreshCw,
   BarChart3,
-  PieChart,
-  Activity,
-  Shield,
-  AlertTriangle,
-  Info,
-  Copy,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
   Globe,
   Settings,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Star,
-  ThumbsUp,
-  MessageSquare,
-  Bell,
   Lock,
-  Unlock,
-  Key,
-  UserCheck,
-  Users,
-  UserPlus,
-  UserX,
   Folder,
-  FileText,
-  Music,
   Archive,
-  BookOpen,
-  Bookmark,
-  Clock,
-  Volume2,
-  VolumeX,
-  Volume1,
-  Volume
+  Clock
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -85,12 +41,9 @@ interface Video {
 }
 
 export default function VideosPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
@@ -268,13 +221,13 @@ export default function VideosPage() {
     { id: 'categories', name: 'Categorias', icon: Tag }
   ];
 
-  const handleCardClick = (cardId: string) => {
+  const handleCardClick = (_cardId: string) => {
     setSelectedVideo(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada card
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (_action: string) => {
     setSelectedVideo(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada ação
@@ -330,9 +283,6 @@ export default function VideosPage() {
     return `${size} MB`;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
 
   const filteredVideos = videos.filter(video => {
     const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
