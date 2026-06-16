@@ -4,36 +4,33 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Bus,
-  Calendar,
-  Users,
-  Clock,
   Plus,
   Save,
   Trash2,
   Upload,
   Eye,
   Edit,
-  Copy,
   Lightbulb,
   CheckSquare,
   BookOpen,
-  Image,
-  Globe,
-  Star,
-  UserCheck,
-  MapPin,
-  Utensils,
+  Image as ImageIcon,
   FileText
 } from 'lucide-react';
 import { TourSelector } from '@/components/TourSelector';
-import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';
+import type { Tour } from '@/lib/tours-data';
+import { Budget, BudgetItem } from '@/lib/types/budget';
 import { patchBudgetItemField } from '@/lib/cotacoes/patch-budget-item';
 import { budgetStorage } from '@/lib/budget-storage';
 import { generateId } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getTourById } from '@/lib/tours-data';
 import { QuotePreview } from '@/components/QuotePreview';
 import { exportToPDF, exportToDOCX, generateQuoteHTML } from '@/lib/export-utils';
+
+interface TourSelection {
+  state?: string;
+  city?: string;
+  tour?: Tour;
+}
 
 export default function PasseiosPage() {
   const router = useRouter();
@@ -83,24 +80,58 @@ export default function PasseiosPage() {
     maxParticipants: 50
   });
   const [activeTab, setActiveTab] = useState('basic-info');
-  const [selectedTour, setSelectedTour] = useState<any>(null);
+  const [selectedTour, setSelectedTour] = useState<TourSelection | undefined>(undefined);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  function calculateTotals() {
+    const newSubtotal = budget.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || 0;
+    let newDiscount = 0;
+    if (budget.discountType === 'percentage') {
+      newDiscount = newSubtotal * (budget.discount! / 100);
+    } else {
+      newDiscount = budget.discount || 0;
+    }
+
+    let newTaxes = 0;
+    if (budget.taxType === 'percentage') {
+      newTaxes = (newSubtotal - newDiscount) * (budget.taxes! / 100);
+    } else {
+      newTaxes = budget.taxes || 0;
+    }
+
+    const newTotal = newSubtotal - newDiscount + newTaxes;
+
+    setBudget((prev) => ({
+      ...prev,
+      subtotal: newSubtotal,
+      total: newTotal,
+    }));
+  }
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount
     setIsClient(true);
-    calculateTotals();
-    
-    // Carregar orçamento existente se estiver em modo view/edit
+  }, []);
+
+  useEffect(() => {
     const { view, edit } = router.query;
     const budgetId = view || edit;
     if (budgetId && typeof budgetId === 'string') {
       const existing = budgetStorage.getById(budgetId);
       if (existing) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load saved budget from query
         setBudget(existing);
       }
     }
-  }, [router.query, budget.items, budget.discount, budget.taxes, budget.discountType, budget.taxType]);
+  }, [router.query]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- recalc totals when pricing fields change
+    calculateTotals();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- recalc totals when pricing fields change
+  }, [budget.items, budget.discount, budget.taxes, budget.discountType, budget.taxType]);
+
   
   // Calcular data padrão de validade (30 dias após criação)
   const getDefaultValidityDate = (): string => {
@@ -113,11 +144,11 @@ export default function PasseiosPage() {
     return validUntil.toISOString().slice(0, 16);
   };
 
-  const updateBudget = (field: string, value: any) => {
+  const updateBudget = (field: string, value: unknown) => {
     setBudget((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: string, value: unknown) => {
     const newItems = [...budget.items!];
     newItems[index] = patchBudgetItemField(newItems[index], field, value);
     
@@ -170,31 +201,6 @@ export default function PasseiosPage() {
     }));
   };
 
-  const calculateTotals = () => {
-    const newSubtotal = budget.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || 0;
-    let newDiscount = 0;
-    if (budget.discountType === 'percentage') {
-      newDiscount = newSubtotal * (budget.discount! / 100);
-    } else {
-      newDiscount = budget.discount || 0;
-    }
-
-    let newTaxes = 0;
-    if (budget.taxType === 'percentage') {
-      newTaxes = (newSubtotal - newDiscount) * (budget.taxes! / 100);
-    } else {
-      newTaxes = budget.taxes || 0;
-    }
-
-    const newTotal = newSubtotal - newDiscount + newTaxes;
-
-    setBudget((prev) => ({
-      ...prev,
-      subtotal: newSubtotal,
-      total: newTotal,
-    }));
-  };
-
   const applyGroupDiscount = () => {
     if (budget.groupSize && budget.groupSize >= 10) {
       setBudget(prev => ({
@@ -206,29 +212,30 @@ export default function PasseiosPage() {
     }
   };
 
-  const handleTourSelect = (selection: any) => {
+  const handleTourSelect = (selection: TourSelection) => {
     setSelectedTour(selection);
-    if (selection.tour) {
+    const tour = selection.tour;
+    if (tour) {
       setBudget(prev => ({
         ...prev,
-        tourState: selection.tour.state,
-        tourCity: selection.tour.city,
-        tourId: selection.tour.id,
-        tourName: selection.tour.name,
-        tourType: selection.tour.type,
-        hasGroupDiscount: selection.tour.hasGroupDiscount,
-        transportIncluded: selection.tour.transportIncluded,
-        guideIncluded: selection.tour.guideIncluded,
-        mealIncluded: selection.tour.mealIncluded,
-        meetingPoint: selection.tour.meetingPoint,
-        difficulty: selection.tour.difficulty,
-        weatherDependent: selection.tour.weatherDependent,
-        minParticipants: selection.tour.minParticipants,
-        maxParticipants: selection.tour.maxParticipants,
-        departureTime: selection.tour.departureTime,
-        returnTime: selection.tour.returnTime,
-        duration: selection.tour.duration,
-        title: `Cotação - ${selection.tour.name}`
+        tourState: tour.state,
+        tourCity: tour.city,
+        tourId: tour.id,
+        tourName: tour.name,
+        tourType: tour.type,
+        hasGroupDiscount: tour.hasGroupDiscount,
+        transportIncluded: tour.transportIncluded,
+        guideIncluded: tour.guideIncluded,
+        mealIncluded: tour.mealIncluded,
+        meetingPoint: tour.meetingPoint,
+        difficulty: tour.difficulty,
+        weatherDependent: tour.weatherDependent,
+        minParticipants: tour.minParticipants,
+        maxParticipants: tour.maxParticipants,
+        departureTime: tour.departureTime,
+        returnTime: tour.returnTime,
+        duration: tour.duration,
+        title: `Cotação - ${tour.name}`
       }));
     }
   };
@@ -259,12 +266,12 @@ export default function PasseiosPage() {
       id: budget.id || generateId(),
       createdAt: budget.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: (budget.status as any) || 'draft',
+      status: (budget.status as Budget['status']) || 'draft',
       subtotal: budget.subtotal || 0,
       discount: budget.discount || 0,
       taxes: budget.taxes || 0,
       total: budget.total || 0,
-      items: (budget.items as any) || [],
+      items: (budget.items ?? []) || [],
     } as Budget);
     const w = window.open('', '_blank');
     if (w) {
@@ -752,7 +759,7 @@ export default function PasseiosPage() {
 
                 {budget.items?.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    Nenhum item adicionado. Clique em "Adicionar Item" para começar.
+                    Nenhum item adicionado. Clique em &quot;Adicionar Item&quot; para começar.
                   </div>
                 )}
               </div>
@@ -787,7 +794,7 @@ export default function PasseiosPage() {
             {/* Fotos e Vídeos do Passeio */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center space-x-2">
-                <Image className="w-5 h-5 text-blue-600" />
+                <ImageIcon className="w-5 h-5 text-blue-600" aria-hidden />
                 <span>Fotos e Vídeos do Passeio</span>
               </h3>
               
@@ -858,7 +865,10 @@ export default function PasseiosPage() {
                         </div>
                       </div>
                     ) : (
-                      <img src={photo.url} alt={photo.caption} className="w-full h-32 object-cover rounded-lg" />
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- preview URL from upload */}
+                        <img src={photo.url} alt={photo.caption} className="w-full h-32 object-cover rounded-lg" />
+                      </>
                     )}
                     
                     {/* Overlay com controles */}
@@ -1141,10 +1151,10 @@ export default function PasseiosPage() {
           budget={{
             ...(budget as Budget),
             id: budget.id as string,
-            items: (budget.items as any) || [],
+            items: (budget.items ?? []) || [],
             createdAt: budget.createdAt as string,
             updatedAt: budget.updatedAt as string,
-            status: (budget.status as any) || 'draft',
+            status: (budget.status as Budget['status']) || 'draft',
             subtotal: budget.subtotal || 0,
             discount: budget.discount || 0,
             taxes: budget.taxes || 0,

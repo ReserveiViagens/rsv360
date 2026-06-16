@@ -1,44 +1,27 @@
 ﻿import React, { useState, useEffect } from 'react';
 import {
-    DollarSign,
-    CreditCard,
-    Wallet,
-    Users,
-    Building2,
-    Plane,
-    Handshake,
-    Plus,
-    Edit,
-    Trash,
-    X,
-    Save,
-    Search,
-    Filter,
-    Eye,
-    FileText,
-    Receipt,
-    Banknote,
-    Calculator,
-    Target,
-    AlertCircle,
-    CheckCircle,
-    Clock,
-    RefreshCw,
-    ChevronDown,
-    ChevronRight,
-    Calendar,
-    MapPin,
-    Phone,
-    Mail,
-    Star,
-    TrendingUp,
-    TrendingDown,
-    Download,
-    Upload,
-    User,
-    Home
+  DollarSign,
+  Users,
+  Building2,
+  Plane,
+  Handshake,
+  Plus,
+  Edit,
+  Trash,
+  X,
+  Save,
+  Search,
+  Eye,
+  Receipt,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  User,
+  Home
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Payment {
@@ -64,6 +47,242 @@ interface Payment {
     serviceType?: string;
 }
 
+const MOCK_PAYMENTS: Payment[] = [
+    {
+        id: 1,
+        type: 'corretor',
+        category: 'Corretores',
+        subcategory: 'Comissão de Vendas',
+        recipientName: 'João Silva',
+        recipientEmail: 'joao.silva@imoveis.com',
+        recipientPhone: '(11) 99999-9999',
+        description: 'Comissão venda pacote Paris',
+        totalAmount: 2250.00,
+        initialPayment: 1125.00,
+        remainingBalance: 1125.00,
+        paymentMethod: 'Transferência',
+        status: 'parcial',
+        dueDate: '2024-08-15',
+        reference: 'PAY-001',
+        commission: 5.0,
+        notes: 'Pacote vendido para cliente VIP'
+    },
+    {
+        id: 2,
+        type: 'proprietario',
+        category: 'Proprietários',
+        subcategory: 'Comissão de Hospedagem',
+        recipientName: 'Carlos Oliveira',
+        recipientEmail: 'carlos@hotelmarina.com',
+        recipientPhone: '(11) 77777-7777',
+        description: 'Comissão hotel Marina - Julho',
+        totalAmount: 3500.00,
+        initialPayment: 1750.00,
+        remainingBalance: 1750.00,
+        paymentMethod: 'Cartão de Crédito',
+        status: 'pendente',
+        dueDate: '2024-08-20',
+        reference: 'PAY-002',
+        propertyName: 'Hotel Marina',
+        notes: 'Comissão referente a 15 reservas'
+    },
+    {
+        id: 3,
+        type: 'consultor',
+        category: 'Consultores de Viagem',
+        subcategory: 'Comissão de Pacotes',
+        recipientName: 'Maria Santos',
+        recipientEmail: 'maria@consultoria.com',
+        recipientPhone: '(21) 88888-8888',
+        description: 'Comissão pacote Disney',
+        totalAmount: 1800.00,
+        initialPayment: 900.00,
+        remainingBalance: 900.00,
+        paymentMethod: 'PIX',
+        status: 'pago',
+        dueDate: '2024-08-10',
+        paymentDate: '2024-08-05',
+        reference: 'PAY-003',
+        serviceType: 'Pacote Disney World',
+        notes: 'Pacote vendido para família com 4 pessoas'
+    },
+    {
+        id: 4,
+        type: 'parceiro',
+        category: 'Parceiros',
+        subcategory: 'Comissão de Parceria',
+        recipientName: 'Empresa ABC Turismo',
+        recipientEmail: 'contato@abcturismo.com',
+        recipientPhone: '(31) 66666-6666',
+        description: 'Comissão parceria trimestral',
+        totalAmount: 5000.00,
+        initialPayment: 2500.00,
+        remainingBalance: 2500.00,
+        paymentMethod: 'Transferência',
+        status: 'atrasado',
+        dueDate: '2024-07-30',
+        reference: 'PAY-004',
+        notes: 'Comissão referente ao 2º trimestre'
+    },
+    {
+        id: 5,
+        type: 'corretor',
+        category: 'Corretores',
+        subcategory: 'Bônus de Performance',
+        recipientName: 'Ana Costa',
+        recipientEmail: 'ana.costa@imoveis.com',
+        recipientPhone: '(41) 55555-5555',
+        description: 'Bônus performance mensal',
+        totalAmount: 1200.00,
+        initialPayment: 600.00,
+        remainingBalance: 600.00,
+        paymentMethod: 'Cartão de Débito',
+        status: 'pendente',
+        dueDate: '2024-08-25',
+        reference: 'PAY-005',
+        notes: 'Bônus por atingir meta de vendas'
+    },
+    {
+        id: 6,
+        type: 'proprietario',
+        category: 'Proprietários',
+        subcategory: 'Taxa de Gestão',
+        recipientName: 'Roberto Almeida',
+        recipientEmail: 'roberto@chaletmontanha.com',
+        recipientPhone: '(54) 44444-4444',
+        description: 'Taxa gestão chalet montanha',
+        totalAmount: 800.00,
+        initialPayment: 400.00,
+        remainingBalance: 400.00,
+        paymentMethod: 'Transferência',
+        status: 'pago',
+        dueDate: '2024-08-05',
+        paymentDate: '2024-08-01',
+        reference: 'PAY-006',
+        propertyName: 'Chalet Montanha',
+        notes: 'Taxa de gestão mensal'
+    },
+    {
+        id: 7,
+        type: 'cliente',
+        category: 'Clientes',
+        subcategory: 'Pacotes de Viagem',
+        recipientName: 'Fernanda Costa',
+        recipientEmail: 'fernanda.costa@email.com',
+        recipientPhone: '(11) 33333-3333',
+        description: 'Pacote Paris - Família Costa',
+        totalAmount: 8500.00,
+        initialPayment: 4250.00,
+        remainingBalance: 4250.00,
+        paymentMethod: 'Cartão de Crédito',
+        status: 'parcial',
+        dueDate: '2024-08-30',
+        reference: 'PAY-007',
+        serviceType: 'Pacote Paris 7 dias',
+        notes: 'Pacote para família com 4 pessoas'
+    },
+    {
+        id: 8,
+        type: 'cliente',
+        category: 'Clientes',
+        subcategory: 'Ingressos',
+        recipientName: 'Pedro Santos',
+        recipientEmail: 'pedro.santos@email.com',
+        recipientPhone: '(21) 22222-2222',
+        description: 'Ingressos Disney World',
+        totalAmount: 1200.00,
+        initialPayment: 600.00,
+        remainingBalance: 600.00,
+        paymentMethod: 'PIX',
+        status: 'pendente',
+        dueDate: '2024-08-25',
+        reference: 'PAY-008',
+        serviceType: 'Ingressos Disney 2 dias',
+        notes: 'Ingressos para casal'
+    },
+    {
+        id: 9,
+        type: 'hospede',
+        category: 'Hóspedes',
+        subcategory: 'Hospedagem',
+        recipientName: 'Carlos Mendes',
+        recipientEmail: 'carlos.mendes@email.com',
+        recipientPhone: '(31) 11111-1111',
+        description: 'Hospedagem Hotel Marina - 5 noites',
+        totalAmount: 2500.00,
+        initialPayment: 1250.00,
+        remainingBalance: 1250.00,
+        paymentMethod: 'Cartão de Débito',
+        status: 'pendente',
+        dueDate: '2024-08-28',
+        reference: 'PAY-009',
+        propertyName: 'Hotel Marina',
+        notes: 'Quarto duplo com café da manhã'
+    },
+    {
+        id: 10,
+        type: 'hospede',
+        category: 'Hóspedes',
+        subcategory: 'Taxa de Limpeza',
+        recipientName: 'Ana Paula Silva',
+        recipientEmail: 'ana.silva@email.com',
+        recipientPhone: '(41) 00000-0000',
+        description: 'Taxa de limpeza chalet montanha',
+        totalAmount: 150.00,
+        initialPayment: 75.00,
+        remainingBalance: 75.00,
+        paymentMethod: 'Transferência',
+        status: 'pago',
+        dueDate: '2024-08-10',
+        paymentDate: '2024-08-08',
+        reference: 'PAY-010',
+        propertyName: 'Chalet Montanha',
+        notes: 'Taxa de limpeza final'
+    },
+    {
+        id: 11,
+        type: 'cliente',
+        category: 'Clientes',
+        subcategory: 'Transporte',
+        recipientName: 'Lucas Oliveira',
+        recipientEmail: 'lucas.oliveira@email.com',
+        recipientPhone: '(51) 99999-9999',
+        description: 'Transfer aeroporto - Orlando',
+        totalAmount: 180.00,
+        initialPayment: 90.00,
+        remainingBalance: 90.00,
+        paymentMethod: 'Cartão de Crédito',
+        status: 'pago',
+        dueDate: '2024-08-15',
+        paymentDate: '2024-08-12',
+        reference: 'PAY-011',
+        serviceType: 'Transfer Aeroporto-Hotel',
+        notes: 'Transfer para 2 pessoas'
+    },
+    {
+        id: 12,
+        type: 'hospede',
+        category: 'Hóspedes',
+        subcategory: 'Serviços Extras',
+        recipientName: 'Mariana Costa',
+        recipientEmail: 'mariana.costa@email.com',
+        recipientPhone: '(27) 88888-8888',
+        description: 'Wi-Fi Premium + Estacionamento',
+        totalAmount: 80.00,
+        initialPayment: 40.00,
+        remainingBalance: 40.00,
+        paymentMethod: 'PIX',
+        status: 'pendente',
+        dueDate: '2024-08-20',
+        reference: 'PAY-012',
+        propertyName: 'Hotel Marina',
+        notes: 'Serviços extras para 3 dias'
+    }
+];
+
+
+const PAYMENT_PERIODS = ['diario', 'semanal', 'mensal', 'anual'] as const;
+
 interface PaymentCategory {
     id: string;
     name: string;
@@ -76,19 +295,16 @@ export default function PagamentosPage() {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [loading, setLoading] = useState(true);
     const [showNewPaymentModal, setShowNewPaymentModal] = useState(false);
-    const [showEditPaymentModal, setShowEditPaymentModal] = useState(false);
-    const [showPaymentDetails, setShowPaymentDetails] = useState(false);
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
-    const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
-    const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+    const [, setShowEditPaymentModal] = useState(false);
+    const [, setShowPaymentDetails] = useState(false);
+    const [, setShowPaymentModal] = useState(false);
+    const [, setEditingPayment] = useState<Payment | null>(null);
+    const [, setSelectedPayment] = useState<Payment | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedStatus, setSelectedStatus] = useState('all');
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
-    const [exportGenerating, setExportGenerating] = useState(false);
     const [showCategoryDetails, setShowCategoryDetails] = useState(false);
     const [showSubcategoryDetails, setShowSubcategoryDetails] = useState(false);
     const [showPeriodDetails, setShowPeriodDetails] = useState(false);
@@ -144,245 +360,11 @@ export default function PagamentosPage() {
         }
     ];
 
-    // Dados mockados de pagamentos
-    const mockPayments: Payment[] = [
-        {
-            id: 1,
-            type: 'corretor',
-            category: 'Corretores',
-            subcategory: 'Comissão de Vendas',
-            recipientName: 'João Silva',
-            recipientEmail: 'joao.silva@imoveis.com',
-            recipientPhone: '(11) 99999-9999',
-            description: 'Comissão venda pacote Paris',
-            totalAmount: 2250.00,
-            initialPayment: 1125.00,
-            remainingBalance: 1125.00,
-            paymentMethod: 'Transferência',
-            status: 'parcial',
-            dueDate: '2024-08-15',
-            reference: 'PAY-001',
-            commission: 5.0,
-            notes: 'Pacote vendido para cliente VIP'
-        },
-        {
-            id: 2,
-            type: 'proprietario',
-            category: 'Proprietários',
-            subcategory: 'Comissão de Hospedagem',
-            recipientName: 'Carlos Oliveira',
-            recipientEmail: 'carlos@hotelmarina.com',
-            recipientPhone: '(11) 77777-7777',
-            description: 'Comissão hotel Marina - Julho',
-            totalAmount: 3500.00,
-            initialPayment: 1750.00,
-            remainingBalance: 1750.00,
-            paymentMethod: 'Cartão de Crédito',
-            status: 'pendente',
-            dueDate: '2024-08-20',
-            reference: 'PAY-002',
-            propertyName: 'Hotel Marina',
-            notes: 'Comissão referente a 15 reservas'
-        },
-        {
-            id: 3,
-            type: 'consultor',
-            category: 'Consultores de Viagem',
-            subcategory: 'Comissão de Pacotes',
-            recipientName: 'Maria Santos',
-            recipientEmail: 'maria@consultoria.com',
-            recipientPhone: '(21) 88888-8888',
-            description: 'Comissão pacote Disney',
-            totalAmount: 1800.00,
-            initialPayment: 900.00,
-            remainingBalance: 900.00,
-            paymentMethod: 'PIX',
-            status: 'pago',
-            dueDate: '2024-08-10',
-            paymentDate: '2024-08-05',
-            reference: 'PAY-003',
-            serviceType: 'Pacote Disney World',
-            notes: 'Pacote vendido para família com 4 pessoas'
-        },
-        {
-            id: 4,
-            type: 'parceiro',
-            category: 'Parceiros',
-            subcategory: 'Comissão de Parceria',
-            recipientName: 'Empresa ABC Turismo',
-            recipientEmail: 'contato@abcturismo.com',
-            recipientPhone: '(31) 66666-6666',
-            description: 'Comissão parceria trimestral',
-            totalAmount: 5000.00,
-            initialPayment: 2500.00,
-            remainingBalance: 2500.00,
-            paymentMethod: 'Transferência',
-            status: 'atrasado',
-            dueDate: '2024-07-30',
-            reference: 'PAY-004',
-            notes: 'Comissão referente ao 2º trimestre'
-        },
-        {
-            id: 5,
-            type: 'corretor',
-            category: 'Corretores',
-            subcategory: 'Bônus de Performance',
-            recipientName: 'Ana Costa',
-            recipientEmail: 'ana.costa@imoveis.com',
-            recipientPhone: '(41) 55555-5555',
-            description: 'Bônus performance mensal',
-            totalAmount: 1200.00,
-            initialPayment: 600.00,
-            remainingBalance: 600.00,
-            paymentMethod: 'Cartão de Débito',
-            status: 'pendente',
-            dueDate: '2024-08-25',
-            reference: 'PAY-005',
-            notes: 'Bônus por atingir meta de vendas'
-        },
-        {
-            id: 6,
-            type: 'proprietario',
-            category: 'Proprietários',
-            subcategory: 'Taxa de Gestão',
-            recipientName: 'Roberto Almeida',
-            recipientEmail: 'roberto@chaletmontanha.com',
-            recipientPhone: '(54) 44444-4444',
-            description: 'Taxa gestão chalet montanha',
-            totalAmount: 800.00,
-            initialPayment: 400.00,
-            remainingBalance: 400.00,
-            paymentMethod: 'Transferência',
-            status: 'pago',
-            dueDate: '2024-08-05',
-            paymentDate: '2024-08-01',
-            reference: 'PAY-006',
-            propertyName: 'Chalet Montanha',
-            notes: 'Taxa de gestão mensal'
-        },
-        {
-            id: 7,
-            type: 'cliente',
-            category: 'Clientes',
-            subcategory: 'Pacotes de Viagem',
-            recipientName: 'Fernanda Costa',
-            recipientEmail: 'fernanda.costa@email.com',
-            recipientPhone: '(11) 33333-3333',
-            description: 'Pacote Paris - Família Costa',
-            totalAmount: 8500.00,
-            initialPayment: 4250.00,
-            remainingBalance: 4250.00,
-            paymentMethod: 'Cartão de Crédito',
-            status: 'parcial',
-            dueDate: '2024-08-30',
-            reference: 'PAY-007',
-            serviceType: 'Pacote Paris 7 dias',
-            notes: 'Pacote para família com 4 pessoas'
-        },
-        {
-            id: 8,
-            type: 'cliente',
-            category: 'Clientes',
-            subcategory: 'Ingressos',
-            recipientName: 'Pedro Santos',
-            recipientEmail: 'pedro.santos@email.com',
-            recipientPhone: '(21) 22222-2222',
-            description: 'Ingressos Disney World',
-            totalAmount: 1200.00,
-            initialPayment: 600.00,
-            remainingBalance: 600.00,
-            paymentMethod: 'PIX',
-            status: 'pendente',
-            dueDate: '2024-08-25',
-            reference: 'PAY-008',
-            serviceType: 'Ingressos Disney 2 dias',
-            notes: 'Ingressos para casal'
-        },
-        {
-            id: 9,
-            type: 'hospede',
-            category: 'Hóspedes',
-            subcategory: 'Hospedagem',
-            recipientName: 'Carlos Mendes',
-            recipientEmail: 'carlos.mendes@email.com',
-            recipientPhone: '(31) 11111-1111',
-            description: 'Hospedagem Hotel Marina - 5 noites',
-            totalAmount: 2500.00,
-            initialPayment: 1250.00,
-            remainingBalance: 1250.00,
-            paymentMethod: 'Cartão de Débito',
-            status: 'pendente',
-            dueDate: '2024-08-28',
-            reference: 'PAY-009',
-            propertyName: 'Hotel Marina',
-            notes: 'Quarto duplo com café da manhã'
-        },
-        {
-            id: 10,
-            type: 'hospede',
-            category: 'Hóspedes',
-            subcategory: 'Taxa de Limpeza',
-            recipientName: 'Ana Paula Silva',
-            recipientEmail: 'ana.silva@email.com',
-            recipientPhone: '(41) 00000-0000',
-            description: 'Taxa de limpeza chalet montanha',
-            totalAmount: 150.00,
-            initialPayment: 75.00,
-            remainingBalance: 75.00,
-            paymentMethod: 'Transferência',
-            status: 'pago',
-            dueDate: '2024-08-10',
-            paymentDate: '2024-08-08',
-            reference: 'PAY-010',
-            propertyName: 'Chalet Montanha',
-            notes: 'Taxa de limpeza final'
-        },
-        {
-            id: 11,
-            type: 'cliente',
-            category: 'Clientes',
-            subcategory: 'Transporte',
-            recipientName: 'Lucas Oliveira',
-            recipientEmail: 'lucas.oliveira@email.com',
-            recipientPhone: '(51) 99999-9999',
-            description: 'Transfer aeroporto - Orlando',
-            totalAmount: 180.00,
-            initialPayment: 90.00,
-            remainingBalance: 90.00,
-            paymentMethod: 'Cartão de Crédito',
-            status: 'pago',
-            dueDate: '2024-08-15',
-            paymentDate: '2024-08-12',
-            reference: 'PAY-011',
-            serviceType: 'Transfer Aeroporto-Hotel',
-            notes: 'Transfer para 2 pessoas'
-        },
-        {
-            id: 12,
-            type: 'hospede',
-            category: 'Hóspedes',
-            subcategory: 'Serviços Extras',
-            recipientName: 'Mariana Costa',
-            recipientEmail: 'mariana.costa@email.com',
-            recipientPhone: '(27) 88888-8888',
-            description: 'Wi-Fi Premium + Estacionamento',
-            totalAmount: 80.00,
-            initialPayment: 40.00,
-            remainingBalance: 40.00,
-            paymentMethod: 'PIX',
-            status: 'pendente',
-            dueDate: '2024-08-20',
-            reference: 'PAY-012',
-            propertyName: 'Hotel Marina',
-            notes: 'Serviços extras para 3 dias'
-        }
-    ];
-
     useEffect(() => {
         const loadPayments = async () => {
             try {
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                setPayments(mockPayments);
+                setPayments(MOCK_PAYMENTS);
             } catch (error) {
                 console.error('Erro ao carregar pagamentos:', error);
             } finally {
@@ -468,18 +450,10 @@ export default function PagamentosPage() {
         setShowPaymentModal(true);
     };
 
-    const handleExportReport = () => {
-        setShowExportModal(true);
-    };
-
-    const handleExportSubmit = async () => {
-        setExportGenerating(true);
+    const handleExportReport = async () => {
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            const filename = `relatorio-pagamentos-${new Date().toISOString().split('T')[0]}.${exportFormat}`;
+            const filename = `relatorio-pagamentos-${new Date().toISOString().split('T')[0]}.csv`;
             const content = `Relatório de Pagamentos - ${new Date().toLocaleDateString()}\n\n`;
-
             const blob = new Blob([content], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -489,16 +463,13 @@ export default function PagamentosPage() {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            setShowExportModal(false);
             alert('Relatório exportado com sucesso!');
         } catch (error) {
             console.error('Erro ao exportar relatório:', error);
             alert('Erro ao exportar relatório. Tente novamente.');
-        } finally {
-            setExportGenerating(false);
         }
     };
+
 
     // Funções para cards clicáveis
     const handleMetricClick = (metricName: string) => {
@@ -594,16 +565,6 @@ export default function PagamentosPage() {
                     return true;
             }
         });
-    };
-
-    const getCategoryStats = (categoryId: string) => {
-        const categoryPayments = getPaymentsByCategory(categoryId);
-        const total = categoryPayments.reduce((acc, p) => acc + p.totalAmount, 0);
-        const paid = categoryPayments.filter(p => p.status === 'pago').reduce((acc, p) => acc + p.totalAmount, 0);
-        const pending = categoryPayments.filter(p => p.status === 'pendente').reduce((acc, p) => acc + p.remainingBalance, 0);
-        const overdue = categoryPayments.filter(p => p.status === 'atrasado').reduce((acc, p) => acc + p.remainingBalance, 0);
-
-        return { total, paid, pending, overdue, count: categoryPayments.length };
     };
 
     const getSubcategoryStats = (subcategory: string) => {
@@ -1091,13 +1052,13 @@ export default function PagamentosPage() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                {['diario', 'semanal', 'mensal', 'anual'].map((period) => {
-                                    const stats = getPeriodStats(period as any);
+                                {PAYMENT_PERIODS.map((period) => {
+                                    const stats = getPeriodStats(period);
                                     return (
                                         <div
                                             key={period}
                                             className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors"
-                                            onClick={() => handlePeriodClick(period as any)}
+                                            onClick={() => handlePeriodClick(period)}
                                         >
                                             <h3 className="font-semibold text-gray-900 capitalize">{period}</h3>
                                             <p className="text-2xl font-bold text-blue-600">{formatCurrency(stats.total)}</p>
@@ -1149,15 +1110,15 @@ export default function PagamentosPage() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                {['diario', 'semanal', 'mensal', 'anual'].map((period) => {
-                                    const periodPayments = getPaymentsByPeriod(period as any);
+                                {PAYMENT_PERIODS.map((period) => {
+                                    const periodPayments = getPaymentsByPeriod(period);
                                     const subcategoryPayments = periodPayments.filter(p => p.subcategory === selectedSubcategoryDetails);
                                     const total = subcategoryPayments.reduce((acc, p) => acc + p.totalAmount, 0);
                                     return (
                                         <div
                                             key={period}
                                             className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors"
-                                            onClick={() => handlePeriodClick(period as any)}
+                                            onClick={() => handlePeriodClick(period)}
                                         >
                                             <h3 className="font-semibold text-gray-900 capitalize">{period}</h3>
                                             <p className="text-2xl font-bold text-blue-600">{formatCurrency(total)}</p>

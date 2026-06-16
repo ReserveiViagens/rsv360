@@ -149,6 +149,7 @@
 - [x] Lint integracoes-automacao + pagamentos + integracoes-servicos −101 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-INTEGRACOES-PAGAMENTOS.md`
 - [x] Lint APIGateway + WebhookManager + ProjectCollaboration −99 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-APIGATEWAY-WEBHOOK-PROJECTCOLLAB.md`
 - [x] Lint hotels×2 + users −96 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-HOTELS-USERS.md`
+- [x] Lint pagamentos + passeios + hotels-debug −92 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-PAGAMENTOS-PASSEIOS-HOTELS-DEBUG.md`
 
 ## Decisão Trilha 0
 
