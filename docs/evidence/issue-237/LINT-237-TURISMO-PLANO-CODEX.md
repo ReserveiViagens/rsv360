@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #14 concluído)  
-**Baseline global:** **2175** warnings  
+**Atualizado:** 2026-06-02 (cluster #15 concluído)  
+**Baseline global:** **2121** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2175** |
-| Clusters concluídos | **14** / 120 |
-| PR empilhada mais recente | **#426** (cluster #14, −54) |
-| Próximo cluster | **#15** — cotacoes/hoteis + dashboard-personalizado + insurance (−54) |
+| Warnings globais | **2121** |
+| Clusters concluídos | **15** / 120 |
+| PR empilhada mais recente | **#427** (cluster #15, −54) |
+| Próximo cluster | **#16** — integracoes-webhooks + transport + AdvancedReportBuilder (−54) |
 
 ## Padrão por cluster (repetir)
 
@@ -46,6 +46,7 @@
 | #424 | automacao×2 + rsv-360-ecosystem | −57 → **2284** | cadastros-security-taskautomation |
 | #425 | ProductionMonitoring + dashboard-personalizado + analytics-avancados | −55 → **2229** | automacao-rsv-ecosystem |
 | #426 | animations-demo + backend-integration-test + configuracoes-sistema | −54 → **2175** | production-dashboard-analytics |
+| #427 | cotacoes/hoteis + dashboard-personalizado (src) + insurance | −54 → **2121** | animations-backend-config |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -65,7 +66,7 @@
 | 12 | −57 | automacao×2, rsv-360-ecosystem | **concluído** (#424) |
 | 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | **concluído** (#425) |
 | 14 | −54 | animations-demo, backend-integration-test, configuracoes-sistema | **concluído** (#426) |
-| 15 | −54 | cotacoes/hoteis, dashboard-personalizado, insurance | pendente |
+| 15 | −54 | cotacoes/hoteis, dashboard-personalizado (src), insurance | **concluído** (#427) |
 | 16 | −54 | integracoes-webhooks, transport, AdvancedReportBuilder | pendente |
 | 17 | −54 | GoLiveSystem, HelpSystem, ChatSystem | pendente |
 | 18 | −52 | WorkflowTemplates, visa, configuracoes-gerais | pendente |
