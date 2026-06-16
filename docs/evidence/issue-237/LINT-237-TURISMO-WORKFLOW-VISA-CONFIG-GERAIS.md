@@ -14,4 +14,4 @@
 
 **Gates:** ESLint 0 nos 3 alvos | type-check OK | build OK
 
-**Próximo:** cluster #19 — visa (src) + BookingCalendar + BookingModal (−51)
+**Próximo:** cluster #20 — apiClient + cadastros + gestao (−49)

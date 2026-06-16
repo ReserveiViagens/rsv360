@@ -166,6 +166,7 @@
 - [x] Lint integracoes-webhooks + transport + AdvancedReportBuilder −54 — **GO condicional** *(PR #428)* — `issue-237/LINT-237-TURISMO-WEBHOOKS-TRANSPORT-REPORTBUILDER.md`
 - [x] Lint GoLiveSystem + HelpSystem + ChatSystem −54 — **GO condicional** *(PR #429)* — `issue-237/LINT-237-TURISMO-GOLIVE-HELP-CHAT.md`
 - [x] Lint WorkflowTemplates + visa + configuracoes-gerais −52 — **GO condicional** *(PR #430)* — `issue-237/LINT-237-TURISMO-WORKFLOW-VISA-CONFIG-GERAIS.md`
+- [x] Lint visa (src) + BookingCalendar + BookingModal −51 — **GO condicional** *(PR #431)* — `issue-237/LINT-237-TURISMO-VISA-BOOKING-CALENDAR-MODAL.md`
 
 ## Decisão Trilha 0
 
