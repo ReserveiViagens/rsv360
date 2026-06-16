@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **2597** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **2530** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)

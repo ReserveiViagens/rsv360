@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Progress, Textarea, Switch } from '@/components/ui';
-import { Plus, Settings, Edit, Trash2, Users, Calendar, Target, Clock, CheckCircle, AlertCircle, XCircle, Eye, Copy, Filter, Search, Star, User, Tag, Mail, Phone, MapPin, Award, TrendingUp } from 'lucide-react';
+import { Card, Button, Input, Badge, Select, Avatar, Textarea } from '@/components/ui';
+import { Plus, Edit, Users, Eye, Copy, Filter, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TeamMember {
@@ -254,11 +254,6 @@ export default function TeamManager({ onMemberSelect }: TeamManagerProps) {
       skills: '', experience: 0, hourlyRate: 0, availability: 100, location: '', bio: ''
     });
     toast.success('Membro da equipe atualizado com sucesso!');
-  };
-
-  const handleDeleteMember = (memberId: string) => {
-    setMembers(members.filter(m => m.id !== memberId));
-    toast.success('Membro da equipe removido com sucesso!');
   };
 
   const handleDuplicateMember = (member: TeamMember) => {
@@ -581,7 +576,7 @@ export default function TeamManager({ onMemberSelect }: TeamManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Função *</label>
-              <Select value={newMember.role} onValueChange={(value: any) => setNewMember({...newMember, role: value})}>
+              <Select value={newMember.role} onValueChange={(value: string) => setNewMember({...newMember, role: value})}>
                 <option value="">Selecione uma função</option>
                 <option value="Project Manager">Project Manager</option>
                 <option value="Frontend Developer">Frontend Developer</option>
@@ -594,7 +589,7 @@ export default function TeamManager({ onMemberSelect }: TeamManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
-              <Select value={newMember.department} onValueChange={(value: any) => setNewMember({...newMember, department: value})}>
+              <Select value={newMember.department} onValueChange={(value: string) => setNewMember({...newMember, department: value})}>
                 <option value="">Selecione um departamento</option>
                 <option value="Gestão de Projetos">Gestão de Projetos</option>
                 <option value="Desenvolvimento">Desenvolvimento</option>
@@ -607,7 +602,7 @@ export default function TeamManager({ onMemberSelect }: TeamManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <Select value={newMember.status} onValueChange={(value: any) => setNewMember({...newMember, status: value})}>
+              <Select value={newMember.status} onValueChange={(value: 'active' | 'inactive' | 'on-leave') => setNewMember({...newMember, status: value})}>
                 <option value="active">Ativo</option>
                 <option value="inactive">Inativo</option>
                 <option value="on-leave">Em Licença</option>
