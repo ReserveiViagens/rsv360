@@ -159,6 +159,7 @@
 - [x] Lint turismo (pages) + parks + permissions (src) −66 — **GO condicional** *(PR #421)* — `issue-237/LINT-237-TURISMO-PAGES-TURISMO-PARKS-PERMISSIONS.md`
 - [x] Lint api-publica + Dashboard + ProcessMonitoring −63 — **GO condicional** *(PR #422)* — `issue-237/LINT-237-TURISMO-API-DASHBOARD-PROCESSMONITORING.md`
 - [x] Lint cadastros + security-system-test + TaskAutomation −60 — **GO condicional** *(PR #423)* — `issue-237/LINT-237-TURISMO-CADASTROS-SECURITY-TASKAUTOMATION.md`
+- [x] Lint automacao×2 + rsv-360-ecosystem −57 — **GO condicional** *(PR #424)* — `issue-237/LINT-237-TURISMO-AUTOMACAO-RSV-ECOSYSTEM.md`
 
 ## Decisão Trilha 0
 

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
   Building,
-  Users,
   DollarSign,
   ShoppingCart,
   MapPin,
@@ -19,38 +19,24 @@ import {
   Zap,
   Heart,
   MessageCircle,
-  Share2,
   Bookmark,
-  Flag,
   Layers,
   Database,
   Server,
-  Cloud,
   TrendingUp,
   Calendar,
-  Mail,
-  Phone,
   Search,
-  Filter,
-  Download,
-  Upload,
-  Plus,
   Edit,
-  Eye,
-  Trash2,
   MoreHorizontal,
   Clock,
   CheckCircle,
   AlertCircle,
   XCircle,
   User,
-  Hotel,
   Plane,
-  Car,
   Award,
   Target
 } from 'lucide-react';
-import RSVSidebar from '../components/RSVSidebar';
 import RSVDashboard from '../components/RSVDashboard';
 import { ResponsiveSidebar } from '../components/ResponsiveSidebar';
 
@@ -65,7 +51,7 @@ interface Service {
   port: number;
   status: 'active' | 'inactive' | 'error';
   category: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   url: string;
   color: string;
 }
@@ -74,13 +60,13 @@ interface Category {
   id: string;
   name: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   color: string;
   services: Service[];
 }
 
 const RSV360Ecosystem: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [, setSidebarOpen] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('core');
   const [showDashboard, setShowDashboard] = useState(false);
 
@@ -508,10 +494,6 @@ const RSV360Ecosystem: React.FC = () => {
     if (category) {
       setSelectedCategory(category.id);
     }
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
   };
 
   const getStatusColor = (status: string) => {
