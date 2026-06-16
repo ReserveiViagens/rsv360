@@ -1,10 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import {
-  User, Users, Search, Filter, Plus, Edit, Trash2, Eye, Mail, Phone,
-  MapPin, Calendar, Star, DollarSign, Download, Upload, FileText,
-  Heart, MessageCircle, Gift, CreditCard, Clock, CheckCircle, AlertCircle,
-  X, Save, Loader, UserPlus, UserCheck, UserX, Building, Camera,
-  Briefcase, Globe, Shield, Award, Target, TrendingUp, BarChart3
+  User,
+  Users,
+  Search,
+  Edit,
+  Trash2,
+  Eye,
+  Mail,
+  Phone,
+  MapPin,
+  Star,
+  DollarSign,
+  Download,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  X,
+  Save,
+  Loader,
+  UserPlus,
+  UserCheck,
+  UserX,
+  Briefcase,
+  Shield,
+  Award,
+  TrendingUp,
+  BarChart3
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -152,7 +173,7 @@ export default function CustomersComplete() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [, setShowStatsModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [formData, setFormData] = useState<Customer>(initialCustomerData);
   const [currentStep, setCurrentStep] = useState(1);
@@ -160,12 +181,7 @@ export default function CustomersComplete() {
   const [success, setSuccess] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Carregar clientes completos na inicialização
-  useEffect(() => {
-    loadCustomersComplete();
-  }, []);
-
-  const loadCustomersComplete = async () => {
+  async function loadCustomersComplete() {
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -310,12 +326,17 @@ export default function CustomersComplete() {
       setCustomers(mockCustomers);
       setSuccess(`${mockCustomers.length} clientes carregados com sucesso!`);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError(`Erro ao carregar clientes: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao carregar clientes: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial mock customer load
+    loadCustomersComplete();
+  }, []);
 
   const handleCreateCustomer = () => {
     setSelectedCustomer(null);
@@ -381,8 +402,8 @@ export default function CustomersComplete() {
         setSuccess('');
       }, 2000);
 
-    } catch (error: any) {
-      setError(`Erro ao salvar: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao salvar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setSaving(false);
     }
@@ -395,39 +416,21 @@ export default function CustomersComplete() {
       setCustomers(prev => prev.filter(c => c.id !== customerId));
       setSuccess('Cliente excluído com sucesso!');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError(`Erro ao excluir: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao excluir: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     const keys = field.split('.');
     setFormData(prev => {
-      const updated = { ...prev };
-      let current: any = updated;
+      const updated = { ...prev } as Record<string, unknown>;
+      let current: Record<string, unknown> = updated;
       for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]];
+        current = current[keys[i]] as Record<string, unknown>;
       }
       current[keys[keys.length - 1]] = value;
-      return updated;
-    });
-  };
-
-  const handleArrayToggle = (field: string, value: string) => {
-    const keys = field.split('.');
-    setFormData(prev => {
-      const updated = { ...prev };
-      let current: any = updated;
-      for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]];
-      }
-      const array = current[keys[keys.length - 1]] as string[];
-      if (array.includes(value)) {
-        current[keys[keys.length - 1]] = array.filter(item => item !== value);
-      } else {
-        current[keys[keys.length - 1]] = [...array, value];
-      }
-      return updated;
+      return updated as unknown as Customer;
     });
   };
 
@@ -442,32 +445,30 @@ export default function CustomersComplete() {
       return matchesSearch && matchesStatus && matchesLoyalty;
     })
     .sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
-
-      if (sortBy.includes('.')) {
-        const keys = sortBy.split('.');
-        let aNested: any = a;
-        let bNested: any = b;
-        for (const key of keys) {
-          aNested = aNested?.[key];
-          bNested = bNested?.[key];
+      const getSortValue = (customer: Customer): string | number => {
+        if (sortBy.includes('.')) {
+          const keys = sortBy.split('.');
+          let nested: unknown = customer;
+          for (const key of keys) {
+            nested = (nested as Record<string, unknown>)?.[key];
+          }
+          if (typeof nested === 'string' || typeof nested === 'number') return nested;
+          return String(nested ?? '');
         }
-        aValue = aNested;
-        bValue = bNested;
-      } else {
-        aValue = a[sortBy as keyof Customer];
-        bValue = b[sortBy as keyof Customer];
-      }
+        const value = customer[sortBy as keyof Customer];
+        if (typeof value === 'string' || typeof value === 'number') return value;
+        return String(value ?? '');
+      };
 
+      let aValue = getSortValue(a);
+      let bValue = getSortValue(b);
       if (typeof aValue === 'string') aValue = aValue.toLowerCase();
       if (typeof bValue === 'string') bValue = bValue.toLowerCase();
 
       if (sortOrder === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     });
 
   const getStatusColor = (status: string) => {

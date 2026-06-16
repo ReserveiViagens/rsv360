@@ -6,18 +6,12 @@ import React, { useState, useMemo } from 'react';
 import {
   LineChart,
   Line,
-  AreaChart,
-  Area,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   ScatterChart,
   Scatter,
@@ -28,32 +22,34 @@ import {
   Radar,
   Treemap
 } from 'recharts';
-import {
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Activity,
-  Target,
-  Zap,
-  Users,
-  Calendar,
-  DollarSign
-} from 'lucide-react';
+import { TrendingUp, Activity, Target, Zap } from 'lucide-react';
 
 // ===================================================================
 // TIPOS E INTERFACES
 // ===================================================================
 
-interface ChartData {
+interface AnalyticsDestination {
   name: string;
-  value: number;
-  fill?: string;
-  [key: string]: any;
+  bookings: number;
+  revenue: number;
+  rating: number;
+}
+
+interface AnalyticsData {
+  destinations?: AnalyticsDestination[];
+  revenue?: Array<{ month: string; revenue: number; growth?: number }>;
+  summary?: {
+    totalRevenue?: number;
+    totalBookings?: number;
+    activeCustomers?: number;
+    averageRating?: number;
+    conversionRate?: number;
+    monthlyGrowth?: number;
+  };
 }
 
 interface AdvancedChartsProps {
-  data: any;
+  data: AnalyticsData | null;
   selectedMetric: string;
   onMetricChange: (metric: string) => void;
 }
@@ -63,8 +59,7 @@ interface AdvancedChartsProps {
 // ===================================================================
 
 const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, onMetricChange }) => {
-  const [hoveredData, setHoveredData] = useState<any>(null);
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  const [, setHoveredData] = useState<unknown>(null);
 
   // ===================================================================
   // DADOS PROCESSADOS
@@ -74,7 +69,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
     if (!data) return null;
 
     // Dados para gráfico de correlação
-    const correlationData = data.destinations?.map((dest: any) => ({
+    const correlationData = data.destinations?.map((dest) => ({
       bookings: dest.bookings,
       revenue: dest.revenue,
       rating: dest.rating * 1000, // Escalar para visualização
@@ -83,15 +78,15 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
 
     // Dados para radar chart
     const radarData = [
-      { metric: 'Receita', A: data.summary?.totalRevenue / 1000 || 0, fullMark: 200 },
-      { metric: 'Reservas', A: data.summary?.totalBookings / 10 || 0, fullMark: 150 },
-      { metric: 'Clientes', A: data.summary?.activeCustomers / 10 || 0, fullMark: 100 },
+      { metric: 'Receita', A: (data.summary?.totalRevenue ?? 0) / 1000, fullMark: 200 },
+      { metric: 'Reservas', A: (data.summary?.totalBookings ?? 0) / 10, fullMark: 150 },
+      { metric: 'Clientes', A: (data.summary?.activeCustomers ?? 0) / 10, fullMark: 100 },
       { metric: 'Avaliação', A: (data.summary?.averageRating || 0) * 20, fullMark: 100 },
       { metric: 'Conversão', A: data.summary?.conversionRate || 0, fullMark: 30 }
     ];
 
     // Dados para treemap
-    const treemapData = data.destinations?.map((dest: any) => ({
+    const treemapData = data.destinations?.map((dest) => ({
       name: dest.name,
       size: dest.revenue,
       bookings: dest.bookings,
@@ -120,14 +115,6 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
 
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
-  };
-
-  const getColorByValue = (value: number, max: number) => {
-    const intensity = value / max;
-    if (intensity > 0.8) return '#10B981';
-    if (intensity > 0.6) return '#3B82F6';
-    if (intensity > 0.4) return '#F59E0B';
-    return '#EF4444';
   };
 
   // ===================================================================
@@ -183,9 +170,9 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
               />
               <Tooltip 
                 cursor={{ strokeDasharray: '3 3' }}
-                formatter={(value, name, props) => [
-                  name === 'revenue' ? formatCurrency(Number(value)) : formatNumber(Number(value)),
-                  name === 'revenue' ? 'Receita' : 'Reservas'
+                formatter={(value, _name, _props) => [
+                  _name === 'revenue' ? formatCurrency(Number(value)) : formatNumber(Number(value)),
+                  _name === 'revenue' ? 'Receita' : 'Reservas'
                 ]}
                 labelFormatter={(label, payload) => {
                   if (payload && payload[0]) {
@@ -222,7 +209,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
                 fillOpacity={0.3}
               />
               <Tooltip 
-                formatter={(value, name) => [
+                formatter={(value, _name) => [
                   typeof value === 'number' ? value.toFixed(1) : value,
                   'Performance'
                 ]}
@@ -245,7 +232,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
               fill="#8884d8"
             >
               <Tooltip 
-                formatter={(value, name, props) => [
+                formatter={(value, _name, _props) => [
                   formatCurrency(Number(value)),
                   'Receita'
                 ]}
@@ -273,7 +260,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
             <TrendingUp className="w-5 h-5 text-green-500" />
           </div>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={data.revenue}>
+            <LineChart data={data.revenue ?? []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -299,7 +286,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
             <Activity className="w-5 h-5 text-blue-500" />
           </div>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={data.revenue}>
+            <BarChart data={data.revenue ?? []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -328,7 +315,7 @@ const AdvancedCharts: React.FC<AdvancedChartsProps> = ({ data, selectedMetric, o
               <h5 className="font-medium text-green-800">Crescimento Positivo</h5>
             </div>
             <p className="text-sm text-green-700">
-              Sua receita cresceu {data.summary?.monthlyGrowth}% este mês. 
+              Sua receita cresceu {data.summary?.monthlyGrowth ?? 0}% este mês. 
               Continue investindo em marketing digital.
             </p>
           </div>
