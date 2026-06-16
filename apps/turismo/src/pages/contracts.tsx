@@ -1,50 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  FileText, 
-  CheckCircle, 
-  XCircle, 
+import {
+  FileText,
+  CheckCircle,
+  XCircle,
   Clock,
   Download,
-  Printer,
   Eye,
   Edit,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
-  DollarSign,
-  MapPin,
-  Phone,
-  Mail,
-  Star,
-  MessageSquare,
-  BarChart3,
-  PieChart,
-  Activity,
-  TrendingUp,
-  Users,
-  Percent,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon
+  DollarSign
 } from 'lucide-react';
 
 interface Contract {
@@ -144,7 +109,7 @@ const ContractsPage: React.FC = () => {
 
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [, setShowCreateModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -163,11 +128,6 @@ const ContractsPage: React.FC = () => {
     fully_signed: 'bg-green-100 text-green-800'
   };
 
-  const priorityColors = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800'
-  };
 
   const filteredContracts = contracts.filter(contract => {
     const matchesStatus = filterStatus === 'all' || contract.status === filterStatus;
@@ -187,13 +147,13 @@ const ContractsPage: React.FC = () => {
     totalValue: contracts.reduce((sum, c) => sum + c.totalAmount, 0)
   };
 
-  const handleStatusChange = (contractId: string, newStatus: Contract['status']) => {
+  const _handleStatusChange = (contractId: string, newStatus: Contract['status']) => {
     setContracts(prev => prev.map(c => 
       c.id === contractId ? { ...c, status: newStatus } : c
     ));
   };
 
-  const handleSignatureStatusChange = (contractId: string, newStatus: Contract['signatureStatus']) => {
+  const _handleSignatureStatusChange = (contractId: string, newStatus: Contract['signatureStatus']) => {
     setContracts(prev => prev.map(c => 
       c.id === contractId ? { ...c, signatureStatus: newStatus } : c
     ));
