@@ -163,6 +163,7 @@
 - [x] Lint ProductionMonitoring + dashboard-personalizado + analytics-avancados −55 — **GO condicional** *(PR #425)* — `issue-237/LINT-237-TURISMO-PRODUCTION-DASHBOARD-ANALYTICS.md`
 - [x] Lint animations-demo + backend-integration-test + configuracoes-sistema −54 — **GO condicional** *(PR #426)* — `issue-237/LINT-237-TURISMO-ANIMATIONS-BACKEND-CONFIG.md`
 - [x] Lint cotacoes/hoteis + dashboard-personalizado (src) + insurance −54 — **GO condicional** *(PR #427)* — `issue-237/LINT-237-TURISMO-HOTEIS-DASHBOARD-INSURANCE.md`
+- [x] Lint integracoes-webhooks + transport + AdvancedReportBuilder −54 — **GO condicional** *(PR #428)* — `issue-237/LINT-237-TURISMO-WEBHOOKS-TRANSPORT-REPORTBUILDER.md`
 
 ## Decisão Trilha 0
 
