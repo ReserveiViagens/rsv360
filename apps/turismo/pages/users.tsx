@@ -4,45 +4,15 @@ import React, { useState, useEffect } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import {
-  Users,
   UserPlus,
   UserCog,
   UserX,
   Search,
-  Filter,
   Download,
-  Upload,
-  RefreshCw,
   Save,
   X,
-  Check,
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Clock,
-  Shield,
-  AlertCircle,
-  Info,
-  Copy,
-  Key,
-  UserCheck,
-  Settings,
-  Database,
-  FileText,
-  CreditCard,
-  Bell,
-  Globe,
-  Building,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle
-} from 'lucide-react'
+  Eye
+} from 'lucide-react';
 import { toast } from 'react-hot-toast'
 
 interface User {
@@ -100,14 +70,10 @@ export default function UsersPage() {
     permissions: [] as string[]
   })
 
-  useEffect(() => {
-    loadData()
-  }, [filterRole, filterDepartment, filterStatus])
-
   const loadData = async () => {
     try {
       setLoading(true)
-      const params: any = {
+      const params: Record<string, string | undefined> = {
         search: searchTerm || undefined,
         role: filterRole !== 'all' ? filterRole : undefined,
         department: filterDepartment !== 'all' ? filterDepartment : undefined,
@@ -142,6 +108,12 @@ export default function UsersPage() {
     }
   }
 
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch users on filter change
+    loadData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- reload on filter change
+  }, [filterRole, filterDepartment, filterStatus])
   const handleSave = async () => {
     try {
       const payload = {
@@ -202,7 +174,7 @@ export default function UsersPage() {
     setShowModal(true)
   }
 
-  const handleStatusChange = async (id: number, newStatus: string) => {
+  const _handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await api.patch(`/api/v1/users/${id}/status`, { status: newStatus })
       toast.success(`Status do usuário atualizado para ${newStatus}`)
@@ -213,7 +185,7 @@ export default function UsersPage() {
     }
   }
 
-  const handleVerificationChange = async (id: number, isVerified: boolean) => {
+  const _handleVerificationChange = async (id: number, isVerified: boolean) => {
     try {
       await api.patch(`/api/v1/users/${id}/verification`, { isVerified })
       toast.success(`Verificação ${isVerified ? 'ativada' : 'desativada'}`)
@@ -467,7 +439,7 @@ export default function UsersPage() {
                   {users.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                        Nenhum usuário encontrado. Clique em "Novo Usuário" para começar.
+                        Nenhum usuário encontrado. Clique em &quot;Novo Usuário&quot; para começar.
                       </td>
                     </tr>
                   ) : (
@@ -758,7 +730,7 @@ export default function UsersPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Permissões</label>
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <p className="text-sm text-gray-600 mb-2">
-                        {roles.find(r => r.id === formData.role)?.permissionCount || 0} permissões associadas à função "{roles.find(r => r.id === formData.role)?.name}"
+                        {roles.find(r => r.id === formData.role)?.permissionCount || 0} permissões associadas à função &quot;{roles.find(r => r.id === formData.role)?.name}&quot;
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {(roles.find(r => r.id === formData.role)?.permissions || []).map((permission, index) => (
