@@ -1,46 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { 
-  Building, 
-  MapPin, 
-  Star, 
-  DollarSign, 
-  Users, 
-  Calendar, 
-  Search, 
-  Filter,
+import {
+  Building,
+  MapPin,
+  Star,
+  DollarSign,
+  Search,
   Plus,
   Edit,
   Trash2,
   Download,
-  Upload,
-  Eye,
-  Camera,
   Video,
-  BarChart3,
-  FileText,
-  Settings,
-  MoreHorizontal,
-  Heart,
-  Share2,
-  MessageCircle,
-  Phone,
-  Mail,
-  Globe,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  X,
-  ChevronDown,
-  ChevronUp,
-  ArrowUpDown,
-  Filter as FilterIcon,
-  Search as SearchIcon,
-  Plus as PlusIcon,
-  Download as DownloadIcon,
-  Upload as UploadIcon,
-  BarChart3 as BarChart3Icon,
-  FileText as FileTextIcon,
-  Settings as SettingsIcon
+  X
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -67,6 +37,142 @@ interface Hotel {
   updatedAt: string;
 }
 
+const MOCK_HOTELS: Hotel[] = [
+  {
+    id: 1,
+    name: "Copacabana Palace",
+    location: "Rio de Janeiro, RJ",
+    description: "Hotel histórico de luxo na praia de Copacabana, oferecendo experiências únicas e serviço de primeira classe.",
+    category: "luxo",
+    rating: 4.9,
+    price: 2500,
+    amenities: ["Piscina", "Spa", "Restaurante", "Concierge"],
+    facilities: ["Wi-Fi", "Estacionamento", "Academia", "Sala de conferências"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/copacabana-palace-1.jpg", "/images/hotels/copacabana-palace-2.jpg"],
+    videos: ["/videos/hotels/copacabana-palace.mp4"],
+    contact: {
+      phone: "(21) 2548-7070",
+      email: "reservas@copacabanapalace.com",
+      website: "www.copacabanapalace.com"
+    },
+    status: "active",
+    createdAt: "2024-01-15",
+    updatedAt: "2024-01-20"
+  },
+  {
+    id: 2,
+    name: "Fasano São Paulo",
+    location: "São Paulo, SP",
+    description: "Hotel boutique de luxo no coração de São Paulo, conhecido por seu design sofisticado e gastronomia excepcional.",
+    category: "luxo",
+    rating: 4.8,
+    price: 1800,
+    amenities: ["Restaurante", "Bar", "Spa", "Academia"],
+    facilities: ["Wi-Fi", "Estacionamento", "Concierge", "Sala de eventos"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/fasano-sp-1.jpg", "/images/hotels/fasano-sp-2.jpg"],
+    videos: ["/videos/hotels/fasano-sp.mp4"],
+    contact: {
+      phone: "(11) 3896-4000",
+      email: "reservas@fasano.com.br",
+      website: "www.fasano.com.br"
+    },
+    status: "active",
+    createdAt: "2024-01-10",
+    updatedAt: "2024-01-18"
+  },
+  {
+    id: 3,
+    name: "Pousada do Ouro",
+    location: "Paraty, RJ",
+    description: "Pousada charmosa no centro histórico de Paraty, oferecendo conforto e proximidade com as principais atrações.",
+    category: "turístico",
+    rating: 4.5,
+    price: 450,
+    amenities: ["Café da manhã", "Wi-Fi", "Ar condicionado"],
+    facilities: ["Wi-Fi", "Café da manhã", "Ar condicionado"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/pousada-ouro-1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(24) 3371-1555",
+      email: "contato@pousadadoouro.com",
+      website: "www.pousadadoouro.com"
+    },
+    status: "active",
+    createdAt: "2024-01-05",
+    updatedAt: "2024-01-12"
+  },
+  {
+    id: 4,
+    name: "Brasília Palace Hotel",
+    location: "Brasília, DF",
+    description: "Hotel executivo moderno no centro empresarial de Brasília, ideal para viagens de negócios.",
+    category: "executivo",
+    rating: 4.3,
+    price: 650,
+    amenities: ["Restaurante", "Academia", "Sala de conferências"],
+    facilities: ["Wi-Fi", "Estacionamento", "Business center", "Sala de reuniões"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/brasilia-palace-1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(61) 3322-0044",
+      email: "reservas@brasiliapalace.com",
+      website: "www.brasiliapalace.com"
+    },
+    status: "active",
+    createdAt: "2024-01-08",
+    updatedAt: "2024-01-15"
+  },
+  {
+    id: 5,
+    name: "Hostel Floripa",
+    location: "Florianópolis, SC",
+    description: "Hostel econômico próximo à praia, perfeito para mochileiros e viajantes com orçamento limitado.",
+    category: "econômico",
+    rating: 4.1,
+    price: 120,
+    amenities: ["Café da manhã", "Wi-Fi", "Cozinha compartilhada"],
+    facilities: ["Wi-Fi", "Café da manhã", "Cozinha", "Sala comum"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/hostel-floripa-1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(48) 3333-4444",
+      email: "contato@hostelfloripa.com",
+      website: "www.hostelfloripa.com"
+    },
+    status: "active",
+    createdAt: "2024-01-03",
+    updatedAt: "2024-01-10"
+  },
+  {
+    id: 6,
+    name: "Pousada do Mar",
+    location: "Porto de Galinhas, PE",
+    description: "Pousada familiar na praia de Porto de Galinhas, oferecendo tranquilidade e contato com a natureza.",
+    category: "turístico",
+    rating: 4.6,
+    price: 380,
+    amenities: ["Piscina", "Café da manhã", "Wi-Fi"],
+    facilities: ["Wi-Fi", "Café da manhã", "Piscina", "Estacionamento"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/pousada-mar-1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(81) 3552-1234",
+      email: "reservas@pousadadomar.com",
+      website: "www.pousadadomar.com"
+    },
+    status: "active",
+    createdAt: "2024-01-12",
+    updatedAt: "2024-01-19"
+  }
+];
+
+
 export default function Hotels() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,146 +185,10 @@ export default function Hotels() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [newVideo, setNewVideo] = useState<File | null>(null);
 
-  // Dados mockados para hotéis
-  const mockHotels: Hotel[] = [
-    {
-      id: 1,
-      name: "Copacabana Palace",
-      location: "Rio de Janeiro, RJ",
-      description: "Hotel histórico de luxo na praia de Copacabana, oferecendo experiências únicas e serviço de primeira classe.",
-      category: "luxo",
-      rating: 4.9,
-      price: 2500,
-      amenities: ["Piscina", "Spa", "Restaurante", "Concierge"],
-      facilities: ["Wi-Fi", "Estacionamento", "Academia", "Sala de conferências"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/copacabana-palace-1.jpg", "/images/hotels/copacabana-palace-2.jpg"],
-      videos: ["/videos/hotels/copacabana-palace.mp4"],
-      contact: {
-        phone: "(21) 2548-7070",
-        email: "reservas@copacabanapalace.com",
-        website: "www.copacabanapalace.com"
-      },
-      status: "active",
-      createdAt: "2024-01-15",
-      updatedAt: "2024-01-20"
-    },
-    {
-      id: 2,
-      name: "Fasano São Paulo",
-      location: "São Paulo, SP",
-      description: "Hotel boutique de luxo no coração de São Paulo, conhecido por seu design sofisticado e gastronomia excepcional.",
-      category: "luxo",
-      rating: 4.8,
-      price: 1800,
-      amenities: ["Restaurante", "Bar", "Spa", "Academia"],
-      facilities: ["Wi-Fi", "Estacionamento", "Concierge", "Sala de eventos"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/fasano-sp-1.jpg", "/images/hotels/fasano-sp-2.jpg"],
-      videos: ["/videos/hotels/fasano-sp.mp4"],
-      contact: {
-        phone: "(11) 3896-4000",
-        email: "reservas@fasano.com.br",
-        website: "www.fasano.com.br"
-      },
-      status: "active",
-      createdAt: "2024-01-10",
-      updatedAt: "2024-01-18"
-    },
-    {
-      id: 3,
-      name: "Pousada do Ouro",
-      location: "Paraty, RJ",
-      description: "Pousada charmosa no centro histórico de Paraty, oferecendo conforto e proximidade com as principais atrações.",
-      category: "turístico",
-      rating: 4.5,
-      price: 450,
-      amenities: ["Café da manhã", "Wi-Fi", "Ar condicionado"],
-      facilities: ["Wi-Fi", "Café da manhã", "Ar condicionado"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/pousada-ouro-1.jpg"],
-      videos: [],
-      contact: {
-        phone: "(24) 3371-1555",
-        email: "contato@pousadadoouro.com",
-        website: "www.pousadadoouro.com"
-      },
-      status: "active",
-      createdAt: "2024-01-05",
-      updatedAt: "2024-01-12"
-    },
-    {
-      id: 4,
-      name: "Brasília Palace Hotel",
-      location: "Brasília, DF",
-      description: "Hotel executivo moderno no centro empresarial de Brasília, ideal para viagens de negócios.",
-      category: "executivo",
-      rating: 4.3,
-      price: 650,
-      amenities: ["Restaurante", "Academia", "Sala de conferências"],
-      facilities: ["Wi-Fi", "Estacionamento", "Business center", "Sala de reuniões"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/brasilia-palace-1.jpg"],
-      videos: [],
-      contact: {
-        phone: "(61) 3322-0044",
-        email: "reservas@brasiliapalace.com",
-        website: "www.brasiliapalace.com"
-      },
-      status: "active",
-      createdAt: "2024-01-08",
-      updatedAt: "2024-01-15"
-    },
-    {
-      id: 5,
-      name: "Hostel Floripa",
-      location: "Florianópolis, SC",
-      description: "Hostel econômico próximo à praia, perfeito para mochileiros e viajantes com orçamento limitado.",
-      category: "econômico",
-      rating: 4.1,
-      price: 120,
-      amenities: ["Café da manhã", "Wi-Fi", "Cozinha compartilhada"],
-      facilities: ["Wi-Fi", "Café da manhã", "Cozinha", "Sala comum"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/hostel-floripa-1.jpg"],
-      videos: [],
-      contact: {
-        phone: "(48) 3333-4444",
-        email: "contato@hostelfloripa.com",
-        website: "www.hostelfloripa.com"
-      },
-      status: "active",
-      createdAt: "2024-01-03",
-      updatedAt: "2024-01-10"
-    },
-    {
-      id: 6,
-      name: "Pousada do Mar",
-      location: "Porto de Galinhas, PE",
-      description: "Pousada familiar na praia de Porto de Galinhas, oferecendo tranquilidade e contato com a natureza.",
-      category: "turístico",
-      rating: 4.6,
-      price: 380,
-      amenities: ["Piscina", "Café da manhã", "Wi-Fi"],
-      facilities: ["Wi-Fi", "Café da manhã", "Piscina", "Estacionamento"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/pousada-mar-1.jpg"],
-      videos: [],
-      contact: {
-        phone: "(81) 3552-1234",
-        email: "reservas@pousadadomar.com",
-        website: "www.pousadadomar.com"
-      },
-      status: "active",
-      createdAt: "2024-01-12",
-      updatedAt: "2024-01-19"
-    }
-  ];
-
   useEffect(() => {
     // Simular carregamento de dados
     setTimeout(() => {
-      setHotels(mockHotels);
+      setHotels(MOCK_HOTELS);
       setLoading(false);
     }, 1000);
   }, []);
@@ -338,14 +308,6 @@ export default function Hotels() {
     }
   };
 
-  const getStatisticLabel = (type: string) => {
-    switch (type) {
-      case 'total': return 'Total de Hotéis';
-      case 'rating': return 'Avaliação Média';
-      case 'revenue': return 'Receita Média';
-      default: return 'Estatísticas';
-    }
-  };
 
   const filteredHotels = hotels.filter(hotel => {
     const matchesSearch = hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

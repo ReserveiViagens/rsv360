@@ -1,39 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { 
-    Users, 
-    UserPlus, 
-    UserX, 
-    Search, 
-    Filter, 
-    Download, 
-    Upload, 
-    RefreshCw, 
-    Save, 
-    X, 
-    Check, 
-    Eye, 
-    EyeOff, 
-    Lock, 
-    Unlock, 
-    Mail, 
-    Phone, 
-    MapPin, 
-    Calendar, 
-    Clock, 
-    Shield, 
-    AlertCircle, 
-    Info, 
-    Copy, 
-    Key, 
-    UserCheck, 
-    Settings, 
-    Database, 
-    FileText, 
-    CreditCard, 
-    Bell, 
-    Globe, 
-    Building,
-    Edit
+import React, { useState } from 'react';
+import {
+  UserPlus,
+  UserX,
+  Download,
+  Eye,
+  Edit
 } from 'lucide-react';
 
 interface User {
@@ -64,81 +35,69 @@ interface Department {
     manager: string;
 }
 
+const MOCK_USERS: User[] = [
+    {
+        id: '1',
+        name: 'João Silva',
+        email: 'joao.silva@reserveiviagens.com',
+        phone: '(11) 99999-9999',
+        role: 'admin',
+        department: 'TI',
+        isActive: true,
+        isVerified: true,
+        lastLogin: '2024-01-15 10:30:00',
+        createdAt: '2024-01-01',
+        permissions: ['user_create', 'user_read', 'user_update', 'user_delete', 'report_create', 'report_read', 'finance_read']
+    },
+    {
+        id: '2',
+        name: 'Maria Santos',
+        email: 'maria.santos@reserveiviagens.com',
+        phone: '(11) 88888-8888',
+        role: 'manager',
+        department: 'Vendas',
+        isActive: true,
+        isVerified: true,
+        lastLogin: '2024-01-14 15:45:00',
+        createdAt: '2024-01-05',
+        permissions: ['user_read', 'report_create', 'report_read', 'finance_read']
+    }
+];
+
+const MOCK_ROLES: Role[] = [
+    {
+        id: 'admin',
+        name: 'Administrador',
+        description: 'Acesso completo ao sistema',
+        permissions: ['user_create', 'user_read', 'user_update', 'user_delete', 'report_create', 'report_read', 'report_update', 'report_delete', 'finance_read', 'finance_update', 'finance_delete']
+    },
+    {
+        id: 'manager',
+        name: 'Gerente',
+        description: 'Acesso de gerenciamento',
+        permissions: ['user_read', 'user_update', 'report_create', 'report_read', 'report_update', 'finance_read', 'finance_update']
+    }
+];
+
+const MOCK_DEPARTMENTS: Department[] = [
+    {
+        id: 'ti',
+        name: 'Tecnologia da Informação',
+        description: 'Departamento de TI',
+        manager: 'João Silva'
+    },
+    {
+        id: 'vendas',
+        name: 'Vendas',
+        description: 'Departamento de Vendas',
+        manager: 'Maria Santos'
+    }
+];
+
 export default function UsersPage() {
-    const [users, setUsers] = useState<User[]>([]);
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = () => {
-        // Simular carregamento de dados
-        const mockUsers: User[] = [
-            {
-                id: '1',
-                name: 'João Silva',
-                email: 'joao.silva@reserveiviagens.com',
-                phone: '(11) 99999-9999',
-                role: 'admin',
-                department: 'TI',
-                isActive: true,
-                isVerified: true,
-                lastLogin: '2024-01-15 10:30:00',
-                createdAt: '2024-01-01',
-                permissions: ['user_create', 'user_read', 'user_update', 'user_delete', 'report_create', 'report_read', 'finance_read']
-            },
-            {
-                id: '2',
-                name: 'Maria Santos',
-                email: 'maria.santos@reserveiviagens.com',
-                phone: '(11) 88888-8888',
-                role: 'manager',
-                department: 'Vendas',
-                isActive: true,
-                isVerified: true,
-                lastLogin: '2024-01-14 15:45:00',
-                createdAt: '2024-01-05',
-                permissions: ['user_read', 'report_create', 'report_read', 'finance_read']
-            }
-        ];
-
-        const mockRoles: Role[] = [
-            {
-                id: 'admin',
-                name: 'Administrador',
-                description: 'Acesso completo ao sistema',
-                permissions: ['user_create', 'user_read', 'user_update', 'user_delete', 'report_create', 'report_read', 'report_update', 'report_delete', 'finance_read', 'finance_update', 'finance_delete']
-            },
-            {
-                id: 'manager',
-                name: 'Gerente',
-                description: 'Acesso de gerenciamento',
-                permissions: ['user_read', 'user_update', 'report_create', 'report_read', 'report_update', 'finance_read', 'finance_update']
-            }
-        ];
-
-        const mockDepartments: Department[] = [
-            {
-                id: 'ti',
-                name: 'Tecnologia da Informação',
-                description: 'Departamento de TI',
-                manager: 'João Silva'
-            },
-            {
-                id: 'vendas',
-                name: 'Vendas',
-                description: 'Departamento de Vendas',
-                manager: 'Maria Santos'
-            }
-        ];
-
-        setUsers(mockUsers);
-        setRoles(mockRoles);
-        setDepartments(mockDepartments);
-    };
+    const [users] = useState<User[]>(MOCK_USERS);
+    const [roles] = useState<Role[]>(MOCK_ROLES);
+    const [departments] = useState<Department[]>(MOCK_DEPARTMENTS);
 
     const getRoleByName = (roleId: string) => {
         return roles.find(role => role.id === roleId);
