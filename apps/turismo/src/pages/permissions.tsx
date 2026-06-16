@@ -3,9 +3,6 @@ import {
     Shield, 
     Users, 
     Lock, 
-    Unlock, 
-    Eye, 
-    EyeOff, 
     Check, 
     X, 
     Plus, 
@@ -13,24 +10,9 @@ import {
     Trash2, 
     Save, 
     Search, 
-    Filter, 
     Download, 
-    Upload, 
     RefreshCw, 
-    AlertCircle, 
-    Info, 
-    Copy, 
-    Key, 
-    UserCheck, 
-    UserX, 
-    Settings, 
-    Database, 
-    FileText, 
-    CreditCard, 
-    Calendar, 
-    Bell, 
-    Globe, 
-    Building
+    UserCheck
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -73,7 +55,6 @@ export default function PermissionsPage() {
     const [showExportModal, setShowExportModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [exportGenerating, setExportGenerating] = useState(false);
     
@@ -85,11 +66,7 @@ export default function PermissionsPage() {
     const [editRoleDescription, setEditRoleDescription] = useState('');
     const [editRolePermissions, setEditRolePermissions] = useState<string[]>([]);
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = () => {
+    function loadData() {
         // Simular carregamento de dados
         const mockPermissions: Permission[] = [
             // Usuários
@@ -202,7 +179,12 @@ export default function PermissionsPage() {
         setPermissions(mockPermissions);
         setRoles(mockRoles);
         setUsers(mockUsers);
-    };
+    }
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- initial mock permissions load
+        loadData();
+    }, []);
 
     const handlePermissionToggle = (permissionId: string) => {
         setPermissions(prev => prev.map(permission => 
@@ -226,7 +208,7 @@ export default function PermissionsPage() {
         }));
     };
 
-    const handleSaveRole = async (roleData: Partial<Role>) => {
+    const handleSaveRole = async (_roleData: Partial<Role>) => {
         setSaving(true);
         
         // Simular salvamento
