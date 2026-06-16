@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **1861** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **1813** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
@@ -21,8 +21,8 @@ Baseline: **1861** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 17** (−54): `src/components/deploy/GoLiveSystem.tsx` (18), `src/components/documentation/HelpSystem.tsx` (18), `src/components/notifications/ChatSystem.tsx` (18)
 - [x] **Cluster 18** (−52): `src/components/workflow/WorkflowTemplates.tsx` (18), `pages/visa.tsx` (17), `src/pages/configuracoes-gerais.tsx` (17)
 - [x] **Cluster 19** (−51): `src/pages/visa.tsx` (17), `src/components/bookings/BookingCalendar.tsx` (17), `src/components/bookings/BookingModal.tsx` (17)
-- [ ] **Cluster 20** (−49): `src/services/apiClient.ts` (17), `pages/cadastros.tsx` (16), `pages/gestao.tsx` (16)
-- [ ] **Cluster 21** (−48): `pages/hotels-complete.tsx` (16), `pages/reports.tsx` (16), `pages/travel.tsx` (16)
+- [x] **Cluster 20** (−49): `src/services/apiClient.ts` (17), `pages/cadastros.tsx` (16), `pages/gestao.tsx` (16)
+- [x] **Cluster 21** (−48): `pages/hotels-complete.tsx` (16), `pages/reports.tsx` (16), `pages/travel.tsx` (16)
 - [ ] **Cluster 22** (−48): `src/pages/chatbot-ia.tsx` (16), `src/pages/gestao.tsx` (16), `src/pages/reports.tsx` (16)
 - [ ] **Cluster 23** (−48): `src/components/chat/ChatConversations.tsx` (16), `src/components/notifications/NotificationManager.tsx` (16), `src/components/notifications/PushNotificationSystem.tsx` (16)
 - [ ] **Cluster 24** (−47): `src/components/projects/TaskManager.tsx` (16), `src/services/api/leiloesApi.ts` (16), `pages/dashboard/marketplace.tsx` (15)

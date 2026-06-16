@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Building, MapPin, Star, DollarSign, Users, Calendar, Search, Filter,
-  Plus, Edit, Trash2, Download, Upload, Eye, Camera, Video, BarChart3,
-  FileText, Settings, MoreHorizontal, Heart, Share2, MessageCircle,
-  Phone, Mail, Globe, Clock, CheckCircle, AlertCircle, X, Save, Loader,
+  Building, MapPin, Star, DollarSign, Users, Calendar, Search,
+  Plus, Edit, Trash2, Download, Eye, BarChart3,
+  FileText, Phone, Mail, Globe, CheckCircle, AlertCircle, X, Save, Loader,
   Wifi, Car, Coffee, Utensils, Dumbbell, Waves, Tv, AirVent, ShieldCheck
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
@@ -98,8 +97,111 @@ const initialHotelData: Hotel = {
   }
 };
 
+const OCCUPANCY_MONTH_OFFSETS = [-8, 5, -3, 7, -6, 4, -2, 9, -5, 3, -7, 6];
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+const MOCK_HOTELS: Hotel[] = [
+  {
+    id: 1,
+    name: "Resort Caldas Novas Premium",
+    location: "Caldas Novas, GO",
+    description: "Resort completo com águas termais naturais, parque aquático e spa relaxante. Perfeito para famílias e casais.",
+    category: "luxo",
+    rating: 4.8,
+    price: 450,
+    amenities: ["Piscina Termal", "Spa", "Restaurante", "Bar", "Academia", "Wi-Fi", "Estacionamento"],
+    facilities: ["Ar Condicionado", "TV", "Frigobar", "Cofre", "Room Service", "Lavanderia"],
+    restrictions: ["Não aceita pets", "Check-in 14h", "Check-out 12h"],
+    images: ["/images/caldas1.jpg", "/images/caldas2.jpg"],
+    videos: ["/videos/caldas-tour.mp4"],
+    contact: {
+      phone: "(64) 3453-1000",
+      email: "reservas@caldasnovas.com",
+      website: "www.caldasnovas.com"
+    },
+    address: {
+      street: "Av. das Águas Termais, 1000",
+      city: "Caldas Novas",
+      state: "GO",
+      zipCode: "75690-000",
+      country: "Brasil"
+    },
+    coordinates: {
+      lat: -17.7739,
+      lng: -48.6211
+    },
+    status: "active",
+    roomTypes: [
+      { type: "Standard", count: 50, pricePerNight: 350, maxOccupancy: 2 },
+      { type: "Luxo", count: 30, pricePerNight: 450, maxOccupancy: 4 },
+      { type: "Suíte Premium", count: 20, pricePerNight: 650, maxOccupancy: 6 }
+    ],
+    availability: [
+      { checkIn: "2025-02-01", checkOut: "2025-02-28", availableRooms: 80 },
+      { checkIn: "2025-03-01", checkOut: "2025-03-31", availableRooms: 95 }
+    ],
+    stats: {
+      totalBookings: 1247,
+      averageRating: 4.8,
+      occupancyRate: 85,
+      revenue: 2500000
+    },
+    createdAt: "2024-01-15",
+    updatedAt: "2025-01-20"
+  },
+  {
+    id: 2,
+    name: "Pousada Familiar Rio Quente",
+    location: "Rio Quente, GO",
+    description: "Pousada aconchegante com piscinas termais e ambiente familiar. Ideal para relaxar e curtir as águas quentes.",
+    category: "turístico",
+    rating: 4.5,
+    price: 280,
+    amenities: ["Piscina Termal", "Café da Manhã", "Wi-Fi", "Estacionamento", "Playground"],
+    facilities: ["Ar Condicionado", "TV", "Frigobar", "Room Service"],
+    restrictions: ["Aceita pets pequenos", "Check-in 14h"],
+    images: ["/images/rioquente1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(64) 3442-2000",
+      email: "contato@rioquente.com",
+      website: "www.rioquente.com"
+    },
+    address: {
+      street: "Rua das Termas, 500",
+      city: "Rio Quente",
+      state: "GO",
+      zipCode: "75695-000",
+      country: "Brasil"
+    },
+    coordinates: {
+      lat: -17.7842,
+      lng: -48.7533
+    },
+    status: "active",
+    roomTypes: [
+      { type: "Standard", count: 40, pricePerNight: 250, maxOccupancy: 3 },
+      { type: "Família", count: 20, pricePerNight: 280, maxOccupancy: 5 }
+    ],
+    availability: [
+      { checkIn: "2025-02-01", checkOut: "2025-02-28", availableRooms: 45 }
+    ],
+    stats: {
+      totalBookings: 892,
+      averageRating: 4.5,
+      occupancyRate: 75,
+      revenue: 850000
+    },
+    createdAt: "2024-02-10",
+    updatedAt: "2025-01-18"
+  }
+];
+
 export default function HotelsComplete() {
-  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [hotels, setHotels] = useState<Hotel[]>(MOCK_HOTELS);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,119 +219,16 @@ export default function HotelsComplete() {
   const [success, setSuccess] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Carregar hotéis completos na inicialização
-  useEffect(() => {
-    loadHotelsComplete();
-  }, []);
-
   const loadHotelsComplete = async () => {
     setLoading(true);
     try {
-      // Simular carregamento da API
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const mockHotels: Hotel[] = [
-        {
-          id: 1,
-          name: "Resort Caldas Novas Premium",
-          location: "Caldas Novas, GO",
-          description: "Resort completo com águas termais naturais, parque aquático e spa relaxante. Perfeito para famílias e casais.",
-          category: "luxo",
-          rating: 4.8,
-          price: 450,
-          amenities: ["Piscina Termal", "Spa", "Restaurante", "Bar", "Academia", "Wi-Fi", "Estacionamento"],
-          facilities: ["Ar Condicionado", "TV", "Frigobar", "Cofre", "Room Service", "Lavanderia"],
-          restrictions: ["Não aceita pets", "Check-in 14h", "Check-out 12h"],
-          images: ["/images/caldas1.jpg", "/images/caldas2.jpg"],
-          videos: ["/videos/caldas-tour.mp4"],
-          contact: {
-            phone: "(64) 3453-1000",
-            email: "reservas@caldasnovas.com",
-            website: "www.caldasnovas.com"
-          },
-          address: {
-            street: "Av. das Águas Termais, 1000",
-            city: "Caldas Novas",
-            state: "GO",
-            zipCode: "75690-000",
-            country: "Brasil"
-          },
-          coordinates: {
-            lat: -17.7739,
-            lng: -48.6211
-          },
-          status: "active",
-          roomTypes: [
-            { type: "Standard", count: 50, pricePerNight: 350, maxOccupancy: 2 },
-            { type: "Luxo", count: 30, pricePerNight: 450, maxOccupancy: 4 },
-            { type: "Suíte Premium", count: 20, pricePerNight: 650, maxOccupancy: 6 }
-          ],
-          availability: [
-            { checkIn: "2025-02-01", checkOut: "2025-02-28", availableRooms: 80 },
-            { checkIn: "2025-03-01", checkOut: "2025-03-31", availableRooms: 95 }
-          ],
-          stats: {
-            totalBookings: 1247,
-            averageRating: 4.8,
-            occupancyRate: 85,
-            revenue: 2500000
-          },
-          createdAt: "2024-01-15",
-          updatedAt: "2025-01-20"
-        },
-        {
-          id: 2,
-          name: "Pousada Familiar Rio Quente",
-          location: "Rio Quente, GO",
-          description: "Pousada aconchegante com piscinas termais e ambiente familiar. Ideal para relaxar e curtir as águas quentes.",
-          category: "turístico",
-          rating: 4.5,
-          price: 280,
-          amenities: ["Piscina Termal", "Café da Manhã", "Wi-Fi", "Estacionamento", "Playground"],
-          facilities: ["Ar Condicionado", "TV", "Frigobar", "Room Service"],
-          restrictions: ["Aceita pets pequenos", "Check-in 14h"],
-          images: ["/images/rioquente1.jpg"],
-          videos: [],
-          contact: {
-            phone: "(64) 3442-2000",
-            email: "contato@rioquente.com",
-            website: "www.rioquente.com"
-          },
-          address: {
-            street: "Rua das Termas, 500",
-            city: "Rio Quente",
-            state: "GO",
-            zipCode: "75695-000",
-            country: "Brasil"
-          },
-          coordinates: {
-            lat: -17.7842,
-            lng: -48.7533
-          },
-          status: "active",
-          roomTypes: [
-            { type: "Standard", count: 40, pricePerNight: 250, maxOccupancy: 3 },
-            { type: "Família", count: 20, pricePerNight: 280, maxOccupancy: 5 }
-          ],
-          availability: [
-            { checkIn: "2025-02-01", checkOut: "2025-02-28", availableRooms: 45 }
-          ],
-          stats: {
-            totalBookings: 892,
-            averageRating: 4.5,
-            occupancyRate: 75,
-            revenue: 850000
-          },
-          createdAt: "2024-02-10",
-          updatedAt: "2025-01-18"
-        }
-      ];
-
-      setHotels(mockHotels);
-      setSuccess(`${mockHotels.length} hotéis carregados com sucesso!`);
+      setHotels(MOCK_HOTELS);
+      setSuccess(`${MOCK_HOTELS.length} hotéis carregados com sucesso!`);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError(`Erro ao carregar hotéis: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao carregar hotéis: ${getErrorMessage(error, 'Erro desconhecido')}`);
     } finally {
       setLoading(false);
     }
@@ -302,8 +301,8 @@ export default function HotelsComplete() {
         setSuccess('');
       }, 2000);
 
-    } catch (error: any) {
-      setError(`Erro ao salvar: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao salvar: ${getErrorMessage(error, 'Erro desconhecido')}`);
     } finally {
       setSaving(false);
     }
@@ -316,12 +315,12 @@ export default function HotelsComplete() {
       setHotels(prev => prev.filter(h => h.id !== hotelId));
       setSuccess('Hotel excluído com sucesso!');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError(`Erro ao excluir: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Erro ao excluir: ${getErrorMessage(error, 'Erro desconhecido')}`);
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean | string[]) => {
     if (field.includes('.')) {
       const keys = field.split('.');
       setFormData(prev => {
@@ -1600,7 +1599,7 @@ export default function HotelsComplete() {
                   <div className="grid grid-cols-12 gap-1 h-32">
                     {Array.from({length: 12}, (_, i) => {
                       const month = i + 1;
-                      const occupancy = Math.max(40, Math.min(95, selectedHotel.stats.occupancyRate + (Math.random() * 20 - 10)));
+                      const occupancy = Math.max(40, Math.min(95, selectedHotel.stats.occupancyRate + OCCUPANCY_MONTH_OFFSETS[i]));
                       return (
                         <div key={i} className="flex flex-col justify-end">
                           <div
