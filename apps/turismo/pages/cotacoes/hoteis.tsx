@@ -4,23 +4,19 @@ import { useRouter } from 'next/router';
 import { 
   ArrowLeft, 
   Hotel, 
-  Calendar, 
-  Users, 
-  MapPin, 
   Plus,
   Save,
   Trash2,
   Upload,
   Eye,
   Edit,
-  Copy,
   Lightbulb,
   CheckSquare,
   BookOpen,
-  Image
+  Image as ImageIcon
 } from 'lucide-react';
 import { HotelSelector } from '@/components/HotelSelector';
-import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';
+import { Budget, BudgetItem } from '@/lib/types/budget';
 import { budgetStorage } from '@/lib/budget-storage';
 import { generateId } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -67,14 +63,17 @@ export default function HoteisPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount
     setIsClient(true);
-    
-    // Carregar orçamento existente se estiver em modo view/edit
+  }, []);
+
+  useEffect(() => {
     const { view, edit } = router.query;
     const budgetId = view || edit;
     if (budgetId && typeof budgetId === 'string') {
       const existing = budgetStorage.getById(budgetId);
       if (existing) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load saved budget from query
         setBudget(existing);
         setHotelSelection({
           state: existing.hotelState,
@@ -124,12 +123,12 @@ export default function HoteisPage() {
       id: budget.id || generateId(),
       createdAt: budget.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: (budget.status as any) || 'draft',
+      status: budget.status ?? 'draft',
       subtotal: budget.subtotal || 0,
       discount: budget.discount || 0,
       taxes: budget.taxes || 0,
       total: budget.total || 0,
-      items: (budget.items as any) || [],
+      items: budget.items || [],
     } as Budget);
     const w = window.open('', '_blank');
     if (w) { w.document.write(html); w.document.close(); }
@@ -161,7 +160,7 @@ export default function HoteisPage() {
     }));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: string, value: string | number) => {
     setBudget(prev => {
       const newItems = [...(prev.items || [])];
       if (field.startsWith('details.')) {
@@ -196,41 +195,6 @@ export default function HoteisPage() {
     setBudget(prev => ({
       ...prev,
       items: (prev.items || []).filter((_, i) => i !== index)
-    }));
-  };
-
-  const addHighlight = () => {
-    const newHighlight: Highlight = {
-      id: generateId(),
-      title: '',
-      description: '',
-      checked: true
-    };
-
-    setBudget(prev => ({
-      ...prev,
-      highlights: [...(prev.highlights || []), newHighlight]
-    }));
-  };
-
-  const updateHighlight = (index: number, field: string, value: any) => {
-    setBudget(prev => {
-      const newHighlights = [...(prev.highlights || [])];
-      newHighlights[index] = {
-        ...newHighlights[index],
-        [field]: value
-      };
-      return {
-        ...prev,
-        highlights: newHighlights
-      };
-    });
-  };
-
-  const removeHighlight = (index: number) => {
-    setBudget(prev => ({
-      ...prev,
-      highlights: (prev.highlights || []).filter((_, i) => i !== index)
     }));
   };
 
@@ -585,7 +549,7 @@ export default function HoteisPage() {
 
                 {budget.items?.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    Nenhum item adicionado. Clique em "Adicionar Item" para começar.
+                    Nenhum item adicionado. Clique em &quot;Adicionar Item&quot; para começar.
                   </div>
                 )}
               </div>
@@ -596,7 +560,7 @@ export default function HoteisPage() {
             {/* Fotos do Hotel */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center space-x-2">
-                <Image className="w-5 h-5 text-blue-600" />
+                <ImageIcon className="w-5 h-5 text-blue-600" />
                 <span>Fotos e Vídeos do Hotel</span>
               </h3>
               
@@ -667,7 +631,10 @@ export default function HoteisPage() {
                         </div>
                       </div>
                     ) : (
-                      <img src={photo.url} alt={photo.caption} className="w-full h-32 object-cover rounded-lg" />
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- preview URL from upload */}
+                        <img src={photo.url} alt={photo.caption || 'Foto do hotel'} className="w-full h-32 object-cover rounded-lg" />
+                      </>
                     )}
                     
                     {/* Overlay com controles */}
@@ -948,10 +915,10 @@ export default function HoteisPage() {
             budget={{
               ...(budget as Budget),
               id: budget.id as string,
-              items: (budget.items as any) || [],
+              items: budget.items || [],
               createdAt: budget.createdAt as string,
               updatedAt: budget.updatedAt as string,
-              status: (budget.status as any) || 'draft',
+              status: budget.status ?? 'draft',
               subtotal: budget.subtotal || 0,
               discount: budget.discount || 0,
               taxes: budget.taxes || 0,
