@@ -1,9 +1,9 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **3055** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **2971** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
-- [ ] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
+- [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
 - [ ] **Cluster 3** (−82): `src/components/layout/Sidebar.tsx` (28), `pages/customers-rsv.tsx` (27), `src/pages/NotificationsPage.tsx` (27)
 - [ ] **Cluster 4** (−78): `pages/customers-complete.tsx` (26), `src/components/analytics/AdvancedCharts.tsx` (26), `src/components/workflow/ApprovalSystem.tsx` (26)
 - [ ] **Cluster 5** (−73): `pages/cotacoes/parques.tsx` (25), `pages/settings.tsx` (24), `src/components/ai/OptimizationEngine.tsx` (24)
