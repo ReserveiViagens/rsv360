@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Card, Button, Input, Badge, Tabs, Select, Switch } from '@/components/ui';
-import { Plus, Settings, Play, Pause, Trash2, Save, Clock, Calendar, Zap, Repeat, AlertTriangle, CheckCircle, XCircle, Edit, Copy } from 'lucide-react';
+import { Plus, Settings, Play, Trash2, Clock, Zap, AlertTriangle, CheckCircle, Edit, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AutomatedTask {
@@ -18,7 +18,7 @@ interface AutomatedTask {
   };
   actions: {
     type: 'email' | 'notification' | 'api_call' | 'database' | 'workflow';
-    config: Record<string, any>;
+    config: Record<string, unknown>;
   }[];
   lastRun?: Date;
   nextRun?: Date;
@@ -34,162 +34,162 @@ interface TaskAutomationProps {
   onTaskSelect?: (task: AutomatedTask) => void;
 }
 
+const MOCK_TASKS: AutomatedTask[] = [
+  {
+    id: '1',
+    name: 'Envio de Lembretes de Check-in',
+    description: 'Envia lembretes automáticos para hóspedes 24h antes do check-in',
+    type: 'scheduled',
+    status: 'active',
+    trigger: {
+      type: 'time',
+      value: '24h_before_checkin',
+      schedule: '0 8 * * *',
+    },
+    actions: [
+      {
+        type: 'email',
+        config: {
+          template: 'checkin_reminder',
+          recipients: 'guest_email',
+          subject: 'Lembrete de Check-in - Hotel RSV',
+        },
+      },
+      {
+        type: 'notification',
+        config: {
+          type: 'push',
+          message: 'Lembrete de check-in enviado para {guest_name}',
+        },
+      },
+    ],
+    lastRun: new Date('2025-01-09T08:00:00Z'),
+    nextRun: new Date('2025-01-11T08:00:00Z'),
+    runCount: 45,
+    successCount: 43,
+    errorCount: 2,
+    createdAt: new Date('2024-12-01T08:00:00Z'),
+    updatedAt: new Date('2025-01-09T08:00:00Z'),
+    createdBy: 'Admin',
+  },
+  {
+    id: '2',
+    name: 'Atualização de Status de Reservas',
+    description: 'Atualiza automaticamente o status das reservas baseado em regras de negócio',
+    type: 'triggered',
+    status: 'active',
+    trigger: {
+      type: 'event',
+      value: 'reservation_created',
+      conditions: ['payment_confirmed', 'availability_checked'],
+    },
+    actions: [
+      {
+        type: 'workflow',
+        config: {
+          workflow_id: 'reservation_processing',
+          trigger_data: 'reservation_data',
+        },
+      },
+      {
+        type: 'database',
+        config: {
+          operation: 'update',
+          table: 'reservations',
+          fields: { status: 'confirmed', updated_at: 'now()' },
+          where: 'id = {reservation_id}',
+        },
+      },
+    ],
+    lastRun: new Date('2025-01-10T11:00:00Z'),
+    runCount: 156,
+    successCount: 154,
+    errorCount: 2,
+    createdAt: new Date('2024-10-01T08:00:00Z'),
+    updatedAt: new Date('2025-01-10T11:00:00Z'),
+    createdBy: 'Admin',
+  },
+  {
+    id: '3',
+    name: 'Relatório Diário de Ocupação',
+    description: 'Gera e envia relatório diário de ocupação para gerentes',
+    type: 'recurring',
+    status: 'active',
+    trigger: {
+      type: 'time',
+      value: 'daily_occupancy_report',
+      schedule: '0 18 * * *',
+    },
+    actions: [
+      {
+        type: 'api_call',
+        config: {
+          endpoint: '/api/reports/occupancy',
+          method: 'POST',
+          data: { date: 'yesterday', format: 'pdf' },
+        },
+      },
+      {
+        type: 'email',
+        config: {
+          template: 'occupancy_report',
+          recipients: 'managers_list',
+          subject: 'Relatório Diário de Ocupação - {date}',
+          attachments: ['occupancy_report.pdf'],
+        },
+      },
+    ],
+    lastRun: new Date('2025-01-09T18:00:00Z'),
+    nextRun: new Date('2025-01-10T18:00:00Z'),
+    runCount: 30,
+    successCount: 30,
+    errorCount: 0,
+    createdAt: new Date('2024-12-01T08:00:00Z'),
+    updatedAt: new Date('2025-01-09T18:00:00Z'),
+    createdBy: 'Admin',
+  },
+  {
+    id: '4',
+    name: 'Limpeza de Dados Antigos',
+    description: 'Remove dados antigos e logs para otimizar performance',
+    type: 'conditional',
+    status: 'paused',
+    trigger: {
+      type: 'condition',
+      value: 'storage_usage > 80%',
+      conditions: ['storage_usage > 80%', 'last_cleanup > 7_days'],
+    },
+    actions: [
+      {
+        type: 'database',
+        config: {
+          operation: 'delete',
+          table: 'logs',
+          where: "created_at < now() - interval '90 days'",
+        },
+      },
+      {
+        type: 'notification',
+        config: {
+          type: 'email',
+          recipients: 'admin_team',
+          subject: 'Limpeza Automática de Dados Executada',
+          message: 'Dados antigos foram removidos para otimizar storage',
+        },
+      },
+    ],
+    lastRun: new Date('2025-01-03T08:00:00Z'),
+    runCount: 12,
+    successCount: 12,
+    errorCount: 0,
+    createdAt: new Date('2024-09-01T08:00:00Z'),
+    updatedAt: new Date('2025-01-03T08:00:00Z'),
+    createdBy: 'Admin',
+  },
+];
+
 export default function TaskAutomation({ onTaskSelect }: TaskAutomationProps) {
-  const [tasks, setTasks] = useState<AutomatedTask[]>([
-    {
-      id: '1',
-      name: 'Envio de Lembretes de Check-in',
-      description: 'Envia lembretes automáticos para hóspedes 24h antes do check-in',
-      type: 'scheduled',
-      status: 'active',
-      trigger: {
-        type: 'time',
-        value: '24h_before_checkin',
-        schedule: '0 8 * * *', // 8h da manhã todos os dias
-      },
-      actions: [
-        {
-          type: 'email',
-          config: {
-            template: 'checkin_reminder',
-            recipients: 'guest_email',
-            subject: 'Lembrete de Check-in - Hotel RSV',
-          },
-        },
-        {
-          type: 'notification',
-          config: {
-            type: 'push',
-            message: 'Lembrete de check-in enviado para {guest_name}',
-          },
-        },
-      ],
-      lastRun: new Date(Date.now() - 86400000),
-      nextRun: new Date(Date.now() + 86400000),
-      runCount: 45,
-      successCount: 43,
-      errorCount: 2,
-      createdAt: new Date(Date.now() - 2592000000),
-      updatedAt: new Date(Date.now() - 86400000),
-      createdBy: 'Admin',
-    },
-    {
-      id: '2',
-      name: 'Atualização de Status de Reservas',
-      description: 'Atualiza automaticamente o status das reservas baseado em regras de negócio',
-      type: 'triggered',
-      status: 'active',
-      trigger: {
-        type: 'event',
-        value: 'reservation_created',
-        conditions: ['payment_confirmed', 'availability_checked'],
-      },
-      actions: [
-        {
-          type: 'workflow',
-          config: {
-            workflow_id: 'reservation_processing',
-            trigger_data: 'reservation_data',
-          },
-        },
-        {
-          type: 'database',
-          config: {
-            operation: 'update',
-            table: 'reservations',
-            fields: { status: 'confirmed', updated_at: 'now()' },
-            where: 'id = {reservation_id}',
-          },
-        },
-      ],
-      lastRun: new Date(Date.now() - 3600000),
-      nextRun: undefined,
-      runCount: 156,
-      successCount: 154,
-      errorCount: 2,
-      createdAt: new Date(Date.now() - 5184000000),
-      updatedAt: new Date(Date.now() - 3600000),
-      createdBy: 'Admin',
-    },
-    {
-      id: '3',
-      name: 'Relatório Diário de Ocupação',
-      description: 'Gera e envia relatório diário de ocupação para gerentes',
-      type: 'recurring',
-      status: 'active',
-      trigger: {
-        type: 'time',
-        value: 'daily_occupancy_report',
-        schedule: '0 18 * * *', // 18h todos os dias
-      },
-      actions: [
-        {
-          type: 'api_call',
-          config: {
-            endpoint: '/api/reports/occupancy',
-            method: 'POST',
-            data: { date: 'yesterday', format: 'pdf' },
-          },
-        },
-        {
-          type: 'email',
-          config: {
-            template: 'occupancy_report',
-            recipients: 'managers_list',
-            subject: 'Relatório Diário de Ocupação - {date}',
-            attachments: ['occupancy_report.pdf'],
-          },
-        },
-      ],
-      lastRun: new Date(Date.now() - 86400000),
-      nextRun: new Date(Date.now() + 3600000),
-      runCount: 30,
-      successCount: 30,
-      errorCount: 0,
-      createdAt: new Date(Date.now() - 2592000000),
-      updatedAt: new Date(Date.now() - 86400000),
-      createdBy: 'Admin',
-    },
-    {
-      id: '4',
-      name: 'Limpeza de Dados Antigos',
-      description: 'Remove dados antigos e logs para otimizar performance',
-      type: 'conditional',
-      status: 'paused',
-      trigger: {
-        type: 'condition',
-        value: 'storage_usage > 80%',
-        conditions: ['storage_usage > 80%', 'last_cleanup > 7_days'],
-      },
-      actions: [
-        {
-          type: 'database',
-          config: {
-            operation: 'delete',
-            table: 'logs',
-            where: 'created_at < now() - interval \'90 days\'',
-          },
-        },
-        {
-          type: 'notification',
-          config: {
-            type: 'email',
-            recipients: 'admin_team',
-            subject: 'Limpeza Automática de Dados Executada',
-            message: 'Dados antigos foram removidos para otimizar storage',
-          },
-        },
-      ],
-      lastRun: new Date(Date.now() - 604800000),
-      nextRun: undefined,
-      runCount: 12,
-      successCount: 12,
-      errorCount: 0,
-      createdAt: new Date(Date.now() - 7776000000),
-      updatedAt: new Date(Date.now() - 604800000),
-      createdBy: 'Admin',
-    },
-  ]);
+  const [tasks, setTasks] = useState<AutomatedTask[]>(MOCK_TASKS);
 
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');

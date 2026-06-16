@@ -21,27 +21,9 @@ import {
   CheckCircle,
   TrendingUp,
   Users,
-  Key,
   Activity,
   BarChart3,
-  Settings,
-  Globe,
-  Search,
-  Filter,
-  RefreshCw,
-  Download,
-  Upload,
-  Bell,
-  Zap,
-  Target,
-  Layers,
-  Network,
-  Code,
-  Server,
-  HardDrive,
-  Cpu,
-  Wifi,
-  Building
+  Target
 } from 'lucide-react'
 
 const SecuritySystemTestPage: React.FC = () => {
@@ -239,11 +221,6 @@ const SecuritySystemTestPage: React.FC = () => {
       case 'failed': case 'error': return 'bg-red-100 text-red-800'
       default: return 'bg-gray-100 text-gray-800'
     }
-  }
-
-  const getModuleIcon = (moduleId: string) => {
-    const module = systemModules.find(m => m.id === moduleId)
-    return module?.icon || Shield
   }
 
   const renderModuleComponent = () => {

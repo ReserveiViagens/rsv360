@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **2401** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **2341** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
@@ -12,7 +12,7 @@ Baseline: **2401** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 8** (−67): `src/components/projects/TeamManager.tsx` (23), `pages/cotacoes/hoteis.tsx` (22), `pages/permissions.tsx` (22)
 - [x] **Cluster 9** (−66): `pages/turismo.tsx` (22), `src/pages/parks.tsx` (22), `src/pages/permissions.tsx` (22)
 - [x] **Cluster 10** (−63): `src/pages/api-publica.tsx` (21), `src/components/dashboard/Dashboard.tsx` (21), `src/components/workflow/ProcessMonitoring.tsx` (21)
-- [ ] **Cluster 11** (−60): `src/pages/cadastros.tsx` (20), `src/pages/security-system-test.tsx` (20), `src/components/workflow/TaskAutomation.tsx` (20)
+- [x] **Cluster 11** (−60): `src/pages/cadastros.tsx` (20), `src/pages/security-system-test.tsx` (20), `src/components/workflow/TaskAutomation.tsx` (20)
 - [ ] **Cluster 12** (−57): `pages/automacao.tsx` (19), `pages/rsv-360-ecosystem.tsx` (19), `src/pages/automacao.tsx` (19)
 - [ ] **Cluster 13** (−55): `src/components/deploy/ProductionMonitoring.tsx` (19), `pages/dashboard-personalizado.tsx` (18), `src/pages/analytics-avancados.tsx` (18)
 - [ ] **Cluster 14** (−54): `src/pages/animations-demo.tsx` (18), `src/pages/backend-integration-test.tsx` (18), `src/pages/configuracoes-sistema.tsx` (18)
