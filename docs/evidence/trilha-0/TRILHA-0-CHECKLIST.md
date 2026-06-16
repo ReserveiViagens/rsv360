@@ -145,6 +145,7 @@
 - [x] Lint financeiro×2 + pages/vouchers −123 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-FINANCEIRO-VOUCHERS.md`
 - [x] Lint AccessControlManager + DocumentationPage + ComplianceManager −121 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-ACCESS-DOC-COMPLIANCE.md`
 - [x] Lint contracts×2 + pages/users −117 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-CONTRACTS-USERS.md`
+- [x] Lint ServiceDiscovery + OnboardingWizard + MicroservicesManager −115 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-SERVICEDISCOVERY-ONBOARDING-MICROSERVICES.md`
 
 ## Decisão Trilha 0
 
