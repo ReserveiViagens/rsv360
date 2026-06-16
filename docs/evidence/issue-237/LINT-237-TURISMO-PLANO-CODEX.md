@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #9 concluído)  
-**Baseline global:** **2464** warnings  
+**Atualizado:** 2026-06-02 (cluster #10 concluído)  
+**Baseline global:** **2401** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2464** |
-| Clusters concluídos | **9** / 120 |
-| PR empilhada mais recente | **#421** (cluster #9, −66) |
-| Próximo cluster | **#10** — api-publica + Dashboard + ProcessMonitoring (−63) |
+| Warnings globais | **2401** |
+| Clusters concluídos | **10** / 120 |
+| PR empilhada mais recente | **#422** (cluster #10, −63) |
+| Próximo cluster | **#11** — cadastros + security-system-test + TaskAutomation (−60) |
 
 ## Padrão por cluster (repetir)
 
@@ -41,6 +41,7 @@
 | #419 | DeployPage + turismo + AIEngine | −69 → **2597** | predictive-smart-offline |
 | #420 | TeamManager + hoteis + permissions | −67 → **2530** | deploy-turismo-aiengine |
 | #421 | turismo (pages) + parks + permissions (src) | −66 → **2464** | team-hoteis-permissions |
+| #422 | api-publica + Dashboard + ProcessMonitoring | −63 → **2401** | pages-turismo-parks-permissions |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -55,7 +56,7 @@
 | 7 | −69 | DeployPage, turismo (src), AIEngine | **concluído** (#419) |
 | 8 | −67 | TeamManager, cotacoes/hoteis, permissions (pages) | **concluído** (#420) |
 | 9 | −66 | turismo (pages), parks, permissions (src) | **concluído** (#421) |
-| 10 | −63 | api-publica, Dashboard, ProcessMonitoring | pendente |
+| 10 | −63 | api-publica, Dashboard, ProcessMonitoring | **concluído** (#422) |
 | 11 | −60 | cadastros, security-system-test, TaskAutomation | pendente |
 | 12 | −57 | automacao×2, rsv-360-ecosystem | pendente |
 | 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | pendente |
