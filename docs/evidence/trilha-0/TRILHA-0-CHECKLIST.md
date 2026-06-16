@@ -137,7 +137,8 @@
 - [x] Lint src/pages duplicates (upgrades, workflows, maps) −206 — **GO condicional** *(PR #395)* — `issue-237/LINT-237-TURISMO-SRC-PAGES-DUPLICATES.md`
 - [x] Lint SkillsAssessment + DataReplication + src/pages/plans −191 — **GO condicional** *(PR #396)* — `issue-237/LINT-237-TURISMO-SKILLS-BACKUP-PLANS.md`
 - [x] Lint refunds + photos duplicate + DisasterRecovery −177 — **GO condicional** *(PR #397)* — `issue-237/LINT-237-TURISMO-REFUNDS-PHOTOS-DISASTERRECOVERY.md`
-- [x] Lint RecoveryTesting + TrainingCenter + vouchers + refunds −221 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-RECOVERY-TRAINING-VOUCHERS-REFUNDS.md`
+- [x] Lint RecoveryTesting + TrainingCenter + vouchers + refunds −221 — **GO condicional** *(PR #398)* — `issue-237/LINT-237-TURISMO-RECOVERY-TRAINING-VOUCHERS-REFUNDS.md`
+- [x] Lint BackupCenter + marketing + AuditSystem −152 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-BACKUP-MARKETING-AUDIT.md`
 
 ## Decisão Trilha 0
 
