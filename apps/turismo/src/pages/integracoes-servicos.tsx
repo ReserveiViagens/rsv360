@@ -1,21 +1,28 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Switch } from '@/components/ui/Switch';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue } from '@/components/ui/Select';
 import { Progress } from '@/components/ui/Progress';
 import {
   Cloud,
-  Zap,
-  Settings,
-  Server,
   Database,
   Mail,
   MessageSquare,
@@ -23,37 +30,17 @@ import {
   MapPin,
   Users,
   BarChart3,
-  Bell,
-  Shield,
-  Globe,
-  Smartphone,
-  Calendar,
   FileText,
-  Image,
-  Video,
-  Music,
   Phone,
   CheckCircle,
-  XCircle,
-  AlertTriangle,
   RefreshCw,
   Save,
   TestTube,
   Plus,
   Trash2,
-  Edit,
   Play,
   Pause,
-  Eye,
-  EyeOff,
-  Copy,
-  Download,
-  Upload,
   Activity,
-  Clock,
-  Network,
-  Key,
-  Lock,
   Info
 } from 'lucide-react';
 
@@ -64,7 +51,7 @@ interface ExternalService {
   category: 'email' | 'sms' | 'payment' | 'storage' | 'analytics' | 'maps' | 'communication' | 'social' | 'other';
   provider: string;
   status: 'connected' | 'disconnected' | 'error' | 'testing';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   credentials: Record<string, string>;
   features: string[];
   pricing_tier: 'free' | 'basic' | 'pro' | 'enterprise';
@@ -385,7 +372,6 @@ export default function IntegracoesServicos() {
   const [selectedService, setSelectedService] = useState<ExternalService | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<ServiceTemplate | null>(null);
   const [isConfiguring, setIsConfiguring] = useState(false);
-  const [showCredentials, setShowCredentials] = useState(false);
   const [testingService, setTestingService] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -497,7 +483,7 @@ export default function IntegracoesServicos() {
       ));
 
       alert('Teste realizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       setServices(prev => prev.map(s =>
         s.id === service.id
           ? {
@@ -530,14 +516,14 @@ export default function IntegracoesServicos() {
     setIsConfiguring(true);
   };
 
-  const handleSaveService = (configData: Record<string, any>) => {
+  const handleSaveService = (configData: Record<string, unknown>) => {
     if (!selectedTemplate) return;
 
     const newService: ExternalService = {
       id: Date.now().toString(),
       name: `${selectedTemplate.name} ${selectedTemplate.category}`,
       description: selectedTemplate.description,
-      category: selectedTemplate.category as any,
+      category: selectedTemplate.category as ExternalService['category'],
       provider: selectedTemplate.provider,
       status: 'disconnected',
       config: {},
@@ -574,12 +560,6 @@ export default function IntegracoesServicos() {
   const getUsagePercentage = (usage: number, limit: number) => {
     if (limit === 0) return 0;
     return Math.min(Math.round((usage / limit) * 100), 100);
-  };
-
-  const getUsageColor = (percentage: number) => {
-    if (percentage < 50) return 'bg-green-500';
-    if (percentage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
   };
 
   const getTotalMonthlyCost = () => {
