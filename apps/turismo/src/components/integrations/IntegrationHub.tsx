@@ -1,20 +1,24 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
 import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { Progress } from '@/components/ui/Progress'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { 
   Package,
-  Plug,
-  Globe,
   Database,
-  Cloud,
   Mail,
   CreditCard,
   MessageSquare,
@@ -26,44 +30,24 @@ import {
   AlertTriangle,
   Clock,
   RefreshCw,
-  Play,
-  Pause,
   Eye,
   Edit,
-  Trash2,
   Plus,
-  Download,
   Upload,
   Filter,
-  Search,
   Star,
-  Shield,
   Zap,
   Code,
   Terminal,
   FileText,
-  Link2,
   ExternalLink,
-  Copy,
-  GitBranch,
   Activity,
   TrendingUp,
-  Calendar,
-  Bell,
-  Smartphone,
   ShoppingCart,
   Building,
-  Truck,
-  Camera,
-  Phone,
-  Video,
-  Music,
-  Image,
-  Server
-} from 'lucide-react'
+  Phone
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -108,7 +92,7 @@ interface IntegrationConfig {
   id: string
   integrationId: string
   isActive: boolean
-  settings: Record<string, any>
+  settings: Record<string, unknown>
   credentials: Record<string, string>
   webhooks: {
     url: string
@@ -143,19 +127,10 @@ interface IntegrationTemplate {
   useCase: string
 }
 
-interface MarketplaceStats {
-  totalIntegrations: number
-  installedIntegrations: number
-  popularCategories: string[]
-  recentUpdates: number
-  communityRating: number
-}
-
 const IntegrationHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState('marketplace')
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null)
 
   // Dados mock para demonstração
   const [integrations] = useState<Integration[]>([
