@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **2121** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **2067** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
@@ -17,7 +17,7 @@ Baseline: **2121** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 13** (−55): `src/components/deploy/ProductionMonitoring.tsx` (19), `pages/dashboard-personalizado.tsx` (18), `src/pages/analytics-avancados.tsx` (18)
 - [x] **Cluster 14** (−54): `src/pages/animations-demo.tsx` (18), `src/pages/backend-integration-test.tsx` (18), `src/pages/configuracoes-sistema.tsx` (18)
 - [x] **Cluster 15** (−54): `src/pages/cotacoes/hoteis.tsx` (18), `src/pages/dashboard-personalizado.tsx` (18), `src/pages/insurance.tsx` (18)
-- [ ] **Cluster 16** (−54): `src/pages/integracoes-webhooks.tsx` (18), `src/pages/transport.tsx` (18), `src/components/analytics/AdvancedReportBuilder.tsx` (18)
+- [x] **Cluster 16** (−54): `src/pages/integracoes-webhooks.tsx` (18), `src/pages/transport.tsx` (18), `src/components/analytics/AdvancedReportBuilder.tsx` (18)
 - [ ] **Cluster 17** (−54): `src/components/deploy/GoLiveSystem.tsx` (18), `src/components/documentation/HelpSystem.tsx` (18), `src/components/notifications/ChatSystem.tsx` (18)
 - [ ] **Cluster 18** (−52): `src/components/workflow/WorkflowTemplates.tsx` (18), `pages/visa.tsx` (17), `src/pages/configuracoes-gerais.tsx` (17)
 - [ ] **Cluster 19** (−51): `src/pages/visa.tsx` (17), `src/components/bookings/BookingCalendar.tsx` (17), `src/components/bookings/BookingModal.tsx` (17)

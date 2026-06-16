@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #15 concluído)  
-**Baseline global:** **2121** warnings  
+**Atualizado:** 2026-06-02 (cluster #16 concluído)  
+**Baseline global:** **2067** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2121** |
-| Clusters concluídos | **15** / 120 |
-| PR empilhada mais recente | **#427** (cluster #15, −54) |
-| Próximo cluster | **#16** — integracoes-webhooks + transport + AdvancedReportBuilder (−54) |
+| Warnings globais | **2067** |
+| Clusters concluídos | **16** / 120 |
+| PR empilhada mais recente | **#428** (cluster #16, −54) |
+| Próximo cluster | **#17** — GoLiveSystem + HelpSystem + ChatSystem (−54) |
 
 ## Padrão por cluster (repetir)
 
@@ -47,6 +47,7 @@
 | #425 | ProductionMonitoring + dashboard-personalizado + analytics-avancados | −55 → **2229** | automacao-rsv-ecosystem |
 | #426 | animations-demo + backend-integration-test + configuracoes-sistema | −54 → **2175** | production-dashboard-analytics |
 | #427 | cotacoes/hoteis + dashboard-personalizado (src) + insurance | −54 → **2121** | animations-backend-config |
+| #428 | integracoes-webhooks + transport + AdvancedReportBuilder | −54 → **2067** | hoteis-dashboard-insurance |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -67,7 +68,7 @@
 | 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | **concluído** (#425) |
 | 14 | −54 | animations-demo, backend-integration-test, configuracoes-sistema | **concluído** (#426) |
 | 15 | −54 | cotacoes/hoteis, dashboard-personalizado (src), insurance | **concluído** (#427) |
-| 16 | −54 | integracoes-webhooks, transport, AdvancedReportBuilder | pendente |
+| 16 | −54 | integracoes-webhooks, transport, AdvancedReportBuilder | **concluído** (#428) |
 | 17 | −54 | GoLiveSystem, HelpSystem, ChatSystem | pendente |
 | 18 | −52 | WorkflowTemplates, visa, configuracoes-gerais | pendente |
 | 19 | −51 | visa (src), BookingCalendar, BookingModal | pendente |
