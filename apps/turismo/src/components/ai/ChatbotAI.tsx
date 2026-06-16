@@ -1,14 +1,32 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
 import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
+import { Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
 import { 
@@ -16,15 +34,12 @@ import {
   MessageSquare,
   Send,
   User,
-  Brain,
   Settings,
   Download,
   Upload,
   Play,
-  Pause,
   RefreshCw,
   BarChart3,
-  TrendingUp,
   Clock,
   CheckCircle,
   AlertTriangle,
@@ -32,28 +47,78 @@ import {
   Edit,
   Trash2,
   Plus,
-  Search,
-  Filter,
-  Users,
-  Activity,
-  Target,
-  Zap,
-  FileText,
-  Database,
-  Globe,
-  Calendar,
-  ArrowUp,
-  ArrowDown,
   ThumbsUp,
   ThumbsDown,
-  Copy,
-  ExternalLink,
   Lightbulb,
-  HelpCircle,
-  Phone,
-  Mail
-} from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Cell } from 'recharts'
+  HelpCircle
+} from 'lucide-react';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
+
+const KnowledgeForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="knowledge-category">Categoria</Label>
+        <Select>
+          <SelectTrigger title="Selecionar categoria">
+            <SelectValue placeholder="Selecionar categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="produtos">Produtos</SelectItem>
+            <SelectItem value="suporte">Suporte</SelectItem>
+            <SelectItem value="pagamento">Pagamento</SelectItem>
+            <SelectItem value="conta">Conta</SelectItem>
+            <SelectItem value="geral">Geral</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confidence">Nível de Confiança (%)</Label>
+        <Input
+          id="confidence"
+          type="number"
+          placeholder="95"
+          min="0"
+          max="100"
+          title="Nível de confiança da resposta"
+        />
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="question">Pergunta/Intenção</Label>
+      <Input id="question" placeholder="Como cancelar minha reserva?" title="Pergunta ou intenção do usuário" />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="answer">Resposta</Label>
+      <Textarea id="answer" placeholder="Para cancelar sua reserva..." title="Resposta que o bot deve dar" />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="keywords">Palavras-chave (separadas por vírgula)</Label>
+      <Input
+        id="keywords"
+        placeholder="cancelar, reserva, reembolso, política"
+        title="Palavras-chave que identificam esta intenção"
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="source">Fonte</Label>
+      <Select>
+        <SelectTrigger title="Selecionar fonte">
+          <SelectValue placeholder="Selecionar fonte" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="manual">Manual</SelectItem>
+          <SelectItem value="learned">Aprendido</SelectItem>
+          <SelectItem value="imported">Importado</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </form>
+)
 
 // Tipos para chatbot AI
 interface ChatMessage {
@@ -99,16 +164,6 @@ interface BotKnowledge {
   source: 'manual' | 'learned' | 'imported'
 }
 
-interface BotIntent {
-  name: string
-  description: string
-  training_phrases: string[]
-  response_templates: string[]
-  actions: string[]
-  confidence_threshold: number
-  enabled: boolean
-}
-
 interface BotAnalytics {
   total_conversations: number
   active_sessions: number
@@ -123,9 +178,18 @@ interface BotAnalytics {
 const ChatbotAI: React.FC = () => {
   const [activeTab, setActiveTab] = useState('chat')
   const [isKnowledgeModalOpen, setIsKnowledgeModalOpen] = useState(false)
-  const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null)
   const [currentMessage, setCurrentMessage] = useState('')
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const messageIdRef = useRef(2)
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      type: 'bot',
+      content: 'Olá! Sou o assistente virtual da Reservei Viagens. Como posso ajudá-lo hoje?',
+      timestamp: new Date().toISOString(),
+      sessionId: 'demo_session',
+      suggestions: ['Cancelar reserva', 'Formas de pagamento', 'Horário de funcionamento', 'Falar com atendente']
+    }
+  ])
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -251,34 +315,20 @@ const ChatbotAI: React.FC = () => {
     ]
   })
 
-  // Mensagens iniciais do chat
-  useEffect(() => {
-    setMessages([
-      {
-        id: '1',
-        type: 'bot',
-        content: 'Olá! Sou o assistente virtual da Reservei Viagens. Como posso ajudá-lo hoje?',
-        timestamp: new Date().toISOString(),
-        sessionId: 'demo_session',
-        suggestions: ['Cancelar reserva', 'Formas de pagamento', 'Horário de funcionamento', 'Falar com atendente']
-      }
-    ])
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [messages, scrollToBottom])
 
   const handleSendMessage = async () => {
     if (!currentMessage.trim()) return
 
     // Adicionar mensagem do usuário
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: String(messageIdRef.current++),
       type: 'user',
       content: currentMessage,
       timestamp: new Date().toISOString(),
@@ -307,7 +357,7 @@ const ChatbotAI: React.FC = () => {
 
     if (knowledge) {
       return {
-        id: Date.now().toString(),
+        id: String(messageIdRef.current++),
         type: 'bot',
         content: knowledge.answer,
         timestamp: new Date().toISOString(),
@@ -320,7 +370,7 @@ const ChatbotAI: React.FC = () => {
 
     // Resposta padrão
     return {
-      id: Date.now().toString(),
+      id: String(messageIdRef.current++),
       type: 'bot',
       content: 'Entendo sua dúvida. Deixe-me conectá-lo com um de nossos atendentes especializados que poderá ajudá-lo melhor. Um momento, por favor.',
       timestamp: new Date().toISOString(),
@@ -353,80 +403,6 @@ const ChatbotAI: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800'
     }
   }
-
-  const KnowledgeForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="knowledge-category">Categoria</Label>
-          <Select>
-            <SelectTrigger title="Selecionar categoria">
-              <SelectValue placeholder="Selecionar categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="produtos">Produtos</SelectItem>
-              <SelectItem value="suporte">Suporte</SelectItem>
-              <SelectItem value="pagamento">Pagamento</SelectItem>
-              <SelectItem value="conta">Conta</SelectItem>
-              <SelectItem value="geral">Geral</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confidence">Nível de Confiança (%)</Label>
-          <Input 
-            id="confidence"
-            type="number" 
-            placeholder="95"
-            min="0"
-            max="100"
-            title="Nível de confiança da resposta"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="question">Pergunta/Intenção</Label>
-        <Input 
-          id="question"
-          placeholder="Como cancelar minha reserva?"
-          title="Pergunta ou intenção do usuário"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="answer">Resposta</Label>
-        <Textarea 
-          id="answer"
-          placeholder="Para cancelar sua reserva..."
-          title="Resposta que o bot deve dar"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="keywords">Palavras-chave (separadas por vírgula)</Label>
-        <Input 
-          id="keywords"
-          placeholder="cancelar, reserva, reembolso, política"
-          title="Palavras-chave que identificam esta intenção"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="source">Fonte</Label>
-        <Select>
-          <SelectTrigger title="Selecionar fonte">
-            <SelectValue placeholder="Selecionar fonte" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="manual">Manual</SelectItem>
-            <SelectItem value="learned">Aprendido</SelectItem>
-            <SelectItem value="imported">Importado</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </form>
-  )
 
   return (
     <div className="space-y-6">

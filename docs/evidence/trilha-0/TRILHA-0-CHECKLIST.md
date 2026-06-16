@@ -150,7 +150,8 @@
 - [x] Lint APIGateway + WebhookManager + ProjectCollaboration −99 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-APIGATEWAY-WEBHOOK-PROJECTCOLLAB.md`
 - [x] Lint hotels×2 + users −96 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-HOTELS-USERS.md`
 - [x] Lint pagamentos + passeios + hotels-debug −92 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-PAGAMENTOS-PASSEIOS-HOTELS-DEBUG.md`
-- [x] Lint useApi + conteudo×2 −88 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-USEAPI-CONTEUDO.md`
+- [x] Lint useApi + conteudo×2 −88 — **GO condicional** *(PR #411)* — `issue-237/LINT-237-TURISMO-USEAPI-CONTEUDO.md`
+- [x] Lint dashboard + tickets + ChatbotAI −87 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-DASHBOARD-TICKETS-CHATBOT.md`
 
 ## Decisão Trilha 0
 
