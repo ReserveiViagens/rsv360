@@ -1,70 +1,43 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   FileSearch,
   Activity,
   Eye,
-  Clock,
-  Calendar,
   User,
-  Users,
   Database,
   Server,
-  Network,
   Shield,
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Info,
-  Warning,
-  Search,
-  Filter,
   Download,
-  Upload,
   RefreshCw,
-  Settings,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Globe,
-  Laptop,
-  Smartphone,
-  Monitor,
-  Building,
-  MapPin,
-  Phone,
-  Mail,
   Key,
-  Lock,
-  Unlock,
-  Fingerprint,
   Code,
   FileText,
-  Archive,
-  Trash2,
   Plus,
   Edit,
-  ExternalLink,
-  Router,
-  Cloud,
-  HardDrive,
-  Cpu,
-  Memory,
-  Wifi,
-  WifiOff
-} from 'lucide-react'
+  Play
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -76,11 +49,7 @@ import {
   Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter
+  Pie
 } from 'recharts'
 
 // Tipos para Audit System
@@ -101,7 +70,7 @@ interface AuditLog {
   action: string
   outcome: 'success' | 'failure' | 'blocked' | 'error'
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   tags: string[]
   correlationId?: string
   parentLogId?: string
@@ -122,7 +91,7 @@ interface AuditRule {
   }[]
   actions: {
     type: 'alert' | 'block' | 'log' | 'notify' | 'escalate'
-    parameters: Record<string, any>
+    parameters: Record<string, unknown>
   }[]
   severity: 'low' | 'medium' | 'high' | 'critical'
   isActive: boolean
@@ -130,28 +99,6 @@ interface AuditRule {
   createdAt: string
   lastTriggered?: string
   triggerCount: number
-}
-
-interface AuditReport {
-  id: string
-  title: string
-  type: 'summary' | 'detailed' | 'compliance' | 'security' | 'performance' | 'custom'
-  period: {
-    start: string
-    end: string
-  }
-  filters: Record<string, any>
-  status: 'generating' | 'completed' | 'failed' | 'scheduled'
-  generatedAt?: string
-  generatedBy: string
-  fileSize?: number
-  format: 'pdf' | 'csv' | 'json' | 'excel'
-  downloadUrl?: string
-  recipients: string[]
-  schedule?: {
-    frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly'
-    nextRun: string
-  }
 }
 
 interface AuditAlert {
@@ -167,7 +114,7 @@ interface AuditAlert {
   description: string
   affectedResources: string[]
   recommendedActions: string[]
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   escalatedAt?: string
   resolvedAt?: string
   notes: string[]
@@ -190,7 +137,6 @@ interface AuditMetrics {
 
 const AuditSystem: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -1179,7 +1125,7 @@ const AuditSystem: React.FC = () => {
                               {rule.conditions.map((condition, index) => (
                                 <div key={index} className="bg-gray-50 p-2 rounded text-sm">
                                   <code>
-                                    {condition.field} {condition.operator} "{condition.value}"
+                                    {condition.field} {condition.operator} &quot;{condition.value}&quot;
                                   </code>
                                 </div>
                               ))}
