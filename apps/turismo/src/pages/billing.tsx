@@ -1,88 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  CreditCard, 
-  CheckCircle, 
-  XCircle, 
+import {
+  CreditCard,
+  CheckCircle,
+  XCircle,
   Clock,
   Download,
-  Printer,
   Eye,
   Edit,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
   DollarSign,
-  Star,
-  MessageSquare,
-  BarChart3,
-  PieChart,
-  Activity,
-  TrendingUp,
-  Users,
-  Percent,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon,
-  Receipt,
-  Wallet,
-  Banknote,
-  Coins,
-  PiggyBank,
-  TrendingDown,
-  AlertTriangle,
-  CheckSquare as CheckSquareIcon,
-  XSquare,
-  Clock as ClockIcon,
-  Calendar as CalendarIcon,
-  User as UserIcon,
-  DollarSign as DollarSignIcon,
-  Star as StarIcon,
-  MessageSquare as MessageSquareIcon,
-  BarChart3 as BarChart3Icon,
-  PieChart as PieChartIcon,
-  Activity as ActivityIcon,
-  TrendingUp as TrendingUpIcon,
-  Users as UsersIcon,
-  Percent as PercentIcon,
-  Shield as ShieldIcon,
-  Lock as LockIcon,
-  Unlock as UnlockIcon,
-  Key as KeyIcon,
-  Database as DatabaseIcon,
-  Server as ServerIcon,
-  Cloud as CloudIcon,
-  Zap as ZapIcon,
-  Target as TargetIcon,
-  Award as AwardIcon,
-  Trophy as TrophyIcon,
-  Medal as MedalIcon,
-  Crown as CrownIcon,
-  Flag as FlagIcon,
-  CheckSquare as CheckSquareIcon2,
-  Square as SquareIcon,
-  Circle as CircleIcon,
-  Triangle as TriangleIcon,
-  Hexagon as HexagonIcon,
-  Octagon as OctagonIcon
+  Receipt
 } from 'lucide-react';
 
 interface Billing {
@@ -120,7 +48,7 @@ interface BillingItem {
 }
 
 const BillingPage: React.FC = () => {
-  const [billings, setBillings] = useState<Billing[]>([
+  const [billings] = useState<Billing[]>([
     {
       id: 'BIL001',
       customerName: 'Maria Silva',
@@ -221,7 +149,6 @@ const BillingPage: React.FC = () => {
 
   const [selectedBilling, setSelectedBilling] = useState<Billing | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -262,11 +189,6 @@ const BillingPage: React.FC = () => {
     pendingRevenue: billings.filter(b => b.status === 'pending').reduce((sum, b) => sum + b.total, 0)
   };
 
-  const handleStatusChange = (billingId: string, newStatus: Billing['status']) => {
-    setBillings(prev => prev.map(b => 
-      b.id === billingId ? { ...b, status: newStatus } : b
-    ));
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -282,7 +204,7 @@ const BillingPage: React.FC = () => {
               <p className="text-gray-600 mt-2">Gerencie cobranças e pagamentos</p>
             </div>
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => setShowModal(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center font-medium transition-colors"
             >
               <Plus className="mr-2 h-5 w-5" />
@@ -492,7 +414,7 @@ const BillingPage: React.FC = () => {
                         <button
                           onClick={() => {
                             setSelectedBilling(billing);
-                            setShowCreateModal(true);
+                            setShowModal(true);
                           }}
                           className="text-green-600 hover:text-green-900"
                         >
@@ -705,7 +627,7 @@ const BillingPage: React.FC = () => {
                   <button
                     onClick={() => {
                       setShowModal(false);
-                      setShowCreateModal(true);
+                      setShowModal(true);
                     }}
                     className="px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700"
                   >
