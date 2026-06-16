@@ -154,6 +154,7 @@
 - [x] Lint dashboard + tickets + ChatbotAI −87 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-DASHBOARD-TICKETS-CHATBOT.md`
 - [x] Lint parques + settings + OptimizationEngine −73 — **GO condicional** *(PR #417)* — `issue-237/LINT-237-TURISMO-PARQUES-SETTINGS-OPTIMIZATION.md`
 - [x] Lint PredictiveAnalytics + SmartAutomation + OfflineSupport −72 — **GO condicional** *(PR #418)* — `issue-237/LINT-237-TURISMO-PREDICTIVE-SMART-OFFLINE.md`
+- [x] Lint DeployPage + turismo + AIEngine −69 — **GO condicional** *(PR #419)* — `issue-237/LINT-237-TURISMO-DEPLOY-TURISMO-AIENGINE.md`
 
 ## Decisão Trilha 0
 
