@@ -1,64 +1,19 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import {
-  ArrowLeft,
   Star,
   ThumbsUp,
   ThumbsDown,
   MessageSquare,
   Eye,
   Download,
-  Upload,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
-  Tag,
-  Heart,
-  Share,
-  Edit,
-  Trash2,
-  RefreshCw,
   BarChart3,
-  PieChart,
-  Activity,
-  Shield,
-  AlertTriangle,
-  Info,
-  Copy,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  Settings,
-  Database,
-  Server,
-  Zap,
-  Target,
   Award,
-  Bell,
-  Lock,
-  Unlock,
-  Key,
-  UserCheck,
-  Users,
-  UserPlus,
-  UserX,
   Clock,
-  Volume2,
-  VolumeX,
-  Volume1,
-  Volume,
   CheckCircle,
   XCircle,
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Plus as PlusIcon
+  TrendingUp
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -84,12 +39,9 @@ interface Review {
 }
 
 export default function ReviewsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
@@ -262,13 +214,13 @@ export default function ReviewsPage() {
     { id: 'featured', name: 'Destaques', icon: Award }
   ];
 
-  const handleCardClick = (cardId: string) => {
+  const handleCardClick = (_cardId: string) => {
     setSelectedReview(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada card
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (_action: string) => {
     setSelectedReview(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada ação
