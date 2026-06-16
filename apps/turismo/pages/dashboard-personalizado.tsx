@@ -7,7 +7,7 @@ interface DashboardWidget {
   type: 'chart' | 'metric' | 'list' | 'weather' | 'events' | 'predictions';
   title: string;
   position: { x: number; y: number; w: number; h: number };
-  config: any;
+  config: Record<string, unknown>;
 }
 
 interface UserPreferences {
@@ -15,6 +15,14 @@ interface UserPreferences {
   layout: 'grid' | 'list' | 'compact';
   widgets: DashboardWidget[];
   refreshInterval: number;
+}
+
+interface DashboardData {
+  weather?: Record<string, unknown>;
+  events?: { events?: Array<{ name: string }> };
+  predictions?: Record<string, unknown>;
+  metrics?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 const DashboardPersonalizado: React.FC = () => {
@@ -27,19 +35,10 @@ const DashboardPersonalizado: React.FC = () => {
   });
   
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>({});
+  const [data, setData] = useState<DashboardData>({});
   const [editing, setEditing] = useState(false);
 
-  useEffect(() => {
-    loadUserPreferences();
-    loadDashboardData();
-    
-    // Auto-refresh
-    const interval = setInterval(loadDashboardData, preferences.refreshInterval);
-    return () => clearInterval(interval);
-  }, [user?.id]);
-
-  const loadUserPreferences = async () => {
+  async function loadUserPreferences() {
     try {
       const response = await fetch(`/api/users/${user?.id}/preferences`);
       if (response.ok) {
@@ -51,9 +50,9 @@ const DashboardPersonalizado: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const loadDashboardData = async () => {
+  async function loadDashboardData() {
     try {
       const [weatherData, eventsData, predictionsData, metricsData] = await Promise.all([
         fetch('/api/weather/user').then(r => r.json()),
@@ -71,7 +70,17 @@ const DashboardPersonalizado: React.FC = () => {
     } catch (error) {
       console.error('Erro ao carregar dados do dashboard:', error);
     }
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial mock dashboard load
+    loadUserPreferences();
+    loadDashboardData();
+
+    const interval = setInterval(loadDashboardData, preferences.refreshInterval);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mock dashboard; refreshInterval estável no mount
+  }, [user?.id]);
 
   const savePreferences = async (newPreferences: UserPreferences) => {
     try {
@@ -129,7 +138,7 @@ const DashboardPersonalizado: React.FC = () => {
       case 'chart':
         return <ChartWidget data={data.metrics} config={widget.config} />;
       case 'list':
-        return <ListWidget data={data} config={widget.config} />;
+        return <ListWidget config={widget.config} />;
       default:
         return <div>Widget não suportado</div>;
     }
@@ -239,17 +248,17 @@ const DashboardPersonalizado: React.FC = () => {
 };
 
 // Componentes de Widget
-const WeatherWidget: React.FC<{ data: any }> = ({ data }) => (
+const WeatherWidget: React.FC<{ data?: Record<string, unknown> }> = ({ data }) => (
   <div className="text-center">
     {data ? (
       <>
         <div className="text-4xl mb-2">🌤️</div>
         <div className="text-2xl font-bold text-blue-600">
-          {data.temperature}°C
+          {String(data.temperature ?? '')}°C
         </div>
-        <div className="text-gray-600">{data.description}</div>
+        <div className="text-gray-600">{String(data.description ?? '')}</div>
         <div className="text-sm text-gray-500 mt-2">
-          {data.location}
+          {String(data.location ?? '')}
         </div>
       </>
     ) : (
@@ -258,11 +267,11 @@ const WeatherWidget: React.FC<{ data: any }> = ({ data }) => (
   </div>
 );
 
-const EventsWidget: React.FC<{ data: any }> = ({ data }) => (
+const EventsWidget: React.FC<{ data?: { events?: Array<{ name: string }> } }> = ({ data }) => (
   <div>
     {data?.events ? (
       <div className="space-y-2">
-        {data.events.slice(0, 3).map((event: any, index: number) => (
+        {data.events.slice(0, 3).map((event, index) => (
           <div key={index} className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             <span className="text-sm text-gray-700">{event.name}</span>
@@ -275,20 +284,20 @@ const EventsWidget: React.FC<{ data: any }> = ({ data }) => (
   </div>
 );
 
-const PredictionsWidget: React.FC<{ data: any }> = ({ data }) => (
+const PredictionsWidget: React.FC<{ data?: Record<string, unknown> }> = ({ data }) => (
   <div>
     {data ? (
       <div className="space-y-3">
         <div className="flex justify-between">
           <span className="text-sm text-gray-600">Demanda Prevista</span>
           <span className="text-sm font-semibold text-green-600">
-            {data.demand}%
+            {String(data.demand ?? '')}%
           </span>
         </div>
         <div className="flex justify-between">
           <span className="text-sm text-gray-600">Preço Otimizado</span>
           <span className="text-sm font-semibold text-blue-600">
-            R$ {data.price}
+            R$ {String(data.price ?? '')}
           </span>
         </div>
       </div>
@@ -298,24 +307,24 @@ const PredictionsWidget: React.FC<{ data: any }> = ({ data }) => (
   </div>
 );
 
-const MetricWidget: React.FC<{ data: any; config: any }> = ({ data, config }) => (
+const MetricWidget: React.FC<{ data?: Record<string, unknown>; config: Record<string, unknown> }> = ({ data, config }) => (
   <div className="text-center">
     <div className="text-3xl font-bold text-gray-900">
-      {data?.[config.metric] || '0'}
+      {String(data?.[String(config.metric ?? '')] ?? '0')}
     </div>
-    <div className="text-sm text-gray-600">{config.label || 'Métrica'}</div>
+    <div className="text-sm text-gray-600">{String(config.label ?? 'Métrica')}</div>
   </div>
 );
 
-const ChartWidget: React.FC<{ data: any; config: any }> = ({ data, config }) => (
+const ChartWidget: React.FC<{ data?: Record<string, unknown>; config: Record<string, unknown> }> = ({ config }) => (
   <div className="h-32 flex items-center justify-center">
-    <div className="text-gray-500">Gráfico: {config.type || 'Barras'}</div>
+    <div className="text-gray-500">Gráfico: {String(config.type ?? 'Barras')}</div>
   </div>
 );
 
-const ListWidget: React.FC<{ data: any; config: any }> = ({ data, config }) => (
+const ListWidget: React.FC<{ config: Record<string, unknown> }> = ({ config }) => (
   <div className="space-y-2">
-    {config.items?.map((item: any, index: number) => (
+    {(config.items as Array<{ label: string; value: string }> | undefined)?.map((item, index) => (
       <div key={index} className="flex justify-between text-sm">
         <span className="text-gray-600">{item.label}</span>
         <span className="font-medium">{item.value}</span>

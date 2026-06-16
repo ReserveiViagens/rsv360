@@ -160,6 +160,7 @@
 - [x] Lint api-publica + Dashboard + ProcessMonitoring −63 — **GO condicional** *(PR #422)* — `issue-237/LINT-237-TURISMO-API-DASHBOARD-PROCESSMONITORING.md`
 - [x] Lint cadastros + security-system-test + TaskAutomation −60 — **GO condicional** *(PR #423)* — `issue-237/LINT-237-TURISMO-CADASTROS-SECURITY-TASKAUTOMATION.md`
 - [x] Lint automacao×2 + rsv-360-ecosystem −57 — **GO condicional** *(PR #424)* — `issue-237/LINT-237-TURISMO-AUTOMACAO-RSV-ECOSYSTEM.md`
+- [x] Lint ProductionMonitoring + dashboard-personalizado + analytics-avancados −55 — **GO condicional** *(PR #425)* — `issue-237/LINT-237-TURISMO-PRODUCTION-DASHBOARD-ANALYTICS.md`
 
 ## Decisão Trilha 0
 

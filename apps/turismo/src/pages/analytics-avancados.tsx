@@ -1,22 +1,29 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import {
-  BarChart3,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs';
+import { Badge } from '@/components/ui/Badge';
+import { Label } from '@/components/ui/Label';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue } from '@/components/ui/Select';
+import {
   TrendingUp,
   Download,
   Settings,
-  Filter,
-  Calendar,
   Users,
-  DollarSign,
   MapPin,
   Star,
   Target,
@@ -27,9 +34,24 @@ import {
   RefreshCw,
   PlayCircle
 } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, ComposedChart, ScatterChart, Scatter, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Area, ComposedChart, ScatterChart, Scatter } from 'recharts';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+interface AnalyticsData {
+  revenue_trend?: Array<Record<string, unknown>>;
+  customer_segments?: Array<{ segmento: string; valor: number; clientes: number; receita: number }>;
+  destination_performance?: Array<{ destino: string; vendas: number; receita: number; satisfacao: number }>;
+  seasonal_trends?: Array<Record<string, unknown>>;
+  customer_journey?: Array<Record<string, unknown>>;
+}
+
+interface AnalyticsPrediction {
+  tipo: string;
+  predicao: string;
+  confianca: number;
+  trend: string;
+}
 
 // Mock data para demonstração
 const generateMockData = (type: string) => {
@@ -85,18 +107,12 @@ export default function AnalyticsAvancados() {
   const [selectedPeriod, setSelectedPeriod] = useState('12m');
   const [selectedSegment, setSelectedSegment] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState<any>({});
-  const [predictions, setPredictions] = useState<any>([]);
+  const [data, setData] = useState<AnalyticsData>({});
+  const [predictions, setPredictions] = useState<AnalyticsPrediction[]>([]);
 
-  useEffect(() => {
-    loadAnalyticsData();
-    generatePredictions();
-  }, [selectedPeriod, selectedSegment]);
-
-  const loadAnalyticsData = async () => {
+  async function loadAnalyticsData() {
     setRefreshing(true);
 
-    // Simular carregamento de dados
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setData({
@@ -108,11 +124,10 @@ export default function AnalyticsAvancados() {
     });
 
     setRefreshing(false);
-  };
+  }
 
-  const generatePredictions = () => {
-    // Simular predições baseadas em IA
-    const predictions = [
+  function generatePredictions() {
+    const nextPredictions: AnalyticsPrediction[] = [
       {
         tipo: 'Receita',
         predicao: 'Crescimento de 15% no próximo trimestre',
@@ -138,8 +153,14 @@ export default function AnalyticsAvancados() {
         trend: 'down'
       }
     ];
-    setPredictions(predictions);
-  };
+    setPredictions(nextPredictions);
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock analytics data on filter change
+    loadAnalyticsData();
+    generatePredictions();
+  }, [selectedPeriod, selectedSegment]);
 
   const handleRefresh = () => {
     loadAnalyticsData();
@@ -440,8 +461,8 @@ export default function AnalyticsAvancados() {
                           fill="#8884d8"
                           dataKey="valor"
                         >
-                          {(data.customer_segments || []).map((entry: any, index: number) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          {(data.customer_segments || []).map((entry, index) => (
+                            <Cell key={`cell-${entry.segmento}-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
                         <Tooltip />
@@ -499,8 +520,8 @@ export default function AnalyticsAvancados() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {(data.destination_performance || []).map((dest: any, index: number) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                  {(data.destination_performance || []).map((dest) => (
+                    <div key={dest.destino} className="p-4 bg-gray-50 rounded-lg">
                       <h4 className="font-semibold text-gray-900 mb-2">{dest.destino}</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
