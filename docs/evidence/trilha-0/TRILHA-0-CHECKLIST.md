@@ -142,6 +142,7 @@
 - [x] Lint DataProtectionCenter + pages/marketing + src/pages/reviews −148 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-DATAPROTECTION-MARKETING-REVIEWS.md`
 - [x] Lint BackupAnalytics + reservations + SecurityCenter −189 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-BACKUPANALYTICS-RESERVATIONS-SECURITY.md`
 - [x] Lint api.ts + pages/chat + src/pages/chat −136 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-API-CHAT.md`
+- [x] Lint financeiro×2 + pages/vouchers −123 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-FINANCEIRO-VOUCHERS.md`
 
 ## Decisão Trilha 0
 
