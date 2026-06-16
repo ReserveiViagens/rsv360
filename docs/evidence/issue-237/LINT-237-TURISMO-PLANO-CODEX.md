@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #10 concluído)  
-**Baseline global:** **2401** warnings  
+**Atualizado:** 2026-06-02 (cluster #11 concluído)  
+**Baseline global:** **2341** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2401** |
-| Clusters concluídos | **10** / 120 |
-| PR empilhada mais recente | **#422** (cluster #10, −63) |
-| Próximo cluster | **#11** — cadastros + security-system-test + TaskAutomation (−60) |
+| Warnings globais | **2341** |
+| Clusters concluídos | **11** / 120 |
+| PR empilhada mais recente | **#423** (cluster #11, −60) |
+| Próximo cluster | **#12** — automacao×2 + rsv-360-ecosystem (−57) |
 
 ## Padrão por cluster (repetir)
 
@@ -42,6 +42,7 @@
 | #420 | TeamManager + hoteis + permissions | −67 → **2530** | deploy-turismo-aiengine |
 | #421 | turismo (pages) + parks + permissions (src) | −66 → **2464** | team-hoteis-permissions |
 | #422 | api-publica + Dashboard + ProcessMonitoring | −63 → **2401** | pages-turismo-parks-permissions |
+| #423 | cadastros + security-system-test + TaskAutomation | −60 → **2341** | api-dashboard-processmonitoring |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -57,7 +58,7 @@
 | 8 | −67 | TeamManager, cotacoes/hoteis, permissions (pages) | **concluído** (#420) |
 | 9 | −66 | turismo (pages), parks, permissions (src) | **concluído** (#421) |
 | 10 | −63 | api-publica, Dashboard, ProcessMonitoring | **concluído** (#422) |
-| 11 | −60 | cadastros, security-system-test, TaskAutomation | pendente |
+| 11 | −60 | cadastros, security-system-test, TaskAutomation | **concluído** (#423) |
 | 12 | −57 | automacao×2, rsv-360-ecosystem | pendente |
 | 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | pendente |
 | 14 | −54 | animations-demo, backend-integration-test, configuracoes-sistema | pendente |

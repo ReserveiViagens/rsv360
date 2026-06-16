@@ -5,31 +5,22 @@ import {
     Home, 
     Hotel, 
     Mountain, 
-    TreePine, 
     Users, 
     Plus, 
     Edit, 
     Trash, 
     X, 
-    Save, 
     Upload, 
     Image as ImageIcon,
     Eye,
-    Search,
     Download,
-    Phone,
-    Globe,
-    Calendar,
     MapPin,
     Star,
     DollarSign,
     Mail,
-    FileText,
     Shield,
-    Award,
     Play
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // Interfaces para diferentes tipos de proprietÃ¡rios
@@ -121,7 +112,6 @@ export default function CadastrosPage() {
     const [editingUser, setEditingUser] = useState<Owner | null>(null);
     const [selectedUser, setSelectedUser] = useState<Owner | null>(null);
     const [selectedImage, setSelectedImage] = useState<string>('');
-    const [selectedVideo, setSelectedVideo] = useState<string>('');
     const [uploadingImage, setUploadingImage] = useState(false);
     const [uploadingVideo, setUploadingVideo] = useState(false);
     const [showStatsDetails, setShowStatsDetails] = useState(false);
@@ -353,8 +343,10 @@ export default function CadastrosPage() {
             }
         };
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- reload on tab change
         setLoading(true);
         loadUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- mock data per tab is stable within session
     }, [activeTab]);
 
     // FunÃ§Ãµes de gestÃ£o de usuÃ¡rios
@@ -758,6 +750,7 @@ export default function CadastrosPage() {
                         {users.map((user) => (
                             <div key={user.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                                 <div className="relative">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- owner profile preview URL */}
                                     <img
                                         src={user.images[0] || "https://via.placeholder.com/300x200"}
                                         alt={user.name}
@@ -1025,6 +1018,7 @@ export default function CadastrosPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {selectedUser.images.map((image, index) => (
                                         <div key={index} className="relative group">
+                                            {/* eslint-disable-next-line @next/next/no-img-element -- gallery preview URL */}
                                             <img
                                                 src={image}
                                                 alt={`${selectedUser.name} - Imagem ${index + 1}`}
@@ -1312,6 +1306,7 @@ export default function CadastrosPage() {
                 {selectedImage && (
                     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60">
                         <div className="relative max-w-4xl max-h-[90vh]">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- full-size preview */}
                             <img
                                 src={selectedImage}
                                 alt="Preview"
@@ -1334,14 +1329,14 @@ export default function CadastrosPage() {
 // Componente de formulÃ¡rio genÃ©rico
 interface UserFormProps {
     type: string;
-    onSubmit: (data: any) => void;
+    onSubmit: (data: Partial<Owner>) => void;
     onCancel: () => void;
     isEditing: boolean;
     initialData?: Owner;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing, initialData }) => {
-    const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<Partial<Owner>>({
         name: '',
         email: '',
         phone: '',
@@ -1399,6 +1394,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
 
     useEffect(() => {
         if (initialData) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- sync form when editing user
             setFormData(initialData);
         }
     }, [initialData]);
@@ -1409,10 +1405,10 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
-        setFormData((prev: any) => ({
+        const { name, value, type: inputType } = e.target;
+        setFormData((prev) => ({
             ...prev,
-            [name]: type === 'number' ? parseFloat(value) : value
+            [name]: inputType === 'number' ? parseFloat(value) : value
         }));
     };
 
