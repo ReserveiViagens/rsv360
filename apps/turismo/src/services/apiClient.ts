@@ -80,17 +80,18 @@ apiClient.interceptors.response.use(
           toast.error('Recurso não encontrado.');
           break;
           
-        case 422:
+        case 422: {
           // Validation errors
-          const errorData = data as any;
+          const errorData = data as ApiErrorPayload;
           if (errorData?.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err: any) => {
+            errorData.errors.forEach((err) => {
               toast.error(err.msg || err.message || 'Erro de validação');
             });
           } else {
             toast.error(errorData?.message || 'Dados inválidos');
           }
           break;
+        }
           
         case 429:
           toast.error('Muitas tentativas. Tente novamente em alguns minutos.');
@@ -100,9 +101,11 @@ apiClient.interceptors.response.use(
           toast.error('Erro interno do servidor. Tente novamente mais tarde.');
           break;
           
-        default:
-          const message = (data as any)?.message || 'Erro inesperado';
+        default: {
+          const message = (data as ApiErrorPayload)?.message || 'Erro inesperado';
           toast.error(message);
+          break;
+        }
       }
     } else if (error.request) {
       // Network error
@@ -117,12 +120,22 @@ apiClient.interceptors.response.use(
   }
 );
 
+interface ApiValidationErrorItem {
+  msg?: string;
+  message?: string;
+}
+
+interface ApiErrorPayload {
+  message?: string;
+  errors?: ApiValidationErrorItem[];
+}
+
 // API Response interface
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   data?: T;
-  errors?: any[];
+  errors?: ApiValidationErrorItem[];
   pagination?: {
     page: number;
     limit: number;
@@ -130,44 +143,44 @@ export interface ApiResponse<T = any> {
     totalPages: number;
   };
   /** Campos legados no root (alguns endpoints backend) */
-  auctions?: any[];
-  feeds?: any[];
+  auctions?: unknown[];
+  feeds?: unknown[];
 }
 
 // Generic API methods
 export const api = {
   // GET request
-  get: async <T = any>(url: string, params?: any): Promise<ApiResponse<T>> => {
+  get: async <T = unknown>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> => {
     const response = await apiClient.get(url, { params });
     return response.data;
   },
 
   // POST request
-  post: async <T = any>(url: string, data?: any): Promise<ApiResponse<T>> => {
+  post: async <T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> => {
     const response = await apiClient.post(url, data);
     return response.data;
   },
 
   // PUT request
-  put: async <T = any>(url: string, data?: any): Promise<ApiResponse<T>> => {
+  put: async <T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> => {
     const response = await apiClient.put(url, data);
     return response.data;
   },
 
   // PATCH request
-  patch: async <T = any>(url: string, data?: any): Promise<ApiResponse<T>> => {
+  patch: async <T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> => {
     const response = await apiClient.patch(url, data);
     return response.data;
   },
 
   // DELETE request
-  delete: async <T = any>(url: string): Promise<ApiResponse<T>> => {
+  delete: async <T = unknown>(url: string): Promise<ApiResponse<T>> => {
     const response = await apiClient.delete(url);
     return response.data;
   },
 
   // Upload file
-  upload: async <T = any>(url: string, formData: FormData, onProgress?: (progress: number) => void): Promise<ApiResponse<T>> => {
+  upload: async <T = unknown>(url: string, formData: FormData, onProgress?: (progress: number) => void): Promise<ApiResponse<T>> => {
     const response = await apiClient.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
