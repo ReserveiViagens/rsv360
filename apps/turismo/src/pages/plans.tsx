@@ -1,74 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Package, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Download,
-  Printer,
+import {
+  Package,
+  CheckCircle,
+  XCircle,
   Eye,
   Edit,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
   DollarSign,
-  Star,
-  MessageSquare,
-  BarChart3,
-  PieChart,
-  Activity,
   TrendingUp,
-  Users,
-  Percent,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon,
-  CreditCard,
-  Gift,
-  Crown as CrownIcon,
-  Zap as ZapIcon,
-  Star as StarIcon,
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  Smile,
-  Frown,
-  Meh,
-  Thermometer,
-  Droplet,
-  Umbrella,
-  CloudRain,
-  CloudLightning,
-  CloudSnow,
-  Sun,
-  Moon,
-  Cloud,
-  CloudOff,
-  CloudDrizzle,
-  CloudFog,
-  Wind,
-  Tornado,
-  Snowflake,
-  ThermometerSun,
-  ThermometerSnowflake
+  Users
 } from 'lucide-react';
 
 interface Plan {
@@ -94,7 +35,7 @@ interface Plan {
 }
 
 const PlansPage: React.FC = () => {
-  const [plans, setPlans] = useState<Plan[]>([
+  const [plans] = useState<Plan[]>([
     {
       id: 'PLAN001',
       name: 'Básico',
@@ -193,7 +134,6 @@ const PlansPage: React.FC = () => {
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -211,11 +151,6 @@ const PlansPage: React.FC = () => {
     custom: 'bg-orange-100 text-orange-800'
   };
 
-  const priorityColors = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800'
-  };
 
   const filteredPlans = plans.filter(plan => {
     const matchesStatus = filterStatus === 'all' || plan.status === filterStatus;
@@ -235,11 +170,6 @@ const PlansPage: React.FC = () => {
     averageConversionRate: plans.reduce((sum, p) => sum + p.conversionRate, 0) / plans.length
   };
 
-  const handleStatusChange = (planId: string, newStatus: Plan['status']) => {
-    setPlans(prev => prev.map(p => 
-      p.id === planId ? { ...p, status: newStatus } : p
-    ));
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -255,7 +185,7 @@ const PlansPage: React.FC = () => {
               <p className="text-gray-600 mt-2">Gerencie planos de assinatura e preços</p>
             </div>
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => setShowModal(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center font-medium transition-colors"
             >
               <Plus className="mr-2 h-5 w-5" />
@@ -478,7 +408,7 @@ const PlansPage: React.FC = () => {
                   <button
                     onClick={() => {
                       setSelectedPlan(plan);
-                      setShowCreateModal(true);
+                      setShowModal(true);
                     }}
                     className="flex-1 px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700"
                   >
@@ -634,7 +564,7 @@ const PlansPage: React.FC = () => {
                   <button
                     onClick={() => {
                       setShowModal(false);
-                      setShowCreateModal(true);
+                      setShowModal(true);
                     }}
                     className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700"
                   >
