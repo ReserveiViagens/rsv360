@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Progress, Textarea, Switch } from '@/components/ui';
-import { Plus, Settings, Edit, Trash2, Users, Calendar, Target, Clock, CheckCircle, AlertCircle, XCircle, Eye, Copy, Filter, Search, Star, User, Tag, Mail, Phone, MapPin, Award, TrendingUp, MessageSquare, FileText, Image, Video, Link, ThumbsUp, Share2, MoreVertical, Send, Paperclip, Smile, AtSign } from 'lucide-react';
+import { Card, Button, Input, Badge, Tabs, Select, Avatar, Textarea } from '@/components/ui';
+import { Plus, Users, Target, Eye, MessageSquare, FileText, Image as ImageIcon, Video, ThumbsUp, Share2, MoreVertical, AtSign, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Comment {
@@ -63,7 +63,7 @@ interface ProjectCollaborationProps {
   onChatSelect?: (chat: TeamChat) => void;
 }
 
-export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, onChatSelect }: ProjectCollaborationProps) {
+export default function ProjectCollaboration({ onCommentSelect: _onCommentSelect, onUpdateSelect, onChatSelect }: ProjectCollaborationProps) {
   const [comments, setComments] = useState<Comment[]>([
     {
       id: '1',
@@ -152,7 +152,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
     }
   ]);
 
-  const [chats, setChats] = useState<TeamChat[]>([
+  const [chats] = useState<TeamChat[]>([
     {
       id: '1',
       name: 'Sistema RSV - Geral',
@@ -220,7 +220,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
   const getFileTypeIcon = (type: string) => {
     switch (type) {
       case 'document': return <FileText className="w-4 h-4" />;
-      case 'image': return <Image className="w-4 h-4" />;
+      case 'image': return <ImageIcon className="w-4 h-4" aria-hidden />;
       case 'video': return <Video className="w-4 h-4" />;
       default: return <FileText className="w-4 h-4" />;
     }
@@ -648,7 +648,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
       </Card>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
+      <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value)} className="w-full">
         <div className="flex space-x-1 mb-4">
           <Button
             variant={activeTab === 'updates' ? 'default' : 'outline'}
@@ -716,7 +716,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Projeto</label>
-                <Select value={newComment.projectId} onValueChange={(value: any) => setNewComment({...newComment, projectId: value})}>
+                <Select value={newComment.projectId} onValueChange={(value: string) => setNewComment({...newComment, projectId: value})}>
                   <option value="1">Sistema de Onboarding RSV</option>
                   <option value="2">Migração de Dados</option>
                 </Select>
@@ -784,7 +784,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                <Select value={newUpdate.type} onValueChange={(value: any) => setNewUpdate({...newUpdate, type: value})}>
+                <Select value={newUpdate.type} onValueChange={(value: ProjectUpdate['type']) => setNewUpdate({...newUpdate, type: value})}>
                   <option value="general">Geral</option>
                   <option value="progress">Progresso</option>
                   <option value="milestone">Milestone</option>
@@ -793,7 +793,7 @@ export default function ProjectCollaboration({ onCommentSelect, onUpdateSelect, 
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
-                <Select value={newUpdate.priority} onValueChange={(value: any) => setNewUpdate({...newUpdate, priority: value})}>
+                <Select value={newUpdate.priority} onValueChange={(value: ProjectUpdate['priority']) => setNewUpdate({...newUpdate, priority: value})}>
                   <option value="low">Baixa</option>
                   <option value="medium">Média</option>
                   <option value="high">Alta</option>

@@ -1,13 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Globe,
@@ -22,39 +27,19 @@ import {
   BarChart3,
   Eye,
   Edit,
-  Trash2,
   Plus,
-  Play,
-  Pause,
   RefreshCw,
   Download,
-  Upload,
-  Filter,
-  Search,
   Key,
   Lock,
   Unlock,
-  Server,
   Database,
   Cloud,
-  Network,
-  Router,
-  Layers,
-  Code,
-  Monitor,
   AlertCircle,
-  TrendingUp,
   Users,
-  Calendar,
   MapPin,
-  Gauge,
-  Terminal,
-  FileText,
-  Link2,
-  Webhook,
-  GitBranch,
-  Cpu
-} from 'lucide-react'
+  FileText
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -63,14 +48,11 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
   BarChart, 
   Bar, 
-  PieChart, 
-  Cell,
-  RadialBarChart,
-  RadialBar
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts'
 
 // Tipos para API Gateway
@@ -97,72 +79,6 @@ interface APIEndpoint {
   tags: string[]
 }
 
-interface APIRoute {
-  id: string
-  path: string
-  method: string
-  description: string
-  parameters: {
-    name: string
-    type: string
-    required: boolean
-    description: string
-  }[]
-  responses: {
-    code: number
-    description: string
-    example: string
-  }[]
-  middleware: string[]
-  rateLimiting: boolean
-  caching: boolean
-  authentication: boolean
-}
-
-interface APIMetrics {
-  id: string
-  endpointId: string
-  timestamp: string
-  responseTime: number
-  statusCode: number
-  requestSize: number
-  responseSize: number
-  userAgent: string
-  ipAddress: string
-  error?: string
-}
-
-interface APIConfiguration {
-  id: string
-  name: string
-  baseUrl: string
-  timeout: number
-  retries: number
-  circuitBreaker: {
-    enabled: boolean
-    threshold: number
-    timeout: number
-  }
-  loadBalancing: {
-    enabled: boolean
-    strategy: 'round_robin' | 'least_connections' | 'weighted'
-    servers: string[]
-  }
-  caching: {
-    enabled: boolean
-    ttl: number
-    strategy: 'memory' | 'redis' | 'database'
-  }
-  monitoring: {
-    enabled: boolean
-    alertThresholds: {
-      responseTime: number
-      errorRate: number
-      uptime: number
-    }
-  }
-}
-
 interface ExternalService {
   id: string
   name: string
@@ -184,7 +100,6 @@ interface ExternalService {
 
 const APIGateway: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedEndpoint, setSelectedEndpoint] = useState<APIEndpoint | null>(null)
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false)
 
   // Dados mock para demonstração
