@@ -1,74 +1,45 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Shield,
   AlertTriangle,
-  Lock,
-  Unlock,
   Eye,
-  EyeOff,
   Key,
-  Fingerprint,
-  UserCheck,
-  Clock,
   Activity,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   CheckCircle,
   XCircle,
-  AlertCircle,
-  Info,
   Settings,
-  Search,
-  Filter,
   Download,
-  Upload,
   RefreshCw,
   Zap,
   Globe,
-  Server,
   Database,
-  Network,
-  Cpu,
-  HardDrive,
-  Wifi,
-  WifiOff,
   Bug,
   ShieldCheck,
   ShieldAlert,
-  ShieldOff,
-  Users,
   User,
   UserX,
-  Calendar,
-  MapPin,
-  Phone,
   Mail,
-  Monitor,
-  Smartphone,
-  Laptop,
-  Tablet,
-  Router,
-  Cloud,
-  FileText,
-  Camera,
-  Mic,
-  Volume2,
-  VolumeX
-} from 'lucide-react'
+  Plus
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -80,11 +51,7 @@ import {
   Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter
+  Pie
 } from 'recharts'
 
 // Tipos para Security Center
@@ -122,24 +89,6 @@ interface SecurityEvent {
   location: string
 }
 
-interface SecurityPolicy {
-  id: string
-  name: string
-  category: 'access_control' | 'data_protection' | 'network_security' | 'compliance' | 'incident_response'
-  description: string
-  status: 'active' | 'inactive' | 'draft' | 'review'
-  severity: 'mandatory' | 'recommended' | 'optional'
-  lastUpdated: string
-  compliance: string[]
-  rules: {
-    condition: string
-    action: string
-    notification: boolean
-  }[]
-  violations: number
-  effectiveness: number
-}
-
 interface VulnerabilityAssessment {
   id: string
   target: string
@@ -174,7 +123,6 @@ interface SecurityMetrics {
 
 const SecurityCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedThreat, setSelectedThreat] = useState<SecurityThreat | null>(null)
   const [isIncidentModalOpen, setIsIncidentModalOpen] = useState(false)
 
   // Dados mock para demonstração

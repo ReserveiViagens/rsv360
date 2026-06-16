@@ -140,6 +140,7 @@
 - [x] Lint RecoveryTesting + TrainingCenter + vouchers + refunds −221 — **GO condicional** *(PR #398)* — `issue-237/LINT-237-TURISMO-RECOVERY-TRAINING-VOUCHERS-REFUNDS.md`
 - [x] Lint BackupCenter + marketing + AuditSystem −152 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-BACKUP-MARKETING-AUDIT.md`
 - [x] Lint DataProtectionCenter + pages/marketing + src/pages/reviews −148 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-DATAPROTECTION-MARKETING-REVIEWS.md`
+- [x] Lint BackupAnalytics + reservations + SecurityCenter −189 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-BACKUPANALYTICS-RESERVATIONS-SECURITY.md`
 
 ## Decisão Trilha 0
 
