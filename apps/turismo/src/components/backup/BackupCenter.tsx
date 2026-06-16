@@ -1,18 +1,21 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
-  Save,
   Download,
-  Upload,
   RefreshCw,
   Clock,
   CheckCircle,
@@ -20,55 +23,20 @@ import {
   AlertTriangle,
   Play,
   Pause,
-  Stop,
   Settings,
-  Calendar,
   Database,
-  Server,
   Cloud,
-  Shield,
   Archive,
   RotateCcw,
-  Zap,
   Activity,
-  TrendingUp,
-  BarChart3,
-  FileText,
-  Folder,
   HardDrive,
   Monitor,
-  Globe,
-  Lock,
-  Key,
   Eye,
-  EyeOff,
-  Search,
-  Filter,
   Plus,
   Edit,
-  Trash2,
-  Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
   Info,
-  Warning,
-  Timer,
-  MapPin,
-  Building,
-  Phone,
-  Mail,
-  User,
-  Code,
-  Layers,
-  Router,
-  Star,
-  Heart,
-  Bookmark,
-  Target,
   Gauge
-} from 'lucide-react'
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -77,19 +45,12 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
   Bar, 
   PieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
   ComposedChart,
-  RechartsTooltip
+  Bar
 } from 'recharts'
 
 // Tipos para Backup Center
@@ -210,8 +171,7 @@ interface BackupStorage {
 
 const BackupCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedJob, setSelectedJob] = useState<BackupJob | null>(null)
-  const [isCreateJobOpen, setIsCreateJobOpen] = useState(false)
+  const [, setIsCreateJobOpen] = useState(false)
 
   // Dados mock para demonstração
   const [backupJobs] = useState<BackupJob[]>([
@@ -732,7 +692,7 @@ const BackupCenter: React.FC = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: any) => formatBytes(value * 1024 * 1024 * 1024)} />
+                    <Tooltip formatter={(value: number) => formatBytes(value * 1024 * 1024 * 1024)} />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
