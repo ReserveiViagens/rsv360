@@ -1,99 +1,56 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
-  GraduationCap,
+  BarChart3,
   BookOpen,
   Users,
   Target,
   Trophy,
   Star,
   Clock,
-  CheckCircle,
-  XCircle,
   Play,
-  Pause,
-  RotateCcw,
   Settings,
-  Search,
   Filter,
   Plus,
-  Edit,
-  Trash2,
-  Copy,
-  Share,
-  Download,
-  Upload,
   Eye,
-  EyeOff,
-  Calendar,
   Award,
   TrendingUp,
-  Activity,
   Brain,
-  Lightbulb,
   Zap,
-  Rocket,
-  Shield,
-  Bookmark,
-  Heart,
-  ThumbsUp,
-  MessageCircle,
   Video,
   FileText,
-  Image,
   Headphones,
   Monitor,
-  Smartphone,
-  Tablet,
-  Laptop,
-  Globe,
-  MapPin,
-  Building,
   User,
-  UserCheck,
-  UserPlus,
-  AlertTriangle,
-  Info,
-  Warning,
-  Mail,
-  Phone,
-  Wifi,
-  Database,
-  Server,
-  Cloud,
   Code,
   Layers
-} from 'lucide-react'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+} from 'lucide-react';
+import {
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Training Center
@@ -164,7 +121,7 @@ interface TrainingModule {
   content: {
     videoUrl?: string
     documentUrl?: string
-    interactiveContent?: any
+    interactiveContent?: unknown
     quizQuestions?: QuizQuestion[]
   }
   prerequisites: string[]
@@ -279,7 +236,6 @@ interface LearningAnalytics {
 
 const TrainingCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedCourse, setSelectedCourse] = useState<TrainingCourse | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterCategory, setFilterCategory] = useState('all')
 
@@ -770,16 +726,6 @@ const TrainingCenter: React.FC = () => {
       case 'intermediate': return 'bg-yellow-100 text-yellow-800'
       case 'advanced': return 'bg-orange-100 text-orange-800'
       case 'expert': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'published': case 'completed': return 'bg-green-100 text-green-800'
-      case 'in_progress': case 'under_review': return 'bg-blue-100 text-blue-800'
-      case 'draft': return 'bg-yellow-100 text-yellow-800'
-      case 'archived': return 'bg-gray-100 text-gray-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -1306,8 +1252,8 @@ const TrainingCenter: React.FC = () => {
                             <h5 className="font-medium text-sm mb-2">Módulos:</h5>
                             <div className="space-y-2">
                               {Object.entries(progress.progress.modules).map(([moduleId, moduleProgress]) => {
-                                const module = course.modules.find(m => m.id === moduleId)
-                                if (!module) return null
+                                const courseModule = course.modules.find(m => m.id === moduleId)
+                                if (!courseModule) return null
                                 
                                 return (
                                   <div key={moduleId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
@@ -1317,7 +1263,7 @@ const TrainingCenter: React.FC = () => {
                                         moduleProgress.status === 'in_progress' ? 'bg-blue-500' :
                                         moduleProgress.status === 'failed' ? 'bg-red-500' : 'bg-gray-300'
                                       }`}></div>
-                                      <span className="text-sm font-medium">{module.title}</span>
+                                      <span className="text-sm font-medium">{courseModule.title}</span>
                                     </div>
                                     <div className="flex items-center space-x-2 text-sm">
                                       <span>{moduleProgress.progress}%</span>
