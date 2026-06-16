@@ -1,85 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  TrendingUp, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Download,
-  Printer,
+import {
+  TrendingUp,
+  CheckCircle,
+  XCircle,
   Eye,
   Edit,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
   DollarSign,
   Star,
-  MessageSquare,
-  BarChart3,
-  PieChart,
-  Activity,
-  Users,
-  Percent,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon,
   ArrowUp,
-  ArrowDown,
-  RefreshCw,
-  RotateCcw,
-  Move,
-  Copy,
-  Link,
-  Unlink,
-  ExternalLink,
-  Upload,
-  Download as DownloadIcon,
-  Trash2,
-  Save,
-  FileText,
-  Image,
-  Video,
-  Music,
-  Archive,
-  Bookmark,
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  Smile,
-  Frown,
-  Meh,
-  Thermometer,
-  Droplet,
-  Umbrella,
-  CloudRain,
-  CloudLightning,
-  CloudSnow,
-  Sun,
-  Moon,
-  CloudOff,
-  CloudDrizzle,
-  CloudFog,
-  Wind,
-  Snowflake,
-  ThermometerSun,
-  ThermometerSnowflake
+  ArrowDown
 } from 'lucide-react';
 
 interface Upgrade {
@@ -113,7 +44,7 @@ interface Upgrade {
 }
 
 const UpgradesPage: React.FC = () => {
-  const [upgrades, setUpgrades] = useState<Upgrade[]>([
+  const [upgrades] = useState<Upgrade[]>([
     {
       id: 'UPG001',
       customerName: 'Maria Silva',
@@ -232,7 +163,6 @@ const UpgradesPage: React.FC = () => {
 
   const [selectedUpgrade, setSelectedUpgrade] = useState<Upgrade | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -272,11 +202,6 @@ const UpgradesPage: React.FC = () => {
     totalRevenue: upgrades.filter(u => u.status === 'completed' && u.priceDifference > 0).reduce((sum, u) => sum + u.priceDifference, 0)
   };
 
-  const handleStatusChange = (upgradeId: string, newStatus: Upgrade['status']) => {
-    setUpgrades(prev => prev.map(u => 
-      u.id === upgradeId ? { ...u, status: newStatus } : u
-    ));
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -292,7 +217,7 @@ const UpgradesPage: React.FC = () => {
               <p className="text-gray-600 mt-2">Gerencie upgrades e downgrades de planos</p>
             </div>
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => setShowModal(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center font-medium transition-colors"
             >
               <Plus className="mr-2 h-5 w-5" />
@@ -494,7 +419,7 @@ const UpgradesPage: React.FC = () => {
                         <button
                           onClick={() => {
                             setSelectedUpgrade(upgrade);
-                            setShowCreateModal(true);
+                            setShowModal(true);
                           }}
                           className="text-green-600 hover:text-green-900"
                         >
@@ -732,7 +657,7 @@ const UpgradesPage: React.FC = () => {
                   <button
                     onClick={() => {
                       setShowModal(false);
-                      setShowCreateModal(true);
+                      setShowModal(true);
                     }}
                     className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700"
                   >
