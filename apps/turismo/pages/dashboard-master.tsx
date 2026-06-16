@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  BarChart3, Users, Building, Calendar, DollarSign, TrendingUp,
-  Star, MapPin, Bell, Settings, Search, Filter, Download, Upload,
-  Plus, Edit, Eye, Trash2, MoreHorizontal, Clock, CheckCircle,
-  AlertCircle, XCircle, User, Hotel, Plane, Car, Camera, Gift,
-  CreditCard, Phone, Mail, Globe, Shield, Award, Target, Zap,
-  Heart, MessageCircle, Share2, Bookmark, Flag, Home, Menu,
-  X, ChevronRight, ChevronDown, Layers, Database, Server, Cloud,
-  FileText, Lock
+  BarChart3,
+  Users,
+  Building,
+  Calendar,
+  DollarSign,
+  Star,
+  MapPin,
+  Bell,
+  Settings,
+  CheckCircle,
+  User,
+  Hotel,
+  Plane,
+  Car,
+  Camera,
+  Gift,
+  CreditCard,
+  Shield,
+  Zap,
+  Bookmark,
+  Home,
+  Menu,
+  X,
+  Layers,
+  Database,
+  FileText,
+  Lock
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 
 interface DashboardStats {
   totalHotels: number;
@@ -64,11 +82,7 @@ export default function DashboardMaster() {
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [selectedPeriod]);
-
-  const loadDashboardData = async () => {
+  async function loadDashboardData() {
     setLoading(true);
     try {
       // Simular carregamento de dados
@@ -131,7 +145,12 @@ export default function DashboardMaster() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock dashboard on mount/period change
+    loadDashboardData();
+  }, [selectedPeriod]);
 
   const quickActions: QuickAction[] = [
     {
