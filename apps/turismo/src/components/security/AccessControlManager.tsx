@@ -1,72 +1,44 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Users,
   User,
   UserPlus,
-  UserMinus,
   UserCheck,
-  UserX,
   Lock,
   Unlock,
-  Key,
   Shield,
   Eye,
-  EyeOff,
   Settings,
   Clock,
-  Calendar,
-  MapPin,
-  Smartphone,
-  Laptop,
   Monitor,
-  Globe,
-  Building,
-  Department,
   Crown,
-  Award,
-  AlertTriangle,
   CheckCircle,
   XCircle,
   RefreshCw,
-  Search,
-  Filter,
   Plus,
   Edit,
-  Trash2,
   Download,
-  Upload,
-  FileText,
   Activity,
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Fingerprint,
-  Scan,
-  Wifi,
-  WifiOff,
-  Database,
-  Server,
-  Network,
-  Router,
-  Cloud,
-  HardDrive,
-  Cpu,
-  Memory,
-  Phone
-} from 'lucide-react'
+  BarChart3
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -78,9 +50,7 @@ import {
   Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar
+  Pie
 } from 'recharts'
 
 // Tipos para Access Control Manager
@@ -137,35 +107,6 @@ interface AccessRole {
   maxUsers: number
 }
 
-interface AccessPermission {
-  id: string
-  name: string
-  description: string
-  resource: string
-  action: 'create' | 'read' | 'update' | 'delete' | 'execute' | 'admin'
-  scope: 'global' | 'organization' | 'department' | 'team' | 'personal'
-  category: 'system' | 'data' | 'api' | 'ui' | 'report'
-  riskLevel: 'low' | 'medium' | 'high' | 'critical'
-  requiresMfa: boolean
-  requiresApproval: boolean
-  isRevocable: boolean
-  validUntil?: string
-}
-
-interface AccessGroup {
-  id: string
-  name: string
-  description: string
-  type: 'department' | 'project' | 'security' | 'custom'
-  members: string[]
-  roles: string[]
-  permissions: string[]
-  manager: string
-  createdAt: string
-  isActive: boolean
-  policies: string[]
-}
-
 interface AccessSession {
   id: string
   userId: string
@@ -196,24 +137,6 @@ interface AccessDevice {
   riskScore: number
 }
 
-interface AccessPolicy {
-  id: string
-  name: string
-  description: string
-  type: 'authentication' | 'authorization' | 'password' | 'session' | 'device'
-  rules: {
-    condition: string
-    action: string
-    severity: 'low' | 'medium' | 'high'
-  }[]
-  isActive: boolean
-  appliesTo: 'all' | 'roles' | 'groups' | 'users'
-  targets: string[]
-  exceptions: string[]
-  createdAt: string
-  lastModified: string
-}
-
 interface AccessActivity {
   id: string
   userId: string
@@ -229,7 +152,6 @@ interface AccessActivity {
 
 const AccessControlManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedUser, setSelectedUser] = useState<AccessUser | null>(null)
   const [isUserModalOpen, setIsUserModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -516,9 +438,6 @@ const AccessControlManager: React.FC = () => {
     return new Date(dateString).toLocaleDateString('pt-BR')
   }
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('pt-BR').format(num)
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -559,14 +478,6 @@ const AccessControlManager: React.FC = () => {
     }
   }
 
-  const getMfaIcon = (method: string) => {
-    switch (method) {
-      case 'totp': return Smartphone
-      case 'sms': return Phone
-      case 'biometric': return Fingerprint
-      default: return Key
-    }
-  }
 
   const calculateMetrics = () => {
     const totalUsers = accessUsers.length

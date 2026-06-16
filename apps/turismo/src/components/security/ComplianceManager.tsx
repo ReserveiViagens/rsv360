@@ -1,62 +1,40 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   FileCheck,
   Shield,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Clock,
   Calendar,
-  Users,
-  Building,
-  Globe,
   Scale,
   Eye,
   Edit,
   Download,
-  Upload,
-  Settings,
-  Search,
-  Filter,
-  RefreshCw,
   Plus,
   FileText,
-  Bookmark,
   Award,
   Target,
-  TrendingUp,
-  TrendingDown,
   BarChart3,
-  PieChart as PieChartIcon,
-  Activity,
   AlertCircle,
-  Info,
-  HelpCircle,
-  ExternalLink,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Network,
-  Cpu,
-  Monitor,
-  Smartphone,
-  Laptop,
-  Router,
-  Cloud,
-  HardDrive
-} from 'lucide-react'
+  Info
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -65,15 +43,11 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
   BarChart, 
   Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar
+  Pie
 } from 'recharts'
 
 // Tipos para Compliance Manager
@@ -148,50 +122,8 @@ interface ComplianceAudit {
   }
 }
 
-interface ComplianceRisk {
-  id: string
-  frameworkId: string
-  title: string
-  description: string
-  category: 'operational' | 'financial' | 'legal' | 'reputational' | 'strategic'
-  probability: 'very_low' | 'low' | 'medium' | 'high' | 'very_high'
-  impact: 'very_low' | 'low' | 'medium' | 'high' | 'very_high'
-  riskScore: number
-  status: 'identified' | 'assessed' | 'mitigated' | 'accepted' | 'transferred'
-  mitigation: {
-    strategy: string
-    actions: string[]
-    responsible: string
-    deadline: string
-    budget: number
-  }
-  residualRisk: number
-}
-
-interface ComplianceReport {
-  id: string
-  title: string
-  type: 'overview' | 'framework' | 'audit' | 'risk' | 'gap_analysis'
-  generatedDate: string
-  period: {
-    start: string
-    end: string
-  }
-  frameworks: string[]
-  summary: {
-    overallScore: number
-    compliantFrameworks: number
-    totalFrameworks: number
-    criticalIssues: number
-    recommendations: number
-  }
-  status: 'draft' | 'final' | 'approved' | 'published'
-  recipients: string[]
-}
-
 const ComplianceManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -417,17 +349,11 @@ const ComplianceManager: React.FC = () => {
     { category: 'Estratégico', low: 40, medium: 30, high: 16, critical: 4 }
   ]
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR')
-  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR')
   }
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('pt-BR').format(num)
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
