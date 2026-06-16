@@ -1,88 +1,22 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import {
-  ArrowLeft,
   Bell,
-  BellOff,
   BellRing,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Info,
   Eye,
   Download,
-  Upload,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
-  Tag,
-  Heart,
-  Share,
-  Edit,
-  Trash2,
-  RefreshCw,
   BarChart3,
-  PieChart,
-  Activity,
-  Shield,
   AlertTriangle,
-  Copy,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  Settings,
-  Database,
-  Server,
-  Zap,
   Target,
   Award,
-  Star,
-  ThumbsUp,
-  MessageSquare,
-  Lock,
-  Unlock,
-  Key,
-  UserCheck,
-  Users,
-  UserPlus,
-  UserX,
-  UserCog,
-  UserMinus,
-  UserSearch,
-  UserCheck2,
-  UserX2,
-  UserCog2,
-  UserMinus2,
-  Folder,
   FileText,
-  ImageIcon,
-  Video,
-  Music,
-  Archive,
-  BookOpen,
-  Bookmark,
-  BookmarkPlus,
-  BookmarkMinus,
-  BookmarkX,
-  BookmarkCheck,
   Clock,
-  Volume2,
-  VolumeX,
-  Volume1,
-  Volume,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Plus as PlusIcon,
   Send,
-  Inbox,
-  Archive as ArchiveIcon,
-  Star as StarIcon
+  Archive as ArchiveIcon
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -107,12 +41,9 @@ interface Notification {
 }
 
 export default function NotificationsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
 
@@ -271,13 +202,13 @@ export default function NotificationsPage() {
     { id: 'scheduled', name: 'Agendadas', icon: Clock }
   ];
 
-  const handleCardClick = (cardId: string) => {
+  const handleCardClick = (_cardId: string) => {
     setSelectedNotification(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada card
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (_action: string) => {
     setSelectedNotification(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada ação
@@ -322,20 +253,6 @@ export default function NotificationsPage() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent':
-        return 'bg-red-500';
-      case 'high':
-        return 'bg-orange-500';
-      case 'medium':
-        return 'bg-yellow-500';
-      case 'low':
-        return 'bg-green-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {

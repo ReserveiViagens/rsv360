@@ -1,84 +1,18 @@
 import React, { useState } from 'react';
-import { useAuth } from '../src/context/AuthContext';
-import { useRouter } from 'next/navigation';
 import {
-  ArrowLeft,
-  Camera,
-  Image,
   Eye,
   Download,
   Upload,
-  Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
   Tag,
   Heart,
-  Share,
-  Edit,
-  Trash2,
-  RefreshCw,
   BarChart3,
-  PieChart,
-  Activity,
-  Shield,
-  AlertTriangle,
-  Info,
-  Copy,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
   Globe,
   Settings,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Star,
-  ThumbsUp,
-  MessageSquare,
-  Bell,
   Lock,
-  Unlock,
-  Key,
-  UserCheck,
-  Users,
-  UserPlus,
-  UserX,
-  UserEdit,
-  UserCog,
-  UserShield,
-  UserMinus,
-  UserSearch,
-  UserList,
-  UserCheck2,
-  UserX2,
-  UserEdit2,
-  UserCog2,
-  UserShield2,
-  UserMinus2,
-  UserSearch2,
-  UserList2,
   Folder,
-  FileText,
   ImageIcon,
-  Video,
-  Music,
-  Archive,
-  BookOpen,
-  Bookmark,
-  BookmarkPlus,
-  BookmarkMinus,
-  BookmarkX,
-  BookmarkCheck,
-  BookmarkEdit,
-  BookmarkCog,
-  BookmarkShield,
-  BookmarkSearch,
-  BookmarkList
+  Archive
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -103,12 +37,9 @@ interface Photo {
 }
 
 export default function PhotosPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
@@ -277,13 +208,13 @@ export default function PhotosPage() {
     { id: 'categories', name: 'Categorias', icon: Tag }
   ];
 
-  const handleCardClick = (cardId: string) => {
+  const handleCardClick = (_cardId: string) => {
     setSelectedPhoto(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada card
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (_action: string) => {
     setSelectedPhoto(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada ação
@@ -324,9 +255,6 @@ export default function PhotosPage() {
     return `${size} MB`;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
 
   const filteredPhotos = photos.filter(photo => {
     const matchesSearch = photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
