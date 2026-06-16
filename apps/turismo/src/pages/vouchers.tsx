@@ -1,78 +1,36 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useRouter } from 'next/router';
 import {
-  CreditCard,
-  Calendar,
-  Users,
   MapPin,
-  Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
   Plus,
   Search,
-  Filter,
   Download,
   Upload,
   Edit,
   Trash2,
   Eye,
-  RefreshCw,
   TrendingUp,
-  DollarSign,
-  Star,
   FileText,
-  Send,
-  Copy,
   QrCode,
   BarChart3,
   Settings,
-  MoreHorizontal,
-  ArrowRight,
-  CalendarDays,
   Hotel,
   Plane,
   Car,
   Camera,
   Gift,
-  Tag,
-  Percent,
-  Award,
-  Shield,
-  Zap,
-  Globe,
-  Smartphone,
   Mail,
   Phone,
-  User,
-  Building,
-  CreditCard as CreditCardIcon,
-  Receipt,
-  Wallet,
-  Key,
-  Lock,
-  Unlock,
-  EyeOff,
-  CheckSquare,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  ChevronLeft,
-  Home,
-  ArrowLeft,
   Palette,
-  Type,
-  Image,
-  Settings as SettingsIcon,
   Share2,
   Printer,
   MonitorPlay,
   LayoutDashboard,
-  Layers,
   BookmarkPlus,
-  FolderPlus,
-  Globe2
+  Globe2,
+  CreditCard
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -110,7 +68,6 @@ interface VoucherStats {
 }
 
 export default function VouchersPage() {
-  const router = useRouter();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [stats, setStats] = useState<VoucherStats>({
     total: 0,
@@ -130,7 +87,6 @@ export default function VouchersPage() {
   const [filterTipo, setFilterTipo] = useState<string>('todos');
   const [sortBy, setSortBy] = useState<string>('dataCriacao');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [loading, setLoading] = useState(false);
   const [selectedVouchers, setSelectedVouchers] = useState<string[]>([]);
   const [templateCategory, setTemplateCategory] = useState<'hotel' | 'parque' | 'atracao' | 'transporte' | 'outros'>('hotel');
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -292,11 +248,6 @@ export default function VouchersPage() {
     }
   ];
 
-  useEffect(() => {
-    setVouchers(mockVouchers);
-    calcularEstatisticas(mockVouchers);
-  }, []);
-
   const calcularEstatisticas = (vouchersList: Voucher[]) => {
     const total = vouchersList.length;
     const ativos = vouchersList.filter(v => v.status === 'ativo').length;
@@ -318,6 +269,13 @@ export default function VouchersPage() {
       taxaUtilizacao
     });
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock bootstrap
+    setVouchers(mockVouchers);
+    calcularEstatisticas(mockVouchers);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only mock load
+  }, []);
 
   const handleNovoVoucher = () => {
     const novoVoucher = createEmptyVoucher();
@@ -407,10 +365,10 @@ export default function VouchersPage() {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      const importedArray: any[] = Array.isArray(parsed)
+      const importedArray: unknown[] = Array.isArray(parsed)
         ? parsed
-        : Array.isArray(parsed?.vouchers)
-          ? parsed.vouchers
+        : Array.isArray((parsed as { vouchers?: unknown[] })?.vouchers)
+          ? (parsed as { vouchers: unknown[] }).vouchers
           : [];
 
       if (importedArray.length === 0) {
@@ -418,7 +376,9 @@ export default function VouchersPage() {
         return;
       }
 
-      const normalized: Voucher[] = importedArray.map((item, index) => ({
+      const normalized: Voucher[] = importedArray.map((raw, index) => {
+        const item = raw as Record<string, unknown>;
+        return ({
         id: item.id || generateId(),
         codigo: item.codigo || generateVoucherCode(),
         cliente: item.cliente || `Cliente ${index + 1}`,
@@ -435,8 +395,8 @@ export default function VouchersPage() {
         validade: item.validade || '',
         criadoEm: item.criadoEm || new Date().toISOString(),
         documentos: Array.isArray(item.documentos) ? item.documentos : [],
-        categoria: item.categoria || 'hotel'
-      }));
+        categoria: (item.categoria as Voucher['categoria']) || 'hotel'
+      });});
 
       setVouchers((prev) => {
         const merged = [...prev, ...normalized];
@@ -449,8 +409,9 @@ export default function VouchersPage() {
         type: 'success',
         message: `${normalized.length} voucher${normalized.length > 1 ? 's' : ''} importado${normalized.length > 1 ? 's' : ''} com sucesso.`
       });
-    } catch (error: any) {
-      setImportStatus({ type: 'error', message: `Falha ao importar vouchers: ${error.message || 'Erro desconhecido.'}` });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro desconhecido.';
+      setImportStatus({ type: 'error', message: `Falha ao importar vouchers: ${message}` });
     }
   };
 
@@ -459,7 +420,7 @@ export default function VouchersPage() {
     try {
       await navigator.clipboard.writeText(exportContent);
       setExportStatus('Dados copiados para a área de transferência.');
-    } catch (error) {
+    } catch (_error) {
       setExportStatus('Não foi possível copiar os dados.');
     }
   };
@@ -619,7 +580,8 @@ export default function VouchersPage() {
   });
 
   const sortedVouchers = [...filteredVouchers].sort((a, b) => {
-    let aValue: any, bValue: any;
+    let aValue: string | number | Date;
+    let bValue: string | number | Date;
     
     switch (sortBy) {
       case 'dataCriacao':
@@ -1712,6 +1674,7 @@ export default function VouchersPage() {
                         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrData)}`;
                         return (
                           <div className="flex flex-col items-center space-y-3">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- external QR API */}
                             <img src={qrUrl} alt={`QR Code para o voucher ${voucher.codigo}`} className="w-44 h-44" />
                             <p className="text-xs text-gray-500">Link: {qrData}</p>
                             <div className="flex space-x-2">
