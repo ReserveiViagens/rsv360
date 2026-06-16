@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Server, Database, Globe, Shield, AlertTriangle, CheckCircle, Clock, TrendingUp, TrendingDown, BarChart3, Settings, Eye, Download, Share, Plus, Edit, Trash2, Zap, Cpu, HardDrive, Wifi, Users } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress, Alert, AlertDescription } from '../ui';
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  Settings,
+  Plus,
+  Zap
+} from 'lucide-react';
+import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress, Alert } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 // Interfaces
@@ -235,13 +246,12 @@ const ProductionMonitoring: React.FC<ProductionMonitoringProps> = ({
   onMetricThreshold
 }) => {
   const [systemMetrics, setSystemMetrics] = useState<SystemMetric[]>(mockSystemMetrics);
-  const [serviceStatuses, setServiceStatuses] = useState<ServiceStatus[]>(mockServiceStatuses);
+  const [serviceStatuses] = useState<ServiceStatus[]>(mockServiceStatuses);
   const [alerts, setAlerts] = useState<Alert[]>(mockAlerts);
-  const [monitoringConfigs, setMonitoringConfigs] = useState<MonitoringConfig[]>(mockMonitoringConfigs);
+  const [, setMonitoringConfigs] = useState<MonitoringConfig[]>(mockMonitoringConfigs);
   const [activeTab, setActiveTab] = useState('overview');
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [selectedConfig, setSelectedConfig] = useState<MonitoringConfig | null>(null);
   const [newConfig, setNewConfig] = useState<Partial<MonitoringConfig>>({});
   const [newAlert, setNewAlert] = useState<Partial<Alert>>({});
   const { showNotification } = useUIStore();
@@ -867,7 +877,7 @@ const ProductionMonitoring: React.FC<ProductionMonitoringProps> = ({
               </label>
               <Select
                 value={newAlert.severity || 'info'}
-                onValueChange={(value) => setNewAlert(prev => ({ ...prev, severity: value as any }))}
+                onValueChange={(value) => setNewAlert(prev => ({ ...prev, severity: value as Alert['severity'] }))}
               >
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>

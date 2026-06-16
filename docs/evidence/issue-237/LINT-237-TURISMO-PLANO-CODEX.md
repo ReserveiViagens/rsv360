@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #12 concluído)  
-**Baseline global:** **2284** warnings  
+**Atualizado:** 2026-06-02 (cluster #13 concluído)  
+**Baseline global:** **2229** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2284** |
-| Clusters concluídos | **12** / 120 |
-| PR empilhada mais recente | **#424** (cluster #12, −57) |
-| Próximo cluster | **#13** — ProductionMonitoring + dashboard-personalizado + analytics-avancados (−55) |
+| Warnings globais | **2229** |
+| Clusters concluídos | **13** / 120 |
+| PR empilhada mais recente | **#425** (cluster #13, −55) |
+| Próximo cluster | **#14** — animations-demo + backend-integration-test + configuracoes-sistema (−54) |
 
 ## Padrão por cluster (repetir)
 
@@ -44,6 +44,7 @@
 | #422 | api-publica + Dashboard + ProcessMonitoring | −63 → **2401** | pages-turismo-parks-permissions |
 | #423 | cadastros + security-system-test + TaskAutomation | −60 → **2341** | api-dashboard-processmonitoring |
 | #424 | automacao×2 + rsv-360-ecosystem | −57 → **2284** | cadastros-security-taskautomation |
+| #425 | ProductionMonitoring + dashboard-personalizado + analytics-avancados | −55 → **2229** | automacao-rsv-ecosystem |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -61,7 +62,7 @@
 | 10 | −63 | api-publica, Dashboard, ProcessMonitoring | **concluído** (#422) |
 | 11 | −60 | cadastros, security-system-test, TaskAutomation | **concluído** (#423) |
 | 12 | −57 | automacao×2, rsv-360-ecosystem | **concluído** (#424) |
-| 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | pendente |
+| 13 | −55 | ProductionMonitoring, dashboard-personalizado, analytics-avancados | **concluído** (#425) |
 | 14 | −54 | animations-demo, backend-integration-test, configuracoes-sistema | pendente |
 | 15 | −54 | cotacoes/hoteis, dashboard-personalizado, insurance | pendente |
 | 16 | −54 | integracoes-webhooks, transport, AdvancedReportBuilder | pendente |
