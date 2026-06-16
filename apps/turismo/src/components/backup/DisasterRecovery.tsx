@@ -1,96 +1,49 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Shield,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  Clock,
-  Zap,
   Activity,
   RefreshCw,
   Play,
-  Pause,
-  Stop,
   Settings,
-  Calendar,
-  Database,
   Server,
-  Cloud,
-  Archive,
-  RotateCcw,
-  TrendingUp,
-  BarChart3,
   FileText,
-  Folder,
-  HardDrive,
-  Monitor,
-  Globe,
-  Lock,
-  Key,
   Eye,
-  EyeOff,
-  Search,
-  Filter,
   Plus,
   Edit,
-  Trash2,
   Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
   Info,
-  Warning,
-  Timer,
-  MapPin,
-  Building,
-  Phone,
-  Mail,
-  User,
-  Code,
-  Layers,
-  Router,
-  Star,
-  Heart,
-  Bookmark,
-  Target,
-  Gauge,
-  Users,
-  Download,
-  Upload,
-  Save
-} from 'lucide-react'
+  Target
+} from 'lucide-react';
 import { 
-  LineChart, 
   Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
   BarChart, 
   Bar, 
   PieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Disaster Recovery
@@ -270,8 +223,6 @@ interface RecoveryTest {
 
 const DisasterRecovery: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedPlan, setSelectedPlan] = useState<DisasterRecoveryPlan | null>(null)
-  const [selectedEvent, setSelectedEvent] = useState<DisasterEvent | null>(null)
 
   // Dados mock para demonstração
   const [recoveryPlans] = useState<DisasterRecoveryPlan[]>([
