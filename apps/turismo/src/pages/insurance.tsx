@@ -1,38 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
-import { 
-  Shield, 
-  FileText, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock,
+import {
+  Shield,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
   Search,
-  Filter,
   Plus,
   Edit,
   Eye,
   Download,
-  Upload,
-  Calendar,
-  User,
-  CreditCard,
-  MapPin,
-  Phone,
-  Mail,
   TrendingUp,
-  BarChart3,
-  Settings,
-  Bell,
   Heart,
   Car,
   Plane,
   Home,
-  Briefcase,
-  Umbrella,
-  Zap,
-  XCircle
+  Briefcase
 } from 'lucide-react';
 
 interface InsurancePolicy {
@@ -86,13 +70,11 @@ interface InsuranceType {
 }
 
 export default function InsurancePage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('policies');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showNewPolicyModal, setShowNewPolicyModal] = useState(false);
 
   // Dados simulados - em produção viriam da API
@@ -261,16 +243,6 @@ export default function InsurancePage() {
       case 'property': return <Home className="h-6 w-6 text-orange-500" />;
       case 'business': return <Briefcase className="h-6 w-6 text-indigo-500" />;
       default: return <Shield className="h-6 w-6 text-gray-500" />;
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active': return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'expired': return <Clock className="h-5 w-5 text-yellow-500" />;
-      case 'cancelled': return <XCircle className="h-5 w-5 text-red-500" />;
-      case 'pending': return <AlertTriangle className="h-5 w-5 text-orange-500" />;
-      default: return <Clock className="h-5 w-5 text-gray-500" />;
     }
   };
 
