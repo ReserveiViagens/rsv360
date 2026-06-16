@@ -1,46 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-    Send, 
-    Search, 
-    MoreVertical, 
-    Phone, 
-    Video, 
-    Image, 
-    Paperclip, 
-    Smile, 
-    Mic, 
-    User, 
-    Bot, 
-    Clock, 
-    Check, 
-    CheckCheck,
-    Archive,
-    Trash,
-    Block,
-    Star,
-    Edit,
-    Reply,
-    Forward,
-    Copy,
-    Download,
-    Filter,
-    Plus,
-    Settings,
-    MessageSquare,
-    Users,
-    Hash,
-    AtSign,
-    Calendar,
-    MapPin,
-    DollarSign,
-    TrendingUp,
-    AlertCircle,
-    Info,
-    HelpCircle
+import {
+  Send,
+  Search,
+  MoreVertical,
+  Phone,
+  Video,
+  Image as ImageIcon,
+  Paperclip,
+  Smile,
+  Check,
+  CheckCheck,
+  Plus,
+  Settings,
+  MessageSquare
 } from 'lucide-react';
-import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useRouter } from 'next/router';
 
 interface Message {
     id: string;
@@ -86,9 +60,129 @@ interface ChatStats {
     resolvedToday: number;
 }
 
+// Mock data para conversas
+const MOCK_CONVERSATIONS: Conversation[] = [
+    {
+        id: '1',
+        title: 'João Silva - Reserva Hotel',
+        participants: ['João Silva', 'Agente Maria'],
+        lastMessage: 'Perfeito! Sua reserva foi confirmada para o dia 15/12.',
+        lastMessageTime: new Date('2025-06-02T11:30:00'), // 30 min atrás
+        unreadCount: 2,
+        status: 'active',
+        type: 'customer',
+        priority: 'high',
+        category: 'booking',
+        tags: ['hotel', 'reserva', 'urgente']
+    },
+    {
+        id: '2',
+        title: 'Maria Santos - Pagamento',
+        participants: ['Maria Santos', 'Agente Carlos'],
+        lastMessage: 'O pagamento foi processado com sucesso.',
+        lastMessageTime: new Date('2025-06-02T10:00:00'), // 2h atrás
+        unreadCount: 0,
+        status: 'active',
+        type: 'customer',
+        priority: 'medium',
+        category: 'payment',
+        tags: ['pagamento', 'confirmado']
+    },
+    {
+        id: '3',
+        title: 'Pedro Costa - Suporte Técnico',
+        participants: ['Pedro Costa', 'Bot Assistente'],
+        lastMessage: 'Como posso ajudá-lo com sua viagem?',
+        lastMessageTime: new Date('2025-06-02T07:00:00'), // 5h atrás
+        unreadCount: 1,
+        status: 'active',
+        type: 'bot',
+        priority: 'low',
+        category: 'support',
+        tags: ['suporte', 'bot']
+    },
+    {
+        id: '4',
+        title: 'Ana Oliveira - Vendas',
+        participants: ['Ana Oliveira', 'Agente João'],
+        lastMessage: 'Gostaria de saber mais sobre os pacotes de viagem.',
+        lastMessageTime: new Date('2025-06-01T12:00:00'), // 1 dia atrás
+        unreadCount: 0,
+        status: 'active',
+        type: 'customer',
+        priority: 'medium',
+        category: 'sales',
+        tags: ['vendas', 'pacotes']
+    },
+    {
+        id: '5',
+        title: 'Carlos Ferreira - Reclamação',
+        participants: ['Carlos Ferreira', 'Agente Supervisor'],
+        lastMessage: 'Vou verificar imediatamente sua reclamação.',
+        lastMessageTime: new Date('2025-05-31T12:00:00'), // 2 dias atrás
+        unreadCount: 0,
+        status: 'archived',
+        type: 'customer',
+        priority: 'urgent',
+        category: 'support',
+        tags: ['reclamação', 'urgente']
+    }
+];
+
+// Mock data para mensagens
+const MOCK_MESSAGES: Message[] = [
+    {
+        id: '1',
+        content: 'Olá! Gostaria de fazer uma reserva para o hotel em São Paulo.',
+        sender: 'user',
+        timestamp: new Date('2025-06-02T10:00:00'),
+        type: 'text',
+        status: 'read'
+    },
+    {
+        id: '2',
+        content: 'Olá João! Claro, posso ajudá-lo com a reserva. Para qual data você gostaria?',
+        sender: 'agent',
+        timestamp: new Date('2025-06-02T10:05:00'),
+        type: 'text',
+        status: 'read'
+    },
+    {
+        id: '3',
+        content: 'Para o dia 15 de dezembro, por favor.',
+        sender: 'user',
+        timestamp: new Date('2025-06-02T10:10:00'),
+        type: 'text',
+        status: 'read'
+    },
+    {
+        id: '4',
+        content: 'Perfeito! Vou verificar a disponibilidade para você.',
+        sender: 'agent',
+        timestamp: new Date('2025-06-02T10:15:00'),
+        type: 'text',
+        status: 'read'
+    },
+    {
+        id: '5',
+        content: 'Excelente! Temos disponibilidade. O valor da diária é R$ 350,00. Posso confirmar a reserva?',
+        sender: 'agent',
+        timestamp: new Date('2025-06-02T11:30:00'),
+        type: 'text',
+        status: 'delivered'
+    },
+    {
+        id: '6',
+        content: 'Perfeito! Sua reserva foi confirmada para o dia 15/12.',
+        sender: 'agent',
+        timestamp: new Date('2025-06-02T11:35:00'),
+        type: 'text',
+        status: 'sent'
+    }
+];
+
+
 export default function Chat() {
-    const { user } = useAuth();
-    const router = useRouter();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -96,9 +190,9 @@ export default function Chat() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedStatus, setSelectedStatus] = useState('all');
-    const [showNewConversation, setShowNewConversation] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
+    const [, setShowNewConversation] = useState(false);
+    const [, setShowSettings] = useState(false);
+    const [isTyping] = useState(false);
     const [chatStats, setChatStats] = useState<ChatStats>({
         totalConversations: 0,
         activeConversations: 0,
@@ -109,134 +203,17 @@ export default function Chat() {
     });
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Mock data para conversas
-    const mockConversations: Conversation[] = [
-        {
-            id: '1',
-            title: 'João Silva - Reserva Hotel',
-            participants: ['João Silva', 'Agente Maria'],
-            lastMessage: 'Perfeito! Sua reserva foi confirmada para o dia 15/12.',
-            lastMessageTime: new Date(Date.now() - 1000 * 60 * 30), // 30 min atrás
-            unreadCount: 2,
-            status: 'active',
-            type: 'customer',
-            priority: 'high',
-            category: 'booking',
-            tags: ['hotel', 'reserva', 'urgente']
-        },
-        {
-            id: '2',
-            title: 'Maria Santos - Pagamento',
-            participants: ['Maria Santos', 'Agente Carlos'],
-            lastMessage: 'O pagamento foi processado com sucesso.',
-            lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2h atrás
-            unreadCount: 0,
-            status: 'active',
-            type: 'customer',
-            priority: 'medium',
-            category: 'payment',
-            tags: ['pagamento', 'confirmado']
-        },
-        {
-            id: '3',
-            title: 'Pedro Costa - Suporte Técnico',
-            participants: ['Pedro Costa', 'Bot Assistente'],
-            lastMessage: 'Como posso ajudá-lo com sua viagem?',
-            lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5h atrás
-            unreadCount: 1,
-            status: 'active',
-            type: 'bot',
-            priority: 'low',
-            category: 'support',
-            tags: ['suporte', 'bot']
-        },
-        {
-            id: '4',
-            title: 'Ana Oliveira - Vendas',
-            participants: ['Ana Oliveira', 'Agente João'],
-            lastMessage: 'Gostaria de saber mais sobre os pacotes de viagem.',
-            lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 dia atrás
-            unreadCount: 0,
-            status: 'active',
-            type: 'customer',
-            priority: 'medium',
-            category: 'sales',
-            tags: ['vendas', 'pacotes']
-        },
-        {
-            id: '5',
-            title: 'Carlos Ferreira - Reclamação',
-            participants: ['Carlos Ferreira', 'Agente Supervisor'],
-            lastMessage: 'Vou verificar imediatamente sua reclamação.',
-            lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 dias atrás
-            unreadCount: 0,
-            status: 'archived',
-            type: 'customer',
-            priority: 'urgent',
-            category: 'support',
-            tags: ['reclamação', 'urgente']
-        }
-    ];
-
-    // Mock data para mensagens
-    const mockMessages: Message[] = [
-        {
-            id: '1',
-            content: 'Olá! Gostaria de fazer uma reserva para o hotel em São Paulo.',
-            sender: 'user',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-            type: 'text',
-            status: 'read'
-        },
-        {
-            id: '2',
-            content: 'Olá João! Claro, posso ajudá-lo com a reserva. Para qual data você gostaria?',
-            sender: 'agent',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2 + 1000 * 60 * 5),
-            type: 'text',
-            status: 'read'
-        },
-        {
-            id: '3',
-            content: 'Para o dia 15 de dezembro, por favor.',
-            sender: 'user',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2 + 1000 * 60 * 10),
-            type: 'text',
-            status: 'read'
-        },
-        {
-            id: '4',
-            content: 'Perfeito! Vou verificar a disponibilidade para você.',
-            sender: 'agent',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2 + 1000 * 60 * 15),
-            type: 'text',
-            status: 'read'
-        },
-        {
-            id: '5',
-            content: 'Excelente! Temos disponibilidade. O valor da diária é R$ 350,00. Posso confirmar a reserva?',
-            sender: 'agent',
-            timestamp: new Date(Date.now() - 1000 * 60 * 30),
-            type: 'text',
-            status: 'delivered'
-        },
-        {
-            id: '6',
-            content: 'Perfeito! Sua reserva foi confirmada para o dia 15/12.',
-            sender: 'agent',
-            timestamp: new Date(Date.now() - 1000 * 60 * 25),
-            type: 'text',
-            status: 'sent'
-        }
-    ];
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     useEffect(() => {
         // Simular carregamento de dados
         setTimeout(() => {
-            setConversations(mockConversations);
+            setConversations(MOCK_CONVERSATIONS);
             setChatStats({
-                totalConversations: mockConversations.length,
-                activeConversations: mockConversations.filter(c => c.status === 'active').length,
+                totalConversations: MOCK_CONVERSATIONS.length,
+                activeConversations: MOCK_CONVERSATIONS.filter(c => c.status === 'active').length,
                 averageResponseTime: 2.5,
                 satisfactionRate: 4.8,
                 messagesToday: 156,
@@ -247,14 +224,12 @@ export default function Chat() {
 
     useEffect(() => {
         if (selectedConversation) {
-            setMessages(mockMessages);
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- demo mock load on conversation select
+            setMessages(MOCK_MESSAGES);
             scrollToBottom();
         }
     }, [selectedConversation]);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
 
     const handleSendMessage = () => {
         if (newMessage.trim() && selectedConversation) {
@@ -573,7 +548,7 @@ export default function Chat() {
                                         <Paperclip className="w-5 h-5" />
                                     </button>
                                     <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
-                                        <Image className="w-5 h-5" />
+                                        <ImageIcon className="w-5 h-5" />
                                     </button>
                                     <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
                                         <Smile className="w-5 h-5" />

@@ -53,7 +53,7 @@ const createApiClient = (baseURL: string) => {
                   }
                   return await retryResponse.json();
                 }
-              } catch (refreshError) {
+              } catch (_refreshError) {
                 // Refresh failed, redirect to login
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
@@ -76,14 +76,14 @@ const createApiClient = (baseURL: string) => {
       return this.request<T>(endpoint, { method: 'GET' });
     },
 
-    post<T>(endpoint: string, data?: any): Promise<T> {
+    post<T>(endpoint: string, data?: unknown): Promise<T> {
       return this.request<T>(endpoint, {
         method: 'POST',
         body: data ? JSON.stringify(data) : undefined,
       });
     },
 
-    put<T>(endpoint: string, data?: any): Promise<T> {
+    put<T>(endpoint: string, data?: unknown): Promise<T> {
       return this.request<T>(endpoint, {
         method: 'PUT',
         body: data ? JSON.stringify(data) : undefined,
@@ -94,7 +94,7 @@ const createApiClient = (baseURL: string) => {
       return this.request<T>(endpoint, { method: 'DELETE' });
     },
 
-    patch<T>(endpoint: string, data?: any): Promise<T> {
+    patch<T>(endpoint: string, data?: unknown): Promise<T> {
       return this.request<T>(endpoint, {
         method: 'PATCH',
         body: data ? JSON.stringify(data) : undefined,
@@ -141,12 +141,12 @@ export const authService = {
   
   verify: () => coreApi.post('/api/core/verify'),
   
-  register: (userData: any) =>
+  register: (userData: unknown) =>
     coreApi.post('/api/users/', userData),
   
   getCurrentUser: () => coreApi.get('/api/users/me'),
   
-  updateUser: (userData: any) =>
+  updateUser: (userData: unknown) =>
     coreApi.put('/api/users/me', userData),
   
   changePassword: (currentPassword: string, newPassword: string) =>
@@ -158,25 +158,25 @@ export const loyaltyService = {
   getUserLoyalty: (userId: number) => loyaltyApi.get(`/loyalty/users/${userId}/`),
   getCampaigns: () => loyaltyApi.get('/loyalty/campaigns/'),
   getStats: () => loyaltyApi.get('/loyalty/stats/'),
-  createCampaign: (campaignData: any) => loyaltyApi.post('/loyalty/campaigns/', campaignData),
-  updateTier: (tierId: number, tierData: any) => loyaltyApi.put(`/loyalty/tiers/${tierId}`, tierData),
+  createCampaign: (campaignData: unknown) => loyaltyApi.post('/loyalty/campaigns/', campaignData),
+  updateTier: (tierId: number, tierData: unknown) => loyaltyApi.put(`/loyalty/tiers/${tierId}`, tierData),
 };
 
 export const groupsService = {
   getGroups: () => coreApi.get('/groups/'),
   getGroup: (groupId: number) => coreApi.get(`/groups/${groupId}/`),
-  createGroup: (groupData: any) => coreApi.post('/groups/', groupData),
-  updateGroup: (groupId: number, groupData: any) => coreApi.put(`/groups/${groupId}`, groupData),
+  createGroup: (groupData: unknown) => coreApi.post('/groups/', groupData),
+  updateGroup: (groupId: number, groupData: unknown) => coreApi.put(`/groups/${groupId}`, groupData),
   deleteGroup: (groupId: number) => coreApi.delete(`/groups/${groupId}`),
   getGroupMembers: (groupId: number) => coreApi.get(`/groups/${groupId}/members/`),
-  addMember: (groupId: number, memberData: any) => coreApi.post(`/groups/${groupId}/members/`, memberData),
+  addMember: (groupId: number, memberData: unknown) => coreApi.post(`/groups/${groupId}/members/`, memberData),
   getGroupActivities: (groupId: number) => coreApi.get(`/groups/${groupId}/activities/`),
 };
 
 export const documentsService = {
-  getDocuments: (params?: any) => documentsApi.get(`/documents/?${new URLSearchParams(params).toString()}`),
+  getDocuments: (params?: Record<string, string>) => documentsApi.get(`/documents/?${new URLSearchParams(params).toString()}`),
   getDocument: (docId: number) => documentsApi.get(`/documents/${docId}/`),
-  uploadDocument: (file: File, metadata: any) => {
+  uploadDocument: (file: File, metadata: Record<string, string>) => {
     const formData = new FormData();
     formData.append('file', file);
     Object.keys(metadata).forEach(key => {
@@ -184,17 +184,17 @@ export const documentsService = {
     });
     return documentsApi.post('/documents/upload/', formData);
   },
-  updateDocument: (docId: number, docData: any) => documentsApi.put(`/documents/${docId}`, docData),
+  updateDocument: (docId: number, docData: unknown) => documentsApi.put(`/documents/${docId}`, docData),
   deleteDocument: (docId: number) => documentsApi.delete(`/documents/${docId}`),
   getCategories: () => documentsApi.get('/documents/categories/'),
   searchDocuments: (query: string) => documentsApi.get(`/documents/search/?q=${query}`),
 };
 
 export const visaService = {
-  getApplications: (params?: any) => visaApi.get(`/visa/applications/?${new URLSearchParams(params).toString()}`),
+  getApplications: (params?: Record<string, string>) => visaApi.get(`/visa/applications/?${new URLSearchParams(params).toString()}`),
   getApplication: (appId: number) => visaApi.get(`/visa/applications/${appId}/`),
-  createApplication: (appData: any) => visaApi.post('/visa/applications/', appData),
-  updateApplication: (appId: number, appData: any) => visaApi.put(`/visa/applications/${appId}`, appData),
+  createApplication: (appData: unknown) => visaApi.post('/visa/applications/', appData),
+  updateApplication: (appId: number, appData: unknown) => visaApi.put(`/visa/applications/${appId}`, appData),
   getVisaTypes: () => visaApi.get('/visa/types/'),
   getStats: () => visaApi.get('/visa/stats/'),
   uploadDocument: (appId: number, file: File) => {
@@ -205,74 +205,74 @@ export const visaService = {
 };
 
 export const insuranceService = {
-  getPolicies: (params?: any) => insuranceApi.get(`/insurance/policies/?${new URLSearchParams(params).toString()}`),
+  getPolicies: (params?: Record<string, string>) => insuranceApi.get(`/insurance/policies/?${new URLSearchParams(params).toString()}`),
   getPolicy: (policyId: number) => insuranceApi.get(`/insurance/policies/${policyId}/`),
-  createPolicy: (policyData: any) => insuranceApi.post('/insurance/policies/', policyData),
-  updatePolicy: (policyId: number, policyData: any) => insuranceApi.put(`/insurance/policies/${policyId}`, policyData),
-  getClaims: (params?: any) => insuranceApi.get(`/insurance/claims/?${new URLSearchParams(params).toString()}`),
+  createPolicy: (policyData: unknown) => insuranceApi.post('/insurance/policies/', policyData),
+  updatePolicy: (policyId: number, policyData: unknown) => insuranceApi.put(`/insurance/policies/${policyId}`, policyData),
+  getClaims: (params?: Record<string, string>) => insuranceApi.get(`/insurance/claims/?${new URLSearchParams(params).toString()}`),
   getClaim: (claimId: number) => insuranceApi.get(`/insurance/claims/${claimId}/`),
-  createClaim: (claimData: any) => insuranceApi.post('/insurance/claims/', claimData),
-  updateClaim: (claimId: number, claimData: any) => insuranceApi.put(`/insurance/claims/${claimId}`, claimData),
+  createClaim: (claimData: unknown) => insuranceApi.post('/insurance/claims/', claimData),
+  updateClaim: (claimId: number, claimData: unknown) => insuranceApi.put(`/insurance/claims/${claimId}`, claimData),
   getInsuranceTypes: () => insuranceApi.get('/insurance/types/'),
   getStats: () => insuranceApi.get('/insurance/stats/'),
 };
 
 export const travelService = {
-  getBookings: (params?: any) => travelApi.get(`/travel/bookings/?${new URLSearchParams(params).toString()}`),
+  getBookings: (params?: Record<string, string>) => travelApi.get(`/travel/bookings/?${new URLSearchParams(params).toString()}`),
   getBooking: (bookingId: number) => travelApi.get(`/travel/bookings/${bookingId}/`),
-  createBooking: (bookingData: any) => travelApi.post('/travel/bookings/', bookingData),
-  updateBooking: (bookingId: number, bookingData: any) => travelApi.put(`/travel/bookings/${bookingId}`, bookingData),
+  createBooking: (bookingData: unknown) => travelApi.post('/travel/bookings/', bookingData),
+  updateBooking: (bookingId: number, bookingData: unknown) => travelApi.put(`/travel/bookings/${bookingId}`, bookingData),
   cancelBooking: (bookingId: number) => travelApi.delete(`/travel/bookings/${bookingId}`),
   getDestinations: () => travelApi.get('/travel/destinations/'),
-  getHotels: (params?: any) => travelApi.get(`/travel/hotels/?${new URLSearchParams(params).toString()}`),
-  getFlights: (params?: any) => travelApi.get(`/travel/flights/?${new URLSearchParams(params).toString()}`),
+  getHotels: (params?: Record<string, string>) => travelApi.get(`/travel/hotels/?${new URLSearchParams(params).toString()}`),
+  getFlights: (params?: Record<string, string>) => travelApi.get(`/travel/flights/?${new URLSearchParams(params).toString()}`),
 };
 
 export const attractionsService = {
-  getAttractions: (params?: any) => attractionsApi.get(`/attractions/?${new URLSearchParams(params).toString()}`),
+  getAttractions: (params?: Record<string, string>) => attractionsApi.get(`/attractions/?${new URLSearchParams(params).toString()}`),
   getAttraction: (attractionId: number) => attractionsApi.get(`/attractions/${attractionId}/`),
-  createAttraction: (attractionData: any) => attractionsApi.post('/attractions/', attractionData),
-  updateAttraction: (attractionId: number, attractionData: any) => attractionsApi.put(`/attractions/${attractionId}`, attractionData),
+  createAttraction: (attractionData: unknown) => attractionsApi.post('/attractions/', attractionData),
+  updateAttraction: (attractionId: number, attractionData: unknown) => attractionsApi.put(`/attractions/${attractionId}`, attractionData),
   deleteAttraction: (attractionId: number) => attractionsApi.delete(`/attractions/${attractionId}`),
   getCategories: () => attractionsApi.get('/attractions/categories/'),
   searchAttractions: (query: string) => attractionsApi.get(`/attractions/search/?q=${query}`),
 };
 
 export const ticketsService = {
-  getTickets: (params?: any) => ticketsApi.get(`/tickets/?${new URLSearchParams(params).toString()}`),
+  getTickets: (params?: Record<string, string>) => ticketsApi.get(`/tickets/?${new URLSearchParams(params).toString()}`),
   getTicket: (ticketId: number) => ticketsApi.get(`/tickets/${ticketId}/`),
-  createTicket: (ticketData: any) => ticketsApi.post('/tickets/', ticketData),
-  updateTicket: (ticketId: number, ticketData: any) => ticketsApi.put(`/tickets/${ticketId}`, ticketData),
+  createTicket: (ticketData: unknown) => ticketsApi.post('/tickets/', ticketData),
+  updateTicket: (ticketId: number, ticketData: unknown) => ticketsApi.put(`/tickets/${ticketId}`, ticketData),
   deleteTicket: (ticketId: number) => ticketsApi.delete(`/tickets/${ticketId}`),
   getTicketTypes: () => ticketsApi.get('/tickets/types/'),
   validateTicket: (ticketCode: string) => ticketsApi.post('/tickets/validate/', { code: ticketCode }),
 };
 
 export const financeService = {
-  getTransactions: (params?: any) => financeApi.get(`/finance/transactions/?${new URLSearchParams(params).toString()}`),
+  getTransactions: (params?: Record<string, string>) => financeApi.get(`/finance/transactions/?${new URLSearchParams(params).toString()}`),
   getTransaction: (transactionId: number) => financeApi.get(`/finance/transactions/${transactionId}/`),
-  createTransaction: (transactionData: any) => financeApi.post('/finance/transactions/', transactionData),
-  getReports: (params?: any) => financeApi.get(`/finance/reports/?${new URLSearchParams(params).toString()}`),
+  createTransaction: (transactionData: unknown) => financeApi.post('/finance/transactions/', transactionData),
+  getReports: (params?: Record<string, string>) => financeApi.get(`/finance/reports/?${new URLSearchParams(params).toString()}`),
   getStats: () => financeApi.get('/finance/stats/'),
-  exportData: (format: string, params?: any) => financeApi.get(`/finance/export/${format}/?${new URLSearchParams(params).toString()}`),
+  exportData: (format: string, params?: Record<string, string>) => financeApi.get(`/finance/export/${format}/?${new URLSearchParams(params).toString()}`),
 };
 
 export const marketingService = {
-  getCampaigns: (params?: any) => marketingApi.get(`/marketing/campaigns/?${new URLSearchParams(params).toString()}`),
+  getCampaigns: (params?: Record<string, string>) => marketingApi.get(`/marketing/campaigns/?${new URLSearchParams(params).toString()}`),
   getCampaign: (campaignId: number) => marketingApi.get(`/marketing/campaigns/${campaignId}/`),
-  createCampaign: (campaignData: any) => marketingApi.post('/marketing/campaigns/', campaignData),
-  updateCampaign: (campaignId: number, campaignData: any) => marketingApi.put(`/marketing/campaigns/${campaignId}`, campaignData),
+  createCampaign: (campaignData: unknown) => marketingApi.post('/marketing/campaigns/', campaignData),
+  updateCampaign: (campaignId: number, campaignData: unknown) => marketingApi.put(`/marketing/campaigns/${campaignId}`, campaignData),
   deleteCampaign: (campaignId: number) => marketingApi.delete(`/marketing/campaigns/${campaignId}`),
   getStats: () => marketingApi.get('/marketing/stats/'),
-  sendEmail: (emailData: any) => marketingApi.post('/marketing/email/', emailData),
+  sendEmail: (emailData: unknown) => marketingApi.post('/marketing/email/', emailData),
 };
 
 export const analyticsService = {
   getDashboardData: () => analyticsApi.get('/analytics/dashboard/'),
-  getReports: (params?: any) => analyticsApi.get(`/analytics/reports/?${new URLSearchParams(params).toString()}`),
-  getMetrics: (metricType: string, params?: any) => analyticsApi.get(`/analytics/metrics/${metricType}/?${new URLSearchParams(params).toString()}`),
+  getReports: (params?: Record<string, string>) => analyticsApi.get(`/analytics/reports/?${new URLSearchParams(params).toString()}`),
+  getMetrics: (metricType: string, params?: Record<string, string>) => analyticsApi.get(`/analytics/metrics/${metricType}/?${new URLSearchParams(params).toString()}`),
   exportReport: (reportId: number, format: string) => analyticsApi.get(`/analytics/reports/${reportId}/export/${format}/`),
-  createCustomReport: (reportData: any) => analyticsApi.post('/analytics/reports/custom/', reportData),
+  createCustomReport: (reportData: unknown) => analyticsApi.post('/analytics/reports/custom/', reportData),
 };
 
 // Hook personalizado para usar os serviços
@@ -294,24 +294,21 @@ export const useApiService = () => {
 };
 
 // Utilitários para tratamento de erros
-export const handleApiError = (error: any) => {
-  if (error.message.includes('401')) {
-    // Redirecionar para login
+export const handleApiError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  if (message.includes('401')) {
     window.location.href = '/login';
-  } else if (error.message.includes('403')) {
-    // Acesso negado
+  } else if (message.includes('403')) {
     console.error('Acesso negado:', error);
-  } else if (error.message.includes('500')) {
-    // Erro interno do servidor
+  } else if (message.includes('500')) {
     console.error('Erro interno do servidor:', error);
   } else {
-    // Outros erros
     console.error('Erro da API:', error);
   }
-  
+
   return {
     success: false,
-    error: error.message,
+    error: message,
   };
 };
 
