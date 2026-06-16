@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Textarea } from '@/components/ui';
-import { Plus, Settings, Copy, Download, Upload, Eye, Edit, Trash2, Star, Bookmark, Search, Filter, Workflow, Users, Clock, CheckCircle } from 'lucide-react';
+import { Card, Button, Input, Badge, Tabs, Select } from '@/components/ui';
+import { Plus, Copy, Download, Upload, Eye, Trash2, Star, Bookmark, Workflow } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WorkflowTemplate {
@@ -56,8 +56,8 @@ export default function WorkflowTemplates({ onTemplateSelect }: WorkflowTemplate
       downloads: 156,
       isPublic: true,
       isFeatured: true,
-      createdAt: new Date(Date.now() - 2592000000),
-      updatedAt: new Date(Date.now() - 86400000),
+      createdAt: new Date('2023-12-02'),
+      updatedAt: new Date('2024-01-19'),
       preview: {
         steps: [
           {
@@ -126,8 +126,8 @@ export default function WorkflowTemplates({ onTemplateSelect }: WorkflowTemplate
       downloads: 89,
       isPublic: true,
       isFeatured: false,
-      createdAt: new Date(Date.now() - 5184000000),
-      updatedAt: new Date(Date.now() - 172800000),
+      createdAt: new Date('2023-10-03'),
+      updatedAt: new Date('2024-01-17'),
       preview: {
         steps: [
           {
@@ -188,8 +188,8 @@ export default function WorkflowTemplates({ onTemplateSelect }: WorkflowTemplate
       downloads: 67,
       isPublic: true,
       isFeatured: false,
-      createdAt: new Date(Date.now() - 7776000000),
-      updatedAt: new Date(Date.now() - 259200000),
+      createdAt: new Date('2023-08-04'),
+      updatedAt: new Date('2024-01-15'),
       preview: {
         steps: [
           {
@@ -258,8 +258,8 @@ export default function WorkflowTemplates({ onTemplateSelect }: WorkflowTemplate
       downloads: 134,
       isPublic: true,
       isFeatured: true,
-      createdAt: new Date(Date.now() - 10368000000),
-      updatedAt: new Date(Date.now() - 345600000),
+      createdAt: new Date('2023-06-05'),
+      updatedAt: new Date('2024-01-12'),
       preview: {
         steps: [
           {
@@ -336,8 +336,8 @@ export default function WorkflowTemplates({ onTemplateSelect }: WorkflowTemplate
       downloads: 45,
       isPublic: true,
       isFeatured: false,
-      createdAt: new Date(Date.now() - 12960000000),
-      updatedAt: new Date(Date.now() - 518400000),
+      createdAt: new Date('2023-04-06'),
+      updatedAt: new Date('2024-01-08'),
       preview: {
         steps: [
           {
