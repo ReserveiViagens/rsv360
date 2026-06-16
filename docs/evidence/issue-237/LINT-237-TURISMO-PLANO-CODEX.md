@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #18 concluído)  
-**Baseline global:** **1961** warnings  
+**Atualizado:** 2026-06-02 (cluster #19 concluído)  
+**Baseline global:** **1910** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1961** |
-| Clusters concluídos | **18** / 120 |
-| PR empilhada mais recente | **#430** (cluster #18, −52) |
-| Próximo cluster | **#19** — visa (src) + BookingCalendar + BookingModal (−51) |
+| Warnings globais | **1910** |
+| Clusters concluídos | **19** / 120 |
+| PR empilhada mais recente | **#431** (cluster #19, −51) |
+| Próximo cluster | **#20** — apiClient + cadastros + gestao (−49) |
 
 ## Padrão por cluster (repetir)
 
@@ -50,6 +50,7 @@
 | #428 | integracoes-webhooks + transport + AdvancedReportBuilder | −54 → **2067** | hoteis-dashboard-insurance |
 | #429 | GoLiveSystem + HelpSystem + ChatSystem | −54 → **2013** | webhooks-transport-reportbuilder |
 | #430 | WorkflowTemplates + visa + configuracoes-gerais | −52 → **1961** | golive-help-chat |
+| #431 | visa (src) + BookingCalendar + BookingModal | −51 → **1910** | workflow-visa-config-gerais |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -73,7 +74,7 @@
 | 16 | −54 | integracoes-webhooks, transport, AdvancedReportBuilder | **concluído** (#428) |
 | 17 | −54 | GoLiveSystem, HelpSystem, ChatSystem | **concluído** (#429) |
 | 18 | −52 | WorkflowTemplates, visa, configuracoes-gerais | **concluído** (#430) |
-| 19 | −51 | visa (src), BookingCalendar, BookingModal | pendente |
+| 19 | −51 | visa (src), BookingCalendar, BookingModal | **concluído** (#431) |
 | 20 | −49 | apiClient, cadastros, gestao | pendente |
 
 ## Clusters 21–120
