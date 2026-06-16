@@ -1,72 +1,17 @@
 import React, { useState } from 'react';
-import { useAuth } from '../src/context/AuthContext';
-import { useRouter } from 'next/navigation';
 import {
-  ArrowLeft,
   DollarSign,
-  TrendingDown,
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle,
   FileText,
   Download,
   Upload,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  User,
-  CreditCard,
-  Building,
   Eye,
-  Edit,
-  Trash2,
-  RefreshCw,
   BarChart3,
-  PieChart,
-  Activity,
-  Shield,
-  AlertTriangle,
-  Info,
-  Copy,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  Settings,
-  Database,
-  Server,
-  Zap,
-  Target,
-  Award,
-  Star,
-  Heart,
-  ThumbsUp,
-  MessageSquare,
-  Bell,
-  Lock,
-  Unlock,
-  Key,
-  UserCheck,
-  Users,
-  UserPlus,
-  UserX,
-  UserEdit,
-  UserCog,
-  UserShield,
-  UserMinus,
-  UserSearch,
-  UserList,
-  UserCheck2,
-  UserX2,
-  UserEdit2,
-  UserCog2,
-  UserShield2,
-  UserMinus2,
-  UserSearch2,
-  UserList2
+  Activity
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -87,12 +32,9 @@ interface Refund {
 }
 
 export default function RefundsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedRefund, setSelectedRefund] = useState<Refund | null>(null);
 
@@ -243,13 +185,13 @@ export default function RefundsPage() {
     { id: 'completed', name: 'Concluídos', icon: CheckCircle }
   ];
 
-  const handleCardClick = (cardId: string) => {
+  const handleCardClick = (_cardId: string) => {
     setSelectedRefund(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada card
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (_action: string) => {
     setSelectedRefund(null);
     setShowModal(true);
     // Aqui você pode implementar lógica específica para cada ação
