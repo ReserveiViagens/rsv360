@@ -1,55 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    TrendingUp, 
-    Mail, 
-    Smartphone, 
-    DollarSign, 
-    BarChart3, 
-    Users, 
-    Target, 
-    Calendar,
-    Plus,
-    Edit,
-    Trash,
-    Play,
-    Pause,
-    Eye,
-    Download,
-    Share2,
-    Settings,
-    Filter,
-    Search,
-    X,
-    Save,
-    CheckCircle,
-    AlertCircle,
-    Clock,
-    Star,
-    Zap,
-    Globe,
-    MessageSquare,
-    Image,
-    Video,
-    FileText,
-    Link,
-    Bell,
-    Heart,
-    ThumbsUp,
-    Share,
-    ArrowUp,
-    ArrowDown,
-    Minus,
-    Percent,
-    Activity,
-    PieChart,
-    LineChart,
-    BarChart,
-    TrendingDown
+import {
+  TrendingUp,
+  Mail,
+  Smartphone,
+  DollarSign,
+  BarChart3,
+  Users,
+  Target,
+  Plus,
+  Edit,
+  Trash,
+  Eye,
+  Download,
+  Search,
+  FileText,
+  Heart,
+  Percent
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
-import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useRouter } from 'next/router';
 
 interface Campaign {
     id: number;
@@ -103,25 +71,20 @@ interface MarketingService {
 }
 
 export default function Marketing() {
-    const { user } = useAuth();
-    const router = useRouter();
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showNewCampaignModal, setShowNewCampaignModal] = useState(false);
-    const [showEditCampaignModal, setShowEditCampaignModal] = useState(false);
-    const [showCampaignDetails, setShowCampaignDetails] = useState(false);
-    const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
-    const [showServiceDetails, setShowServiceDetails] = useState(false);
-    const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
-    const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
-    const [selectedService, setSelectedService] = useState<MarketingService | null>(null);
+    const [, setShowNewCampaignModal] = useState(false);
+    const [, setShowEditCampaignModal] = useState(false);
+    const [, setShowCampaignDetails] = useState(false);
+    const [, setShowAnalyticsModal] = useState(false);
+    const [, setShowServiceDetails] = useState(false);
+    const [, setEditingCampaign] = useState<Campaign | null>(null);
+    const [, setSelectedCampaign] = useState<Campaign | null>(null);
+    const [, setSelectedService] = useState<MarketingService | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     const [selectedStatus, setSelectedStatus] = useState('all');
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
-    const [exportGenerating, setExportGenerating] = useState(false);
+    const [, setShowExportModal] = useState(false);
 
     // ServiÃ§os de Marketing
     const marketingServices: MarketingService[] = [
@@ -371,6 +334,7 @@ export default function Marketing() {
             setCampaigns(mockCampaigns);
             setLoading(false);
         }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only mock load
     }, []);
 
     // MÃ©tricas de marketing
@@ -474,33 +438,6 @@ export default function Marketing() {
         setShowExportModal(true);
     };
 
-    const handleExportSubmit = async () => {
-        setExportGenerating(true);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            const filename = `relatorio-marketing-${new Date().toISOString().split('T')[0]}.${exportFormat}`;
-            const content = `RelatÃ³rio de Marketing - ${new Date().toLocaleDateString()}\n\n`;
-            
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            setShowExportModal(false);
-            alert('RelatÃ³rio exportado com sucesso!');
-        } catch (error) {
-            console.error('Erro ao exportar relatÃ³rio:', error);
-            alert('Erro ao exportar relatÃ³rio. Tente novamente.');
-        } finally {
-            setExportGenerating(false);
-        }
-    };
 
     // FunÃ§Ãµes auxiliares
     const getStatusColor = (status: string) => {
@@ -526,9 +463,6 @@ export default function Marketing() {
         }
     };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('pt-BR');
-    };
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -541,10 +475,6 @@ export default function Marketing() {
         return new Intl.NumberFormat('pt-BR').format(value);
     };
 
-    const calculateROI = (spent: number, conversions: number) => {
-        if (spent === 0) return 0;
-        return ((conversions * 100 - spent) / spent * 100).toFixed(2);
-    };
 
     const filteredCampaigns = campaigns.filter(campaign => {
         const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
