@@ -165,6 +165,7 @@
 - [x] Lint cotacoes/hoteis + dashboard-personalizado (src) + insurance −54 — **GO condicional** *(PR #427)* — `issue-237/LINT-237-TURISMO-HOTEIS-DASHBOARD-INSURANCE.md`
 - [x] Lint integracoes-webhooks + transport + AdvancedReportBuilder −54 — **GO condicional** *(PR #428)* — `issue-237/LINT-237-TURISMO-WEBHOOKS-TRANSPORT-REPORTBUILDER.md`
 - [x] Lint GoLiveSystem + HelpSystem + ChatSystem −54 — **GO condicional** *(PR #429)* — `issue-237/LINT-237-TURISMO-GOLIVE-HELP-CHAT.md`
+- [x] Lint WorkflowTemplates + visa + configuracoes-gerais −52 — **GO condicional** *(PR #430)* — `issue-237/LINT-237-TURISMO-WORKFLOW-VISA-CONFIG-GERAIS.md`
 
 ## Decisão Trilha 0
 
