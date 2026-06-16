@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Pause, CheckCircle, AlertCircle, Clock, Globe, Users, BarChart3, Settings, Eye, Download, Share, Plus, Edit, Trash2, Zap, Shield, Database, Server } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress, Alert, AlertDescription } from '../ui';
+import React, { useState } from 'react';
+import {
+  Play,
+  CheckCircle,
+  Clock,
+  Globe,
+  BarChart3,
+  Eye,
+  Plus
+} from 'lucide-react';
+import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 // Interfaces
@@ -234,7 +242,9 @@ const GoLiveSystem: React.FC<GoLiveSystemProps> = ({
     }, 0) / phases.length,
     phasesCompleted: phases.filter(phase => phase.status === 'completed').length,
     totalPhases: phases.length,
-    estimatedCompletion: new Date(Date.now() + (phases.filter(p => p.status === 'pending').length * 8 * 60 * 60 * 1000)).toLocaleDateString()
+    estimatedCompletion: phases.some(phase => phase.status === 'pending' || phase.status === 'in-progress')
+      ? '2024-01-16'
+      : 'Concluído'
   };
 
   const handlePhaseStart = (phase: GoLivePhase) => {
@@ -705,7 +715,7 @@ const GoLiveSystem: React.FC<GoLiveSystemProps> = ({
                 <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
                 
                 <div className="space-y-6">
-                  {phases.map((phase, index) => (
+                  {phases.map((phase) => (
                     <div key={phase.id} className="relative flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
                         {phase.status === 'completed' ? (
@@ -853,7 +863,7 @@ const GoLiveSystem: React.FC<GoLiveSystemProps> = ({
               </label>
               <Select
                 value={newChecklistItem.priority || 'medium'}
-                onValueChange={(value) => setNewChecklistItem(prev => ({ ...prev, priority: value as any }))}
+                onValueChange={(value) => setNewChecklistItem(prev => ({ ...prev, priority: value as GoLiveChecklist['priority'] }))}
               >
                 <option value="low">Baixa</option>
                 <option value="medium">Média</option>
