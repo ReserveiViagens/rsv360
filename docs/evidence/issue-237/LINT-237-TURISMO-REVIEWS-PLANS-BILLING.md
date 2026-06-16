@@ -61,9 +61,9 @@ Breakdown: **305×** `@typescript-eslint/no-unused-vars`.
 
 Top arquivos restantes (single-file):
 
-1. `pages/upgrades.tsx` — 90
-2. `pages/maps.tsx` — 83
-3. `src/components/training/LearningPaths.tsx` — 81
+1. `pages/videos.tsx` — ~73
+2. `pages/photos.tsx` — ~71
+3. `src/pages/notifications.tsx` — ~71
 
 Ou agrupar **`pages/videos.tsx` + `src/pages/videos.tsx`** se duplicata existir (~142).
 
