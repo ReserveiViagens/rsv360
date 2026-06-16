@@ -131,6 +131,7 @@
 - [x] Lint voucher-editor dead code −66 — **GO condicional** *(PR #383)* — `issue-237/LINT-237-TURISMO-VOUCHER-DEAD-CODE.md`
 - [x] Lint voucher-editor residual −12 — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-VOUCHER-RESIDUAL-WARNINGS.md`
 - [x] Lint performance module −286 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-PERFORMANCE-MODULE.md`
+- [x] Lint upgrades + maps + LearningPaths −254 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-UPGRADES-MAPS-LEARNINGPATHS.md`
 
 ## Decisão Trilha 0
 
