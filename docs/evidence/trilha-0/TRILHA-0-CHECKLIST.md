@@ -132,7 +132,8 @@
 - [x] Lint voucher-editor residual −12 — **GO** *(esta PR)* — `issue-237/LINT-237-TURISMO-VOUCHER-RESIDUAL-WARNINGS.md`
 - [x] Lint performance module −286 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-PERFORMANCE-MODULE.md`
 - [x] Lint upgrades + maps + LearningPaths −254 — **GO condicional** *(PR #392)* — `issue-237/LINT-237-TURISMO-UPGRADES-MAPS-LEARNINGPATHS.md`
-- [x] Lint reviews + plans + billing −305 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-REVIEWS-PLANS-BILLING.md`
+- [x] Lint reviews + plans + billing −305 — **GO condicional** *(PR #393)* — `issue-237/LINT-237-TURISMO-REVIEWS-PLANS-BILLING.md`
+- [x] Lint videos + photos + notifications −264 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-VIDEOS-PHOTOS-NOTIFICATIONS.md`
 
 ## Decisão Trilha 0
 
