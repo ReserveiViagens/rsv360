@@ -1,51 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  MapPin, 
-  Navigation, 
+import {
+  MapPin,
+  Navigation,
   Search,
-  Filter,
-  Download,
-  Printer,
-  Share2,
   Eye,
-  Edit,
   Plus,
-  Clock,
-  Calendar,
-  User,
-  DollarSign,
   Star,
-  MessageSquare,
-  BarChart3,
-  PieChart,
-  Activity,
-  TrendingUp,
-  Users,
-  Percent,
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Zap,
-  Target,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Flag,
-  CheckSquare,
-  Square,
-  Circle,
-  Triangle,
-  Hexagon,
-  Octagon,
   Map,
   Globe,
-  Compass,
-  Navigation2,
   Route,
   Car,
   Plane,
@@ -54,49 +16,7 @@ import {
   Ship,
   Bike,
   Footprints,
-  Home,
-  Building,
   Hotel,
-  Restaurant,
-  Coffee,
-  ShoppingBag,
-  Camera,
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  Smile,
-  Frown,
-  Meh,
-  Grin,
-  Wink,
-  Wink2,
-  Tongue,
-  Tongue2,
-  Disappointed,
-  Confused,
-  Astonished,
-  Flushed,
-  Sunglasses,
-  Dizzy,
-  Expressionless,
-  NoMouth,
-  Mask,
-  Thermometer,
-  Droplet,
-  Umbrella,
-  CloudRain,
-  CloudLightning,
-  CloudSnow,
-  Sun,
-  Moon,
-  CloudOff,
-  CloudDrizzle,
-  CloudFog,
-  Wind,
-  Hurricane,
-  Tornado,
-  Snowflake,
-  ThermometerSun,
   XCircle
 } from 'lucide-react';
 
@@ -135,7 +55,7 @@ interface Route {
 }
 
 const MapsPage: React.FC = () => {
-  const [locations, setLocations] = useState<Location[]>([
+  const [locations] = useState<Location[]>([
     {
       id: 'LOC001',
       name: 'Hotel Copacabana Palace',
@@ -189,7 +109,7 @@ const MapsPage: React.FC = () => {
     }
   ]);
 
-  const [routes, setRoutes] = useState<Route[]>([
+  const [routes] = useState<Route[]>([
     {
       id: 'ROU001',
       origin: 'São Paulo',
@@ -223,7 +143,7 @@ const MapsPage: React.FC = () => {
   const [filterType, setFilterType] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'map' | 'locations' | 'routes' | 'analytics'>('map');
-  const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const typeColors = {
     hotel: 'bg-blue-100 text-blue-800',

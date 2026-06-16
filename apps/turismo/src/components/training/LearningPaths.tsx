@@ -1,109 +1,46 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
-  MapPin,
-  Route,
   Target,
   Brain,
   TrendingUp,
   Clock,
   Star,
   Award,
-  Zap,
-  Activity,
   BarChart3,
-  PieChart,
   Eye,
-  EyeOff,
   Play,
-  Pause,
-  RotateCcw,
   Settings,
   Download,
-  Upload,
   Calendar,
-  User,
   Users,
   Lightbulb,
-  Rocket,
-  Shield,
   BookOpen,
-  GraduationCap,
-  Briefcase,
   Code,
-  Database,
-  Globe,
-  Smartphone,
-  Monitor,
-  Tablet,
-  Laptop,
-  Wifi,
-  Mail,
-  Phone,
-  Building,
   Search,
-  Filter,
   Plus,
-  Edit,
-  Trash2,
-  Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
-  Info,
-  Warning,
-  AlertTriangle,
   CheckCircle,
-  CheckCircle2,
-  XCircle,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  ChevronLeft,
-  ArrowRight,
-  ArrowLeft,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
-  Timer,
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  HelpCircle,
   Bookmark,
-  BookmarkCheck,
-  FileText,
-  Video,
   Headphones,
-  Image,
-  Link,
-  Layers,
-  Compass,
-  Navigation,
   Flag,
-  FlagTriangle,
-  Trophy,
-  Medal,
-  Crown,
-  Sparkles,
-  TrendingDown,
-  FlashIcon,
-  Flame,
-  Mountain,
-  TreePine,
-  Waves
-} from 'lucide-react'
+  Trophy
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -118,14 +55,7 @@ import {
   Bar, 
   PieChart as RechartsPieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip,
-  Treemap
+  Pie
 } from 'recharts'
 
 // Tipos para Learning Paths
@@ -227,7 +157,7 @@ interface QuizQuestion {
   type: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay' | 'matching' | 'ordering'
   question: string
   options?: string[]
-  correctAnswer: any
+  correctAnswer: unknown
   explanation: string
   points: number
   difficulty: number
@@ -385,7 +315,6 @@ interface PathRecommendation {
 
 const LearningPaths: React.FC = () => {
   const [activeTab, setActiveTab] = useState('browse')
-  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterCategory, setFilterCategory] = useState('all')
   const [filterLevel, setFilterLevel] = useState('all')
