@@ -1,13 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Target,
@@ -15,69 +20,23 @@ import {
   TrendingUp,
   TrendingDown,
   CheckCircle,
-  XCircle,
-  Clock,
-  Star,
   Award,
   Zap,
   Activity,
-  BarChart3,
-  PieChart,
   Eye,
-  EyeOff,
   Play,
-  Pause,
   RotateCcw,
   Settings,
   Download,
-  Upload,
   Calendar,
-  User,
   Users,
   Lightbulb,
   Rocket,
-  Shield,
-  BookOpen,
-  GraduationCap,
   Briefcase,
   Code,
-  Database,
-  Globe,
-  Smartphone,
-  Monitor,
-  Tablet,
-  Laptop,
-  Wifi,
-  Mail,
-  Phone,
-  Building,
-  MapPin,
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
   Info,
-  AlertTriangle as Warning,
-  AlertTriangle,
-  CheckSquare,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  ArrowRight,
-  ArrowLeft,
-  RefreshCw,
-  Timer,
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  HelpCircle
-} from 'lucide-react'
+  AlertTriangle
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -92,12 +51,7 @@ import {
   Bar, 
   PieChart as RechartsPieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart
+  Pie
 } from 'recharts'
 
 // Tipos para Skills Assessment
@@ -143,7 +97,7 @@ interface Question {
   question: string
   description?: string
   options?: string[]
-  correctAnswer?: any
+  correctAnswer?: unknown
   explanation?: string
   points: number
   difficulty: 'easy' | 'medium' | 'hard'
@@ -268,10 +222,7 @@ interface SkillGap {
 
 const SkillsAssessment: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [currentAssessment, setCurrentAssessment] = useState<AssessmentMethod | null>(null)
-  const [assessmentProgress, setAssessmentProgress] = useState(0)
-  const [selectedResult, setSelectedResult] = useState<AssessmentResult | null>(null)
+  const [, setSelectedCategory] = useState<string | null>(null)
 
   // Dados mock para demonstração
   const [skillCategories] = useState<SkillCategory[]>([
@@ -757,16 +708,6 @@ const SkillsAssessment: React.FC = () => {
     return new Date(dateString).toLocaleDateString('pt-BR')
   }
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60)
-    const remainingMinutes = minutes % 60
-    
-    if (hours > 0) {
-      return `${hours}h ${remainingMinutes}m`
-    } else {
-      return `${remainingMinutes}m`
-    }
-  }
 
   const getSkillLevelColor = (level: string) => {
     switch (level) {
@@ -778,15 +719,6 @@ const SkillsAssessment: React.FC = () => {
     }
   }
 
-  const getImportanceColor = (importance: string) => {
-    switch (importance) {
-      case 'critical': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      case 'low': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -1189,7 +1121,7 @@ const SkillsAssessment: React.FC = () => {
                     </li>
                     <li className="flex items-start space-x-2">
                       <Target className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span>Não se preocupe com respostas "certas"</span>
+                      <span>Não se preocupe com respostas &quot;certas&quot;</span>
                     </li>
                     <li className="flex items-start space-x-2">
                       <Target className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />

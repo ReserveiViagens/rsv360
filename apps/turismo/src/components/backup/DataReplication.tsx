@@ -1,21 +1,22 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   RefreshCw,
   Database,
-  Server,
-  Cloud,
-  Globe,
-  Zap,
   Activity,
   Clock,
   CheckCircle,
@@ -23,57 +24,15 @@ import {
   AlertTriangle,
   Play,
   Pause,
-  Stop,
   Settings,
-  Calendar,
-  Archive,
-  RotateCcw,
   TrendingUp,
-  TrendingDown,
-  BarChart3,
-  FileText,
-  Folder,
-  HardDrive,
   Monitor,
-  Lock,
-  Key,
   Eye,
-  EyeOff,
-  Search,
-  Filter,
   Plus,
   Edit,
-  Trash2,
-  Copy,
-  Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
-  Info,
-  Warning,
-  Timer,
-  MapPin,
-  Building,
-  Phone,
-  Mail,
-  User,
-  Code,
-  Layers,
-  Router,
-  Star,
-  Heart,
-  Bookmark,
-  Target,
   Gauge,
-  Users,
-  Download,
-  Upload,
-  Save,
-  Shield,
-  Network,
-  ArrowRight,
-  ArrowLeft
-} from 'lucide-react'
+  ArrowRight
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -82,19 +41,12 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
   BarChart, 
   Bar, 
   PieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Data Replication
@@ -170,26 +122,13 @@ interface ReplicationConflict {
   table: string
   record: string
   conflictType: 'insert' | 'update' | 'delete' | 'schema'
-  sourceValue: any
-  targetValue: any
+  sourceValue: unknown
+  targetValue: unknown
   resolution: 'pending' | 'resolved' | 'ignored'
   resolvedBy?: string
   resolvedAt?: string
   resolutionMethod: 'source_wins' | 'target_wins' | 'merge' | 'manual'
   severity: 'low' | 'medium' | 'high' | 'critical'
-}
-
-interface ReplicationMetrics {
-  channelId: string
-  timestamp: string
-  lag: number
-  throughput: number
-  errorCount: number
-  bytesPerSecond: number
-  recordsPerSecond: number
-  cpuUsage: number
-  memoryUsage: number
-  networkUsage: number
 }
 
 interface ReplicationTopology {
@@ -216,8 +155,6 @@ interface ReplicationTopology {
 
 const DataReplication: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedChannel, setSelectedChannel] = useState<ReplicationChannel | null>(null)
-  const [selectedTopology, setSelectedTopology] = useState<ReplicationTopology | null>(null)
 
   // Dados mock para demonstração
   const [replicationChannels] = useState<ReplicationChannel[]>([
