@@ -3,7 +3,7 @@
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
 **Atualizado:** 2026-06-02 (cluster #1 concluído)  
-**Baseline global:** **2971** warnings (excl. `voucher-editor` + `validation.tsx`)  
+**Baseline global:** **2889** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,11 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **2971** |
-| Clusters concluídos | **2** / 120 |
-| PR empilhada mais recente | **#414** (cluster #2, −84) |
-| Branch ativa | `chore/lint-turismo-dashboard-master-hotels-financial` |
-| Próximo cluster | **#3** — Sidebar + customers-rsv + NotificationsPage (−82) |
+| Warnings globais | **2889** |
+| Clusters concluídos | **3** / 120 |
+| PR empilhada mais recente | **#415** (cluster #3, −82) |
+| Próximo cluster | **#4** — customers-complete + AdvancedCharts + ApprovalSystem (−78) |
 
 ## Padrão por cluster (repetir)
 
@@ -35,6 +34,7 @@
 | #412 | dashboard + tickets + ChatbotAI | −87 → **3141** | useapi-conteudo |
 | #413 | IntegrationHub + ProjectTimeline + atracoes | −86 → **3055** | dashboard-tickets-chatbot |
 | #414 | dashboard-master + hotels-funcional + FinancialAnalytics | −84 → **2971** | integration-project-atracoes |
+| #415 | Sidebar + customers-rsv + NotificationsPage | −82 → **2889** | dashboard-master-hotels-financial |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -42,8 +42,8 @@
 |---|-----|----------|--------|
 | 1 | −86 | IntegrationHub, ProjectTimeline, cotacoes/atracoes | **concluído** (#413) |
 | 2 | −84 | dashboard-master, hotels-funcional, FinancialAnalytics | **concluído** (#414) |
-| 3 | −82 | Sidebar, customers-rsv, NotificationsPage | **em andamento** |
-| 4 | −78 | customers-complete, AdvancedCharts, ApprovalSystem | pendente |
+| 3 | −82 | Sidebar, customers-rsv, NotificationsPage | **concluído** (#415) |
+| 4 | −78 | customers-complete, AdvancedCharts, ApprovalSystem | **em andamento** |
 | 5 | −73 | cotacoes/parques, settings, OptimizationEngine | pendente |
 | 6 | −72 | PredictiveAnalytics, SmartAutomation, OfflineSupport | pendente |
 | 7 | −69 | DeployPage, turismo (src), AIEngine | pendente |
@@ -78,7 +78,7 @@ Base empilhada: última branch chore/lint-turismo-* mergeada ou PR aberta.
 
 ## O que falta
 
-- [x] Clusters **1–2** (2971 warnings restantes)
-- [ ] Clusters **3–120**
+- [x] Clusters **1–3** (2889 warnings restantes)
+- [ ] Clusters **4–120**
 - [ ] Atualizar este doc após cada PR (global, PR#, branch)
 - [ ] Fechar issue #237 quando global ≈ 0 ou plano de exceções aprovado
