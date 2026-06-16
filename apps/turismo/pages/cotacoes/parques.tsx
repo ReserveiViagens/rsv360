@@ -7,27 +7,20 @@ import {
   Plus,
   Trash2,
   Save,
-  Image,
+  Image as ImageIcon,
   Lightbulb,
   CheckSquare,
-  Ticket,
   BookOpen,
-  Upload,
-  Eye,
-  Edit,
-  Copy,
-  Clock,
   Users,
-  Calendar,
   Zap
 } from 'lucide-react';
 import { ParkSelector } from '@/components/ParkSelector';
-import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';
+import { Budget } from '@/lib/types/budget';
 import { patchBudgetItemField } from '@/lib/cotacoes/patch-budget-item';
 import { budgetStorage } from '@/lib/budget-storage';
 import { generateId } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getAllParks, getParkById, parkTypes } from '@/lib/parks-data';
+import { getParkById, parkTypes } from '@/lib/parks-data';
 import { QuotePreview } from '@/components/QuotePreview';
 import { exportToPDF, exportToDOCX, generateQuoteHTML } from '@/lib/export-utils';
 
@@ -65,20 +58,54 @@ export default function CotacoesParquesPage() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  function calculateTotals() {
+    const newSubtotal = budget.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || 0;
+    let newDiscount = 0;
+    if (budget.discountType === 'percentage') {
+      newDiscount = newSubtotal * (budget.discount! / 100);
+    } else {
+      newDiscount = budget.discount || 0;
+    }
+
+    let newTaxes = 0;
+    if (budget.taxType === 'percentage') {
+      newTaxes = (newSubtotal - newDiscount) * (budget.taxes! / 100);
+    } else {
+      newTaxes = budget.taxes || 0;
+    }
+
+    const newTotal = newSubtotal - newDiscount + newTaxes;
+    setBudget((prev) => ({
+      ...prev,
+      subtotal: newSubtotal,
+      total: newTotal,
+    }));
+  }
+
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount
     setIsClient(true);
-    calculateTotals();
-    
-    // Carregar orçamento existente se estiver em modo view/edit
+  }, []);
+
+  useEffect(() => {
     const { view, edit } = router.query;
     const budgetId = view || edit;
     if (budgetId && typeof budgetId === 'string') {
       const existing = budgetStorage.getById(budgetId);
       if (existing) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load saved budget from query
         setBudget(existing);
       }
     }
-  }, [router.query, budget.items, budget.discount, budget.taxes, budget.discountType, budget.taxType]);
+  }, [router.query]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- recalc totals when pricing fields change
+    calculateTotals();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- recalc totals when pricing fields change
+  }, [budget.items, budget.discount, budget.taxes, budget.discountType, budget.taxType]);
+
   
   // Calcular data padrão de validade (30 dias após criação)
   const getDefaultValidityDate = (): string => {
@@ -91,11 +118,11 @@ export default function CotacoesParquesPage() {
     return validUntil.toISOString().slice(0, 16);
   };
 
-  const updateBudget = (field: string, value: any) => {
+  const updateBudget = (field: string, value: unknown) => {
     setBudget((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: string, value: unknown) => {
     const newItems = [...budget.items!];
     newItems[index] = patchBudgetItemField(newItems[index], field, value);
     setBudget((prev) => ({ ...prev, items: newItems }));
@@ -137,30 +164,6 @@ export default function CotacoesParquesPage() {
     }));
   };
 
-  const calculateTotals = () => {
-    const newSubtotal = budget.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || 0;
-    let newDiscount = 0;
-    if (budget.discountType === 'percentage') {
-      newDiscount = newSubtotal * (budget.discount! / 100);
-    } else {
-      newDiscount = budget.discount || 0;
-    }
-
-    let newTaxes = 0;
-    if (budget.taxType === 'percentage') {
-      newTaxes = (newSubtotal - newDiscount) * (budget.taxes! / 100);
-    } else {
-      newTaxes = budget.taxes || 0;
-    }
-
-    const newTotal = newSubtotal - newDiscount + newTaxes;
-    setBudget((prev) => ({
-      ...prev,
-      subtotal: newSubtotal,
-      total: newTotal,
-    }));
-  };
-
   const handleSave = () => {
     if (!budget.title || !budget.clientName || !budget.clientEmail || !budget.parkName) {
       alert('Por favor, preencha todos os campos obrigatórios (Título, Cliente, Email, Parque).');
@@ -177,12 +180,12 @@ export default function CotacoesParquesPage() {
       id: budget.id || generateId(),
       createdAt: budget.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: (budget.status as any) || 'draft',
+      status: (budget.status as Budget['status']) || 'draft',
       subtotal: budget.subtotal || 0,
       discount: budget.discount || 0,
       taxes: budget.taxes || 0,
       total: budget.total || 0,
-      items: (budget.items as any) || [],
+      items: (budget.items ?? []) || [],
     } as Budget);
     const w = window.open('', '_blank');
     if (w) { w.document.write(html); w.document.close(); }
@@ -684,12 +687,13 @@ export default function CotacoesParquesPage() {
               {/* Photos */}
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center space-x-2">
-                  <Image className="w-5 h-5 text-purple-600" />
+                  <ImageIcon className="w-5 h-5 text-purple-600" aria-hidden />
                   <span>Fotos do Parque</span>
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
                   {budget.photos?.map((photo) => (
                     <div key={photo.id} className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- preview URL from upload */}
                       <img src={photo.url} alt={photo.caption} className="w-full h-32 object-cover rounded-lg" />
                       <button
                         onClick={() => updateBudget('photos', budget.photos?.filter(p => p.id !== photo.id))}
@@ -883,10 +887,10 @@ export default function CotacoesParquesPage() {
           budget={{
             ...(budget as Budget),
             id: budget.id as string,
-            items: (budget.items as any) || [],
+            items: (budget.items ?? []) || [],
             createdAt: budget.createdAt as string,
             updatedAt: budget.updatedAt as string,
-            status: (budget.status as any) || 'draft',
+            status: (budget.status as Budget['status']) || 'draft',
             subtotal: budget.subtotal || 0,
             discount: budget.discount || 0,
             taxes: budget.taxes || 0,
