@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Bell, Mail, MessageSquare, MessageCircle, Megaphone, TrendingUp, Users, DollarSign, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  Bell,
+  Mail,
+  MessageSquare,
+  MessageCircle,
+  Megaphone
+} from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import {
   PushNotificationSystem,
@@ -15,7 +20,7 @@ import { useUIStore } from '../stores/useUIStore';
 
 const NotificationsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('push');
-  const [quickStats, setQuickStats] = useState({
+  const [quickStats] = useState({
     totalNotifications: 1250,
     activeChats: 8,
     emailCampaigns: 12,
@@ -25,35 +30,35 @@ const NotificationsPage: React.FC = () => {
   });
   const { showNotification } = useUIStore();
 
-  const handleNotificationSent = (notification: any) => {
+  const handleNotificationSent = (_notification: unknown) => {
     showNotification('Notificação enviada com sucesso!', 'success');
   };
 
-  const handleCampaignCreated = (campaign: any) => {
+  const handleCampaignCreated = (_campaign: unknown) => {
     showNotification('Campanha criada com sucesso!', 'success');
   };
 
-  const handleTemplateCreated = (template: any) => {
+  const handleTemplateCreated = (_template: unknown) => {
     showNotification('Template criado com sucesso!', 'success');
   };
 
-  const handleListCreated = (list: any) => {
+  const handleListCreated = (_list: unknown) => {
     showNotification('Lista criada com sucesso!', 'success');
   };
 
-  const handleMessageSent = (message: any) => {
+  const handleMessageSent = (_message: unknown) => {
     showNotification('Mensagem enviada com sucesso!', 'success');
   };
 
-  const handleAgentAssigned = (conversationId: string, agentId: string) => {
+  const handleAgentAssigned = (_conversationId: string, _agentId: string) => {
     showNotification('Agente atribuído com sucesso!', 'success');
   };
 
-  const handleBroadcastCreated = (broadcast: any) => {
+  const handleBroadcastCreated = (_broadcast: unknown) => {
     showNotification('Broadcast criado com sucesso!', 'success');
   };
 
-  const handleSegmentCreated = (segment: any) => {
+  const handleSegmentCreated = (_segment: unknown) => {
     showNotification('Segmento criado com sucesso!', 'success');
   };
 
@@ -227,7 +232,7 @@ const NotificationsPage: React.FC = () => {
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span className="text-sm text-gray-600">
-                Campanha de email "Promoção de Verão" criada
+                Campanha de email &quot;Promoção de Verão&quot; criada
               </span>
               <span className="text-xs text-gray-400 ml-auto">15 min atrás</span>
             </div>
