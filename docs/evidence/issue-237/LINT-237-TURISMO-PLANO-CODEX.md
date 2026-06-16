@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #19 concluído)  
-**Baseline global:** **1910** warnings  
+**Atualizado:** 2026-06-02 (cluster #20 concluído)  
+**Baseline global:** **1861** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1910** |
-| Clusters concluídos | **19** / 120 |
-| PR empilhada mais recente | **#431** (cluster #19, −51) |
-| Próximo cluster | **#20** — apiClient + cadastros + gestao (−49) |
+| Warnings globais | **1861** |
+| Clusters concluídos | **20** / 120 |
+| PR empilhada mais recente | **#432** (cluster #20, −49) |
+| Próximo cluster | **#21** — hotels-complete + reports + travel (−48) |
 
 ## Padrão por cluster (repetir)
 
@@ -51,6 +51,7 @@
 | #429 | GoLiveSystem + HelpSystem + ChatSystem | −54 → **2013** | webhooks-transport-reportbuilder |
 | #430 | WorkflowTemplates + visa + configuracoes-gerais | −52 → **1961** | golive-help-chat |
 | #431 | visa (src) + BookingCalendar + BookingModal | −51 → **1910** | workflow-visa-config-gerais |
+| #432 | apiClient + cadastros + gestao | −49 → **1861** | visa-booking-calendar-modal |
 
 ## Clusters 1–20 (próximos na fila)
 
@@ -75,7 +76,7 @@
 | 17 | −54 | GoLiveSystem, HelpSystem, ChatSystem | **concluído** (#429) |
 | 18 | −52 | WorkflowTemplates, visa, configuracoes-gerais | **concluído** (#430) |
 | 19 | −51 | visa (src), BookingCalendar, BookingModal | **concluído** (#431) |
-| 20 | −49 | apiClient, cadastros, gestao | pendente |
+| 20 | −49 | apiClient, cadastros, gestao | **concluído** (#432) |
 
 ## Clusters 21–120
 

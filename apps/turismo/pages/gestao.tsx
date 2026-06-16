@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
     Users,
     Building,
@@ -6,32 +7,63 @@ import {
     BarChart3,
     FileText,
     Shield,
-    Plus,
     Download,
     Upload,
     Edit,
     Trash2,
     Eye,
-    CheckCircle,
-    AlertCircle,
-    Clock,
-    Star,
-    TrendingUp,
-    Activity,
     UserPlus,
     Building2,
     Cog,
     FileText as FileTextIcon,
-    Database,
     UserCheck,
     X
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
+interface StatsCard {
+    id: number;
+    title: string;
+    value: string;
+    change: string;
+    changeType: 'positive' | 'negative';
+    icon: LucideIcon;
+    color: string;
+}
+
+interface QuickAction {
+    id: number;
+    title: string;
+    description: string;
+    icon: LucideIcon;
+    color: string;
+    action: string;
+}
+
+interface GestaoUser {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    department: string;
+    avatar: string;
+}
+
+interface Department {
+    id: number;
+    name: string;
+    manager: string;
+    employees: number;
+    budget: string;
+    color: string;
+}
+
+type ModalItem = StatsCard | QuickAction | GestaoUser | Department | { title: string };
+
 export default function GestaoSimple() {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('');
-    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [selectedItem, setSelectedItem] = useState<ModalItem | null>(null);
 
     // Estados para formulários
     const [newUserForm, setNewUserForm] = useState({
@@ -83,7 +115,7 @@ export default function GestaoSimple() {
     const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const statsCards = [
+    const statsCards: StatsCard[] = [
         {
             id: 1,
             title: 'Total de Usuários',
@@ -141,26 +173,26 @@ export default function GestaoSimple() {
     ];
 
     // Handlers para funcionalidades
-    const handleCardClick = (card: any) => {
+    const handleCardClick = (card: StatsCard) => {
         setSelectedItem(card);
         setModalType('stats-details');
         setShowModal(true);
     };
 
-    const handleQuickAction = (action: any) => {
+    const handleQuickAction = (action: QuickAction) => {
         setSelectedItem(action);
         setModalType(action.action);
         setShowModal(true);
         setFormErrors({});
     };
 
-    const handleUserClick = (user: any) => {
+    const handleUserClick = (user: GestaoUser) => {
         setSelectedItem(user);
         setModalType('user-details');
         setShowModal(true);
     };
 
-    const handleDepartmentClick = (department: any) => {
+    const handleDepartmentClick = (department: Department) => {
         setSelectedItem(department);
         setModalType('department-details');
         setShowModal(true);
@@ -168,8 +200,8 @@ export default function GestaoSimple() {
 
     // Funções de validação
     const validateForm = (formType: string) => {
-        const errors: any = {};
-        let form: any;
+        const errors: Record<string, string> = {};
+        let form: typeof newUserForm | typeof newDepartmentForm;
 
         if (formType === 'user') {
             form = newUserForm;
@@ -253,7 +285,7 @@ export default function GestaoSimple() {
     };
 
     // Funções de input
-    const handleInputChange = (formType: string, field: string, value: any) => {
+    const handleInputChange = (formType: string, field: string, value: string | boolean | File | null | undefined) => {
         if (formType === 'user') {
             setNewUserForm(prev => ({ ...prev, [field]: value }));
         } else if (formType === 'department') {
@@ -535,7 +567,7 @@ export default function GestaoSimple() {
                                     {modalType === 'export' && 'Exportar Dados'}
                                     {modalType === 'import' && 'Importar Dados'}
                                     {modalType === 'manage-users' && 'Gerenciar Usuários'}
-                                    {modalType === 'stats-details' && `Detalhes de ${selectedItem?.title}`}
+                                    {modalType === 'stats-details' && `Detalhes de ${(selectedItem as StatsCard)?.title}`}
                                     {modalType === 'user-details' && 'Detalhes do Usuário'}
                                     {modalType === 'department-details' && 'Detalhes do Departamento'}
                                 </h3>
@@ -1026,16 +1058,18 @@ export default function GestaoSimple() {
                             )}
 
                             {/* Detalhes de Estatísticas */}
-                            {modalType === 'stats-details' && selectedItem && (
+                            {modalType === 'stats-details' && selectedItem && (() => {
+                                const item = selectedItem as StatsCard;
+                                return (
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Valor:</span>
-                                        <span className="font-medium">{selectedItem.value}</span>
+                                        <span className="font-medium">{item.value}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Mudança:</span>
-                                        <span className={`font-medium ${selectedItem.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
-                                            {selectedItem.change}
+                                        <span className={`font-medium ${item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+                                            {item.change}
                                         </span>
                                     </div>
                                     <div className="flex justify-between">
@@ -1051,26 +1085,29 @@ export default function GestaoSimple() {
                                         </button>
                                     </div>
                                 </div>
-                            )}
+                                );
+                            })()}
 
                             {/* Detalhes de Usuário */}
-                            {modalType === 'user-details' && selectedItem && (
+                            {modalType === 'user-details' && selectedItem && (() => {
+                                const item = selectedItem as GestaoUser;
+                                return (
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Nome:</span>
-                                        <span className="font-medium">{selectedItem.name}</span>
+                                        <span className="font-medium">{item.name}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Email:</span>
-                                        <span className="font-medium">{selectedItem.email}</span>
+                                        <span className="font-medium">{item.email}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Cargo:</span>
-                                        <span className="font-medium">{selectedItem.role}</span>
+                                        <span className="font-medium">{item.role}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Departamento:</span>
-                                        <span className="font-medium">{selectedItem.department}</span>
+                                        <span className="font-medium">{item.department}</span>
                                     </div>
                                     <div className="flex justify-end pt-4">
                                         <button
@@ -1081,26 +1118,29 @@ export default function GestaoSimple() {
                                         </button>
                                     </div>
                                 </div>
-                            )}
+                                );
+                            })()}
 
                             {/* Detalhes de Departamento */}
-                            {modalType === 'department-details' && selectedItem && (
+                            {modalType === 'department-details' && selectedItem && (() => {
+                                const item = selectedItem as Department;
+                                return (
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Nome:</span>
-                                        <span className="font-medium">{selectedItem.name}</span>
+                                        <span className="font-medium">{item.name}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Gerente:</span>
-                                        <span className="font-medium">{selectedItem.manager}</span>
+                                        <span className="font-medium">{item.manager}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Funcionários:</span>
-                                        <span className="font-medium">{selectedItem.employees}</span>
+                                        <span className="font-medium">{item.employees}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Orçamento:</span>
-                                        <span className="font-medium">{selectedItem.budget}</span>
+                                        <span className="font-medium">{item.budget}</span>
                                     </div>
                                     <div className="flex justify-end pt-4">
                                         <button
@@ -1111,7 +1151,8 @@ export default function GestaoSimple() {
                                         </button>
                                     </div>
                                 </div>
-                            )}
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
