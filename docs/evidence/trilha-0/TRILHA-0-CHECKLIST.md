@@ -143,6 +143,7 @@
 - [x] Lint BackupAnalytics + reservations + SecurityCenter −189 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-BACKUPANALYTICS-RESERVATIONS-SECURITY.md`
 - [x] Lint api.ts + pages/chat + src/pages/chat −136 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-API-CHAT.md`
 - [x] Lint financeiro×2 + pages/vouchers −123 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-FINANCEIRO-VOUCHERS.md`
+- [x] Lint AccessControlManager + DocumentationPage + ComplianceManager −121 — **GO condicional** *(esta PR)* — `issue-237/LINT-237-TURISMO-ACCESS-DOC-COMPLIANCE.md`
 
 ## Decisão Trilha 0
 
