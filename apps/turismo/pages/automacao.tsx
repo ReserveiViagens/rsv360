@@ -1,41 +1,45 @@
 import React, { useState } from 'react';
-import { 
-    Zap, 
-    Play, 
-    Pause, 
-    Settings, 
-    Clock, 
-    Calendar,
-    CheckCircle,
-    AlertCircle,
-    TrendingUp,
-    Activity,
-    Database,
-    Cpu,
-    Workflow,
-    Bot,
-    Smartphone,
-    Monitor,
-    Server,
-    Cloud,
-    Shield,
-    BarChart3,
-    FileText,
-    Users,
-    Building,
-    Plus,
-    Edit,
-    Trash2,
-    Eye,
-    X,
-    RefreshCw
+import {
+  Zap,
+  Settings,
+  Clock,
+  Calendar,
+  CheckCircle,
+  AlertCircle,
+  Activity,
+  Database,
+  Workflow,
+  Smartphone,
+  Monitor,
+  Cloud,
+  BarChart3,
+  FileText,
+  Users,
+  Trash2,
+  X,
+  RefreshCw
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
+
+interface AutomacaoSelectedItem {
+    title?: string;
+    name?: string;
+    value?: string;
+    change?: string;
+    changeType?: string;
+    status?: string;
+    lastRun?: string;
+    successRate?: string;
+    type?: string;
+    frequency?: string;
+    action?: string;
+    description?: string;
+}
 
 export default function Automacao() {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('');
-    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [selectedItem, setSelectedItem] = useState<AutomacaoSelectedItem | null>(null);
 
     // Estados para formulários
     const [newWorkflowForm, setNewWorkflowForm] = useState({
@@ -244,26 +248,26 @@ export default function Automacao() {
     ];
 
     // Handlers para funcionalidades
-    const handleCardClick = (card: any) => {
+    const handleCardClick = (card: (typeof statsCards)[number]) => {
         setSelectedItem(card);
         setModalType('stats-details');
         setShowModal(true);
     };
 
-    const handleQuickAction = (action: any) => {
+    const handleQuickAction = (action: (typeof quickActions)[number]) => {
         setSelectedItem(action);
         setModalType(action.action);
         setShowModal(true);
         setFormErrors({});
     };
 
-    const handleWorkflowClick = (workflow: any) => {
+    const handleWorkflowClick = (workflow: (typeof recentWorkflows)[number]) => {
         setSelectedItem(workflow);
         setModalType('workflow-details');
         setShowModal(true);
     };
 
-    const handleTriggerClick = (trigger: any) => {
+    const handleTriggerClick = (trigger: (typeof activeTriggers)[number]) => {
         setSelectedItem(trigger);
         setModalType('trigger-details');
         setShowModal(true);
@@ -271,16 +275,15 @@ export default function Automacao() {
 
     // Funções de validação
     const validateForm = (formType: string) => {
-        const errors: any = {};
-        let form: any;
+        const errors: Record<string, string> = {};
 
         if (formType === 'workflow') {
-            form = newWorkflowForm;
+            const form = newWorkflowForm;
             if (!form.name.trim()) errors.name = 'Nome é obrigatório';
             if (!form.description.trim()) errors.description = 'Descrição é obrigatória';
             if (!form.trigger.trim()) errors.trigger = 'Trigger é obrigatório';
         } else if (formType === 'trigger') {
-            form = newTriggerForm;
+            const form = newTriggerForm;
             if (!form.name.trim()) errors.name = 'Nome é obrigatório';
             if (!form.type.trim()) errors.type = 'Tipo é obrigatório';
         }
@@ -315,7 +318,7 @@ export default function Automacao() {
     };
 
     // Funções de input
-    const handleInputChange = (formType: string, field: string, value: any) => {
+    const handleInputChange = (formType: string, field: string, value: string) => {
         if (formType === 'workflow') {
             setNewWorkflowForm(prev => ({ ...prev, [field]: value }));
         } else if (formType === 'trigger') {
