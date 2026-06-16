@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **2530** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **2464** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
@@ -9,8 +9,8 @@ Baseline: **2530** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 5** (−73): `pages/cotacoes/parques.tsx` (25), `pages/settings.tsx` (24), `src/components/ai/OptimizationEngine.tsx` (24)
 - [x] **Cluster 6** (−72): `src/components/ai/PredictiveAnalytics.tsx` (24), `src/components/ai/SmartAutomation.tsx` (24), `src/components/mobile/OfflineSupport.tsx` (24)
 - [x] **Cluster 7** (−69): `src/pages/DeployPage.tsx` (23), `src/pages/turismo.tsx` (23), `src/components/ai/AIEngine.tsx` (23)
-- [ ] **Cluster 8** (−67): `src/components/projects/TeamManager.tsx` (23), `pages/cotacoes/hoteis.tsx` (22), `pages/permissions.tsx` (22)
-- [ ] **Cluster 9** (−66): `pages/turismo.tsx` (22), `src/pages/parks.tsx` (22), `src/pages/permissions.tsx` (22)
+- [x] **Cluster 8** (−67): `src/components/projects/TeamManager.tsx` (23), `pages/cotacoes/hoteis.tsx` (22), `pages/permissions.tsx` (22)
+- [x] **Cluster 9** (−66): `pages/turismo.tsx` (22), `src/pages/parks.tsx` (22), `src/pages/permissions.tsx` (22)
 - [ ] **Cluster 10** (−63): `src/pages/api-publica.tsx` (21), `src/components/dashboard/Dashboard.tsx` (21), `src/components/workflow/ProcessMonitoring.tsx` (21)
 - [ ] **Cluster 11** (−60): `src/pages/cadastros.tsx` (20), `src/pages/security-system-test.tsx` (20), `src/components/workflow/TaskAutomation.tsx` (20)
 - [ ] **Cluster 12** (−57): `pages/automacao.tsx` (19), `pages/rsv-360-ecosystem.tsx` (19), `src/pages/automacao.tsx` (19)
