@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
-import { 
+import {
   Zap,
   Bot,
   Activity,
@@ -23,35 +23,19 @@ import {
   Clock,
   CheckCircle,
   AlertTriangle,
-  TrendingUp,
-  BarChart3,
   Target,
   Database,
-  Network,
-  Cpu,
-  Calendar,
   Filter,
-  Search,
   Download,
-  Upload,
   Plus,
   Edit,
   Trash2,
   Eye,
-  ArrowRight,
   Workflow,
-  GitBranch,
   Timer,
-  Bell,
-  Mail,
-  MessageSquare,
-  FileText,
-  Code,
-  Layers,
-  Users,
-  Building
+  Bell
 } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Cell } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 
 // Tipos para automação inteligente
 interface AutomationRule {
@@ -62,12 +46,12 @@ interface AutomationRule {
   trigger: {
     type: 'time' | 'event' | 'condition' | 'pattern' | 'threshold'
     condition: string
-    parameters: Record<string, any>
+    parameters: Record<string, unknown>
   }
   actions: {
     type: 'notification' | 'api_call' | 'data_update' | 'workflow_trigger' | 'ai_analysis'
     target: string
-    parameters: Record<string, any>
+    parameters: Record<string, unknown>
   }[]
   status: 'active' | 'paused' | 'error' | 'testing'
   executionCount: number
@@ -84,7 +68,7 @@ interface AutomationExecution {
   startTime: string
   endTime?: string
   status: 'running' | 'completed' | 'failed' | 'cancelled'
-  result?: any
+  result?: unknown
   error?: string
   duration?: number
   triggeredBy: string
@@ -125,10 +109,127 @@ interface SmartSuggestion {
   relatedRules: string[]
 }
 
+const RuleForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="rule-name">Nome da Regra</Label>
+        <Input
+          id="rule-name"
+          placeholder="Ex: Auto-backup Noturno"
+          title="Nome da regra de automação"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="rule-category">Categoria</Label>
+        <Select>
+          <SelectTrigger title="Selecionar categoria">
+            <SelectValue placeholder="Selecionar categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="workflow">Workflow</SelectItem>
+            <SelectItem value="notification">Notificação</SelectItem>
+            <SelectItem value="data_processing">Processamento de Dados</SelectItem>
+            <SelectItem value="monitoring">Monitoramento</SelectItem>
+            <SelectItem value="decision_making">Tomada de Decisão</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="rule-description">Descrição</Label>
+      <Textarea
+        id="rule-description"
+        placeholder="Descreva o que esta regra faz e quando é executada"
+        title="Descrição detalhada da regra"
+      />
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="trigger-type">Tipo de Gatilho</Label>
+        <Select>
+          <SelectTrigger title="Selecionar tipo de gatilho">
+            <SelectValue placeholder="Selecionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="time">Tempo/Cronograma</SelectItem>
+            <SelectItem value="event">Evento do Sistema</SelectItem>
+            <SelectItem value="condition">Condição/Threshold</SelectItem>
+            <SelectItem value="pattern">Padrão Detectado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="priority">Prioridade</Label>
+        <Select>
+          <SelectTrigger title="Selecionar prioridade">
+            <SelectValue placeholder="Selecionar prioridade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">Baixa</SelectItem>
+            <SelectItem value="medium">Média</SelectItem>
+            <SelectItem value="high">Alta</SelectItem>
+            <SelectItem value="critical">Crítica</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="trigger-condition">Condição do Gatilho</Label>
+      <Input
+        id="trigger-condition"
+        placeholder="Ex: daily_at_2am ou cpu_usage > 80%"
+        title="Condição que dispara a regra"
+      />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="actions">Ações (uma por linha)</Label>
+      <Textarea
+        id="actions"
+        placeholder="notification:admin_team&#10;backup:database&#10;api_call:scaling_service"
+        title="Lista de ações a serem executadas"
+      />
+    </div>
+    <div className="space-y-4">
+      <Label>Configurações Avançadas</Label>
+      <div className="space-y-3">
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="ai-learning"
+            className="rounded border-gray-300"
+            title="Permitir que IA aprenda e otimize esta regra"
+          />
+          <Label htmlFor="ai-learning">Aprendizado de máquina habilitado</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="auto-retry"
+            defaultChecked
+            className="rounded border-gray-300"
+            title="Tentar novamente automaticamente em caso de falha"
+          />
+          <Label htmlFor="auto-retry">Retry automático em falhas</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="detailed-logging"
+            defaultChecked
+            className="rounded border-gray-300"
+            title="Log detalhado de execuções"
+          />
+          <Label htmlFor="detailed-logging">Log detalhado</Label>
+        </div>
+      </div>
+    </div>
+  </form>
+)
+
 const SmartAutomation: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isRuleModalOpen, setIsRuleModalOpen] = useState(false)
-  const [selectedRule, setSelectedRule] = useState<AutomationRule | null>(null)
   const [filterCategory, setFilterCategory] = useState('all')
   const [runningExecutions, setRunningExecutions] = useState<string[]>([])
 
@@ -494,129 +595,6 @@ const SmartAutomation: React.FC = () => {
       setRunningExecutions(prev => prev.filter(id => id !== ruleId))
     }, 3000)
   }
-
-  const RuleForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="rule-name">Nome da Regra</Label>
-          <Input 
-            id="rule-name"
-            placeholder="Ex: Auto-backup Noturno"
-            title="Nome da regra de automação"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="rule-category">Categoria</Label>
-          <Select>
-            <SelectTrigger title="Selecionar categoria">
-              <SelectValue placeholder="Selecionar categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="workflow">Workflow</SelectItem>
-              <SelectItem value="notification">Notificação</SelectItem>
-              <SelectItem value="data_processing">Processamento de Dados</SelectItem>
-              <SelectItem value="monitoring">Monitoramento</SelectItem>
-              <SelectItem value="decision_making">Tomada de Decisão</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="rule-description">Descrição</Label>
-        <Textarea 
-          id="rule-description"
-          placeholder="Descreva o que esta regra faz e quando é executada"
-          title="Descrição detalhada da regra"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="trigger-type">Tipo de Gatilho</Label>
-          <Select>
-            <SelectTrigger title="Selecionar tipo de gatilho">
-              <SelectValue placeholder="Selecionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="time">Tempo/Cronograma</SelectItem>
-              <SelectItem value="event">Evento do Sistema</SelectItem>
-              <SelectItem value="condition">Condição/Threshold</SelectItem>
-              <SelectItem value="pattern">Padrão Detectado</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="priority">Prioridade</Label>
-          <Select>
-            <SelectTrigger title="Selecionar prioridade">
-              <SelectValue placeholder="Selecionar prioridade" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="low">Baixa</SelectItem>
-              <SelectItem value="medium">Média</SelectItem>
-              <SelectItem value="high">Alta</SelectItem>
-              <SelectItem value="critical">Crítica</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="trigger-condition">Condição do Gatilho</Label>
-        <Input 
-          id="trigger-condition"
-          placeholder="Ex: daily_at_2am ou cpu_usage > 80%"
-          title="Condição que dispara a regra"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="actions">Ações (uma por linha)</Label>
-        <Textarea 
-          id="actions"
-          placeholder="notification:admin_team&#10;backup:database&#10;api_call:scaling_service"
-          title="Lista de ações a serem executadas"
-        />
-      </div>
-
-      <div className="space-y-4">
-        <Label>Configurações Avançadas</Label>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="ai-learning"
-              className="rounded border-gray-300"
-              title="Permitir que IA aprenda e otimize esta regra"
-            />
-            <Label htmlFor="ai-learning">Aprendizado de máquina habilitado</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="auto-retry"
-              defaultChecked
-              className="rounded border-gray-300"
-              title="Tentar novamente automaticamente em caso de falha"
-            />
-            <Label htmlFor="auto-retry">Retry automático em falhas</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="detailed-logging"
-              defaultChecked
-              className="rounded border-gray-300"
-              title="Log detalhado de execuções"
-            />
-            <Label htmlFor="detailed-logging">Log detalhado</Label>
-          </div>
-        </div>
-      </div>
-    </form>
-  )
 
   return (
     <div className="space-y-6">
