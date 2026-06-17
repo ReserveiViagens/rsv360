@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -11,27 +11,26 @@ import {
   Share2,
   Search,
   Filter,
-  Star,
   Trash2,
-  Edit,
   Users,
   Calendar,
   TrendingUp,
   Heart,
-  MessageCircle,
   BarChart3,
   History,
   Settings,
-  Globe,
-  Zap,
-  Award,
-  Target,
-  Activity
+  Target
 } from 'lucide-react';
 import { TemplateManager, Template } from '@/lib/templates-data';
 import { QuotePreview } from '@/components/QuotePreview';
 import { Budget } from '@/lib/types/budget';
 import { budgetStorage } from '@/lib/budget-storage';
+
+type AdvancedStats = ReturnType<typeof TemplateManager.getAdvancedStats>;
+
+interface V0Window extends Window {
+  __V0_DEFAULT_TEMPLATES__?: unknown[];
+}
 
 export default function TemplatesPage() {
   const router = useRouter();
@@ -49,10 +48,10 @@ export default function TemplatesPage() {
   const [selectedSeason, setSelectedSeason] = useState<'all' | 'alta' | 'baixa'>('all');
   const [showFavorites, setShowFavorites] = useState(false);
   const [showRecommended, setShowRecommended] = useState(false);
-  const [advancedStats, setAdvancedStats] = useState<any>(null);
+  const [advancedStats, setAdvancedStats] = useState<AdvancedStats | null>(null);
 
   // Hidratação inicial dos templates V0, caso inexistentes
-  const ensureExternalTemplatesInitialized = () => {
+  const ensureExternalTemplatesInitialized = useCallback(() => {
     try {
       const existing = localStorage.getItem('reservei-templates');
       if (!existing) {
@@ -84,29 +83,15 @@ export default function TemplatesPage() {
     } catch (e) {
       console.error('Falha ao inicializar templates V0:', e);
     }
-  };
-
-  useEffect(() => {
-    setIsClient(true);
-    // Hidratar V0 se necessário
-    try { ensureExternalTemplatesInitialized(); } catch {}
-    loadTemplates();
   }, []);
 
-  useEffect(() => {
-    filterTemplates();
-  }, [templates, selectedCategory, searchQuery, sortBy]);
-
-  const loadTemplates = () => {
+  const loadTemplates = useCallback(() => {
     const allTemplates = TemplateManager.getAll();
     setTemplates(allTemplates);
-    
-    // Carregar estatísticas avançadas
-    const stats = TemplateManager.getAdvancedStats();
-    setAdvancedStats(stats);
-  };
+    setAdvancedStats(TemplateManager.getAdvancedStats());
+  }, []);
 
-  const filterTemplates = () => {
+  const filterTemplates = useCallback(() => {
     let filtered = templates;
 
     // Filtros especiais
@@ -157,7 +142,23 @@ export default function TemplatesPage() {
     });
 
     setFilteredTemplates(filtered);
-  };
+  }, [templates, selectedCategory, searchQuery, sortBy, showFavorites, showRecommended, selectedRegion, selectedSeason]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsClient(true);
+      try { ensureExternalTemplatesInitialized(); } catch { /* noop */ }
+      loadTemplates();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [ensureExternalTemplatesInitialized, loadTemplates]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      filterTemplates();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [filterTemplates]);
 
   const handleUseTemplate = (template: Template) => {
     // Incrementar contador de uso
@@ -206,9 +207,9 @@ export default function TemplatesPage() {
   const handleImportFromV0 = () => {
     try {
       // Se houver uma fonte global injetada pelo módulo V0, preferir
-      const anyWin = window as any;
-      if (anyWin && Array.isArray(anyWin.__V0_DEFAULT_TEMPLATES__)) {
-        localStorage.setItem('reservei-templates', JSON.stringify(anyWin.__V0_DEFAULT_TEMPLATES__));
+      const v0Win = window as V0Window;
+      if (v0Win && Array.isArray(v0Win.__V0_DEFAULT_TEMPLATES__)) {
+        localStorage.setItem('reservei-templates', JSON.stringify(v0Win.__V0_DEFAULT_TEMPLATES__));
       } else {
         // Fallback: garantir hidratação a partir dos nossos templates
         ensureExternalTemplatesInitialized();
