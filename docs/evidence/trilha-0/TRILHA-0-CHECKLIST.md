@@ -171,6 +171,7 @@
 - [x] Lint hotels-complete + reports + travel −48 — **GO condicional** *(PR #433)* — `issue-237/LINT-237-TURISMO-HOTELS-REPORTS-TRAVEL.md`
 - [x] Lint chatbot-ia + gestao + reports (src) −48 — **GO condicional** *(PR #434)* — `issue-237/LINT-237-TURISMO-CHATBOT-GESTAO-REPORTS-SRC.md`
 - [x] Lint ChatConversations + NotificationManager + PushNotificationSystem −48 — **GO condicional** *(PR #435)* — `issue-237/LINT-237-TURISMO-CHAT-NOTIFICATIONS.md`
+- [x] Lint TaskManager + leiloesApi + marketplace −47 — **GO condicional** *(PR #436)* — `issue-237/LINT-237-TURISMO-TASK-LEILOES-MARKETPLACE.md`
 
 ## Decisão Trilha 0
 
