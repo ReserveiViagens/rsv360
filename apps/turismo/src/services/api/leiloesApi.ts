@@ -1,4 +1,4 @@
-import apiClient, { api } from '../apiClient';
+import { api, type ApiResponse } from '../apiClient';
 
 // Tipos para Leilões
 export interface Leilao {
@@ -60,32 +60,85 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export interface LeilaoRelatorio {
+  totalAuctions: number;
+  totalRevenue: number;
+  totalBids: number;
+}
+
+interface AuctionApiRecord {
+  id?: number | string;
+  title?: string;
+  description?: string;
+  property_id?: number | string;
+  start_price?: number;
+  current_price?: number;
+  reserve_price?: number;
+  start_date?: string;
+  end_date?: string;
+  status?: string;
+  enterprise_id?: number | string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface FlashDealApiRecord {
+  id?: number | string;
+  title?: string;
+  description?: string;
+  property_id?: number | string;
+  original_price?: number;
+  current_price?: number;
+  start_date?: string;
+  end_date?: string;
+  status?: string;
+  discount_percentage?: number;
+  units_available?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface BidApiRecord {
+  id?: number | string;
+  auction_id?: number | string;
+  customer_id?: number | string;
+  amount?: number;
+  status?: string;
+  created_at?: string;
+  customer_name?: string;
+  customer_email?: string;
+}
+
+type AuctionPayload = Partial<Omit<Leilao, 'id' | 'created_at' | 'updated_at'>> & {
+  accommodation_id?: number | string;
+  min_increment?: number;
+};
+
+function extractAuctionList(response: ApiResponse<AuctionApiRecord[]>): AuctionApiRecord[] {
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+  if (Array.isArray(response.auctions)) {
+    return response.auctions as AuctionApiRecord[];
+  }
+  return [];
+}
+
 // API de Leilões - Usa /api/v1/auctions (backend real)
 export const leiloesApi = {
   // Listar leilões com filtros e paginação
   getLeiloes: async (filters: LeilaoFilters = {}): Promise<PaginatedResponse<Leilao>> => {
     try {
-      // Mapear filtros para a API de auctions
-      const params: any = {};
+      const params: Record<string, unknown> = {};
       if (filters.status) {
-        if (filters.status === 'ended') params.status = 'finished';
-        else params.status = filters.status;
+        params.status = filters.status === 'ended' ? 'finished' : filters.status;
       }
       if (filters.search) params.search = filters.search;
       if (filters.page) params.page = filters.page;
       if (filters.limit) params.limit = filters.limit;
 
-      const response = await api.get<any>('/api/v1/auctions', params);
-      
-      // A API retorna um array ou objeto com data
-      let auctions: Leilao[] = [];
-      if (Array.isArray(response)) {
-        auctions = response.map(mapAuctionToLeilao);
-      } else if (response?.data && Array.isArray(response.data)) {
-        auctions = response.data.map(mapAuctionToLeilao);
-      } else if (response?.auctions && Array.isArray(response.auctions)) {
-        auctions = response.auctions.map(mapAuctionToLeilao);
-      }
+      const response = await api.get<AuctionApiRecord[]>('/api/v1/auctions', params);
+      const auctions = extractAuctionList(response).map(mapAuctionToLeilao);
 
       return {
         data: auctions,
@@ -112,24 +165,24 @@ export const leiloesApi = {
 
   // Buscar leilão por ID
   getLeilaoById: async (id: string): Promise<Leilao> => {
-    const response = await api.get<any>(`/api/v1/auctions/${id}`);
-    const auction = response.data || response;
+    const response = await api.get<AuctionApiRecord>(`/api/v1/auctions/${id}`);
+    const auction = response.data ?? (response as unknown as AuctionApiRecord);
     return mapAuctionToLeilao(auction);
   },
 
   // Criar novo leilão
   createLeilao: async (data: Omit<Leilao, 'id' | 'created_at' | 'updated_at'>): Promise<Leilao> => {
     const auctionData = mapLeilaoToAuction(data);
-    const response = await api.post<any>('/api/v1/auctions', auctionData);
-    const auction = response.data || response;
+    const response = await api.post<AuctionApiRecord>('/api/v1/auctions', auctionData);
+    const auction = response.data ?? (response as unknown as AuctionApiRecord);
     return mapAuctionToLeilao(auction);
   },
 
   // Atualizar leilão
   updateLeilao: async (id: string, data: Partial<Leilao>): Promise<Leilao> => {
     const auctionData = mapLeilaoToAuction(data);
-    const response = await api.put<any>(`/api/v1/auctions/${id}`, auctionData);
-    const auction = response.data || response;
+    const response = await api.put<AuctionApiRecord>(`/api/v1/auctions/${id}`, auctionData);
+    const auction = response.data ?? (response as unknown as AuctionApiRecord);
     return mapAuctionToLeilao(auction);
   },
 
@@ -140,37 +193,37 @@ export const leiloesApi = {
 
   // Listar lances de um leilão
   getLances: async (auctionId: string): Promise<Lance[]> => {
-    const response = await api.get<any>(`/api/v1/auctions/${auctionId}/bids`);
-    const bids = response.data?.data || response.data || response;
+    const response = await api.get<BidApiRecord[]>(`/api/v1/auctions/${auctionId}/bids`);
+    const bids = response.data ?? [];
     return Array.isArray(bids) ? bids.map(mapBidToLance) : [];
   },
 
   // Criar lance
   createLance: async (auctionId: string, amount: number): Promise<Lance> => {
-    const response = await api.post<any>(`/api/v1/auctions/${auctionId}/bids`, { amount });
-    const bid = response.data || response;
+    const response = await api.post<BidApiRecord>(`/api/v1/auctions/${auctionId}/bids`, { amount });
+    const bid = response.data ?? (response as unknown as BidApiRecord);
     return mapBidToLance(bid);
   },
 
   // Listar flash deals
   getFlashDeals: async (filters: Omit<LeilaoFilters, 'type'> = {}): Promise<PaginatedResponse<Leilao>> => {
-    // Flash deals são gerenciados separadamente na API
-    const response = await api.get<any>('/api/v1/flash-deals/active', filters);
-    const deals = response.data || response;
+    const params: Record<string, unknown> = { ...filters };
+    const response = await api.get<FlashDealApiRecord[]>('/api/v1/flash-deals/active', params);
+    const deals = response.data ?? [];
+    const mapped = Array.isArray(deals) ? deals.map(mapFlashDealToLeilao) : [];
     return {
-      data: Array.isArray(deals) ? deals.map(mapFlashDealToLeilao) : [],
+      data: mapped,
       pagination: {
         page: filters.page || 1,
         limit: filters.limit || 12,
-        total: Array.isArray(deals) ? deals.length : 0,
-        totalPages: Math.ceil((Array.isArray(deals) ? deals.length : 0) / (filters.limit || 12)),
+        total: mapped.length,
+        totalPages: Math.ceil(mapped.length / (filters.limit || 12)),
       },
     };
   },
 
   // Obter relatórios
-  getRelatorios: async (filters: RelatorioFilters = {}): Promise<any> => {
-    // TODO: Implementar endpoint de relatórios quando disponível
+  getRelatorios: async (_filters: RelatorioFilters = {}): Promise<LeilaoRelatorio> => {
     return {
       totalAuctions: 0,
       totalRevenue: 0,
@@ -179,8 +232,7 @@ export const leiloesApi = {
   },
 };
 
-// Funções auxiliares para mapear entre os formatos
-function mapAuctionToLeilao(auction: any): Leilao {
+function mapAuctionToLeilao(auction: AuctionApiRecord): Leilao {
   return {
     id: auction.id?.toString() || '',
     title: auction.title || '',
@@ -189,9 +241,9 @@ function mapAuctionToLeilao(auction: any): Leilao {
     starting_price: auction.start_price || 0,
     current_price: auction.current_price || auction.start_price || 0,
     reserve_price: auction.reserve_price,
-    start_date: auction.start_date || auction.created_at,
+    start_date: auction.start_date || auction.created_at || '',
     end_date: auction.end_date || '',
-    status: mapAuctionStatus(auction.status),
+    status: mapAuctionStatus(auction.status || ''),
     type: 'auction',
     created_by: auction.enterprise_id?.toString(),
     created_at: auction.created_at || new Date().toISOString(),
@@ -199,7 +251,7 @@ function mapAuctionToLeilao(auction: any): Leilao {
   };
 }
 
-function mapFlashDealToLeilao(deal: any): Leilao {
+function mapFlashDealToLeilao(deal: FlashDealApiRecord): Leilao {
   return {
     id: deal.id?.toString() || '',
     title: deal.title || '',
@@ -207,9 +259,9 @@ function mapFlashDealToLeilao(deal: any): Leilao {
     property_id: deal.property_id?.toString(),
     starting_price: deal.original_price || 0,
     current_price: deal.current_price || deal.original_price || 0,
-    start_date: deal.start_date || deal.created_at,
+    start_date: deal.start_date || deal.created_at || '',
     end_date: deal.end_date || '',
-    status: mapFlashDealStatus(deal.status),
+    status: mapFlashDealStatus(deal.status || ''),
     type: 'flash_deal',
     discount_percentage: deal.discount_percentage,
     max_participants: deal.units_available,
@@ -218,12 +270,12 @@ function mapFlashDealToLeilao(deal: any): Leilao {
   };
 }
 
-function mapLeilaoToAuction(leilao: any): any {
+function mapLeilaoToAuction(leilao: AuctionPayload): Record<string, unknown> {
   return {
     title: leilao.title,
     description: leilao.description,
-    property_id: leilao.property_id ? parseInt(leilao.property_id) : undefined,
-    accommodation_id: leilao.accommodation_id ? parseInt(leilao.accommodation_id) : undefined,
+    property_id: leilao.property_id ? parseInt(String(leilao.property_id), 10) : undefined,
+    accommodation_id: leilao.accommodation_id ? parseInt(String(leilao.accommodation_id), 10) : undefined,
     start_price: leilao.starting_price,
     reserve_price: leilao.reserve_price,
     min_increment: leilao.min_increment || 10,
@@ -232,7 +284,7 @@ function mapLeilaoToAuction(leilao: any): any {
   };
 }
 
-function mapBidToLance(bid: any): Lance {
+function mapBidToLance(bid: BidApiRecord): Lance {
   return {
     id: bid.id?.toString() || '',
     auction_id: bid.auction_id?.toString() || '',
