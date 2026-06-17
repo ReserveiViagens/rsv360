@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { NotificationProvider } from '../src/context/NotificationContext';
-import { NotificationBell } from '../src/components/notifications';
 import NotificationDemo from '../src/components/notifications/NotificationDemo';
 import {
   TrendingUp,
@@ -14,27 +13,16 @@ import {
   MapPin,
   Star,
   Plus,
-  Search,
-  Filter,
-  Download,
   Eye,
   Edit,
-  Trash2,
-  Bell,
   Settings,
   LogOut,
   Menu,
   X,
   ArrowRight,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
   BarChart3,
   PieChart,
-  Activity,
-  UserCheck,
-  MessageSquare
+  Activity
 } from 'lucide-react';
 
 interface BookingStats {
