@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-16 (cluster #30 concluído)  
-**Baseline global:** **1415** warnings  
+**Atualizado:** 2026-06-16 (cluster #31 concluído)  
+**Baseline global:** **1375** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1415** |
-| Clusters concluídos | **30** / 120 |
-| PR empilhada mais recente | **#442** (cluster #30, −42) |
-| Próximo cluster | **#31** — PerformanceTesting + templates + dashboard-rsv-backup (−40) |
+| Warnings globais | **1375** |
+| Clusters concluídos | **31** / 120 |
+| PR empilhada mais recente | **#442** (cluster #31, −40) |
+| Próximo cluster | **#32** — dashboard-rsv + voice-commerce + e-commerce (−39) |
 
 ## Padrão por cluster (repetir)
 
@@ -61,8 +61,9 @@
 | #439 | configuracoes-avancadas + configuracoes-usuarios + groups (src) | −42 → **1541** | documents-groups-testing |
 | #440 | integracoes-apis + marketplace-parceiros + notification-system-test | −42 → **1499** | configuracoes-avancadas-usuarios-groups |
 | #441 | relatorios-personalizados + DataExportSystem + BackupRecoverySystem | −42 → **1457** | integracoes-marketplace-notification |
+| #442 | PerformanceTesting + templates + dashboard-rsv-backup | −40 → **1375** | training-leadcapture-settings |
 
-## Clusters 1–29 (concluídos)
+## Clusters 1–31 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -95,6 +96,7 @@
 | 27 | −42 | configuracoes-avancadas, configuracoes-usuarios, groups (src) | **concluído** (#439) |
 | 28 | −42 | integracoes-apis, marketplace-parceiros, notification-system-test | **concluído** (#440) |
 | 29 | −42 | relatorios-personalizados, DataExportSystem, BackupRecoverySystem | **concluído** (#441) |
+| 31 | −40 | PerformanceTesting, cotacoes/templates, dashboard-rsv-backup | **concluído** (#442) |
 
 ## Clusters 30–120
 

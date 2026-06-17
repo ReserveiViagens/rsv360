@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Zap, Clock, TrendingUp, BarChart3, Play, Square, RotateCcw, Download, Activity, Gauge, Memory, Cpu, HardDrive } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Zap, TrendingUp, BarChart3, Play, Square, Download, Activity } from 'lucide-react';
 import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
@@ -44,7 +44,156 @@ interface PerformanceTestingProps {
   onPerformanceAlert?: (metric: PerformanceMetric) => void;
 }
 
-const PerformanceTesting: React.FC<PerformanceTestingProps> = ({ onTestCompleted, onPerformanceAlert }) => {
+const MOCK_TESTS: PerformanceTest[] = [
+  {
+    id: 'load-test-1',
+    name: 'Teste de Carga - Dashboard',
+    description: 'Teste de carga para o dashboard principal com 100 usuários simultâneos',
+    category: 'load',
+    status: 'completed',
+    duration: 180,
+    startTime: new Date('2024-01-15T10:00:00'),
+    endTime: new Date('2024-01-15T10:03:00'),
+    results: {
+      responseTime: 245,
+      throughput: 1250,
+      errorRate: 0.2,
+      cpuUsage: 45,
+      memoryUsage: 68,
+      networkLatency: 12
+    },
+    config: {
+      users: 100,
+      rampUp: 30,
+      duration: 180,
+      target: 'https://dashboard.reserveiviagens.com'
+    }
+  },
+  {
+    id: 'stress-test-1',
+    name: 'Teste de Estresse - Sistema de Reservas',
+    description: 'Teste de estresse para o sistema de reservas com carga máxima',
+    category: 'stress',
+    status: 'running',
+    duration: 0,
+    startTime: new Date('2024-01-15T11:00:00'),
+    endTime: null,
+    results: {
+      responseTime: 0,
+      throughput: 0,
+      errorRate: 0,
+      cpuUsage: 0,
+      memoryUsage: 0,
+      networkLatency: 0
+    },
+    config: {
+      users: 500,
+      rampUp: 60,
+      duration: 300,
+      target: 'https://reservas.reserveiviagens.com'
+    }
+  },
+  {
+    id: 'endurance-test-1',
+    name: 'Teste de Resistência - API',
+    description: 'Teste de resistência para APIs com carga constante por 1 hora',
+    category: 'endurance',
+    status: 'pending',
+    duration: 0,
+    startTime: null,
+    endTime: null,
+    results: {
+      responseTime: 0,
+      throughput: 0,
+      errorRate: 0,
+      cpuUsage: 0,
+      memoryUsage: 0,
+      networkLatency: 0
+    },
+    config: {
+      users: 200,
+      rampUp: 45,
+      duration: 3600,
+      target: 'https://api.reserveiviagens.com'
+    }
+  }
+];
+
+const MOCK_METRICS: PerformanceMetric[] = [
+  {
+    id: 'response-time',
+    name: 'Tempo de Resposta',
+    value: 245,
+    unit: 'ms',
+    threshold: 500,
+    status: 'excellent',
+    trend: 'down',
+    description: 'Tempo médio de resposta das requisições'
+  },
+  {
+    id: 'throughput',
+    name: 'Throughput',
+    value: 1250,
+    unit: 'req/s',
+    threshold: 1000,
+    status: 'excellent',
+    trend: 'up',
+    description: 'Número de requisições por segundo'
+  },
+  {
+    id: 'error-rate',
+    name: 'Taxa de Erro',
+    value: 0.2,
+    unit: '%',
+    threshold: 1.0,
+    status: 'excellent',
+    trend: 'stable',
+    description: 'Porcentagem de requisições com erro'
+  },
+  {
+    id: 'cpu-usage',
+    name: 'Uso de CPU',
+    value: 45,
+    unit: '%',
+    threshold: 80,
+    status: 'good',
+    trend: 'stable',
+    description: 'Utilização média do processador'
+  },
+  {
+    id: 'memory-usage',
+    name: 'Uso de Memória',
+    value: 68,
+    unit: '%',
+    threshold: 85,
+    status: 'good',
+    trend: 'up',
+    description: 'Utilização média da memória RAM'
+  },
+  {
+    id: 'network-latency',
+    name: 'Latência de Rede',
+    value: 12,
+    unit: 'ms',
+    threshold: 50,
+    status: 'excellent',
+    trend: 'stable',
+    description: 'Latência média da rede'
+  }
+];
+
+function simulateTestResults(): PerformanceTest['results'] {
+  return {
+    responseTime: Math.floor(Math.random() * 300) + 100,
+    throughput: Math.floor(Math.random() * 500) + 1000,
+    errorRate: Math.random() * 2,
+    cpuUsage: Math.floor(Math.random() * 40) + 30,
+    memoryUsage: Math.floor(Math.random() * 30) + 50,
+    networkLatency: Math.floor(Math.random() * 20) + 5
+  };
+}
+
+const PerformanceTesting: React.FC<PerformanceTestingProps> = ({ onTestCompleted, onPerformanceAlert: _onPerformanceAlert }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [performanceTests, setPerformanceTests] = useState<PerformanceTest[]>([]);
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
@@ -54,150 +203,14 @@ const PerformanceTesting: React.FC<PerformanceTestingProps> = ({ onTestCompleted
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const { showNotification } = useUIStore();
+  const testIdRef = useRef(0);
 
-  // Mock data
   useEffect(() => {
-    const mockTests: PerformanceTest[] = [
-      {
-        id: 'load-test-1',
-        name: 'Teste de Carga - Dashboard',
-        description: 'Teste de carga para o dashboard principal com 100 usuários simultâneos',
-        category: 'load',
-        status: 'completed',
-        duration: 180,
-        startTime: new Date('2024-01-15T10:00:00'),
-        endTime: new Date('2024-01-15T10:03:00'),
-        results: {
-          responseTime: 245,
-          throughput: 1250,
-          errorRate: 0.2,
-          cpuUsage: 45,
-          memoryUsage: 68,
-          networkLatency: 12
-        },
-        config: {
-          users: 100,
-          rampUp: 30,
-          duration: 180,
-          target: 'https://dashboard.reserveiviagens.com'
-        }
-      },
-      {
-        id: 'stress-test-1',
-        name: 'Teste de Estresse - Sistema de Reservas',
-        description: 'Teste de estresse para o sistema de reservas com carga máxima',
-        category: 'stress',
-        status: 'running',
-        duration: 0,
-        startTime: new Date('2024-01-15T11:00:00'),
-        endTime: null,
-        results: {
-          responseTime: 0,
-          throughput: 0,
-          errorRate: 0,
-          cpuUsage: 0,
-          memoryUsage: 0,
-          networkLatency: 0
-        },
-        config: {
-          users: 500,
-          rampUp: 60,
-          duration: 300,
-          target: 'https://reservas.reserveiviagens.com'
-        }
-      },
-      {
-        id: 'endurance-test-1',
-        name: 'Teste de Resistência - API',
-        description: 'Teste de resistência para APIs com carga constante por 1 hora',
-        category: 'endurance',
-        status: 'pending',
-        duration: 0,
-        startTime: null,
-        endTime: null,
-        results: {
-          responseTime: 0,
-          throughput: 0,
-          errorRate: 0,
-          cpuUsage: 0,
-          memoryUsage: 0,
-          networkLatency: 0
-        },
-        config: {
-          users: 200,
-          rampUp: 45,
-          duration: 3600,
-          target: 'https://api.reserveiviagens.com'
-        }
-      }
-    ];
-
-    setPerformanceTests(mockTests);
-
-    const mockMetrics: PerformanceMetric[] = [
-      {
-        id: 'response-time',
-        name: 'Tempo de Resposta',
-        value: 245,
-        unit: 'ms',
-        threshold: 500,
-        status: 'excellent',
-        trend: 'down',
-        description: 'Tempo médio de resposta das requisições'
-      },
-      {
-        id: 'throughput',
-        name: 'Throughput',
-        value: 1250,
-        unit: 'req/s',
-        threshold: 1000,
-        status: 'excellent',
-        trend: 'up',
-        description: 'Número de requisições por segundo'
-      },
-      {
-        id: 'error-rate',
-        name: 'Taxa de Erro',
-        value: 0.2,
-        unit: '%',
-        threshold: 1.0,
-        status: 'excellent',
-        trend: 'stable',
-        description: 'Porcentagem de requisições com erro'
-      },
-      {
-        id: 'cpu-usage',
-        name: 'Uso de CPU',
-        value: 45,
-        unit: '%',
-        threshold: 80,
-        status: 'good',
-        trend: 'stable',
-        description: 'Utilização média do processador'
-      },
-      {
-        id: 'memory-usage',
-        name: 'Uso de Memória',
-        value: 68,
-        unit: '%',
-        threshold: 85,
-        status: 'good',
-        trend: 'up',
-        description: 'Utilização média da memória RAM'
-      },
-      {
-        id: 'network-latency',
-        name: 'Latência de Rede',
-        value: 12,
-        unit: 'ms',
-        threshold: 50,
-        status: 'excellent',
-        trend: 'stable',
-        description: 'Latência média da rede'
-      }
-    ];
-
-    setMetrics(mockMetrics);
+    const timer = setTimeout(() => {
+      setPerformanceTests(MOCK_TESTS);
+      setMetrics(MOCK_METRICS);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const runTest = async (testId: string) => {
@@ -217,15 +230,7 @@ const PerformanceTesting: React.FC<PerformanceTestingProps> = ({ onTestCompleted
     // Simular execução do teste
     await new Promise(resolve => setTimeout(resolve, test.config.duration * 1000));
     
-    // Simular resultados
-    const results = {
-      responseTime: Math.floor(Math.random() * 300) + 100,
-      throughput: Math.floor(Math.random() * 500) + 1000,
-      errorRate: Math.random() * 2,
-      cpuUsage: Math.floor(Math.random() * 40) + 30,
-      memoryUsage: Math.floor(Math.random() * 30) + 50,
-      networkLatency: Math.floor(Math.random() * 20) + 5
-    };
+    const results = simulateTestResults();
     
     const updatedTest = {
       ...test,
@@ -271,8 +276,9 @@ const PerformanceTesting: React.FC<PerformanceTestingProps> = ({ onTestCompleted
   };
 
   const createTest = () => {
+    testIdRef.current += 1;
     const newTest: PerformanceTest = {
-      id: `test-${Date.now()}`,
+      id: `test-${testIdRef.current}`,
       name: 'Novo Teste de Performance',
       description: 'Descrição do teste de performance',
       category: 'load',
