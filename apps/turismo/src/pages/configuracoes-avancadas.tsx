@@ -14,34 +14,26 @@ import { Progress } from '@/components/ui/Progress';
 import {
   Settings,
   Database,
-  Code,
-  Terminal,
   FileText,
   Download,
   Upload,
   RefreshCw,
   Save,
   AlertTriangle,
-  CheckCircle,
   Info,
   Zap,
   Shield,
   Globe,
-  Cloud,
   HardDrive,
   Network,
   Monitor,
   Cpu,
   MemoryStick,
-  Server,
-  Key,
-  Lock,
   Eye,
   EyeOff,
   Copy,
   Trash2,
-  Plus,
-  Edit
+  Plus
 } from 'lucide-react';
 
 interface AdvancedConfig {
@@ -250,11 +242,7 @@ export default function ConfiguracoesAvancadas() {
   const [exportData, setExportData] = useState('');
   const [importData, setImportData] = useState('');
 
-  useEffect(() => {
-    loadConfig();
-  }, []);
-
-  const loadConfig = async () => {
+  async function loadConfig() {
     try {
       const savedConfig = localStorage.getItem('advanced_config');
       if (savedConfig) {
@@ -263,7 +251,12 @@ export default function ConfiguracoesAvancadas() {
     } catch (error) {
       console.error('Erro ao carregar configurações avançadas:', error);
     }
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load saved advanced config on mount
+    loadConfig();
+  }, []);
 
   const saveConfig = async () => {
     setIsSaving(true);
@@ -280,7 +273,11 @@ export default function ConfiguracoesAvancadas() {
     }
   };
 
-  const updateConfig = (section: keyof AdvancedConfig, field: string, value: any) => {
+  const updateConfig = <S extends keyof AdvancedConfig>(
+    section: S,
+    field: keyof AdvancedConfig[S] & string,
+    value: AdvancedConfig[S][keyof AdvancedConfig[S]]
+  ) => {
     setConfig(prev => ({
       ...prev,
       [section]: {
@@ -294,15 +291,15 @@ export default function ConfiguracoesAvancadas() {
   const addToArray = (section: keyof AdvancedConfig, field: string, value: string) => {
     if (!value.trim()) return;
 
-    const currentArray = (config[section] as any)[field] as string[];
+    const currentArray = (config[section] as Record<string, string[]>)[field];
     if (!currentArray.includes(value)) {
-      updateConfig(section, field, [...currentArray, value]);
+      updateConfig(section, field as keyof AdvancedConfig[typeof section] & string, [...currentArray, value] as AdvancedConfig[typeof section][keyof AdvancedConfig[typeof section]]);
     }
   };
 
   const removeFromArray = (section: keyof AdvancedConfig, field: string, value: string) => {
-    const currentArray = (config[section] as any)[field] as string[];
-    updateConfig(section, field, currentArray.filter(item => item !== value));
+    const currentArray = (config[section] as Record<string, string[]>)[field];
+    updateConfig(section, field as keyof AdvancedConfig[typeof section] & string, currentArray.filter(item => item !== value) as AdvancedConfig[typeof section][keyof AdvancedConfig[typeof section]]);
   };
 
   const exportConfig = () => {
@@ -328,7 +325,7 @@ export default function ConfiguracoesAvancadas() {
       setHasChanges(true);
       setImportData('');
       alert('Configuração importada com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       alert('Erro ao importar configuração. Verifique o formato JSON.');
     }
   };
@@ -365,18 +362,6 @@ export default function ConfiguracoesAvancadas() {
     }
 
     return 'text-gray-600';
-  };
-
-  const getProgressColor = (value: number, type: 'usage' | 'ratio') => {
-    if (type === 'usage') {
-      if (value < 50) return 'bg-green-500';
-      if (value < 80) return 'bg-yellow-500';
-      return 'bg-red-500';
-    }
-
-    if (value > 80) return 'bg-green-500';
-    if (value > 60) return 'bg-yellow-500';
-    return 'bg-red-500';
   };
 
   return (
