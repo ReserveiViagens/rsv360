@@ -169,6 +169,7 @@
 - [x] Lint visa (src) + BookingCalendar + BookingModal −51 — **GO condicional** *(PR #431)* — `issue-237/LINT-237-TURISMO-VISA-BOOKING-CALENDAR-MODAL.md`
 - [x] Lint apiClient + cadastros + gestao −49 — **GO condicional** *(PR #432)* — `issue-237/LINT-237-TURISMO-APICLIENT-CADASTROS-GESTAO.md`
 - [x] Lint hotels-complete + reports + travel −48 — **GO condicional** *(PR #433)* — `issue-237/LINT-237-TURISMO-HOTELS-REPORTS-TRAVEL.md`
+- [x] Lint chatbot-ia + gestao + reports (src) −48 — **GO condicional** *(PR #434)* — `issue-237/LINT-237-TURISMO-CHATBOT-GESTAO-REPORTS-SRC.md`
 
 ## Decisão Trilha 0
 

@@ -14,4 +14,4 @@
 
 **Gates:** ESLint 0 nos 3 alvos | build OK
 
-**Próximo:** cluster #22 — chatbot-ia + gestao + reports (src) (−48)
+**Próximo:** cluster #23 — ChatConversations + NotificationManager + PushNotificationSystem (−48)
