@@ -2,25 +2,15 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import {
   Bell,
   Settings,
-  Send,
-  Clock,
   Zap,
   CheckCircle,
-  XCircle,
-  AlertTriangle,
   Info,
-  Smartphone,
-  Monitor,
   Globe,
-  Shield,
-  Users,
-  Building,
   Mail,
   MessageSquare,
   Radio
@@ -195,7 +185,7 @@ export default function NotificationSystemTestPage() {
                       <div className="text-2xl font-bold text-blue-600">1</div>
                       <div className="font-medium text-blue-800 dark:text-blue-200">Solicitar Permissão</div>
                       <div className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                        Clique em "Solicitar Permissão" para habilitar notificações
+                        Clique em &quot;Solicitar Permissão&quot; para habilitar notificações
                       </div>
                     </div>
                     
@@ -203,7 +193,7 @@ export default function NotificationSystemTestPage() {
                       <div className="text-2xl font-bold text-green-600">2</div>
                       <div className="font-medium text-green-800 dark:text-green-200">Inscrever-se</div>
                       <div className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Clique em "Inscrever" para receber notificações push
+                        Clique em &quot;Inscrever&quot; para receber notificações push
                       </div>
                     </div>
                     
