@@ -179,6 +179,9 @@
 - [x] Lint relatorios-personalizados + DataExportSystem + BackupRecoverySystem −42 — **GO condicional** *(PR #441)* — `issue-237/LINT-237-TURISMO-RELATORIOS-DATAEXPORT-BACKUP.md`
 - [x] Lint PerformanceTesting + templates + dashboard-rsv-backup −40 — **GO condicional** *(PR #442)* — `issue-237/LINT-237-TURISMO-PERFORMANCE-TEMPLATES-DASHBOARD-BACKUP.md`
 - [x] Lint dashboard-rsv + voice-commerce + e-commerce −39 — **GO condicional** *(PR #443)* — `issue-237/LINT-237-TURISMO-DASHBOARD-RSV-VOICE-ECOMMERCE.md`
+- [x] Lint src/documents + src/e-commerce + TutorialSystem −39 — **GO condicional** *(PR #444)* — `issue-237/LINT-237-TURISMO-SRC-DOCUMENTS-ECOMMERCE-TUTORIAL.md`
+- [x] Lint TaxManagement + PaymentModal + CustomReportBuilder −39 — **GO condicional** *(PR #445)* — `issue-237/LINT-237-TURISMO-TAX-PAYMENT-CUSTOMREPORT.md`
+- [x] Lint authService + visas + workflows −37 — **GO condicional** *(PR #446)* — `issue-237/LINT-237-TURISMO-AUTHSERVICE-VISAS-WORKFLOWS.md`
 
 ## Decisão Trilha 0
 

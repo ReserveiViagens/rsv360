@@ -1,4 +1,4 @@
-import { api, tokenManager, ApiResponse } from './apiClient';
+import { api, tokenManager } from './apiClient';
 import { wsClient } from './websocketClient';
 import { toast } from 'react-hot-toast';
 import {
@@ -92,7 +92,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro no login');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       throw error;
     }
@@ -115,7 +115,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro na verificação 2FA');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('2FA verification error:', error);
       throw error;
     }
@@ -132,7 +132,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro no cadastro');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
       throw error;
     }
@@ -175,7 +175,7 @@ export const authService = {
       }
 
       throw new Error('Sessão inválida ou expirada');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get current user error:', error);
       throw error;
     }
@@ -202,7 +202,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro ao renovar token');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Refresh token error:', error);
       // Clear tokens on refresh failure
       tokenManager.clearTokens();
@@ -220,7 +220,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro ao configurar 2FA');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('2FA setup error:', error);
       throw error;
     }
@@ -237,7 +237,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro ao verificar 2FA');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('2FA verification error:', error);
       throw error;
     }
@@ -257,7 +257,7 @@ export const authService = {
       } else {
         throw new Error(response.message || 'Erro ao desativar 2FA');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('2FA disable error:', error);
       throw error;
     }
@@ -277,7 +277,7 @@ export const authService = {
       }
       
       throw new Error(response.message || 'Erro ao gerar códigos de backup');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Backup codes generation error:', error);
       throw error;
     }
@@ -293,7 +293,7 @@ export const authService = {
       } else {
         throw new Error(response.message || 'Erro ao solicitar recuperação');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset request error:', error);
       throw error;
     }
@@ -309,7 +309,7 @@ export const authService = {
       } else {
         throw new Error(response.message || 'Erro ao redefinir senha');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error);
       throw error;
     }
@@ -320,7 +320,7 @@ export const authService = {
     try {
       const response = await api.get<AuthV1SessionResponse>(AUTH_V1.SESSION);
       return response.authenticated === true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   },

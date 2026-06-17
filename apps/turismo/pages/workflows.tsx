@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import {
@@ -8,16 +8,12 @@ import {
   Play,
   Pause,
   Square,
-  RefreshCw,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Eye,
   Download,
   Plus,
   Search,
-  Filter,
-  Calendar,
   Edit,
   Trash2,
   BarChart3,
@@ -99,14 +95,10 @@ export default function WorkflowsPage() {
     conditions: ''
   })
 
-  useEffect(() => {
-    loadData()
-  }, [activeTab])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
-      const params: any = {}
+      const params: Record<string, string> = {}
       if (activeTab !== 'overview') {
         params.status = activeTab
       }
@@ -135,7 +127,14 @@ export default function WorkflowsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, searchTerm])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void loadData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [loadData])
 
   const handleSave = async () => {
     try {
@@ -305,16 +304,6 @@ export default function WorkflowsPage() {
     return labels[type] || type
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'bg-red-500'
-      case 'high': return 'bg-orange-500'
-      case 'medium': return 'bg-yellow-500'
-      case 'low': return 'bg-green-500'
-      default: return 'bg-gray-500'
-    }
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -449,7 +438,7 @@ export default function WorkflowsPage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as typeof activeTab)}
                       className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
@@ -596,7 +585,7 @@ export default function WorkflowsPage() {
                         onChange={(e) => {
                           setSelectedFilter(e.target.value)
                           if (e.target.value !== 'all') {
-                            setActiveTab(e.target.value as any)
+                            setActiveTab(e.target.value as typeof activeTab)
                           }
                         }}
                         className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -641,7 +630,7 @@ export default function WorkflowsPage() {
                       {workflows.length === 0 ? (
                         <tr>
                           <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                            Nenhum workflow encontrado. Clique em "Novo Workflow" para começar.
+                            Nenhum workflow encontrado. Clique em &quot;Novo Workflow&quot; para começar.
                           </td>
                         </tr>
                       ) : (
