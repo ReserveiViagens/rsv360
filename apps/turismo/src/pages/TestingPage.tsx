@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, BarChart3, Code, Zap, TrendingUp, CheckCircle, AlertTriangle, Clock, FileText, Activity } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui';
+import { Card, Button, Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui';
 import {
   TestRunner,
   QualityMetrics,
@@ -10,9 +10,16 @@ import {
 } from '../components/testing';
 import { useUIStore } from '../stores/useUIStore';
 
+type TestResults = unknown[];
+type NamedStatus = { name: string; status: string };
+type TestSuiteSummary = { name: string; passedTests: number; failedTests: number };
+type FileAnalysis = { name: string; issues: number; status: string };
+type CoverageSummary = { overallCoverage: number };
+type PerformanceTest = { name: string; results: { responseTime: number } };
+
 const TestingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('test-runner');
-  const [quickStats, setQuickStats] = useState({
+  const [quickStats] = useState({
     totalTests: 100,
     passedTests: 87,
     failedTests: 8,
@@ -23,7 +30,7 @@ const TestingPage: React.FC = () => {
   });
   const { showNotification } = useUIStore();
 
-  const handleTestCompleted = (results: any) => {
+  const handleTestCompleted = (results: TestResults) => {
     showNotification({
       title: 'Testes Concluídos',
       description: `${results.length} testes executados com sucesso`,
@@ -31,7 +38,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleSuiteCompleted = (suite: any) => {
+  const handleSuiteCompleted = (suite: TestSuiteSummary) => {
     showNotification({
       title: 'Suite Concluída',
       description: `${suite.name} - ${suite.passedTests} passaram, ${suite.failedTests} falharam`,
@@ -39,7 +46,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleQualityAlert = (metric: any) => {
+  const handleQualityAlert = (metric: NamedStatus) => {
     showNotification({
       title: 'Alerta de Qualidade',
       description: `${metric.name} está em estado ${metric.status}`,
@@ -47,7 +54,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleFileAnalysis = (file: any) => {
+  const handleFileAnalysis = (file: FileAnalysis) => {
     showNotification({
       title: 'Análise de Arquivo',
       description: `Analisando ${file.name} - ${file.issues} issues encontrados`,
@@ -55,7 +62,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleCoverageReport = (summary: any) => {
+  const handleCoverageReport = (summary: CoverageSummary) => {
     showNotification({
       title: 'Relatório de Cobertura',
       description: `Cobertura geral: ${summary.overallCoverage}%`,
@@ -63,7 +70,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handlePerformanceAlert = (metric: any) => {
+  const handlePerformanceAlert = (metric: NamedStatus) => {
     showNotification({
       title: 'Alerta de Performance',
       description: `${metric.name} está em estado ${metric.status}`,
@@ -71,7 +78,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleTestSuiteCreated = (suite: any) => {
+  const handleTestSuiteCreated = (suite: TestSuiteSummary) => {
     showNotification({
       title: 'Suite Criada',
       description: `Nova suite de testes "${suite.name}" criada`,
@@ -79,7 +86,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleTestSuiteUpdated = (suite: any) => {
+  const handleTestSuiteUpdated = (suite: TestSuiteSummary) => {
     showNotification({
       title: 'Suite Atualizada',
       description: `Suite "${suite.name}" atualizada com sucesso`,
@@ -87,7 +94,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleTestSuiteDeleted = (suiteId: string) => {
+  const handleTestSuiteDeleted = (_suiteId: string) => {
     showNotification({
       title: 'Suite Excluída',
       description: 'Suite de testes removida com sucesso',
@@ -95,7 +102,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handleTestSuiteExecuted = (suite: any, results: any) => {
+  const handleTestSuiteExecuted = (suite: TestSuiteSummary, results: TestResults) => {
     showNotification({
       title: 'Suite Executada',
       description: `${suite.name} - ${results.length} testes executados`,
@@ -103,7 +110,7 @@ const TestingPage: React.FC = () => {
     });
   };
 
-  const handlePerformanceTestCompleted = (test: any) => {
+  const handlePerformanceTestCompleted = (test: PerformanceTest) => {
     showNotification({
       title: 'Teste de Performance Concluído',
       description: `${test.name} - Response time: ${test.results.responseTime}ms`,

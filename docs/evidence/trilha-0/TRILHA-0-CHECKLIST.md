@@ -173,6 +173,7 @@
 - [x] Lint ChatConversations + NotificationManager + PushNotificationSystem −48 — **GO condicional** *(PR #435)* — `issue-237/LINT-237-TURISMO-CHAT-NOTIFICATIONS.md`
 - [x] Lint TaskManager + leiloesApi + marketplace −47 — **GO condicional** *(PR #436)* — `issue-237/LINT-237-TURISMO-TASK-LEILOES-MARKETPLACE.md`
 - [x] Lint CustomerManagement + FinalDeploySystem + AccountingIntegration −45 — **GO condicional** *(PR #437)* — `issue-237/LINT-237-TURISMO-CUSTOMER-DEPLOY-ACCOUNTING.md`
+- [x] Lint documents + groups + TestingPage −42 — **GO condicional** *(PR #438)* — `issue-237/LINT-237-TURISMO-DOCUMENTS-GROUPS-TESTING.md`
 
 ## Decisão Trilha 0
 

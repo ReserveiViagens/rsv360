@@ -1,6 +1,6 @@
 # Lint #237 — Todo list completo (120 clusters)
 
-Baseline: **1625** warnings | Meta: **0** | Gerado: 2026-06-02
+Baseline: **1583** warnings | Meta: **0** | Gerado: 2026-06-02
 
 - [x] **Cluster 1** (−86): `src/components/integrations/IntegrationHub.tsx` (29), `src/components/projects/ProjectTimeline.tsx` (29), `pages/cotacoes/atracoes.tsx` (28)
 - [x] **Cluster 2** (−84): `pages/dashboard-master.tsx` (28), `pages/hotels-funcional.tsx` (28), `src/components/financial/FinancialAnalytics.tsx` (28)
@@ -27,7 +27,7 @@ Baseline: **1625** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 23** (−48): `src/components/chat/ChatConversations.tsx` (16), `src/components/notifications/NotificationManager.tsx` (16), `src/components/notifications/PushNotificationSystem.tsx` (16)
 - [x] **Cluster 24** (−47): `src/components/projects/TaskManager.tsx` (16), `src/services/api/leiloesApi.ts` (16), `pages/dashboard/marketplace.tsx` (15)
 - [x] **Cluster 25** (−45): `src/components/customers/CustomerManagement.tsx` (15), `src/components/deploy/FinalDeploySystem.tsx` (15), `src/components/financial/AccountingIntegration.tsx` (15)
-- [ ] **Cluster 26** (−42): `pages/documents.tsx` (14), `pages/groups.tsx` (14), `src/pages/TestingPage.tsx` (14)
+- [x] **Cluster 26** (−42): `pages/documents.tsx` (14), `pages/groups.tsx` (14), `src/pages/TestingPage.tsx` (14)
 - [ ] **Cluster 27** (−42): `src/pages/configuracoes-avancadas.tsx` (14), `src/pages/configuracoes-usuarios.tsx` (14), `src/pages/groups.tsx` (14)
 - [ ] **Cluster 28** (−42): `src/pages/integracoes-apis.tsx` (14), `src/pages/marketplace-parceiros.tsx` (14), `src/pages/notification-system-test.tsx` (14)
 - [ ] **Cluster 29** (−42): `src/pages/relatorios-personalizados.tsx` (14), `src/components/analytics/DataExportSystem.tsx` (14), `src/components/deploy/BackupRecoverySystem.tsx` (14)
