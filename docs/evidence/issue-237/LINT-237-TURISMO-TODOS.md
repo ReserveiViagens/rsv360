@@ -31,7 +31,7 @@ Baseline: **1583** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 27** (−42): `src/pages/configuracoes-avancadas.tsx` (14), `src/pages/configuracoes-usuarios.tsx` (14), `src/pages/groups.tsx` (14)
 - [x] **Cluster 28** (−42): `src/pages/integracoes-apis.tsx` (14), `src/pages/marketplace-parceiros.tsx` (14), `src/pages/notification-system-test.tsx` (14)
 - [x] **Cluster 29** (−42): `src/pages/relatorios-personalizados.tsx` (14), `src/components/analytics/DataExportSystem.tsx` (14), `src/components/deploy/BackupRecoverySystem.tsx` (14)
-- [ ] **Cluster 30** (−42): `src/components/documentation/TrainingSystem.tsx` (14), `src/components/marketing/LeadCapture.tsx` (14), `src/components/settings/SettingsPanel.tsx` (14)
+- [x] **Cluster 30** (−42): `src/components/documentation/TrainingSystem.tsx` (14), `src/components/marketing/LeadCapture.tsx` (14), `src/components/settings/SettingsPanel.tsx` (14)
 - [ ] **Cluster 31** (−40): `src/components/testing/PerformanceTesting.tsx` (14), `pages/cotacoes/templates.tsx` (13), `pages/dashboard-rsv-backup.tsx` (13)
 - [ ] **Cluster 32** (−39): `pages/dashboard-rsv.tsx` (13), `pages/dashboard/voice-commerce.tsx` (13), `pages/e-commerce.tsx` (13)
 - [ ] **Cluster 33** (−39): `src/pages/documents.tsx` (13), `src/pages/e-commerce.tsx` (13), `src/components/documentation/TutorialSystem.tsx` (13)
