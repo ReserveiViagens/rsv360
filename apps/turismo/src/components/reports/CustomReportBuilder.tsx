@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   FileText, 
   Plus, 
   Save, 
   Download, 
   Eye, 
-  Edit, 
   Trash2, 
   Calendar,
   BarChart3,
   PieChart,
-  TrendingUp,
-  Filter
+  TrendingUp
 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -28,7 +26,21 @@ interface ReportField {
   type: 'text' | 'number' | 'date' | 'select' | 'boolean';
   required: boolean;
   options?: string[];
-  defaultValue?: any;
+  defaultValue?: string | number | boolean;
+}
+
+interface GeneratedReport {
+  title?: string;
+  generatedAt: string;
+  data: {
+    totalRecords: number;
+    summary: {
+      revenue: number;
+      bookings: number;
+      customers: number;
+    };
+    chartData: ReturnType<typeof generateMockChartData>;
+  };
 }
 
 interface ReportTemplate {
@@ -47,76 +59,121 @@ interface ReportTemplate {
 }
 
 interface CustomReportBuilderProps {
-  onReportGenerated?: (report: any) => void;
+  onReportGenerated?: (report: GeneratedReport) => void;
+}
+
+const DEFAULT_TEMPLATES: ReportTemplate[] = [
+  {
+    id: 'sales-report',
+    name: 'Relatório de Vendas',
+    description: 'Relatório detalhado de vendas por período',
+    category: 'Vendas',
+    fields: [
+      { id: 'period', name: 'Período', type: 'select', required: true, options: ['Diário', 'Semanal', 'Mensal', 'Trimestral', 'Anual'] },
+      { id: 'startDate', name: 'Data Início', type: 'date', required: true },
+      { id: 'endDate', name: 'Data Fim', type: 'date', required: true },
+      { id: 'groupBy', name: 'Agrupar por', type: 'select', required: false, options: ['Destino', 'Cliente', 'Agente', 'Status'] }
+    ],
+    chartType: 'bar',
+    filters: ['status', 'destination', 'agent']
+  },
+  {
+    id: 'customer-analysis',
+    name: 'Análise de Clientes',
+    description: 'Análise comportamental e preferências dos clientes',
+    category: 'Clientes',
+    fields: [
+      { id: 'customerSegment', name: 'Segmento', type: 'select', required: false, options: ['Novos', 'Recorrentes', 'VIP', 'Inativos'] },
+      { id: 'bookingCount', name: 'Mínimo de reservas', type: 'number', required: false, defaultValue: 1 },
+      { id: 'totalSpent', name: 'Valor mínimo gasto', type: 'number', required: false, defaultValue: 0 }
+    ],
+    chartType: 'pie',
+    filters: ['destination', 'season', 'age']
+  },
+  {
+    id: 'financial-summary',
+    name: 'Resumo Financeiro',
+    description: 'Resumo financeiro com receitas, despesas e lucros',
+    category: 'Financeiro',
+    fields: [
+      { id: 'year', name: 'Ano', type: 'select', required: true, options: ['2024', '2025', '2026'] },
+      { id: 'includeExpenses', name: 'Incluir despesas', type: 'boolean', required: false, defaultValue: true },
+      { id: 'groupByMonth', name: 'Agrupar por mês', type: 'boolean', required: false, defaultValue: true }
+    ],
+    chartType: 'line',
+    filters: ['category', 'destination', 'payment_method']
+  }
+];
+
+function generateMockChartData(chartType: string) {
+  const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+
+  switch (chartType) {
+    case 'bar':
+      return months.map(month => ({
+        month,
+        value: Math.floor(Math.random() * 100) + 10
+      }));
+    case 'line':
+      return months.map(month => ({
+        month,
+        value: Math.floor(Math.random() * 1000) + 100
+      }));
+    case 'pie':
+      return [
+        { name: 'Categoria A', value: 400 },
+        { name: 'Categoria B', value: 300 },
+        { name: 'Categoria C', value: 200 }
+      ];
+    default:
+      return months.map(month => ({ month, value: 50 }));
+  }
+}
+
+function buildGeneratedReport(name: string | undefined, chartType: ReportTemplate['chartType']): GeneratedReport {
+  return {
+    title: name,
+    generatedAt: new Date().toISOString(),
+    data: {
+      totalRecords: Math.floor(Math.random() * 1000) + 100,
+      summary: {
+        revenue: Math.floor(Math.random() * 100000) + 10000,
+        bookings: Math.floor(Math.random() * 500) + 50,
+        customers: Math.floor(Math.random() * 200) + 20
+      },
+      chartData: generateMockChartData(chartType)
+    }
+  };
 }
 
 const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({ 
   onReportGenerated 
 }) => {
+  const reportIdRef = useRef(0);
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [customReport, setCustomReport] = useState<Partial<ReportTemplate>>({});
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [activeTab, setActiveTab] = useState('templates');
-  const [reportData, setReportData] = useState<any>(null);
+  const [reportData, setReportData] = useState<GeneratedReport | null>(null);
   
   const { showNotification } = useUIStore();
 
-  // Templates pré-definidos
-  const defaultTemplates: ReportTemplate[] = [
-    {
-      id: 'sales-report',
-      name: 'Relatório de Vendas',
-      description: 'Relatório detalhado de vendas por período',
-      category: 'Vendas',
-      fields: [
-        { id: 'period', name: 'Período', type: 'select', required: true, options: ['Diário', 'Semanal', 'Mensal', 'Trimestral', 'Anual'] },
-        { id: 'startDate', name: 'Data Início', type: 'date', required: true },
-        { id: 'endDate', name: 'Data Fim', type: 'date', required: true },
-        { id: 'groupBy', name: 'Agrupar por', type: 'select', required: false, options: ['Destino', 'Cliente', 'Agente', 'Status'] }
-      ],
-      chartType: 'bar',
-      filters: ['status', 'destination', 'agent']
-    },
-    {
-      id: 'customer-analysis',
-      name: 'Análise de Clientes',
-      description: 'Análise comportamental e preferências dos clientes',
-      category: 'Clientes',
-      fields: [
-        { id: 'customerSegment', name: 'Segmento', type: 'select', required: false, options: ['Novos', 'Recorrentes', 'VIP', 'Inativos'] },
-        { id: 'bookingCount', name: 'Mínimo de reservas', type: 'number', required: false, defaultValue: 1 },
-        { id: 'totalSpent', name: 'Valor mínimo gasto', type: 'number', required: false, defaultValue: 0 }
-      ],
-      chartType: 'pie',
-      filters: ['destination', 'season', 'age']
-    },
-    {
-      id: 'financial-summary',
-      name: 'Resumo Financeiro',
-      description: 'Resumo financeiro com receitas, despesas e lucros',
-      category: 'Financeiro',
-      fields: [
-        { id: 'year', name: 'Ano', type: 'select', required: true, options: ['2024', '2025', '2026'] },
-        { id: 'includeExpenses', name: 'Incluir despesas', type: 'boolean', required: false, defaultValue: true },
-        { id: 'groupByMonth', name: 'Agrupar por mês', type: 'boolean', required: false, defaultValue: true }
-      ],
-      chartType: 'line',
-      filters: ['category', 'destination', 'payment_method']
-    }
-  ];
-
   useEffect(() => {
-    setTemplates(defaultTemplates);
+    const timer = setTimeout(() => {
+      setTemplates(DEFAULT_TEMPLATES);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCreateReport = (template: ReportTemplate) => {
+    reportIdRef.current += 1;
     setSelectedTemplate(template);
     setCustomReport({
       ...template,
       name: `${template.name} - ${new Date().toLocaleDateString()}`,
-      id: `${template.id}-${Date.now()}`
+      id: `${template.id}-${reportIdRef.current}`
     });
     setShowTemplateModal(true);
   };
@@ -127,9 +184,10 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
       return;
     }
 
+    reportIdRef.current += 1;
     const newReport = {
       ...customReport,
-      id: customReport.id || `report-${Date.now()}`,
+      id: customReport.id || `report-${reportIdRef.current}`,
       createdAt: new Date().toISOString()
     };
 
@@ -142,20 +200,7 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
   };
 
   const handleGenerateReport = () => {
-    // Simular geração de relatório
-    const mockData = {
-      title: customReport.name,
-      generatedAt: new Date().toISOString(),
-      data: {
-        totalRecords: Math.floor(Math.random() * 1000) + 100,
-        summary: {
-          revenue: Math.floor(Math.random() * 100000) + 10000,
-          bookings: Math.floor(Math.random() * 500) + 50,
-          customers: Math.floor(Math.random() * 200) + 20
-        },
-        chartData: generateMockChartData(customReport.chartType || 'bar')
-      }
-    };
+    const mockData = buildGeneratedReport(customReport.name, customReport.chartType || 'bar');
 
     setReportData(mockData);
     setShowPreviewModal(true);
@@ -164,33 +209,6 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
       onReportGenerated(mockData);
     }
   };
-
-  const generateMockChartData = (chartType: string) => {
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
-    
-    switch (chartType) {
-      case 'bar':
-        return months.map(month => ({
-          month,
-          value: Math.floor(Math.random() * 100) + 10
-        }));
-      case 'line':
-        return months.map(month => ({
-          month,
-          value: Math.floor(Math.random() * 1000) + 100
-        }));
-      case 'pie':
-        return [
-          { name: 'Caldas Novas', value: 45 },
-          { name: 'Porto de Galinhas', value: 30 },
-          { name: 'Fernando de Noronha', value: 15 },
-          { name: 'Outros', value: 10 }
-        ];
-      default:
-        return [];
-    }
-  };
-
   const handleExportReport = (format: 'pdf' | 'excel' | 'csv') => {
     showNotification(`Relatório exportado em ${format.toUpperCase()}`, 'success');
     // Aqui seria implementada a lógica real de exportação
@@ -335,7 +353,7 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
               ].map(({ type, icon: Icon, label }) => (
                 <button
                   key={type}
-                  onClick={() => setCustomReport(prev => ({ ...prev, chartType: type as any }))}
+                  onClick={() => setCustomReport(prev => ({ ...prev, chartType: type as ReportTemplate['chartType'] }))}
                   className={`p-3 border rounded-lg flex flex-col items-center space-y-2 transition-colors ${
                     customReport.chartType === type
                       ? 'border-blue-500 bg-blue-50 text-blue-700'

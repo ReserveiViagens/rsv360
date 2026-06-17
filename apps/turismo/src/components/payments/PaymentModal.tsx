@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { CreditCard, Lock, Shield, CheckCircle, AlertCircle, Clock, DollarSign, Calendar, User, MapPin, CreditCard as CardIcon, Smartphone, QrCode } from 'lucide-react';
+import React, { useState } from 'react';
+import { CreditCard, Lock, Shield, CheckCircle, AlertCircle, CreditCard as CardIcon, QrCode } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Select, SelectOption } from '../ui/Select';
 import { Modal } from '../ui/Modal';
 import { Badge } from '../ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
 import { cn } from '../../utils/cn';
 
 export interface PaymentMethod {
@@ -151,7 +150,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     brand: ''
   });
 
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [_isProcessing, setIsProcessing] = useState(false);
   const [currentStep, setCurrentStep] = useState<'method' | 'details' | 'processing' | 'success' | 'error'>('method');
 
   const handleMethodSelect = (method: PaymentMethod) => {
@@ -159,7 +158,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     setCurrentStep('details');
   };
 
-  const handleInputChange = (field: keyof PaymentData, value: any) => {
+  const handleInputChange = (field: keyof PaymentData, value: PaymentData[keyof PaymentData]) => {
     setPaymentData(prev => ({ ...prev, [field]: value }));
   };
 
