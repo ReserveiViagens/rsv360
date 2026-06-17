@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #21 concluído)  
-**Baseline global:** **1813** warnings  
+**Atualizado:** 2026-06-02 (cluster #22 concluído)  
+**Baseline global:** **1765** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1813** |
-| Clusters concluídos | **21** / 120 |
-| PR empilhada mais recente | **#433** (cluster #21, −48) |
-| Próximo cluster | **#22** — chatbot-ia + gestao + reports (src) (−48) |
+| Warnings globais | **1765** |
+| Clusters concluídos | **22** / 120 |
+| PR empilhada mais recente | **#434** (cluster #22, −48) |
+| Próximo cluster | **#23** — ChatConversations + NotificationManager + PushNotificationSystem (−48) |
 
 ## Padrão por cluster (repetir)
 
@@ -53,8 +53,9 @@
 | #431 | visa (src) + BookingCalendar + BookingModal | −51 → **1910** | workflow-visa-config-gerais |
 | #432 | apiClient + cadastros + gestao | −49 → **1861** | visa-booking-calendar-modal |
 | #433 | hotels-complete + reports + travel | −48 → **1813** | apiclient-cadastros-gestao |
+| #434 | chatbot-ia + gestao + reports (src) | −48 → **1765** | hotels-reports-travel |
 
-## Clusters 1–21 (próximos na fila)
+## Clusters 1–22 (próximos na fila)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -79,8 +80,9 @@
 | 19 | −51 | visa (src), BookingCalendar, BookingModal | **concluído** (#431) |
 | 20 | −49 | apiClient, cadastros, gestao | **concluído** (#432) |
 | 21 | −48 | hotels-complete, reports, travel | **concluído** (#433) |
+| 22 | −48 | chatbot-ia, gestao, reports (src) | **concluído** (#434) |
 
-## Clusters 22–120
+## Clusters 23–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
