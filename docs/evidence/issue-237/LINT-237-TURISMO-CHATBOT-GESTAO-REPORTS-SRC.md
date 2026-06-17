@@ -14,4 +14,4 @@
 
 **Gates:** ESLint 0 nos 3 alvos | build OK
 
-**Próximo:** cluster #23 — ChatConversations + NotificationManager + PushNotificationSystem (−48)
+**Próximo:** cluster #24 — TaskManager + leiloesApi + marketplace (−47)

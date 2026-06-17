@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #22 concluído)  
-**Baseline global:** **1765** warnings  
+**Atualizado:** 2026-06-02 (cluster #23 concluído)  
+**Baseline global:** **1717** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1765** |
-| Clusters concluídos | **22** / 120 |
-| PR empilhada mais recente | **#434** (cluster #22, −48) |
-| Próximo cluster | **#23** — ChatConversations + NotificationManager + PushNotificationSystem (−48) |
+| Warnings globais | **1717** |
+| Clusters concluídos | **23** / 120 |
+| PR empilhada mais recente | **#435** (cluster #23, −48) |
+| Próximo cluster | **#24** — TaskManager + leiloesApi + marketplace (−47) |
 
 ## Padrão por cluster (repetir)
 
@@ -54,8 +54,9 @@
 | #432 | apiClient + cadastros + gestao | −49 → **1861** | visa-booking-calendar-modal |
 | #433 | hotels-complete + reports + travel | −48 → **1813** | apiclient-cadastros-gestao |
 | #434 | chatbot-ia + gestao + reports (src) | −48 → **1765** | hotels-reports-travel |
+| #435 | ChatConversations + NotificationManager + PushNotificationSystem | −48 → **1717** | chatbot-gestao-reports-src |
 
-## Clusters 1–22 (próximos na fila)
+## Clusters 1–23 (próximos na fila)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -81,8 +82,9 @@
 | 20 | −49 | apiClient, cadastros, gestao | **concluído** (#432) |
 | 21 | −48 | hotels-complete, reports, travel | **concluído** (#433) |
 | 22 | −48 | chatbot-ia, gestao, reports (src) | **concluído** (#434) |
+| 23 | −48 | ChatConversations, NotificationManager, PushNotificationSystem | **concluído** (#435) |
 
-## Clusters 23–120
+## Clusters 24–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
