@@ -178,6 +178,7 @@
 - [x] Lint integracoes-apis + marketplace-parceiros + notification-system-test −42 — **GO condicional** *(PR #440)* — `issue-237/LINT-237-TURISMO-INTEGRACOES-MARKETPLACE-NOTIFICATION.md`
 - [x] Lint relatorios-personalizados + DataExportSystem + BackupRecoverySystem −42 — **GO condicional** *(PR #441)* — `issue-237/LINT-237-TURISMO-RELATORIOS-DATAEXPORT-BACKUP.md`
 - [x] Lint PerformanceTesting + templates + dashboard-rsv-backup −40 — **GO condicional** *(PR #442)* — `issue-237/LINT-237-TURISMO-PERFORMANCE-TEMPLATES-DASHBOARD-BACKUP.md`
+- [x] Lint dashboard-rsv + voice-commerce + e-commerce −39 — **GO condicional** *(PR #443)* — `issue-237/LINT-237-TURISMO-DASHBOARD-RSV-VOICE-ECOMMERCE.md`
 
 ## Decisão Trilha 0
 

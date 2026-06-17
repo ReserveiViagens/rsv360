@@ -33,7 +33,7 @@ Baseline: **1583** warnings | Meta: **0** | Gerado: 2026-06-02
 - [x] **Cluster 29** (−42): `src/pages/relatorios-personalizados.tsx` (14), `src/components/analytics/DataExportSystem.tsx` (14), `src/components/deploy/BackupRecoverySystem.tsx` (14)
 - [ ] **Cluster 30** (−42): `src/components/documentation/TrainingSystem.tsx` (14), `src/components/marketing/LeadCapture.tsx` (14), `src/components/settings/SettingsPanel.tsx` (14)
 - [x] **Cluster 31** (−40): `src/components/testing/PerformanceTesting.tsx` (14), `pages/cotacoes/templates.tsx` (13), `pages/dashboard-rsv-backup.tsx` (13)
-- [ ] **Cluster 32** (−39): `pages/dashboard-rsv.tsx` (13), `pages/dashboard/voice-commerce.tsx` (13), `pages/e-commerce.tsx` (13)
+- [x] **Cluster 32** (−39): `pages/dashboard-rsv.tsx` (13), `pages/dashboard/voice-commerce.tsx` (13), `pages/e-commerce.tsx` (13)
 - [ ] **Cluster 33** (−39): `src/pages/documents.tsx` (13), `src/pages/e-commerce.tsx` (13), `src/components/documentation/TutorialSystem.tsx` (13)
 - [ ] **Cluster 34** (−39): `src/components/financial/TaxManagement.tsx` (13), `src/components/payments/PaymentModal.tsx` (13), `src/components/reports/CustomReportBuilder.tsx` (13)
 - [ ] **Cluster 35** (−37): `src/services/authService.ts` (13), `pages/visas.tsx` (12), `pages/workflows.tsx` (12)
