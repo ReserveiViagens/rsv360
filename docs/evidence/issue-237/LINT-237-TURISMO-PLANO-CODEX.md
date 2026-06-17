@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-16 (cluster #28 concluído)  
-**Baseline global:** **1499** warnings  
+**Atualizado:** 2026-06-16 (cluster #29 concluído)  
+**Baseline global:** **1457** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1499** |
-| Clusters concluídos | **28** / 120 |
-| PR empilhada mais recente | **#440** (cluster #28, −42) |
-| Próximo cluster | **#29** — relatorios-personalizados + DataExportSystem + BackupRecoverySystem (−42) |
+| Warnings globais | **1457** |
+| Clusters concluídos | **29** / 120 |
+| PR empilhada mais recente | **#441** (cluster #29, −42) |
+| Próximo cluster | **#30** — TrainingSystem + LeadCapture + SettingsPanel (−42) |
 
 ## Padrão por cluster (repetir)
 
@@ -60,8 +60,9 @@
 | #438 | documents + groups + TestingPage | −42 → **1583** | customer-deploy-accounting |
 | #439 | configuracoes-avancadas + configuracoes-usuarios + groups (src) | −42 → **1541** | documents-groups-testing |
 | #440 | integracoes-apis + marketplace-parceiros + notification-system-test | −42 → **1499** | configuracoes-avancadas-usuarios-groups |
+| #441 | relatorios-personalizados + DataExportSystem + BackupRecoverySystem | −42 → **1457** | integracoes-marketplace-notification |
 
-## Clusters 1–28 (concluídos)
+## Clusters 1–29 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -93,8 +94,9 @@
 | 26 | −42 | documents, groups, TestingPage | **concluído** (#438) |
 | 27 | −42 | configuracoes-avancadas, configuracoes-usuarios, groups (src) | **concluído** (#439) |
 | 28 | −42 | integracoes-apis, marketplace-parceiros, notification-system-test | **concluído** (#440) |
+| 29 | −42 | relatorios-personalizados, DataExportSystem, BackupRecoverySystem | **concluído** (#441) |
 
-## Clusters 29–120
+## Clusters 30–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
