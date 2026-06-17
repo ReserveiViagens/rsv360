@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
@@ -9,15 +9,12 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Checkbox } from '@/components/ui/Checkbox';
 import {
   FileText,
   Plus,
   Save,
-  Download,
   Settings,
   Filter,
-  Calendar,
   BarChart3,
   PieChart,
   LineChart,
@@ -25,15 +22,13 @@ import {
   Layout,
   Trash2,
   Copy,
-  Share,
   Clock,
   Mail,
   Bell,
   PlayCircle,
-  Eye,
   Edit
 } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 interface ReportField {
   id: string;
@@ -65,6 +60,16 @@ interface ReportTemplate {
   };
   created_at: string;
   updated_at: string;
+}
+
+interface ReportData {
+  name: string;
+  description: string;
+  type: ReportTemplate['type'];
+  fields: ReportField[];
+  filters: Filter[];
+  visualization: ReportTemplate['visualization'];
+  schedule: ReportTemplate['schedule'] | null;
 }
 
 const AVAILABLE_FIELDS: ReportField[] = [
@@ -134,9 +139,9 @@ const MOCK_TEMPLATES: ReportTemplate[] = [
 export default function RelatoriosPersonalizados() {
   const [activeTab, setActiveTab] = useState('templates');
   const [templates, setTemplates] = useState<ReportTemplate[]>(MOCK_TEMPLATES);
-  const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
+  const [, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [reportData, setReportData] = useState<any>({
+  const [reportData, setReportData] = useState<ReportData>({
     name: '',
     description: '',
     type: 'custom',
@@ -147,7 +152,7 @@ export default function RelatoriosPersonalizados() {
   });
 
   // Funções de Drag & Drop para campos
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const { source, destination } = result;
@@ -251,11 +256,6 @@ export default function RelatoriosPersonalizados() {
   const generateReport = (template: ReportTemplate) => {
     console.log('Gerando relatório:', template);
     // Implementar lógica de geração de relatório
-  };
-
-  const exportTemplate = (template: ReportTemplate, format: string) => {
-    console.log(`Exportando template ${template.name} em formato ${format}`);
-    // Implementar lógica de exportação
   };
 
   return (
@@ -702,7 +702,7 @@ export default function RelatoriosPersonalizados() {
                       </div>
                     ) : (
                       <div className="text-center text-gray-500 py-8">
-                        Nenhum filtro adicionado. Clique em "Adicionar Filtro" para começar.
+                        Nenhum filtro adicionado. Clique em &quot;Adicionar Filtro&quot; para começar.
                       </div>
                     )}
                   </CardContent>
@@ -716,7 +716,7 @@ export default function RelatoriosPersonalizados() {
                     Construtor de Relatórios
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Clique em "Novo Relatório" para começar a criar um relatório personalizado
+                    Clique em &quot;Novo Relatório&quot; para começar a criar um relatório personalizado
                   </p>
                   <Button onClick={() => setIsCreating(true)}>
                     <Plus className="h-4 w-4 mr-2" />
