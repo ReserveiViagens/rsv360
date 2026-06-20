@@ -12,9 +12,9 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **82** | | | | |
-| Clusters concluídos | **96** / 120 | / 120 | / 120 | / 120 | / 120 |
-| PR empilhada mais recente | **#TBD** (cluster #96, −6) |
+| Warnings globais | **82** | | | | | |
+| Clusters concluídos | **96** / 120 | / 120 | / 120 | / 120 | / 120 | / 120 |
+| PR empilhada mais recente | **#511** (cluster #96, −6) |
 | Próximo cluster | **#97** — (−6) |
 
 ## Padrão por cluster (repetir)
