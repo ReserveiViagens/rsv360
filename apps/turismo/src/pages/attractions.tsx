@@ -18,7 +18,6 @@ import {
     Download,
     Play
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Attraction {
@@ -58,6 +57,90 @@ interface Attraction {
     annualRevenue?: number;
 }
 
+const MOCK_ATTRACTIONS: Attraction[] = [
+    {
+        id: 1,
+        name: "Cristo Redentor",
+        location: "Rio de Janeiro, RJ",
+        description: "Monumento art déco de Jesus Cristo no topo do Corcovado, oferecendo vistas panorâmicas da cidade.",
+        category: "monumento",
+        rating: 4.8,
+        price: 85.00,
+        duration: "2-3 horas",
+        visitors: 2500000,
+        amenities: ["Vista panorâmica", "Restaurante", "Loja de souvenirs"],
+        facilities: ["Estacionamento", "Banheiros", "Acessibilidade"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/attractions/cristo-redentor-1.jpg", "/images/attractions/cristo-redentor-2.jpg"],
+        videos: ["/videos/attractions/cristo-redentor.mp4"],
+        contact: {
+            phone: "(21) 2558-1329",
+            email: "info@cristoredentor.com",
+            website: "www.cristoredentor.com"
+        },
+        website: "www.cristoredentor.com",
+        openingHours: "08:00 - 19:00",
+        bestTime: "Manhã cedo ou fim da tarde",
+        status: "active",
+        createdAt: "2024-01-15",
+        updatedAt: "2024-01-20"
+    },
+    {
+        id: 2,
+        name: "Pão de Açúcar",
+        location: "Rio de Janeiro, RJ",
+        description: "Complexo de bondinhos que leva ao topo do Pão de Açúcar, com vistas espetaculares da Baía de Guanabara.",
+        category: "monumento",
+        rating: 4.7,
+        price: 120.00,
+        duration: "3-4 horas",
+        visitors: 1800000,
+        amenities: ["Bondinho", "Vista panorâmica", "Restaurante"],
+        facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/attractions/pao-acucar-1.jpg", "/images/attractions/pao-acucar-2.jpg"],
+        videos: ["/videos/attractions/pao-acucar.mp4"],
+        contact: {
+            phone: "(21) 2546-8400",
+            email: "info@paodeacucar.com",
+            website: "www.paodeacucar.com"
+        },
+        website: "www.paodeacucar.com",
+        openingHours: "08:30 - 19:30",
+        bestTime: "Manhã ou fim da tarde",
+        status: "active",
+        createdAt: "2024-01-10",
+        updatedAt: "2024-01-18"
+    },
+    {
+        id: 3,
+        name: "Cataratas do Iguaçu",
+        location: "Foz do Iguaçu, PR",
+        description: "Uma das maiores cachoeiras do mundo, com 275 quedas d'água em meio à Mata Atlântica.",
+        category: "natureza",
+        rating: 4.9,
+        price: 95.00,
+        duration: "4-5 horas",
+        visitors: 1500000,
+        amenities: ["Trilhas", "Passeio de barco", "Restaurante"],
+        facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/attractions/cataratas-iguacu-1.jpg", "/images/attractions/cataratas-iguacu-2.jpg"],
+        videos: ["/videos/attractions/cataratas-iguacu.mp4"],
+        contact: {
+            phone: "(45) 3521-4400",
+            email: "info@cataratasdoiguacu.com",
+            website: "www.cataratasdoiguacu.com"
+        },
+        website: "www.cataratasdoiguacu.com",
+        openingHours: "09:00 - 17:00",
+        bestTime: "Manhã para evitar multidões",
+        status: "active",
+        createdAt: "2024-01-05",
+        updatedAt: "2024-01-12"
+    }
+];
+
 export default function AttractionsPage() {
     const [attractions, setAttractions] = useState<Attraction[]>([]);
     const [loading, setLoading] = useState(true);
@@ -77,101 +160,14 @@ export default function AttractionsPage() {
     const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
     const [exportGenerating, setExportGenerating] = useState(false);
     const [showVideoModal, setShowVideoModal] = useState(false);
-    const [selectedVideo, setSelectedVideo] = useState<string>('');
+    const [_selectedVideo, _setSelectedVideo] = useState<string>('');
     const [uploadingVideo, setUploadingVideo] = useState(false);
 
-    // Dados mockados para atrações
-    const mockAttractions: Attraction[] = [
-        {
-            id: 1,
-            name: "Cristo Redentor",
-            location: "Rio de Janeiro, RJ",
-            description: "Monumento art déco de Jesus Cristo no topo do Corcovado, oferecendo vistas panorâmicas da cidade.",
-            category: "monumento",
-            rating: 4.8,
-            price: 85.00,
-            duration: "2-3 horas",
-            visitors: 2500000,
-            amenities: ["Vista panorâmica", "Restaurante", "Loja de souvenirs"],
-            facilities: ["Estacionamento", "Banheiros", "Acessibilidade"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/attractions/cristo-redentor-1.jpg", "/images/attractions/cristo-redentor-2.jpg"],
-            videos: ["/videos/attractions/cristo-redentor.mp4"],
-            contact: {
-                phone: "(21) 2558-1329",
-                email: "info@cristoredentor.com",
-                website: "www.cristoredentor.com"
-            },
-            website: "www.cristoredentor.com",
-            openingHours: "08:00 - 19:00",
-            bestTime: "Manhã cedo ou fim da tarde",
-            status: "active",
-            createdAt: "2024-01-15",
-            updatedAt: "2024-01-20"
-        },
-        {
-            id: 2,
-            name: "Pão de Açúcar",
-            location: "Rio de Janeiro, RJ",
-            description: "Complexo de bondinhos que leva ao topo do Pão de Açúcar, com vistas espetaculares da Baía de Guanabara.",
-            category: "monumento",
-            rating: 4.7,
-            price: 120.00,
-            duration: "3-4 horas",
-            visitors: 1800000,
-            amenities: ["Bondinho", "Vista panorâmica", "Restaurante"],
-            facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/attractions/pao-acucar-1.jpg", "/images/attractions/pao-acucar-2.jpg"],
-            videos: ["/videos/attractions/pao-acucar.mp4"],
-            contact: {
-                phone: "(21) 2546-8400",
-                email: "info@paodeacucar.com",
-                website: "www.paodeacucar.com"
-            },
-            website: "www.paodeacucar.com",
-            openingHours: "08:30 - 19:30",
-            bestTime: "Manhã ou fim da tarde",
-            status: "active",
-            createdAt: "2024-01-10",
-            updatedAt: "2024-01-18"
-        },
-        {
-            id: 3,
-            name: "Cataratas do Iguaçu",
-            location: "Foz do Iguaçu, PR",
-            description: "Uma das maiores cachoeiras do mundo, com 275 quedas d'água em meio à Mata Atlântica.",
-            category: "natureza",
-            rating: 4.9,
-            price: 95.00,
-            duration: "4-5 horas",
-            visitors: 1500000,
-            amenities: ["Trilhas", "Passeio de barco", "Restaurante"],
-            facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/attractions/cataratas-iguacu-1.jpg", "/images/attractions/cataratas-iguacu-2.jpg"],
-            videos: ["/videos/attractions/cataratas-iguacu.mp4"],
-            contact: {
-                phone: "(45) 3521-4400",
-                email: "info@cataratasdoiguacu.com",
-                website: "www.cataratasdoiguacu.com"
-            },
-            website: "www.cataratasdoiguacu.com",
-            openingHours: "09:00 - 17:00",
-            bestTime: "Manhã para evitar multidões",
-            status: "active",
-            createdAt: "2024-01-05",
-            updatedAt: "2024-01-12"
-        }
-    ];
-
     useEffect(() => {
-        // Simular carregamento de dados
         const loadAttractions = async () => {
             setLoading(true);
-            // Simular delay de API
             await new Promise(resolve => setTimeout(resolve, 1000));
-            setAttractions(mockAttractions);
+            setAttractions(MOCK_ATTRACTIONS);
             setLoading(false);
         };
 
@@ -740,6 +736,7 @@ export default function AttractionsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {selectedAttraction.images.map((image, index) => (
                                     <div key={index} className="relative group">
+                                        {/* eslint-disable-next-line @next/next/no-img-element -- attraction gallery from mock/API paths */}
                                         <img
                                             src={image}
                                             alt={`${selectedAttraction.name} - Imagem ${index + 1}`}
@@ -1104,6 +1101,7 @@ export default function AttractionsPage() {
             {selectedImage && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                     <div className="relative max-w-4xl max-h-[90vh] mx-4">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- full-size attraction image preview modal */}
                         <img
                             src={selectedImage}
                             alt="Preview"
