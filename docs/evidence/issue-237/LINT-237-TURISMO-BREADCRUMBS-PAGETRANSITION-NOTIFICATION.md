@@ -1,6 +1,6 @@
 # Lint #237 — turismo breadcrumbs + pagetransition + notificationbell
 
-**Cluster:** **#96** | **Branch:** `chore/lint-turismo-breadcrumbs-pagetransition-notification`
+**Cluster:** **#96** | **Branch:** `chore/lint-turismo-breadcrumbs-pagetransition-notification` | **PR:** #511
 
 | Métrica | Pós-#95 | Esta PR |
 |---------|---------|---------|

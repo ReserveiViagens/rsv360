@@ -240,6 +240,7 @@
 - [x] Lint dashboard excursoes index + participantes + roteiros ?6 ? **GO condicional** *(PR #506)* ? `issue-237/LINT-237-TURISMO-DASHBOARD-EXCURSOES-PAGES.md`
 - [x] Lint flash-deals + viagens-grupo index + pagamentos ?6 ? **GO condicional** *(PR #507)* ? `issue-237/LINT-237-TURISMO-FLASH-DEALS-VIAGENS-GRUPO.md`
 - [x] Lint ai-system-test + src/coupons + training-system-test
+- [x] Lint breadcrumbs + pagetransition + notificationbell −6 **GO condicional** *(PR #511)* `issue-237/LINT-237-TURISMO-BREADCRUMBS-PAGETRANSITION-NOTIFICATION.md`
 - [x] Lint breadcrumbs + pagetransition + notificationbell −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-BREADCRUMBS-PAGETRANSITION-NOTIFICATION.md`
 - [x] Lint participanteslist + auctionlist + auctionstats −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-PARTICIPANTES-AUCTION-LIST-STATS.md`
 - [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #509)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md`
