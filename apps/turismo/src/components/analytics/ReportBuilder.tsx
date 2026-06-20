@@ -2,12 +2,10 @@
 // REPORT BUILDER - CONSTRUTOR DE RELATÓRIOS AVANÇADO
 // ===================================================================
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   Download,
-  FileText,
   Calendar,
-  Filter,
   BarChart3,
   PieChart,
   LineChart,
@@ -16,10 +14,7 @@ import {
   MapPin,
   Star,
   Settings,
-  Eye,
-  Share2,
-  Mail,
-  Printer
+  Eye
 } from 'lucide-react';
 
 // ===================================================================
@@ -42,29 +37,37 @@ interface ReportConfig {
 }
 
 interface ReportBuilderProps {
-  data: any;
+  data: Record<string, unknown>;
   onGenerateReport: (config: ReportConfig) => void;
 }
+
+function buildDefaultDateRange(): ReportConfig['dateRange'] {
+  const end = new Date();
+  const start = new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000);
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  };
+}
+
+const DEFAULT_REPORT_CONFIG: ReportConfig = {
+  title: 'Relatório de Performance',
+  description: 'Análise completa do negócio de viagens',
+  dateRange: buildDefaultDateRange(),
+  metrics: ['revenue', 'bookings', 'customers'],
+  charts: ['revenue', 'bookings'],
+  format: 'pdf',
+  includeCharts: true,
+  includeData: true,
+  includeInsights: true,
+};
 
 // ===================================================================
 // COMPONENTE PRINCIPAL
 // ===================================================================
 
-const ReportBuilder: React.FC<ReportBuilderProps> = ({ data, onGenerateReport }) => {
-  const [config, setConfig] = useState<ReportConfig>({
-    title: 'Relatório de Performance',
-    description: 'Análise completa do negócio de viagens',
-    dateRange: {
-      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0]
-    },
-    metrics: ['revenue', 'bookings', 'customers'],
-    charts: ['revenue', 'bookings'],
-    format: 'pdf',
-    includeCharts: true,
-    includeData: true,
-    includeInsights: true
-  });
+const ReportBuilder: React.FC<ReportBuilderProps> = ({ data: _data, onGenerateReport }) => {
+  const [config, setConfig] = useState<ReportConfig>(DEFAULT_REPORT_CONFIG);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -100,7 +103,7 @@ const ReportBuilder: React.FC<ReportBuilderProps> = ({ data, onGenerateReport })
   // HANDLERS
   // ===================================================================
 
-  const handleConfigChange = (key: keyof ReportConfig, value: any) => {
+  const handleConfigChange = <K extends keyof ReportConfig>(key: K, value: ReportConfig[K]) => {
     setConfig(prev => ({
       ...prev,
       [key]: value
