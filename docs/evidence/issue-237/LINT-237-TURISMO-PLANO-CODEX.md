@@ -3,7 +3,7 @@
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
 **Atualizado:** 2026-06-20 (cluster #77 concluído)  
-**Baseline global:** **205** warnings  
+**Baseline global:** **196** warnings  
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **205** |
-| Clusters concluídos | **80** / 120 |
-| PR empilhada mais recente | **#495** (cluster #80, −12) |
-| Próximo cluster | **#81** — enterprises edit + analytics-complete + cotacoes/share (−9) |
+| Warnings globais | **196** |
+| Clusters concluídos | **81** / 120 |
+| PR empilhada mais recente | **#496** (cluster #81, −9) |
+| Próximo cluster | **#82** — excursoes/leiloes dashboard (−9) |
 
 ## Padrão por cluster (repetir)
 
@@ -110,6 +110,7 @@
 | #493 | PasswordReset + NavigationMenu + BroadcastSystem | −12 → **229** | cotacoes-ui-hotelselector |
 | #494 | ReportNotifications + QualityMetrics + dialog | −12 → **217** | password-nav-broadcast |
 | #495 | useAccessibility + useAnimations + useAuth | −12 → **205** | reports-quality-dialog |
+| #496 | enterprises edit + analytics-complete + share | −9 → **196** | hooks-accessibility-auth |
 
 ## Clusters 1–50 (concluídos)
 
