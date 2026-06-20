@@ -205,6 +205,7 @@
 - [x] Lint ReportGenerator + WorkflowEngine + paymentService −24 — **GO condicional** *(PR #471)* — `issue-237/LINT-237-TURISMO-REPORT-WORKFLOW-PAYMENT.md`
 - [x] Lint websocket + AuthContext + calendar −23 — **GO condicional** *(PR #472)* — `issue-237/LINT-237-TURISMO-WEBSOCKET-AUTH-CALENDAR.md`
 - [x] Lint cotacoes/templates/new + loyalty + analytics-dashboard −21 — **GO condicional** *(PR #473)* — `issue-237/LINT-237-TURISMO-COTACOES-LOYALTY-ANALYTICS.md`
+- [x] Lint analytics-system-test + calendar (src) + component-test −21 — **GO condicional** *(PR #474)* — `issue-237/LINT-237-TURISMO-ANALYTICS-CALENDAR-COMPONENT.md`
 
 ## Decisão Trilha 0
 
