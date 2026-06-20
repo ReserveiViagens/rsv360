@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { 
   Users, 
   UserPlus, 
   Search, 
   Filter, 
-  MoreHorizontal,
   Edit,
   Trash2,
   Eye,
@@ -22,12 +20,9 @@ import {
   Calendar,
   CheckCircle,
   XCircle,
-  AlertTriangle,
   Download,
   Upload,
-  RefreshCw
 } from 'lucide-react';
-import { useAuth } from './AuthProvider';
 import { cn } from '@/lib/utils';
 
 interface User {
@@ -52,11 +47,53 @@ interface UserFilters {
   company: string;
 }
 
+const MOCK_USERS: User[] = [
+  {
+    id: '1',
+    firstName: 'João',
+    lastName: 'Silva',
+    email: 'joao.silva@rsv.com',
+    phone: '(11) 99999-9999',
+    company: 'RSV Viagens',
+    role: 'admin',
+    isActive: true,
+    lastLogin: new Date(),
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date(),
+    avatar: '/avatars/joao.jpg'
+  },
+  {
+    id: '2',
+    firstName: 'Maria',
+    lastName: 'Santos',
+    email: 'maria.santos@rsv.com',
+    phone: '(11) 88888-8888',
+    company: 'RSV Viagens',
+    role: 'manager',
+    isActive: true,
+    lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    createdAt: new Date('2024-02-01'),
+    updatedAt: new Date(),
+    avatar: '/avatars/maria.jpg'
+  },
+  {
+    id: '3',
+    firstName: 'Pedro',
+    lastName: 'Oliveira',
+    email: 'pedro.oliveira@rsv.com',
+    phone: '(11) 77777-7777',
+    company: 'RSV Viagens',
+    role: 'user',
+    isActive: false,
+    lastLogin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    createdAt: new Date('2024-03-10'),
+    updatedAt: new Date(),
+    avatar: '/avatars/pedro.jpg'
+  }
+];
+
 export const UserManagement: React.FC = () => {
-  const { user } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     role: '',
@@ -64,62 +101,8 @@ export const UserManagement: React.FC = () => {
     company: ''
   });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [showBulkActions, setShowBulkActions] = useState(false);
 
-  // Mock data - em produção viria da API
-  useEffect(() => {
-    const mockUsers: User[] = [
-      {
-        id: '1',
-        firstName: 'João',
-        lastName: 'Silva',
-        email: 'joao.silva@rsv.com',
-        phone: '(11) 99999-9999',
-        company: 'RSV Viagens',
-        role: 'admin',
-        isActive: true,
-        lastLogin: new Date(),
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date(),
-        avatar: '/avatars/joao.jpg'
-      },
-      {
-        id: '2',
-        firstName: 'Maria',
-        lastName: 'Santos',
-        email: 'maria.santos@rsv.com',
-        phone: '(11) 88888-8888',
-        company: 'RSV Viagens',
-        role: 'manager',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        createdAt: new Date('2024-02-01'),
-        updatedAt: new Date(),
-        avatar: '/avatars/maria.jpg'
-      },
-      {
-        id: '3',
-        firstName: 'Pedro',
-        lastName: 'Oliveira',
-        email: 'pedro.oliveira@rsv.com',
-        phone: '(11) 77777-7777',
-        company: 'RSV Viagens',
-        role: 'user',
-        isActive: false,
-        lastLogin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        createdAt: new Date('2024-03-10'),
-        updatedAt: new Date(),
-        avatar: '/avatars/pedro.jpg'
-      }
-    ];
-
-    setUsers(mockUsers);
-    setFilteredUsers(mockUsers);
-    setLoading(false);
-  }, []);
-
-  // Filtrar usuários
-  useEffect(() => {
+  const filteredUsers = useMemo(() => {
     let filtered = users;
 
     if (filters.search) {
@@ -148,7 +131,7 @@ export const UserManagement: React.FC = () => {
       filtered = filtered.filter(user => user.company === filters.company);
     }
 
-    setFilteredUsers(filtered);
+    return filtered;
   }, [users, filters]);
 
   const handleUserSelection = (userId: string) => {
@@ -246,14 +229,6 @@ export const UserManagement: React.FC = () => {
       <XCircle className="h-4 w-4 text-red-600" />
     );
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -373,6 +348,7 @@ export const UserManagement: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
                           {user.avatar ? (
+                            /* eslint-disable-next-line @next/next/no-img-element -- avatar URL from mock */
                             <img src={user.avatar} alt="" className="w-8 h-8 rounded-full" />
                           ) : (
                             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
