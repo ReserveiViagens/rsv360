@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Users, X, CheckCircle, Clock } from 'lucide-react'
+import { Users, X } from 'lucide-react'
 import { Participante } from '../../services/api/excursoesApi'
 import { StatusBadge } from '../shared/StatusBadge'
 
