@@ -11,7 +11,7 @@ type AnalyticsStatus = {
 
 type AnalyticsData = {
   message?: string
-  data?: any[]
+  data?: Record<string, unknown>[]
 }
 
 export default function AnalyticsCompletePage() {
@@ -40,7 +40,7 @@ export default function AnalyticsCompletePage() {
           } catch {
             const resp2 = await fetch(`${base}/health`, { headers, signal: controller.signal })
             if (!resp2.ok) throw new Error(`Status ${resp2.status}`)
-            const data = await resp2.json().catch(() => ({} as any))
+            const data = await resp2.json().catch(() => ({} as Record<string, unknown>))
             return {
               service: 'analytics',
               status: data?.status || 'unknown',
@@ -70,8 +70,8 @@ export default function AnalyticsCompletePage() {
         if (stResult.status === 'rejected' && anResult.status === 'rejected') {
           throw new Error('Falha ao carregar status e dados de analytics')
         }
-      } catch (e: any) {
-        setError(e?.message || 'Falha ao carregar analytics')
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'Falha ao carregar analytics')
       } finally {
         clearTimeout(timeout)
         setLoading(false)

@@ -227,6 +227,7 @@
 - [x] Lint PasswordReset + NavigationMenu + BroadcastSystem −12 — **GO condicional** *(PR #493)* — `issue-237/LINT-237-TURISMO-PASSWORD-NAV-BROADCAST.md`
 - [x] Lint ReportNotifications + QualityMetrics + dialog −12 — **GO condicional** *(PR #494)* — `issue-237/LINT-237-TURISMO-REPORTS-QUALITY-DIALOG.md`
 - [x] Lint useAccessibility + useAnimations + useAuth −12 — **GO condicional** *(PR #495)* — `issue-237/LINT-237-TURISMO-HOOKS-ACCESSIBILITY-AUTH.md`
+- [x] Lint enterprises edit + analytics-complete + share −9 — **GO condicional** *(PR #496)* — `issue-237/LINT-237-TURISMO-ENTERPRISES-ANALYTICS-SHARE.md`
 
 ## Decisão Trilha 0
 
