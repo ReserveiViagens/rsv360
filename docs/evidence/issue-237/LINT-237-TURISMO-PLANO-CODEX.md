@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #38 concluído)  
-**Baseline global:** **1117** warnings  
+**Atualizado:** 2026-06-20 (cluster #39 concluído)  
+**Baseline global:** **1084** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1117** |
-| Clusters concluídos | **38** / 120 |
-| PR empilhada mais recente | **#453** (cluster #38, −33) |
-| Próximo cluster | **#39** — reports-dashboard + travel-catalog-rsv + src/marketing-dashboard (−33) |
+| Warnings globais | **1084** |
+| Clusters concluídos | **39** / 120 |
+| PR empilhada mais recente | **#454** (cluster #39, −33) |
+| Próximo cluster | **#40** — src/reports-dashboard + Navigation + CampaignManager (−33) |
 
 ## Padrão por cluster (repetir)
 
@@ -68,8 +68,9 @@
 | #451 | ExecutiveDashboard + UserManagement + DocumentationSystem | −36 → **1185** | authservice-visas-workflows |
 | #452 | FAQSystem + FinancialDashboard + dashboard-reservei-viagens | −35 → **1150** | executive-usermgmt-docsystem |
 | #453 | google-hotel-ads + giftcards + marketing-dashboard | −33 → **1117** | faq-financial-dashboard-reservei |
+| #454 | reports-dashboard + travel-catalog-rsv + src/marketing-dashboard | −33 → **1084** | googlehotel-giftcards-marketing |
 
-## Clusters 1–38 (concluídos)
+## Clusters 1–39 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -110,8 +111,9 @@
 | 36 | −36 | ExecutiveDashboard, UserManagement, DocumentationSystem | **concluído** (#451) |
 | 37 | −35 | FAQSystem, FinancialDashboard, dashboard-reservei-viagens | **concluído** (#452) |
 | 38 | −33 | google-hotel-ads, giftcards, marketing-dashboard | **concluído** (#453) |
+| 39 | −33 | reports-dashboard, travel-catalog-rsv, src/marketing-dashboard | **concluído** (#454) |
 
-## Clusters 39–120
+## Clusters 40–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
