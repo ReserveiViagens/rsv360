@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Save, X } from 'lucide-react'
 import { Leilao } from '../../services/api/leiloesApi'
 
@@ -27,7 +27,7 @@ export function LeilaoForm({ leilao, onSubmit, onCancel, isLoading = false }: Le
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -79,7 +79,7 @@ export function LeilaoForm({ leilao, onSubmit, onCancel, isLoading = false }: Le
     
     if (!validate()) return
 
-    const submitData: any = {
+    const submitData: Partial<Leilao> = {
       title: formData.title,
       description: formData.description || null,
       starting_price: parseFloat(formData.starting_price),
