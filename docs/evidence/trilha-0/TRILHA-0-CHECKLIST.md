@@ -266,6 +266,8 @@
 
 - [x] Lint cluster #111 auth-provider-login-register ?3 ? **GO condicional** *(PR #526)* ? `issue-237/LINT-237-TURISMO-AUTH-PROVIDER-LOGIN-REGISTER.md`
 
+- [x] Lint cluster #116 checkbox-input-keyboard ?3 ? **GO condicional** *(PR #531)* ? `issue-237/LINT-237-TURISMO-CHECKBOX-INPUT-KEYBOARD.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
