@@ -256,6 +256,8 @@
 
 - [x] Lint cluster #101 ecosystem-enterprises-analytics ?3 ? **GO condicional** *(PR #516)* ? `issue-237/LINT-237-TURISMO-ECOSYSTEM-ENTERPRISES-ANALYTICS.md`
 
+- [x] Lint cluster #102 attractions-nova-leiloes ?3 ? **GO condicional** *(PR #517)* ? `issue-237/LINT-237-TURISMO-ATTRACTIONS-NOVA-LEILOES.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
