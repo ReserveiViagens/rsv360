@@ -250,6 +250,8 @@
 - [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #509)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md`
 - [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md` ?6 ? **GO condicional** *(PR #508)* ? `issue-237/LINT-237-TURISMO-AI-COUPONS-TRAINING-TEST.md`
 
+- [x] Lint cluster #98 radiogroup-grupo-pagamento ?6 ? **GO condicional** *(PR #513)* ? `issue-237/LINT-237-TURISMO-RADIOGROUP-GRUPO-PAGAMENTO.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
