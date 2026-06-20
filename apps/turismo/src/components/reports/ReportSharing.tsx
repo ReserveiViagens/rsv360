@@ -87,7 +87,7 @@ const ReportSharing: React.FC<ReportSharingProps> = ({
     window.open(mailtoUrl);
   };
 
-  const getPermissionBadge = (permission: string) => {
+  const _getPermissionBadge = (permission: string) => {
     const configs = {
       view: { color: 'bg-blue-100 text-blue-800', label: 'Visualizar' },
       download: { color: 'bg-green-100 text-green-800', label: 'Download' },
@@ -106,7 +106,7 @@ const ReportSharing: React.FC<ReportSharingProps> = ({
     <div className={`p-6 ${className}`}>
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Compartilhar Relatório</h3>
-        <p className="text-gray-600">Compartilhe "{reportName}" com outros usuários</p>
+        <p className="text-gray-600">Compartilhe &quot;{reportName}&quot; com outros usuários</p>
       </div>
 
       {/* Configurações de Visibilidade */}

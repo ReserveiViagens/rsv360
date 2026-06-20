@@ -6,7 +6,7 @@ export interface NotificationPayload {
   badge?: string;
   image?: string;
   tag?: string;
-  data?: any;
+  data?: Record<string, unknown>;
   actions?: NotificationAction[];
   requireInteraction?: boolean;
   silent?: boolean;
@@ -282,7 +282,7 @@ export class PushNotificationService {
     }
   }
 
-  private handlePushReceived(data: any): void {
+  private handlePushReceived(data: Record<string, unknown>): void {
     // Processar dados recebidos via push
     console.log('Push recebido:', data);
     
@@ -292,7 +292,7 @@ export class PushNotificationService {
     }
   }
 
-  private executeNotificationAction(action: string, data: any): void {
+  private executeNotificationAction(action: string, data: Record<string, unknown>): void {
     switch (action) {
       case 'OPEN_URL':
         if (data.url) {
