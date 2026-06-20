@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const BusinessModules: React.FC = () => {
