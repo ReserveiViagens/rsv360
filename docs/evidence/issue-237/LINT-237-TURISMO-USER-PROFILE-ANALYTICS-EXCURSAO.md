@@ -1,6 +1,6 @@
 # Lint #237 — turismo userprofile + analyticschart + excursaoform
 
-**Cluster:** **#94** | **Branch:** `chore/lint-turismo-user-profile-analytics-excursao`
+**Cluster:** **#94** | **Branch:** `chore/lint-turismo-user-profile-analytics-excursao` | **PR:** #509
 
 | Métrica | Pós-#93 | Esta PR |
 |---------|---------|---------|
