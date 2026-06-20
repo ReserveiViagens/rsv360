@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -25,9 +25,7 @@ import {
   Award,
   Users,
   Eye,
-  Clock,
-  Calendar,
-  DollarSign
+  Calendar
 } from 'lucide-react';
 
 interface Recommendation {
@@ -156,8 +154,8 @@ const MOCK_TRENDING: TrendingHotel[] = [
 ];
 
 export default function MLRecomendacoes() {
-  const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
-  const [trendingHotels, setTrendingHotels] = useState<TrendingHotel[]>(MOCK_TRENDING);
+  const [recommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
+  const [trendingHotels] = useState<TrendingHotel[]>(MOCK_TRENDING);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     location: '',
@@ -330,6 +328,7 @@ export default function MLRecomendacoes() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Imagem */}
                     <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- mock hotel photo from Unsplash */}
                       <img
                         src={hotel.photos[0]?.url}
                         alt={hotel.name}
@@ -432,7 +431,7 @@ export default function MLRecomendacoes() {
                                 </div>
                                 <span className="text-xs font-medium">{hotel.recentReviews[0].user_name}</span>
                               </div>
-                              <p className="text-sm text-gray-600">"{hotel.recentReviews[0].comment}"</p>
+                              <p className="text-sm text-gray-600">&ldquo;{hotel.recentReviews[0].comment}&rdquo;</p>
                             </div>
                           )}
                         </div>
