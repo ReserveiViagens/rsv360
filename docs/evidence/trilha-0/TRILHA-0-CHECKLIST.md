@@ -262,6 +262,8 @@
 
 - [x] Lint cluster #104 register-reports-reservations ?3 ? **GO condicional** *(PR #519)* ? `issue-237/LINT-237-TURISMO-REGISTER-REPORTS-RESERVATIONS.md`
 
+- [x] Lint cluster #110 protected-toast-enterprise ?3 ? **GO condicional** *(PR #525)* ? `issue-237/LINT-237-TURISMO-PROTECTED-TOAST-ENTERPRISE.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
