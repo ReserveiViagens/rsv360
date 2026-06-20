@@ -2,10 +2,10 @@
 // COMPONENTE - VISUALIZAÇÃO HIERÁRQUICA
 // ===================================================================
 
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronDown, Building2, Home, Bed, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ChevronRight, ChevronDown, Building2, Home, Bed, Edit, Trash2 } from 'lucide-react';
 import type { Enterprise, Property, Accommodation } from '../../types/accommodations';
-import { enterprisesApi, propertiesApi, accommodationsApi } from '../../services/api/accommodationsApi';
+import { enterprisesApi, propertiesApi } from '../../services/api/accommodationsApi';
 
 interface HierarchyViewProps {
   enterpriseId?: number;
@@ -41,11 +41,26 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
   const [accommodations, setAccommodations] = useState<Record<number, Accommodation[]>>({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadEnterprises();
-  }, [enterpriseId]);
+  const loadProperties = useCallback(async (targetEnterpriseId: number) => {
+    try {
+      const response = await enterprisesApi.getProperties(targetEnterpriseId);
+      if (response.success && response.data) {
+        const list: Property[] = Array.isArray(response.data)
+          ? response.data
+          : response.data
+            ? [response.data]
+            : [];
+        setProperties(prev => ({
+          ...prev,
+          [targetEnterpriseId]: list,
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar propriedades:', error);
+    }
+  }, []);
 
-  const loadEnterprises = async () => {
+  const loadEnterprises = useCallback(async () => {
     try {
       setLoading(true);
       const response = enterpriseId
@@ -56,7 +71,7 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
         setEnterprises(data);
         if (enterpriseId) {
           setExpandedEnterprises(new Set([enterpriseId]));
-          loadProperties(enterpriseId);
+          await loadProperties(enterpriseId);
         }
       }
     } catch (error) {
@@ -64,26 +79,12 @@ export const HierarchyView: React.FC<HierarchyViewProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [enterpriseId, loadProperties]);
 
-  const loadProperties = async (enterpriseId: number) => {
-    try {
-      const response = await enterprisesApi.getProperties(enterpriseId);
-      if (response.success && response.data) {
-        const list: Property[] = Array.isArray(response.data)
-          ? response.data
-          : response.data
-            ? [response.data]
-            : [];
-        setProperties(prev => ({
-          ...prev,
-          [enterpriseId]: list,
-        }));
-      }
-    } catch (error) {
-      console.error('Erro ao carregar propriedades:', error);
-    }
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load enterprise hierarchy on mount or filter change
+    loadEnterprises();
+  }, [loadEnterprises]);
 
   const loadAccommodations = async (propertyId: number) => {
     try {

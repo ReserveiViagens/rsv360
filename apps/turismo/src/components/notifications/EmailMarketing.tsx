@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, XCircle, BarChart3, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, BarChart3 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -51,99 +51,92 @@ interface EmailMarketingProps {
   onListCreated?: (list: ContactList) => void;
 }
 
+const MOCK_CAMPAIGNS: EmailCampaign[] = [
+  {
+    id: '1',
+    name: 'Promoção de Verão',
+    subject: 'Descontos especiais para suas férias!',
+    template: 'Promoção Padrão',
+    status: 'sent',
+    recipients: 2500,
+    sent: 2500,
+    delivered: 2400,
+    opened: 1200,
+    clicked: 300,
+    bounced: 50,
+    unsubscribed: 25,
+    sentAt: new Date(Date.now() - 86400000),
+    createdAt: new Date(Date.now() - 172800000)
+  },
+  {
+    id: '2',
+    name: 'Newsletter Mensal',
+    subject: 'As melhores ofertas de viagem',
+    template: 'Newsletter',
+    status: 'scheduled',
+    recipients: 3000,
+    sent: 0,
+    delivered: 0,
+    opened: 0,
+    clicked: 0,
+    bounced: 0,
+    unsubscribed: 0,
+    scheduledAt: new Date(Date.now() + 86400000),
+    createdAt: new Date()
+  }
+];
+
+const MOCK_TEMPLATES: EmailTemplate[] = [
+  {
+    id: '1',
+    name: 'Promoção Padrão',
+    subject: 'Oferta Especial para Você',
+    htmlContent: '<h1>Oferta Especial</h1><p>Conteúdo do email...</p>',
+    category: 'marketing',
+    isDefault: true
+  },
+  {
+    id: '2',
+    name: 'Newsletter',
+    subject: 'Newsletter da Reservei Viagens',
+    htmlContent: '<h1>Newsletter</h1><p>Conteúdo da newsletter...</p>',
+    category: 'newsletter',
+    isDefault: true
+  }
+];
+
+const MOCK_CONTACT_LISTS: ContactList[] = [
+  {
+    id: '1',
+    name: 'Clientes Ativos',
+    description: 'Clientes que fizeram reservas nos últimos 12 meses',
+    contactCount: 1500,
+    createdAt: new Date(Date.now() - 2592000000),
+    lastUpdated: new Date()
+  },
+  {
+    id: '2',
+    name: 'Newsletter',
+    description: 'Inscritos na newsletter',
+    contactCount: 3000,
+    createdAt: new Date(Date.now() - 5184000000),
+    lastUpdated: new Date()
+  }
+];
+
 const EmailMarketing: React.FC<EmailMarketingProps> = ({
   onCampaignCreated,
   onTemplateCreated,
   onListCreated
 }) => {
-  const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
-  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
-  const [contactLists, setContactLists] = useState<ContactList[]>([]);
+  const [campaigns, setCampaigns] = useState<EmailCampaign[]>(MOCK_CAMPAIGNS);
+  const [templates, setTemplates] = useState<EmailTemplate[]>(MOCK_TEMPLATES);
+  const [contactLists, setContactLists] = useState<ContactList[]>(MOCK_CONTACT_LISTS);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
   const [activeTab, setActiveTab] = useState('campaigns');
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCampaigns: EmailCampaign[] = [
-      {
-        id: '1',
-        name: 'Promoção de Verão',
-        subject: 'Descontos especiais para suas férias!',
-        template: 'Promoção Padrão',
-        status: 'sent',
-        recipients: 2500,
-        sent: 2500,
-        delivered: 2400,
-        opened: 1200,
-        clicked: 300,
-        bounced: 50,
-        unsubscribed: 25,
-        sentAt: new Date(Date.now() - 86400000),
-        createdAt: new Date(Date.now() - 172800000)
-      },
-      {
-        id: '2',
-        name: 'Newsletter Mensal',
-        subject: 'As melhores ofertas de viagem',
-        template: 'Newsletter',
-        status: 'scheduled',
-        recipients: 3000,
-        sent: 0,
-        delivered: 0,
-        opened: 0,
-        clicked: 0,
-        bounced: 0,
-        unsubscribed: 0,
-        scheduledAt: new Date(Date.now() + 86400000),
-        createdAt: new Date()
-      }
-    ];
-
-    const mockTemplates: EmailTemplate[] = [
-      {
-        id: '1',
-        name: 'Promoção Padrão',
-        subject: 'Oferta Especial para Você',
-        htmlContent: '<h1>Oferta Especial</h1><p>Conteúdo do email...</p>',
-        category: 'marketing',
-        isDefault: true
-      },
-      {
-        id: '2',
-        name: 'Newsletter',
-        subject: 'Newsletter da Reservei Viagens',
-        htmlContent: '<h1>Newsletter</h1><p>Conteúdo da newsletter...</p>',
-        category: 'newsletter',
-        isDefault: true
-      }
-    ];
-
-    const mockLists: ContactList[] = [
-      {
-        id: '1',
-        name: 'Clientes Ativos',
-        description: 'Clientes que fizeram reservas nos últimos 12 meses',
-        contactCount: 1500,
-        createdAt: new Date(Date.now() - 2592000000),
-        lastUpdated: new Date()
-      },
-      {
-        id: '2',
-        name: 'Newsletter',
-        description: 'Inscritos na newsletter',
-        contactCount: 3000,
-        createdAt: new Date(Date.now() - 5184000000),
-        lastUpdated: new Date()
-      }
-    ];
-
-    setCampaigns(mockCampaigns);
-    setTemplates(mockTemplates);
-    setContactLists(mockLists);
-  }, []);
 
   const handleCreateCampaign = (campaign: Omit<EmailCampaign, 'id' | 'status' | 'recipients' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'unsubscribed' | 'createdAt'>) => {
     const newCampaign: EmailCampaign = {
@@ -207,14 +200,18 @@ const EmailMarketing: React.FC<EmailMarketingProps> = ({
     onListCreated?.(newList);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
-      case 'draft': return 'gray';
-      case 'scheduled': return 'blue';
-      case 'sending': return 'yellow';
-      case 'sent': return 'green';
-      case 'paused': return 'orange';
-      default: return 'gray';
+      case 'draft':
+      case 'paused':
+        return 'secondary';
+      case 'scheduled':
+      case 'sending':
+        return 'outline';
+      case 'sent':
+        return 'default';
+      default:
+        return 'secondary';
     }
   };
 
@@ -284,7 +281,7 @@ const EmailMarketing: React.FC<EmailMarketingProps> = ({
                         <h4 className="font-medium text-lg">{campaign.name}</h4>
                         <p className="text-sm text-gray-600">{campaign.subject}</p>
                         <div className="flex items-center gap-4 mt-2">
-                          <Badge variant={getStatusColor(campaign.status) as any}>
+                          <Badge variant={getStatusVariant(campaign.status)}>
                             {getStatusIcon(campaign.status)}
                             <span className="ml-1">{campaign.status}</span>
                           </Badge>
