@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Calendar as CalendarIcon, 
   List, 
-  Grid3X3,
   Plus,
   RefreshCw
 } from 'lucide-react';
@@ -28,15 +27,13 @@ const BookingsPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
 
   // Carregar reservas
-  const loadBookings = async () => {
+  const loadBookings = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await bookingApi.getBookings();
       if (response.success && response.data) {
         const bookingsData = response.data.data;
         setBookings(bookingsData);
-        
-        // Converter para formato do calendário
         const calendarData: CalendarBooking[] = bookingsData.map(booking => ({
           id: booking.id,
           customerName: booking.customerName,
@@ -55,7 +52,7 @@ const BookingsPage: React.FC = () => {
           message: response.error || 'Erro ao carregar reservas'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       addNotification({
         type: 'error',
         title: 'Erro',
@@ -64,12 +61,12 @@ const BookingsPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [bookingApi, addNotification]);
 
-  // Carregar reservas na montagem
   useEffect(() => {
-    loadBookings();
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- API load on mount
+    void loadBookings();
+  }, [loadBookings]);
 
   // Handlers
   const handleNewBooking = () => {
@@ -110,7 +107,7 @@ const BookingsPage: React.FC = () => {
             message: response.error || 'Erro ao excluir reserva'
           });
         }
-      } catch (error) {
+      } catch (_error) {
         addNotification({
           type: 'error',
           title: 'Erro',
@@ -145,7 +142,7 @@ const BookingsPage: React.FC = () => {
           message: response.error || 'Erro ao salvar reserva'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       addNotification({
         type: 'error',
         title: 'Erro',
@@ -190,7 +187,7 @@ const BookingsPage: React.FC = () => {
           message: response.error || 'Erro ao mover reserva'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       addNotification({
         type: 'error',
         title: 'Erro',
@@ -215,7 +212,7 @@ const BookingsPage: React.FC = () => {
           message: response.error || 'Erro ao exportar reservas'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       addNotification({
         type: 'error',
         title: 'Erro',
