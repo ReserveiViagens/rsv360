@@ -9,7 +9,7 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   action_url?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface NotificationPreferences {
@@ -97,16 +97,16 @@ class NotificationService {
     }
   }
 
-  private handleNotification(data: any) {
+  private handleNotification(data: Record<string, unknown>) {
     const notification: Notification = {
-      id: data.id || this.generateId(),
-      type: data.type || 'info',
-      title: data.title || 'Notificação',
-      message: data.message || '',
-      timestamp: new Date(data.timestamp || Date.now()),
+      id: (data.id as string) || this.generateId(),
+      type: (data.type as Notification['type']) || 'info',
+      title: (data.title as string) || 'Notificação',
+      message: (data.message as string) || '',
+      timestamp: new Date((data.timestamp as string | number) || Date.now()),
       read: false,
-      action_url: data.action_url,
-      metadata: data.metadata,
+      action_url: data.action_url as string | undefined,
+      metadata: data.metadata as Record<string, unknown> | undefined,
     };
 
     // Notificar todos os listeners
@@ -313,6 +313,7 @@ export const useNotifications = () => {
 
   React.useEffect(() => {
     // Carregar notificações iniciais
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate notifications from service on mount
     setNotifications(notificationService.getNotifications());
     setUnreadCount(notificationService.getUnreadCount());
 
