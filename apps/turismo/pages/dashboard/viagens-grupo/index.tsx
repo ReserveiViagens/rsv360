@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { GrupoCard } from '../../../src/components/viagens-grupo/GrupoCard'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
@@ -22,11 +22,7 @@ export default function ViagensGrupoPage() {
     totalPages: 0,
   })
 
-  useEffect(() => {
-    loadGrupos()
-  }, [filters])
-
-  const loadGrupos = async () => {
+  const loadGrupos = useCallback(async () => {
     try {
       setLoading(true)
       const response = await viagensGrupoApi.getGrupos(filters)
@@ -45,7 +41,12 @@ export default function ViagensGrupoPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload grupos when filters change
+    loadGrupos()
+  }, [loadGrupos])
 
   const handleSearchChange = (value: string) => {
     setFilters(prev => ({ ...prev, search: value, page: 1 }))
