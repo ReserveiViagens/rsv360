@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Tabs, Badge } from '@/components/ui';
-import { Workflow, Zap, CheckCircle, Eye, BarChart3, Settings, Clock, Users, TrendingUp, AlertTriangle, FileText, Star, Bookmark } from 'lucide-react';
+import { Card, Tabs, Badge } from '@/components/ui';
+import { Workflow, Zap, CheckCircle, Eye, BarChart3, Settings, Clock, Users, TrendingUp, AlertTriangle, FileText } from 'lucide-react';
 import { WorkflowEngine, TaskAutomation, ApprovalSystem, ProcessMonitoring, WorkflowTemplates } from '@/components/workflow';
 
 export default function WorkflowSystemTest() {
