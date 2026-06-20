@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNotifications } from '../../context/NotificationContext';
-import { Bell, X } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import NotificationCenter from './NotificationCenter';
 
 // ===================================================================
@@ -23,6 +23,7 @@ const NotificationBell: React.FC = () => {
   useEffect(() => {
     // Detectar nova notificação
     if (state.lastNotification && !state.lastNotification.read) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- pulse indicator on new notification
       setHasNewNotification(true);
       
       // Resetar flag após 5 segundos
