@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { CreditCard, Shield, Zap, AlertCircle, CheckCircle, Clock, RefreshCw, Settings, Key, Globe, Database, Activity, TestTube } from 'lucide-react';
+import React, { useState } from 'react';
+import { CreditCard, AlertCircle, CheckCircle, Clock, RefreshCw, Settings, Globe, TestTube } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';

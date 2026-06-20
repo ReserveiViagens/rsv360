@@ -98,6 +98,7 @@
 | #481 | attractions + integration-system-test + notifications-dashboard (src) | −18 → **408** | notification-finance-dashboard |
 | #482 | AnalyticsDashboard + AdminPanel + AuthPage | −18 → **390** | attractions-integration-notifications-src |
 | #483 | CustomerProfile + Layout + NotificationToast | −18 → **372** | analytics-admin-auth |
+| #484 | SMSSystem + PaymentGateway + ReportTemplates | −18 → **354** | customer-layout-toast |
 
 ## Clusters 1–50 (concluídos)
 

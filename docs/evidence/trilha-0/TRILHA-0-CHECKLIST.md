@@ -215,6 +215,7 @@
 - [x] Lint attractions + integration-system-test + notifications-dashboard (src) −18 — **GO condicional** *(PR #481)* — `issue-237/LINT-237-TURISMO-ATTRACTIONS-INTEGRATION-NOTIFICATIONS-SRC.md`
 - [x] Lint AnalyticsDashboard + AdminPanel + AuthPage −18 — **GO condicional** *(PR #482)* — `issue-237/LINT-237-TURISMO-ANALYTICS-ADMIN-AUTH.md`
 - [x] Lint CustomerProfile + Layout + NotificationToast −18 — **GO condicional** *(PR #483)* — `issue-237/LINT-237-TURISMO-CUSTOMER-LAYOUT-TOAST.md`
+- [x] Lint SMSSystem + PaymentGateway + ReportTemplates −18 — **GO condicional** *(PR #484)* — `issue-237/LINT-237-TURISMO-SMS-PAYMENT-REPORT-TEMPLATES.md`
 
 ## Decisão Trilha 0
 
