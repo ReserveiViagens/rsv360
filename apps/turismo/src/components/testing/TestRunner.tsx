@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Square, RotateCcw, FileText, CheckCircle, XCircle, Clock, AlertTriangle, BarChart3, Settings } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Progress } from '../ui';
+import React, { useState } from 'react';
+import { Play, Square, RotateCcw, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import { Card, Button, Badge, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface TestResult {
@@ -29,63 +29,59 @@ interface TestRunnerProps {
   onSuiteCompleted?: (suite: TestSuite) => void;
 }
 
-const TestRunner: React.FC<TestRunnerProps> = ({ onTestCompleted, onSuiteCompleted }) => {
+const MOCK_TEST_SUITES: TestSuite[] = [
+  {
+    id: 'unit-tests',
+    name: 'Testes Unitários',
+    description: 'Testes de componentes e funções individuais',
+    tests: [],
+    totalTests: 45,
+    passedTests: 42,
+    failedTests: 3,
+    coverage: 93.3
+  },
+  {
+    id: 'integration-tests',
+    name: 'Testes de Integração',
+    description: 'Testes de integração entre componentes',
+    tests: [],
+    totalTests: 28,
+    passedTests: 26,
+    failedTests: 2,
+    coverage: 92.9
+  },
+  {
+    id: 'e2e-tests',
+    name: 'Testes End-to-End',
+    description: 'Testes de fluxos completos do usuário',
+    tests: [],
+    totalTests: 15,
+    passedTests: 14,
+    failedTests: 1,
+    coverage: 93.3
+  },
+  {
+    id: 'performance-tests',
+    name: 'Testes de Performance',
+    description: 'Testes de velocidade e eficiência',
+    tests: [],
+    totalTests: 12,
+    passedTests: 11,
+    failedTests: 1,
+    coverage: 91.7
+  }
+];
+
+const TestRunner: React.FC<TestRunnerProps> = ({ onTestCompleted: _onTestCompleted, onSuiteCompleted }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [currentSuite, setCurrentSuite] = useState<string>('');
   const [testResults, setTestResults] = useState<TestResult[]>([]);
-  const [testSuites, setTestSuites] = useState<TestSuite[]>([]);
+  const [testSuites, setTestSuites] = useState<TestSuite[]>(MOCK_TEST_SUITES);
   const [selectedSuite, setSelectedSuite] = useState<string>('');
   const [autoRun, setAutoRun] = useState(false);
   const [parallelExecution, setParallelExecution] = useState(true);
   const [maxRetries, setMaxRetries] = useState(3);
   const { showNotification } = useUIStore();
-
-  // Mock test suites
-  useEffect(() => {
-    const mockSuites: TestSuite[] = [
-      {
-        id: 'unit-tests',
-        name: 'Testes Unitários',
-        description: 'Testes de componentes e funções individuais',
-        tests: [],
-        totalTests: 45,
-        passedTests: 42,
-        failedTests: 3,
-        coverage: 93.3
-      },
-      {
-        id: 'integration-tests',
-        name: 'Testes de Integração',
-        description: 'Testes de integração entre componentes',
-        tests: [],
-        totalTests: 28,
-        passedTests: 26,
-        failedTests: 2,
-        coverage: 92.9
-      },
-      {
-        id: 'e2e-tests',
-        name: 'Testes End-to-End',
-        description: 'Testes de fluxos completos do usuário',
-        tests: [],
-        totalTests: 15,
-        passedTests: 14,
-        failedTests: 1,
-        coverage: 93.3
-      },
-      {
-        id: 'performance-tests',
-        name: 'Testes de Performance',
-        description: 'Testes de velocidade e eficiência',
-        tests: [],
-        totalTests: 12,
-        passedTests: 11,
-        failedTests: 1,
-        coverage: 91.7
-      }
-    ];
-    setTestSuites(mockSuites);
-  }, []);
 
   const runTestSuite = async (suiteId: string) => {
     if (isRunning) return;
