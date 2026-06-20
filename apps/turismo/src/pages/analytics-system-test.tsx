@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import { 
@@ -10,12 +9,6 @@ import {
   TrendingUp, 
   Download, 
   FileText, 
-  FileSpreadsheet, 
-  FileCode,
-  Users,
-  DollarSign,
-  Package,
-  Target,
   Zap,
   CheckCircle,
   AlertTriangle,
