@@ -2,7 +2,7 @@
 // TRAVEL CATALOG RSV PAGE - PÁGINA DEDICADA PARA CATÁLOGO DE VIAGENS
 // ===================================================================
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../src/components/ProtectedRoute';
 import { useRouter } from 'next/router';
@@ -23,20 +23,9 @@ import {
   Heart,
   Calendar,
   TrendingUp,
-  Eye,
   DollarSign,
   Star,
-  Filter,
-  Grid,
-  List
 } from 'lucide-react';
-
-// ===================================================================
-// TIPOS
-// ===================================================================
-
-// Usar tipo do hook
-type TravelPackage = TravelPackageType;
 
 // ===================================================================
 // SISTEMA DE FAVORITOS
@@ -78,10 +67,6 @@ const toggleFavorite = (packageId: string): boolean => {
   }
 };
 
-const isFavorite = (packageId: string): boolean => {
-  return getFavorites().includes(packageId);
-};
-
 // ===================================================================
 // COMPONENTE DE FAVORITOS
 // ===================================================================
@@ -90,10 +75,9 @@ interface FavoritesTabProps {
   packages: TravelPackageType[];
   onViewPackage: (pkg: TravelPackageType) => void;
   onBookPackage: (pkg: TravelPackageType) => void;
-  onSharePackage: (pkg: TravelPackageType) => void;
 }
 
-const FavoritesTab: React.FC<FavoritesTabProps> = ({ packages, onViewPackage, onBookPackage, onSharePackage }) => {
+const FavoritesTab: React.FC<FavoritesTabProps> = ({ packages, onViewPackage, onBookPackage }) => {
   const [favorites, setFavorites] = useState<string[]>(getFavorites());
   const favoritePackages = useMemo(() => {
     return packages.filter(pkg => favorites.includes(pkg.id));
@@ -129,6 +113,7 @@ const FavoritesTab: React.FC<FavoritesTabProps> = ({ packages, onViewPackage, on
             <div key={pkg.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48 bg-gradient-to-br from-blue-400 to-purple-500">
                 {pkg.images && pkg.images.length > 0 && (
+                  /* eslint-disable-next-line @next/next/no-img-element -- travel package gallery URL */
                   <img
                     src={pkg.images[0]}
                     alt={pkg.title}
@@ -423,7 +408,7 @@ export default function TravelCatalogRSVPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'favorites' | 'analytics'>('catalog');
   const [selectedPackage, setSelectedPackage] = useState<TravelPackageType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { packages, loading: packagesLoading } = useTravelPackages();
+  const { packages } = useTravelPackages();
 
   // ===================================================================
   // HANDLERS
@@ -445,7 +430,7 @@ export default function TravelCatalogRSVPage() {
   };
 
   const handleFavoritePackage = (pkg: TravelPackageType) => {
-    const isNowFavorite = toggleFavorite(pkg.id);
+    toggleFavorite(pkg.id);
     // Forçar atualização do componente TravelCatalog
     if (activeTab === 'favorites') {
       window.location.reload();
@@ -694,7 +679,6 @@ export default function TravelCatalogRSVPage() {
                     packages={packages}
                     onViewPackage={handleViewPackage}
                     onBookPackage={handleBookPackage}
-                    onSharePackage={handleSharePackage}
                   />
                 )}
                 {activeTab === 'analytics' && (
