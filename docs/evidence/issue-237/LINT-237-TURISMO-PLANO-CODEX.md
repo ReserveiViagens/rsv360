@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #56 concluído)  
-**Baseline global:** **615** warnings  
+**Atualizado:** 2026-06-20 (cluster #57 concluído)  
+**Baseline global:** **592** warnings  
 **Arquivos com débito:** **345**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **615** |
-| Clusters concluídos | **56** / 120 |
-| PR empilhada mais recente | **#471** (cluster #56, −24) |
-| Próximo cluster | **#57** — websocket + AuthContext + calendar (−23) |
+| Warnings globais | **592** |
+| Clusters concluídos | **57** / 120 |
+| PR empilhada mais recente | **#472** (cluster #57, −23) |
+| Próximo cluster | **#58** — cotacoes/templates/new + loyalty + analytics-dashboard (−21) |
 
 ## Padrão por cluster (repetir)
 
@@ -86,6 +86,7 @@
 | #469 | ml-recomendacoes + navigation-test + sales-dashboard (src) | −24 → **663** | chat-clients-layout |
 | #470 | travel + CustomerModal + EmailAutomation | −24 → **639** | ml-nav-sales-src |
 | #471 | ReportGenerator + WorkflowEngine + paymentService | −24 → **615** | travel-customer-email |
+| #472 | websocket + AuthContext + calendar | −23 → **592** | report-workflow-payment |
 
 ## Clusters 1–50 (concluídos)
 

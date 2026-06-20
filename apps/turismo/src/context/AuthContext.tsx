@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import {
   AUTH_V1,
   DEFAULT_API_URL,
@@ -56,6 +56,138 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   console.log('[AuthContext] AuthProvider renderizado, isLoading:', isLoading);
 
+  const clearAuth = useCallback(() => {
+    setUser(null);
+    setAccessToken(null);
+    setRefreshToken(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    }
+    setIsLoading(false);
+  }, []);
+
+  const verifyToken = useCallback(async (token: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data = (await response.json()) as AuthV1SessionResponse;
+      return data.authenticated === true;
+    } catch (error) {
+      console.error('Erro ao verificar token:', error);
+      return false;
+    }
+  }, [API_BASE_URL]);
+
+  const fetchUserData = useCallback(async (token: string) => {
+    try {
+      const timeoutPromise = new Promise<Response>((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout ao buscar dados do usuário')), 5000)
+      );
+
+      const fetchPromise = fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (response.ok) {
+        const data = (await response.json()) as AuthV1SessionResponse;
+        if (data.authenticated && data.user) {
+          const mapped = mapAuthV1User(data.user, token);
+          setUser({
+            ...mapped,
+            id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+          } as User);
+          setIsLoading(false);
+          console.log('[AuthContext] Dados do usuário carregados com sucesso');
+          return;
+        }
+      }
+
+      throw new Error('Falha ao buscar dados do usuário');
+    } catch (error) {
+      console.error('[AuthContext] Erro ao buscar dados do usuário:', error);
+      setIsLoading(false);
+      throw error;
+    }
+  }, [API_BASE_URL]);
+
+  const refreshAccessToken = useCallback(async (refreshTokenValue: string): Promise<void> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.REFRESH}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: refreshTokenValue }),
+      });
+
+      if (response.ok) {
+        const data = parseAuthV1RefreshResponse(await response.json());
+        if (!data) {
+          throw new Error('Resposta de refresh inválida');
+        }
+        setAccessToken(data.access_token);
+        localStorage.setItem('access_token', data.access_token);
+        if (data.refresh_token) {
+          setRefreshToken(data.refresh_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
+        }
+      } else {
+        throw new Error('Falha ao renovar token');
+      }
+    } catch (error) {
+      console.error('Erro ao renovar token:', error);
+      throw error;
+    }
+  }, [API_BASE_URL]);
+
+  const logout = useCallback(() => {
+    const token =
+      accessToken ||
+      (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null);
+    const storedRefresh =
+      refreshToken ||
+      (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
+
+    if (
+      token &&
+      storedRefresh &&
+      token !== 'demo-token' &&
+      token !== 'admin-token'
+    ) {
+      void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: storedRefresh }),
+      }).catch((error) => {
+        console.error('[AuthContext] Erro ao revogar sessão no servidor:', error);
+      });
+    }
+
+    clearAuth();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  }, [API_BASE_URL, accessToken, refreshToken, clearAuth]);
+
   // Verificar token armazenado ao inicializar
   useEffect(() => {
     let isMounted = true;
@@ -64,6 +196,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('[AuthContext] useEffect executado - iniciando initAuth');
     
     // Definir isLoading como true apenas durante a verificação
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- bootstrap auth from localStorage on mount
     setIsLoading(true);
     
     const initAuth = async () => {
@@ -180,7 +313,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isMounted = false;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, []);
+  }, [clearAuth, fetchUserData, verifyToken]);
   
   // FALLBACK: Garantir que isLoading seja false após 5 segundos, independente de tudo
   useEffect(() => {
@@ -210,97 +343,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, 25 * 60 * 1000); // Renovar 5 minutos antes da expiração (30 min - 5 min)
 
     return () => clearInterval(tokenRefreshInterval);
-  }, [accessToken, refreshToken]);
-
-  const verifyToken = async (token: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const data = (await response.json()) as AuthV1SessionResponse;
-      return data.authenticated === true;
-    } catch (error) {
-      console.error('Erro ao verificar token:', error);
-      return false;
-    }
-  };
-
-  const fetchUserData = async (token: string) => {
-    try {
-      const timeoutPromise = new Promise<Response>((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout ao buscar dados do usuário')), 5000)
-      );
-
-      const fetchPromise = fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-      if (response.ok) {
-        const data = (await response.json()) as AuthV1SessionResponse;
-        if (data.authenticated && data.user) {
-          const mapped = mapAuthV1User(data.user, token);
-          setUser({
-            ...mapped,
-            id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
-          } as User);
-          setIsLoading(false);
-          console.log('[AuthContext] Dados do usuário carregados com sucesso');
-          return;
-        }
-      }
-
-      throw new Error('Falha ao buscar dados do usuário');
-    } catch (error) {
-      console.error('[AuthContext] Erro ao buscar dados do usuário:', error);
-      // Se falhar, limpar autenticação mas garantir que isLoading seja false
-      setIsLoading(false);
-      throw error;
-    }
-  };
-
-  const refreshAccessToken = async (refreshTokenValue: string): Promise<void> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}${AUTH_V1.REFRESH}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh_token: refreshTokenValue }),
-      });
-
-      if (response.ok) {
-        const data = parseAuthV1RefreshResponse(await response.json());
-        if (!data) {
-          throw new Error('Resposta de refresh inválida');
-        }
-        setAccessToken(data.access_token);
-        localStorage.setItem('access_token', data.access_token);
-        if (data.refresh_token) {
-          setRefreshToken(data.refresh_token);
-          localStorage.setItem('refresh_token', data.refresh_token);
-        }
-      } else {
-        throw new Error('Falha ao renovar token');
-      }
-    } catch (error) {
-      console.error('Erro ao renovar token:', error);
-      throw error;
-    }
-  };
+  }, [accessToken, refreshToken, logout, refreshAccessToken]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -407,50 +450,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Erro no registro:', error);
       throw error;
     }
-  };
-
-  const logout = () => {
-    const token =
-      accessToken ||
-      (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null);
-    const storedRefresh =
-      refreshToken ||
-      (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
-
-    if (
-      token &&
-      storedRefresh &&
-      token !== 'demo-token' &&
-      token !== 'admin-token'
-    ) {
-      void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh_token: storedRefresh }),
-      }).catch((error) => {
-        console.error('[AuthContext] Erro ao revogar sessão no servidor:', error);
-      });
-    }
-
-    clearAuth();
-    // Redirecionar para login usando window.location (funciona em SSR)
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
-  };
-
-  const clearAuth = () => {
-    setUser(null);
-    setAccessToken(null);
-    setRefreshToken(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-    }
-    setIsLoading(false);
   };
 
   const updateUser = async (userData: Partial<User>): Promise<boolean> => {
