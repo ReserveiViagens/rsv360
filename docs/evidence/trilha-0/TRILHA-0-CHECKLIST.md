@@ -188,6 +188,7 @@
 - [x] Lint reports-dashboard + travel-catalog-rsv + src/marketing-dashboard −33 — **GO condicional** *(PR #454)* — `issue-237/LINT-237-TURISMO-REPORTS-TRAVEL-MARKETING-SRC.md`
 - [x] Lint src/reports-dashboard + Navigation + CampaignManager −33 — **GO condicional** *(PR #455)* — `issue-237/LINT-237-TURISMO-SRC-REPORTS-NAV-CAMPAIGN.md`
 - [x] Lint ProjectManager + ReportExport + TestSuites −33 — **GO condicional** *(PR #456)* — `issue-237/LINT-237-TURISMO-PROJECT-REPORTEXPORT-TESTSUITES.md`
+- [x] Lint bookingService + accommodations/analytics + cotacoes/templates −31 — **GO condicional** *(PR #457)* — `issue-237/LINT-237-TURISMO-BOOKING-ACCOMMODATIONS-TEMPLATES.md`
 
 ## Decisão Trilha 0
 
