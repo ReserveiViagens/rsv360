@@ -264,6 +264,8 @@
 
 - [x] Lint cluster #105 rewards-subscriptions-admin ?3 ? **GO condicional** *(PR #520)* ? `issue-237/LINT-237-TURISMO-REWARDS-SUBSCRIPTIONS-ADMIN.md`
 
+- [x] Lint cluster #106 src-analytics-templates-giftcards ?3 ? **GO condicional** *(PR #521)* ? `issue-237/LINT-237-TURISMO-SRC-ANALYTICS-TEMPLATES-GIFTCARDS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
