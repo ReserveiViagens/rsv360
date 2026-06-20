@@ -80,8 +80,8 @@
 | #463 | notifications + DevOpsPage + demo-layout | −27 → **813** | cotacoes-insurance |
 | #464 | ChatSystem + SocialMediaIntegration + PaymentHistory | −27 → **786** | notifications-devops-demo |
 | #465 | RefundManager + DataExport + TestRunner | −27 → **759** | chat-social-payment |
-| #466 | analytics-financeiro + recommendations + sales-dashboard | −24 → **735** | refund-export-testrunner |
-| #467 | seo + ReportsPage + BookingsPage | −24 → **711** | analytics-recommendations-sales |
+| #466 | seo + ReportsPage + BookingsPage | −24 → **711** | analytics-recommendations-sales |
+| #467 | analytics-financeiro + recommendations + sales-dashboard | −24 → **735** | refund-export-testrunner |
 | #468 | chat-test + clients + layout-test | −24 → **687** | seo-reports-bookings |
 | #469 | ml-recomendacoes + navigation-test + sales-dashboard (src) | −24 → **663** | chat-clients-layout |
 | #470 | travel + CustomerModal + EmailAutomation | −24 → **639** | ml-nav-sales-src |
