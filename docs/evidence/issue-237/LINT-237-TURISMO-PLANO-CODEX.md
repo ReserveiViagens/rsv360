@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #92 concluído)  
-**Baseline global:** **106** warnings  
+**Atualizado:** 2026-06-20 (cluster #93 concluído)  
+**Baseline global:** **100** warnings  
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **106** |
-| Clusters concluídos | **92** / 120 |
-| PR empilhada mais recente | **#507** (cluster #92, −6) |
-| Próximo cluster | **#93** — (−6) |
+| Warnings globais | **100** |
+| Clusters concluídos | **93** / 120 |
+| PR empilhada mais recente | **#508** (cluster #93, −6) |
+| Próximo cluster | **#94** — (−6) |
 
 ## Padrão por cluster (repetir)
 
