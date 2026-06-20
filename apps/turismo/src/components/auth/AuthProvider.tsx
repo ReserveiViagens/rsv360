@@ -20,7 +20,7 @@ export interface User {
 
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  _refreshToken: string;
   expiresIn: number;
 }
 
@@ -142,7 +142,7 @@ const mockAuthAPI = {
     };
   },
 
-  async refreshToken(refreshToken: string): Promise<{ tokens: AuthTokens }> {
+  async refreshToken(_refreshToken: string): Promise<{ tokens: AuthTokens }> {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     return {
