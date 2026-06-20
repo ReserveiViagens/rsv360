@@ -189,7 +189,8 @@ export const useAuthState = () => {
 
   // Initialize auth on mount
   useEffect(() => {
-    initializeAuth();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- bootstrap auth session from stored token on mount
+    void initializeAuth();
   }, [initializeAuth]);
 
   // Setup token refresh
@@ -343,7 +344,7 @@ export const useUserProfile = () => {
   const { user, refreshUser } = useAuth();
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const updateProfile = useCallback(async (data: Partial<User>): Promise<void> => {
+  const updateProfile = useCallback(async (_data: Partial<User>): Promise<void> => {
     try {
       setIsUpdating(true);
       // Implement profile update API call
@@ -359,7 +360,7 @@ export const useUserProfile = () => {
     }
   }, [refreshUser]);
 
-  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<void> => {
+  const changePassword = useCallback(async (_currentPassword: string, _newPassword: string): Promise<void> => {
     try {
       setIsUpdating(true);
       // Implement password change API call
