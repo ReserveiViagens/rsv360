@@ -14,7 +14,7 @@
 |---------|-------|
 | Warnings globais | **27** | | | | | | | | | |
 | Clusters concluídos | **113** / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 |
-| PR empilhada mais recente | **#530** (cluster #112, −3) |
+| PR empilhada mais recente | **#532** (cluster #113, −3) |
 | Próximo cluster | **#114** — (−3) |
 
 ## Padrão por cluster (repetir)
