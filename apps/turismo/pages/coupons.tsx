@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 
@@ -29,52 +28,7 @@ interface CouponCategory {
     total_value: number;
 }
 
-export default function Coupons() {
-    const { user } = useAuth();
-    const router = useRouter();
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [coupons, setCoupons] = useState<Coupon[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-
-    // Categorias de cupons
-    const categories: CouponCategory[] = [
-        {
-            name: 'Cupons Ativos',
-            icon: '✅',
-            color: 'green',
-            description: 'Cupons disponíveis para uso',
-            count: 15,
-            total_value: 25000
-        },
-        {
-            name: 'Cupons Expirados',
-            icon: '⏰',
-            color: 'red',
-            description: 'Cupons com prazo vencido',
-            count: 8,
-            total_value: 12000
-        },
-        {
-            name: 'Cupons Inativos',
-            icon: '⏸️',
-            color: 'yellow',
-            description: 'Cupons temporariamente desabilitados',
-            count: 3,
-            total_value: 5000
-        },
-        {
-            name: 'Cupons Esgotados',
-            icon: '🔚',
-            color: 'gray',
-            description: 'Cupons com limite atingido',
-            count: 5,
-            total_value: 8000
-        }
-    ];
-
-    // Dados mock de cupons
-    const mockCoupons: Coupon[] = [
+const mockCoupons: Coupon[] = [
         {
             id: 1,
             code: 'BLACKFRIDAY2024',
@@ -122,6 +76,49 @@ export default function Coupons() {
             applicable_products: ['Produtos físicos'],
             description: 'Frete grátis para compras acima de R$ 150',
             created_at: '2024-09-15'
+        }
+    ];
+
+export default function Coupons() {
+    const router = useRouter();
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [coupons, setCoupons] = useState<Coupon[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+
+    // Categorias de cupons
+    const categories: CouponCategory[] = [
+        {
+            name: 'Cupons Ativos',
+            icon: '✅',
+            color: 'green',
+            description: 'Cupons disponíveis para uso',
+            count: 15,
+            total_value: 25000
+        },
+        {
+            name: 'Cupons Expirados',
+            icon: '⏰',
+            color: 'red',
+            description: 'Cupons com prazo vencido',
+            count: 8,
+            total_value: 12000
+        },
+        {
+            name: 'Cupons Inativos',
+            icon: '⏸️',
+            color: 'yellow',
+            description: 'Cupons temporariamente desabilitados',
+            count: 3,
+            total_value: 5000
+        },
+        {
+            name: 'Cupons Esgotados',
+            icon: '🔚',
+            color: 'gray',
+            description: 'Cupons com limite atingido',
+            count: 5,
+            total_value: 8000
         }
     ];
 
