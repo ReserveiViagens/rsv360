@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { FlashDealCard } from '../../../src/components/leiloes/FlashDealCard'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
@@ -24,11 +24,7 @@ export default function FlashDealsPage() {
     totalPages: 0,
   })
 
-  useEffect(() => {
-    loadFlashDeals()
-  }, [filters])
-
-  const loadFlashDeals = async () => {
+  const loadFlashDeals = useCallback(async () => {
     try {
       setLoading(true)
       const response = await leiloesApi.getFlashDeals(filters)
@@ -39,7 +35,12 @@ export default function FlashDealsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload flash deals when filters change
+    loadFlashDeals()
+  }, [loadFlashDeals])
 
   const handleSearchChange = (value: string) => {
     setFilters(prev => ({ ...prev, search: value, page: 1 }))
