@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { DollarSign, Users, Calendar, CheckCircle, Clock } from 'lucide-react'
+import { DollarSign, Users, Calendar } from 'lucide-react'
 import { PagamentoDividido as PagamentoDivididoType } from '../../services/api/viagensGrupoApi'
 import { StatusBadge } from '../shared/StatusBadge'
 
