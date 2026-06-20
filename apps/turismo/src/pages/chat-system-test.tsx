@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Tabs, Badge } from '@/components/ui';
-import { MessageSquare, Users, History, BarChart3, Settings, Phone, Video, FileText, Image, Smile, Star, Clock, TrendingUp } from 'lucide-react';
+import { Card, Badge } from '@/components/ui';
+import { MessageSquare, Users, History, BarChart3, Star, Clock, TrendingUp } from 'lucide-react';
 import { ChatSystem, ChatAgents, ChatConversations, ChatAnalytics } from '@/components/chat';
 
 export default function ChatSystemTest() {
