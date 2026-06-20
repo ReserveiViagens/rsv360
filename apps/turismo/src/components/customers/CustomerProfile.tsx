@@ -4,16 +4,12 @@ import {
   Mail, 
   Phone, 
   MapPin, 
-  Calendar, 
   Star, 
-  Heart, 
-  FileText, 
   Download, 
   Edit, 
   Trash2, 
   Plus,
   Globe,
-  CreditCard,
   Award,
   Clock,
   TrendingUp,
@@ -406,7 +402,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({
                       </div>
                     )}
                     {travel.review && (
-                      <p className="text-sm text-gray-600 mt-2 italic">"{travel.review}"</p>
+                      <p className="text-sm text-gray-600 mt-2 italic">&ldquo;{travel.review}&rdquo;</p>
                     )}
                   </div>
                 </div>
