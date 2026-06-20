@@ -203,12 +203,14 @@ export function UserProfile() {
             <div className="relative">
               <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                 {avatarPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- avatar preview from file input
                   <img 
                     src={avatarPreview} 
                     alt="Preview do avatar" 
                     className="w-full h-full object-cover"
                   />
                 ) : user.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- user avatar from profile data
                   <img 
                     src={user.avatar} 
                     alt="Avatar do usuário" 

@@ -28,7 +28,7 @@ export function ExcursaoForm({ excursao, onSubmit, onCancel, isLoading = false }
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -79,7 +79,7 @@ export function ExcursaoForm({ excursao, onSubmit, onCancel, isLoading = false }
     
     if (!validate()) return
 
-    const submitData: any = {
+    const submitData: Partial<Excursao> = {
       nome: formData.nome,
       destino: formData.destino,
       descricao: formData.descricao || null,
