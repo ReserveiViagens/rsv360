@@ -1,13 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
-import { Globe, FileCode, RefreshCw, Upload, BarChart3, TrendingUp, Eye, MousePointerClick, DollarSign, Filter } from 'lucide-react'
+import { Globe, FileCode, RefreshCw, Upload, BarChart3, TrendingUp, Eye, MousePointerClick, DollarSign } from 'lucide-react'
 import { Button } from '../../src/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/Card'
-import { Input } from '../../src/components/ui/Input'
-import { Label } from '../../src/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../src/components/ui/Select'
 import { Badge } from '../../src/components/ui/Badge'
 import { toast } from 'react-hot-toast'
 import { api } from '../../src/services/apiClient'
@@ -58,15 +55,8 @@ export default function GoogleHotelAdsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null)
-  const [filters, setFilters] = useState({
-    period: 'last_30_days',
-  })
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const feedsResponse = await api.get<{ feeds: Feed[] }>('/api/v1/google-hotel-ads/feeds')
@@ -80,7 +70,12 @@ export default function GoogleHotelAdsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial API load on mount
+    loadData()
+  }, [loadData])
 
   const handleGenerateFeed = async (feedId: number) => {
     try {
