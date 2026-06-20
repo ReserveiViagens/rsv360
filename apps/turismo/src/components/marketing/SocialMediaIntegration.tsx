@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Share2, Instagram, Facebook, Twitter, Linkedin, Youtube, Plus, Edit, Trash2, RefreshCw, Settings, BarChart3, Users, Eye, Heart, MessageCircle, Share, Calendar, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Share2, Instagram, Facebook, Twitter, Linkedin, Youtube, Plus, Edit, Trash2, RefreshCw, Settings, BarChart3, Users, Eye, Heart, Share, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -179,10 +179,7 @@ const SocialMediaIntegration: React.FC<SocialMediaIntegrationProps> = ({ classNa
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<SocialMediaAccount | null>(null);
-  const [selectedPost, setSelectedPost] = useState<SocialMediaPost | null>(null);
   const [activeTab, setActiveTab] = useState('accounts');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
 
   const connectedAccounts = useMemo(() => accounts.filter(acc => acc.status === 'connected'), [accounts]);
   const totalFollowers = useMemo(() => connectedAccounts.reduce((acc, account) => acc + account.followers, 0), [connectedAccounts]);

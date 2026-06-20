@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Button, Input, Badge, Tabs, Avatar, ScrollArea } from '@/components/ui';
-import { Send, Plus, Users, Settings, Search, MoreVertical, Phone, Video, FileText, Image, Smile } from 'lucide-react';
+import { Button, Input, Badge, Avatar, ScrollArea } from '@/components/ui';
+import { Send, Plus, Users, Search, MoreVertical, Phone, Video, FileText, Image as ImageIcon, Smile } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ChatMessage {
@@ -40,6 +40,33 @@ interface ChatSystemProps {
   currentUserId: string;
 }
 
+const MOCK_MESSAGES_BY_ROOM: Record<string, ChatMessage[]> = {
+  '1': [
+    {
+      id: '1',
+      content: 'Bom dia equipe! Como estão os preparativos para o evento?',
+      sender: { id: '1', name: 'João Silva', avatar: '/avatars/joao.jpg', role: 'Admin' },
+      timestamp: new Date(Date.now() - 3600000),
+      type: 'text',
+    },
+    {
+      id: '2',
+      content: 'Tudo certo por aqui! Reservas confirmadas e clientes notificados.',
+      sender: { id: '2', name: 'Maria Santos', avatar: '/avatars/maria.jpg', role: 'Manager' },
+      timestamp: new Date(Date.now() - 1800000),
+      type: 'text',
+    },
+    {
+      id: '3',
+      content: 'Relatório de vendas enviado para análise.',
+      sender: { id: '3', name: 'Pedro Costa', avatar: '/avatars/pedro.jpg', role: 'Operator' },
+      timestamp: new Date(Date.now() - 900000),
+      type: 'text',
+    },
+  ],
+  '2': [],
+};
+
 export default function ChatSystem({ currentUserId }: ChatSystemProps) {
   const [rooms, setRooms] = useState<ChatRoom[]>([
     {
@@ -77,30 +104,8 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
   // Simular mensagens iniciais
   useEffect(() => {
     if (activeRoom) {
-      const mockMessages: ChatMessage[] = [
-        {
-          id: '1',
-          content: 'Bom dia equipe! Como estão os preparativos para o evento?',
-          sender: { id: '1', name: 'João Silva', avatar: '/avatars/joao.jpg', role: 'Admin' },
-          timestamp: new Date(Date.now() - 3600000),
-          type: 'text',
-        },
-        {
-          id: '2',
-          content: 'Tudo certo por aqui! Reservas confirmadas e clientes notificados.',
-          sender: { id: '2', name: 'Maria Santos', avatar: '/avatars/maria.jpg', role: 'Manager' },
-          timestamp: new Date(Date.now() - 1800000),
-          type: 'text',
-        },
-        {
-          id: '3',
-          content: 'Relatório de vendas enviado para análise.',
-          sender: { id: '3', name: 'Pedro Costa', avatar: '/avatars/pedro.jpg', role: 'Operator' },
-          timestamp: new Date(Date.now() - 900000),
-          type: 'text',
-        },
-      ];
-      setMessages(mockMessages);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- mock chat messages per room
+      setMessages(MOCK_MESSAGES_BY_ROOM[activeRoom.id] ?? []);
     }
   }, [activeRoom]);
 
@@ -222,6 +227,7 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
                   <div className="flex items-center space-x-3">
                     <div className="relative">
                       <Avatar className="h-10 w-10">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- mock avatar URLs in chat demo */}
                         <img src={room.participants[0]?.avatar} alt={room.name} />
                       </Avatar>
                       {room.type === 'direct' && room.participants[0]?.status === 'online' && (
@@ -269,6 +275,7 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- mock avatar URLs in chat demo */}
                     <img src={activeRoom.participants[0]?.avatar} alt={activeRoom.name} />
                   </Avatar>
                   <div>
@@ -308,6 +315,7 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
                         {message.sender.id !== currentUserId && (
                           <div className="flex items-center space-x-2 mb-1">
                             <Avatar className="h-6 w-6">
+                              {/* eslint-disable-next-line @next/next/no-img-element -- mock avatar URLs in chat demo */}
                               <img src={message.sender.avatar} alt={message.sender.name} />
                             </Avatar>
                             <span className="text-sm font-medium text-gray-700">{message.sender.name}</span>
@@ -360,6 +368,7 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
                       <div key={participant.id} className="flex items-center space-x-3">
                         <div className="relative">
                           <Avatar className="h-8 w-8">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- mock avatar URLs in chat demo */}
                             <img src={participant.avatar} alt={participant.name} />
                           </Avatar>
                           <div
@@ -392,7 +401,7 @@ export default function ChatSystem({ currentUserId }: ChatSystemProps) {
                   <FileText className="h-4 w-4" />
                 </Button>
                 <Button variant="ghost" size="sm">
-                  <Image className="h-4 w-4" />
+                  <ImageIcon className="h-4 w-4" aria-hidden="true" />
                 </Button>
                 <Button variant="ghost" size="sm">
                   <Smile className="h-4 w-4" />
