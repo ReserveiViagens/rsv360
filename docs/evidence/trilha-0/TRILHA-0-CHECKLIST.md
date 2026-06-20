@@ -182,7 +182,7 @@
 - [x] Lint src/documents + src/e-commerce + TutorialSystem −39 — **GO condicional** *(PR #444)* — `issue-237/LINT-237-TURISMO-SRC-DOCUMENTS-ECOMMERCE-TUTORIAL.md`
 - [x] Lint TaxManagement + PaymentModal + CustomReportBuilder −39 — **GO condicional** *(PR #445)* — `issue-237/LINT-237-TURISMO-TAX-PAYMENT-CUSTOMREPORT.md`
 - [x] Lint authService + visas + workflows −37 — **GO condicional** *(PR #446)* — `issue-237/LINT-237-TURISMO-AUTHSERVICE-VISAS-WORKFLOWS.md`
-- [x] Lint ExecutiveDashboard + UserManagement + DocumentationSystem −36 — **GO condicional** *(PR #447)* — `issue-237/LINT-237-TURISMO-EXECUTIVE-USERMGMT-DOCSYSTEM.md`
+- [x] Lint ExecutiveDashboard + UserManagement + DocumentationSystem −36 — **GO condicional** *(PR #451)* — `issue-237/LINT-237-TURISMO-EXECUTIVE-USERMGMT-DOCSYSTEM.md`
 
 ## Decisão Trilha 0
 

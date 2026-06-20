@@ -14,7 +14,7 @@
 |---------|-------|
 | Warnings globais | **1185** |
 | Clusters concluídos | **36** / 120 |
-| PR empilhada mais recente | **#447** (cluster #36, −36) |
+| PR empilhada mais recente | **#451** (cluster #36, −36) |
 | Próximo cluster | **#37** — FAQSystem + FinancialDashboard + dashboard-reservei-viagens (−35) |
 
 ## Padrão por cluster (repetir)
@@ -65,7 +65,7 @@
 | #444 | src/documents + src/e-commerce + TutorialSystem | −39 → **1297** | dashboard-rsv-voice-ecommerce |
 | #445 | TaxManagement + PaymentModal + CustomReportBuilder | −39 → **1258** | src-documents-ecommerce-tutorial |
 | #446 | authService + visas + workflows | −37 → **1221** | tax-payment-customreport |
-| #447 | ExecutiveDashboard + UserManagement + DocumentationSystem | −36 → **1185** | authservice-visas-workflows |
+| #451 | ExecutiveDashboard + UserManagement + DocumentationSystem | −36 → **1185** | authservice-visas-workflows |
 
 ## Clusters 1–36 (concluídos)
 
@@ -105,7 +105,7 @@
 | 33 | −39 | src/documents, src/e-commerce, TutorialSystem | **concluído** (#444) |
 | 34 | −39 | TaxManagement, PaymentModal, CustomReportBuilder | **concluído** (#445) |
 | 35 | −37 | authService, visas, workflows | **concluído** (#446) |
-| 36 | −36 | ExecutiveDashboard, UserManagement, DocumentationSystem | **concluído** (#447) |
+| 36 | −36 | ExecutiveDashboard, UserManagement, DocumentationSystem | **concluído** (#451) |
 
 ## Clusters 37–120
 
