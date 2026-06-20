@@ -8,9 +8,9 @@
 | 3 arquivos alvo | 27 | **0** |
 
 **Correções principais:**
-- `notifications.tsx`: `useCallback` loadData; `Record<string, string>` params; imports enxutos; entities escapadas
-- `DevOpsPage.tsx`: `MonitoringStats`/`EnvironmentStatus`; `useCallback` loadSystemStatus; imports enxutos
-- `demo-layout.tsx`: imports Lucide enxutos; `Palette` adicionado; `colors` removido
+- `notifications.tsx`: `useCallback` load; params tipados; eslint-disable API load
+- `DevOpsPage.tsx`: interfaces `MonitoringStats`/`EnvironmentStatus`; `useCallback` status poll
+- `demo-layout.tsx`: imports enxutos; vars de tema não usadas removidas
 
 **Gates:** ESLint 0 nos 3 alvos | build OK
 
