@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, Users, Activity, Settings, Send, Trash2, Eye, EyeOff } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Bell, Activity, Settings, Trash2, Eye, EyeOff } from 'lucide-react';
 import { useNotifications } from '../services/notifications';
 import { useToast } from '../components/ToastContainer';
 
@@ -18,27 +18,16 @@ interface NotificationStats {
 
 const NotificationsDashboard: React.FC = () => {
   const { notifications, markAsRead, deleteNotification, clearAll } = useNotifications();
-  const { showSuccess, showError, showInfo } = useToast();
-  const [stats, setStats] = useState<NotificationStats>({
-    total: 0,
-    unread: 0,
-    read: 0,
-    byType: { success: 0, error: 0, warning: 0, info: 0 },
-    byHour: {}
-  });
+  const { showSuccess, showInfo } = useToast();
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [showSettings, setShowSettings] = useState(false);
 
-  useEffect(() => {
-    calculateStats();
-  }, [notifications]);
-
-  const calculateStats = () => {
+  const stats = useMemo<NotificationStats>(() => {
     const total = notifications.length;
     const unread = notifications.filter(n => !n.read).length;
     const read = total - unread;
-    
+
     const byType = {
       success: notifications.filter(n => n.type === 'success').length,
       error: notifications.filter(n => n.type === 'error').length,
@@ -53,8 +42,8 @@ const NotificationsDashboard: React.FC = () => {
       byHour[hourKey] = (byHour[hourKey] || 0) + 1;
     });
 
-    setStats({ total, unread, read, byType, byHour });
-  };
+    return { total, unread, read, byType, byHour };
+  }, [notifications]);
 
   const filteredNotifications = notifications.filter(notification => {
     const matchesFilter = filter === 'all' || 
@@ -215,7 +204,7 @@ const NotificationsDashboard: React.FC = () => {
           <div className="flex items-center space-x-4">
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as any)}
+              onChange={(e) => setFilter(e.target.value as typeof filter)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="all">Todas</option>
