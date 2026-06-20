@@ -76,6 +76,7 @@ export function LoginForm({
     await onLogin(data);
   };
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form watch
   const rememberMe = watch('rememberMe');
 
   return (
