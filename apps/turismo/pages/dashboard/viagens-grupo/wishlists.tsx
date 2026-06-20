@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { WishlistItem } from '../../../src/components/viagens-grupo/WishlistItem'
@@ -20,16 +20,7 @@ export default function WishlistsPage() {
     descricao: '',
   })
 
-  useEffect(() => {
-    // Tentar pegar do query ou da URL
-    const id = (router.query.grupo_id || router.query.id) as string
-    if (id) {
-      setGrupoId(id)
-      loadWishlists(id)
-    }
-  }, [router.query])
-
-  const loadWishlists = async (id: string) => {
+  const loadWishlists = useCallback(async (id: string) => {
     try {
       setLoading(true)
       const data = await viagensGrupoApi.getWishlists(id)
@@ -43,7 +34,17 @@ export default function WishlistsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Tentar pegar do query ou da URL
+    const id = (router.query.grupo_id || router.query.id) as string
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync grupo id from route query
+      setGrupoId(id)
+      loadWishlists(id)
+    }
+  }, [router.query, loadWishlists])
 
   const handleAdd = async () => {
     if (!newItem.descricao.trim() || !newItem.item_tipo.trim()) {
@@ -66,7 +67,7 @@ export default function WishlistsPage() {
     }
   }
 
-  const handleVote = async (itemId: string) => {
+  const handleVote = async (_itemId: string) => {
     // TODO: Implementar votação
     toast.success('Voto registrado!')
   }

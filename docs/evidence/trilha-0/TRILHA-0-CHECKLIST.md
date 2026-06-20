@@ -230,6 +230,7 @@
 - [x] Lint enterprises edit + analytics-complete + share −9 — **GO condicional** *(PR #496)* — `issue-237/LINT-237-TURISMO-ENTERPRISES-ANALYTICS-SHARE.md`
 - [x] Lint excursoes + leiloes dashboard pages −9 — **GO condicional** *(PR #497)* — `issue-237/LINT-237-TURISMO-EXCURSOES-LEILOES-DASHBOARD.md`
 - [x] Lint leiloes relatorios + ota-sync + viagens-grupo id −9 — **GO condicional** *(PR #498)* — `issue-237/LINT-237-TURISMO-LEILOES-RELATORIOS-OTA-VIAGENS.md`
+- [x] Lint wishlists + advanced-features-demo + auth-test −9 — **GO condicional** *(PR #499)* — `issue-237/LINT-237-TURISMO-WISHLISTS-ADVANCED-AUTH.md`
 
 ## Decisão Trilha 0
 
