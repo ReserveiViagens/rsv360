@@ -251,3 +251,5 @@
 | **HITL pós-Fase E** | **GO** — T0.23 TS turismo selecionado |
 | **ADR-0004** | **Aceito** — PLANO-MESTRE Fase 1 |
 | **Próximo passo** | warnings por módulo (próximo cluster de volume no turismo) |
+
+- [x] Lint workflow session calendar -9 � **GO condicional** *(PR #500)* � `issue-237/LINT-237-TURISMO-WORKFLOW-SESSION-CALENDAR.md`
