@@ -5,19 +5,13 @@ import {
   FileText, 
   Download, 
   Calendar, 
-  Filter, 
   BarChart3, 
-  PieChart, 
   TrendingUp,
   Users,
   DollarSign,
-  MapPin,
-  Clock,
   Settings,
   Eye,
-  Share2,
   Save,
-  Plus,
   Trash2,
   Edit3
 } from 'lucide-react';
@@ -51,7 +45,7 @@ interface ReportConfig {
   name: string;
   template: string;
   fields: string[];
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   dateRange: {
     start: string;
     end: string;
@@ -208,7 +202,7 @@ const ReportBuilder: React.FC = () => {
     }));
   };
 
-  const handleFilterChange = (filterKey: string, value: any) => {
+  const handleFilterChange = (filterKey: string, value: unknown) => {
     setReportConfig(prev => ({
       ...prev,
       filters: { ...prev.filters, [filterKey]: value }
@@ -287,7 +281,7 @@ const ReportBuilder: React.FC = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
@@ -623,7 +617,7 @@ const ReportBuilder: React.FC = () => {
                           value={reportConfig.schedule?.frequency || 'weekly'}
                           onChange={(e) => setReportConfig(prev => ({
                             ...prev,
-                            schedule: { ...prev.schedule!, frequency: e.target.value as any }
+                            schedule: { ...prev.schedule!, frequency: e.target.value as 'daily' | 'weekly' | 'monthly' }
                           }))}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           title="Selecione a frequência do agendamento"

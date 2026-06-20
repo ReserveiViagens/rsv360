@@ -10,24 +10,16 @@ import {
   Star,
   Calendar,
   Users,
-  DollarSign,
   Heart,
   Share2,
   Eye,
-  Clock,
-  Wifi,
-  Car,
-  Utensils,
   Waves,
   Mountain,
   Sun,
   Snowflake,
   Leaf,
   Camera,
-  Navigation,
-  Phone,
-  Mail,
-  ExternalLink
+  Navigation
 } from 'lucide-react';
 
 // ===================================================================
@@ -189,6 +181,7 @@ const TravelCard: React.FC<TravelCardProps> = ({
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Imagem Principal */}
       <div className="relative h-48 bg-gray-200">
+        {/* eslint-disable-next-line @next/next/no-img-element -- travel package gallery images */}
         <img
           src={pkg.images[currentImageIndex] || '/placeholder-travel.jpg'}
           alt={pkg.title}
@@ -621,7 +614,7 @@ const TravelCatalog: React.FC = () => {
           </div>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
             className="border border-gray-300 rounded-md px-3 py-2"
             title="Ordenar pacotes"
             aria-label="Ordenar pacotes de viagem"
