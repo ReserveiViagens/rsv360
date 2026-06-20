@@ -19,8 +19,8 @@ const DialogPortal = radixRoot(DialogPrimitive.Portal)
 const DialogClose = DialogPrimitive.Close
 
 const DialogOverlay = radixUiExport<DialogOverlayProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, DialogOverlayProps>(({ className, ...props }, ref) =>
-    radixCreate(DialogPrimitive.Overlay, {
+  React.forwardRef<HTMLDivElement, DialogOverlayProps>(function DialogOverlay({ className, ...props }, ref) {
+    return radixCreate(DialogPrimitive.Overlay, {
       ref,
       className: cn(
         "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -28,13 +28,16 @@ const DialogOverlay = radixUiExport<DialogOverlayProps, HTMLDivElement>(
       ),
       ...props,
     })
-  ) as React.FC<DialogOverlayProps & React.RefAttributes<HTMLDivElement>>
+  }) as React.FC<DialogOverlayProps & React.RefAttributes<HTMLDivElement>>
 )
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = radixUiExport<DialogContentProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, DialogContentProps>(
-    ({ className, children, ...props }, ref) => (
+  React.forwardRef<HTMLDivElement, DialogContentProps>(function DialogContent(
+    { className, children, ...props },
+    ref
+  ) {
+    return (
       <DialogPortal>
         <DialogOverlay />
         {radixCreate(DialogPrimitive.Content, {
@@ -60,7 +63,7 @@ const DialogContent = radixUiExport<DialogContentProps, HTMLDivElement>(
         })}
       </DialogPortal>
     )
-  ) as React.FC<DialogContentProps & React.RefAttributes<HTMLDivElement>>
+  }) as React.FC<DialogContentProps & React.RefAttributes<HTMLDivElement>>
 )
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
@@ -87,25 +90,27 @@ const DialogFooter = ({
 DialogFooter.displayName = "DialogFooter"
 
 const DialogTitle = radixUiExport<DialogTitleProps, HTMLHeadingElement>(
-  React.forwardRef<HTMLHeadingElement, DialogTitleProps>(({ className, ...props }, ref) =>
-    radixCreate(DialogPrimitive.Title, {
+  React.forwardRef<HTMLHeadingElement, DialogTitleProps>(function DialogTitle({ className, ...props }, ref) {
+    return radixCreate(DialogPrimitive.Title, {
       ref,
       className: cn("text-lg font-semibold leading-none tracking-tight", className),
       ...props,
     })
-  ) as React.FC<DialogTitleProps & React.RefAttributes<HTMLHeadingElement>>
+  }) as React.FC<DialogTitleProps & React.RefAttributes<HTMLHeadingElement>>
 )
 DialogTitle.displayName = DialogPrimitive.Title.displayName
 
 const DialogDescription = radixUiExport<DialogDescriptionProps, HTMLParagraphElement>(
-  React.forwardRef<HTMLParagraphElement, DialogDescriptionProps>(
-    ({ className, ...props }, ref) =>
-      radixCreate(DialogPrimitive.Description, {
-        ref,
-        className: cn("text-sm text-muted-foreground", className),
-        ...props,
-      })
-  ) as React.FC<DialogDescriptionProps & React.RefAttributes<HTMLParagraphElement>>
+  React.forwardRef<HTMLParagraphElement, DialogDescriptionProps>(function DialogDescription(
+    { className, ...props },
+    ref
+  ) {
+    return radixCreate(DialogPrimitive.Description, {
+      ref,
+      className: cn("text-sm text-muted-foreground", className),
+      ...props,
+    })
+  }) as React.FC<DialogDescriptionProps & React.RefAttributes<HTMLParagraphElement>>
 )
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
