@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #45 concluído)  
-**Baseline global:** **897** warnings  
+**Atualizado:** 2026-06-20 (cluster #46 concluído)  
+**Baseline global:** **867** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **897** |
-| Clusters concluídos | **45** / 120 |
-| PR empilhada mais recente | **#460** (cluster #45, −30) |
-| Próximo cluster | **#46** — reports/ReportBuilder + CodeCoverage + TravelCatalog (−30) |
+| Warnings globais | **867** |
+| Clusters concluídos | **46** / 120 |
+| PR empilhada mais recente | **#461** (cluster #46, −30) |
+| Próximo cluster | **#47** — cotacoes/index + test-page + insurance (−27) |
 
 ## Padrão por cluster (repetir)
 
@@ -75,8 +75,9 @@
 | #458 | dashboard + affiliates + roles | −30 → **957** | booking-accommodations-templates |
 | #459 | src/dashboard + ReportBuilder + AuditLog | −30 → **927** | dashboard-affiliates-roles |
 | #460 | ChatAnalytics + ApiConnector + NotificationSettings | −30 → **897** | src-dashboard-reportbuilder-auditlog |
+| #461 | ReportBuilder + CodeCoverage + TravelCatalog | −30 → **867** | chat-api-notifications |
 
-## Clusters 1–45 (concluídos)
+## Clusters 1–46 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
