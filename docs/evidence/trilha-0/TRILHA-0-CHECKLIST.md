@@ -220,6 +220,7 @@
 - [x] Lint reservations-rsv + backup-system-test −15 — **GO condicional** *(PR #486)* — `issue-237/LINT-237-TURISMO-RESERVATIONS-BACKUP.md`
 - [x] Lint finance-dashboard (src) + login + project-management-test −15 — **GO condicional** *(PR #487)* — `issue-237/LINT-237-TURISMO-FINANCE-LOGIN-PROJECT.md`
 - [x] Lint EnterpriseForm + HierarchyView + EmailMarketing −15 — **GO condicional** *(PR #488)* — `issue-237/LINT-237-TURISMO-ACCOMMODATIONS-EMAIL-MARKETING.md`
+- [x] Lint NotificationCenter + AnalyticsDashboard (reports) + usePWA −15 — **GO condicional** *(PR #489)* — `issue-237/LINT-237-TURISMO-NOTIFICATION-ANALYTICS-PWA.md`
 
 ## Decisão Trilha 0
 
