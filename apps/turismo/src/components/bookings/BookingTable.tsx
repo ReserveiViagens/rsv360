@@ -4,7 +4,6 @@ import {
   ChevronDown, 
   Search, 
   Filter, 
-  MoreHorizontal,
   Eye,
   Edit,
   Trash2,
@@ -43,6 +42,25 @@ export interface BookingTableProps {
   onExport?: () => void;
   onNewBooking?: () => void;
   className?: string;
+}
+
+function BookingSortIcon({
+  column,
+  sortBy,
+  sortOrder,
+}: {
+  column: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+}) {
+  if (sortBy !== column) {
+    return <ChevronUp className="h-4 w-4 text-neutral-400" />;
+  }
+  return sortOrder === 'asc' ? (
+    <ChevronUp className="h-4 w-4 text-primary-600" />
+  ) : (
+    <ChevronDown className="h-4 w-4 text-primary-600" />
+  );
 }
 
 const BookingTable: React.FC<BookingTableProps> = ({
@@ -103,7 +121,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
 
   // Filtrar e ordenar dados
   const filteredAndSortedBookings = useMemo(() => {
-    let filtered = bookings.filter(booking => {
+    const filtered = bookings.filter(booking => {
       // Filtro de busca
       const matchesSearch = 
         booking.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -265,17 +283,6 @@ const BookingTable: React.FC<BookingTableProps> = ({
     }
   };
 
-  const SortIcon = ({ column }: { column: string }) => {
-    if (sortBy !== column) {
-      return <ChevronUp className="h-4 w-4 text-neutral-400" />;
-    }
-    return sortOrder === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-primary-600" />
-    ) : (
-      <ChevronDown className="h-4 w-4 text-primary-600" />
-    );
-  };
-
   return (
     <div className={cn('rounded-xl border border-neutral-200 bg-white', className)}>
       {/* Header da Tabela */}
@@ -362,7 +369,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Destino
-                  <SortIcon column="destination" />
+                  <BookingSortIcon column="destination" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -371,7 +378,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Check-in
-                  <SortIcon column="checkIn" />
+                  <BookingSortIcon column="checkIn" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -380,7 +387,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Check-out
-                  <SortIcon column="checkOut" />
+                  <BookingSortIcon column="checkOut" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -389,7 +396,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Hóspedes
-                  <SortIcon column="guests" />
+                  <BookingSortIcon column="guests" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -398,7 +405,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Preço
-                  <SortIcon column="totalPrice" />
+                  <BookingSortIcon column="totalPrice" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -410,7 +417,7 @@ const BookingTable: React.FC<BookingTableProps> = ({
                   className="flex items-center gap-1 hover:text-neutral-700"
                 >
                   Criado em
-                  <SortIcon column="createdAt" />
+                  <BookingSortIcon column="createdAt" sortBy={sortBy} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
