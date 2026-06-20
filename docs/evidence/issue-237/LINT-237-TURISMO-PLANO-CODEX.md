@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #62 concluído)  
-**Baseline global:** **487** warnings  
+**Atualizado:** 2026-06-20 (cluster #63 concluído)  
+**Baseline global:** **466** warnings  
 **Arquivos com débito:** **345**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **487** |
-| Clusters concluídos | **62** / 120 |
-| PR empilhada mais recente | **#477** (cluster #62, −21) |
-| Próximo cluster | **#63** — ModernSidebar + MarketingAnalytics + PushNotifications (−21) |
+| Warnings globais | **466** |
+| Clusters concluídos | **63** / 120 |
+| PR empilhada mais recente | **#478** (cluster #63, −21) |
+| Próximo cluster | **#64** — ReportScheduler + AITutor + Select (−21) |
 
 ## Padrão por cluster (repetir)
 
@@ -92,6 +92,7 @@
 | #475 | dashboard-new + financial-system-test + loyalty (src) | −21 → **529** | analytics-calendar-component |
 | #476 | TwoFactorAuth + BookingTable + CustomerList | −21 → **508** | dashboard-financial-integration |
 | #477 | DocumentManager + BudgetSystem + FinancialManager | −21 → **487** | twofactor-booking-customer |
+| #478 | ModernSidebar + MarketingAnalytics + PushNotifications | −21 → **466** | document-budget-financial |
 
 ## Clusters 1–50 (concluídos)
 

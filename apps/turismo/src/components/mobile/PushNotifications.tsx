@@ -18,21 +18,37 @@ const PushNotifications: React.FC<PushNotificationsProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { showNotification } = useUIStore();
 
-  useEffect(() => {
-    checkSupport();
-    checkPermission();
-  }, []);
-
-  const checkSupport = () => {
+  const checkSupport = useCallback(() => {
     const supported = 'serviceWorker' in navigator && 'PushManager' in window;
     setIsSupported(supported);
-  };
+  }, []);
 
-  const checkPermission = () => {
+  const checkPermission = useCallback(() => {
     if ('Notification' in window) {
       setPermission(Notification.permission);
     }
-  };
+  }, []);
+
+  const subscribeToPush = useCallback(async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      const pushSubscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      });
+      
+      setSubscription(pushSubscription);
+      showNotification('Inscrição em notificações push realizada!', 'success');
+    } catch (_error) {
+      showNotification('Erro ao inscrever em notificações push', 'error');
+    }
+  }, [showNotification]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- detect push API support on mount
+    checkSupport();
+    checkPermission();
+  }, [checkSupport, checkPermission]);
 
   const requestPermission = useCallback(async () => {
     if (!isSupported) return;
@@ -48,27 +64,12 @@ const PushNotifications: React.FC<PushNotificationsProps> = ({
       } else {
         showNotification('Permissão para notificações negada', 'warning');
       }
-    } catch (error) {
+    } catch (_error) {
       showNotification('Erro ao solicitar permissão', 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, showNotification]);
-
-  const subscribeToPush = async () => {
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      });
-      
-      setSubscription(subscription);
-      showNotification('Inscrição em notificações push realizada!', 'success');
-    } catch (error) {
-      showNotification('Erro ao inscrever em notificações push', 'error');
-    }
-  };
+  }, [isSupported, showNotification, subscribeToPush]);
 
   const unsubscribeFromPush = async () => {
     if (!subscription) return;
@@ -77,7 +78,7 @@ const PushNotifications: React.FC<PushNotificationsProps> = ({
       await subscription.unsubscribe();
       setSubscription(null);
       showNotification('Inscrição em notificações push cancelada', 'info');
-    } catch (error) {
+    } catch (_error) {
       showNotification('Erro ao cancelar inscrição', 'error');
     }
   };
