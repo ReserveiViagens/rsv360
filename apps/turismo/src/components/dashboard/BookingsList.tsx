@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   Calendar, 
-  Clock, 
   User, 
   MapPin, 
   Phone, 
@@ -9,8 +8,6 @@ import {
   Eye,
   Edit,
   Trash2,
-  MoreHorizontal,
-  Filter,
   Search
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
