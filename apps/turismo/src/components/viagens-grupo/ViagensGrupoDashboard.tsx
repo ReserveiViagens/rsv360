@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react'
 import { Users, Heart, Calendar, DollarSign, Plus } from 'lucide-react'
 import Link from 'next/link'
 
+const MOCK_VIAGENS_GRUPO_STATS = {
+  gruposAtivos: 18,
+  totalParticipantes: 156,
+  wishlistsCompartilhadas: 42,
+  receitaTotal: 89000,
+}
+
 export function ViagensGrupoDashboard() {
   const [stats, setStats] = useState({
     gruposAtivos: 0,
@@ -13,13 +20,8 @@ export function ViagensGrupoDashboard() {
   })
 
   useEffect(() => {
-    // TODO: Buscar dados da API
-    setStats({
-      gruposAtivos: 18,
-      totalParticipantes: 156,
-      wishlistsCompartilhadas: 42,
-      receitaTotal: 89000
-    })
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock dashboard stats until API wired
+    setStats(MOCK_VIAGENS_GRUPO_STATS)
   }, [])
 
   return (
