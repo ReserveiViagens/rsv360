@@ -102,6 +102,7 @@
 | #485 | AccessibilityPanel + finance-dashboard + parks | −16 → **338** | sms-payment-report-templates |
 | #486 | reservations-rsv + backup-system-test | −15 → **323** | accessibility-finance-parks |
 | #487 | finance-dashboard (src) + login + project-management-test | −15 → **308** | reservations-backup |
+| #488 | EnterpriseForm + HierarchyView + EmailMarketing | −15 → **293** | finance-login-project |
 
 ## Clusters 1–50 (concluídos)
 
