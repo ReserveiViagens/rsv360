@@ -1,23 +1,15 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Target, 
   Users, 
-  Eye, 
   MousePointer, 
   TrendingUp, 
-  Mail,
-  MessageSquare,
-  Share2,
   BarChart3,
-  PieChart,
-  Activity,
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
   Calendar,
-  Filter
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import { useToast } from '../components/ToastContainer';
 
 interface MarketingMetrics {
@@ -112,14 +104,10 @@ const MarketingDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState('30d');
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    loadMarketingData();
-  }, [dateRange, filter]);
-
-  const loadMarketingData = async () => {
+  const loadMarketingData = useCallback(async () => {
     try {
       setLoading(true);
-      // Simular dados de marketing (em produÃ§Ã£o, viria da API)
+      // Simular dados de marketing (em produção, viria da API)
       const mockData: MarketingMetrics = {
         totalCampaigns: 24,
         activeCampaigns: 8,
@@ -238,12 +226,17 @@ const MarketingDashboard: React.FC = () => {
       
       setMetrics(mockData);
       showSuccess('Sucesso', 'Dados de marketing carregados com sucesso');
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao carregar dados de marketing');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showSuccess, showError]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload mock marketing data on filter change
+    loadMarketingData();
+  }, [dateRange, filter, loadMarketingData]);
 
   const formatNumber = (value: number) => {
     if (value >= 1000000) {
