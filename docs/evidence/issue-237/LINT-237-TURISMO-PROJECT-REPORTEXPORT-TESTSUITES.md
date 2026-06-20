@@ -14,4 +14,4 @@
 
 **Gates:** ESLint 0 nos 3 alvos | build OK
 
-**Próximo:** cluster #42 — bookingService + accommodations/analytics + cotacoes/templates (−31)
+**Próximo:** cluster #43 — dashboard + affiliates + roles (−30)

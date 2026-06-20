@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #41 concluído)  
-**Baseline global:** **1018** warnings  
+**Atualizado:** 2026-06-20 (cluster #42 concluído)  
+**Baseline global:** **987** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1018** |
-| Clusters concluídos | **41** / 120 |
-| PR empilhada mais recente | **#456** (cluster #41, −33) |
-| Próximo cluster | **#42** — bookingService + accommodations/analytics + cotacoes/templates (−31) |
+| Warnings globais | **987** |
+| Clusters concluídos | **42** / 120 |
+| PR empilhada mais recente | **#457** (cluster #42, −31) |
+| Próximo cluster | **#43** — dashboard + affiliates + roles (−30) |
 
 ## Padrão por cluster (repetir)
 
@@ -71,8 +71,9 @@
 | #454 | reports-dashboard + travel-catalog-rsv + src/marketing-dashboard | −33 → **1084** | googlehotel-giftcards-marketing |
 | #455 | src/reports-dashboard + Navigation + CampaignManager | −33 → **1051** | reports-travel-marketing-src |
 | #456 | ProjectManager + ReportExport + TestSuites | −33 → **1018** | src-reports-nav-campaign |
+| #457 | bookingService + accommodations/analytics + cotacoes/templates | −31 → **987** | project-reportexport-testsuites |
 
-## Clusters 1–41 (concluídos)
+## Clusters 1–42 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
