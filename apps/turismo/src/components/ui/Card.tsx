@@ -265,6 +265,7 @@ export const TourismCard: React.FC<Omit<CardProps, 'variant' | 'hover'> & {
   <Card variant="elevated" hover={true} className="overflow-hidden" {...props}>
     {image && (
       <div className="relative h-48 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element -- card header image */}
         <img 
           src={image} 
           alt={title}
