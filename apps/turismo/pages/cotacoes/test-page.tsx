@@ -6,7 +6,7 @@
  * Todos os imports são 100% dinâmicos para evitar erros no SSR
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, XCircle } from 'lucide-react';
 
@@ -14,7 +14,18 @@ interface TestResult {
   name: string;
   passed: boolean;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
+}
+
+interface WindowWithTestModule extends Window {
+  testModule?: {
+    runAllTests: () => TestResult[];
+    testTemplateLoading: () => void;
+    testCreateBudgetFromTemplate: () => void;
+    testCalculations: () => void;
+    testLocalStorage: () => void;
+    testTemplateVersioning: () => void;
+  };
 }
 
 export default function TestPage() {
@@ -22,14 +33,7 @@ export default function TestPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    // Garantir que estamos no cliente
-    if (typeof window !== 'undefined') {
-      setMounted(true);
-    }
-  }, []);
-
-  const executeTests = async () => {
+  const executeTests = useCallback(async () => {
     if (!mounted || typeof window === 'undefined') {
       return;
     }
@@ -37,15 +41,12 @@ export default function TestPage() {
     setIsRunning(true);
     
     try {
-      // Import dinâmico APENAS após verificar que estamos no cliente
-      // Usar string literal para evitar análise estática pelo bundler
       const modulePath = '@/lib/test-module';
       const testModule = await import(modulePath);
       
       if (testModule && testModule.runAllTests) {
-        // Exportar para window para uso no console
         if (typeof window !== 'undefined') {
-          (window as any).testModule = {
+          (window as WindowWithTestModule).testModule = {
             runAllTests: testModule.runAllTests,
             testTemplateLoading: testModule.testTemplateLoading,
             testCreateBudgetFromTemplate: testModule.testCreateBudgetFromTemplate,
@@ -60,36 +61,41 @@ export default function TestPage() {
       } else {
         throw new Error('Função runAllTests não encontrada no módulo');
       }
-    } catch (error: any) {
-      console.error('Erro ao executar testes:', error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('Erro ao executar testes:', err);
       setTestResults([{
         name: 'Erro na Execução',
         passed: false,
-        message: `Erro: ${error.message || 'Erro desconhecido'}`,
+        message: `Erro: ${err.message || 'Erro desconhecido'}`,
         details: { 
-          error: error.toString(),
-          stack: error.stack,
-          message: error.message
+          error: err.toString(),
+          stack: err.stack,
+          message: err.message
         }
       }]);
     } finally {
       setIsRunning(false);
     }
-  };
+  }, [mounted]);
 
   useEffect(() => {
-    // Executar testes automaticamente após montagem
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only test page mount
+      setMounted(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (mounted && typeof window !== 'undefined') {
-      // Delay maior para garantir que tudo está pronto
       const timer = setTimeout(() => {
         executeTests();
       }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [mounted]);
+  }, [mounted, executeTests]);
 
-  // Renderizar apenas no cliente - retornar null durante SSR
   if (typeof window === 'undefined' || !mounted) {
     return (
       <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
@@ -107,7 +113,6 @@ export default function TestPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">🧪 Testes do Módulo de Orçamentos</h1>
           <p className="text-gray-600">
@@ -115,14 +120,12 @@ export default function TestPage() {
           </p>
         </div>
 
-        {/* Botão de Reexecutar */}
         <div className="mb-6">
           <Button onClick={executeTests} disabled={isRunning} className="mb-4">
             {isRunning ? 'Executando testes...' : '🔄 Reexecutar Testes'}
           </Button>
         </div>
 
-        {/* Resumo */}
         {testResults.length > 0 && (
           <div className={`rounded-lg shadow p-6 mb-6 ${
             successRate === '100' ? 'bg-green-50 border-2 border-green-500' :
@@ -147,7 +150,6 @@ export default function TestPage() {
           </div>
         )}
 
-        {/* Resultados Individuais */}
         <div className="space-y-4">
           {testResults.map((result, index) => (
             <div
@@ -188,21 +190,19 @@ export default function TestPage() {
           ))}
         </div>
 
-        {/* Mensagem se não houver resultados */}
         {testResults.length === 0 && !isRunning && mounted && (
           <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 text-center">
             <p className="text-yellow-800">
-              Nenhum teste foi executado ainda. Clique em "Reexecutar Testes" ou aguarde a execução automática.
+              Nenhum teste foi executado ainda. Clique em &quot;Reexecutar Testes&quot; ou aguarde a execução automática.
             </p>
           </div>
         )}
 
-        {/* Instruções */}
         <div className="mt-8 bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">📝 Instruções de Teste Manual</h3>
           <ol className="list-decimal list-inside space-y-2 text-blue-800">
             <li>Acesse <code className="bg-blue-100 px-1 rounded">/cotacoes/templates</code> e verifique se 157 templates estão carregados</li>
-            <li>Clique em "Usar Template" em um template e preencha os dados do cliente</li>
+            <li>Clique em &quot;Usar Template&quot; em um template e preencha os dados do cliente</li>
             <li>Modifique itens e verifique se os cálculos são atualizados automaticamente</li>
             <li>Salve o orçamento e verifique se aparece no dashboard</li>
             <li>Acesse a visualização do orçamento e teste o botão de impressão</li>
