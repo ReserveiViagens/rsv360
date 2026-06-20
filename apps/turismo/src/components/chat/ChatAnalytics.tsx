@@ -1,9 +1,8 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Select, Badge, Tabs } from '@/components/ui';
-import { TrendingUp, TrendingDown, Users, MessageSquare, Clock, Star, Download, Calendar, Filter, BarChart3, LineChart, PieChart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card, Button, Select, Tabs } from '@/components/ui';
+import { TrendingUp, TrendingDown, Clock, Star, Download, LineChart, PieChart } from 'lucide-react';
 import { toast } from 'sonner';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, Pie, Cell, AreaChart, Area } from 'recharts';
 
 interface ChatMetric {
   name: string;
