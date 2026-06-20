@@ -255,3 +255,4 @@
 - [x] Lint workflow session calendar -9 — **GO condicional** *(PR #500)* — `issue-237/LINT-237-TURISMO-WORKFLOW-SESSION-CALENDAR.md`
 - [x] Lint chat bookings quickactions -9 — **GO condicional** *(PR #501)* — `issue-237/LINT-237-TURISMO-CHAT-BOOKINGS-QUICKACTIONS.md`
 - [x] Lint header modernlayout leilaoform -9 — **GO condicional** *(PR #502)* — `issue-237/LINT-237-TURISMO-HEADER-MODERNLAYOUT-LEILAOFORM.md`
+- [x] Lint touch push reportsharing -9 — **GO condicional** *(PR #503)* — `issue-237/LINT-237-TURISMO-TOUCH-PUSH-REPORTSHARING.md`
