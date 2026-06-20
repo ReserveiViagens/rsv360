@@ -13,7 +13,7 @@ export default function NovaExcursaoPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Excursao>) => {
     try {
       setIsLoading(true)
       await excursoesApi.createExcursao(data)
