@@ -1,4 +1,4 @@
-import { api, ApiResponse } from './apiClient';
+import { api } from './apiClient';
 import { toast } from 'react-hot-toast';
 
 // Types
@@ -113,7 +113,7 @@ export const paymentService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar pagamentos');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get payments error:', error);
       throw error;
     }
@@ -129,7 +129,7 @@ export const paymentService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar pagamento');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get payment error:', error);
       throw error;
     }
@@ -155,7 +155,7 @@ export const paymentService = {
       }
       
       throw new Error(response.message || 'Erro ao processar pagamento');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Process payment error:', error);
       throw error;
     }
@@ -176,7 +176,7 @@ export const paymentService = {
       }
       
       throw new Error(response.message || 'Erro ao processar estorno');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Refund payment error:', error);
       throw error;
     }
@@ -192,7 +192,7 @@ export const paymentService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar estatísticas');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get payment stats error:', error);
       throw error;
     }
@@ -357,7 +357,7 @@ export const paymentService = {
       // Convert response to blob
       const blob = new Blob([response.data], { type: 'text/csv' });
       return blob;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Export payments error:', error);
       throw error;
     }
@@ -371,7 +371,7 @@ export const paymentService = {
       });
       
       return new Blob([response.data], { type: 'application/pdf' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Generate receipt error:', error);
       throw error;
     }

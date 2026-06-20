@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Download, FileText, BarChart3, PieChart, TrendingUp, Calendar, Filter, RefreshCw, Eye, Printer, Mail, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, FileText, BarChart3, PieChart, TrendingUp, Calendar, RefreshCw, Eye, Printer, Mail, Share2 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -109,15 +109,21 @@ const customerSegmentOptions: SelectOption[] = [
   { value: 'couple', label: 'Couple' },
 ];
 
-const bookingStatusOptions: SelectOption[] = [
-  { value: 'confirmed', label: 'Confirmado' },
-  { value: 'pending', label: 'Pendente' },
-  { value: 'cancelled', label: 'Cancelado' },
-  { value: 'completed', label: 'Concluído' },
-];
+function buildDefaultDateRange(): ReportFilters['dateRange'] {
+  const end = new Date();
+  const start = new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000);
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  };
+}
+
+const DEFAULT_REPORT_FILTERS: ReportFilters = {
+  dateRange: buildDefaultDateRange(),
+};
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ className }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
+  const [_selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
@@ -125,20 +131,10 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ className }) => {
     name: '',
     type: 'financial',
     format: 'pdf',
-    filters: {
-      dateRange: {
-        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        end: new Date().toISOString().split('T')[0],
-      },
-    },
+    filters: DEFAULT_REPORT_FILTERS,
   });
 
-  const [filters, setFilters] = useState<ReportFilters>({
-    dateRange: {
-      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-    },
-  });
+  const [filters, setFilters] = useState<ReportFilters>(DEFAULT_REPORT_FILTERS);
 
   const handleTemplateSelect = (template: ReportTemplate) => {
     setSelectedTemplate(template);
@@ -485,7 +481,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ className }) => {
           <div className="text-center py-8">
             <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Relatório "{reportConfig.name}" Gerado com Sucesso!
+              Relatório &quot;{reportConfig.name}&quot; Gerado com Sucesso!
             </h3>
             <p className="text-gray-600 mb-6">
               Seu relatório está pronto para visualização e download.
