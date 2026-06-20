@@ -222,6 +222,7 @@
 - [x] Lint EnterpriseForm + HierarchyView + EmailMarketing −15 — **GO condicional** *(PR #488)* — `issue-237/LINT-237-TURISMO-ACCOMMODATIONS-EMAIL-MARKETING.md`
 - [x] Lint NotificationCenter + AnalyticsDashboard (reports) + usePWA −15 — **GO condicional** *(PR #489)* — `issue-237/LINT-237-TURISMO-NOTIFICATION-ANALYTICS-PWA.md`
 - [x] Lint user-service + enterprises + reports-rsv −13 — **GO condicional** *(PR #490)* — `issue-237/LINT-237-TURISMO-USER-ENTERPRISES-REPORTS.md`
+- [x] Lint tickets + transport + CustomersPage −12 — **GO condicional** *(PR #491)* — `issue-237/LINT-237-TURISMO-TICKETS-TRANSPORT-CUSTOMERS.md`
 
 ## Decisão Trilha 0
 

@@ -17,11 +17,9 @@ import {
   Edit3,
   Plane,
   Bus,
-  Car,
   Ship,
   Train,
   DollarSign,
-  CheckCircle,
   Navigation,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -31,7 +29,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   getTransportsByCity,
   getAllTransports,
-  searchTransports,
   transportTypes,
   transportCategories,
   caldasNovasTransports,
@@ -55,21 +52,6 @@ function formatPrice(value: number) {
   }).format(value)
 }
 
-function getTransportIcon(type: Transport['type']) {
-  switch (type) {
-    case 'aereo':
-      return Plane
-    case 'terrestre':
-      return Bus
-    case 'maritimo':
-      return Ship
-    case 'ferroviario':
-      return Train
-    default:
-      return Truck
-  }
-}
-
 function getCategoryColor(category: Transport['category']) {
   switch (category) {
     case 'publico':
@@ -85,8 +67,22 @@ function getCategoryColor(category: Transport['category']) {
   }
 }
 
+function TransportTypeIcon({ type, className }: { type: Transport['type']; className?: string }) {
+  switch (type) {
+    case 'aereo':
+      return <Plane className={className} />;
+    case 'terrestre':
+      return <Bus className={className} />;
+    case 'maritimo':
+      return <Ship className={className} />;
+    case 'ferroviario':
+      return <Train className={className} />;
+    default:
+      return <Truck className={className} />;
+  }
+}
+
 function TransportCard({ transport, viewMode }: { transport: Transport; viewMode: 'grid' | 'list' }) {
-  const TransportIcon = getTransportIcon(transport.type)
   const typeLabel = transportTypes.find((t) => t.value === transport.type)?.label || transport.type
   const categoryLabel =
     transportCategories.find((c) => c.value === transport.category)?.label || transport.category
@@ -98,7 +94,7 @@ function TransportCard({ transport, viewMode }: { transport: Transport; viewMode
           viewMode === 'grid' ? 'aspect-video' : 'w-48 shrink-0 aspect-video'
         } flex items-center justify-center`}
       >
-        <TransportIcon className="w-16 h-16 text-white/80" />
+        <TransportTypeIcon type={transport.type} className="w-16 h-16 text-white/80" />
         <Badge className="absolute top-2 left-2 bg-white/90 text-gray-800 text-xs">
           {typeLabel.split(' ')[0]}
         </Badge>
