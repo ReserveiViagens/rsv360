@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
-import { leiloesApi, type RelatorioFilters } from '../../../src/services/api/leiloesApi'
+import { leiloesApi, type LeilaoRelatorio, type RelatorioFilters } from '../../../src/services/api/leiloesApi'
 import { BarChart3, DollarSign, TrendingUp, FileDown } from 'lucide-react'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
 
 export default function RelatoriosPage() {
-  const [relatorios, setRelatorios] = useState<any>(null)
+  const [relatorios, setRelatorios] = useState<LeilaoRelatorio | null>(null)
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     start_date: '',
@@ -16,11 +16,7 @@ export default function RelatoriosPage() {
     type: '' as '' | RelatorioFilters['type'],
   })
 
-  useEffect(() => {
-    loadRelatorios()
-  }, [filters])
-
-  const loadRelatorios = async () => {
+  const loadRelatorios = useCallback(async () => {
     try {
       setLoading(true)
       const data = await leiloesApi.getRelatorios({
@@ -33,7 +29,12 @@ export default function RelatoriosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload relatorios when filters change
+    loadRelatorios()
+  }, [loadRelatorios])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({
