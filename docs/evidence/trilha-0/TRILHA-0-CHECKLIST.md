@@ -270,6 +270,8 @@
 
 - [x] Lint cluster #108 src-register-rewards-seo ?3 ? **GO condicional** *(PR #523)* ? `issue-237/LINT-237-TURISMO-SRC-REGISTER-REWARDS-SEO.md`
 
+- [x] Lint cluster #109 settings-subscriptions-notificationbell ?3 ? **GO condicional** *(PR #524)* ? `issue-237/LINT-237-TURISMO-SETTINGS-SUBSCRIPTIONS-NOTIFICATIONBELL.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
