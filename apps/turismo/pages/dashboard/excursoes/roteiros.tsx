@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { RoteiroEditor } from '../../../src/components/excursoes/RoteiroEditor'
@@ -15,16 +15,7 @@ export default function RoteirosPage() {
   const [loading, setLoading] = useState(true)
   const [excursaoId, setExcursaoId] = useState<string>('')
 
-  useEffect(() => {
-    // Tentar pegar do query ou da URL
-    const id = (router.query.excursao_id || router.query.id) as string
-    if (id) {
-      setExcursaoId(id)
-      loadRoteiros(id)
-    }
-  }, [router.query])
-
-  const loadRoteiros = async (id: string) => {
+  const loadRoteiros = useCallback(async (id: string) => {
     try {
       setLoading(true)
       const data = await excursoesApi.getRoteiros(id)
@@ -35,7 +26,17 @@ export default function RoteirosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Tentar pegar do query ou da URL
+    const id = (router.query.excursao_id || router.query.id) as string
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync excursao id from route query
+      setExcursaoId(id)
+      loadRoteiros(id)
+    }
+  }, [router.query, loadRoteiros])
 
   const handleSave = async (roteirosToSave: Omit<Roteiro, 'id' | 'excursao_id' | 'created_at'>[]) => {
     try {
