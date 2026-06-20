@@ -2,13 +2,11 @@
 // ANALYTICS DASHBOARD - DASHBOARD AVANÇADO COM GRÁFICOS INTERATIVOS
 // ===================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  LineChart,
   Line,
   AreaChart,
   Area,
-  BarChart,
   Bar,
   PieChart,
   Pie,
@@ -33,7 +31,6 @@ import {
   BarChart3,
   PieChart as PieChartIcon,
   Download,
-  Filter,
   RefreshCw
 } from 'lucide-react';
 
@@ -105,20 +102,11 @@ const AnalyticsDashboard: React.FC = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('6months');
-  const [selectedMetric, setSelectedMetric] = useState('revenue');
 
-  // ===================================================================
-  // CARREGAMENTO DE DADOS
-  // ===================================================================
-
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [selectedPeriod]);
-
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
+    void selectedPeriod;
     setLoading(true);
-    
-    // Simular carregamento de dados
+
     setTimeout(() => {
       const mockData: AnalyticsData = {
         revenue: [
@@ -171,7 +159,12 @@ const AnalyticsDashboard: React.FC = () => {
       setData(mockData);
       setLoading(false);
     }, 1000);
-  };
+  }, [selectedPeriod]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock analytics when period changes
+    loadAnalyticsData();
+  }, [loadAnalyticsData]);
 
   // ===================================================================
   // FUNÇÕES DE UTILIDADE
