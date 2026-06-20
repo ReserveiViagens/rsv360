@@ -24,7 +24,7 @@ export function GrupoForm({ grupo, onSubmit, onCancel, isLoading = false }: Grup
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -51,7 +51,7 @@ export function GrupoForm({ grupo, onSubmit, onCancel, isLoading = false }: Grup
     
     if (!validate()) return
 
-    const submitData: any = {
+    const submitData: Partial<Grupo> = {
       nome: formData.nome,
       destino: formData.destino,
       descricao: formData.descricao || null,
