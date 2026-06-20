@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, type ComponentProps } from 'react';
 import { useAuth } from './AuthProvider';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 import { PasswordReset } from './PasswordReset';
 import { TwoFactorAuth } from './TwoFactorAuth';
-import { Shield, User, Lock, Key, ArrowLeft } from 'lucide-react';
+import { Shield, ArrowLeft } from 'lucide-react';
 
 export type AuthStep = 'login' | 'register' | 'forgot-password' | '2fa';
+
+type LoginFormData = Parameters<ComponentProps<typeof LoginForm>['onLogin']>[0];
+type RegisterFormData = Parameters<ComponentProps<typeof RegisterForm>['onRegister']>[0];
 
 export const AuthPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AuthStep>('login');
@@ -14,7 +17,7 @@ export const AuthPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { login, register } = useAuth();
 
-  const handleLogin = async (data: any) => {
+  const handleLogin = async (data: LoginFormData) => {
     setIsLoading(true);
     setError(null);
     
@@ -29,7 +32,7 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  const handleRegister = async (data: any) => {
+  const handleRegister = async (data: RegisterFormData) => {
     setIsLoading(true);
     setError(null);
     
@@ -57,11 +60,6 @@ export const AuthPage: React.FC = () => {
 
   const handleGoToRegister = () => {
     setCurrentStep('register');
-    setError(null);
-  };
-
-  const handleGoTo2FA = () => {
-    setCurrentStep('2fa');
     setError(null);
   };
 
