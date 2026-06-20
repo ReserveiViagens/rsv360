@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import {
@@ -10,18 +10,10 @@ import {
   Trash2,
   Eye,
   Search,
-  Download,
   Save,
   X,
-  CheckCircle,
-  XCircle,
   Users,
-  Key,
-  Settings,
-  FileText,
-  BarChart3,
-  Lock,
-  Unlock
+  Key
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -59,15 +51,11 @@ export default function RolesPage() {
     permissions: [] as string[]
   })
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [rolesRes, permissionsRes] = await Promise.all([
-        api.get('/api/v1/roles', { params: { search: searchTerm || undefined } }),
+        api.get('/api/v1/roles'),
         api.get('/api/v1/roles/permissions/available')
       ])
       
@@ -79,7 +67,12 @@ export default function RolesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial roles page load
+    loadData()
+  }, [loadData])
 
   const handleSave = async () => {
     try {
