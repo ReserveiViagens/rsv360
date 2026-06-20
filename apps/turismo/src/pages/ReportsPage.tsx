@@ -6,15 +6,12 @@ import {
   Download, 
   TrendingUp,
   Users,
-  DollarSign,
-  MapPin,
   Clock,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { 
   CustomReportBuilder, 
@@ -24,33 +21,35 @@ import {
 } from '../components/reports';
 import { useUIStore } from '../stores/useUIStore';
 
+interface GeneratedReport { title: string; }
+interface ReportSchedule { name: string; }
+interface ExportJob { reportName: string; }
+
 const ReportsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('builder');
-  const [quickStats, setQuickStats] = useState({
+  const quickStats = {
     totalReports: 156,
     scheduledReports: 12,
     recentExports: 8,
     successRate: 94.2
-  });
+  };
   
   const { showNotification } = useUIStore();
 
-  const handleReportGenerated = (report: any) => {
+  const handleReportGenerated = (report: GeneratedReport) => {
     showNotification(`Relatório "${report.title}" gerado com sucesso!`, 'success');
     // Aqui seria implementada a lógica para salvar o relatório
   };
 
-  const handleScheduleCreated = (schedule: any) => {
+  const handleScheduleCreated = (schedule: ReportSchedule) => {
     showNotification(`Agendamento "${schedule.name}" criado com sucesso!`, 'success');
-    // Aqui seria implementada a lógica para salvar o agendamento
   };
 
-  const handleExportRequested = (exportJob: any) => {
+  const handleExportRequested = (exportJob: ExportJob) => {
     showNotification(`Exportação "${exportJob.reportName}" solicitada!`, 'success');
-    // Aqui seria implementada a lógica para processar a exportação
   };
 
-  const handleExportCompleted = (exportJob: any) => {
+  const handleExportCompleted = (exportJob: ExportJob) => {
     showNotification(`Exportação "${exportJob.reportName}" concluída!`, 'success');
     // Aqui seria implementada a lógica para notificar o usuário
   };
