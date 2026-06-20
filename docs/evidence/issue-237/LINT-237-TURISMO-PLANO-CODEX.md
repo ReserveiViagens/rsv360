@@ -2,9 +2,9 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #50 concluído)  
-**Baseline global:** **759** warnings  
-**Arquivos com débito:** **360**  
+**Atualizado:** 2026-06-20 (cluster #55 concluído)  
+**Baseline global:** **639** warnings  
+**Arquivos com débito:** **345**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
 
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **759** |
-| Clusters concluídos | **50** / 120 |
-| PR empilhada mais recente | **#465** (cluster #50, −27) |
-| Próximo cluster | **#51** — analytics-financeiro + recommendations + sales-dashboard (−24) |
+| Warnings globais | **639** |
+| Clusters concluídos | **55** / 120 |
+| PR empilhada mais recente | **#470** (cluster #55, −24) |
+| Próximo cluster | **#56** — ReportGenerator + WorkflowEngine + paymentService (−24) |
 
 ## Padrão por cluster (repetir)
 
@@ -80,6 +80,11 @@
 | #463 | notifications + DevOpsPage + demo-layout | −27 → **813** | cotacoes-insurance |
 | #464 | ChatSystem + SocialMediaIntegration + PaymentHistory | −27 → **786** | notifications-devops-demo |
 | #465 | RefundManager + DataExport + TestRunner | −27 → **759** | chat-social-payment |
+| #466 | analytics-financeiro + recommendations + sales-dashboard | −24 → **735** | refund-export-testrunner |
+| #467 | seo + ReportsPage + BookingsPage | −24 → **711** | analytics-recommendations-sales |
+| #468 | chat-test + clients + layout-test | −24 → **687** | seo-reports-bookings |
+| #469 | ml-recomendacoes + navigation-test + sales-dashboard (src) | −24 → **663** | chat-clients-layout |
+| #470 | travel + CustomerModal + EmailAutomation | −24 → **639** | ml-nav-sales-src |
 
 ## Clusters 1–50 (concluídos)
 
