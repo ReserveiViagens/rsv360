@@ -266,6 +266,8 @@
 
 - [x] Lint cluster #111 auth-provider-login-register ?3 ? **GO condicional** *(PR #526)* ? `issue-237/LINT-237-TURISMO-AUTH-PROVIDER-LOGIN-REGISTER.md`
 
+- [x] Lint cluster #115 datatable-loader-card ?3 ? **GO condicional** *(PR #530)* ? `issue-237/LINT-237-TURISMO-DATATABLE-LOADER-CARD.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
