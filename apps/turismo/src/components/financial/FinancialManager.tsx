@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { 
-  DollarSign, 
   TrendingUp, 
   TrendingDown, 
   Calculator, 
@@ -31,7 +30,7 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Cell, AreaChart, Area } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 
 // Tipos de dados financeiros
 interface Transaction {
@@ -68,9 +67,10 @@ interface CashFlowData {
 }
 
 const FinancialManager: React.FC = () => {
+  /* eslint-disable react-hooks/static-components -- TransactionForm colocated with modal state */
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [_selectedTransaction, _setSelectedTransaction] = useState<Transaction | null>(null)
   const [transactionFilter, setTransactionFilter] = useState('todos')
   const [searchTerm, setSearchTerm] = useState('')
 
