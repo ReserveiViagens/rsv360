@@ -99,6 +99,7 @@
 | #482 | AnalyticsDashboard + AdminPanel + AuthPage | −18 → **390** | attractions-integration-notifications-src |
 | #483 | CustomerProfile + Layout + NotificationToast | −18 → **372** | analytics-admin-auth |
 | #484 | SMSSystem + PaymentGateway + ReportTemplates | −18 → **354** | customer-layout-toast |
+| #485 | AccessibilityPanel + finance-dashboard + parks | −16 → **338** | sms-payment-report-templates |
 
 ## Clusters 1–50 (concluídos)
 
