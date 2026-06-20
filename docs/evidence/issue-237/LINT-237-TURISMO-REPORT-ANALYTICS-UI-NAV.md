@@ -1,6 +1,6 @@
 # Lint #237 — turismo reportanalytics + ui/pagetransition + skiplinks
 
-**Cluster:** **#97** | **Branch:** `chore/lint-turismo-report-analytics-ui-nav`
+**Cluster:** **#97** | **Branch:** `chore/lint-turismo-report-analytics-ui-nav` | **PR:** #512
 
 | Métrica | Pós-#96 | Esta PR |
 |---------|---------|---------|
