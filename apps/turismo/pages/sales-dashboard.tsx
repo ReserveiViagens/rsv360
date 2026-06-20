@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ShoppingCart, 
   DollarSign, 
@@ -9,16 +9,11 @@ import {
   Clock,
   XCircle,
   BarChart3,
-  PieChart,
-  Activity,
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
-  Calendar,
-  Filter,
   Star
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import { useToast } from '../components/ToastContainer';
 
 interface SalesMetrics {
@@ -103,11 +98,9 @@ const SalesDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState('30d');
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    loadSalesData();
-  }, [dateRange, filter]);
-
-  const loadSalesData = async () => {
+  const loadSalesData = useCallback(async () => {
+    void dateRange;
+    void filter;
     try {
       setLoading(true);
       // Simular dados de vendas (em produção, viria da API)
@@ -251,12 +244,17 @@ const SalesDashboard: React.FC = () => {
       
       setMetrics(mockData);
       showSuccess('Sucesso', 'Dados de vendas carregados com sucesso');
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao carregar dados de vendas');
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange, filter, showSuccess, showError]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock sales data load
+    void loadSalesData();
+  }, [loadSalesData]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
