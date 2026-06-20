@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -33,30 +33,6 @@ import {
 } from 'lucide-react'
 
 // Tipos para AI Tutor
-interface AITutorSession {
-  id: string
-  userId: string
-  startedAt: string
-  endedAt?: string
-  duration: number // in minutes
-  topic: string
-  learningObjectives: string[]
-  messages: ChatMessage[]
-  status: 'active' | 'completed' | 'paused'
-  metadata: {
-    totalQuestions: number
-    questionsAnswered: number
-    conceptsExplained: number
-    exercisesSuggested: number
-    resourcesRecommended: number
-    learningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'reading'
-    difficulty: number // 1-10
-    satisfaction: number // 1-5
-  }
-  insights: AIInsight[]
-  recommendations: LearningRecommendation[]
-}
-
 interface ChatMessage {
   id: string
   type: 'user' | 'ai' | 'system'
@@ -92,36 +68,6 @@ interface MessageReaction {
   feedback?: string
 }
 
-interface AIInsight {
-  id: string
-  type: 'strength' | 'weakness' | 'pattern' | 'recommendation' | 'progress'
-  title: string
-  description: string
-  confidence: number // 0-100
-  evidence: string[]
-  actionable: boolean
-  priority: 'high' | 'medium' | 'low'
-  category: string
-}
-
-interface LearningRecommendation {
-  id: string
-  type: 'concept' | 'practice' | 'resource' | 'technique' | 'path'
-  title: string
-  description: string
-  reasoning: string
-  priority: number // 1-10
-  estimatedTime: number // in minutes
-  difficulty: number // 1-10
-  tags: string[]
-  resources: {
-    type: string
-    title: string
-    url: string
-    description: string
-  }[]
-}
-
 interface TutorPersonality {
   id: string
   name: string
@@ -154,8 +100,16 @@ interface QuickAction {
   label: string
   description: string
   icon: React.ComponentType<{ className?: string }>
-  action: () => void
+  message: string
   category: 'learning' | 'practice' | 'help' | 'tools'
+}
+
+function createChatMessageId(suffix: string) {
+  return `msg_${crypto.randomUUID()}_${suffix}`;
+}
+
+function randomTypingDelayMs() {
+  return 1500 + Math.floor(Math.random() * 1000);
 }
 
 const AITutor: React.FC = () => {
@@ -180,6 +134,11 @@ const AITutor: React.FC = () => {
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const addQuickMessage = useCallback((message: string) => {
+    setCurrentMessage(message)
+    inputRef.current?.focus()
+  }, [])
 
   // Dados mock para demonstração
   const [tutorPersonalities] = useState<TutorPersonality[]>([
@@ -229,13 +188,13 @@ const AITutor: React.FC = () => {
     }
   ])
 
-  const [quickActions] = useState<QuickAction[]>([
+  const quickActions = useMemo<QuickAction[]>(() => [
     {
       id: 'explain',
       label: 'Explique um conceito',
       description: 'Peça uma explicação detalhada',
       icon: Lightbulb,
-      action: () => addQuickMessage('Pode me explicar o conceito de [conceito] de forma simples?'),
+      message: 'Pode me explicar o conceito de [conceito] de forma simples?',
       category: 'learning'
     },
     {
@@ -243,7 +202,7 @@ const AITutor: React.FC = () => {
       label: 'Quero praticar',
       description: 'Solicite exercícios práticos',
       icon: Target,
-      action: () => addQuickMessage('Gostaria de fazer alguns exercícios práticos sobre o tópico atual'),
+      message: 'Gostaria de fazer alguns exercícios práticos sobre o tópico atual',
       category: 'practice'
     },
     {
@@ -251,7 +210,7 @@ const AITutor: React.FC = () => {
       label: 'Mostre exemplos',
       description: 'Veja exemplos reais',
       icon: Eye,
-      action: () => addQuickMessage('Pode me mostrar alguns exemplos práticos deste conceito?'),
+      message: 'Pode me mostrar alguns exemplos práticos deste conceito?',
       category: 'learning'
     },
     {
@@ -259,7 +218,7 @@ const AITutor: React.FC = () => {
       label: 'Estou confuso',
       description: 'Peça esclarecimentos',
       icon: HelpCircle,
-      action: () => addQuickMessage('Estou tendo dificuldades para entender. Pode explicar de outra forma?'),
+      message: 'Estou tendo dificuldades para entender. Pode explicar de outra forma?',
       category: 'help'
     },
     {
@@ -267,7 +226,7 @@ const AITutor: React.FC = () => {
       label: 'Resumir tópico',
       description: 'Peça um resumo do que aprendeu',
       icon: BookOpen,
-      action: () => addQuickMessage('Pode fazer um resumo do que aprendemos até agora?'),
+      message: 'Pode fazer um resumo do que aprendemos até agora?',
       category: 'learning'
     },
     {
@@ -275,7 +234,7 @@ const AITutor: React.FC = () => {
       label: 'Próximo tópico',
       description: 'Avance para o próximo assunto',
       icon: ArrowRight,
-      action: () => addQuickMessage('Estou pronto para o próximo tópico. O que vamos aprender agora?'),
+      message: 'Estou pronto para o próximo tópico. O que vamos aprender agora?',
       category: 'learning'
     },
     {
@@ -283,7 +242,7 @@ const AITutor: React.FC = () => {
       label: 'Quiz rápido',
       description: 'Teste seus conhecimentos',
       icon: Brain,
-      action: () => addQuickMessage('Gostaria de fazer um quiz rápido para testar meu conhecimento'),
+      message: 'Gostaria de fazer um quiz rápido para testar meu conhecimento',
       category: 'practice'
     },
     {
@@ -291,10 +250,10 @@ const AITutor: React.FC = () => {
       label: 'Mais recursos',
       description: 'Solicite materiais adicionais',
       icon: Archive,
-      action: () => addQuickMessage('Tem alguns recursos adicionais que posso estudar sobre este tema?'),
+      message: 'Tem alguns recursos adicionais que posso estudar sobre este tema?',
       category: 'tools'
     }
-  ])
+  ], [])
 
   // Simular mensagens iniciais
   useEffect(() => {
@@ -327,8 +286,10 @@ Como posso ajudá-lo hoje? Posso explicar conceitos, criar exercícios, dar exem
           }
         }
       ]
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seed welcome message on mount
       setMessages(initialMessages)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, [])
 
   // Auto-scroll para a última mensagem
@@ -336,16 +297,11 @@ Como posso ajudá-lo hoje? Posso explicar conceitos, criar exercícios, dar exem
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const addQuickMessage = (message: string) => {
-    setCurrentMessage(message)
-    inputRef.current?.focus()
-  }
-
   const sendMessage = async () => {
     if (!currentMessage.trim()) return
 
     const userMessage: ChatMessage = {
-      id: `msg_${Date.now()}_user`,
+      id: createChatMessageId('user'),
       type: 'user',
       content: currentMessage,
       timestamp: new Date().toISOString()
@@ -355,15 +311,14 @@ Como posso ajudá-lo hoje? Posso explicar conceitos, criar exercícios, dar exem
     setCurrentMessage('')
     setIsTyping(true)
 
-    // Simular resposta da IA após delay
     setTimeout(() => {
       const aiResponse = generateAIResponse(currentMessage)
       setMessages(prev => [...prev, aiResponse])
       setIsTyping(false)
-    }, 1500 + Math.random() * 1000)
+    }, randomTypingDelayMs())
   }
 
-  const generateAIResponse = (userInput: string): ChatMessage => {
+  const generateAIResponse = (_userInput: string): ChatMessage => {
     const responses = [
       {
         content: `Ótima pergunta! Vou explicar isso de forma visual, já que sei que você aprende melhor assim. 
@@ -457,7 +412,7 @@ Ou prefere que eu:
     const randomResponse = responses[Math.floor(Math.random() * responses.length)]
     
     return {
-      id: `msg_${Date.now()}_ai`,
+      id: createChatMessageId('ai'),
       type: 'ai',
       content: randomResponse.content,
       timestamp: new Date().toISOString(),
@@ -659,7 +614,7 @@ Ou prefere que eu:
                   variant="secondary"
                   size="sm"
                   className="justify-start text-left h-auto p-2"
-                  onClick={action.action}
+                  onClick={() => addQuickMessage(action.message)}
                 >
                   <div className="flex items-center space-x-2">
                     <action.icon className="w-4 h-4 flex-shrink-0" />
