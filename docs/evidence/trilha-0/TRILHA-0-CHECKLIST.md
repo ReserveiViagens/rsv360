@@ -266,6 +266,8 @@
 
 - [x] Lint cluster #106 src-analytics-templates-giftcards ?3 ? **GO condicional** *(PR #521)* ? `issue-237/LINT-237-TURISMO-SRC-ANALYTICS-TEMPLATES-GIFTCARDS.md`
 
+- [x] Lint cluster #107 multilingual-offline-recommendations ?3 ? **GO condicional** *(PR #522)* ? `issue-237/LINT-237-TURISMO-MULTILINGUAL-OFFLINE-RECOMMENDATIONS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
