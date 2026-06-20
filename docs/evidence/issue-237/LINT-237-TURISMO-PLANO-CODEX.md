@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #77 concluído)  
-**Baseline global:** **196** warnings  
+**Atualizado:** 2026-06-20 (cluster #82 concluído)  
+**Baseline global:** **187** warnings  
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **196** |
-| Clusters concluídos | **81** / 120 |
-| PR empilhada mais recente | **#496** (cluster #81, −9) |
-| Próximo cluster | **#82** — excursoes/leiloes dashboard (−9) |
+| Warnings globais | **187** |
+| Clusters concluídos | **82** / 120 |
+| PR empilhada mais recente | **#497** (cluster #82, −9) |
+| Próximo cluster | **#83** — leiloes relatorios + ota-sync + viagens-grupo id (−9) |
 
 ## Padrão por cluster (repetir)
 
@@ -111,6 +111,7 @@
 | #494 | ReportNotifications + QualityMetrics + dialog | −12 → **217** | password-nav-broadcast |
 | #495 | useAccessibility + useAnimations + useAuth | −12 → **205** | reports-quality-dialog |
 | #496 | enterprises edit + analytics-complete + share | −9 → **196** | hooks-accessibility-auth |
+| #497 | excursoes + leiloes dashboard pages | −9 → **187** | enterprises-analytics-share |
 
 ## Clusters 1–50 (concluídos)
 
