@@ -32,7 +32,8 @@ export default function ProtectedRoute({
   // IMPORTANTE: Todos os hooks devem ser chamados antes de qualquer return condicional
   // Garantir que só executa no cliente
   useEffect(() => {
-    setMounted(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount guard
+      setMounted(true);
     console.log('[ProtectedRoute] Componente montado');
   }, []);
 

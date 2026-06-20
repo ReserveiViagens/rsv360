@@ -53,6 +53,7 @@ export const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
       {/* Imagem */}
       {enterprise.images && enterprise.images.length > 0 && (
         <div className="relative h-48 w-full overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- enterprise image from API */}
           <img
             src={enterprise.images[0]}
             alt={enterprise.name}
