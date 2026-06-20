@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import ModernSidebar from './ModernSidebar';
@@ -10,7 +11,6 @@ import {
   Bell,
   Search,
   Settings,
-  User,
   ChevronDown
 } from 'lucide-react';
 
@@ -53,6 +53,7 @@ export default function ModernLayout({
   // Fechar sidebar mobile ao mudar de rota
   useEffect(() => {
     if (isMobile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- close mobile sidebar on route change
       setShowMobileSidebar(false);
     }
   }, [router.pathname, isMobile]);
@@ -194,12 +195,12 @@ export default function ModernLayout({
               <nav className="flex" aria-label="Breadcrumb">
                 <ol className="flex items-center space-x-2">
                   <li>
-                    <a
+                    <Link
                       href="/"
                       className={`text-sm transition-colors duration-300 ${actualTheme === 'dark' ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       Home
-                    </a>
+                    </Link>
                   </li>
                   {router.pathname.split('/').filter(Boolean).map((segment, index, array) => (
                     <li key={index} className="flex items-center">
