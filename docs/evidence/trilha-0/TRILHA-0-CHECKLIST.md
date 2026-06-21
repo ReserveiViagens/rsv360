@@ -211,6 +211,7 @@
 - [x] Lint TwoFactorAuth + BookingTable + CustomerList −21 — **GO condicional** *(PR #476)* — `issue-237/LINT-237-TURISMO-TWOFACTOR-BOOKING-CUSTOMER.md`
 - [x] Lint DocumentManager + BudgetSystem + FinancialManager −21 — **GO condicional** *(PR #477)* — `issue-237/LINT-237-TURISMO-DOCUMENT-BUDGET-FINANCIAL.md`
 - [x] Lint ModernSidebar + MarketingAnalytics + PushNotifications −21 — **GO condicional** *(PR #478)* — `issue-237/LINT-237-TURISMO-SIDEBAR-MARKETING-PUSH.md`
+- [x] Lint ReportScheduler + AITutor + Select −21 — **GO condicional** *(PR #479)* — `issue-237/LINT-237-TURISMO-REPORT-AITUTOR-SELECT.md`
 
 ## Decisão Trilha 0
 
