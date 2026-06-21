@@ -25,7 +25,6 @@ import {
   Settings,
   Plus,
   Edit,
-  Trash2,
   Copy,
   Download,
   Filter,
@@ -34,9 +33,10 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Activity,
-  Zap
+  Zap,
+  Eye
 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Cell, RadialBarChart, RadialBar } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, RadialBarChart, RadialBar } from 'recharts'
 
 // Tipos de dados do sistema de orçamentos
 interface Budget {
@@ -88,10 +88,11 @@ interface BudgetTemplate {
 }
 
 const BudgetSystem: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('orcamentos')
+  /* eslint-disable react-hooks/static-components -- BudgetForm colocated with budget modal state */
+  const [activeTab, setActiveTab] = useState('orcamentos');
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false)
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
-  const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null)
+  const [_selectedBudget, _setSelectedBudget] = useState<Budget | null>(null)
   const [budgetFilter, setBudgetFilter] = useState('todos')
   const [searchTerm, setSearchTerm] = useState('')
 

@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { 
   Upload, 
   FileText, 
-  Image, 
   File, 
   Download, 
   Eye, 
@@ -10,10 +9,7 @@ import {
   X, 
   Plus,
   CheckCircle,
-  AlertCircle,
-  Clock,
   Search,
-  Filter,
   User,
   Calendar
 } from 'lucide-react';
@@ -311,7 +307,7 @@ const DocumentManager: React.FC<DocumentManagerProps> = ({
                   </div>
                   
                   {document.notes && (
-                    <p className="text-sm text-gray-600 italic">"{document.notes}"</p>
+                    <p className="text-sm text-gray-600 italic">&quot;{document.notes}&quot;</p>
                   )}
                 </div>
               </div>
@@ -488,6 +484,7 @@ const DocumentManager: React.FC<DocumentManagerProps> = ({
             
             <div className="border rounded-lg p-4 bg-gray-50">
               {isImageFile(selectedDocument.url) ? (
+                // eslint-disable-next-line @next/next/no-img-element -- preview de documento mock com URL arbitrária
                 <img
                   src={selectedDocument.url}
                   alt={selectedDocument.name}
