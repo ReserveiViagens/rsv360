@@ -276,6 +276,8 @@
 
 - [x] Lint cluster #118 viagensgrupo-toast-sidebar ?3 ? **GO condicional** *(PR #539)* ? `issue-237/LINT-237-TURISMO-VIAGENSGRUPO-TOAST-SIDEBAR.md`
 
+- [x] Lint cluster #119 theme-travel-accommodations ?3 ? **GO condicional** *(PR #540)* ? `issue-237/LINT-237-TURISMO-THEME-TRAVEL-ACCOMMODATIONS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
