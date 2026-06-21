@@ -7,7 +7,6 @@ import {
   Search,
   Filter,
   ExternalLink,
-  Star,
   Clock,
   Users,
   MapPin,
@@ -16,7 +15,6 @@ import {
   Eye,
   Edit3,
   DollarSign,
-  Calendar,
   CheckCircle,
   TrendingUp,
 } from 'lucide-react'
@@ -27,7 +25,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   getAttractionsByCity,
   getAllAttractions,
-  searchAttractions,
   attractionTypes,
   caldasNovasAttractions,
   type Attraction,
@@ -79,6 +76,7 @@ function TicketCard({
           viewMode === 'grid' ? 'aspect-video' : 'w-48 shrink-0 aspect-video'
         }`}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- attraction ticket card image from catalog */}
         <img
           src={attraction.imageUrl || '/placeholder.svg?height=300&width=400'}
           alt={attraction.name}
