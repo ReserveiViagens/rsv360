@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Users, Target, Mail, Phone, Calendar, MapPin, Filter, Search, Plus, Edit, Trash2, Eye, Download, TrendingUp, UserPlus } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Users, Target, Mail, Calendar, Plus, Edit, Eye, TrendingUp, UserPlus } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select, SelectOption } from '../components/ui/Select';
 import { Modal } from '../components/ui/Modal';
 import { Badge } from '../components/ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { cn } from '../../utils/cn';
 
 export interface Lead {
@@ -99,7 +98,7 @@ const mockLeads: Lead[] = [
 ];
 
 const LeadCapture: React.FC<LeadCaptureProps> = ({ className }) => {
-  const [leads, setLeads] = useState<Lead[]>(mockLeads);
+  const [leads] = useState<Lead[]>(mockLeads);
   const [filters, setFilters] = useState<LeadFilters>({
     status: [],
     source: [],
@@ -157,7 +156,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ className }) => {
     }
   };
 
-  const handleFilterChange = (field: keyof LeadFilters, value: any) => {
+  const handleFilterChange = <K extends keyof LeadFilters>(field: K, value: LeadFilters[K]) => {
     setFilters(prev => ({ ...prev, [field]: value }));
     setCurrentPage(1);
   };
@@ -175,12 +174,6 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ className }) => {
   const handleEditLead = (lead: Lead) => {
     setSelectedLead(lead);
     setShowEditModal(true);
-  };
-
-  const handleStatusChange = (leadId: string, newStatus: string) => {
-    setLeads(prev => prev.map(l => 
-      l.id === leadId ? { ...l, status: newStatus as any } : l
-    ));
   };
 
   const formatDate = (date: Date) => {

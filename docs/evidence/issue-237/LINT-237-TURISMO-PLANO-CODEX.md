@@ -97,6 +97,7 @@
 | 27 | −42 | configuracoes-avancadas, configuracoes-usuarios, groups (src) | **concluído** (#439) |
 | 28 | −42 | integracoes-apis, marketplace-parceiros, notification-system-test | **concluído** (#440) |
 | 29 | −42 | relatorios-personalizados, DataExportSystem, BackupRecoverySystem | **concluído** (#441) |
+| 30 | −42 | TrainingSystem, LeadCapture, SettingsPanel | **concluído** (#447) |
 | 31 | −40 | PerformanceTesting, cotacoes/templates, dashboard-rsv-backup | **concluído** (#442) |
 | 32 | −39 | dashboard-rsv, voice-commerce, e-commerce | **concluído** (#443) |
 
