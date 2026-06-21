@@ -1,26 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import { 
   Users, 
   UserPlus, 
   Settings, 
-  MessageSquare, 
   Calendar,
-  MapPin,
-  Phone,
-  Mail,
   Plus,
   Edit,
   Trash,
   Search,
-  Filter,
   Download,
-  Upload,
-  Eye,
-  Crown,
-  Shield
+  Eye
 } from 'lucide-react';
 
 interface Group {
@@ -38,18 +29,6 @@ interface Group {
   avatar?: string;
 }
 
-interface GroupMember {
-  id: number;
-  user_id: number;
-  group_id: number;
-  name: string;
-  email: string;
-  role: 'admin' | 'moderator' | 'member';
-  joined_at: string;
-  avatar?: string;
-  status: 'active' | 'inactive' | 'pending';
-}
-
 interface GroupActivity {
   id: number;
   group_id: number;
@@ -57,16 +36,14 @@ interface GroupActivity {
   description: string;
   user_name: string;
   timestamp: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export default function GroupsPage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('my-groups');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Dados simulados - em produção viriam da API
@@ -112,31 +89,6 @@ export default function GroupsPage() {
       privacy: 'private',
       tags: ['amigos', 'faculdade', 'encontros'],
       avatar: '/api/placeholder/40/40'
-    }
-  ]);
-
-  const [groupMembers] = useState<GroupMember[]>([
-    {
-      id: 1,
-      user_id: 1,
-      group_id: 1,
-      name: 'João Silva',
-      email: 'joao@email.com',
-      role: 'admin',
-      joined_at: '2024-01-15',
-      status: 'active',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 2,
-      user_id: 2,
-      group_id: 1,
-      name: 'Maria Silva',
-      email: 'maria@email.com',
-      role: 'member',
-      joined_at: '2024-01-16',
-      status: 'active',
-      avatar: '/api/placeholder/32/32'
     }
   ]);
 
