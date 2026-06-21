@@ -240,7 +240,9 @@
 - [x] Lint analytics-dashboard + cotacoes/new + coupons ?6 ? **GO condicional** *(PR #505)* ? `issue-237/LINT-237-TURISMO-ANALYTICS-COTACOES-COUPONS.md`
 - [x] Lint dashboard excursoes index + participantes + roteiros ?6 ? **GO condicional** *(PR #506)* ? `issue-237/LINT-237-TURISMO-DASHBOARD-EXCURSOES-PAGES.md`
 - [x] Lint flash-deals + viagens-grupo index + pagamentos ?6 ? **GO condicional** *(PR #507)* ? `issue-237/LINT-237-TURISMO-FLASH-DEALS-VIAGENS-GRUPO.md`
-- [x] Lint ai-system-test + src/coupons + training-system-test ?6 ? **GO condicional** *(PR #508)* ? `issue-237/LINT-237-TURISMO-AI-COUPONS-TRAINING-TEST.md`
+- [x] Lint ai-system-test + src/coupons + training-system-test
+- [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #509)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md`
+- [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md` ?6 ? **GO condicional** *(PR #508)* ? `issue-237/LINT-237-TURISMO-AI-COUPONS-TRAINING-TEST.md`
 
 ## Decis?o Trilha 0
 
