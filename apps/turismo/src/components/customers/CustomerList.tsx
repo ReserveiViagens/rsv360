@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   Filter, 
-  MoreHorizontal, 
   Eye, 
   Edit, 
   Trash2, 
@@ -12,7 +11,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Star,
   Award,
   Calendar
 } from 'lucide-react';
@@ -26,7 +24,6 @@ import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { Avatar } from '../ui/Avatar';
 import { useUIStore } from '../../stores/useUIStore';
-import { CustomerProfileData } from './CustomerProfile';
 
 export interface CustomerListData {
   id: string;
@@ -90,7 +87,7 @@ const CustomerList: React.FC<CustomerListProps> = ({
 
   // Filtros e busca
   const filteredCustomers = useMemo(() => {
-    let filtered = customers.filter(customer => {
+    const filtered = customers.filter(customer => {
       const matchesSearch = 
         customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,10 +101,9 @@ const CustomerList: React.FC<CustomerListProps> = ({
       return matchesSearch && matchesStatus;
     });
 
-    // Ordenação
-    filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof CustomerListData];
-      let bValue: any = b[sortBy as keyof CustomerListData];
+    return [...filtered].sort((a, b) => {
+      let aValue: string | number | Date | string[] = a[sortBy as keyof CustomerListData];
+      let bValue: string | number | Date | string[] = b[sortBy as keyof CustomerListData];
 
       if (sortBy === 'memberSince') {
         aValue = new Date(aValue).getTime();
@@ -123,8 +119,6 @@ const CustomerList: React.FC<CustomerListProps> = ({
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-
-    return filtered;
   }, [customers, searchTerm, statusFilter, sortBy, sortOrder]);
 
   // Paginação
@@ -132,16 +126,6 @@ const CustomerList: React.FC<CustomerListProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentCustomers = filteredCustomers.slice(startIndex, endIndex);
-
-  const handleSort = (field: string) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
-    setCurrentPage(1);
-  };
 
   const handleDelete = (customer: CustomerListData) => {
     if (onDelete) {
@@ -175,16 +159,6 @@ const CustomerList: React.FC<CustomerListProps> = ({
       case 'vip': return 'VIP';
       default: return status;
     }
-  };
-
-  const SortIcon = ({ field }: { field: string }) => {
-    if (sortBy !== field) return <div className="w-4 h-4" />;
-    
-    return sortOrder === 'asc' ? (
-      <div className="w-4 h-4 text-blue-600">↑</div>
-    ) : (
-      <div className="w-4 h-4 text-blue-600">↓</div>
-    );
   };
 
   return (
