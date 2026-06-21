@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Card, Button, Tabs, Badge } from '@/components/ui';
-import { Target, CheckSquare, Users, Calendar, MessageSquare, Settings, TrendingUp, BarChart3, Star, Clock, CheckCircle, AlertTriangle, FileText, Award, Zap } from 'lucide-react';
+import { Target, CheckSquare, Users, Calendar, MessageSquare, TrendingUp, BarChart3, Star, CheckCircle, Zap } from 'lucide-react';
 import { ProjectManager, TaskManager, TeamManager, ProjectTimeline, ProjectCollaboration } from '@/components/projects';
 
 export default function ProjectManagementTest() {

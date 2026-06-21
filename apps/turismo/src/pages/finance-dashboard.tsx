@@ -1,10 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { 
   TrendingUp, 
   DollarSign, 
   CreditCard, 
   ShoppingCart, 
-  Users, 
   Calendar,
   BarChart3,
   PieChart,
@@ -13,7 +12,6 @@ import {
   ArrowDownRight,
   RefreshCw
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import { useToast } from '../components/ToastContainer';
 
 interface FinancialMetrics {
@@ -71,14 +69,9 @@ const FinanceDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState('30d');
 
-  useEffect(() => {
-    loadFinancialData();
-  }, [dateRange]);
-
-  const loadFinancialData = async () => {
+  const loadFinancialData = useCallback(async () => {
     try {
       setLoading(true);
-      // Simular dados financeiros (em produção, viria da API)
       const mockData: FinancialMetrics = {
         totalRevenue: 1250000.50,
         monthlyRevenue: 85000.75,
@@ -114,12 +107,17 @@ const FinanceDashboard: React.FC = () => {
       
       setMetrics(mockData);
       showSuccess('Sucesso', 'Dados financeiros carregados com sucesso');
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao carregar dados financeiros');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showSuccess, showError]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock finance data when date range changes
+    loadFinancialData();
+  }, [loadFinancialData, dateRange]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {

@@ -219,6 +219,7 @@
 - [x] Lint SMSSystem + PaymentGateway + ReportTemplates −18 — **GO condicional** *(PR #484)* — `issue-237/LINT-237-TURISMO-SMS-PAYMENT-REPORT-TEMPLATES.md`
 - [x] Lint AccessibilityPanel + finance-dashboard + parks −16 — **GO condicional** *(PR #485)* — `issue-237/LINT-237-TURISMO-ACCESSIBILITY-FINANCE-PARKS.md`
 - [x] Lint reservations-rsv + backup-system-test −15 — **GO condicional** *(PR #486)* — `issue-237/LINT-237-TURISMO-RESERVATIONS-BACKUP.md`
+- [x] Lint finance-dashboard (src) + login + project-management-test −15 — **GO condicional** *(PR #487)* — `issue-237/LINT-237-TURISMO-FINANCE-LOGIN-PROJECT.md`
 
 ## Decisão Trilha 0
 
