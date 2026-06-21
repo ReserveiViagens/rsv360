@@ -15,7 +15,7 @@ export default function Register() {
         try {
             await axios.post('/api/core/users/', { email, password, fullName });
             router.push('/login'); // Redirect to login page after successful registration
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to register. Please try again.');
         }
     };
