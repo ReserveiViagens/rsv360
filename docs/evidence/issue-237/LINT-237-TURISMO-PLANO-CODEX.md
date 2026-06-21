@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #58 concluído)  
-**Baseline global:** **571** warnings  
+**Atualizado:** 2026-06-20 (cluster #59 concluído)  
+**Baseline global:** **550** warnings  
 **Arquivos com débito:** **345**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **571** |
-| Clusters concluídos | **58** / 120 |
-| PR empilhada mais recente | **#473** (cluster #58, −21) |
-| Próximo cluster | **#59** — analytics-system-test + calendar (src) + … (−21) |
+| Warnings globais | **550** |
+| Clusters concluídos | **59** / 120 |
+| PR empilhada mais recente | **#474** (cluster #59, −21) |
+| Próximo cluster | **#60** — dashboard-new + financial-system-test + … (−21) |
 
 ## Padrão por cluster (repetir)
 
@@ -88,6 +88,7 @@
 | #471 | ReportGenerator + WorkflowEngine + paymentService | −24 → **615** | travel-customer-email |
 | #472 | websocket + AuthContext + calendar | −23 → **592** | report-workflow-payment |
 | #473 | cotacoes/templates/new + loyalty + analytics-dashboard | −21 → **571** | websocket-auth-calendar |
+| #474 | analytics-system-test + calendar (src) + component-test | −21 → **550** | cotacoes-loyalty-analytics |
 
 ## Clusters 1–50 (concluídos)
 

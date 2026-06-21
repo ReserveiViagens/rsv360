@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import {
@@ -11,7 +10,6 @@ import {
   Users,
   DollarSign,
   CheckCircle,
-  XCircle,
   Edit,
   Trash,
   X,
@@ -61,8 +59,47 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
   );
 }
 
+const MOCK_CALENDAR_EVENTS: CalendarEvent[] = [
+  {
+    id: 1,
+    title: 'Consulta de Viagem - Paris',
+    destination: 'Paris, França',
+    date: '2024-08-15',
+    time: '14:00',
+    duration: '1 hora',
+    passengers: 2,
+    price: 4500.00,
+    status: 'confirmed',
+    type: 'consultation'
+  },
+  {
+    id: 2,
+    title: 'Apresentação Pacote Disney',
+    destination: 'Orlando, EUA',
+    date: '2024-08-20',
+    time: '10:00',
+    duration: '45 min',
+    passengers: 4,
+    price: 8500.00,
+    status: 'pending',
+    type: 'presentation'
+  },
+  {
+    id: 3,
+    title: 'Reunião Corporativa',
+    destination: 'São Paulo, Brasil',
+    date: '2024-08-25',
+    time: '16:00',
+    duration: '2 horas',
+    passengers: 8,
+    price: 12000.00,
+    status: 'confirmed',
+    type: 'meeting'
+  }
+];
+
 export default function CalendarPage() {
-  const { user } = useAuth();
+  /* eslint-disable react-hooks/static-components -- modal subforms colocated with calendar state */
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showNewEvent, setShowNewEvent] = useState(false);
@@ -70,54 +107,9 @@ export default function CalendarPage() {
   const [showStatsDetails, setShowStatsDetails] = useState(false);
   const [selectedStatsType, setSelectedStatsType] = useState<string>('');
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>(MOCK_CALENDAR_EVENTS);
   const [statsSearchTerm, setStatsSearchTerm] = useState('');
   const [statsFilter, setStatsFilter] = useState('all');
-
-  // Dados mockados de eventos
-  const mockEvents: CalendarEvent[] = [
-    {
-      id: 1,
-      title: 'Consulta de Viagem - Paris',
-      destination: 'Paris, França',
-      date: '2024-08-15',
-      time: '14:00',
-      duration: '1 hora',
-      passengers: 2,
-      price: 4500.00,
-      status: 'confirmed',
-      type: 'consultation'
-    },
-    {
-      id: 2,
-      title: 'Apresentação Pacote Disney',
-      destination: 'Orlando, EUA',
-      date: '2024-08-20',
-      time: '10:00',
-      duration: '45 min',
-      passengers: 4,
-      price: 8500.00,
-      status: 'pending',
-      type: 'presentation'
-    },
-    {
-      id: 3,
-      title: 'Reunião Corporativa',
-      destination: 'São Paulo, Brasil',
-      date: '2024-08-25',
-      time: '16:00',
-      duration: '2 horas',
-      passengers: 8,
-      price: 12000.00,
-      status: 'confirmed',
-      type: 'meeting'
-    }
-  ];
-
-  // Inicializar eventos
-  React.useEffect(() => {
-    setEvents(mockEvents);
-  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
