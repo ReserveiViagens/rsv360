@@ -278,6 +278,8 @@
 
 - [x] Lint cluster #119 theme-travel-accommodations ?3 ? **GO condicional** *(PR #540)* ? `issue-237/LINT-237-TURISMO-THEME-TRAVEL-ACCOMMODATIONS.md`
 
+- [x] Lint cluster #120 api-booking-excursoes-viagens ?3 ? **GO condicional** *(PR #541)* ? `issue-237/LINT-237-TURISMO-API-BOOKING-EXCURSOES-VIAGENS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |

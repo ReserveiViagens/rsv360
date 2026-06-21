@@ -1,4 +1,4 @@
-import apiClient, { api } from '../apiClient';
+import { api } from '../apiClient';
 import { unwrapApiData } from './unwrapApiData';
 
 // Tipos para Viagens em Grupo
