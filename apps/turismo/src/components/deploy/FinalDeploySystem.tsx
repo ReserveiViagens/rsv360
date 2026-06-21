@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Rocket, CheckCircle, AlertCircle, Clock, Server, Database, Globe, Shield, Zap, BarChart3, Settings, Play, Pause, RotateCcw, Eye, Download, Share, Plus, Edit } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress, Alert, AlertDescription } from '../ui';
+import React, { useState, useEffect, useRef } from 'react';
+import { Rocket, CheckCircle, AlertCircle, Clock, Server, Settings, RotateCcw, Eye, Plus, Edit } from 'lucide-react';
+import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 // Interfaces
@@ -150,9 +150,9 @@ const mockDeployStatuses: DeployStatus[] = [
 const FinalDeploySystem: React.FC<DeploySystemProps> = ({
   onDeployStarted,
   onDeployCompleted,
-  onDeployFailed
 }) => {
-  const [environments, setEnvironments] = useState<DeployEnvironment[]>(mockEnvironments);
+  const [environments] = useState<DeployEnvironment[]>(mockEnvironments);
+  const nextDeployIdRef = useRef(1000);
   const [deployConfigs, setDeployConfigs] = useState<DeployConfig[]>(mockDeployConfigs);
   const [deployStatuses, setDeployStatuses] = useState<DeployStatus[]>(mockDeployStatuses);
   const [activeTab, setActiveTab] = useState('overview');
@@ -198,7 +198,7 @@ const FinalDeploySystem: React.FC<DeploySystemProps> = ({
 
   const handleDeploy = (config: DeployConfig) => {
     const newStatus: DeployStatus = {
-      id: Date.now().toString(),
+      id: String(nextDeployIdRef.current++),
       environment: config.environment,
       status: 'running',
       progress: 0,
@@ -217,7 +217,7 @@ const FinalDeploySystem: React.FC<DeploySystemProps> = ({
   const handleRollback = (status: DeployStatus) => {
     const rollbackStatus: DeployStatus = {
       ...status,
-      id: Date.now().toString(),
+      id: String(nextDeployIdRef.current++),
       status: 'running',
       progress: 0,
       startTime: new Date().toISOString(),
@@ -233,7 +233,7 @@ const FinalDeploySystem: React.FC<DeploySystemProps> = ({
   const handleCreateConfig = () => {
     if (newConfig.name && newConfig.environment) {
       const config: DeployConfig = {
-        id: Date.now().toString(),
+        id: String(nextDeployIdRef.current++),
         name: newConfig.name,
         environment: newConfig.environment as 'staging' | 'production' | 'testing',
         database: newConfig.database || 'PostgreSQL 15',
