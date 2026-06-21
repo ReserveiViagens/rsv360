@@ -68,6 +68,7 @@ function AttractionCard({
           viewMode === 'grid' ? 'aspect-video' : 'w-48 shrink-0 aspect-video'
         }`}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic attraction image URL */}
         <img
           src={attraction.imageUrl || '/placeholder.svg?height=300&width=400'}
           alt={attraction.name}
