@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import { 
@@ -8,17 +8,13 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  BarChart3, 
   FileText, 
   Globe, 
   TrendingUp,
   CheckCircle,
-  AlertCircle,
   Save,
   X,
-  RefreshCw,
-  Download,
-  Eye
+  Download
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -50,6 +46,13 @@ interface TopKeyword {
   pages: number
 }
 
+interface SitemapUrl {
+  loc: string
+  lastmod?: string
+  changefreq?: string
+  priority?: string
+}
+
 export default function SEO() {
   const [configs, setConfigs] = useState<SEOConfig[]>([])
   const [stats, setStats] = useState<SEOStats | null>(null)
@@ -66,11 +69,7 @@ export default function SEO() {
     canonical: ''
   })
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [configsRes, statsRes, keywordsRes] = await Promise.all([
@@ -88,7 +87,12 @@ export default function SEO() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- API load on mount
+    void loadData()
+  }, [loadData])
 
   const handleSave = async () => {
     try {
@@ -166,7 +170,7 @@ export default function SEO() {
     }
   }
 
-  const generateSitemapXML = (urls: any[]) => {
+  const generateSitemapXML = (urls: SitemapUrl[]) => {
     const urlsXml = urls.map(url => `
     <url>
       <loc>${url.loc}</loc>
@@ -330,7 +334,7 @@ ${urlsXml}
                 {configs.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                      Nenhuma configuração encontrada. Clique em "Nova Configuração" para começar.
+                      Nenhuma configuração encontrada. Clique em &quot;Nova Configuração&quot; para começar.
                     </td>
                   </tr>
                 ) : (
