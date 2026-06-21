@@ -59,6 +59,22 @@ Certifique-se que completou os itens antes de submeter:
 
 ---
 
+## 🛡️ Enterprise / Segurança (obrigatório para PRs críticas)
+
+Conforme `.cursor/rules/enterprise-pr-policy.mdc`:
+
+- [ ] Escopo pequeno e justificado (sem refactor fora do escopo)
+- [ ] Risco e blast radius descritos
+- [ ] Evidência do bug ou necessidade (passos de reprodução)
+- [ ] Comandos de validação listados com resultado (`lint`, `test`, `build`, `type-check`)
+- [ ] Screenshots se alteração de UI (loading/erro/vazio/sucesso)
+- [ ] Plano de rollback se migration, reserva, pagamento ou auth
+- [ ] Nenhuma alteração em `.env`, secrets ou credenciais
+- [ ] Nenhum dado pessoal (CPF, e-mail, token) em logs, testes ou descrição do PR
+- [ ] Revisão humana requerida — **sem auto-merge**
+
+---
+
 ## 📋 Mudanças de Dependências
 
 Dependências adicionadas/removidas?
