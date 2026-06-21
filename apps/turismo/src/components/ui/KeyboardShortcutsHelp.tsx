@@ -21,7 +21,7 @@ export default function KeyboardShortcutsHelp({ isOpen, onClose }: KeyboardShort
 
   const filteredShortcuts = shortcuts.filter(s => s.category === activeCategory);
 
-  const getKeyDisplay = (shortcut: any) => {
+  const getKeyDisplay = (shortcut: Record<string, unknown>) => {
     const keys = [];
     if (shortcut.ctrlKey) keys.push('Ctrl');
     if (shortcut.altKey) keys.push('Alt');
