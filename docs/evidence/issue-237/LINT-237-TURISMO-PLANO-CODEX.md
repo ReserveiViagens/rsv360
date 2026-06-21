@@ -104,6 +104,7 @@
 | #487 | finance-dashboard (src) + login + project-management-test | −15 → **308** | reservations-backup |
 | #488 | EnterpriseForm + HierarchyView + EmailMarketing | −15 → **293** | finance-login-project |
 | #489 | NotificationCenter + AnalyticsDashboard (reports) + usePWA | −15 → **278** | accommodations-email-marketing |
+| #490 | user-service + enterprises + reports-rsv | −13 → **265** | notification-analytics-pwa |
 
 ## Clusters 1–50 (concluídos)
 
