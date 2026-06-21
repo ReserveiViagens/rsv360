@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #40 concluído)  
-**Baseline global:** **1051** warnings  
+**Atualizado:** 2026-06-20 (cluster #41 concluído)  
+**Baseline global:** **1018** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1051** |
-| Clusters concluídos | **40** / 120 |
-| PR empilhada mais recente | **#455** (cluster #40, −33) |
-| Próximo cluster | **#41** — ProjectManager + ReportExport + TestSuites (−33) |
+| Warnings globais | **1018** |
+| Clusters concluídos | **41** / 120 |
+| PR empilhada mais recente | **#456** (cluster #41, −33) |
+| Próximo cluster | **#42** — bookingService + accommodations/analytics + cotacoes/templates (−31) |
 
 ## Padrão por cluster (repetir)
 
@@ -70,8 +70,9 @@
 | #453 | google-hotel-ads + giftcards + marketing-dashboard | −33 → **1117** | faq-financial-dashboard-reservei |
 | #454 | reports-dashboard + travel-catalog-rsv + src/marketing-dashboard | −33 → **1084** | googlehotel-giftcards-marketing |
 | #455 | src/reports-dashboard + Navigation + CampaignManager | −33 → **1051** | reports-travel-marketing-src |
+| #456 | ProjectManager + ReportExport + TestSuites | −33 → **1018** | src-reports-nav-campaign |
 
-## Clusters 1–40 (concluídos)
+## Clusters 1–41 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -115,8 +116,9 @@
 | 38 | −33 | google-hotel-ads, giftcards, marketing-dashboard | **concluído** (#453) |
 | 39 | −33 | reports-dashboard, travel-catalog-rsv, src/marketing-dashboard | **concluído** (#454) |
 | 40 | −33 | src/reports-dashboard, Navigation, CampaignManager | **concluído** (#455) |
+| 41 | −33 | ProjectManager, ReportExport, TestSuites | **concluído** (#456) |
 
-## Clusters 41–120
+## Clusters 42–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
