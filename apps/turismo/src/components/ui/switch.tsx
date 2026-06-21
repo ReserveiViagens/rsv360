@@ -7,8 +7,8 @@ import type { SwitchProps } from "@radix-ui/react-switch"
 import { cn } from "@/lib/utils"
 import { radixCreate, radixUiExport } from "@/lib/radix-jsx"
 
-const Switch = radixUiExport<SwitchProps, HTMLButtonElement>(
-  React.forwardRef<HTMLButtonElement, SwitchProps>(({ className, ...props }, ref) =>
+const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
+  ({ className, ...props }, ref) =>
     radixCreate(SwitchPrimitives.Root, {
       className: cn(
         "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
@@ -22,7 +22,11 @@ const Switch = radixUiExport<SwitchProps, HTMLButtonElement>(
         ),
       }),
     })
-  ) as React.FC<SwitchProps & React.RefAttributes<HTMLButtonElement>>
+)
+SwitchRoot.displayName = SwitchPrimitives.Root.displayName
+
+const Switch = radixUiExport<SwitchProps, HTMLButtonElement>(
+  SwitchRoot as React.FC<SwitchProps & React.RefAttributes<HTMLButtonElement>>
 )
 Switch.displayName = SwitchPrimitives.Root.displayName
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -33,11 +33,7 @@ export default function MultilingualPage() {
     const [selectedTranslation, setSelectedTranslation] = useState<Translation | null>(null);
     const [newLanguage, setNewLanguage] = useState<Partial<Language>>({});
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [translationsRes, languagesRes] = await Promise.all([
                 axios.get('/api/multilingual/translations/'),
@@ -50,7 +46,12 @@ export default function MultilingualPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchData();
+    }, [fetchData]);
 
     const handleAddTranslation = async (e: React.FormEvent) => {
         e.preventDefault();

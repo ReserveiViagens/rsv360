@@ -8,8 +8,8 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { radixCreate, radixUiExport } from "@/lib/radix-jsx"
 
-const Checkbox = radixUiExport<CheckboxProps, HTMLButtonElement>(
-  React.forwardRef<HTMLButtonElement, CheckboxProps>(({ className, ...props }, ref) =>
+const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
+  ({ className, ...props }, ref) =>
     radixCreate(CheckboxPrimitive.Root, {
       ref,
       className: cn(
@@ -22,7 +22,11 @@ const Checkbox = radixUiExport<CheckboxProps, HTMLButtonElement>(
         children: <Check className="h-4 w-4" />,
       }),
     })
-  ) as React.FC<CheckboxProps & React.RefAttributes<HTMLButtonElement>>
+)
+CheckboxRoot.displayName = CheckboxPrimitive.Root.displayName
+
+const Checkbox = radixUiExport<CheckboxProps, HTMLButtonElement>(
+  CheckboxRoot as React.FC<CheckboxProps & React.RefAttributes<HTMLButtonElement>>
 )
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 

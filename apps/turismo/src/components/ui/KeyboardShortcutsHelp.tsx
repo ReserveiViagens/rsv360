@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Keyboard, Search, Palette, Navigation, Settings } from 'lucide-react';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 
+type ShortcutItem = ReturnType<typeof useKeyboardShortcuts>['shortcuts'][number];
+
 interface KeyboardShortcutsHelpProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,7 +23,7 @@ export default function KeyboardShortcutsHelp({ isOpen, onClose }: KeyboardShort
 
   const filteredShortcuts = shortcuts.filter(s => s.category === activeCategory);
 
-  const getKeyDisplay = (shortcut: any) => {
+  const getKeyDisplay = (shortcut: ShortcutItem) => {
     const keys = [];
     if (shortcut.ctrlKey) keys.push('Ctrl');
     if (shortcut.altKey) keys.push('Alt');

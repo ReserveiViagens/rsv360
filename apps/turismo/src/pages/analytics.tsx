@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 
@@ -27,7 +26,6 @@ interface AnalyticsCategory {
 }
 
 export default function Analytics() {
-    const { user } = useAuth();
     const router = useRouter();
     const [selectedPeriod, setSelectedPeriod] = useState('30d');
     const [loading, setLoading] = useState(true);

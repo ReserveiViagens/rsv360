@@ -186,13 +186,13 @@ export default function OfflinePage() {
 
 // Componente para indicador de status offline
 export function OfflineIndicator() {
-  const [isOnline, setIsOnline] = React.useState(true);
+  const [isOnline, setIsOnline] = React.useState(
+    () => (typeof navigator !== 'undefined' ? navigator.onLine : true)
+  );
 
   React.useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
-    setIsOnline(navigator.onLine);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
