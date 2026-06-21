@@ -8,22 +8,13 @@ import {
   Phone, 
   Mail, 
   Globe, 
-  MessageCircle, 
-  Camera, 
-  Heart,
   Star,
   Award,
   TrendingUp,
   Users,
   Calendar,
   DollarSign,
-  CreditCard,
-  FileText,
-  Settings,
   LogOut,
-  User,
-  Bell,
-  Search,
   Menu,
   X,
   Facebook,
@@ -31,8 +22,7 @@ import {
   Twitter,
   Linkedin,
   Youtube,
-  MessageSquare,
-  ExternalLink
+  MessageSquare
 } from 'lucide-react';
 
 interface ServiceStatus {

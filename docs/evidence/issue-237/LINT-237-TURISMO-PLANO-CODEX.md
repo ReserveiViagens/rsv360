@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #43 concluído)  
-**Baseline global:** **957** warnings  
+**Atualizado:** 2026-06-20 (cluster #44 concluído)  
+**Baseline global:** **927** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **957** |
-| Clusters concluídos | **43** / 120 |
-| PR empilhada mais recente | **#458** (cluster #43, −30) |
-| Próximo cluster | **#44** — src/dashboard + ReportBuilder + AuditLog (−30) |
+| Warnings globais | **927** |
+| Clusters concluídos | **44** / 120 |
+| PR empilhada mais recente | **#459** (cluster #44, −30) |
+| Próximo cluster | **#45** — ChatAnalytics + ApiConnector + NotificationSettings (−30) |
 
 ## Padrão por cluster (repetir)
 
@@ -73,8 +73,9 @@
 | #456 | ProjectManager + ReportExport + TestSuites | −33 → **1018** | src-reports-nav-campaign |
 | #457 | bookingService + accommodations/analytics + cotacoes/templates | −31 → **987** | project-reportexport-testsuites |
 | #458 | dashboard + affiliates + roles | −30 → **957** | booking-accommodations-templates |
+| #459 | src/dashboard + ReportBuilder + AuditLog | −30 → **927** | dashboard-affiliates-roles |
 
-## Clusters 1–43 (concluídos)
+## Clusters 1–44 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
