@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #47 concluído)  
-**Baseline global:** **840** warnings  
+**Atualizado:** 2026-06-20 (cluster #48 concluído)  
+**Baseline global:** **813** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **840** |
-| Clusters concluídos | **47** / 120 |
-| PR empilhada mais recente | **#462** (cluster #47, −27) |
-| Próximo cluster | **#48** — notifications + DevOpsPage + demo-layout (−27) |
+| Warnings globais | **813** |
+| Clusters concluídos | **48** / 120 |
+| PR empilhada mais recente | **#463** (cluster #48, −27) |
+| Próximo cluster | **#49** — ChatSystem + SocialMediaIntegration + PaymentHistory (−27) |
 
 ## Padrão por cluster (repetir)
 
@@ -77,6 +77,7 @@
 | #460 | ChatAnalytics + ApiConnector + NotificationSettings | −30 → **897** | src-dashboard-reportbuilder-auditlog |
 | #461 | ReportBuilder + CodeCoverage + TravelCatalog | −30 → **867** | chat-api-notifications |
 | #462 | cotacoes/index + test-page + insurance | −27 → **840** | reports-coverage-travelcatalog |
+| #463 | notifications + DevOpsPage + demo-layout | −27 → **813** | cotacoes-insurance |
 
 ## Clusters 1–47 (concluídos)
 

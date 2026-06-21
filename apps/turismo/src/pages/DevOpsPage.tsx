@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Server, Settings, BarChart3, Activity, Database, Shield, Docker, GitBranch, Zap, CheckCircle, AlertCircle, XCircle, RefreshCw, Download, Eye, Play, Pause, Stop } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Server, Settings, BarChart3, Activity, Database, Docker, GitBranch, Zap, CheckCircle, RefreshCw, Download, Eye, Play, Pause } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -12,21 +12,29 @@ import {
   icpMaxConfig,
   generateFullConfigReport 
 } from '../config';
+import type { Environment } from '../config/EnvironmentManagement';
+
+interface MonitoringStats {
+  metricsBufferSize: number;
+  logsBufferSize: number;
+  alertsBufferSize: number;
+  providersCount: number;
+  isEnabled: boolean;
+}
+
+interface EnvironmentStatus {
+  environment: Environment;
+  validation: { isValid: boolean; errors: string[] };
+}
 
 const DevOpsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [configReport, setConfigReport] = useState<string>('');
-  const [monitoringStats, setMonitoringStats] = useState<any>(null);
-  const [environmentStatus, setEnvironmentStatus] = useState<any>(null);
+  const [monitoringStats, setMonitoringStats] = useState<MonitoringStats | null>(null);
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus | null>(null);
   const { showNotification } = useUIStore();
 
-  useEffect(() => {
-    loadSystemStatus();
-    const interval = setInterval(loadSystemStatus, 30000); // Atualizar a cada 30 segundos
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadSystemStatus = () => {
+  const loadSystemStatus = useCallback(() => {
     try {
       // Gerar relatório de configuração
       const report = generateFullConfigReport();
@@ -45,14 +53,21 @@ const DevOpsPage: React.FC = () => {
       console.error('❌ Erro ao carregar status do sistema:', error);
       showNotification('Erro ao carregar status do sistema', 'error');
     }
-  };
+  }, [showNotification]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- polling system status on mount
+    loadSystemStatus();
+    const interval = setInterval(loadSystemStatus, 30000);
+    return () => clearInterval(interval);
+  }, [loadSystemStatus]);
 
   const handleEnvironmentChange = (envName: string) => {
     try {
       environmentManager.setEnvironment(envName);
       showNotification(`Ambiente alterado para: ${envName}`, 'success');
       loadSystemStatus();
-    } catch (error) {
+    } catch (_error) {
       showNotification('Erro ao alterar ambiente', 'error');
     }
   };

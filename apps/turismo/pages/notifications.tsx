@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import {
@@ -8,7 +8,6 @@ import {
   BellRing,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Info,
   Eye,
   Download,
@@ -21,7 +20,6 @@ import {
   Edit,
   Trash2,
   BarChart3,
-  Activity,
   Archive,
   Award,
   AlertTriangle,
@@ -93,14 +91,10 @@ export default function NotificationsPage() {
     scheduled_for: ''
   })
 
-  useEffect(() => {
-    loadData()
-  }, [activeTab])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
-      const params: any = {}
+      const params: Record<string, string> = {}
       if (activeTab !== 'overview') {
         params.status = activeTab === 'scheduled' ? 'scheduled' : activeTab
       }
@@ -129,7 +123,12 @@ export default function NotificationsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, searchTerm])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- API load on tab/search change
+    void loadData()
+  }, [loadData])
 
   const handleSave = async () => {
     try {
@@ -466,7 +465,7 @@ export default function NotificationsPage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as typeof activeTab)}
                       className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
@@ -598,7 +597,7 @@ export default function NotificationsPage() {
                         onChange={(e) => {
                           setSelectedFilter(e.target.value)
                           if (e.target.value !== 'all') {
-                            setActiveTab(e.target.value as any)
+                            setActiveTab(e.target.value as typeof activeTab)
                           }
                         }}
                         className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -642,7 +641,7 @@ export default function NotificationsPage() {
                       {notifications.length === 0 ? (
                         <tr>
                           <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                            Nenhuma notificação encontrada. Clique em "Nova Notificação" para começar.
+                            Nenhuma notificação encontrada. Clique em &quot;Nova Notificação&quot; para começar.
                           </td>
                         </tr>
                       ) : (
