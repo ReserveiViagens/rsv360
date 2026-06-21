@@ -213,6 +213,7 @@
 - [x] Lint ModernSidebar + MarketingAnalytics + PushNotifications −21 — **GO condicional** *(PR #478)* — `issue-237/LINT-237-TURISMO-SIDEBAR-MARKETING-PUSH.md`
 - [x] Lint ReportScheduler + AITutor + Select −21 — **GO condicional** *(PR #479)* — `issue-237/LINT-237-TURISMO-REPORT-AITUTOR-SELECT.md`
 - [x] Lint NotificationContext + finance + notifications-dashboard −19 — **GO condicional** *(PR #480)* — `issue-237/LINT-237-TURISMO-NOTIFICATION-FINANCE-DASHBOARD.md`
+- [x] Lint attractions + integration-system-test + notifications-dashboard (src) −18 — **GO condicional** *(PR #481)* — `issue-237/LINT-237-TURISMO-ATTRACTIONS-INTEGRATION-NOTIFICATIONS-SRC.md`
 
 ## Decisão Trilha 0
 

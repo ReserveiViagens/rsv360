@@ -21,16 +21,10 @@ import {
   Network,
   Activity,
   TrendingUp,
-  Settings,
-  BarChart3,
-  Shield,
   Zap,
   ArrowRight,
   CheckCircle,
-  Database,
-  Cloud,
-  Router,
-  Code
+  Cloud
 } from 'lucide-react'
 
 const IntegrationSystemTest: React.FC = () => {
