@@ -254,3 +254,4 @@
 | **Pr√≥ximo passo** | warnings por m√≥dulo (pr√≥ximo cluster de volume no turismo) |
 
 - [x] Lint workflow session calendar -9 ó **GO condicional** *(PR #500)* ó `issue-237/LINT-237-TURISMO-WORKFLOW-SESSION-CALENDAR.md`
+- [x] Lint chat bookings quickactions -9 ó **GO condicional** *(PR #501)* ó `issue-237/LINT-237-TURISMO-CHAT-BOOKINGS-QUICKACTIONS.md`
