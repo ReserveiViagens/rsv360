@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import { 
@@ -9,13 +9,10 @@ import {
   TrendingDown,
   ArrowUpRight,
   ArrowDownRight,
-  PieChart,
   BarChart3,
   FileText,
   Download,
-  Calendar,
-  Filter,
-  RefreshCw
+  Calendar
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -80,11 +77,7 @@ export default function FinancePage() {
   const [period, setPeriod] = useState('month')
   const [activeTab, setActiveTab] = useState<'overview' | 'revenue' | 'expenses' | 'reports'>('overview')
 
-  useEffect(() => {
-    loadData()
-  }, [period])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [statsRes, dashboardRes, categoriesRes] = await Promise.all([
@@ -102,7 +95,12 @@ export default function FinancePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [period])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load finance data when period changes
+    loadData()
+  }, [loadData])
 
   const handleGenerateReport = async () => {
     try {
@@ -203,7 +201,7 @@ export default function FinancePage() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition ${
                     activeTab === tab.id
                       ? 'border-emerald-600 text-emerald-600'
