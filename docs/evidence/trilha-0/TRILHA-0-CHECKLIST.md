@@ -194,6 +194,7 @@
 - [x] Lint src/dashboard + ReportBuilder + AuditLog −30 — **GO condicional** *(PR #459)* — `issue-237/LINT-237-TURISMO-SRC-DASHBOARD-REPORTBUILDER-AUDITLOG.md`
 - [x] Lint ChatAnalytics + ApiConnector + NotificationSettings −30 — **GO condicional** *(PR #460)* — `issue-237/LINT-237-TURISMO-CHAT-API-NOTIFICATIONS.md`
 - [x] Lint ReportBuilder + CodeCoverage + TravelCatalog −30 — **GO condicional** *(PR #461)* — `issue-237/LINT-237-TURISMO-REPORTS-COVERAGE-TRAVELCATALOG.md`
+- [x] Lint cotacoes/index + test-page + insurance −27 — **GO condicional** *(PR #462)* — `issue-237/LINT-237-TURISMO-COTACOES-INSURANCE.md`
 
 ## Decisão Trilha 0
 

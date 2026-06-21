@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
+import type { LucideIcon } from 'lucide-react'
 import {
   Shield,
   FileText,
@@ -12,7 +13,6 @@ import {
   Plus,
   Download,
   Search,
-  Filter,
   Eye,
   Edit,
   Trash2,
@@ -21,7 +21,6 @@ import {
   XCircle,
   TrendingUp,
   DollarSign,
-  Calendar,
   User,
   X
 } from 'lucide-react'
@@ -70,12 +69,19 @@ interface InsuranceStats {
   satisfaction_rating: number
 }
 
+interface InsuranceType {
+  id: string | number
+  name: string
+  label?: string
+  description?: string
+}
+
 export default function InsurancePage() {
   const [activeTab, setActiveTab] = useState<'policies' | 'claims' | 'types' | 'analytics'>('policies')
   const [policies, setPolicies] = useState<Policy[]>([])
   const [claims, setClaims] = useState<Claim[]>([])
   const [stats, setStats] = useState<InsuranceStats | null>(null)
-  const [types, setTypes] = useState<any[]>([])
+  const [types, setTypes] = useState<InsuranceType[]>([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('all')
@@ -98,16 +104,12 @@ export default function InsurancePage() {
   })
   const [claimFilterStatus, setClaimFilterStatus] = useState('all')
 
-  useEffect(() => {
-    loadData()
-  }, [activeTab, filterType, filterStatus])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       
       if (activeTab === 'policies') {
-        const params: any = {
+        const params: Record<string, string | undefined> = {
           type: filterType !== 'all' ? filterType : undefined,
           status: filterStatus !== 'all' ? filterStatus : undefined,
           search: searchTerm || undefined
@@ -121,7 +123,7 @@ export default function InsurancePage() {
         setStats(statsRes.data?.data || null)
         setTypes(typesRes.data?.data || [])
       } else if (activeTab === 'claims') {
-        const params: any = {
+        const params: Record<string, string | undefined> = {
           status: claimFilterStatus !== 'all' ? claimFilterStatus : undefined
         }
         const [claimsRes] = await Promise.all([
@@ -138,7 +140,12 @@ export default function InsurancePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, filterType, filterStatus, searchTerm, claimFilterStatus])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- insurance tab/filter reload
+    loadData()
+  }, [loadData])
 
   const handleExport = async () => {
     try {
@@ -261,7 +268,7 @@ export default function InsurancePage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const badges: Record<string, { color: string; icon: any; label: string }> = {
+    const badges: Record<string, { color: string; icon: LucideIcon; label: string }> = {
       active: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Ativa' },
       expired: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Expirada' },
       cancelled: { color: 'bg-gray-100 text-gray-800', icon: XCircle, label: 'Cancelada' },
@@ -414,7 +421,7 @@ export default function InsurancePage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as typeof activeTab)}
                       className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
