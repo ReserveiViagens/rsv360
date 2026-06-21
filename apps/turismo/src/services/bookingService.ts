@@ -1,4 +1,4 @@
-import { api, ApiResponse } from './apiClient';
+import { api } from './apiClient';
 import { toast } from 'react-hot-toast';
 
 // Types
@@ -22,7 +22,7 @@ export interface Booking {
   guests_count: number;
   adults_count: number;
   children_count: number;
-  guest_details?: any[];
+  guest_details?: Record<string, unknown>[];
   special_requests?: string[];
   provider_name?: string;
   cancellation_fee?: number;
@@ -62,7 +62,7 @@ export interface CreateBookingData {
   guests_count?: number;
   adults_count?: number;
   children_count?: number;
-  guest_details?: any[];
+  guest_details?: Record<string, unknown>[];
   special_requests?: string[];
   provider_name?: string;
   user_id?: number;
@@ -116,7 +116,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar reservas');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get bookings error:', error);
       throw error;
     }
@@ -132,7 +132,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar reserva');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get booking error:', error);
       throw error;
     }
@@ -149,7 +149,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao criar reserva');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Create booking error:', error);
       throw error;
     }
@@ -166,7 +166,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao atualizar reserva');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Update booking error:', error);
       throw error;
     }
@@ -185,7 +185,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao cancelar reserva');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Cancel booking error:', error);
       throw error;
     }
@@ -201,7 +201,7 @@ export const bookingService = {
       } else {
         throw new Error(response.message || 'Erro ao deletar reserva');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Delete booking error:', error);
       throw error;
     }
@@ -217,7 +217,7 @@ export const bookingService = {
       }
       
       throw new Error(response.message || 'Erro ao buscar estatísticas');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Get booking stats error:', error);
       throw error;
     }
@@ -324,7 +324,7 @@ export const bookingService = {
       // Convert response to blob
       const blob = new Blob([response.data], { type: 'text/csv' });
       return blob;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Export bookings error:', error);
       throw error;
     }

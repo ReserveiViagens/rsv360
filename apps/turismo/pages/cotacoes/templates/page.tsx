@@ -1,14 +1,14 @@
 // Página de galeria de templates conforme documentação (linha 374-387)
 // Grid cards, filtros categoria, busca, imagem capa, metadados, ações (usar, editar, copiar, excluir), versionamento
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Search, Eye, Edit, Copy, Trash2, Filter, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Edit, Copy, Trash2, Image as ImageIcon } from 'lucide-react';
 import { BudgetTemplate } from '@/lib/types/budget';
 import { templateStorage } from '@/lib/template-storage';
 import { initializeDefaultTemplates } from '@/lib/default-templates';
-import { MAIN_CATEGORIES, SUB_CATEGORIES } from '@/lib/budget-types';
+import { MAIN_CATEGORIES } from '@/lib/budget-types';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,33 +19,54 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
+
+interface WindowWithTestModule extends Window {
+  testModule?: {
+    runAllTests: () => void;
+    testTemplateLoading: () => void;
+    testCreateBudgetFromTemplate: () => void;
+    testCalculations: () => void;
+    testLocalStorage: () => void;
+    testTemplateVersioning: () => void;
+  };
+}
 
 export default function TemplatesGalleryPage() {
   const router = useRouter();
   const [templates, setTemplates] = useState<BudgetTemplate[]>([]);
-  const [filteredTemplates, setFilteredTemplates] = useState<BudgetTemplate[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [isClient, setIsClient] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
 
+  const loadTemplates = useCallback(() => {
+    const all = templateStorage.getAll();
+    setTemplates(all);
+    
+    console.log('Templates carregados:', {
+      total: all.length,
+      porCategoria: {
+        hotéis: all.filter(t => t.mainCategory === 'Hotéis').length,
+        parques: all.filter(t => t.mainCategory === 'Parques').length,
+        atrações: all.filter(t => t.mainCategory === 'Atrações').length,
+        passeios: all.filter(t => t.mainCategory === 'Passeios').length,
+      }
+    });
+  }, []);
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only template gallery init
     setIsClient(true);
-    // Garantir que templates padrão estejam inicializados
     initializeDefaultTemplates();
     loadTemplates();
 
-    // Expor função de testes no console do navegador para validação (apenas no cliente)
-    // Usar import dinâmico para evitar problemas no SSR
     if (typeof window !== 'undefined') {
-      // Aguardar um pouco para garantir que estamos no cliente
       setTimeout(async () => {
         try {
           const testModule = await import('@/lib/test-module');
           if (testModule) {
-            (window as any).testModule = {
+            (window as WindowWithTestModule).testModule = {
               runAllTests: testModule.runAllTests,
               testTemplateLoading: testModule.testTemplateLoading,
               testCreateBudgetFromTemplate: testModule.testCreateBudgetFromTemplate,
@@ -60,37 +81,15 @@ export default function TemplatesGalleryPage() {
         }
       }, 100);
     }
-  }, []);
+  }, [loadTemplates]);
 
-  useEffect(() => {
-    filterTemplates();
-  }, [templates, selectedCategory, searchQuery]);
-
-  const loadTemplates = () => {
-    const all = templateStorage.getAll();
-    setTemplates(all);
-    
-    // Log para debug/testes - verificar se templates estão carregados
-    console.log('Templates carregados:', {
-      total: all.length,
-      porCategoria: {
-        hotéis: all.filter(t => t.mainCategory === 'Hotéis').length,
-        parques: all.filter(t => t.mainCategory === 'Parques').length,
-        atrações: all.filter(t => t.mainCategory === 'Atrações').length,
-        passeios: all.filter(t => t.mainCategory === 'Passeios').length,
-      }
-    });
-  };
-
-  const filterTemplates = () => {
+  const filteredTemplates = useMemo(() => {
     let filtered = templates;
 
-    // Filtrar por categoria conforme documento (linha 380)
     if (selectedCategory !== 'Todos') {
       filtered = filtered.filter(t => t.mainCategory === selectedCategory);
     }
 
-    // Busca por nome ou descrição conforme documento (linha 381)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(t => 
@@ -101,15 +100,12 @@ export default function TemplatesGalleryPage() {
       );
     }
 
-    // Ordenar por data de atualização (mais recentes primeiro)
-    filtered.sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       const dateA = new Date(a.updatedAt || a.createdAt || '').getTime();
       const dateB = new Date(b.updatedAt || b.createdAt || '').getTime();
       return dateB - dateA;
     });
-
-    setFilteredTemplates(filtered);
-  };
+  }, [templates, selectedCategory, searchQuery]);
 
   const handleUseTemplate = (template: BudgetTemplate) => {
     // Fluxo completo conforme documento (linha 808-822): redirecionar para customização
@@ -243,6 +239,7 @@ export default function TemplatesGalleryPage() {
                 {/* Imagem de Capa conforme documento (linha 382) */}
                 {template.thumbnailUrl ? (
                   <div className="aspect-video w-full bg-gray-100 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- template thumbnail URL */}
                     <img
                       src={template.thumbnailUrl}
                       alt={template.name}
