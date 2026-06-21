@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Save, RotateCcw, Download, Upload, Clock, CheckCircle, AlertTriangle, Settings, Plus, Eye, Trash2, Database, HardDrive, Cloud, Shield } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress } from '../ui';
+import React, { useState } from 'react';
+import { Save, RotateCcw, CheckCircle, Plus, Eye, HardDrive } from 'lucide-react';
+import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 // Interfaces
@@ -71,11 +71,11 @@ const mockRecoveryPoints: RecoveryPoint[] = [
 
 const BackupRecoverySystem: React.FC<BackupRecoverySystemProps> = ({
   onBackupStarted,
-  onBackupCompleted,
+  onBackupCompleted: _onBackupCompleted,
   onRecoveryStarted
 }) => {
   const [backupJobs, setBackupJobs] = useState<BackupJob[]>(mockBackupJobs);
-  const [recoveryPoints, setRecoveryPoints] = useState<RecoveryPoint[]>(mockRecoveryPoints);
+  const [recoveryPoints] = useState<RecoveryPoint[]>(mockRecoveryPoints);
   const [activeTab, setActiveTab] = useState('overview');
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
