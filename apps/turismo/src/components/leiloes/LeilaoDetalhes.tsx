@@ -13,6 +13,7 @@ interface LeilaoDetalhesProps {
 }
 
 export function LeilaoDetalhes({ leilao, onEdit, onCancel, onFinalize }: LeilaoDetalhesProps) {
+  const _isActive = leilao.status === 'active'
   const isFlashDeal = leilao.type === 'flash_deal'
   const canEdit = leilao.status === 'scheduled' || leilao.status === 'active'
   const canCancel = leilao.status !== 'ended' && leilao.status !== 'cancelled'

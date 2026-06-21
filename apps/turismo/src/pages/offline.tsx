@@ -186,13 +186,14 @@ export default function OfflinePage() {
 
 // Componente para indicador de status offline
 export function OfflineIndicator() {
-  const [isOnline, setIsOnline] = React.useState(
-    () => (typeof navigator !== 'undefined' ? navigator.onLine : true)
-  );
+  const [isOnline, setIsOnline] = React.useState(true);
 
   React.useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync online status on mount
+      setIsOnline(navigator.onLine);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);

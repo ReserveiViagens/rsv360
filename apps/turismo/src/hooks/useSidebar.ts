@@ -20,7 +20,7 @@ export function useSidebar() {
       if (savedState) {
         const parsedState = JSON.parse(savedState);
         // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate sidebar state from localStorage
-        setSidebarState(parsedState);
+      setSidebarState(parsedState);
       }
     } catch (error) {
       console.warn('Erro ao carregar estado do sidebar:', error);

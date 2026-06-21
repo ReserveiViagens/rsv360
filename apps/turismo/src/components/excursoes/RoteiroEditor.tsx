@@ -23,7 +23,7 @@ export function RoteiroEditor({ roteiros: initialRoteiros, onSave, isLoading = f
   const handleAdd = () => {
     if (!newRoteiro.atividade.trim()) return
 
-    const roteiro: Omit<Roteiro, 'id' | 'excursao_id' | 'created_at'> = {
+    const roteiro: Record<string, unknown> = {
       ...newRoteiro,
       ordem: roteiros.length,
     }
