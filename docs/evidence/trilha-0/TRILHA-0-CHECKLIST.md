@@ -241,6 +241,7 @@
 - [x] Lint dashboard excursoes index + participantes + roteiros ?6 ? **GO condicional** *(PR #506)* ? `issue-237/LINT-237-TURISMO-DASHBOARD-EXCURSOES-PAGES.md`
 - [x] Lint flash-deals + viagens-grupo index + pagamentos ?6 ? **GO condicional** *(PR #507)* ? `issue-237/LINT-237-TURISMO-FLASH-DEALS-VIAGENS-GRUPO.md`
 - [x] Lint ai-system-test + src/coupons + training-system-test
+- [x] Lint radio-group + grupoform + pagamentodividido −6 **GO condicional** *(PR #514)* `issue-237/LINT-237-TURISMO-RADIO-GRUPO-PAGAMENTO.md`
 - [x] Lint radio-group + grupoform + pagamentodividido −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-RADIO-GRUPO-PAGAMENTO.md`
 - [x] Lint reportanalytics + ui/pagetransition + skiplinks −6 **GO condicional** *(PR #512)* `issue-237/LINT-237-TURISMO-REPORT-ANALYTICS-UI-NAV.md`
 - [x] Lint reportanalytics + ui/pagetransition + skiplinks −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-REPORT-ANALYTICS-UI-NAV.md`
@@ -249,6 +250,8 @@
 - [x] Lint participanteslist + auctionlist + auctionstats −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-PARTICIPANTES-AUCTION-LIST-STATS.md`
 - [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #509)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md`
 - [x] Lint userprofile + analyticschart + excursaoform −6 **GO condicional** *(PR #TBD)* `issue-237/LINT-237-TURISMO-USER-PROFILE-ANALYTICS-EXCURSAO.md` ?6 ? **GO condicional** *(PR #508)* ? `issue-237/LINT-237-TURISMO-AI-COUPONS-TRAINING-TEST.md`
+
+- [x] Lint cluster #98 radiogroup-grupo-pagamento ?6 ? **GO condicional** *(PR #513)* ? `issue-237/LINT-237-TURISMO-RADIOGROUP-GRUPO-PAGAMENTO.md`
 
 ## Decis?o Trilha 0
 
