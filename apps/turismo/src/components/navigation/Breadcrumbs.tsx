@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, Home, MapPin } from 'lucide-react';
+import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 export interface BreadcrumbItem {
@@ -44,8 +44,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     if (onNavigate) {
       onNavigate(href);
     } else {
-      // Navegação padrão
-      window.location.href = href;
+      window.location.assign(href);
     }
   };
 

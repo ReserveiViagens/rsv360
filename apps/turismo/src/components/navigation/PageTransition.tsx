@@ -2,6 +2,35 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
+
+const PageTransitionLoading = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen flex items-center justify-center bg-gray-50"
+    >
+      <div className="text-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="mx-auto mb-4"
+        >
+          <Loader2 className="w-8 h-8 text-primary-600" />
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-gray-600"
+        >
+          Carregando...
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+PageTransitionLoading.displayName = 'PageTransitionLoading';
+
 export interface PageTransitionProps {
   children: ReactNode;
   className?: string;
@@ -28,6 +57,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({
 
   useEffect(() => {
     if (showLoading) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- show loading overlay on mount
       setIsLoading(true);
       const timer = setTimeout(() => {
         setIsLoading(false);
@@ -98,37 +128,9 @@ const PageTransition: React.FC<PageTransitionProps> = ({
     }
   };
 
-  // Loading component
-  const LoadingComponent = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen flex items-center justify-center bg-gray-50"
-    >
-      <div className="text-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="mx-auto mb-4"
-        >
-          <Loader2 className="w-8 h-8 text-primary-600" />
-        </motion.div>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-gray-600"
-        >
-          Carregando...
-        </motion.p>
-      </div>
-    </motion.div>
-  );
-
   // Se ainda está carregando, mostrar loading
   if (isLoading) {
-    return <LoadingComponent />;
+    return <PageTransitionLoading />;
   }
 
   // Se não deve renderizar ainda, não mostrar nada
