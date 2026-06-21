@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import { 
@@ -8,7 +8,6 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  BarChart3, 
   Users, 
   MapPin, 
   Package,
@@ -19,7 +18,6 @@ import {
   Save,
   Eye,
   EyeOff,
-  Filter,
   Search
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -93,14 +91,10 @@ export default function Recommendations() {
     duration: ''
   })
 
-  useEffect(() => {
-    loadData()
-  }, [filters])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
-      const params: any = {}
+      const params: Record<string, string> = {}
       if (filters.type) params.type = filters.type
       if (filters.status) params.status = filters.status
 
@@ -127,7 +121,12 @@ export default function Recommendations() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- API load on filter change
+    void loadData()
+  }, [loadData])
 
   const handleSave = async () => {
     try {
@@ -391,14 +390,17 @@ export default function Recommendations() {
             <div className="col-span-full bg-white rounded-lg shadow p-12 text-center">
               <Lightbulb className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 text-lg mb-2">Nenhuma recomendação encontrada</p>
-              <p className="text-gray-500 text-sm">Clique em "Nova Recomendação" para começar</p>
+              <p className="text-gray-500 text-sm">Clique em &quot;Nova Recomendação&quot; para começar</p>
             </div>
           ) : (
             recommendations.map((recommendation) => (
               <div key={recommendation.id} className="bg-white rounded-lg shadow hover:shadow-lg transition">
                 <div className="relative h-48 bg-gray-200 rounded-t-lg overflow-hidden">
                   {recommendation.image ? (
-                    <img src={recommendation.image} alt={recommendation.title} className="w-full h-full object-cover" />
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- recommendation image from API/mock */}
+                      <img src={recommendation.image} alt={recommendation.title} className="w-full h-full object-cover" />
+                    </>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-yellow-600">
                       {getTypeIcon(recommendation.type)}
