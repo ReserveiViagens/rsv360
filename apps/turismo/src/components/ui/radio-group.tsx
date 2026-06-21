@@ -9,19 +9,19 @@ import { cn } from "@/lib/utils"
 import { radixCreate, radixUiExport } from "@/lib/radix-jsx"
 
 const RadioGroup = radixUiExport<RadioGroupProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, RadioGroupProps>(({ className, ...props }, ref) =>
-    radixCreate(RadioGroupPrimitive.Root, {
+  React.forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroup({ className, ...props }, ref) {
+    return radixCreate(RadioGroupPrimitive.Root, {
       className: cn("grid gap-2", className),
       ...props,
       ref,
     })
-  ) as React.FC<RadioGroupProps & React.RefAttributes<HTMLDivElement>>
+  }) as React.FC<RadioGroupProps & React.RefAttributes<HTMLDivElement>>
 )
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 const RadioGroupItem = radixUiExport<RadioGroupItemProps, HTMLButtonElement>(
-  React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(({ className, ...props }, ref) =>
-    radixCreate(RadioGroupPrimitive.Item, {
+  React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(function RadioGroupItem({ className, ...props }, ref) {
+    return radixCreate(RadioGroupPrimitive.Item, {
       ref,
       className: cn(
         "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
@@ -33,7 +33,7 @@ const RadioGroupItem = radixUiExport<RadioGroupItemProps, HTMLButtonElement>(
         children: <Circle className="h-2.5 w-2.5 fill-current text-current" />,
       }),
     })
-  ) as React.FC<RadioGroupItemProps & React.RefAttributes<HTMLButtonElement>>
+  }) as React.FC<RadioGroupItemProps & React.RefAttributes<HTMLButtonElement>>
 )
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
 
