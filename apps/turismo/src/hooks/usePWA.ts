@@ -5,6 +5,20 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
+
+function detectPwaInstalled(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    Boolean((window.navigator as NavigatorStandalone).standalone) ||
+    document.referrer.includes('android-app://');
+}
+
 interface PWAState {
   isInstallable: boolean;
   isInstalled: boolean;
@@ -24,23 +38,14 @@ interface PWAActions {
 export function usePWA(): PWAState & PWAActions {
   const [state, setState] = useState<PWAState>({
     isInstallable: false,
-    isInstalled: false,
-    isOffline: !navigator.onLine,
+    isInstalled: detectPwaInstalled(),
+    isOffline: typeof navigator !== 'undefined' ? !navigator.onLine : false,
     isUpdateAvailable: false,
-    canShare: !!navigator.share,
+    canShare: typeof navigator !== 'undefined' ? !!navigator.share : false,
   });
 
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
-
-  // Detectar se é PWA instalada
-  useEffect(() => {
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
-                       (window.navigator as any).standalone ||
-                       document.referrer.includes('android-app://');
-
-    setState(prev => ({ ...prev, isInstalled }));
-  }, []);
 
   // Monitorar status online/offline
   useEffect(() => {
@@ -224,14 +229,10 @@ export function usePWA(): PWAState & PWAActions {
 
 // Hook para notificações push
 export function usePushNotifications() {
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [permission, setPermission] = useState<NotificationPermission>(() =>
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'default'
+  );
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
-
-  useEffect(() => {
-    if ('Notification' in window) {
-      setPermission(Notification.permission);
-    }
-  }, []);
 
   const requestPermission = useCallback(async (): Promise<boolean> => {
     if (!('Notification' in window)) return false;
@@ -308,14 +309,9 @@ export function usePushNotifications() {
 // Hook para detectar instalação
 export function useInstallPrompt() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(detectPwaInstalled);
 
   useEffect(() => {
-    // Detectar se já está instalado
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
-                       (window.navigator as any).standalone;
-    setIsInstalled(isInstalled);
-
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
