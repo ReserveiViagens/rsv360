@@ -177,7 +177,8 @@
 - [x] Lint configuracoes-avancadas + configuracoes-usuarios + groups (src) −42 — **GO condicional** *(PR #439)* — `issue-237/LINT-237-TURISMO-CONFIGURACOES-AVANCADAS-USUARIOS-GROUPS.md`
 - [x] Lint integracoes-apis + marketplace-parceiros + notification-system-test −42 — **GO condicional** *(PR #440)* — `issue-237/LINT-237-TURISMO-INTEGRACOES-MARKETPLACE-NOTIFICATION.md`
 - [x] Lint relatorios-personalizados + DataExportSystem + BackupRecoverySystem −42 — **GO condicional** *(PR #441)* — `issue-237/LINT-237-TURISMO-RELATORIOS-DATAEXPORT-BACKUP.md`
-- [x] Lint TrainingSystem + LeadCapture + SettingsPanel −42 — **GO condicional** — `issue-237/LINT-237-TURISMO-TRAINING-LEADCAPTURE-SETTINGS.md`
+- [x] Lint TrainingSystem + LeadCapture + SettingsPanel −42 — **GO condicional** *(PR #442)* — `issue-237/LINT-237-TURISMO-TRAINING-LEADCAPTURE-SETTINGS.md`
+- [x] Lint PerformanceTesting + templates + dashboard-rsv-backup −40 — **GO condicional** *(PR #443)* — `issue-237/LINT-237-TURISMO-PERFORMANCE-TEMPLATES-DASHBOARD-BACKUP.md`
 
 ## Decisão Trilha 0
 
