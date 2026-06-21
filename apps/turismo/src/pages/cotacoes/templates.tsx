@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Calculator, FileText, Plus, Eye, Copy } from 'lucide-react';
+import { ArrowLeft, FileText, Plus, Eye, Copy } from 'lucide-react';
 
 export default function TemplatesPage() {
   const templates = [
