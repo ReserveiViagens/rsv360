@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, SkipForward, RotateCcw, CheckCircle, Clock, Users, BookOpen, Plus, Edit, Trash2, Eye, Star, Target, ArrowRight, ArrowLeft } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress } from '../ui';
+import { Play, CheckCircle, Clock, Users, BookOpen, Plus, Edit, Trash2, Eye, Star, Target, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal, Textarea, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface Tutorial {
@@ -54,9 +54,103 @@ interface TutorialSystemProps {
   onUserCompleted?: (userId: string, tutorialId: string) => void;
 }
 
+const MOCK_TUTORIALS: Tutorial[] = [
+  {
+    id: '1',
+    title: 'Tutorial Completo do Sistema RSV',
+    description: 'Aprenda todas as funcionalidades principais do sistema passo a passo',
+    category: 'onboarding',
+    difficulty: 'beginner',
+    duration: 45,
+    steps: [
+      {
+        id: 's1',
+        title: 'Bem-vindo ao Sistema RSV',
+        description: 'Introdução ao sistema e suas principais funcionalidades',
+        content: 'O Sistema RSV é uma plataforma completa para gestão de reservas de viagens...',
+        type: 'text',
+        order: 1,
+        isCompleted: false,
+        estimatedTime: 3,
+        hints: ['Leia atentamente as informações', 'Anote suas dúvidas']
+      },
+      {
+        id: 's2',
+        title: 'Primeira Reserva',
+        description: 'Criando sua primeira reserva no sistema',
+        content: 'Vamos criar uma reserva passo a passo...',
+        type: 'interactive',
+        order: 2,
+        isCompleted: false,
+        estimatedTime: 8,
+        hints: ['Siga as instruções na tela', 'Não tenha medo de errar'],
+        requiredActions: ['Criar reserva', 'Preencher dados do cliente']
+      },
+      {
+        id: 's3',
+        title: 'Gestão de Clientes',
+        description: 'Como gerenciar perfis de clientes',
+        content: 'Aprenda a criar e editar perfis de clientes...',
+        type: 'video',
+        order: 3,
+        isCompleted: false,
+        estimatedTime: 5,
+        hints: ['Assista o vídeo completo', 'Pause quando necessário']
+      }
+    ],
+    author: 'Equipe RSV',
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-20',
+    status: 'published',
+    completedUsers: 67,
+    rating: 4.9,
+    tags: ['iniciante', 'onboarding', 'sistema', 'reservas']
+  },
+  {
+    id: '2',
+    title: 'Relatórios Avançados',
+    description: 'Dominando os relatórios e analytics do sistema',
+    category: 'advanced',
+    difficulty: 'advanced',
+    duration: 30,
+    steps: [
+      {
+        id: 's4',
+        title: 'Configuração de Relatórios',
+        description: 'Configurando parâmetros para relatórios personalizados',
+        content: 'Vamos configurar relatórios avançados...',
+        type: 'interactive',
+        order: 1,
+        isCompleted: false,
+        estimatedTime: 10,
+        hints: ['Teste diferentes configurações', 'Salve suas preferências']
+      }
+    ],
+    author: 'Especialista RSV',
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-15',
+    status: 'published',
+    completedUsers: 23,
+    rating: 4.7,
+    tags: ['avançado', 'relatórios', 'analytics']
+  }
+];
+
+const MOCK_PROGRESS: TutorialProgress[] = [
+  {
+    userId: 'user1',
+    tutorialId: '1',
+    currentStep: 1,
+    completedSteps: ['s1'],
+    startedAt: '2024-01-15T10:00:00Z',
+    lastAccessed: '2024-01-20T14:30:00Z',
+    totalTime: 15
+  }
+];
+
 const TutorialSystem: React.FC<TutorialSystemProps> = ({
-  onTutorialCreated,
-  onTutorialUpdated,
+  onTutorialCreated: _onTutorialCreated,
+  onTutorialUpdated: _onTutorialUpdated,
   onTutorialDeleted,
   onUserStarted,
   onUserCompleted
@@ -71,108 +165,15 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('tutorials');
   
   const { showNotification } = useUIStore();
 
-  // Mock data
   useEffect(() => {
-    const mockTutorials: Tutorial[] = [
-      {
-        id: '1',
-        title: 'Tutorial Completo do Sistema RSV',
-        description: 'Aprenda todas as funcionalidades principais do sistema passo a passo',
-        category: 'onboarding',
-        difficulty: 'beginner',
-        duration: 45,
-        steps: [
-          {
-            id: 's1',
-            title: 'Bem-vindo ao Sistema RSV',
-            description: 'Introdução ao sistema e suas principais funcionalidades',
-            content: 'O Sistema RSV é uma plataforma completa para gestão de reservas de viagens...',
-            type: 'text',
-            order: 1,
-            isCompleted: false,
-            estimatedTime: 3,
-            hints: ['Leia atentamente as informações', 'Anote suas dúvidas']
-          },
-          {
-            id: 's2',
-            title: 'Primeira Reserva',
-            description: 'Criando sua primeira reserva no sistema',
-            content: 'Vamos criar uma reserva passo a passo...',
-            type: 'interactive',
-            order: 2,
-            isCompleted: false,
-            estimatedTime: 8,
-            hints: ['Siga as instruções na tela', 'Não tenha medo de errar'],
-            requiredActions: ['Criar reserva', 'Preencher dados do cliente']
-          },
-          {
-            id: 's3',
-            title: 'Gestão de Clientes',
-            description: 'Como gerenciar perfis de clientes',
-            content: 'Aprenda a criar e editar perfis de clientes...',
-            type: 'video',
-            order: 3,
-            isCompleted: false,
-            estimatedTime: 5,
-            hints: ['Assista o vídeo completo', 'Pause quando necessário']
-          }
-        ],
-        author: 'Equipe RSV',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-20',
-        status: 'published',
-        completedUsers: 67,
-        rating: 4.9,
-        tags: ['iniciante', 'onboarding', 'sistema', 'reservas']
-      },
-      {
-        id: '2',
-        title: 'Relatórios Avançados',
-        description: 'Dominando os relatórios e analytics do sistema',
-        category: 'advanced',
-        difficulty: 'advanced',
-        duration: 30,
-        steps: [
-          {
-            id: 's4',
-            title: 'Configuração de Relatórios',
-            description: 'Configurando parâmetros para relatórios personalizados',
-            content: 'Vamos configurar relatórios avançados...',
-            type: 'interactive',
-            order: 1,
-            isCompleted: false,
-            estimatedTime: 10,
-            hints: ['Teste diferentes configurações', 'Salve suas preferências']
-          }
-        ],
-        author: 'Especialista RSV',
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-15',
-        status: 'published',
-        completedUsers: 23,
-        rating: 4.7,
-        tags: ['avançado', 'relatórios', 'analytics']
-      }
-    ];
-
-    const mockProgress: TutorialProgress[] = [
-      {
-        userId: 'user1',
-        tutorialId: '1',
-        currentStep: 1,
-        completedSteps: ['s1'],
-        startedAt: '2024-01-15T10:00:00Z',
-        lastAccessed: '2024-01-20T14:30:00Z',
-        totalTime: 15
-      }
-    ];
-
-    setTutorials(mockTutorials);
-    setUserProgress(mockProgress);
+    const timer = setTimeout(() => {
+      setTutorials(MOCK_TUTORIALS);
+      setUserProgress(MOCK_PROGRESS);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const filteredTutorials = tutorials.filter(tutorial => {
@@ -278,16 +279,6 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
       case 'intermediate': return 'Intermediário';
       case 'advanced': return 'Avançado';
       default: return difficulty;
-    }
-  };
-
-  const getStepTypeIcon = (type: string) => {
-    switch (type) {
-      case 'video': return 'Play';
-      case 'interactive': return 'Target';
-      case 'quiz': return 'CheckCircle';
-      case 'image': return 'Eye';
-      default: return 'BookOpen';
     }
   };
 
