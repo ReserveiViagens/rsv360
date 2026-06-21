@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,20 +11,14 @@ import { Separator } from '@/components/ui/separator';
 import { 
   Settings, 
   Bell, 
-  BellOff, 
   Clock, 
   Smartphone, 
-  Monitor, 
   Globe,
   Save,
   RefreshCw,
   Eye,
-  EyeOff,
-  Volume2,
-  VolumeX,
   Zap,
   Shield,
-  User,
   Users,
   Building
 } from 'lucide-react';
@@ -83,7 +77,7 @@ interface NotificationChannel {
   type: 'email' | 'sms' | 'push' | 'webhook' | 'slack' | 'teams';
   enabled: boolean;
   priority: 'low' | 'medium' | 'high' | 'critical';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -168,12 +162,7 @@ export default function NotificationSettings() {
   const [activeTab, setActiveTab] = useState('general');
   const [hasChanges, setHasChanges] = useState(false);
 
-  useEffect(() => {
-    // Carregar preferências salvas
-    loadPreferences();
-  }, []);
-
-  const loadPreferences = () => {
+  const loadPreferences = useCallback(() => {
     try {
       const savedPreferences = localStorage.getItem('notification-preferences');
       const savedChannels = localStorage.getItem('notification-channels');
@@ -188,7 +177,12 @@ export default function NotificationSettings() {
     } catch (error) {
       console.error('Erro ao carregar preferências:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate notification prefs from localStorage
+    loadPreferences();
+  }, [loadPreferences]);
 
   const savePreferences = async () => {
     try {
@@ -213,7 +207,7 @@ export default function NotificationSettings() {
     toast.info('Configurações resetadas para padrão');
   };
 
-  const updatePreference = (key: keyof NotificationPreferences, value: any) => {
+  const updatePreference = <K extends keyof NotificationPreferences>(key: K, value: NotificationPreferences[K]) => {
     setPreferences(prev => ({
       ...prev,
       [key]: value
@@ -437,7 +431,7 @@ export default function NotificationSettings() {
                               <label className="text-sm font-medium">Prioridade</label>
                               <Select
                                 value={channel.priority}
-                                onValueChange={(value: string) => updateChannel(channel.id, { priority: value as any })}
+                                onValueChange={(value: string) => updateChannel(channel.id, { priority: value as NotificationChannel['priority'] })}
                               >
                                 <SelectTrigger className="w-32">
                                   <SelectValue />

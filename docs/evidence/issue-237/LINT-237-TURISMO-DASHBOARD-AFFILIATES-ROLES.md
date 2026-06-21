@@ -14,4 +14,4 @@
 
 **Gates:** ESLint 0 nos 3 alvos | build OK
 
-**Próximo:** cluster #44 — src/dashboard + ReportBuilder + AuditLog (−30)
+**Próximo:** cluster #45 — ChatAnalytics + ApiConnector + NotificationSettings (−30)
