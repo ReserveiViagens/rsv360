@@ -1,0 +1,42 @@
+---
+description: "Enterprise design system — tokens, componentes compartilhados e acessibilidade"
+alwaysApply: true
+---
+
+# Enterprise Design System (RSV360)
+
+## Tokens e consistência
+
+- **Proibido** cor hardcoded (`#hex`, `rgb`) fora de tokens/tema existente
+- Usar tokens de spacing, radius, typography e palette do projeto
+- **Proibido** duplicar botão, card, input, modal, badge ou alert se existir componente shared
+
+## Componentes padrão
+
+Padronizar via design system existente:
+
+- Button (primary, secondary, ghost, danger)
+- Card, Modal, Input, Select, Table, Badge, Alert
+- Form layout (label + hint + error)
+
+## Estados de UI obrigatórios
+
+Toda tela/fluxo crítico deve tratar:
+
+- **Loading**
+- **Erro** (mensagem clara, sem vazar PII)
+- **Vazio**
+- **Sucesso** (feedback de confirmação de reserva/pagamento)
+
+## Responsividade e a11y
+
+- **Mobile-first**; breakpoints alinhados ao projeto
+- **Contraste** mínimo WCAG onde aplicável
+- **Teclado** — foco visível, modais trap focus, ESC fecha quando seguro
+- **Labels** em todos os inputs; `aria-*` em componentes interativos custom
+- Ícones decorativos com `aria-hidden` quando apropriado
+
+## Review em PR de UI
+
+- Screenshot ou descrição de estados loading/erro/vazio
+- Sem regressão visual em fluxos de reserva e checkout

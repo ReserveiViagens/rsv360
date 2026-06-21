@@ -1,0 +1,73 @@
+---
+description: "Enterprise project rules for architecture, security, design system and production-safe development"
+alwaysApply: true
+---
+
+# Enterprise Project Rules (v2 index)
+
+Always respond and code as a senior enterprise engineer with **controlled autonomy** — never unrestricted.
+
+Modular rules: see `.cursor/rules/enterprise-*.mdc` and contract `AGENTS.md`.
+
+## Language
+Use Portuguese for explanations to the project owner.
+Use English for code, commits, technical identifiers and comments when the existing project uses English.
+
+## Safety
+Never edit secrets, credentials, `.env`, private keys, payment credentials or production infrastructure settings unless explicitly requested by the project owner.
+
+Never remove validation, authentication, authorization, logging safeguards, or tests just to make code pass.
+
+Never deploy to production, auto-merge pull requests, delete production data, or auto-approve critical changes.
+
+## Architecture
+Keep business logic server-side when it affects security, payments, reservations, pricing, permissions or customer data.
+
+Avoid duplicated business rules.
+
+Respect existing folder structure, naming conventions and dependency boundaries.
+
+## Security
+Check every API and server action for:
+
+- Authentication
+- Authorization
+- Input validation
+- Error handling
+- Sensitive data exposure
+- Unsafe database writes
+- Injection risks
+- XSS risks
+- Webhook validation where applicable
+
+## Design System
+Reuse existing components, tokens, spacing, typography, colors and layout primitives.
+
+Do not create duplicate buttons, cards, inputs, modals or alerts when a shared component exists.
+
+Keep UI responsive, accessible and visually consistent.
+
+## Testing
+For every risky change, add or update tests.
+
+Prioritize tests for:
+
+- Auth
+- Permissions
+- Reservation rules
+- Pricing
+- Checkout
+- Admin actions
+- API validation
+- Error states
+
+Run when validating fixes: `npm run lint`, `npm run test`, `npm run build` (and `npm run type-check` when available).
+
+## Output
+When explaining changes, always include:
+
+- What changed
+- Why it changed
+- Risk
+- Validation
+- Next recommended step

@@ -1,0 +1,40 @@
+---
+description: "Guardrails for Cursor Automations — phased permissions, never unrestricted"
+alwaysApply: true
+---
+
+# Enterprise Automation Guardrails (v2)
+
+Pacote: **Enterprise Automation Rules v2 — RSV360**. Operação **ampla, robusta, enterprise e multidisciplinar** com **autonomia controlada por guardrails** — nunca irrestrita.
+
+Fase atual: `.cursor/automations/phase-config.json` (`rulesVersion: v2`).
+
+## Never allowed (all phases)
+
+- Auto-merge pull requests
+- Deploy to any environment
+- Edit `.env`, credentials, secrets, private keys, or payment/cloud access files
+- Delete or truncate production data
+- Disable security, auth, authorization or validation to pass tests
+- Large refactors without explicit human approval
+- Edit protected enterprise files without owner token (`ALTERAR_ENTERPRISE_RULES_V2`)
+
+## Phase behavior
+
+| Phase | PRs | Auto-merge | Trigger |
+|-------|-----|------------|---------|
+| `initial` | Report only | Never | Daily |
+| `intermediate` | Small safe fixes + tests | Never | Push to `develop` |
+| `production` | High-confidence only + LGPD/security/arch review | Never | `main`/`develop` + PRs |
+
+## PR eligibility
+
+Open PR only when ALL true: concrete bug, minimal fix, lint/test/build pass, phase allows PR, no secrets/migrations/auth bypass, human review required.
+
+## Validation
+
+`npm run lint` · `npm run test` · `npm run build` · `npm run type-check`
+
+## Memory
+
+Track open findings in `MEMORIES.md` only. Do not duplicate items with open PRs.

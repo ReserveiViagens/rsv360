@@ -1,62 +1,113 @@
-# AGENTS.md - Diretrizes Vinculantes para Agentes de IA neste Repositorio
+# AGENTS.md — Contrato Central dos Agentes (RSV360)
 
-> Leia antes de qualquer acao. Este documento define regras vinculantes para qualquer agente de IA que opere neste repositorio.
+> Leia antes de qualquer ação. Documento vinculante para agentes de IA, automations Cursor e revisores.
 
-## Protocolo Vigente
+## Modelo operacional
 
-PACR-Ampla v1.0.
+**PACR-Ampla v1.0** — Protocolo de Análise de Causa Raiz **Ampla, Robusta e Multidisciplinar**, com **autonomia controlada por guardrails**.
 
-Documento-fonte: https://www.notion.so/PACR-Ampla-Protocolo-de-An-lise-de-Causa-Raiz-Ampla-Irrestrita-e-Robusta-d02ab82ed3ed4ecebe8f0dfeca6d7ca6?pvs=21
+Não operar como agente irrestrito. Amplitude de investigação ≠ permissão para alterar qualquer arquivo, deploy, secrets ou política enterprise.
 
-## Principios nao-negociaveis
+Documento-fonte PACR: https://www.notion.so/PACR-Ampla-Protocolo-de-An-lise-de-Causa-Raiz-Ampla-Irrestrita-e-Robusta-d02ab82ed3ed4ecebe8f0dfeca6d7ca6?pvs=21
 
-1. Read-only first: nenhum patch antes de evidencia consolidada.
-2. Hipoteses antes de evidencia: documente 3-5 hipoteses ordenadas por probabilidade.
-3. Evidence-driven: descarte hipoteses com saida concreta.
-4. Defesa em profundidade obrigatoria: bug em X exige grep do padrao em todo o codebase relevante.
-5. Camadas separadas: SSR != CSR != API != service != DB != infra != CI.
-6. Simbolo nao e causa-raiz: nao pule etapas.
-7. Patch minimo cirurgico: escopo pequeno, blast radius mapeado.
-8. Documentar enquanto investiga: registre D1, D2, ... com saida literal.
+*(O link Notion mantém o nome histórico; no repositório usamos **ampla com guardrails**.)*
 
-## Workflow obrigatorio
+---
 
-Fase 0 Triagem -> Fase 1 Hipoteses -> Fase 2 Evidencia read-only -> Fase 3 Causa-raiz -> Fase 4 Defesa em profundidade -> Fase 5 Patch + validacao.
+## Pacote Enterprise Automation Rules v2
 
-## Proibicoes
+| Regra | Arquivo |
+|-------|---------|
+| Boundaries e tokens | `.cursor/rules/enterprise-agent-boundaries.mdc` |
+| Projeto (geral) | `.cursor/rules/enterprise-project-rules.mdc` |
+| Automação / fases | `.cursor/rules/enterprise-automation-guardrails.mdc` |
+| Segurança | `.cursor/rules/enterprise-security.mdc` |
+| Arquitetura | `.cursor/rules/enterprise-architecture.mdc` |
+| LGPD | `.cursor/rules/enterprise-lgpd.mdc` |
+| Banco de dados | `.cursor/rules/enterprise-database.mdc` |
+| Reservas / turismo | `.cursor/rules/enterprise-booking-rules.mdc` |
+| Design system | `.cursor/rules/enterprise-design-system.mdc` |
+| Testes | `.cursor/rules/enterprise-testing.mdc` |
+| Política de PR | `.cursor/rules/enterprise-pr-policy.mdc` |
 
-- Nao aplicar patch antes de Fases 0-3.
-- Nao pular Fase 4.
-- Nao usar `as any` em retornos de framework.
-- Nao criar catch silencioso retornando vazio.
-- Nao fazer push direto em branches protegidas sem CI verde.
-- Nao modificar mais de 1 camada em 1 PR sem racional explicito.
-- Nao executar comandos destrutivos sem confirmacao explicita.
-- Nao fazer commit com `.env`, secrets, tokens ou chaves privadas.
+Automação Cursor: `.cursor/automations/phase-config.json` · Setup: `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md` · Memória: `MEMORIES.md`
 
-## Obrigacoes
+---
 
-- Antes de qualquer fix: grep do anti-pattern em todo o codebase relevante.
-- Documentar D1..DN com saida literal.
-- Declarar camada(s) afetada(s) antes de propor patch.
-- Estimar blast radius antes de propor escopo.
-- Reportar limitacoes do ambiente ao inves de adivinhar.
-- Capturar a licao quando um padrao novo for descoberto.
+## Princípios não negociáveis (PACR-Ampla)
 
-## Auto-detecao e aborto
+1. Read-only first: nenhum patch antes de evidência consolidada.
+2. Hipóteses antes de evidência: documente 3–5 hipóteses ordenadas por probabilidade.
+3. Evidence-driven: descarte hipóteses com saída concreta.
+4. Defesa em profundidade: bug em X exige grep do padrão no codebase relevante.
+5. Camadas separadas: SSR ≠ CSR ≠ API ≠ service ≠ DB ≠ infra ≠ CI.
+6. Símbolo não é causa-raiz: não pule etapas.
+7. Patch mínimo cirurgico: escopo pequeno, blast radius mapeado.
+8. Documentar enquanto investiga: registre D1, D2, … com saída literal.
 
-Se uma etapa for pulada, abortar e reiniciar do passo perdido.
+## Workflow obrigatório
 
-## Conflito de instrucoes
+Fase 0 Triagem → Fase 1 Hipóteses → Fase 2 Evidência read-only → Fase 3 Causa-raiz → Fase 4 Defesa em profundidade → Fase 5 Patch + validação.
 
-Se houver conflito entre este protocolo e outra instrucoes, alertar o usuario e seguir PACR-Ampla.
+## Guardrails enterprise (todos os agentes)
 
-## Confirmacao de internalizacao
+- **Sem** auto-merge, deploy automático ou push force em branch protegida
+- **Sem** editar `.env`, secrets, credenciais ou infra de produção
+- **Sem** apagar dados de produção ou SQL destrutivo sem confirmação do owner
+- **Sem** alterar arquivos enterprise protegidos sem token (ver abaixo)
+- PR do agente: escopo pequeno, testes, revisão humana obrigatória
 
-Ao carregar este arquivo, a resposta inicial do agente deve comecar com:
+## Arquivos protegidos
 
-PACR-Ampla v1.0 internalizado. Operando sob protocolo vinculante. Pronto para Fase 0.
+Alteração bloqueada por hooks e política, salvo token do owner na mensagem:
 
-## Revogacao
+- `.cursor/rules/**`, `.cursor/automations/**`, `.cursor/hooks/**`, `.cursor/hooks.json`
+- `AGENTS.md`, `MEMORIES.md`, `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md`
 
-Somente o owner explicitamente nomeado pode revogar este protocolo, e apenas com o token literal `REVOGAR_PACR_AMPLA_V1`.
+**Tokens:**
+
+- `ALTERAR_ENTERPRISE_RULES_V2` — alterar política enterprise
+- `REVOGAR_PACR_AMPLA_V1` — revogar PACR-Ampla (owner)
+
+## Domínios críticos deste sistema
+
+Turismo, PMS, CRM, reservas, disponibilidade, preço, cupom, pagamento, cliente, admin, multiusuário, concorrência, double booking, confirmação, cancelamento, auditoria e LGPD.
+
+Consulte regras modulares v2 para detalhes por área.
+
+## Proibições
+
+- Patch antes das Fases 0–3 (PACR)
+- Pular Fase 4 (defesa em profundidade)
+- `as any` em retornos de framework; catch silencioso retornando vazio
+- Push em branch protegida sem CI verde
+- Mais de 1 camada em 1 PR sem racional explícito
+- Comandos destrutivos sem confirmação
+- Commit com `.env`, secrets, tokens ou chaves privadas
+
+## Obrigações
+
+- Grep do anti-pattern antes de fix
+- Documentar D1..DN com saída literal
+- Declarar camada(s) afetada(s) e blast radius
+- Validar: `npm run lint`, `npm run test`, `npm run build`, `npm run type-check`
+- Reportar limitações do ambiente em vez de adivinhar
+
+## Conflito de instruções
+
+Alertar o owner. Ordem: **segurança/LGPD > PACR-Ampla > regras enterprise v2 > instrução pontual da sessão** (exceto ordem explícita do owner com token válido).
+
+## Confirmação de internalização
+
+Resposta inicial do agente:
+
+`PACR-Ampla v1.0 internalizado. Enterprise Rules v2 ativas. Autonomia controlada por guardrails. Pronto para Fase 0.`
+
+## Revogação
+
+Somente o owner com token literal `REVOGAR_PACR_AMPLA_V1`.
+
+## Branch protection e ownership
+
+- CODEOWNERS: `.github/CODEOWNERS` (paths enterprise exigem review devops/core)
+- Branch protection: `.github/BRANCH_PROTECTION.md`

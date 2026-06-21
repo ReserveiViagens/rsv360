@@ -1,0 +1,40 @@
+---
+description: "Enterprise database — migrations, transações, DELETE seguro e índices"
+alwaysApply: true
+---
+
+# Enterprise Database (RSV360)
+
+## Migrations
+
+- Sempre revisadas por humano antes de merge em `main`
+- Incluir plano de rollback ou migration reversível quando possível
+- Nunca migration destrutiva (DROP coluna/tabela) sem checklist e backup documentado
+- Não rodar migration automaticamente via agente sem confirmação explícita
+
+## Comandos proibidos sem confirmação do owner
+
+- `DROP DATABASE`, `DROP TABLE`, `TRUNCATE`
+- `DELETE FROM` **sem** cláusula `WHERE` restritiva
+- Mass update em reservas, pagamentos ou clientes
+
+## Transações obrigatórias
+
+Usar transação (ou equivalente atômico) para:
+
+- Criar/atualizar **reserva** + decremento de **disponibilidade**
+- **Pagamento** + confirmação de reserva
+- Aplicar **cupom** + recalcular total + persistir
+- **Cancelamento** + liberação de inventário + status auditável
+- Ajuste de **estoque/capacidade** concorrente
+
+## Performance e integridade
+
+- Consultas críticas (disponibilidade por data, listagem admin) com índices adequados
+- Evitar N+1 em listagens de reservas e clientes
+- Constraints de unicidade onde evitar double booking (ex.: slot + recurso + intervalo)
+
+## Agente
+
+- Não executar migration rollback em produção
+- Não alterar schema “para corrigir teste” sem PR dedicada e review

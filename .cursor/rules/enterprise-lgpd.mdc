@@ -1,0 +1,37 @@
+---
+description: "Enterprise LGPD — dados pessoais, mascaramento, auditoria e consentimento"
+alwaysApply: true
+---
+
+# Enterprise LGPD (RSV360)
+
+Sistema trata dados de **clientes, reservas, pagamentos e operadores** — tratar como dados pessoais por padrão.
+
+## Nunca registrar em log, erro, teste ou PR
+
+- CPF, RG, passaporte
+- Telefone, e-mail completo (preferir mascarado: `***@dominio`)
+- Senha, token, cookie, JWT, API key
+- Dados de cartão ou PIX completo
+- Endereço completo quando não necessário
+
+## Obrigatório
+
+- **Mascarar** dados sensíveis em logs e dashboards de suporte
+- Separar **dados públicos** (catálogo) de **dados privados** (cliente/reserva)
+- **Justificar** coleta: só persistir campos usados no fluxo
+- **Consentimento** quando marketing, cookies não essenciais ou compartilhamento exigir
+- **Erro de API** sem vazar registro de outro usuário
+- **Trilha de auditoria** para ações admin: quem alterou reserva, preço, cancelamento, reembolso, permissão
+
+## Retenção e acesso
+
+- Exportação/eliminação de dados do titular via fluxo controlado (não script ad hoc)
+- Acesso admin a dados de cliente exige role e motivo rastreável
+- Anonimizar em relatórios agregados quando possível
+
+## Proibições
+
+- Enviar PII para ferramentas externas sem base legal e contrato
+- Commitar dump de banco com dados reais
+- Logar payload completo de checkout em produção
