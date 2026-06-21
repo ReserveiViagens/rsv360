@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -27,11 +27,7 @@ export default function SEOPage() {
     const [selectedPage, setSelectedPage] = useState<SEOPage | null>(null);
     const [showForm, setShowForm] = useState(false);
 
-    useEffect(() => {
-        fetchPages();
-    }, []);
-
-    const fetchPages = async () => {
+    const fetchPages = useCallback(async () => {
         try {
             const response = await axios.get('/api/seo/pages/');
             setPages(response.data);
@@ -40,7 +36,12 @@ export default function SEOPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchPages();
+    }, [fetchPages]);
 
     const handleEdit = (page: SEOPage) => {
         setSelectedPage(page);

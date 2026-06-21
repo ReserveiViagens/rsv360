@@ -269,6 +269,8 @@
 
 - [x] Lint cluster #107 multilingual-offline-recommendations ?3 ? **GO condicional** *(PR #522)* ? `issue-237/LINT-237-TURISMO-MULTILINGUAL-OFFLINE-RECOMMENDATIONS.md`
 
+- [x] Lint cluster #108 src-register-rewards-seo ?3 ? **GO condicional** *(PR #523)* ? `issue-237/LINT-237-TURISMO-SRC-REGISTER-REWARDS-SEO.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
