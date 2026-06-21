@@ -1,26 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MapPin, Calendar, Users, TrendingUp, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-export function ExcursoesDashboard() {
-  const [stats, setStats] = useState({
-    totalExcursoes: 0,
-    emPlanejamento: 0,
-    emAndamento: 0,
-    concluidas: 0
-  })
+const MOCK_STATS = {
+  totalExcursoes: 25,
+  emPlanejamento: 8,
+  emAndamento: 5,
+  concluidas: 12
+}
 
-  useEffect(() => {
-    // TODO: Buscar dados da API
-    setStats({
-      totalExcursoes: 25,
-      emPlanejamento: 8,
-      emAndamento: 5,
-      concluidas: 12
-    })
-  }, [])
+export function ExcursoesDashboard() {
+  const [stats] = useState(MOCK_STATS)
 
   return (
     <div className="space-y-6">

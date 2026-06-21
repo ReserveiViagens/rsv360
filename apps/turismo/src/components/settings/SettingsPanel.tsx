@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, User, Shield, Bell, Palette, Globe, Database, Key, Save, RefreshCw, Eye, EyeOff, Trash2, Plus, Edit, Download, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Key, Save, RefreshCw, Eye, EyeOff, Edit, Download, CheckCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -192,7 +192,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ className }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const handleSettingChange = (section: keyof SystemSettings, key: string, value: any) => {
+  const handleSettingChange = <S extends keyof SystemSettings>(
+    section: S,
+    key: keyof SystemSettings[S] & string,
+    value: SystemSettings[S][keyof SystemSettings[S]]
+  ) => {
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -203,13 +207,18 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ className }) => {
     setHasUnsavedChanges(true);
   };
 
-  const handleNestedSettingChange = (section: keyof SystemSettings, subsection: string, key: string, value: any) => {
+  const handleNestedSettingChange = <S extends keyof SystemSettings>(
+    section: S,
+    subsection: keyof SystemSettings[S] & string,
+    key: string,
+    value: unknown
+  ) => {
     setSettings(prev => ({
       ...prev,
       [section]: {
         ...prev[section],
         [subsection]: {
-          ...(prev[section] as any)[subsection],
+          ...(prev[section] as Record<string, Record<string, unknown>>)[subsection],
           [key]: value,
         },
       },

@@ -1,26 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Users, Heart, Calendar, DollarSign, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-export function ViagensGrupoDashboard() {
-  const [stats, setStats] = useState({
-    gruposAtivos: 0,
-    totalParticipantes: 0,
-    wishlistsCompartilhadas: 0,
-    receitaTotal: 0
-  })
+const MOCK_STATS = {
+  gruposAtivos: 18,
+  totalParticipantes: 156,
+  wishlistsCompartilhadas: 42,
+  receitaTotal: 89000
+}
 
-  useEffect(() => {
-    // TODO: Buscar dados da API
-    setStats({
-      gruposAtivos: 18,
-      totalParticipantes: 156,
-      wishlistsCompartilhadas: 42,
-      receitaTotal: 89000
-    })
-  }, [])
+export function ViagensGrupoDashboard() {
+  const [stats] = useState(MOCK_STATS)
 
   return (
     <div className="space-y-6">
