@@ -15,12 +15,7 @@ import {
   Instagram,
   Twitter,
   Linkedin,
-  Youtube,
-  MessageSquare,
-  ExternalLink,
-  Star,
-  Award,
-  Heart
+  MessageSquare
 } from 'lucide-react';
 
 interface CompanyInfo {
