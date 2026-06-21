@@ -103,6 +103,7 @@
 | #486 | reservations-rsv + backup-system-test | −15 → **323** | accessibility-finance-parks |
 | #487 | finance-dashboard (src) + login + project-management-test | −15 → **308** | reservations-backup |
 | #488 | EnterpriseForm + HierarchyView + EmailMarketing | −15 → **293** | finance-login-project |
+| #489 | NotificationCenter + AnalyticsDashboard (reports) + usePWA | −15 → **278** | accommodations-email-marketing |
 
 ## Clusters 1–50 (concluídos)
 
