@@ -1,9 +1,9 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAccessibility } from '../../hooks/useAccessibility';
 
 export default function SkipLinks() {
-  const { skipToContent, skipToNavigation, announce } = useAccessibility();
+  const { skipToContent, skipToNavigation } = useAccessibility();
 
   const skipLinks = [
     {

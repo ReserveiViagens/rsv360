@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, Calendar, Download, DollarSign } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Download } from 'lucide-react';
 
 interface AnalyticsData {
   totalReports: number;
