@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, FileText, Code, GitBranch, Download, Eye, EyeOff, Filter, Search } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, Eye } from 'lucide-react';
 import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
@@ -54,10 +54,105 @@ interface CodeCoverageProps {
   onFileAnalyzed?: (file: CoverageData) => void;
 }
 
-const CodeCoverage: React.FC<CodeCoverageProps> = ({ onCoverageReport, onFileAnalyzed }) => {
+const MOCK_COVERAGE_DATA: CoverageData[] = [
+  {
+    id: 'dashboard-page',
+    name: 'DashboardPage.tsx',
+    path: 'src/components/dashboard/DashboardPage.tsx',
+    type: 'file',
+    lines: { total: 156, covered: 143, uncovered: 13, partial: 0 },
+    functions: { total: 8, covered: 7, uncovered: 1 },
+    branches: { total: 12, covered: 11, uncovered: 1 },
+    statements: { total: 89, covered: 82, uncovered: 7 },
+    lastUpdated: new Date('2024-01-15T10:30:00'),
+    status: 'good'
+  },
+  {
+    id: 'booking-modal',
+    name: 'BookingModal.tsx',
+    path: 'src/components/booking/BookingModal.tsx',
+    type: 'file',
+    lines: { total: 203, covered: 158, uncovered: 45, partial: 0 },
+    functions: { total: 12, covered: 9, uncovered: 3 },
+    branches: { total: 18, covered: 15, uncovered: 3 },
+    statements: { total: 134, covered: 112, uncovered: 22 },
+    lastUpdated: new Date('2024-01-15T09:15:00'),
+    status: 'warning'
+  },
+  {
+    id: 'customer-list',
+    name: 'CustomerList.tsx',
+    path: 'src/components/customers/CustomerList.tsx',
+    type: 'file',
+    lines: { total: 89, covered: 85, uncovered: 4, partial: 0 },
+    functions: { total: 5, covered: 5, uncovered: 0 },
+    branches: { total: 6, covered: 6, uncovered: 0 },
+    statements: { total: 67, covered: 64, uncovered: 3 },
+    lastUpdated: new Date('2024-01-15T08:45:00'),
+    status: 'excellent'
+  },
+  {
+    id: 'travel-card',
+    name: 'TravelCard.tsx',
+    path: 'src/components/travel/TravelCard.tsx',
+    type: 'file',
+    lines: { total: 67, covered: 59, uncovered: 8, partial: 0 },
+    functions: { total: 3, covered: 3, uncovered: 0 },
+    branches: { total: 4, covered: 4, uncovered: 0 },
+    statements: { total: 45, covered: 41, uncovered: 4 },
+    lastUpdated: new Date('2024-01-15T08:30:00'),
+    status: 'good'
+  },
+  {
+    id: 'payment-gateway',
+    name: 'PaymentGateway.tsx',
+    path: 'src/components/payments/PaymentGateway.tsx',
+    type: 'file',
+    lines: { total: 234, covered: 152, uncovered: 82, partial: 0 },
+    functions: { total: 15, covered: 10, uncovered: 5 },
+    branches: { total: 22, covered: 18, uncovered: 4 },
+    statements: { total: 167, covered: 118, uncovered: 49 },
+    lastUpdated: new Date('2024-01-15T07:15:00'),
+    status: 'critical'
+  }
+];
+
+function buildCoverageSummary(data: CoverageData[]): CoverageSummary {
+  const totalFiles = data.length;
+  const totalLines = data.reduce((sum, file) => sum + file.lines.total, 0);
+  const coveredLines = data.reduce((sum, file) => sum + file.lines.covered, 0);
+  const uncoveredLines = data.reduce((sum, file) => sum + file.lines.uncovered, 0);
+  const totalFunctions = data.reduce((sum, file) => sum + file.functions.total, 0);
+  const coveredFunctions = data.reduce((sum, file) => sum + file.functions.covered, 0);
+  const totalBranches = data.reduce((sum, file) => sum + file.branches.total, 0);
+  const coveredBranches = data.reduce((sum, file) => sum + file.branches.covered, 0);
+  const totalStatements = data.reduce((sum, file) => sum + file.statements.total, 0);
+  const coveredStatements = data.reduce((sum, file) => sum + file.statements.covered, 0);
+  const overallCoverage = totalLines > 0 ? (coveredLines / totalLines) * 100 : 0;
+
+  return {
+    totalFiles,
+    totalLines,
+    coveredLines,
+    uncoveredLines,
+    partialLines: 0,
+    totalFunctions,
+    coveredFunctions,
+    totalBranches,
+    coveredBranches,
+    totalStatements,
+    coveredStatements,
+    overallCoverage: Math.round(overallCoverage * 100) / 100,
+    trend: 'up'
+  };
+}
+
+const DEFAULT_COVERAGE_SUMMARY = buildCoverageSummary(MOCK_COVERAGE_DATA);
+
+const CodeCoverage: React.FC<CodeCoverageProps> = ({ onCoverageReport: _onCoverageReport, onFileAnalyzed }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [coverageData, setCoverageData] = useState<CoverageData[]>([]);
-  const [summary, setSummary] = useState<CoverageSummary | null>(null);
+  const [coverageData] = useState<CoverageData[]>(MOCK_COVERAGE_DATA);
+  const [summary] = useState<CoverageSummary>(DEFAULT_COVERAGE_SUMMARY);
   const [selectedFile, setSelectedFile] = useState<string>('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -65,105 +160,6 @@ const CodeCoverage: React.FC<CodeCoverageProps> = ({ onCoverageReport, onFileAna
   const [showUncovered, setShowUncovered] = useState(false);
   const [sortBy, setSortBy] = useState('coverage');
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCoverageData: CoverageData[] = [
-      {
-        id: 'dashboard-page',
-        name: 'DashboardPage.tsx',
-        path: 'src/components/dashboard/DashboardPage.tsx',
-        type: 'file',
-        lines: { total: 156, covered: 143, uncovered: 13, partial: 0 },
-        functions: { total: 8, covered: 7, uncovered: 1 },
-        branches: { total: 12, covered: 11, uncovered: 1 },
-        statements: { total: 89, covered: 82, uncovered: 7 },
-        lastUpdated: new Date('2024-01-15T10:30:00'),
-        status: 'good'
-      },
-      {
-        id: 'booking-modal',
-        name: 'BookingModal.tsx',
-        path: 'src/components/booking/BookingModal.tsx',
-        type: 'file',
-        lines: { total: 203, covered: 158, uncovered: 45, partial: 0 },
-        functions: { total: 12, covered: 9, uncovered: 3 },
-        branches: { total: 18, covered: 15, uncovered: 3 },
-        statements: { total: 134, covered: 112, uncovered: 22 },
-        lastUpdated: new Date('2024-01-15T09:15:00'),
-        status: 'warning'
-      },
-      {
-        id: 'customer-list',
-        name: 'CustomerList.tsx',
-        path: 'src/components/customers/CustomerList.tsx',
-        type: 'file',
-        lines: { total: 89, covered: 85, uncovered: 4, partial: 0 },
-        functions: { total: 5, covered: 5, uncovered: 0 },
-        branches: { total: 6, covered: 6, uncovered: 0 },
-        statements: { total: 67, covered: 64, uncovered: 3 },
-        lastUpdated: new Date('2024-01-15T08:45:00'),
-        status: 'excellent'
-      },
-      {
-        id: 'travel-card',
-        name: 'TravelCard.tsx',
-        path: 'src/components/travel/TravelCard.tsx',
-        type: 'file',
-        lines: { total: 67, covered: 59, uncovered: 8, partial: 0 },
-        functions: { total: 3, covered: 3, uncovered: 0 },
-        branches: { total: 4, covered: 4, uncovered: 0 },
-        statements: { total: 45, covered: 41, uncovered: 4 },
-        lastUpdated: new Date('2024-01-15T08:30:00'),
-        status: 'good'
-      },
-      {
-        id: 'payment-gateway',
-        name: 'PaymentGateway.tsx',
-        path: 'src/components/payments/PaymentGateway.tsx',
-        type: 'file',
-        lines: { total: 234, covered: 152, uncovered: 82, partial: 0 },
-        functions: { total: 15, covered: 10, uncovered: 5 },
-        branches: { total: 22, covered: 18, uncovered: 4 },
-        statements: { total: 167, covered: 118, uncovered: 49 },
-        lastUpdated: new Date('2024-01-15T07:15:00'),
-        status: 'critical'
-      }
-    ];
-
-    setCoverageData(mockCoverageData);
-
-    // Calcular resumo
-    const totalFiles = mockCoverageData.length;
-    const totalLines = mockCoverageData.reduce((sum, file) => sum + file.lines.total, 0);
-    const coveredLines = mockCoverageData.reduce((sum, file) => sum + file.lines.covered, 0);
-    const uncoveredLines = mockCoverageData.reduce((sum, file) => sum + file.lines.uncovered, 0);
-    const totalFunctions = mockCoverageData.reduce((sum, file) => sum + file.functions.total, 0);
-    const coveredFunctions = mockCoverageData.reduce((sum, file) => sum + file.functions.covered, 0);
-    const totalBranches = mockCoverageData.reduce((sum, file) => sum + file.branches.total, 0);
-    const coveredBranches = mockCoverageData.reduce((sum, file) => sum + file.branches.covered, 0);
-    const totalStatements = mockCoverageData.reduce((sum, file) => sum + file.statements.total, 0);
-    const coveredStatements = mockCoverageData.reduce((sum, file) => sum + file.statements.covered, 0);
-    const overallCoverage = totalLines > 0 ? (coveredLines / totalLines) * 100 : 0;
-
-    const coverageSummary: CoverageSummary = {
-      totalFiles,
-      totalLines,
-      coveredLines,
-      uncoveredLines,
-      partialLines: 0,
-      totalFunctions,
-      coveredFunctions,
-      totalBranches,
-      coveredBranches,
-      totalStatements,
-      coveredStatements,
-      overallCoverage: Math.round(overallCoverage * 100) / 100,
-      trend: 'up'
-    };
-
-    setSummary(coverageSummary);
-  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
