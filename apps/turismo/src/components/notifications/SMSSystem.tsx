@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MessageSquare, Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, XCircle, BarChart3, Phone } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Edit, Trash2, Eye, Send, Clock, CheckCircle, XCircle, BarChart3, Phone } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -54,102 +54,95 @@ interface SMSSystemProps {
   onTemplateCreated?: (template: SMSTemplate) => void;
 }
 
+const MOCK_MESSAGES: SMSMessage[] = [
+  {
+    id: '1',
+    phoneNumber: '+55 64 99319-7555',
+    message: 'Sua reserva para Caldas Novas foi confirmada!',
+    template: 'Confirmação de Reserva',
+    status: 'delivered',
+    category: 'transactional',
+    sentAt: new Date(Date.now() - 3600000),
+    deliveredAt: new Date(Date.now() - 3500000),
+    cost: 0.15,
+    attempts: 1
+  },
+  {
+    id: '2',
+    phoneNumber: '+55 64 99306-8752',
+    message: 'Promoção especial: 20% de desconto em viagens!',
+    template: 'Promoção',
+    status: 'sent',
+    category: 'marketing',
+    sentAt: new Date(Date.now() - 7200000),
+    cost: 0.15,
+    attempts: 1
+  }
+];
+
+const MOCK_CAMPAIGNS: SMSCampaign[] = [
+  {
+    id: '1',
+    name: 'Promoção de Verão',
+    message: 'Descontos especiais para suas férias!',
+    template: 'Promoção Padrão',
+    status: 'sent',
+    recipients: 500,
+    sent: 500,
+    delivered: 480,
+    failed: 20,
+    sentAt: new Date(Date.now() - 86400000),
+    createdAt: new Date(Date.now() - 172800000),
+    cost: 75.00
+  },
+  {
+    id: '2',
+    name: 'Lembretes de Viagem',
+    message: 'Lembrete: sua viagem está chegando!',
+    template: 'Lembrete',
+    status: 'scheduled',
+    recipients: 200,
+    sent: 0,
+    delivered: 0,
+    failed: 0,
+    scheduledAt: new Date(Date.now() + 86400000),
+    createdAt: new Date(),
+    cost: 30.00
+  }
+];
+
+const MOCK_TEMPLATES: SMSTemplate[] = [
+  {
+    id: '1',
+    name: 'Confirmação de Reserva',
+    message: 'Sua reserva para {destino} foi confirmada! Data: {data}',
+    category: 'transactional',
+    isDefault: true,
+    variables: ['destino', 'data']
+  },
+  {
+    id: '2',
+    name: 'Promoção',
+    message: 'Promoção especial: {desconto}% de desconto em {destino}!',
+    category: 'marketing',
+    isDefault: true,
+    variables: ['desconto', 'destino']
+  }
+];
+
 const SMSSystem: React.FC<SMSSystemProps> = ({
   onMessageSent,
   onCampaignCreated,
   onTemplateCreated
 }) => {
-  const [messages, setMessages] = useState<SMSMessage[]>([]);
-  const [campaigns, setCampaigns] = useState<SMSCampaign[]>([]);
-  const [templates, setTemplates] = useState<SMSTemplate[]>([]);
+  const [messages, setMessages] = useState<SMSMessage[]>(MOCK_MESSAGES);
+  const [campaigns, setCampaigns] = useState<SMSCampaign[]>(MOCK_CAMPAIGNS);
+  const [templates, setTemplates] = useState<SMSTemplate[]>(MOCK_TEMPLATES);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [activeTab, setActiveTab] = useState('messages');
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockMessages: SMSMessage[] = [
-      {
-        id: '1',
-        phoneNumber: '+55 64 99319-7555',
-        message: 'Sua reserva para Caldas Novas foi confirmada!',
-        template: 'Confirmação de Reserva',
-        status: 'delivered',
-        category: 'transactional',
-        sentAt: new Date(Date.now() - 3600000),
-        deliveredAt: new Date(Date.now() - 3500000),
-        cost: 0.15,
-        attempts: 1
-      },
-      {
-        id: '2',
-        phoneNumber: '+55 64 99306-8752',
-        message: 'Promoção especial: 20% de desconto em viagens!',
-        template: 'Promoção',
-        status: 'sent',
-        category: 'marketing',
-        sentAt: new Date(Date.now() - 7200000),
-        cost: 0.15,
-        attempts: 1
-      }
-    ];
-
-    const mockCampaigns: SMSCampaign[] = [
-      {
-        id: '1',
-        name: 'Promoção de Verão',
-        message: 'Descontos especiais para suas férias!',
-        template: 'Promoção Padrão',
-        status: 'sent',
-        recipients: 500,
-        sent: 500,
-        delivered: 480,
-        failed: 20,
-        sentAt: new Date(Date.now() - 86400000),
-        createdAt: new Date(Date.now() - 172800000),
-        cost: 75.00
-      },
-      {
-        id: '2',
-        name: 'Lembretes de Viagem',
-        message: 'Lembrete: sua viagem está chegando!',
-        template: 'Lembrete',
-        status: 'scheduled',
-        recipients: 200,
-        sent: 0,
-        delivered: 0,
-        failed: 0,
-        scheduledAt: new Date(Date.now() + 86400000),
-        createdAt: new Date(),
-        cost: 30.00
-      }
-    ];
-
-    const mockTemplates: SMSTemplate[] = [
-      {
-        id: '1',
-        name: 'Confirmação de Reserva',
-        message: 'Sua reserva para {destino} foi confirmada! Data: {data}',
-        category: 'transactional',
-        isDefault: true,
-        variables: ['destino', 'data']
-      },
-      {
-        id: '2',
-        name: 'Promoção',
-        message: 'Promoção especial: {desconto}% de desconto em {destino}!',
-        category: 'marketing',
-        isDefault: true,
-        variables: ['desconto', 'destino']
-      }
-    ];
-
-    setMessages(mockMessages);
-    setCampaigns(mockCampaigns);
-    setTemplates(mockTemplates);
-  }, []);
 
   const handleSendMessage = (message: Omit<SMSMessage, 'id' | 'status' | 'sentAt' | 'deliveredAt' | 'cost' | 'attempts'>) => {
     const newMessage: SMSMessage = {
@@ -225,14 +218,22 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
     onTemplateCreated?.(newTemplate);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
-      case 'pending': return 'gray';
-      case 'sending': return 'yellow';
-      case 'sent': return 'blue';
-      case 'delivered': return 'green';
-      case 'failed': return 'red';
-      default: return 'gray';
+      case 'pending':
+      case 'draft':
+      case 'paused':
+        return 'secondary';
+      case 'sending':
+      case 'scheduled':
+        return 'outline';
+      case 'sent':
+      case 'delivered':
+        return 'default';
+      case 'failed':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
@@ -321,7 +322,7 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={getStatusColor(message.status) as any}>
+                        <Badge variant={getStatusVariant(message.status)}>
                           {getStatusIcon(message.status)}
                           <span className="ml-1">{message.status}</span>
                         </Badge>
@@ -376,7 +377,7 @@ const SMSSystem: React.FC<SMSSystemProps> = ({
                         <h4 className="font-medium text-lg">{campaign.name}</h4>
                         <p className="text-sm text-gray-600">{campaign.message}</p>
                         <div className="flex items-center gap-4 mt-2">
-                          <Badge variant={getStatusColor(campaign.status) as any}>
+                          <Badge variant={getStatusVariant(campaign.status)}>
                             {getStatusIcon(campaign.status)}
                             <span className="ml-1">{campaign.status}</span>
                           </Badge>
