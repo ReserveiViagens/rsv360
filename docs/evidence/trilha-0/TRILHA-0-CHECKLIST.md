@@ -266,9 +266,7 @@
 
 - [x] Lint cluster #111 auth-provider-login-register ?3 ? **GO condicional** *(PR #526)* ? `issue-237/LINT-237-TURISMO-AUTH-PROVIDER-LOGIN-REGISTER.md`
 
-- [x] Lint cluster #112 booking-analytics-excursoes ?3 ? **GO condicional** *(PR #527)* ? `issue-237/LINT-237-TURISMO-BOOKING-ANALYTICS-EXCURSOES.md`
-
-- [x] Lint cluster #113 roteiro-leilao-dashboard ?3 ? **GO condicional** *(PR #528)* ? `issue-237/LINT-237-TURISMO-ROTEIRO-LEILAO-DASHBOARD.md`
+- [x] Lint cluster #114 navigation-report-security ?3 ? **GO condicional** *(PR #529)* ? `issue-237/LINT-237-TURISMO-NAVIGATION-REPORT-SECURITY.md`
 
 ## Decis?o Trilha 0
 
