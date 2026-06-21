@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-02 (cluster #26 concluído)  
-**Baseline global:** **1583** warnings  
+**Atualizado:** 2026-06-16 (cluster #27 concluído)  
+**Baseline global:** **1541** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1583** |
-| Clusters concluídos | **26** / 120 |
-| PR empilhada mais recente | **#438** (cluster #26, −42) |
-| Próximo cluster | **#27** — configuracoes-avancadas + configuracoes-usuarios + groups src (−42) |
+| Warnings globais | **1541** |
+| Clusters concluídos | **27** / 120 |
+| PR empilhada mais recente | **#439** (cluster #27, −42) |
+| Próximo cluster | **#28** — integracoes-apis + marketplace-parceiros + notification-system-test (−42) |
 
 ## Padrão por cluster (repetir)
 
@@ -58,8 +58,9 @@
 | #436 | TaskManager + leiloesApi + marketplace | −47 → **1670** | chat-notifications |
 | #437 | CustomerManagement + FinalDeploySystem + AccountingIntegration | −45 → **1625** | task-leiloes-marketplace |
 | #438 | documents + groups + TestingPage | −42 → **1583** | customer-deploy-accounting |
+| #439 | configuracoes-avancadas + configuracoes-usuarios + groups (src) | −42 → **1541** | documents-groups-testing |
 
-## Clusters 1–26 (próximos na fila)
+## Clusters 1–27 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -89,8 +90,9 @@
 | 24 | −47 | TaskManager, leiloesApi, marketplace | **concluído** (#436) |
 | 25 | −45 | CustomerManagement, FinalDeploySystem, AccountingIntegration | **concluído** (#437) |
 | 26 | −42 | documents, groups, TestingPage | **concluído** (#438) |
+| 27 | −42 | configuracoes-avancadas, configuracoes-usuarios, groups (src) | **concluído** (#439) |
 
-## Clusters 27–120
+## Clusters 28–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
