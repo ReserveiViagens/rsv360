@@ -94,6 +94,7 @@
 | #477 | DocumentManager + BudgetSystem + FinancialManager | −21 → **487** | twofactor-booking-customer |
 | #478 | ModernSidebar + MarketingAnalytics + PushNotifications | −21 → **466** | document-budget-financial |
 | #479 | ReportScheduler + AITutor + Select | −21 → **445** | sidebar-marketing-push |
+| #480 | NotificationContext + finance + notifications-dashboard | −19 → **426** | report-aitutor-select |
 
 ## Clusters 1–50 (concluídos)
 

@@ -37,6 +37,31 @@ interface NotificationContextType {
   getUnreadNotifications: () => NotificationData[];
 }
 
+interface BookingEvent {
+  id: string | number;
+  customerName: string;
+  destination: string;
+}
+
+interface PaymentEvent {
+  id: string | number;
+  amount: number;
+}
+
+interface CustomerMessageEvent {
+  id: string | number;
+  customerName: string;
+  content: string;
+  customerId: string | number;
+}
+
+interface SystemAlertEvent {
+  id: string | number;
+  message: string;
+  priority?: NotificationData['priority'];
+  actionUrl?: string;
+}
+
 // ===================================================================
 // REDUCER
 // ===================================================================
@@ -166,182 +191,156 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   // ===================================================================
 
   useEffect(() => {
-    if (user?.id) {
-      const connectWebSocket = async () => {
-        try {
-          await webSocketService.connect(String(user.id), user.token || '');
-          dispatch({ type: 'SET_CONNECTION_STATUS', payload: true });
-          
-          // Configurar listeners
-          setupWebSocketListeners();
-          
-          // Carregar notificações existentes
-          loadExistingNotifications();
-          
-        } catch (error) {
-          console.error('Erro ao conectar WebSocket:', error);
-          dispatch({ type: 'SET_CONNECTION_STATUS', payload: false });
-        }
-      };
-
-      connectWebSocket();
+    if (!user?.id) {
+      return undefined;
     }
+
+    const showNotificationToast = (notification: NotificationData) => {
+      console.log('🔔 Nova notificação:', notification);
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(notification.title, {
+          body: notification.message,
+          icon: '/favicon.ico',
+          tag: notification.id
+        });
+      }
+    };
+
+    const setupWebSocketListeners = () => {
+      webSocketService.on('notification:new', (notification: NotificationData) => {
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+
+        if (!notification.read) {
+          showNotificationToast(notification);
+        }
+      });
+
+      webSocketService.on('notification:read', (notificationId: string) => {
+        dispatch({ type: 'MARK_AS_READ', payload: notificationId });
+      });
+
+      webSocketService.on('booking:created', (booking: BookingEvent) => {
+        const notification: NotificationData = {
+          id: `booking_${booking.id}`,
+          type: 'booking',
+          title: 'Nova Reserva',
+          message: `${booking.customerName} fez uma reserva para ${booking.destination}`,
+          timestamp: new Date(),
+          read: false,
+          priority: 'medium',
+          actionUrl: `/reservations/${booking.id}`,
+          metadata: { booking }
+        };
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      });
+
+      webSocketService.on('payment:received', (payment: PaymentEvent) => {
+        const notification: NotificationData = {
+          id: `payment_${payment.id}`,
+          type: 'payment',
+          title: 'Pagamento Recebido',
+          message: `Pagamento de R$ ${payment.amount} confirmado`,
+          timestamp: new Date(),
+          read: false,
+          priority: 'high',
+          actionUrl: `/payments/${payment.id}`,
+          metadata: { payment }
+        };
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      });
+
+      webSocketService.on('customer:message', (message: CustomerMessageEvent) => {
+        const notification: NotificationData = {
+          id: `message_${message.id}`,
+          type: 'customer',
+          title: 'Nova Mensagem',
+          message: `${message.customerName}: ${message.content.substring(0, 50)}...`,
+          timestamp: new Date(),
+          read: false,
+          priority: 'medium',
+          actionUrl: `/chat/${message.customerId}`,
+          metadata: { message }
+        };
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      });
+
+      webSocketService.on('system:alert', (alert: SystemAlertEvent) => {
+        const notification: NotificationData = {
+          id: `alert_${alert.id}`,
+          type: 'system',
+          title: 'Alerta do Sistema',
+          message: alert.message,
+          timestamp: new Date(),
+          read: false,
+          priority: alert.priority || 'high',
+          actionUrl: alert.actionUrl,
+          metadata: { alert }
+        };
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      });
+    };
+
+    const loadExistingNotifications = async () => {
+      try {
+        const mockNotifications: NotificationData[] = [
+          {
+            id: '1',
+            type: 'booking',
+            title: 'Reserva Confirmada',
+            message: 'Maria Santos confirmou reserva para Porto de Galinhas',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30),
+            read: false,
+            priority: 'medium',
+            actionUrl: '/reservations/1'
+          },
+          {
+            id: '2',
+            type: 'payment',
+            title: 'Pagamento Processado',
+            message: 'Pagamento de R$ 1.500,00 processado com sucesso',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60),
+            read: true,
+            priority: 'high',
+            actionUrl: '/payments/2'
+          },
+          {
+            id: '3',
+            type: 'customer',
+            title: 'Nova Mensagem',
+            message: 'João Silva enviou uma mensagem sobre sua viagem',
+            timestamp: new Date(Date.now() - 1000 * 60 * 90),
+            read: false,
+            priority: 'low',
+            actionUrl: '/chat/3'
+          }
+        ];
+
+        dispatch({ type: 'LOAD_NOTIFICATIONS', payload: mockNotifications });
+      } catch (error) {
+        console.error('Erro ao carregar notificações:', error);
+      }
+    };
+
+    const connectWebSocket = async () => {
+      try {
+        await webSocketService.connect(String(user.id), user.token || '');
+        dispatch({ type: 'SET_CONNECTION_STATUS', payload: true });
+        setupWebSocketListeners();
+        await loadExistingNotifications();
+      } catch (error) {
+        console.error('Erro ao conectar WebSocket:', error);
+        dispatch({ type: 'SET_CONNECTION_STATUS', payload: false });
+      }
+    };
+
+    connectWebSocket();
 
     return () => {
       webSocketService.disconnect();
       dispatch({ type: 'SET_CONNECTION_STATUS', payload: false });
     };
-  }, [user?.id]);
-
-  // ===================================================================
-  // CONFIGURAÇÃO DE LISTENERS
-  // ===================================================================
-
-  const setupWebSocketListeners = () => {
-    // Nova notificação
-    webSocketService.on('notification:new', (notification: NotificationData) => {
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-      
-      // Mostrar toast se não estiver lida
-      if (!notification.read) {
-        showNotificationToast(notification);
-      }
-    });
-
-    // Notificação marcada como lida
-    webSocketService.on('notification:read', (notificationId: string) => {
-      dispatch({ type: 'MARK_AS_READ', payload: notificationId });
-    });
-
-    // Nova reserva
-    webSocketService.on('booking:created', (booking: any) => {
-      const notification: NotificationData = {
-        id: `booking_${booking.id}`,
-        type: 'booking',
-        title: 'Nova Reserva',
-        message: `${booking.customerName} fez uma reserva para ${booking.destination}`,
-        timestamp: new Date(),
-        read: false,
-        priority: 'medium',
-        actionUrl: `/reservations/${booking.id}`,
-        metadata: { booking }
-      };
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-    });
-
-    // Pagamento recebido
-    webSocketService.on('payment:received', (payment: any) => {
-      const notification: NotificationData = {
-        id: `payment_${payment.id}`,
-        type: 'payment',
-        title: 'Pagamento Recebido',
-        message: `Pagamento de R$ ${payment.amount} confirmado`,
-        timestamp: new Date(),
-        read: false,
-        priority: 'high',
-        actionUrl: `/payments/${payment.id}`,
-        metadata: { payment }
-      };
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-    });
-
-    // Mensagem de cliente
-    webSocketService.on('customer:message', (message: any) => {
-      const notification: NotificationData = {
-        id: `message_${message.id}`,
-        type: 'customer',
-        title: 'Nova Mensagem',
-        message: `${message.customerName}: ${message.content.substring(0, 50)}...`,
-        timestamp: new Date(),
-        read: false,
-        priority: 'medium',
-        actionUrl: `/chat/${message.customerId}`,
-        metadata: { message }
-      };
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-    });
-
-    // Alerta do sistema
-    webSocketService.on('system:alert', (alert: any) => {
-      const notification: NotificationData = {
-        id: `alert_${alert.id}`,
-        type: 'system',
-        title: 'Alerta do Sistema',
-        message: alert.message,
-        timestamp: new Date(),
-        read: false,
-        priority: alert.priority || 'high',
-        actionUrl: alert.actionUrl,
-        metadata: { alert }
-      };
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-    });
-  };
-
-  // ===================================================================
-  // CARREGAMENTO DE NOTIFICAÇÕES EXISTENTES
-  // ===================================================================
-
-  const loadExistingNotifications = async () => {
-    try {
-      // Simular carregamento de notificações existentes
-      const mockNotifications: NotificationData[] = [
-        {
-          id: '1',
-          type: 'booking',
-          title: 'Reserva Confirmada',
-          message: 'Maria Santos confirmou reserva para Porto de Galinhas',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 min atrás
-          read: false,
-          priority: 'medium',
-          actionUrl: '/reservations/1'
-        },
-        {
-          id: '2',
-          type: 'payment',
-          title: 'Pagamento Processado',
-          message: 'Pagamento de R$ 1.500,00 processado com sucesso',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hora atrás
-          read: true,
-          priority: 'high',
-          actionUrl: '/payments/2'
-        },
-        {
-          id: '3',
-          type: 'customer',
-          title: 'Nova Mensagem',
-          message: 'João Silva enviou uma mensagem sobre sua viagem',
-          timestamp: new Date(Date.now() - 1000 * 60 * 90), // 1.5 horas atrás
-          read: false,
-          priority: 'low',
-          actionUrl: '/chat/3'
-        }
-      ];
-
-      dispatch({ type: 'LOAD_NOTIFICATIONS', payload: mockNotifications });
-    } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
-    }
-  };
-
-  // ===================================================================
-  // TOAST DE NOTIFICAÇÃO
-  // ===================================================================
-
-  const showNotificationToast = (notification: NotificationData) => {
-    // Implementar toast system aqui
-    console.log('🔔 Nova notificação:', notification);
-    
-    // Em um ambiente real, você usaria um sistema de toast
-    // como react-hot-toast ou react-toastify
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(notification.title, {
-        body: notification.message,
-        icon: '/favicon.ico',
-        tag: notification.id
-      });
-    }
-  };
+  }, [user?.id, user?.token]);
 
   // ===================================================================
   // MÉTODOS DO CONTEXT
