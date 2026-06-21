@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-16 (cluster #35 concluído)  
-**Baseline global:** **1221** warnings  
+**Atualizado:** 2026-06-20 (cluster #36 concluído)  
+**Baseline global:** **1185** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1221** |
-| Clusters concluídos | **35** / 120 |
-| PR empilhada mais recente | **#446** (cluster #35, −37) |
-| Próximo cluster | **#36** — ExecutiveDashboard + UserManagement + DocumentationSystem (−36) |
+| Warnings globais | **1185** |
+| Clusters concluídos | **36** / 120 |
+| PR empilhada mais recente | **#447** (cluster #36, −36) |
+| Próximo cluster | **#37** — FAQSystem + FinancialDashboard + dashboard-reservei-viagens (−35) |
 
 ## Padrão por cluster (repetir)
 
@@ -65,8 +65,9 @@
 | #444 | src/documents + src/e-commerce + TutorialSystem | −39 → **1297** | dashboard-rsv-voice-ecommerce |
 | #445 | TaxManagement + PaymentModal + CustomReportBuilder | −39 → **1258** | src-documents-ecommerce-tutorial |
 | #446 | authService + visas + workflows | −37 → **1221** | tax-payment-customreport |
+| #447 | ExecutiveDashboard + UserManagement + DocumentationSystem | −36 → **1185** | authservice-visas-workflows |
 
-## Clusters 1–35 (concluídos)
+## Clusters 1–36 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -105,8 +106,9 @@
 | 33 | −39 | src/documents, src/e-commerce, TutorialSystem | **concluído** (#444) |
 | 34 | −39 | TaxManagement, PaymentModal, CustomReportBuilder | **concluído** (#445) |
 | 35 | −37 | authService, visas, workflows | **concluído** (#446) |
+| 36 | −36 | ExecutiveDashboard, UserManagement, DocumentationSystem | **concluído** (#447) |
 
-## Clusters 30–120
+## Clusters 37–120
 
 Lista completa em `apps/turismo/scripts/lint-237-clusters.json`.  
 Meta final: **0** warnings globais (excl. voucher/validation) ou GO condicional documentado por módulo.
