@@ -9,7 +9,7 @@ interface HistoryReport {
   status: 'completed' | 'failed' | 'processing';
   size: string;
   downloadUrl?: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 
 interface ReportHistoryProps {
