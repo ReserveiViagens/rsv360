@@ -272,6 +272,8 @@
 
 - [x] Lint cluster #116 checkbox-input-keyboard ?3 ? **GO condicional** *(PR #535, retomado)* ? `issue-237/LINT-237-TURISMO-CHECKBOX-INPUT-KEYBOARD.md`
 
+- [x] Lint cluster #117 label-separator-switch ?3 ? **GO condicional** *(PR #537)* ? `issue-237/LINT-237-TURISMO-LABEL-SEPARATOR-SWITCH.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
