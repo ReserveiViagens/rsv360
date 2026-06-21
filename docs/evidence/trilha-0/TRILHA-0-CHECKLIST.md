@@ -224,6 +224,7 @@
 - [x] Lint NotificationCenter + AnalyticsDashboard (reports) + usePWA −15 — **GO condicional** *(PR #489)* — `issue-237/LINT-237-TURISMO-NOTIFICATION-ANALYTICS-PWA.md`
 - [x] Lint user-service + enterprises + reports-rsv −13 — **GO condicional** *(PR #490)* — `issue-237/LINT-237-TURISMO-USER-ENTERPRISES-REPORTS.md`
 - [x] Lint tickets + transport + CustomersPage −12 — **GO condicional** *(PR #491)* — `issue-237/LINT-237-TURISMO-TICKETS-TRANSPORT-CUSTOMERS.md`
+- [x] Lint cotacoes/index + ui-components-test + HotelSelector −12 — **GO condicional** *(PR #492)* — `issue-237/LINT-237-TURISMO-COTACOES-UI-HOTELSELECTOR.md`
 
 ## Decisão Trilha 0
 

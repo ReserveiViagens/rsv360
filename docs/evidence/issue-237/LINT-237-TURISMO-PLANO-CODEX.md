@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #76 concluído)  
-**Baseline global:** **253** warnings  
+**Atualizado:** 2026-06-20 (cluster #77 concluído)  
+**Baseline global:** **241** warnings  
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **253** |
-| Clusters concluídos | **76** / 120 |
-| PR empilhada mais recente | **#491** (cluster #76, −12) |
-| Próximo cluster | **#77** — cotacoes/index + ui-components-test + HotelSelector (−12) |
+| Warnings globais | **241** |
+| Clusters concluídos | **77** / 120 |
+| PR empilhada mais recente | **#492** (cluster #77, −12) |
+| Próximo cluster | **#78** — PasswordReset + NavigationMenu + BroadcastSystem (−12) |
 
 ## Padrão por cluster (repetir)
 
@@ -106,6 +106,7 @@
 | #489 | NotificationCenter + AnalyticsDashboard (reports) + usePWA | −15 → **278** | accommodations-email-marketing |
 | #490 | user-service + enterprises + reports-rsv | −13 → **265** | notification-analytics-pwa |
 | #491 | tickets + transport + CustomersPage | −12 → **253** | user-enterprises-reports |
+| #492 | cotacoes/index + ui-components-test + HotelSelector | −12 → **241** | tickets-transport-customers |
 
 ## Clusters 1–50 (concluídos)
 
