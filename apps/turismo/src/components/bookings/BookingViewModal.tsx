@@ -13,7 +13,6 @@ import {
   User,
   Phone,
   Mail,
-  CreditCard,
   Clock,
   CheckCircle,
   XCircle,
