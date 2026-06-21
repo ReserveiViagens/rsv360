@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-16 (cluster #32 concluído)  
-**Baseline global:** **1336** warnings  
+**Atualizado:** 2026-06-16 (cluster #35 concluído)  
+**Baseline global:** **1221** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1336** |
-| Clusters concluídos | **32** / 120 |
-| PR empilhada mais recente | **#443** (cluster #32, −39) |
-| Próximo cluster | **#33** — src/documents + src/e-commerce + TutorialSystem (−39) |
+| Warnings globais | **1221** |
+| Clusters concluídos | **35** / 120 |
+| PR empilhada mais recente | **#446** (cluster #35, −37) |
+| Próximo cluster | **#36** — ExecutiveDashboard + UserManagement + DocumentationSystem (−36) |
 
 ## Padrão por cluster (repetir)
 
@@ -62,9 +62,11 @@
 | #440 | integracoes-apis + marketplace-parceiros + notification-system-test | −42 → **1499** | configuracoes-avancadas-usuarios-groups |
 | #441 | relatorios-personalizados + DataExportSystem + BackupRecoverySystem | −42 → **1457** | integracoes-marketplace-notification |
 | #442 | PerformanceTesting + templates + dashboard-rsv-backup | −40 → **1375** | training-leadcapture-settings |
-| #443 | dashboard-rsv + voice-commerce + e-commerce | −39 → **1336** | performance-templates-dashboard-backup |
+| #444 | src/documents + src/e-commerce + TutorialSystem | −39 → **1297** | dashboard-rsv-voice-ecommerce |
+| #445 | TaxManagement + PaymentModal + CustomReportBuilder | −39 → **1258** | src-documents-ecommerce-tutorial |
+| #446 | authService + visas + workflows | −37 → **1221** | tax-payment-customreport |
 
-## Clusters 1–32 (concluídos)
+## Clusters 1–35 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -100,6 +102,9 @@
 | 30 | −42 | TrainingSystem, LeadCapture, SettingsPanel | **concluído** (#447) |
 | 31 | −40 | PerformanceTesting, cotacoes/templates, dashboard-rsv-backup | **concluído** (#442) |
 | 32 | −39 | dashboard-rsv, voice-commerce, e-commerce | **concluído** (#443) |
+| 33 | −39 | src/documents, src/e-commerce, TutorialSystem | **concluído** (#444) |
+| 34 | −39 | TaxManagement, PaymentModal, CustomReportBuilder | **concluído** (#445) |
+| 35 | −37 | authService, visas, workflows | **concluído** (#446) |
 
 ## Clusters 30–120
 
