@@ -259,6 +259,8 @@
 
 - [x] Lint cluster #102 attractions-nova-leiloes ?3 ? **GO condicional** *(PR #517)* ? `issue-237/LINT-237-TURISMO-ATTRACTIONS-NOVA-LEILOES.md`
 
+- [x] Lint cluster #103 viagens-grupo-nova-login ?3 ? **GO condicional** *(PR #518)* ? `issue-237/LINT-237-TURISMO-VIAGENS-GRUPO-NOVA-LOGIN.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |

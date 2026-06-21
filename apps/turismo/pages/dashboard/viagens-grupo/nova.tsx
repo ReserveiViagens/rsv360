@@ -13,7 +13,7 @@ export default function NovoGrupoPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Grupo>) => {
     try {
       setIsLoading(true)
       await viagensGrupoApi.createGrupo(data)
