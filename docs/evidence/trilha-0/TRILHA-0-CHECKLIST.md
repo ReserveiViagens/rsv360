@@ -208,6 +208,7 @@
 - [x] Lint cotacoes/templates/new + loyalty + analytics-dashboard −21 — **GO condicional** *(PR #473)* — `issue-237/LINT-237-TURISMO-COTACOES-LOYALTY-ANALYTICS.md`
 - [x] Lint analytics-system-test + calendar (src) + component-test −21 — **GO condicional** *(PR #474)* — `issue-237/LINT-237-TURISMO-ANALYTICS-CALENDAR-COMPONENT.md`
 - [x] Lint dashboard-new + financial-system-test + loyalty (src) −21 — **GO condicional** *(PR #475)* — `issue-237/LINT-237-TURISMO-DASHBOARD-FINANCIAL-LOYALTY.md`
+- [x] Lint TwoFactorAuth + BookingTable + CustomerList −21 — **GO condicional** *(PR #476)* — `issue-237/LINT-237-TURISMO-TWOFACTOR-BOOKING-CUSTOMER.md`
 
 ## Decisão Trilha 0
 
