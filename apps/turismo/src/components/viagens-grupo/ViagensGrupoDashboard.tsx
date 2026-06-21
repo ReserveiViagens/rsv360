@@ -1,18 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Users, Heart, Calendar, DollarSign, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-const MOCK_STATS = {
+const MOCK_VIAGENS_GRUPO_STATS = {
   gruposAtivos: 18,
   totalParticipantes: 156,
   wishlistsCompartilhadas: 42,
-  receitaTotal: 89000
+  receitaTotal: 89000,
 }
 
 export function ViagensGrupoDashboard() {
-  const [stats] = useState(MOCK_STATS)
+  const [stats, setStats] = useState({
+    gruposAtivos: 0,
+    totalParticipantes: 0,
+    wishlistsCompartilhadas: 0,
+    receitaTotal: 0
+  })
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock dashboard stats until API wired
+    setStats(MOCK_VIAGENS_GRUPO_STATS)
+  }, [])
 
   return (
     <div className="space-y-6">

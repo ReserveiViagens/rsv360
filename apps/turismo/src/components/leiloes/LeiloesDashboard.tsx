@@ -27,7 +27,7 @@ export function LeiloesDashboard() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- load upcoming auctions on mount
-    void loadUpcomingAuctions()
+    loadUpcomingAuctions()
   }, [loadUpcomingAuctions])
 
   const formatTimeUntil = (dateString: string) => {

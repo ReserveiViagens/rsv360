@@ -1,18 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapPin, Calendar, Users, TrendingUp, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-const MOCK_STATS = {
+const MOCK_EXCURSOES_STATS = {
   totalExcursoes: 25,
   emPlanejamento: 8,
   emAndamento: 5,
-  concluidas: 12
+  concluidas: 12,
 }
 
 export function ExcursoesDashboard() {
-  const [stats] = useState(MOCK_STATS)
+  const [stats, setStats] = useState({
+    totalExcursoes: 0,
+    emPlanejamento: 0,
+    emAndamento: 0,
+    concluidas: 0
+  })
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock dashboard stats until API wired
+    setStats(MOCK_EXCURSOES_STATS)
+  }, [])
 
   return (
     <div className="space-y-6">

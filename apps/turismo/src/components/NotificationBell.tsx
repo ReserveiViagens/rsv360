@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, X, Check, Trash2 } from 'lucide-react';
 import { useNotifications } from '../services/notifications';
 
@@ -9,7 +9,13 @@ interface NotificationBellProps {
 const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) => {
   const { notifications, markAsRead, deleteNotification, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const unread = notifications.filter(n => !n.read).length;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync unread count from notifications
+      setUnreadCount(unread);
+  }, [notifications]);
 
   const handleMarkAsRead = (id: string) => {
     markAsRead(id);
