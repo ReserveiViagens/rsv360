@@ -19,7 +19,8 @@ export function useSidebar() {
       const savedState = localStorage.getItem(STORAGE_KEY);
       if (savedState) {
         const parsedState = JSON.parse(savedState);
-        setSidebarState(parsedState);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate sidebar state from localStorage
+      setSidebarState(parsedState);
       }
     } catch (error) {
       console.warn('Erro ao carregar estado do sidebar:', error);

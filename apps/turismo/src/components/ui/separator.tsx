@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils"
 import { radixCreate, radixUiExport } from "@/lib/radix-jsx"
 
 const Separator = radixUiExport<SeparatorProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, SeparatorProps>(
-    ({ className, orientation = "horizontal", decorative = true, ...props }, ref) =>
-      radixCreate(SeparatorPrimitive.Root, {
+  React.forwardRef<HTMLDivElement, SeparatorProps>(function Separator(
+    { className, orientation = "horizontal", decorative = true, ...props },
+    ref
+  ) {
+    return radixCreate(SeparatorPrimitive.Root, {
         ref,
         decorative,
         orientation,
@@ -20,8 +22,8 @@ const Separator = radixUiExport<SeparatorProps, HTMLDivElement>(
           className
         ),
         ...props,
-      })
-  ) as React.FC<SeparatorProps & React.RefAttributes<HTMLDivElement>>
+    })
+  }) as React.FC<SeparatorProps & React.RefAttributes<HTMLDivElement>>
 )
 Separator.displayName = SeparatorPrimitive.Root.displayName
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { GraduationCap, Play, Pause, CheckCircle, Clock, Users, BookOpen, Award, Target, BarChart3, Plus, Edit, Trash2, Eye, Download, Share } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea, Progress } from '../ui';
+import React, { useState } from 'react';
+import { GraduationCap, Play, CheckCircle, Clock, Users, BookOpen, Award, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal, Textarea, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface TrainingCourse {
@@ -51,130 +51,123 @@ interface TrainingSystemProps {
   onUserEnrolled?: (userId: string, courseId: string) => void;
 }
 
+const MOCK_COURSES: TrainingCourse[] = [
+  {
+    id: '1',
+    title: 'Introdução ao Sistema RSV',
+    description: 'Curso completo para novos usuários aprenderem o básico do sistema',
+    category: 'onboarding',
+    difficulty: 'beginner',
+    duration: 120,
+    modules: [
+      {
+        id: 'm1',
+        title: 'Visão Geral do Sistema',
+        description: 'Conheça as principais funcionalidades',
+        duration: 15,
+        type: 'video',
+        content: 'video_url_here',
+        order: 1,
+        isCompleted: false
+      },
+      {
+        id: 'm2',
+        title: 'Primeira Reserva',
+        description: 'Aprenda a criar sua primeira reserva',
+        duration: 25,
+        type: 'interactive',
+        content: 'interactive_content_here',
+        order: 2,
+        isCompleted: false
+      },
+      {
+        id: 'm3',
+        title: 'Gestão de Clientes',
+        description: 'Como gerenciar clientes no sistema',
+        duration: 30,
+        type: 'text',
+        content: 'text_content_here',
+        order: 3,
+        isCompleted: false
+      }
+    ],
+    instructor: 'Equipe RSV',
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-20',
+    status: 'published',
+    enrolledUsers: 45,
+    completionRate: 78,
+    rating: 4.8,
+    tags: ['iniciante', 'onboarding', 'sistema']
+  },
+  {
+    id: '2',
+    title: 'Gestão Avançada de Reservas',
+    description: 'Técnicas avançadas para gestão eficiente de reservas',
+    category: 'advanced',
+    difficulty: 'advanced',
+    duration: 180,
+    modules: [
+      {
+        id: 'm4',
+        title: 'Otimização de Preços',
+        description: 'Estratégias para maximizar receita',
+        duration: 40,
+        type: 'video',
+        content: 'video_url_here',
+        order: 1,
+        isCompleted: false
+      },
+      {
+        id: 'm5',
+        title: 'Análise de Mercado',
+        description: 'Como analisar tendências do mercado',
+        duration: 35,
+        type: 'interactive',
+        content: 'interactive_content_here',
+        order: 2,
+        isCompleted: false
+      }
+    ],
+    instructor: 'Especialista RSV',
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-15',
+    status: 'published',
+    enrolledUsers: 23,
+    completionRate: 65,
+    rating: 4.6,
+    tags: ['avançado', 'reservas', 'otimização']
+  }
+];
+
+const MOCK_PROGRESS: TrainingProgress[] = [
+  {
+    userId: 'user1',
+    courseId: '1',
+    completedModules: ['m1'],
+    currentModule: 'm2',
+    progress: 33,
+    startedAt: '2024-01-15',
+    lastAccessed: '2024-01-20'
+  }
+];
+
 const TrainingSystem: React.FC<TrainingSystemProps> = ({
-  onCourseCreated,
-  onCourseUpdated,
+  onCourseCreated: _onCourseCreated,
+  onCourseUpdated: _onCourseUpdated,
   onCourseDeleted,
   onUserEnrolled
 }) => {
-  const [courses, setCourses] = useState<TrainingCourse[]>([]);
-  const [userProgress, setUserProgress] = useState<TrainingProgress[]>([]);
+  const [courses, setCourses] = useState<TrainingCourse[]>(MOCK_COURSES);
+  const [userProgress, setUserProgress] = useState<TrainingProgress[]>(MOCK_PROGRESS);
   const [selectedCourse, setSelectedCourse] = useState<TrainingCourse | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('courses');
   
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCourses: TrainingCourse[] = [
-      {
-        id: '1',
-        title: 'Introdução ao Sistema RSV',
-        description: 'Curso completo para novos usuários aprenderem o básico do sistema',
-        category: 'onboarding',
-        difficulty: 'beginner',
-        duration: 120,
-        modules: [
-          {
-            id: 'm1',
-            title: 'Visão Geral do Sistema',
-            description: 'Conheça as principais funcionalidades',
-            duration: 15,
-            type: 'video',
-            content: 'video_url_here',
-            order: 1,
-            isCompleted: false
-          },
-          {
-            id: 'm2',
-            title: 'Primeira Reserva',
-            description: 'Aprenda a criar sua primeira reserva',
-            duration: 25,
-            type: 'interactive',
-            content: 'interactive_content_here',
-            order: 2,
-            isCompleted: false
-          },
-          {
-            id: 'm3',
-            title: 'Gestão de Clientes',
-            description: 'Como gerenciar clientes no sistema',
-            duration: 30,
-            type: 'text',
-            content: 'text_content_here',
-            order: 3,
-            isCompleted: false
-          }
-        ],
-        instructor: 'Equipe RSV',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-20',
-        status: 'published',
-        enrolledUsers: 45,
-        completionRate: 78,
-        rating: 4.8,
-        tags: ['iniciante', 'onboarding', 'sistema']
-      },
-      {
-        id: '2',
-        title: 'Gestão Avançada de Reservas',
-        description: 'Técnicas avançadas para gestão eficiente de reservas',
-        category: 'advanced',
-        difficulty: 'advanced',
-        duration: 180,
-        modules: [
-          {
-            id: 'm4',
-            title: 'Otimização de Preços',
-            description: 'Estratégias para maximizar receita',
-            duration: 40,
-            type: 'video',
-            content: 'video_url_here',
-            order: 1,
-            isCompleted: false
-          },
-          {
-            id: 'm5',
-            title: 'Análise de Mercado',
-            description: 'Como analisar tendências do mercado',
-            duration: 35,
-            type: 'interactive',
-            content: 'interactive_content_here',
-            order: 2,
-            isCompleted: false
-          }
-        ],
-        instructor: 'Especialista RSV',
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-15',
-        status: 'published',
-        enrolledUsers: 23,
-        completionRate: 65,
-        rating: 4.6,
-        tags: ['avançado', 'reservas', 'otimização']
-      }
-    ];
-
-    const mockProgress: TrainingProgress[] = [
-      {
-        userId: 'user1',
-        courseId: '1',
-        completedModules: ['m1'],
-        currentModule: 'm2',
-        progress: 33,
-        startedAt: '2024-01-15',
-        lastAccessed: '2024-01-20'
-      }
-    ];
-
-    setCourses(mockCourses);
-    setUserProgress(mockProgress);
-  }, []);
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
