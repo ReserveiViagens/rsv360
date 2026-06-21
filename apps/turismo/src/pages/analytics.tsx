@@ -27,7 +27,7 @@ interface AnalyticsCategory {
 }
 
 export default function Analytics() {
-    const { user } = useAuth();
+    const { user: _user } = useAuth();
     const router = useRouter();
     const [selectedPeriod, setSelectedPeriod] = useState('30d');
     const [loading, setLoading] = useState(true);
