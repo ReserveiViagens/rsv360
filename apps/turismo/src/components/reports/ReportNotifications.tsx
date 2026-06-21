@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Mail, Smartphone, Settings, Check, X, Clock, AlertCircle } from 'lucide-react';
+import { Bell, Mail, Smartphone, X, AlertCircle } from 'lucide-react';
 
 interface NotificationRule {
   id: string;
@@ -75,6 +75,7 @@ const ReportNotifications: React.FC<ReportNotificationsProps> = ({ className = '
       }
     ];
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock notification rules on mount
     setRules(mockRules);
   }, []);
 
