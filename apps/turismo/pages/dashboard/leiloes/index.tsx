@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { LeilaoCard } from '../../../src/components/leiloes/LeilaoCard'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
@@ -10,7 +9,6 @@ import { Gavel, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 export default function LeiloesPage() {
-  const router = useRouter()
   const [leiloes, setLeiloes] = useState<Leilao[]>([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<LeilaoFilters>({
@@ -24,11 +22,7 @@ export default function LeiloesPage() {
     totalPages: 0,
   })
 
-  useEffect(() => {
-    loadLeiloes()
-  }, [filters])
-
-  const loadLeiloes = async () => {
+  const loadLeiloes = useCallback(async () => {
     try {
       setLoading(true)
       const response = await leiloesApi.getLeiloes(filters)
@@ -47,7 +41,12 @@ export default function LeiloesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload leiloes when filters change
+    loadLeiloes()
+  }, [loadLeiloes])
 
   const handleSearchChange = (value: string) => {
     setFilters(prev => ({ ...prev, search: value, page: 1 }))

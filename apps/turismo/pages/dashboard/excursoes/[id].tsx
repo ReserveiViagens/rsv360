@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { ExcursaoForm } from '../../../src/components/excursoes/ExcursaoForm'
@@ -20,13 +20,7 @@ export default function ExcursaoDetalhesPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  useEffect(() => {
-    if (id) {
-      loadExcursao()
-    }
-  }, [id])
-
-  const loadExcursao = async () => {
+  const loadExcursao = useCallback(async () => {
     try {
       setLoading(true)
       const data = await excursoesApi.getExcursaoById(id as string)
@@ -38,13 +32,20 @@ export default function ExcursaoDetalhesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, router])
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- load excursao when route id is available
+      loadExcursao()
+    }
+  }, [id, loadExcursao])
 
   const handleEdit = () => {
     setEditing(true)
   }
 
-  const handleSave = async (data: any) => {
+  const handleSave = async (data: Partial<Excursao>) => {
     try {
       setIsSaving(true)
       await excursoesApi.updateExcursao(id as string, data)
