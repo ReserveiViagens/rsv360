@@ -8,7 +8,6 @@ import {
   Filter,
   ExternalLink,
   Star,
-  Clock,
   Users,
   MapPin,
   Grid3X3,
@@ -18,8 +17,6 @@ import {
   Zap,
   Ticket,
   DollarSign,
-  CheckCircle,
-  TrendingUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -28,7 +25,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   getParksByCity,
   getAllParks,
-  searchParks,
   parkTypes,
   caldasNovasParks,
   type Park,
@@ -73,6 +69,7 @@ function ParkCard({ park, viewMode }: { park: Park; viewMode: 'grid' | 'list' })
           viewMode === 'grid' ? 'aspect-video' : 'w-48 shrink-0 aspect-video'
         }`}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- park card image from parks-data catalog */}
         <img
           src={park.imageUrl || '/placeholder.svg?height=300&width=400'}
           alt={park.name}
