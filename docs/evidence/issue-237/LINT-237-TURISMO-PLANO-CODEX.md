@@ -97,6 +97,7 @@
 | #480 | NotificationContext + finance + notifications-dashboard | −19 → **426** | report-aitutor-select |
 | #481 | attractions + integration-system-test + notifications-dashboard (src) | −18 → **408** | notification-finance-dashboard |
 | #482 | AnalyticsDashboard + AdminPanel + AuthPage | −18 → **390** | attractions-integration-notifications-src |
+| #483 | CustomerProfile + Layout + NotificationToast | −18 → **372** | analytics-admin-auth |
 
 ## Clusters 1–50 (concluídos)
 
