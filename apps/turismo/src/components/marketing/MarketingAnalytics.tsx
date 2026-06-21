@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, TrendingUp, Users, Mail, Target, Calendar, Download, RefreshCw, Filter, Eye, PieChart, Activity, DollarSign, Share2, Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { BarChart3, TrendingUp, Users, Target, Download, RefreshCw, PieChart, DollarSign, Share2, Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../components/ui/Button';
 import { Select, SelectOption } from '../components/ui/Select';
 import { Badge } from '../components/ui/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { cn } from '../../utils/cn';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, AreaChart, Area, ComposedChart } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, Pie, Cell, AreaChart, Area, ComposedChart } from 'recharts';
 
 export interface MarketingMetrics {
   totalCampaigns: number;
