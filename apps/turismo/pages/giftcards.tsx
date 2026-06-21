@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import { 
@@ -14,12 +14,6 @@ import {
   DollarSign,
   CreditCard,
   CheckCircle,
-  AlertCircle,
-  Clock,
-  Mail,
-  User,
-  FileText,
-  TrendingUp
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -83,14 +77,10 @@ export default function GiftCardsPage() {
     expires_at: ''
   })
 
-  useEffect(() => {
-    loadData()
-  }, [filters])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
-      const params: any = {}
+      const params: Record<string, string> = {}
       if (filters.status) params.status = filters.status
       if (filters.search) params.search = filters.search
 
@@ -109,7 +99,12 @@ export default function GiftCardsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload gift cards when filters change
+    loadData()
+  }, [loadData])
 
   const handleSave = async () => {
     try {
@@ -364,7 +359,7 @@ export default function GiftCardsPage() {
             <div className="col-span-full bg-white rounded-lg shadow p-12 text-center">
               <Gift className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 text-lg mb-2">Nenhum gift card encontrado</p>
-              <p className="text-gray-500 text-sm">Clique em "Novo Gift Card" para começar</p>
+              <p className="text-gray-500 text-sm">Clique em &quot;Novo Gift Card&quot; para começar</p>
             </div>
           ) : (
             giftCards.map((giftCard) => (
