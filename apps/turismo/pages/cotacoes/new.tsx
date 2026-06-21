@@ -119,15 +119,7 @@ export default function NovaCotacaoPage() {
       <BudgetTypeSelector
         open={isSelectorOpen}
         onOpenChange={setIsSelectorOpen}
-        onSelect={(type: BudgetType) => {
-          // Redirecionar para página apropriada ou galeria de templates
-          const routes = {
-            hotel: '/cotacoes/hoteis',
-            parque: '/cotacoes/parques',
-            atracao: '/cotacoes/atracoes',
-            passeio: '/cotacoes/passeios',
-            personalizado: '/cotacoes/new'
-          };
+        onSelect={(_type: BudgetType) => {
           // Opção: redirecionar para galeria de templates primeiro
           router.push('/cotacoes/templates');
         }}
