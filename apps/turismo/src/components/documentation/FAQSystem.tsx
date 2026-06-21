@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { HelpCircle, Search, Plus, Edit, Trash2, ChevronDown, ChevronUp, MessageCircle, ThumbsUp, ThumbsDown, Star, Tag, Clock, User, Eye, Filter } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea } from '../ui';
+import React, { useState } from 'react';
+import { HelpCircle, Plus, Edit, Trash2, ChevronDown, ChevronUp, MessageCircle, ThumbsUp, ThumbsDown, Tag, Clock, User, Eye } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal, Textarea } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface FAQItem {
@@ -36,100 +36,91 @@ interface FAQSystemProps {
   onFAQViewed?: (id: string) => void;
 }
 
+const MOCK_CATEGORIES: FAQCategory[] = [
+  { id: 'general', name: 'Geral', description: 'Perguntas gerais sobre o sistema', itemCount: 15, icon: 'HelpCircle', color: 'bg-blue-500' },
+  { id: 'reservations', name: 'Reservas', description: 'Dúvidas sobre reservas e agendamentos', itemCount: 22, icon: 'Calendar', color: 'bg-green-500' },
+  { id: 'payments', name: 'Pagamentos', description: 'Questões relacionadas a pagamentos', itemCount: 18, icon: 'CreditCard', color: 'bg-purple-500' },
+  { id: 'technical', name: 'Técnico', description: 'Problemas técnicos e configurações', itemCount: 12, icon: 'Settings', color: 'bg-orange-500' },
+  { id: 'account', name: 'Conta', description: 'Gestão de conta e perfil', itemCount: 8, icon: 'User', color: 'bg-indigo-500' }
+];
+
+const MOCK_FAQS: FAQItem[] = [
+  {
+    id: '1',
+    question: 'Como criar minha primeira reserva no sistema RSV?',
+    answer: 'Para criar sua primeira reserva, siga estes passos:\n\n1. Acesse o menu "Reservas" no painel principal\n2. Clique em "Nova Reserva"\n3. Selecione o pacote de viagem desejado\n4. Escolha as datas de check-in e check-out\n5. Preencha os dados do cliente\n6. Confirme as informações e finalize a reserva\n\nO sistema irá gerar automaticamente um número de confirmação e enviar um email com os detalhes.',
+    category: 'reservations',
+    tags: ['reserva', 'primeira-vez', 'tutorial'],
+    author: 'Equipe RSV',
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-20',
+    status: 'published',
+    helpfulCount: 89,
+    notHelpfulCount: 3,
+    views: 456,
+    priority: 'high'
+  },
+  {
+    id: '2',
+    question: 'Quais são as formas de pagamento aceitas?',
+    answer: 'O sistema RSV aceita as seguintes formas de pagamento:\n\n• Cartão de crédito (Visa, Mastercard, American Express)\n• Cartão de débito\n• PIX (transferência instantânea)\n• Boleto bancário\n• Transferência bancária\n\nPara pagamentos parcelados, consulte as condições específicas de cada pacote de viagem.',
+    category: 'payments',
+    tags: ['pagamento', 'cartão', 'pix', 'boleto'],
+    author: 'Suporte RSV',
+    createdAt: '2024-01-08',
+    updatedAt: '2024-01-15',
+    status: 'published',
+    helpfulCount: 67,
+    notHelpfulCount: 2,
+    views: 234,
+    priority: 'high'
+  },
+  {
+    id: '3',
+    question: 'Como alterar minha senha de acesso?',
+    answer: 'Para alterar sua senha:\n\n1. Acesse "Configurações" no menu do usuário\n2. Clique em "Segurança"\n3. Selecione "Alterar Senha"\n4. Digite sua senha atual\n5. Digite a nova senha (mínimo 8 caracteres)\n6. Confirme a nova senha\n7. Clique em "Salvar"\n\nA nova senha será aplicada imediatamente.',
+    category: 'account',
+    tags: ['senha', 'segurança', 'conta'],
+    author: 'Admin RSV',
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-12',
+    status: 'published',
+    helpfulCount: 45,
+    notHelpfulCount: 1,
+    views: 189,
+    priority: 'medium'
+  },
+  {
+    id: '4',
+    question: 'O que fazer se esquecer minha senha?',
+    answer: 'Se você esqueceu sua senha:\n\n1. Na tela de login, clique em "Esqueci minha senha"\n2. Digite seu email cadastrado\n3. Clique em "Enviar link de recuperação"\n4. Verifique seu email e clique no link recebido\n5. Digite uma nova senha\n6. Confirme a nova senha\n\nO link de recuperação é válido por 24 horas.',
+    category: 'account',
+    tags: ['senha', 'recuperação', 'esqueci'],
+    author: 'Suporte RSV',
+    createdAt: '2024-01-03',
+    updatedAt: '2024-01-10',
+    status: 'published',
+    helpfulCount: 34,
+    notHelpfulCount: 0,
+    views: 156,
+    priority: 'medium'
+  }
+];
+
 const FAQSystem: React.FC<FAQSystemProps> = ({
-  onFAQCreated,
-  onFAQUpdated,
   onFAQDeleted,
   onFAQViewed
 }) => {
-  const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  const [categories, setCategories] = useState<FAQCategory[]>([]);
+  const [faqs, setFaqs] = useState<FAQItem[]>(MOCK_FAQS);
+  const [categories] = useState<FAQCategory[]>(MOCK_CATEGORIES);
   const [selectedFAQ, setSelectedFAQ] = useState<FAQItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('faqs');
   
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCategories: FAQCategory[] = [
-      { id: 'general', name: 'Geral', description: 'Perguntas gerais sobre o sistema', itemCount: 15, icon: 'HelpCircle', color: 'bg-blue-500' },
-      { id: 'reservations', name: 'Reservas', description: 'Dúvidas sobre reservas e agendamentos', itemCount: 22, icon: 'Calendar', color: 'bg-green-500' },
-      { id: 'payments', name: 'Pagamentos', description: 'Questões relacionadas a pagamentos', itemCount: 18, icon: 'CreditCard', color: 'bg-purple-500' },
-      { id: 'technical', name: 'Técnico', description: 'Problemas técnicos e configurações', itemCount: 12, icon: 'Settings', color: 'bg-orange-500' },
-      { id: 'account', name: 'Conta', description: 'Gestão de conta e perfil', itemCount: 8, icon: 'User', color: 'bg-indigo-500' }
-    ];
-
-    const mockFAQs: FAQItem[] = [
-      {
-        id: '1',
-        question: 'Como criar minha primeira reserva no sistema RSV?',
-        answer: 'Para criar sua primeira reserva, siga estes passos:\n\n1. Acesse o menu "Reservas" no painel principal\n2. Clique em "Nova Reserva"\n3. Selecione o pacote de viagem desejado\n4. Escolha as datas de check-in e check-out\n5. Preencha os dados do cliente\n6. Confirme as informações e finalize a reserva\n\nO sistema irá gerar automaticamente um número de confirmação e enviar um email com os detalhes.',
-        category: 'reservations',
-        tags: ['reserva', 'primeira-vez', 'tutorial'],
-        author: 'Equipe RSV',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-20',
-        status: 'published',
-        helpfulCount: 89,
-        notHelpfulCount: 3,
-        views: 456,
-        priority: 'high'
-      },
-      {
-        id: '2',
-        question: 'Quais são as formas de pagamento aceitas?',
-        answer: 'O sistema RSV aceita as seguintes formas de pagamento:\n\n• Cartão de crédito (Visa, Mastercard, American Express)\n• Cartão de débito\n• PIX (transferência instantânea)\n• Boleto bancário\n• Transferência bancária\n\nPara pagamentos parcelados, consulte as condições específicas de cada pacote de viagem.',
-        category: 'payments',
-        tags: ['pagamento', 'cartão', 'pix', 'boleto'],
-        author: 'Suporte RSV',
-        createdAt: '2024-01-08',
-        updatedAt: '2024-01-15',
-        status: 'published',
-        helpfulCount: 67,
-        notHelpfulCount: 2,
-        views: 234,
-        priority: 'high'
-      },
-      {
-        id: '3',
-        question: 'Como alterar minha senha de acesso?',
-        answer: 'Para alterar sua senha:\n\n1. Acesse "Configurações" no menu do usuário\n2. Clique em "Segurança"\n3. Selecione "Alterar Senha"\n4. Digite sua senha atual\n5. Digite a nova senha (mínimo 8 caracteres)\n6. Confirme a nova senha\n7. Clique em "Salvar"\n\nA nova senha será aplicada imediatamente.',
-        category: 'account',
-        tags: ['senha', 'segurança', 'conta'],
-        author: 'Admin RSV',
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-12',
-        status: 'published',
-        helpfulCount: 45,
-        notHelpfulCount: 1,
-        views: 189,
-        priority: 'medium'
-      },
-      {
-        id: '4',
-        question: 'O que fazer se esquecer minha senha?',
-        answer: 'Se você esqueceu sua senha:\n\n1. Na tela de login, clique em "Esqueci minha senha"\n2. Digite seu email cadastrado\n3. Clique em "Enviar link de recuperação"\n4. Verifique seu email e clique no link recebido\n5. Digite uma nova senha\n6. Confirme a nova senha\n\nO link de recuperação é válido por 24 horas.',
-        category: 'account',
-        tags: ['senha', 'recuperação', 'esqueci'],
-        author: 'Suporte RSV',
-        createdAt: '2024-01-03',
-        updatedAt: '2024-01-10',
-        status: 'published',
-        helpfulCount: 34,
-        notHelpfulCount: 0,
-        views: 156,
-        priority: 'medium'
-      }
-    ];
-
-    setCategories(mockCategories);
-    setFaqs(mockFAQs);
-  }, []);
 
   const filteredFAQs = faqs.filter(faq => {
     const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
