@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Layout } from '../components/layout';
-import { Card, Button, Badge, Alert } from '../components/ui';
+import { Card, Button, Badge } from '../components/ui';
 import { AnimatedCard, PageTransition } from '../components/ui';
 import { useAnimations } from '../hooks/useAnimations';
 import { 
-  MapPin, 
   Calendar, 
   Users, 
   DollarSign, 
