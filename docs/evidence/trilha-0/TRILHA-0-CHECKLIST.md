@@ -175,6 +175,7 @@
 - [x] Lint CustomerManagement + FinalDeploySystem + AccountingIntegration −45 — **GO condicional** *(PR #437)* — `issue-237/LINT-237-TURISMO-CUSTOMER-DEPLOY-ACCOUNTING.md`
 - [x] Lint documents + groups + TestingPage −42 — **GO condicional** *(PR #438)* — `issue-237/LINT-237-TURISMO-DOCUMENTS-GROUPS-TESTING.md`
 - [x] Lint configuracoes-avancadas + configuracoes-usuarios + groups (src) −42 — **GO condicional** *(PR #439)* — `issue-237/LINT-237-TURISMO-CONFIGURACOES-AVANCADAS-USUARIOS-GROUPS.md`
+- [x] Lint integracoes-apis + marketplace-parceiros + notification-system-test −42 — **GO condicional** *(PR #440)* — `issue-237/LINT-237-TURISMO-INTEGRACOES-MARKETPLACE-NOTIFICATION.md`
 
 ## Decisão Trilha 0
 

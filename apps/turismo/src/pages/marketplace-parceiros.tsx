@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -17,27 +18,19 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Settings,
   Eye,
-  Edit,
   Plus,
   Download,
-  Filter,
   Search,
-  Calendar,
   MapPin,
   Star,
   Building,
   Phone,
   Mail,
   Globe,
-  Handshake,
-  Target,
   BarChart3,
   PieChart,
   LineChart,
-  ArrowUp,
-  ArrowDown,
   Minus
 } from 'lucide-react';
 
@@ -161,12 +154,10 @@ const MOCK_STATS: PartnerStats = {
 
 export default function MarketplaceParceiros() {
   const [partners, setPartners] = useState<Partner[]>(MOCK_PARTNERS);
-  const [stats, setStats] = useState<PartnerStats>(MOCK_STATS);
-  const [loading, setLoading] = useState(false);
+  const [stats] = useState<PartnerStats>(MOCK_STATS);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterTier, setFilterTier] = useState('all');
-  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
 
   const getTierColor = (tier: string) => {
     switch (tier) {
@@ -421,7 +412,7 @@ export default function MarketplaceParceiros() {
                         <div className="flex items-start space-x-4">
                           <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                             {partner.logo ? (
-                              <img src={partner.logo} alt={partner.companyName} className="w-full h-full object-cover rounded-lg" />
+                              <Image src={partner.logo} alt={partner.companyName} width={64} height={64} className="w-full h-full object-cover rounded-lg" />
                             ) : (
                               <Building className="h-8 w-8 text-gray-400" />
                             )}
@@ -519,7 +510,7 @@ export default function MarketplaceParceiros() {
                           </div>
 
                           <div className="flex space-x-2 mt-4">
-                            <Button size="sm" variant="outline" onClick={() => setSelectedPartner(partner)}>
+                            <Button size="sm" variant="outline">
                               <Eye className="h-4 w-4 mr-1" />
                               Ver
                             </Button>
