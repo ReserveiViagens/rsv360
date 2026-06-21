@@ -2,7 +2,7 @@
 // RESERVATIONS RSV PAGE - PÁGINA DEDICADA PARA GESTÃO DE RESERVAS
 // ===================================================================
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../src/components/ProtectedRoute';
 import { useRouter } from 'next/router';
@@ -22,7 +22,6 @@ import {
   Users,
   MapPin,
   Search,
-  Filter,
   Edit,
   Trash2,
   Eye,
@@ -31,8 +30,7 @@ import {
   AlertCircle,
   DollarSign,
   TrendingUp,
-  Clock,
-  FileText
+  Clock
 } from 'lucide-react';
 
 // ===================================================================
@@ -512,6 +510,51 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ bookings }) => {
 // COMPONENTE PRINCIPAL
 // ===================================================================
 
+const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: '1',
+    customerName: 'João Silva',
+    customerEmail: 'joao.silva@email.com',
+    customerPhone: '(11) 99999-9999',
+    destination: 'Caldas Novas - GO',
+    checkIn: new Date('2024-02-15'),
+    checkOut: new Date('2024-02-18'),
+    value: 1500,
+    status: 'confirmed',
+    paymentStatus: 'paid',
+    guests: 4,
+    notes: 'Cliente preferiu quarto com vista para a piscina'
+  },
+  {
+    id: '2',
+    customerName: 'Pedro Costa',
+    customerEmail: 'pedro.costa@email.com',
+    customerPhone: '(11) 77777-7777',
+    destination: 'Fernando de Noronha - PE',
+    checkIn: new Date('2024-03-01'),
+    checkOut: new Date('2024-03-06'),
+    value: 4500,
+    status: 'confirmed',
+    paymentStatus: 'paid',
+    guests: 2,
+    notes: 'Pacote completo com mergulho incluído'
+  },
+  {
+    id: '3',
+    customerName: 'Maria Santos',
+    customerEmail: 'maria.santos@email.com',
+    customerPhone: '(11) 88888-8888',
+    destination: 'Gramado - RS',
+    checkIn: new Date('2024-06-15'),
+    checkOut: new Date('2024-06-19'),
+    value: 7200,
+    status: 'pending',
+    paymentStatus: 'pending',
+    guests: 4,
+    notes: 'Reserva aguardando confirmação'
+  }
+];
+
 export default function ReservationsRSVPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -522,60 +565,7 @@ export default function ReservationsRSVPage() {
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [viewingBooking, setViewingBooking] = useState<Booking | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [bookings, setBookings] = useState<Booking[]>([]);
-
-  // ===================================================================
-  // DADOS MOCK
-  // ===================================================================
-
-  useEffect(() => {
-    // Simular carregamento de reservas
-    const mockBookings: Booking[] = [
-      {
-        id: '1',
-        customerName: 'João Silva',
-        customerEmail: 'joao.silva@email.com',
-        customerPhone: '(11) 99999-9999',
-        destination: 'Caldas Novas - GO',
-        checkIn: new Date('2024-02-15'),
-        checkOut: new Date('2024-02-18'),
-        value: 1500,
-        status: 'confirmed',
-        paymentStatus: 'paid',
-        guests: 4,
-        notes: 'Cliente preferiu quarto com vista para a piscina'
-      },
-      {
-        id: '2',
-        customerName: 'Pedro Costa',
-        customerEmail: 'pedro.costa@email.com',
-        customerPhone: '(11) 77777-7777',
-        destination: 'Fernando de Noronha - PE',
-        checkIn: new Date('2024-03-01'),
-        checkOut: new Date('2024-03-06'),
-        value: 4500,
-        status: 'confirmed',
-        paymentStatus: 'paid',
-        guests: 2,
-        notes: 'Pacote completo com mergulho incluído'
-      },
-      {
-        id: '3',
-        customerName: 'Maria Santos',
-        customerEmail: 'maria.santos@email.com',
-        customerPhone: '(11) 88888-8888',
-        destination: 'Gramado - RS',
-        checkIn: new Date('2024-06-15'),
-        checkOut: new Date('2024-06-19'),
-        value: 7200,
-        status: 'pending',
-        paymentStatus: 'pending',
-        guests: 4,
-        notes: 'Reserva aguardando confirmação'
-      }
-    ];
-    setBookings(mockBookings);
-  }, []);
+  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS);
 
   // ===================================================================
   // HANDLERS
@@ -592,7 +582,7 @@ export default function ReservationsRSVPage() {
     setIsModalOpen(true);
   };
 
-  const handleOpenEditModal = (booking: Booking | any) => {
+  const handleOpenEditModal = (booking: Booking) => {
     // Converter do tipo do BookingCalendar para o tipo da página
     const convertedBooking: Booking = {
       id: booking.id,
@@ -638,7 +628,7 @@ export default function ReservationsRSVPage() {
     }
   };
 
-  const handleViewBooking = (booking: Booking | any) => {
+  const handleViewBooking = (booking: Booking) => {
     // Converter do tipo do BookingCalendar para o tipo da página
     const convertedBooking: Booking = {
       id: booking.id,
