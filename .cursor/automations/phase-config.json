@@ -40,9 +40,14 @@
     ".cursor/hooks.json",
     ".cursor/hooks/**",
     "AGENTS.md",
-    "MEMORIES.md",
     "docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md"
   ],
+  "memoriesAutomationPolicy": {
+    "path": "MEMORIES.md",
+    "allowAutomationFindingsUpdates": true,
+    "forbidSensitiveContent": true,
+    "structuralEditsRequireToken": true
+  },
   "unlockTokens": [
     "ALTERAR_ENTERPRISE_RULES_V2",
     "REVOGAR_PACR_AMPLA_V1"

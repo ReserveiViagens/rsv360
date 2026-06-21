@@ -29,8 +29,13 @@ Operação **ampla, robusta, enterprise e multidisciplinar**, com **autonomia co
 - `.cursor/hooks.json`
 - `.cursor/hooks/**`
 - `AGENTS.md`
-- `MEMORIES.md`
 - `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md`
+
+### MEMORIES.md (política especial)
+
+- Automação **Find critical bugs** pode atualizar achados ativos/rejeitados recentes
+- **Proibido** secrets, tokens, CPF, telefone, e-mail de cliente, cookies, `.env`, chaves privadas ou PII
+- Alterações estruturais/políticas exigem token do owner
 
 ## Tokens de desbloqueio
 
@@ -43,9 +48,10 @@ O agente **não pode** gerar, reutilizar, simular ou inserir esses tokens por co
 
 ## Hierarquia de regras
 
-1. `AGENTS.md` (contrato central)
-2. PACR-Ampla (investigações manuais)
-3. Regras enterprise v2 (`.cursor/rules/enterprise-*.mdc`)
-4. Instruções pontuais do owner na sessão
+1. **Segurança / LGPD** (`enterprise-security.mdc`, `enterprise-lgpd.mdc`)
+2. **`AGENTS.md`** (contrato central)
+3. **PACR-Ampla** (investigações manuais)
+4. **Regras enterprise v2** (`.cursor/rules/enterprise-*.mdc`)
+5. **Instruções pontuais do owner na sessão** (exceto ordem explícita do owner com token válido)
 
 Em conflito: alertar o owner e seguir o nível mais restritivo de segurança.
