@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useCallback } from 'react';
 import { Card, Button, Input, Badge, Tabs, Select } from '@/components/ui';
-import { Plus, Settings, Play, Pause, Trash2, Save, Eye, Copy, Download, Upload, Workflow, ArrowRight, Users, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Plus, Settings, Play, Trash2, Save, Copy, Download, Upload, ArrowRight, Users, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
@@ -112,7 +112,7 @@ function SortableStep({ step, onEdit, onDelete }: { step: WorkflowStep; onEdit: 
   );
 }
 
-export default function WorkflowEngine({ onProcessSelect }: WorkflowEngineProps) {
+export default function WorkflowEngine({ onProcessSelect: _onProcessSelect }: WorkflowEngineProps) {
   const [processes, setProcesses] = useState<WorkflowProcess[]>([
     {
       id: '1',
@@ -308,7 +308,7 @@ export default function WorkflowEngine({ onProcessSelect }: WorkflowEngineProps)
   const handleDuplicateProcess = (process: WorkflowProcess) => {
     const duplicated = {
       ...process,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: `${process.name} (Cópia)`,
       status: 'draft' as const,
       createdAt: new Date(),
@@ -557,7 +557,7 @@ export default function WorkflowEngine({ onProcessSelect }: WorkflowEngineProps)
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                      <Select value={activeProcess.status} onValueChange={(value) => setActiveProcess({...activeProcess, status: value as any})}>
+                      <Select value={activeProcess.status} onValueChange={(value) => setActiveProcess({...activeProcess, status: value as WorkflowProcess['status']})}>
                         <option value="draft">Rascunho</option>
                         <option value="active">Ativo</option>
                         <option value="paused">Pausado</option>
@@ -621,7 +621,7 @@ export default function WorkflowEngine({ onProcessSelect }: WorkflowEngineProps)
                     
                     <div className="text-center">
                       <p className="text-gray-600 mb-4">
-                        Este processo tem {activeProcess.steps.length} passos e está no status "{getStatusLabel(activeProcess.status)}"
+                        Este processo tem {activeProcess.steps.length} passos e está no status &quot;{getStatusLabel(activeProcess.status)}&quot;
                       </p>
                       <Button onClick={() => toast.info('Simulando execução do processo')}>
                         <Play className="h-4 w-4 mr-2" />
