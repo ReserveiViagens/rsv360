@@ -222,6 +222,7 @@
 - [x] Lint finance-dashboard (src) + login + project-management-test −15 — **GO condicional** *(PR #487)* — `issue-237/LINT-237-TURISMO-FINANCE-LOGIN-PROJECT.md`
 - [x] Lint EnterpriseForm + HierarchyView + EmailMarketing −15 — **GO condicional** *(PR #488)* — `issue-237/LINT-237-TURISMO-ACCOMMODATIONS-EMAIL-MARKETING.md`
 - [x] Lint NotificationCenter + AnalyticsDashboard (reports) + usePWA −15 — **GO condicional** *(PR #489)* — `issue-237/LINT-237-TURISMO-NOTIFICATION-ANALYTICS-PWA.md`
+- [x] Lint user-service + enterprises + reports-rsv −13 — **GO condicional** *(PR #490)* — `issue-237/LINT-237-TURISMO-USER-ENTERPRISES-REPORTS.md`
 
 ## Decisão Trilha 0
 
