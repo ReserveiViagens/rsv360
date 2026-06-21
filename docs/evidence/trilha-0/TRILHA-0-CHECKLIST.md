@@ -268,6 +268,8 @@
 
 - [x] Lint cluster #112 booking-analytics-excursoes ?3 ? **GO condicional** *(PR #527)* ? `issue-237/LINT-237-TURISMO-BOOKING-ANALYTICS-EXCURSOES.md`
 
+- [x] Lint cluster #113 roteiro-leilao-dashboard ?3 ? **GO condicional** *(PR #528)* ? `issue-237/LINT-237-TURISMO-ROTEIRO-LEILAO-DASHBOARD.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |

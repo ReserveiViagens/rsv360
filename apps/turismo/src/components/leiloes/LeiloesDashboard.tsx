@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Gavel } from 'lucide-react'
 import Link from 'next/link'
 import { AuctionStats } from './AuctionStats'
@@ -10,11 +10,7 @@ import { leiloesApi, Leilao } from '../../services/api/leiloesApi'
 export function LeiloesDashboard() {
   const [upcomingAuctions, setUpcomingAuctions] = useState<Leilao[]>([])
 
-  useEffect(() => {
-    loadUpcomingAuctions()
-  }, [])
-
-  const loadUpcomingAuctions = async () => {
+  const loadUpcomingAuctions = useCallback(async () => {
     try {
       const response = await leiloesApi.getLeiloes({
         status: 'scheduled',
@@ -27,7 +23,12 @@ export function LeiloesDashboard() {
       console.error('Erro ao carregar próximos leilões:', error)
       setUpcomingAuctions([])
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load upcoming auctions on mount
+    loadUpcomingAuctions()
+  }, [loadUpcomingAuctions])
 
   const formatTimeUntil = (dateString: string) => {
     const now = new Date()
