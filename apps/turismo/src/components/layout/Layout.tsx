@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { useSidebar } from '../../hooks/useSidebar';
 import { useTheme } from '../../hooks/useTheme';
@@ -25,13 +26,13 @@ export default function Layout({
   showSidebar = true, 
   showHeader = true 
 }: LayoutProps) {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const { isOpen, isCollapsed, toggleSidebar, toggleMobileSidebar, closeMobileSidebar } = useSidebar();
-  const { theme, colorScheme, setTheme, setColorScheme, toggleTheme, colors } = useTheme();
-  const { showHelp } = useKeyboardShortcuts();
+  const { theme, colorScheme, setColorScheme, toggleTheme } = useTheme();
+  useKeyboardShortcuts();
   const { isOnline, updateAvailable, updateApp } = usePWA();
-  const { announce } = useAccessibility();
+  useAccessibility();
   const [isMobile, setIsMobile] = useState(false);
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [showAccessibilityPanel, setShowAccessibilityPanel] = useState(false);
@@ -168,12 +169,12 @@ export default function Layout({
               <nav className="flex" aria-label="Breadcrumb">
                 <ol className="flex items-center space-x-2">
                   <li>
-                    <a
+                    <Link
                       href="/"
                       className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm"
                     >
                       Home
-                    </a>
+                    </Link>
                   </li>
                   {router.pathname.split('/').filter(Boolean).map((segment, index, array) => (
                     <li key={index} className="flex items-center">
