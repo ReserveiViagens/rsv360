@@ -23,18 +23,11 @@ import {
   Send,
   Eye,
   Edit,
-  Trash2,
   Plus,
   Filter,
-  Search,
-  RefreshCw,
-  Shield,
   Building,
   Percent,
   DollarSign,
-  BarChart3,
-  TrendingUp,
-  Archive,
   BookOpen,
   Settings,
   Globe,
@@ -42,7 +35,106 @@ import {
   CheckSquare,
   XCircle
 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, PieChart, Pie, Cell } from 'recharts'
+
+function isDueWithinSevenDays(dueDate: string): boolean {
+  return new Date(dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+}
+
+const ObligationForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="obligation-name">Nome da Obrigação</Label>
+        <Input 
+          id="obligation-name"
+          placeholder="Ex: ICMS - Janeiro 2025"
+          title="Nome da obrigação tributária"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="obligation-amount">Valor</Label>
+        <Input 
+          id="obligation-amount"
+          type="number" 
+          placeholder="0,00"
+          title="Valor da obrigação"
+        />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-3 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="tax-type">Esfera</Label>
+        <Select>
+          <SelectTrigger title="Selecionar esfera tributária">
+            <SelectValue placeholder="Selecionar esfera" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="federal">Federal</SelectItem>
+            <SelectItem value="estadual">Estadual</SelectItem>
+            <SelectItem value="municipal">Municipal</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="tax-category">Categoria</Label>
+        <Select>
+          <SelectTrigger title="Selecionar categoria do imposto">
+            <SelectValue placeholder="Selecionar categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="PIS">PIS</SelectItem>
+            <SelectItem value="COFINS">COFINS</SelectItem>
+            <SelectItem value="ICMS">ICMS</SelectItem>
+            <SelectItem value="ISS">ISS</SelectItem>
+            <SelectItem value="IRPJ">IRPJ</SelectItem>
+            <SelectItem value="CSLL">CSLL</SelectItem>
+            <SelectItem value="IPI">IPI</SelectItem>
+            <SelectItem value="INSS">INSS</SelectItem>
+            <SelectItem value="FGTS">FGTS</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="due-date">Data de Vencimento</Label>
+        <Input 
+          id="due-date"
+          type="date"
+          title="Data de vencimento da obrigação"
+        />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="period">Período de Referência</Label>
+        <Input 
+          id="period"
+          placeholder="Ex: 2025-01"
+          title="Período de referência da obrigação"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="reference">Referência/Código</Label>
+        <Input 
+          id="reference"
+          placeholder="Ex: DCTF-WEB-JAN-2025"
+          title="Código de referência da obrigação"
+        />
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="description">Descrição</Label>
+      <Textarea 
+        id="description"
+        placeholder="Descrição detalhada da obrigação tributária"
+        title="Descrição da obrigação"
+      />
+    </div>
+  </form>
+)
 
 // Tipos de dados para gestão fiscal
 interface TaxObligation {
@@ -401,101 +493,6 @@ const TaxManagement: React.FC = () => {
     }
   }
 
-  const ObligationForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="obligation-name">Nome da Obrigação</Label>
-          <Input 
-            id="obligation-name"
-            placeholder="Ex: ICMS - Janeiro 2025"
-            title="Nome da obrigação tributária"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="obligation-amount">Valor</Label>
-          <Input 
-            id="obligation-amount"
-            type="number" 
-            placeholder="0,00"
-            title="Valor da obrigação"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="tax-type">Esfera</Label>
-          <Select>
-            <SelectTrigger title="Selecionar esfera tributária">
-              <SelectValue placeholder="Selecionar esfera" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="federal">Federal</SelectItem>
-              <SelectItem value="estadual">Estadual</SelectItem>
-              <SelectItem value="municipal">Municipal</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="tax-category">Categoria</Label>
-          <Select>
-            <SelectTrigger title="Selecionar categoria do imposto">
-              <SelectValue placeholder="Selecionar categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="PIS">PIS</SelectItem>
-              <SelectItem value="COFINS">COFINS</SelectItem>
-              <SelectItem value="ICMS">ICMS</SelectItem>
-              <SelectItem value="ISS">ISS</SelectItem>
-              <SelectItem value="IRPJ">IRPJ</SelectItem>
-              <SelectItem value="CSLL">CSLL</SelectItem>
-              <SelectItem value="IPI">IPI</SelectItem>
-              <SelectItem value="INSS">INSS</SelectItem>
-              <SelectItem value="FGTS">FGTS</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="due-date">Data de Vencimento</Label>
-          <Input 
-            id="due-date"
-            type="date"
-            title="Data de vencimento da obrigação"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="period">Período de Referência</Label>
-          <Input 
-            id="period"
-            placeholder="Ex: 2025-01"
-            title="Período de referência da obrigação"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="reference">Referência/Código</Label>
-          <Input 
-            id="reference"
-            placeholder="Ex: DCTF-WEB-JAN-2025"
-            title="Código de referência da obrigação"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description">Descrição</Label>
-        <Textarea 
-          id="description"
-          placeholder="Descrição detalhada da obrigação tributária"
-          title="Descrição da obrigação"
-        />
-      </div>
-    </form>
-  )
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -586,7 +583,7 @@ const TaxManagement: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-yellow-600">
-                  {obligations.filter(o => o.status === 'pendente' && new Date(o.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).length}
+                  {obligations.filter(o => o.status === 'pendente' && isDueWithinSevenDays(o.dueDate)).length}
                 </div>
                 <p className="text-xs text-gray-600">
                   Nos próximos 7 dias
@@ -844,7 +841,7 @@ const TaxManagement: React.FC = () => {
               <div className="space-y-4">
                 {taxReturns.map((taxReturn) => {
                   const StatusIcon = getStatusIcon(taxReturn.status)
-                  const isNearDue = new Date(taxReturn.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                  const isNearDue = isDueWithinSevenDays(taxReturn.dueDate)
 
                   return (
                     <div key={taxReturn.id} className={`flex items-center justify-between p-4 border rounded-lg ${isNearDue && taxReturn.status === 'nao_iniciado' ? 'border-yellow-200 bg-yellow-50' : ''}`}>
