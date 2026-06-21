@@ -89,6 +89,7 @@ export default function RewardsPage() {
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
         fetchData();
     }, [fetchData]);
 
