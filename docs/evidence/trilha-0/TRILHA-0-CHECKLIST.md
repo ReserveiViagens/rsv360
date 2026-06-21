@@ -177,7 +177,6 @@
 - [x] Lint configuracoes-avancadas + configuracoes-usuarios + groups (src) ?42 ? **GO condicional** *(PR #439)* ? `issue-237/LINT-237-TURISMO-CONFIGURACOES-AVANCADAS-USUARIOS-GROUPS.md`
 - [x] Lint integracoes-apis + marketplace-parceiros + notification-system-test ?42 ? **GO condicional** *(PR #440)* ? `issue-237/LINT-237-TURISMO-INTEGRACOES-MARKETPLACE-NOTIFICATION.md`
 - [x] Lint relatorios-personalizados + DataExportSystem + BackupRecoverySystem ?42 ? **GO condicional** *(PR #441)* ? `issue-237/LINT-237-TURISMO-RELATORIOS-DATAEXPORT-BACKUP.md`
-- [x] Lint TrainingSystem + LeadCapture + SettingsPanel *(PR #447)* — issue-237/LINT-237-TURISMO-TRAINING-LEADCAPTURE-SETTINGS.md
 - [x] Lint PerformanceTesting + templates + dashboard-rsv-backup ?40 ? **GO condicional** *(PR #442)* ? `issue-237/LINT-237-TURISMO-PERFORMANCE-TEMPLATES-DASHBOARD-BACKUP.md`
 - [x] Lint dashboard-rsv + voice-commerce + e-commerce ?39 ? **GO condicional** *(PR #443)* ? `issue-237/LINT-237-TURISMO-DASHBOARD-RSV-VOICE-ECOMMERCE.md`
 - [x] Lint src/documents + src/e-commerce + TutorialSystem ?39 ? **GO condicional** *(PR #444)* ? `issue-237/LINT-237-TURISMO-SRC-DOCUMENTS-ECOMMERCE-TUTORIAL.md`
@@ -263,15 +262,7 @@
 
 - [x] Lint cluster #104 register-reports-reservations ?3 ? **GO condicional** *(PR #519)* ? `issue-237/LINT-237-TURISMO-REGISTER-REPORTS-RESERVATIONS.md`
 
-- [x] Lint cluster #105 rewards-subscriptions-admin ?3 ? **GO condicional** *(PR #520)* ? `issue-237/LINT-237-TURISMO-REWARDS-SUBSCRIPTIONS-ADMIN.md`
-
-- [x] Lint cluster #106 src-analytics-templates-giftcards ?3 ? **GO condicional** *(PR #521)* ? `issue-237/LINT-237-TURISMO-SRC-ANALYTICS-TEMPLATES-GIFTCARDS.md`
-
-- [x] Lint cluster #107 multilingual-offline-recommendations ?3 ? **GO condicional** *(PR #522)* ? `issue-237/LINT-237-TURISMO-MULTILINGUAL-OFFLINE-RECOMMENDATIONS.md`
-
-- [x] Lint cluster #108 src-register-rewards-seo ?3 ? **GO condicional** *(PR #523)* ? `issue-237/LINT-237-TURISMO-SRC-REGISTER-REWARDS-SEO.md`
-
-- [x] Lint cluster #109 settings-subscriptions-notificationbell ?3 ? **GO condicional** *(PR #524)* ? `issue-237/LINT-237-TURISMO-SETTINGS-SUBSCRIPTIONS-NOTIFICATIONBELL.md`
+- [x] Lint cluster #110 protected-toast-enterprise ?3 ? **GO condicional** *(PR #525)* ? `issue-237/LINT-237-TURISMO-PROTECTED-TOAST-ENTERPRISE.md`
 
 ## Decis?o Trilha 0
 
