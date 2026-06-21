@@ -238,6 +238,7 @@
 - [x] Lint TouchInteractions + PushNotificationService + ReportSharing ?9 ? **GO condicional** *(PR #503)* ? `issue-237/LINT-237-TURISMO-TOUCH-PUSH-REPORTSHARING.md`
 - [x] Lint TravelPackageModal + Tabs + notifications.ts ?9 ? **GO condicional** *(PR #504)* ? `issue-237/LINT-237-TURISMO-TRAVEL-TABS-NOTIFICATIONS.md`
 - [x] Lint analytics-dashboard + cotacoes/new + coupons ?6 ? **GO condicional** *(PR #505)* ? `issue-237/LINT-237-TURISMO-ANALYTICS-COTACOES-COUPONS.md`
+- [x] Lint dashboard excursoes index + participantes + roteiros ?6 ? **GO condicional** *(PR #506)* ? `issue-237/LINT-237-TURISMO-DASHBOARD-EXCURSOES-PAGES.md`
 
 ## Decis?o Trilha 0
 
