@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { ExcursaoCard } from '../../../src/components/excursoes/ExcursaoCard'
 import { FilterBar } from '../../../src/components/shared/FilterBar'
@@ -22,11 +22,7 @@ export default function ExcursoesPage() {
     totalPages: 0,
   })
 
-  useEffect(() => {
-    loadExcursoes()
-  }, [filters])
-
-  const loadExcursoes = async () => {
+  const loadExcursoes = useCallback(async () => {
     try {
       setLoading(true)
       const response = await excursoesApi.getExcursoes(filters)
@@ -45,7 +41,12 @@ export default function ExcursoesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload excursoes when filters change
+    loadExcursoes()
+  }, [loadExcursoes])
 
   const handleSearchChange = (value: string) => {
     setFilters(prev => ({ ...prev, search: value, page: 1 }))
