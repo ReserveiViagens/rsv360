@@ -4,21 +4,13 @@ import {
   NavigationMenu,
   PageTransition,
   ErrorBoundary,
-  NotFoundPage,
   NavigationGuard,
   ROUTES,
   RouteUtils
 } from '../components/navigation';
 import { Button, Card, Badge, Alert, AlertDescription } from '../components/ui';
 import {
-  Home,
-  Calendar,
-  Users,
-  BarChart3,
-  Settings,
-  ChevronRight,
-  MapPin,
-  Search
+  ChevronRight
 } from 'lucide-react';
 
 // Componente que gera erro para testar ErrorBoundary
