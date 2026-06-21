@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 
@@ -70,11 +70,7 @@ export default function RewardsPage() {
     const [selectedReward, setSelectedReward] = useState<Partial<Reward>>({});
     const [selectedUserId, setSelectedUserId] = useState<number>(1);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [rewardsRes, statsRes] = await Promise.all([
                 api.get('/api/v1/rewards'),
@@ -90,7 +86,12 @@ export default function RewardsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchData();
+    }, [fetchData]);
 
     const fetchUserData = async (userId: number) => {
         try {
