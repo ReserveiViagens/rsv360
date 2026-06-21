@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -45,11 +45,7 @@ export default function GiftCardsPage() {
     const [selectedGiftCard, setSelectedGiftCard] = useState<Partial<GiftCard>>({});
     const [searchCode, setSearchCode] = useState('');
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [giftCardsRes, transactionsRes, statsRes] = await Promise.all([
                 axios.get('/api/giftcards/giftcards/'),
@@ -64,7 +60,12 @@ export default function GiftCardsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchData();
+    }, [fetchData]);
 
     const handleAddGiftCard = async (e: React.FormEvent) => {
         e.preventDefault();
