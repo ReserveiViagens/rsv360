@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Gavel, TrendingUp, Users, DollarSign, Clock, Award } from 'lucide-react'
 import { leiloesApi } from '../../services/api/leiloesApi'
 
@@ -26,11 +26,7 @@ export function AuctionStats({ filters }: AuctionStatsProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadStats()
-  }, [filters])
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -76,7 +72,12 @@ export function AuctionStats({ filters }: AuctionStatsProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload stats when filters change
+    loadStats()
+  }, [loadStats])
 
   if (loading) {
     return (
