@@ -255,6 +255,8 @@
 
 - [x] Lint cluster #100 theme-analytics-business ?4 ? **GO condicional** *(PR #515)* ? `issue-237/LINT-237-TURISMO-THEME-ANALYTICS-BUSINESS.md`
 
+- [x] Lint cluster #101 ecosystem-enterprises-analytics ?3 ? **GO condicional** *(PR #516)* ? `issue-237/LINT-237-TURISMO-ECOSYSTEM-ENTERPRISES-ANALYTICS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
