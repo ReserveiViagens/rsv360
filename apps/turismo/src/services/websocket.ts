@@ -13,17 +13,17 @@ export interface NotificationData {
   read: boolean;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   actionUrl?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface WebSocketEvents {
   'notification:new': (notification: NotificationData) => void;
   'notification:read': (notificationId: string) => void;
-  'booking:created': (booking: any) => void;
-  'booking:updated': (booking: any) => void;
-  'payment:received': (payment: any) => void;
-  'customer:message': (message: any) => void;
-  'system:alert': (alert: any) => void;
+  'booking:created': (booking: unknown) => void;
+  'booking:updated': (booking: unknown) => void;
+  'payment:received': (payment: unknown) => void;
+  'customer:message': (message: unknown) => void;
+  'system:alert': (alert: unknown) => void;
   'user:online': (userId: string) => void;
   'user:offline': (userId: string) => void;
 }
@@ -137,7 +137,7 @@ class WebSocketService {
   // EMISSÃO DE EVENTOS
   // ===================================================================
 
-  emit(event: string, data?: any): void {
+  emit(event: string, data?: unknown): void {
     if (this.socket?.connected) {
       this.socket.emit(event, data);
     } else {
@@ -153,7 +153,7 @@ class WebSocketService {
     this.emit('notification:read', { notificationId });
   }
 
-  sendMessage(room: string, message: any): void {
+  sendMessage(room: string, message: unknown): void {
     this.emit('message:send', { room, message });
   }
 
