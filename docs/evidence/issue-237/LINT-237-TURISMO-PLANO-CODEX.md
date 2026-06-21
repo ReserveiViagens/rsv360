@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-20 (cluster #120 concluído)
-**Baseline global:** **0** warnings
+**Atualizado:** 2026-06-21 (residual-zero #542 — sweep final, baseline 0 confirmado)  
+**Baseline global:** **0** warnings (verificado `eslint-warnings-rank.cjs`)
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -14,8 +14,8 @@
 |---------|-------|
 | Warnings globais | **0** |
 | Clusters concluídos | **120** / 120 |
-| PR empilhada mais recente | **#541** (cluster #120 api-booking-excursoes-viagens, −3) |
-| Próximo cluster | **#542** — residual-zero (sweep final) |
+| PR empilhada mais recente | **#542** (residual-zero / sweep final, pós-#541 cluster #120) |
+| Próximo passo | **merge #542** → fechar issue #237 |
 
 ## Padrão por cluster (repetir)
 
@@ -183,7 +183,7 @@ Base empilhada: última branch chore/lint-turismo-* mergeada ou PR aberta.
 
 ## O que falta
 
-- [x] Clusters **1–8** (2530 warnings restantes)
-- [ ] Clusters **9–120**
-- [ ] Atualizar este doc após cada PR (global, PR#, branch)
-- [ ] Fechar issue #237 quando global ≈ 0 ou plano de exceções aprovado
+- [x] Clusters **1–120** (baseline **0** confirmado 2026-06-21)
+- [x] Residual sweep pós-pilha (#30 + 35 arquivos avulsos)
+- [ ] Merge da pilha #438→#542
+- [ ] Fechar issue #237 após merge e CI verde
