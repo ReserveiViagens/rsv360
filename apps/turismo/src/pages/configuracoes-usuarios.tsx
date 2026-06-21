@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
@@ -9,35 +9,24 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Switch } from '@/components/ui/Switch';
 import { Checkbox } from '@/components/ui/Checkbox';
 import {
   Users,
   UserPlus,
-  Settings,
   Shield,
   Crown,
-  Key,
   Mail,
   Phone,
   MapPin,
   Calendar,
   Edit,
   Trash2,
-  Eye,
-  EyeOff,
   Clock,
   Activity,
-  Award,
-  Filter,
   Search,
-  Download,
-  Upload,
-  RefreshCw,
   Save,
   Plus,
-  AlertTriangle,
-  CheckCircle
+  AlertTriangle
 } from 'lucide-react';
 
 interface User {
@@ -339,10 +328,10 @@ export default function ConfiguracoesUsuarios() {
     }
   };
 
-  const updateUserField = (field: string, value: any) => {
+  const updateUserField = <K extends keyof User>(field: K, value: User[K]) => {
     if (!selectedUser) return;
 
-    let updatedUser = { ...selectedUser, [field]: value };
+    const updatedUser = { ...selectedUser, [field]: value };
 
     // Atualizar permissões quando o role mudar
     if (field === 'role') {
@@ -353,7 +342,7 @@ export default function ConfiguracoesUsuarios() {
     setSelectedUser(updatedUser);
   };
 
-  const updateRoleField = (field: string, value: any) => {
+  const updateRoleField = <K extends keyof Role>(field: K, value: Role[K]) => {
     if (!selectedRole) return;
     setSelectedRole({ ...selectedRole, [field]: value });
   };

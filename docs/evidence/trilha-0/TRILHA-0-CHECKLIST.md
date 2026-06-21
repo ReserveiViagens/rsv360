@@ -174,6 +174,7 @@
 - [x] Lint TaskManager + leiloesApi + marketplace −47 — **GO condicional** *(PR #436)* — `issue-237/LINT-237-TURISMO-TASK-LEILOES-MARKETPLACE.md`
 - [x] Lint CustomerManagement + FinalDeploySystem + AccountingIntegration −45 — **GO condicional** *(PR #437)* — `issue-237/LINT-237-TURISMO-CUSTOMER-DEPLOY-ACCOUNTING.md`
 - [x] Lint documents + groups + TestingPage −42 — **GO condicional** *(PR #438)* — `issue-237/LINT-237-TURISMO-DOCUMENTS-GROUPS-TESTING.md`
+- [x] Lint configuracoes-avancadas + configuracoes-usuarios + groups (src) −42 — **GO condicional** *(PR #439)* — `issue-237/LINT-237-TURISMO-CONFIGURACOES-AVANCADAS-USUARIOS-GROUPS.md`
 
 ## Decisão Trilha 0
 
