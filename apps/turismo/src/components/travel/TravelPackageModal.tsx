@@ -9,7 +9,6 @@ import {
   MapPin,
   Calendar,
   Users,
-  DollarSign,
   Clock,
   Wifi,
   Car,
@@ -227,6 +226,7 @@ const TravelPackageModal: React.FC<TravelPackageModalProps> = ({
             {/* Galeria de Imagens */}
             <div className="mb-6">
               <div className="relative h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element -- package gallery from catalog data */}
                 <img
                   src={pkg.images[currentImageIndex] || '/placeholder-travel.jpg'}
                   alt={pkg.title}
@@ -284,7 +284,7 @@ const TravelPackageModal: React.FC<TravelPackageModalProps> = ({
                   ].map(tab => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as 'overview' | 'itinerary' | 'details' | 'reviews')}
                       className={`py-2 px-1 border-b-2 font-medium text-sm ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
