@@ -44,7 +44,7 @@ interface SessionStats {
 }
 
 export const SessionManager: React.FC = () => {
-  const { user, logout } = useAuth();
+  useAuth();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [stats, setStats] = useState<SessionStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,6 +100,7 @@ export const SessionManager: React.FC = () => {
       suspiciousActivity: 0
     };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock session data on mount
     setSessions(mockSessions);
     setStats(mockStats);
     setLoading(false);
