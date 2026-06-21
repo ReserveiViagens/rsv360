@@ -1,26 +1,18 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
-import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { 
   Download, 
   FileText, 
   FileSpreadsheet, 
   FileCode, 
-  Calendar, 
-  Filter,
-  Database,
-  Save,
   Trash2,
-  Eye,
-  Play,
   RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -97,6 +89,7 @@ const availableFields: ExportField[] = [
 ];
 
 export default function DataExportSystem() {
+  const jobIdRef = useRef(0);
   const [selectedFormat, setSelectedFormat] = useState<string>('csv');
   const [selectedFields, setSelectedFields] = useState<ExportField[]>(availableFields.filter(f => f.selected));
   const [exportJobs, setExportJobs] = useState<ExportJob[]>([]);
@@ -117,8 +110,9 @@ export default function DataExportSystem() {
       return;
     }
 
+    jobIdRef.current += 1;
     const job: ExportJob = {
-      id: Date.now().toString(),
+      id: String(jobIdRef.current),
       name: `Exportação ${selectedFormat.toUpperCase()} - ${new Date().toLocaleString()}`,
       status: 'pending',
       progress: 0,
@@ -168,7 +162,7 @@ export default function DataExportSystem() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `export-${job.format}-${Date.now()}.json`;
+    a.download = `export-${job.format}-${job.id}.json`;
     a.click();
     URL.revokeObjectURL(url);
     
