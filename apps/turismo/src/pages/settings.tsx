@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Layout } from '../components/layout';
 import { Card, Button } from '../components/ui';
 import { PageTransition } from '../components/ui';
-import { Settings, Server, Globe, Users, MapPin } from 'lucide-react';
+import { Settings, Server, Users, MapPin } from 'lucide-react';
 
 export default function Settings() {
   const router = useRouter();

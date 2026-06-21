@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils"
 import { radixCreate, radixUiExport } from "@/lib/radix-jsx"
 
 const Checkbox = radixUiExport<CheckboxProps, HTMLButtonElement>(
-  React.forwardRef<HTMLButtonElement, CheckboxProps>(({ className, ...props }, ref) =>
-    radixCreate(CheckboxPrimitive.Root, {
+  React.forwardRef<HTMLButtonElement, CheckboxProps>(function Checkbox({ className, ...props }, ref) {
+    return radixCreate(CheckboxPrimitive.Root, {
       ref,
       className: cn(
         "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
@@ -22,7 +22,7 @@ const Checkbox = radixUiExport<CheckboxProps, HTMLButtonElement>(
         children: <Check className="h-4 w-4" />,
       }),
     })
-  ) as React.FC<CheckboxProps & React.RefAttributes<HTMLButtonElement>>
+  }) as React.FC<CheckboxProps & React.RefAttributes<HTMLButtonElement>>
 )
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 
