@@ -16,4 +16,6 @@ _Nenhum achado ativo._
 
 - Remover entrada quando PR for mergeada ou issue fechada.
 - Não registrar histórico completo de scans — só estado atual.
+- A automação pode editar **somente** as seções de achados (`Open findings` / `Rejected / wont-fix`).
+- Alterações estruturais ou de política neste arquivo exigem token `ALTERAR_ENTERPRISE_RULES_V2` do owner.
 - **Nunca armazenar** senhas, tokens, CPF, telefone, e-mail de cliente, cookies, chaves privadas, conteúdo de `.env` ou qualquer dado pessoal sensível.
