@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Megaphone, Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, XCircle, BarChart3, Globe, Smartphone, Mail, MessageSquare } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, XCircle, BarChart3, Globe, Smartphone, Mail, MessageSquare } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -161,6 +161,7 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
       }
     ];
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock broadcast data on mount
     setBroadcasts(mockBroadcasts);
     setTemplates(mockTemplates);
     setSegments(mockSegments);
@@ -228,14 +229,14 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
     onSegmentCreated?.(newSegment);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
-      case 'draft': return 'gray';
-      case 'scheduled': return 'blue';
-      case 'sending': return 'yellow';
-      case 'sent': return 'green';
-      case 'failed': return 'red';
-      default: return 'gray';
+      case 'draft': return 'secondary';
+      case 'scheduled': return 'default';
+      case 'sending': return 'outline';
+      case 'sent': return 'default';
+      case 'failed': return 'destructive';
+      default: return 'secondary';
     }
   };
 
@@ -325,7 +326,7 @@ const BroadcastSystem: React.FC<BroadcastSystemProps> = ({
                         <h4 className="font-medium text-lg">{broadcast.title}</h4>
                         <p className="text-sm text-gray-600 mb-2">{broadcast.message}</p>
                         <div className="flex items-center gap-4 mb-2">
-                          <Badge variant={getStatusColor(broadcast.status) as any}>
+                          <Badge variant={getStatusColor(broadcast.status)}>
                             {getStatusIcon(broadcast.status)}
                             <span className="ml-1">{broadcast.status}</span>
                           </Badge>

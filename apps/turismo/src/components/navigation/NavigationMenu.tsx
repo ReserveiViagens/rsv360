@@ -35,7 +35,7 @@ export interface NavigationMenuProps {
 const NavigationMenu: React.FC<NavigationMenuProps> = ({
   userPermissions = [],
   isAuthenticated = false,
-  userRole = 'guest',
+  userRole: _userRole = 'guest',
   currentPath = '/',
   onNavigate,
   className,
@@ -124,6 +124,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
     if (onNavigate) {
       onNavigate(path);
     } else {
+      // eslint-disable-next-line react-hooks/immutability -- fallback navigation when onNavigate is not provided
       window.location.href = path;
     }
     
@@ -272,7 +273,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         
         {searchResults.length === 0 && searchQuery && (
           <div className="text-center py-8 text-gray-500">
-            <p>Nenhum resultado encontrado para "{searchQuery}"</p>
+            <p>Nenhum resultado encontrado para &quot;{searchQuery}&quot;</p>
           </div>
         )}
       </div>
