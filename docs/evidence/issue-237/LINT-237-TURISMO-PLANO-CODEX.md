@@ -14,8 +14,8 @@
 |---------|-------|
 | Warnings globais | **15** | | | | | | | | | |
 | Clusters concluídos | **116** / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 | / 120 |
-| PR empilhada mais recente | **#531** (cluster #116, −3) |
-| Próximo cluster | **#117** — (−3) |
+| PR empilhada mais recente | **#535** (cluster #116 checkbox-input-keyboard, −3) |
+| Próximo cluster | **#117** — label-separator-switch (−3) |
 
 ## Padrão por cluster (repetir)
 
