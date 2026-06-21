@@ -253,6 +253,8 @@
 
 - [x] Lint cluster #98 radiogroup-grupo-pagamento ?6 ? **GO condicional** *(PR #513)* ? `issue-237/LINT-237-TURISMO-RADIOGROUP-GRUPO-PAGAMENTO.md`
 
+- [x] Lint cluster #100 theme-analytics-business ?4 ? **GO condicional** *(PR #515)* ? `issue-237/LINT-237-TURISMO-THEME-ANALYTICS-BUSINESS.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
