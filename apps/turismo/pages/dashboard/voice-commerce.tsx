@@ -1,13 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
-import { Phone, TrendingUp, DollarSign, Clock, Users, BarChart3, Filter } from 'lucide-react'
-import { Button } from '../../src/components/ui/Button'
+import { Phone, TrendingUp, DollarSign, Users, BarChart3 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/Card'
-import { Input } from '../../src/components/ui/Input'
 import { Label } from '../../src/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../src/components/ui/Select'
 import { Badge } from '../../src/components/ui/Badge'
 import { toast } from 'react-hot-toast'
 import { api } from '../../src/services/apiClient'
@@ -59,26 +56,10 @@ export default function VoiceCommercePage() {
   const [selectedCall, setSelectedCall] = useState<VoiceCall | null>(null)
   const [interactions, setInteractions] = useState<Interaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState({
-    period: 'last_30_days',
-    status: 'all',
-  })
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  useEffect(() => {
-    if (selectedCall) {
-      loadCallInteractions(selectedCall.id)
-    }
-  }, [selectedCall])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      // TODO: Implementar endpoints para listar sessões e chamadas
-      // Por enquanto, usar dados mockados ou implementar quando disponível
       setSessions([])
       setCalls([])
     } catch (error) {
@@ -87,9 +68,9 @@ export default function VoiceCommercePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const loadCallInteractions = async (callId: number) => {
+  const loadCallInteractions = useCallback(async (callId: number) => {
     try {
       const response = await api.get<Interaction[]>(`/api/v1/voice-commerce/calls/${callId}/interactions`)
       setInteractions(Array.isArray(response) ? response : [])
@@ -97,7 +78,23 @@ export default function VoiceCommercePage() {
       console.error('Failed to load call interactions:', error)
       toast.error('Erro ao carregar interações da chamada.')
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void loadData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [loadData])
+
+  useEffect(() => {
+    if (selectedCall) {
+      const timer = setTimeout(() => {
+        void loadCallInteractions(selectedCall.id)
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedCall, loadCallInteractions])
 
   // Calcular estatísticas
   const totalCalls = calls.length
