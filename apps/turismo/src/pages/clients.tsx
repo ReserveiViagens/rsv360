@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Layout } from '../components/layout';
 import { Card, Button, Badge, Avatar } from '../components/ui';
 import { AnimatedCard, PageTransition } from '../components/ui';
 import { useAnimations } from '../hooks/useAnimations';
 import { 
   Users, 
-  Plus, 
   Search, 
   Filter,
   Eye,
@@ -13,7 +13,6 @@ import {
   Trash2,
   Mail,
   Phone,
-  MapPin,
   Calendar,
   Star,
   MoreVertical,
