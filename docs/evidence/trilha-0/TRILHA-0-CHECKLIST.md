@@ -203,6 +203,7 @@
 - [x] Lint chat-test + clients + layout-test −24 — **GO condicional** *(PR #468)* — `issue-237/LINT-237-TURISMO-CHAT-CLIENTS-LAYOUT.md`
 - [x] Lint ml-recomendacoes + navigation-test + sales-dashboard (src) −24 — **GO condicional** *(PR #469)* — `issue-237/LINT-237-TURISMO-ML-NAV-SALES-SRC.md`
 - [x] Lint travel + CustomerModal + EmailAutomation −24 — **GO condicional** *(PR #470)* — `issue-237/LINT-237-TURISMO-TRAVEL-CUSTOMER-EMAIL.md`
+- [x] Lint ReportGenerator + WorkflowEngine + paymentService −24 — **GO condicional** *(PR #471)* — `issue-237/LINT-237-TURISMO-REPORT-WORKFLOW-PAYMENT.md`
 
 ## Decisão Trilha 0
 
