@@ -197,6 +197,12 @@
 - [x] Lint cotacoes/index + test-page + insurance −27 — **GO condicional** *(PR #462)* — `issue-237/LINT-237-TURISMO-COTACOES-INSURANCE.md`
 - [x] Lint notifications + DevOpsPage + demo-layout −27 — **GO condicional** *(PR #463)* — `issue-237/LINT-237-TURISMO-NOTIFICATIONS-DEVOPS-DEMO.md`
 - [x] Lint ChatSystem + SocialMediaIntegration + PaymentHistory −27 — **GO condicional** *(PR #464)* — `issue-237/LINT-237-TURISMO-CHAT-SOCIAL-PAYMENT.md`
+- [x] Lint RefundManager + DataExport + TestRunner −27 — **GO condicional** *(PR #465)* — `issue-237/LINT-237-TURISMO-REFUND-EXPORT-TESTRUNNER.md`
+- [x] Lint analytics-financeiro + recommendations + sales-dashboard −24 — **GO condicional** *(PR #467)* — `issue-237/LINT-237-TURISMO-ANALYTICS-RECOMMENDATIONS-SALES.md`
+- [x] Lint seo + ReportsPage + BookingsPage −24 — **GO condicional** *(PR #466)* — `issue-237/LINT-237-TURISMO-SEO-REPORTS-BOOKINGS.md`
+- [x] Lint chat-test + clients + layout-test −24 — **GO condicional** *(PR #468)* — `issue-237/LINT-237-TURISMO-CHAT-CLIENTS-LAYOUT.md`
+- [x] Lint ml-recomendacoes + navigation-test + sales-dashboard (src) −24 — **GO condicional** *(PR #469)* — `issue-237/LINT-237-TURISMO-ML-NAV-SALES-SRC.md`
+- [x] Lint travel + CustomerModal + EmailAutomation −24 — **GO condicional** *(PR #470)* — `issue-237/LINT-237-TURISMO-TRAVEL-CUSTOMER-EMAIL.md`
 
 ## Decisão Trilha 0
 
