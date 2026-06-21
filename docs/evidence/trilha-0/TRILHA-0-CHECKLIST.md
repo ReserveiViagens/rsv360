@@ -263,6 +263,8 @@
 
 - [x] Lint cluster #104 register-reports-reservations ?3 ? **GO condicional** *(PR #519)* ? `issue-237/LINT-237-TURISMO-REGISTER-REPORTS-RESERVATIONS.md`
 
+- [x] Lint cluster #105 rewards-subscriptions-admin ?3 ? **GO condicional** *(PR #520)* ? `issue-237/LINT-237-TURISMO-REWARDS-SUBSCRIPTIONS-ADMIN.md`
+
 ## Decis?o Trilha 0
 
 | Campo | Valor |
