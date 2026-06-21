@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useSidebar } from './useSidebar';
 import { useTheme } from './useTheme';
@@ -16,10 +16,10 @@ interface KeyboardShortcut {
 
 export function useKeyboardShortcuts() {
   const router = useRouter();
-  const { toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const { toggleSidebar, toggleMobileSidebar: _toggleMobileSidebar } = useSidebar();
   const { toggleTheme, setColorScheme } = useTheme();
 
-  const shortcuts: KeyboardShortcut[] = [
+  const shortcuts: KeyboardShortcut[] = useMemo(() => [
     // Navegação
     {
       key: 'h',
@@ -181,7 +181,7 @@ export function useKeyboardShortcuts() {
       description: 'Mostrar Ajuda',
       category: 'ui'
     }
-  ];
+  ], [router, toggleSidebar, toggleTheme, setColorScheme]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Ignorar se estiver digitando em input/textarea

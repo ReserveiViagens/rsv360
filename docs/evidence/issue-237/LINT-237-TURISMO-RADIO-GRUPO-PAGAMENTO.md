@@ -1,6 +1,6 @@
 # Lint #237 — turismo radio-group + grupoform + pagamentodividido
 
-**Cluster:** **#98** | **Branch:** `chore/lint-turismo-radio-grupo-pagamento`
+**Cluster:** **#98** | **Branch:** `chore/lint-turismo-radio-grupo-pagamento` | **PR:** #514
 
 | Métrica | Pós-#97 | Esta PR |
 |---------|---------|---------|
