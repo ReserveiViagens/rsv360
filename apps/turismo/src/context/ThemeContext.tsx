@@ -19,6 +19,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Carregar tema salvo do localStorage
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate theme from localStorage on mount
       setTheme(savedTheme);
     }
   }, []);
@@ -38,7 +39,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       resolvedTheme = theme;
     }
 
-    setActualTheme(resolvedTheme);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- apply resolved theme to document
+      setActualTheme(resolvedTheme);
     root.classList.add(resolvedTheme);
 
     // Salvar no localStorage
