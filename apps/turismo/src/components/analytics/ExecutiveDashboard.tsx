@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -13,11 +12,7 @@ import {
   DollarSign, 
   Package, 
   MapPin, 
-  Clock, 
   Target,
-  BarChart3,
-  LineChart,
-  PieChart,
   Activity,
   Zap,
   Eye,
@@ -36,8 +31,6 @@ import {
   Tooltip, 
   Legend, 
   ResponsiveContainer,
-  LineChart as RechartsLineChart,
-  Line,
   PieChart as RechartsPieChart,
   Pie,
   Cell,
@@ -56,12 +49,6 @@ interface KPI {
   unit: string;
   icon: React.ReactNode;
   color: string;
-}
-
-interface ChartData {
-  name: string;
-  value: number;
-  [key: string]: any;
 }
 
 interface DashboardMetric {

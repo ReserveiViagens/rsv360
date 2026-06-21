@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, BookOpen, Search, Plus, Edit, Trash2, Download, Share, Eye, Clock, User, Tag, FolderOpen, ArrowRight } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea } from '../ui';
+import React, { useState } from 'react';
+import { FileText, BookOpen, Plus, Edit, Trash2, Download, Share, Eye, Clock, User, ArrowRight } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal, Textarea } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface DocumentationItem {
@@ -32,80 +32,71 @@ interface DocumentationSystemProps {
   onDocumentDeleted?: (id: string) => void;
 }
 
+const MOCK_CATEGORIES: DocumentationCategory[] = [
+  { id: 'user-guide', name: 'Guia do Usuário', description: 'Documentação para usuários finais', itemCount: 12, color: 'bg-blue-500' },
+  { id: 'api', name: 'Documentação da API', description: 'Referência completa da API', itemCount: 8, color: 'bg-green-500' },
+  { id: 'deployment', name: 'Deploy e DevOps', description: 'Guia de implantação e operações', itemCount: 6, color: 'bg-purple-500' },
+  { id: 'troubleshooting', name: 'Solução de Problemas', description: 'FAQ e resolução de erros', itemCount: 15, color: 'bg-orange-500' },
+  { id: 'development', name: 'Desenvolvimento', description: 'Guia para desenvolvedores', itemCount: 10, color: 'bg-indigo-500' }
+];
+
+const MOCK_DOCUMENTS: DocumentationItem[] = [
+  {
+    id: '1',
+    title: 'Primeiros Passos no Sistema RSV',
+    content: 'Guia completo para começar a usar o sistema de onboarding RSV...',
+    category: 'user-guide',
+    tags: ['iniciante', 'onboarding', 'primeiros-passos'],
+    author: 'Equipe RSV',
+    createdAt: '2024-01-15',
+    updatedAt: '2024-01-20',
+    version: '1.2',
+    status: 'published',
+    views: 1250,
+    downloads: 89
+  },
+  {
+    id: '2',
+    title: 'API de Reservas - Referência Completa',
+    content: 'Documentação completa da API de reservas incluindo endpoints, parâmetros...',
+    category: 'api',
+    tags: ['api', 'reservas', 'endpoints', 'rest'],
+    author: 'Dev Team',
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-18',
+    version: '2.1',
+    status: 'published',
+    views: 890,
+    downloads: 156
+  },
+  {
+    id: '3',
+    title: 'Deploy em Produção - VPS ICP MAX',
+    content: 'Guia detalhado para deploy do sistema em ambiente de produção...',
+    category: 'deployment',
+    tags: ['deploy', 'vps', 'docker', 'produção'],
+    author: 'DevOps Team',
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-15',
+    version: '1.0',
+    status: 'published',
+    views: 567,
+    downloads: 234
+  }
+];
+
 const DocumentationSystem: React.FC<DocumentationSystemProps> = ({
-  onDocumentCreated,
-  onDocumentUpdated,
   onDocumentDeleted
 }) => {
-  const [documents, setDocuments] = useState<DocumentationItem[]>([]);
-  const [categories, setCategories] = useState<DocumentationCategory[]>([]);
+  const [documents, setDocuments] = useState<DocumentationItem[]>(MOCK_DOCUMENTS);
+  const [categories] = useState<DocumentationCategory[]>(MOCK_CATEGORIES);
   const [selectedDocument, setSelectedDocument] = useState<DocumentationItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
   
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCategories: DocumentationCategory[] = [
-      { id: 'user-guide', name: 'Guia do Usuário', description: 'Documentação para usuários finais', itemCount: 12, color: 'bg-blue-500' },
-      { id: 'api', name: 'Documentação da API', description: 'Referência completa da API', itemCount: 8, color: 'bg-green-500' },
-      { id: 'deployment', name: 'Deploy e DevOps', description: 'Guia de implantação e operações', itemCount: 6, color: 'bg-purple-500' },
-      { id: 'troubleshooting', name: 'Solução de Problemas', description: 'FAQ e resolução de erros', itemCount: 15, color: 'bg-orange-500' },
-      { id: 'development', name: 'Desenvolvimento', description: 'Guia para desenvolvedores', itemCount: 10, color: 'bg-indigo-500' }
-    ];
-
-    const mockDocuments: DocumentationItem[] = [
-      {
-        id: '1',
-        title: 'Primeiros Passos no Sistema RSV',
-        content: 'Guia completo para começar a usar o sistema de onboarding RSV...',
-        category: 'user-guide',
-        tags: ['iniciante', 'onboarding', 'primeiros-passos'],
-        author: 'Equipe RSV',
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-20',
-        version: '1.2',
-        status: 'published',
-        views: 1250,
-        downloads: 89
-      },
-      {
-        id: '2',
-        title: 'API de Reservas - Referência Completa',
-        content: 'Documentação completa da API de reservas incluindo endpoints, parâmetros...',
-        category: 'api',
-        tags: ['api', 'reservas', 'endpoints', 'rest'],
-        author: 'Dev Team',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-18',
-        version: '2.1',
-        status: 'published',
-        views: 890,
-        downloads: 156
-      },
-      {
-        id: '3',
-        title: 'Deploy em Produção - VPS ICP MAX',
-        content: 'Guia detalhado para deploy do sistema em ambiente de produção...',
-        category: 'deployment',
-        tags: ['deploy', 'vps', 'docker', 'produção'],
-        author: 'DevOps Team',
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-15',
-        version: '1.0',
-        status: 'published',
-        views: 567,
-        downloads: 234
-      }
-    ];
-
-    setCategories(mockCategories);
-    setDocuments(mockDocuments);
-  }, []);
 
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
