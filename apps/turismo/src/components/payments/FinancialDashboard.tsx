@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, CreditCard, Users, Calendar, BarChart3, PieChart, Activity, Download, RefreshCw, Eye, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { DollarSign, TrendingUp, TrendingDown, CreditCard, Users, Activity, Download, RefreshCw } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
 import { Badge } from '../ui/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
 import { cn } from '../../utils/cn';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 
 export interface FinancialMetrics {
   totalRevenue: number;
@@ -89,7 +89,7 @@ const mockGatewayPerformance: GatewayPerformance[] = [
 const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ className }) => {
   const [selectedTimeRange, setSelectedTimeRange] = useState<SelectOption>(timeRangeOptions[1]);
   const [selectedChartType, setSelectedChartType] = useState<SelectOption>(chartTypeOptions[0]);
-  const [currentMetrics, setCurrentMetrics] = useState<FinancialMetrics>({
+  const [currentMetrics] = useState<FinancialMetrics>({
     totalRevenue: 22100,
     totalTransactions: 85,
     averageTransactionValue: 260.0,
@@ -99,17 +99,6 @@ const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ className }) =>
     refundRate: 7.5,
     netRevenue: 20450
   });
-
-  const previousMetrics: FinancialMetrics = {
-    totalRevenue: 20300,
-    totalTransactions: 78,
-    averageTransactionValue: 260.3,
-    revenueGrowth: 9.7,
-    transactionGrowth: 9.0,
-    conversionRate: 12.3,
-    refundRate: 7.8,
-    netRevenue: 18780
-  };
 
   const getGrowthColor = (growth: number) => {
     if (growth > 0) return 'text-green-600';
