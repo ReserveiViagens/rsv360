@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, AlertTriangle, CheckCircle, Clock, FileText, Code, GitBranch, Activity } from 'lucide-react';
+import { TrendingUp, AlertTriangle, CheckCircle, Clock, FileText, Code, Activity } from 'lucide-react';
 import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Progress } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
@@ -30,7 +30,7 @@ interface QualityMetricsProps {
   onFileAnalysis?: (file: FileQuality) => void;
 }
 
-const QualityMetrics: React.FC<QualityMetricsProps> = ({ onQualityAlert, onFileAnalysis }) => {
+const QualityMetrics: React.FC<QualityMetricsProps> = ({ onQualityAlert: _onQualityAlert, onFileAnalysis }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [metrics, setMetrics] = useState<CodeQualityMetric[]>([]);
   const [fileQuality, setFileQuality] = useState<FileQuality[]>([]);
@@ -102,6 +102,7 @@ const QualityMetrics: React.FC<QualityMetricsProps> = ({ onQualityAlert, onFileA
         description: 'Indicadores de problemas no código'
       }
     ];
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock quality metrics on mount
     setMetrics(mockMetrics);
 
     const mockFileQuality: FileQuality[] = [
