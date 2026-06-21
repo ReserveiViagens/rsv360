@@ -187,6 +187,7 @@
 - [x] Lint FAQSystem + FinancialDashboard + dashboard-reservei-viagens −35 — **GO condicional** *(PR #452)* — `issue-237/LINT-237-TURISMO-FAQ-FINANCIAL-DASHBOARD-RESERVEI.md`
 - [x] Lint google-hotel-ads + giftcards + marketing-dashboard −33 — **GO condicional** *(PR #453)* — `issue-237/LINT-237-TURISMO-GOOGLEHOTEL-GIFTCARDS-MARKETING.md`
 - [x] Lint reports-dashboard + travel-catalog-rsv + src/marketing-dashboard −33 — **GO condicional** *(PR #454)* — `issue-237/LINT-237-TURISMO-REPORTS-TRAVEL-MARKETING-SRC.md`
+- [x] Lint src/reports-dashboard + Navigation + CampaignManager −33 — **GO condicional** *(PR #455)* — `issue-237/LINT-237-TURISMO-SRC-REPORTS-NAV-CAMPAIGN.md`
 
 ## Decisão Trilha 0
 

@@ -1,27 +1,21 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
   Download, 
-  Filter, 
   Calendar,
   BarChart3,
-  PieChart,
-  TrendingUp,
   Users,
   DollarSign,
   ShoppingCart,
   Target,
-  Eye,
   Clock,
   RefreshCw,
   Search,
   Settings,
   Share2,
   Mail,
-  Printer,
   Archive
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import { useToast } from '../components/ToastContainer';
 
 interface ReportTemplate {
@@ -67,6 +61,73 @@ interface ReportMetrics {
   popularTemplates: ReportTemplate[];
 }
 
+const REPORT_TEMPLATES: ReportTemplate[] = [
+  {
+    id: 'financial-summary',
+    name: 'Relatório Financeiro Mensal',
+    category: 'financial',
+    description: 'Resumo completo das finanças do mês',
+    icon: 'DollarSign',
+    format: 'pdf'
+  },
+  {
+    id: 'sales-performance',
+    name: 'Performance de Vendas',
+    category: 'sales',
+    description: 'Análise detalhada do desempenho de vendas',
+    icon: 'ShoppingCart',
+    format: 'excel'
+  },
+  {
+    id: 'marketing-campaigns',
+    name: 'Relatório de Campanhas',
+    category: 'marketing',
+    description: 'Resultados das campanhas de marketing',
+    icon: 'Target',
+    format: 'pdf'
+  },
+  {
+    id: 'user-analytics',
+    name: 'Analytics de Usuários',
+    category: 'analytics',
+    description: 'Comportamento e métricas dos usuários',
+    icon: 'Users',
+    format: 'csv'
+  },
+  {
+    id: 'operational-kpis',
+    name: 'KPIs Operacionais',
+    category: 'operational',
+    description: 'Indicadores de performance operacional',
+    icon: 'BarChart3',
+    format: 'excel'
+  },
+  {
+    id: 'revenue-analysis',
+    name: 'Análise de Receita',
+    category: 'financial',
+    description: 'Análise detalhada da receita por período',
+    icon: 'TrendingUp',
+    format: 'pdf'
+  },
+  {
+    id: 'customer-segments',
+    name: 'Segmentação de Clientes',
+    category: 'analytics',
+    description: 'Análise de segmentos de clientes',
+    icon: 'Users',
+    format: 'excel'
+  },
+  {
+    id: 'inventory-status',
+    name: 'Status do Inventário',
+    category: 'operational',
+    description: 'Relatório de estoque e disponibilidade',
+    icon: 'Archive',
+    format: 'csv'
+  }
+];
+
 const ReportsDashboard: React.FC = () => {
   const { showSuccess, showError } = useToast();
   const [metrics, setMetrics] = useState<ReportMetrics>({
@@ -90,82 +151,10 @@ const ReportsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
-  const [dateRange, setDateRange] = useState('30d');
+  const [dateRange] = useState('30d');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Templates de relatórios disponíveis
-  const reportTemplates: ReportTemplate[] = [
-    {
-      id: 'financial-summary',
-      name: 'Relatório Financeiro Mensal',
-      category: 'financial',
-      description: 'Resumo completo das finanças do mês',
-      icon: 'DollarSign',
-      format: 'pdf'
-    },
-    {
-      id: 'sales-performance',
-      name: 'Performance de Vendas',
-      category: 'sales',
-      description: 'Análise detalhada do desempenho de vendas',
-      icon: 'ShoppingCart',
-      format: 'excel'
-    },
-    {
-      id: 'marketing-campaigns',
-      name: 'Relatório de Campanhas',
-      category: 'marketing',
-      description: 'Resultados das campanhas de marketing',
-      icon: 'Target',
-      format: 'pdf'
-    },
-    {
-      id: 'user-analytics',
-      name: 'Analytics de Usuários',
-      category: 'analytics',
-      description: 'Comportamento e métricas dos usuários',
-      icon: 'Users',
-      format: 'csv'
-    },
-    {
-      id: 'operational-kpis',
-      name: 'KPIs Operacionais',
-      category: 'operational',
-      description: 'Indicadores de performance operacional',
-      icon: 'BarChart3',
-      format: 'excel'
-    },
-    {
-      id: 'revenue-analysis',
-      name: 'Análise de Receita',
-      category: 'financial',
-      description: 'Análise detalhada da receita por período',
-      icon: 'TrendingUp',
-      format: 'pdf'
-    },
-    {
-      id: 'customer-segments',
-      name: 'Segmentação de Clientes',
-      category: 'analytics',
-      description: 'Análise de segmentos de clientes',
-      icon: 'Users',
-      format: 'excel'
-    },
-    {
-      id: 'inventory-status',
-      name: 'Status do Inventário',
-      category: 'operational',
-      description: 'Relatório de estoque e disponibilidade',
-      icon: 'Archive',
-      format: 'csv'
-    }
-  ];
-
-  useEffect(() => {
-    loadReportsData();
-  }, [dateRange]);
-
-  const loadReportsData = async () => {
+  const loadReportsData = useCallback(async () => {
     try {
       setLoading(true);
       // Simular dados de relatórios (em produção, viria da API)
@@ -236,21 +225,26 @@ const ReportsDashboard: React.FC = () => {
           }
         ],
         popularTemplates: [
-          reportTemplates[0], // Financial Summary
-          reportTemplates[1], // Sales Performance
-          reportTemplates[2], // Marketing Campaigns
-          reportTemplates[3]  // User Analytics
+          REPORT_TEMPLATES[0],
+          REPORT_TEMPLATES[1],
+          REPORT_TEMPLATES[2],
+          REPORT_TEMPLATES[3]
         ]
       };
       
       setMetrics(mockData);
       showSuccess('Sucesso', 'Dados de relatórios carregados com sucesso');
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao carregar dados de relatórios');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showSuccess, showError]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload mock reports data on date range change
+    loadReportsData();
+  }, [dateRange, loadReportsData]);
 
   const generateReport = async (template: ReportTemplate) => {
     try {
@@ -259,7 +253,7 @@ const ReportsDashboard: React.FC = () => {
       setTimeout(() => {
         showSuccess('Sucesso', `Relatório "${template.name}" gerado com sucesso!`);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao gerar relatório');
     }
   };
@@ -299,7 +293,7 @@ const ReportsDashboard: React.FC = () => {
     }
   };
 
-  const filteredTemplates = reportTemplates.filter(template => {
+  const filteredTemplates = REPORT_TEMPLATES.filter(template => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
     const matchesFormat = selectedFormat === 'all' || template.format === selectedFormat;
     const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
