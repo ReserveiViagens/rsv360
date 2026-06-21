@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -15,19 +15,14 @@ import {
   Clock,
   TrendingUp,
   TrendingDown,
-  Database,
-  Server,
   Globe,
   Cpu,
   HardDrive,
   Wifi,
   RefreshCw,
-  Download,
-  Upload,
   Eye,
   EyeOff
 } from 'lucide-react';
-import { useAuth } from './AuthProvider';
 import { cn } from '@/lib/utils';
 
 interface SystemMetrics {
@@ -60,84 +55,75 @@ interface SystemLog {
   userId?: string;
 }
 
+const MOCK_METRICS: SystemMetrics = {
+  totalUsers: 156,
+  activeUsers: 89,
+  totalSessions: 234,
+  systemUptime: '15 dias, 8 horas',
+  cpuUsage: 23,
+  memoryUsage: 67,
+  diskUsage: 45,
+  networkTraffic: 12.5,
+  errorRate: 0.02,
+  responseTime: 145
+};
+
+const MOCK_ALERTS: SystemAlert[] = [
+  {
+    id: '1',
+    type: 'warning',
+    message: 'Uso de memória acima de 80%',
+    timestamp: new Date(Date.now() - 30 * 60 * 1000),
+    isRead: false
+  },
+  {
+    id: '2',
+    type: 'info',
+    message: 'Backup automático concluído com sucesso',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    isRead: true
+  },
+  {
+    id: '3',
+    type: 'success',
+    message: 'Atualização de segurança aplicada',
+    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    isRead: true
+  }
+];
+
+const MOCK_LOGS: SystemLog[] = [
+  {
+    id: '1',
+    level: 'info',
+    message: 'Usuário joao.silva@rsv.com fez login',
+    timestamp: new Date(),
+    source: 'auth',
+    userId: '1'
+  },
+  {
+    id: '2',
+    level: 'warn',
+    message: 'Tentativa de login falhou para email inválido',
+    timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    source: 'auth'
+  },
+  {
+    id: '3',
+    level: 'error',
+    message: 'Erro ao conectar com banco de dados',
+    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    source: 'database'
+  }
+];
+
 export const AdminPanel: React.FC = () => {
-  const { user } = useAuth();
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
-  const [logs, setLogs] = useState<SystemLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const metrics = MOCK_METRICS;
+  const [alerts, setAlerts] = useState<SystemAlert[]>(MOCK_ALERTS);
+  const logs = MOCK_LOGS;
+  const loading = false;
   const [showSensitiveData, setShowSensitiveData] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  // Mock data - em produção viria da API
-  useEffect(() => {
-    const mockMetrics: SystemMetrics = {
-      totalUsers: 156,
-      activeUsers: 89,
-      totalSessions: 234,
-      systemUptime: '15 dias, 8 horas',
-      cpuUsage: 23,
-      memoryUsage: 67,
-      diskUsage: 45,
-      networkTraffic: 12.5,
-      errorRate: 0.02,
-      responseTime: 145
-    };
-
-    const mockAlerts: SystemAlert[] = [
-      {
-        id: '1',
-        type: 'warning',
-        message: 'Uso de memória acima de 80%',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        isRead: false
-      },
-      {
-        id: '2',
-        type: 'info',
-        message: 'Backup automático concluído com sucesso',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        isRead: true
-      },
-      {
-        id: '3',
-        type: 'success',
-        message: 'Atualização de segurança aplicada',
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        isRead: true
-      }
-    ];
-
-    const mockLogs: SystemLog[] = [
-      {
-        id: '1',
-        level: 'info',
-        message: 'Usuário joao.silva@rsv.com fez login',
-        timestamp: new Date(),
-        source: 'auth',
-        userId: '1'
-      },
-      {
-        id: '2',
-        level: 'warn',
-        message: 'Tentativa de login falhou para email inválido',
-        timestamp: new Date(Date.now() - 5 * 60 * 1000),
-        source: 'auth'
-      },
-      {
-        id: '3',
-        level: 'error',
-        message: 'Erro ao conectar com banco de dados',
-        timestamp: new Date(Date.now() - 15 * 60 * 1000),
-        source: 'database'
-      }
-    ];
-
-    setMetrics(mockMetrics);
-    setAlerts(mockAlerts);
-    setLogs(mockLogs);
-    setLoading(false);
-  }, []);
 
   const refreshData = async () => {
     setRefreshing(true);
