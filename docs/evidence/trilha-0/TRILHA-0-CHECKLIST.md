@@ -185,6 +185,7 @@
 - [x] Lint authService + visas + workflows −37 — **GO condicional** *(PR #446)* — `issue-237/LINT-237-TURISMO-AUTHSERVICE-VISAS-WORKFLOWS.md`
 - [x] Lint ExecutiveDashboard + UserManagement + DocumentationSystem −36 — **GO condicional** *(PR #451)* — `issue-237/LINT-237-TURISMO-EXECUTIVE-USERMGMT-DOCSYSTEM.md`
 - [x] Lint FAQSystem + FinancialDashboard + dashboard-reservei-viagens −35 — **GO condicional** *(PR #452)* — `issue-237/LINT-237-TURISMO-FAQ-FINANCIAL-DASHBOARD-RESERVEI.md`
+- [x] Lint google-hotel-ads + giftcards + marketing-dashboard −33 — **GO condicional** *(PR #453)* — `issue-237/LINT-237-TURISMO-GOOGLEHOTEL-GIFTCARDS-MARKETING.md`
 
 ## Decisão Trilha 0
 
