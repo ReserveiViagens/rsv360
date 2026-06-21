@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-16 (cluster #31 concluído)  
-**Baseline global:** **1375** warnings  
+**Atualizado:** 2026-06-16 (cluster #32 concluído)  
+**Baseline global:** **1336** warnings  
 **Arquivos com débito:** **360**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -12,10 +12,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Warnings globais | **1375** |
-| Clusters concluídos | **31** / 120 |
-| PR empilhada mais recente | **#442** (cluster #31, −40) |
-| Próximo cluster | **#32** — dashboard-rsv + voice-commerce + e-commerce (−39) |
+| Warnings globais | **1336** |
+| Clusters concluídos | **32** / 120 |
+| PR empilhada mais recente | **#443** (cluster #32, −39) |
+| Próximo cluster | **#33** — src/documents + src/e-commerce + TutorialSystem (−39) |
 
 ## Padrão por cluster (repetir)
 
@@ -62,8 +62,9 @@
 | #440 | integracoes-apis + marketplace-parceiros + notification-system-test | −42 → **1499** | configuracoes-avancadas-usuarios-groups |
 | #441 | relatorios-personalizados + DataExportSystem + BackupRecoverySystem | −42 → **1457** | integracoes-marketplace-notification |
 | #442 | PerformanceTesting + templates + dashboard-rsv-backup | −40 → **1375** | training-leadcapture-settings |
+| #443 | dashboard-rsv + voice-commerce + e-commerce | −39 → **1336** | performance-templates-dashboard-backup |
 
-## Clusters 1–31 (concluídos)
+## Clusters 1–32 (concluídos)
 
 | # | Δ | Arquivos | Status |
 |---|-----|----------|--------|
@@ -96,7 +97,9 @@
 | 27 | −42 | configuracoes-avancadas, configuracoes-usuarios, groups (src) | **concluído** (#439) |
 | 28 | −42 | integracoes-apis, marketplace-parceiros, notification-system-test | **concluído** (#440) |
 | 29 | −42 | relatorios-personalizados, DataExportSystem, BackupRecoverySystem | **concluído** (#441) |
+| 30 | −42 | TrainingSystem, LeadCapture, SettingsPanel | **concluído** (#447) |
 | 31 | −40 | PerformanceTesting, cotacoes/templates, dashboard-rsv-backup | **concluído** (#442) |
+| 32 | −39 | dashboard-rsv, voice-commerce, e-commerce | **concluído** (#443) |
 
 ## Clusters 30–120
 
