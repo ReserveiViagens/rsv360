@@ -192,7 +192,8 @@ export function OfflineIndicator() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    setIsOnline(navigator.onLine);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync online status on mount
+      setIsOnline(navigator.onLine);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);

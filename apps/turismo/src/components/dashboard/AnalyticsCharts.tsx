@@ -28,7 +28,7 @@ import {
 export interface ChartData {
   name: string;
   value: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface AnalyticsChartsProps {

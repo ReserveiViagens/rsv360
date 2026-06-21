@@ -1,0 +1,808 @@
+﻿
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\ANALYTICS-INTELLIGENCE.tsx
+  2:10  warning  'useAuth' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\BUSINESS-MODULES.tsx
+  2:10  warning  'useAuth' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\ECOSYSTEM-MASTER.tsx
+  2:10  warning  'useAuth' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\accommodations\enterprises\new.tsx
+  18:11  warning  'user' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\analytics.tsx
+  30:13  warning  'user' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\attractions.tsx
+  71:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\dashboard\excursoes\nova.tsx
+  16:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\dashboard\leiloes\novo.tsx
+  16:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\dashboard\viagens-grupo\nova.tsx
+  16:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\login.tsx
+  26:18  warning  'error' is defined but never used. Allowed unused caught errors must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\multilingual.tsx
+  40:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\multilingual.tsx:40:9
+  38 |
+  39 |     useEffect(() => {
+> 40 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  41 |     }, []);
+  42 |
+  43 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\multilingual.tsx:43:5
+  41 |     }, []);
+  42 |
+> 43 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |         try {
+     | ^^^^^^^^^^^^^
+> 45 |             const [translationsRes, languagesRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 58 |         }
+     | ^^^^^^^^^^^^^
+> 59 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  60 |
+  61 |     const handleAddTranslation = async (e: React.FormEvent) => {
+  62 |         e.preventDefault();  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\register.tsx
+  18:18  warning  'err' is defined but never used. Allowed unused caught errors must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\reports-complete.tsx
+  68:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\reservations\[id].tsx
+  7:10  warning  'useAuth' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\rewards.tsx
+  74:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\rewards.tsx:74:9
+  72 |
+  73 |     useEffect(() => {
+> 74 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  75 |     }, []);
+  76 |
+  77 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\rewards.tsx:77:5
+  75 |     }, []);
+  76 |
+> 77 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         try {
+     | ^^^^^^^^^^^^^
+> 79 |             const [rewardsRes, statsRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 92 |         }
+     | ^^^^^^^^^^^^^
+> 93 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  94 |
+  95 |     const fetchUserData = async (userId: number) => {
+  96 |         try {  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\subscriptions.tsx
+  50:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\subscriptions.tsx:50:9
+  48 |
+  49 |     useEffect(() => {
+> 50 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  51 |     }, []);
+  52 |
+  53 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\pages\subscriptions.tsx:53:5
+  51 |     }, []);
+  52 |
+> 53 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 54 |         try {
+     | ^^^^^^^^^^^^^
+> 55 |             const [subscriptionsRes, plansRes, statsRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 67 |         }
+     | ^^^^^^^^^^^^^
+> 68 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  69 |
+  70 |     const handleAddPlan = async (e: React.FormEvent) => {
+  71 |         e.preventDefault();  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\NotificationBell.tsx
+  16:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\NotificationBell.tsx:16:5
+  14 |   useEffect(() => {
+  15 |     const unread = notifications.filter(n => !n.read).length;
+> 16 |     setUnreadCount(unread);
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  17 |   }, [notifications]);
+  18 |
+  19 |   const handleMarkAsRead = (id: string) => {  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ProtectedRoute.tsx
+  35:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ProtectedRoute.tsx:35:5
+  33 |   // Garantir que s├│ executa no cliente
+  34 |   useEffect(() => {
+> 35 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  36 |     console.log('[ProtectedRoute] Componente montado');
+  37 |   }, []);
+  38 |  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ToastContainer.tsx
+  2:17  warning  'ToastProps' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\accommodations\EnterpriseCard.tsx
+  56:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\auth\AuthProvider.tsx
+  145:22  warning  'refreshToken' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\auth\LoginForm.tsx
+  79:22  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\auth\LoginForm.tsx:79:22
+  77 |   };
+  78 |
+> 79 |   const rememberMe = watch('rememberMe');
+     |                      ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  80 |
+  81 |   return (
+  82 |     <Card className="w-full max-w-md mx-auto">  react-hooks/incompatible-library
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\auth\RegisterForm.tsx
+  63:20  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\auth\RegisterForm.tsx:63:20
+  61 |   });
+  62 |
+> 63 |   const password = watch('password');
+     |                    ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  64 |   const acceptTerms = watch('acceptTerms');
+  65 |   const marketingOptIn = watch('marketingOptIn');
+  66 |  react-hooks/incompatible-library
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\bookings\BookingViewModal.tsx
+  16:3  warning  'CreditCard' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\dashboard\AnalyticsCharts.tsx
+  31:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\excursoes\ExcursoesDashboard.tsx
+  17:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\excursoes\ExcursoesDashboard.tsx:17:5
+  15 |   useEffect(() => {
+  16 |     // TODO: Buscar dados da API
+> 17 |     setStats({
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  18 |       totalExcursoes: 25,
+  19 |       emPlanejamento: 8,
+  20 |       emAndamento: 5,  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\excursoes\ParticipantesList.tsx
+  4:20  warning  'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:33  warning  'Clock' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\excursoes\RoteiroEditor.tsx
+  26:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionList.tsx
+  31:5  warning  Error: Cannot access variable before it is declared
+
+`loadAuctions` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionList.tsx:31:5
+  29 |
+  30 |   useEffect(() => {
+> 31 |     loadAuctions()
+     |     ^^^^^^^^^^^^ `loadAuctions` accessed before it is declared
+  32 |   }, [filters])
+  33 |
+  34 |   const loadAuctions = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionList.tsx:34:3
+  32 |   }, [filters])
+  33 |
+> 34 |   const loadAuctions = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |     try {
+     | ^^^^^^^^^
+> 36 |       setLoading(true)
+     ÔÇª
+     | ^^^^^^^^^
+> 50 |     }
+     | ^^^^^^^^^
+> 51 |   }
+     | ^^^^ `loadAuctions` is declared here
+  52 |
+  53 |   const handleSearchChange = (value: string) => {
+  54 |     setFilters(prev => ({ ...prev, search: value, page: 1 }))  react-hooks/immutability
+  32:6  warning  React Hook useEffect has a missing dependency: 'loadAuctions'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react-hooks/exhaustive-deps
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionStats.tsx
+  30:5  warning  Error: Cannot access variable before it is declared
+
+`loadStats` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionStats.tsx:30:5
+  28 |
+  29 |   useEffect(() => {
+> 30 |     loadStats()
+     |     ^^^^^^^^^ `loadStats` accessed before it is declared
+  31 |   }, [filters])
+  32 |
+  33 |   const loadStats = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\AuctionStats.tsx:33:3
+  31 |   }, [filters])
+  32 |
+> 33 |   const loadStats = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |     try {
+     | ^^^^^^^^^
+> 35 |       setLoading(true)
+     ÔÇª
+     | ^^^^^^^^^
+> 78 |     }
+     | ^^^^^^^^^
+> 79 |   }
+     | ^^^^ `loadStats` is declared here
+  80 |
+  81 |   if (loading) {
+  82 |     return (  react-hooks/immutability
+  31:6  warning  React Hook useEffect has a missing dependency: 'loadStats'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-hooks/exhaustive-deps
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\LeilaoDetalhes.tsx
+  16:9  warning  'isActive' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\LeiloesDashboard.tsx
+  14:5  warning  Error: Cannot access variable before it is declared
+
+`loadUpcomingAuctions` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\LeiloesDashboard.tsx:14:5
+  12 |
+  13 |   useEffect(() => {
+> 14 |     loadUpcomingAuctions()
+     |     ^^^^^^^^^^^^^^^^^^^^ `loadUpcomingAuctions` accessed before it is declared
+  15 |   }, [])
+  16 |
+  17 |   const loadUpcomingAuctions = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\leiloes\LeiloesDashboard.tsx:17:3
+  15 |   }, [])
+  16 |
+> 17 |   const loadUpcomingAuctions = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 18 |     try {
+     | ^^^^^^^^^
+> 19 |       const response = await leiloesApi.getLeiloes({
+     ÔÇª
+     | ^^^^^^^^^
+> 29 |     }
+     | ^^^^^^^^^
+> 30 |   }
+     | ^^^^ `loadUpcomingAuctions` is declared here
+  31 |
+  32 |   const formatTimeUntil = (dateString: string) => {
+  33 |     const now = new Date()  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\Breadcrumbs.tsx
+   2:30  warning  'MapPin' is defined but never used. Allowed unused vars must match /^_/u                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  48:7   warning  Error: This value cannot be modified
+
+Modifying a variable defined outside a component or hook is not allowed. Consider using an effect.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\Breadcrumbs.tsx:48:7
+  46 |     } else {
+  47 |       // Navega├º├úo padr├úo
+> 48 |       window.location.href = href;
+     |       ^^^^^^^^^^^^^^^ value cannot be modified
+  49 |     }
+  50 |   };
+  51 |  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\NavigationGuard.tsx
+  2:10  warning  'Shield' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\PageTransition.tsx
+   31:7   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\PageTransition.tsx:31:7
+  29 |   useEffect(() => {
+  30 |     if (showLoading) {
+> 31 |       setIsLoading(true);
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |       const timer = setTimeout(() => {
+  33 |         setIsLoading(false);
+  34 |         setShouldRender(true);                                       react-hooks/set-state-in-effect
+  131:13  warning  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\PageTransition.tsx:131:13
+  129 |   // Se ainda est├í carregando, mostrar loading
+  130 |   if (isLoading) {
+> 131 |     return <LoadingComponent />;
+      |             ^^^^^^^^^^^^^^^^ This component is created during render
+  132 |   }
+  133 |
+  134 |   // Se n├úo deve renderizar ainda, n├úo mostrar nada
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\navigation\PageTransition.tsx:102:28
+  100 |
+  101 |   // Loading component
+> 102 |   const LoadingComponent = () => (
+      |                            ^^^^^^^
+> 103 |     <motion.div
+      | ^^^^^^^^^^^^^^^
+> 104 |       initial={{ opacity: 0 }}
+      ÔÇª
+      | ^^^^^^^^^^^^^^^
+> 126 |     </motion.div>
+      | ^^^^^^^^^^^^^^^
+> 127 |   );
+      | ^^^^ The component is created during render here
+  128 |
+  129 |   // Se ainda est├í carregando, mostrar loading
+  130 |   if (isLoading) {  react-hooks/static-components
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\notifications\NotificationBell.tsx
+   7:16  warning  'X' is defined but never used. Allowed unused vars must match /^_/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  26:7   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\notifications\NotificationBell.tsx:26:7
+  24 |     // Detectar nova notifica├º├úo
+  25 |     if (state.lastNotification && !state.lastNotification.read) {
+> 26 |       setHasNewNotification(true);
+     |       ^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |       
+  28 |       // Resetar flag ap├│s 5 segundos
+  29 |       const timer = setTimeout(() => {  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\reports\ReportAnalytics.tsx
+  2:40  warning  'Calendar' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  2:60  warning  'DollarSign' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\reports\ReportHistory.tsx
+  12:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\security\index.ts
+  80:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\shared\DataTable.tsx
+  30:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\AnimatedLoader.tsx
+  4:24  warning  'Sparkles' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\Card.tsx
+  268:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\Checkbox.tsx
+  12:3  warning  Component definition is missing display name  react/display-name
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\Input.tsx
+  4:18  warning  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\KeyboardShortcutsHelp.tsx
+  24:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\PageTransition.tsx
+   2:18  warning  'AnimatePresence' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+  20:5   warning  'slideTransition' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\SkipLinks.tsx
+  2:18  warning  'AnimatePresence' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  6:44  warning  'announce' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\label.tsx
+  4:18  warning  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\radio-group.tsx
+  12:3  warning  Component definition is missing display name  react/display-name
+  23:3  warning  Component definition is missing display name  react/display-name
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\separator.tsx
+  11:3  warning  Component definition is missing display name  react/display-name
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\ui\switch.tsx
+  11:3  warning  Component definition is missing display name  react/display-name
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\viagens-grupo\GrupoForm.tsx
+  27:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\viagens-grupo\PagamentoDividido.tsx
+  4:39  warning  'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:52  warning  'Clock' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\viagens-grupo\ViagensGrupoDashboard.tsx
+  17:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\components\viagens-grupo\ViagensGrupoDashboard.tsx:17:5
+  15 |   useEffect(() => {
+  16 |     // TODO: Buscar dados da API
+> 17 |     setStats({
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  18 |       gruposAtivos: 18,
+  19 |       totalParticipantes: 156,
+  20 |       wishlistsCompartilhadas: 42,  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\context\ThemeContext.tsx
+  22:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\context\ThemeContext.tsx:22:7
+  20 |     const savedTheme = localStorage.getItem('theme') as Theme;
+  21 |     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+> 22 |       setTheme(savedTheme);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |     }
+  24 |   }, []);
+  25 |  react-hooks/set-state-in-effect
+  41:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\context\ThemeContext.tsx:41:5
+  39 |     }
+  40 |
+> 41 |     setActualTheme(resolvedTheme);
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |     root.classList.add(resolvedTheme);
+  43 |
+  44 |     // Salvar no localStorage                                                                     react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\use-toast.ts
+  21:7  warning  'actionTypes' is assigned a value but only used as a type. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useKeyboardShortcuts.ts
+  19:26  warning  'toggleMobileSidebar' is assigned a value but never used. Allowed unused vars must match /^_/u                                                                                        @typescript-eslint/no-unused-vars
+  22:9   warning  The 'shortcuts' array makes the dependencies of useCallback Hook (at line 208) change on every render. To fix this, wrap the initialization of 'shortcuts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useSidebar.ts
+  22:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useSidebar.ts:22:9
+  20 |       if (savedState) {
+  21 |         const parsedState = JSON.parse(savedState);
+> 22 |         setSidebarState(parsedState);
+     |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |       }
+  24 |     } catch (error) {
+  25 |       console.warn('Erro ao carregar estado do sidebar:', error);  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useTheme.ts
+  57:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useTheme.ts:57:9
+  55 |       if (savedConfig) {
+  56 |         const parsedConfig = JSON.parse(savedConfig);
+> 57 |         setThemeConfig(parsedConfig);
+     |         ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  58 |       }
+  59 |     } catch (error) {
+  60 |       console.warn('Erro ao carregar configura├º├úo do tema:', error);  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\hooks\useTravelPackages.ts
+  26:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\admin-test.tsx
+  6:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\analytics.tsx
+  30:13  warning  'user' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\cotacoes\templates.tsx
+  3:21  warning  'Calculator' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\giftcards.tsx
+  49:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\giftcards.tsx:49:9
+  47 |
+  48 |     useEffect(() => {
+> 49 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  50 |     }, []);
+  51 |
+  52 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\giftcards.tsx:52:5
+  50 |     }, []);
+  51 |
+> 52 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 53 |         try {
+     | ^^^^^^^^^^^^^
+> 54 |             const [giftCardsRes, transactionsRes, statsRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 66 |         }
+     | ^^^^^^^^^^^^^
+> 67 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  68 |
+  69 |     const handleAddGiftCard = async (e: React.FormEvent) => {
+  70 |         e.preventDefault();  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\multilingual.tsx
+  37:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\multilingual.tsx:37:9
+  35 |
+  36 |     useEffect(() => {
+> 37 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  38 |     }, []);
+  39 |
+  40 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\multilingual.tsx:40:5
+  38 |     }, []);
+  39 |
+> 40 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |         try {
+     | ^^^^^^^^^^^^^
+> 42 |             const [translationsRes, languagesRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 52 |         }
+     | ^^^^^^^^^^^^^
+> 53 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  54 |
+  55 |     const handleAddTranslation = async (e: React.FormEvent) => {
+  56 |         e.preventDefault();  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\offline.tsx
+  195:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\offline.tsx:195:5
+  193 |     const handleOffline = () => setIsOnline(false);
+  194 |
+> 195 |     setIsOnline(navigator.onLine);
+      |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  196 |
+  197 |     window.addEventListener('online', handleOnline);
+  198 |     window.addEventListener('offline', handleOffline);  react-hooks/set-state-in-effect
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\recommendations.tsx
+  26:18  warning  'err' is defined but never used. Allowed unused caught errors must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\register.tsx
+  18:18  warning  'err' is defined but never used. Allowed unused caught errors must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\rewards.tsx
+  72:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\rewards.tsx:72:9
+  70 |
+  71 |     useEffect(() => {
+> 72 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  73 |     }, []);
+  74 |
+  75 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\rewards.tsx:75:5
+  73 |     }, []);
+  74 |
+> 75 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |         try {
+     | ^^^^^^^^^^^^^
+> 77 |             const [rewardsRes, statsRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 87 |         }
+     | ^^^^^^^^^^^^^
+> 88 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  89 |
+  90 |     const fetchUserData = async (userId: number) => {
+  91 |         try {  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\seo.tsx
+  31:9  warning  Error: Cannot access variable before it is declared
+
+`fetchPages` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\seo.tsx:31:9
+  29 |
+  30 |     useEffect(() => {
+> 31 |         fetchPages();
+     |         ^^^^^^^^^^ `fetchPages` accessed before it is declared
+  32 |     }, []);
+  33 |
+  34 |     const fetchPages = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\seo.tsx:34:5
+  32 |     }, []);
+  33 |
+> 34 |     const fetchPages = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |         try {
+     | ^^^^^^^^^^^^^
+> 36 |             const response = await axios.get('/api/seo/pages/');
+     | ^^^^^^^^^^^^^
+> 37 |             setPages(response.data);
+     | ^^^^^^^^^^^^^
+> 38 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 39 |             console.error('Error fetching SEO pages:', err);
+     | ^^^^^^^^^^^^^
+> 40 |         } finally {
+     | ^^^^^^^^^^^^^
+> 41 |             setLoading(false);
+     | ^^^^^^^^^^^^^
+> 42 |         }
+     | ^^^^^^^^^^^^^
+> 43 |     };
+     | ^^^^^^^ `fetchPages` is declared here
+  44 |
+  45 |     const handleEdit = (page: SEOPage) => {
+  46 |         setSelectedPage(page);  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\settings.tsx
+  6:28  warning  'Globe' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\subscriptions.tsx
+  50:9  warning  Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\subscriptions.tsx:50:9
+  48 |
+  49 |     useEffect(() => {
+> 50 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  51 |     }, []);
+  52 |
+  53 |     const fetchData = async () => {
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\pages\subscriptions.tsx:53:5
+  51 |     }, []);
+  52 |
+> 53 |     const fetchData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 54 |         try {
+     | ^^^^^^^^^^^^^
+> 55 |             const [subscriptionsRes, plansRes, statsRes] = await Promise.all([
+     ÔÇª
+     | ^^^^^^^^^^^^^
+> 67 |         }
+     | ^^^^^^^^^^^^^
+> 68 |     };
+     | ^^^^^^^ `fetchData` is declared here
+  69 |
+  70 |     const handleAddPlan = async (e: React.FormEvent) => {
+  71 |         e.preventDefault();  react-hooks/immutability
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\api\accommodationsApi.ts
+  11:3  warning  'PricingRule' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\api\bookingApi.ts
+  413:31  warning  'filters' is assigned a value but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\api\excursoesApi.ts
+  1:8  warning  'apiClient' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\api\viagensGrupoApi.ts
+  1:8  warning  'apiClient' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\auth-service.ts
+  148:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  149:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\RSV 360\Documents\s2-fase-e-clean\apps\turismo\src\services\websocketClient.ts
+  14:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:9   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 94 problems (0 errors, 94 warnings)
+

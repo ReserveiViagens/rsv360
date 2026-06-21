@@ -23,7 +23,7 @@ export default function RecommendationsPage() {
         try {
             const response = await axios.get(`/api/data/recommendations/price?property_id=${propertyId}`);
             setRecommendation(response.data);
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to fetch recommendation. Please check the Property ID.');
         }
     };

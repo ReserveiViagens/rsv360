@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react'
 import { MapPin, Calendar, Users, TrendingUp, Plus } from 'lucide-react'
 import Link from 'next/link'
 
+const MOCK_EXCURSOES_STATS = {
+  totalExcursoes: 25,
+  emPlanejamento: 8,
+  emAndamento: 5,
+  concluidas: 12,
+}
+
 export function ExcursoesDashboard() {
   const [stats, setStats] = useState({
     totalExcursoes: 0,
@@ -13,13 +20,8 @@ export function ExcursoesDashboard() {
   })
 
   useEffect(() => {
-    // TODO: Buscar dados da API
-    setStats({
-      totalExcursoes: 25,
-      emPlanejamento: 8,
-      emAndamento: 5,
-      concluidas: 12
-    })
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mock dashboard stats until API wired
+    setStats(MOCK_EXCURSOES_STATS)
   }, [])
 
   return (
