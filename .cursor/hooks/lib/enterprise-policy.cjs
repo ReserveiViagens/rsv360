@@ -91,7 +91,10 @@ function extractOwnerMessageText(payload) {
 function hasEnterpriseUnlockToken(payload) {
   const ownerText = extractOwnerMessageText(payload);
   if (!ownerText.trim()) return false;
-  return UNLOCK_TOKENS.some((token) => ownerText.includes(token));
+  return UNLOCK_TOKENS.some((token) => {
+    const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`\\b${escaped}\\b`).test(ownerText);
+  });
 }
 
 function parseToolInput(toolInput) {
@@ -213,7 +216,7 @@ function evaluateMemoriesToolEdit(payload, toolInput) {
     return { action: 'deny', reason: 'structural' };
   }
 
-  if (isAutomationContext(payload) || isFindingsOnlyMemoriesEdit(toolInput)) {
+  if (isAutomationContext(payload) && isFindingsOnlyMemoriesEdit(toolInput)) {
     return { action: 'allow' };
   }
 
@@ -272,12 +275,19 @@ function shellCommandMutatesFilesystem(command) {
     /\|\s*tee\b/i,
     /\b(Set-Content|Add-Content|Out-File|Copy-Item|Move-Item|Remove-Item|New-Item|ni\b|del\b|\brm\b|\bmv\b|\bcp\b)\b/i,
     /\b(sed\s+-i|git\s+checkout\s+--|git\s+restore\b(?![^\n]*--source))/i,
+    /\bgit\s+(add|reset|restore)\b/i,
     /\becho\b[^\n]*>/i,
     /\bnano\b|\bvi\b|\bvim\b/i,
     /\bgit\s+apply\b/i,
     /\bgit\s+commit\b/i,
   ];
   return mutatePatterns.some((re) => re.test(c));
+}
+
+function shellUsesInterpretedWrite(command) {
+  const c = String(command || '');
+  if (/\bnode\s+--check\b/i.test(c)) return false;
+  return /\b(node|python3?)\b[^\n]*\s(-e|-c)\b/i.test(c);
 }
 
 /** Legacy helper — true if any protected path appears (read or write). */
@@ -290,8 +300,19 @@ function shellMutatesProtectedPath(command) {
   const paths = shellExtractProtectedPaths(command);
   if (paths.length === 0) return false;
   if (isReadOnlyShellCommand(command)) return false;
-  if (!shellCommandMutatesFilesystem(command)) return false;
+  const mutates = shellCommandMutatesFilesystem(command) || shellUsesInterpretedWrite(command);
+  if (!mutates) return false;
   return paths.some((p) => isPolicyLockedPath(p) || isMemoriesPath(p));
+}
+
+function hasUnsafeDeleteWithoutWhere(command) {
+  const segments = String(command || '').split(/;|&&|\|\|/);
+  for (const segment of segments) {
+    if (/\bDELETE\s+FROM\b/i.test(segment) && !/\bWHERE\b/i.test(segment)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 module.exports = {
@@ -312,5 +333,7 @@ module.exports = {
   shellExtractProtectedPaths,
   isReadOnlyShellCommand,
   shellCommandMutatesFilesystem,
+  shellUsesInterpretedWrite,
+  hasUnsafeDeleteWithoutWhere,
   parseToolInput,
 };

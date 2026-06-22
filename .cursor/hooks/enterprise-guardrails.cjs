@@ -82,9 +82,10 @@ const checkCommand = (cmd, payload) => {
       agent: 'Destructive SQL is blocked.',
     },
     {
-      test: /\bDELETE\s+FROM\b(?![\s\S]*\bWHERE\b)/i,
+      test: null,
+      check: (c) => policy.hasUnsafeDeleteWithoutWhere(c),
       user: 'DELETE sem WHERE bloqueado.',
-      agent: 'DELETE without WHERE is blocked.',
+      agent: 'DELETE without WHERE is blocked (per SQL segment).',
     },
     {
       test: /\b(azd\s+up|azd\s+deploy|terraform\s+apply|kubectl\s+apply|helm\s+upgrade)\b/i,
@@ -124,7 +125,8 @@ const checkCommand = (cmd, payload) => {
   ];
 
   for (const rule of denyRules) {
-    if (rule.test.test(c)) {
+    const matched = rule.check ? rule.check(c) : rule.test && rule.test.test(c);
+    if (matched) {
       return { action: 'deny', user: rule.user, agent: rule.agent };
     }
   }
