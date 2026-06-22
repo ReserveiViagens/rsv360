@@ -57,6 +57,15 @@ Configure **uma** opção no **backend**:
 | Webhook | `PASSWORD_RESET_EMAIL_WEBHOOK`, `PASSWORD_RESET_EMAIL_WEBHOOK_SECRET` (opcional) |
 | SMTP/SES | `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` |
 
+**Teste local (sem SMTP):** em um terminal `npm run staging:webhook`; no `.env`:
+
+```env
+PASSWORD_RESET_EMAIL_WEBHOOK=http://host.docker.internal:9876/password-reset
+PASSWORD_RESET_EMAIL_WEBHOOK_SECRET=<mesmo valor no .env>
+```
+
+O link de reset aparece no terminal e em `logs/staging-password-reset-webhook.log`.
+
 Link no e-mail: `PASSWORD_RESET_BASE_URL` + `/redefinir-senha?token=…`
 
 ## 5. Validar variáveis
