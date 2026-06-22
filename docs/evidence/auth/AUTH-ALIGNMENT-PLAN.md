@@ -17,5 +17,5 @@
 
 ## Próximo (fora escopo atual)
 
-- Turismo 2FA / forgot-reset quando backend v1 + spec segurança existir
+- Implementar trilha **D2.4–D2.7** conforme `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`
 - site-publico OAuth social → BFF ou IdP canônico

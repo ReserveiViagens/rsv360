@@ -20,8 +20,8 @@
 | D2.1 Inventário + smoke | ✅ | `D2.1-TURISMO-LEGACY-AUTH-INVENTORY.md` |
 | D2.2 Backend register v1 | ✅ | `D2.2-BACKEND-AUTH-REGISTER-RESULT.md` |
 | D2.3 Turismo wire → v1 | ✅ | `D2.3-TURISMO-REGISTER-V1-RESULT.md` |
-| 2FA / forgot-reset | Defer (cliente) | `D2-DEFER-2FA-PASSWORD-RESET.md` |
+| 2FA / forgot-reset | Spec ✅ — impl. D2.4–D2.7 | `AUTH-V1-2FA-PASSWORD-RESET-SPEC.md` |
 
 ## Trilha register concluída
 
-Register migrado no turismo. 2FA e forgot/reset: mensagem explícita no cliente até backend v1.
+Register migrado no turismo. 2FA e forgot/reset: spec em `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md` (fases D2.4–D2.7).
