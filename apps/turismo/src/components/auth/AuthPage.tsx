@@ -1,3 +1,4 @@
+import { AUTH_DEFERRED_MESSAGES } from '../../lib/auth-legacy-deferred';
 import React, { useState, type ComponentProps } from 'react';
 import { useAuth } from './AuthProvider';
 import { LoginForm } from './LoginForm';
@@ -49,8 +50,7 @@ export const AuthPage: React.FC = () => {
   };
 
   const handleForgotPassword = () => {
-    setCurrentStep('forgot-password');
-    setError(null);
+    setError(AUTH_DEFERRED_MESSAGES.passwordReset);
   };
 
   const handleBackToLogin = () => {
