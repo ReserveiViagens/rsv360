@@ -112,6 +112,10 @@ jobs:
             echo "OK: $url"
           done
 
+      - name: Reset auth rate limits before E2E
+        run: |
+          docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem -c "DELETE FROM auth_rate_limits;" || true
+
       - name: Run auth v1 E2E (T1.9 — cenários #31)
         env:
           SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
