@@ -52,6 +52,9 @@ const shellCases = [
   ['cat AGENTS.md', 'allow'],
   ['Get-Content AGENTS.md', 'allow'],
   ['git diff -- .cursor/rules/enterprise-security.mdc', 'allow'],
+  ['DELETE FROM users; DELETE FROM users WHERE id=1', 'deny'],
+  ['git add AGENTS.md', 'deny'],
+  ['node -e "require(\"fs\").writeFileSync(\"AGENTS.md\",\"x\")"', 'deny'],
 ];
 
 for (const [cmd, expected] of shellCases) {
@@ -113,6 +116,31 @@ assert(
       path: 'MEMORIES.md',
       old_string: '_Nenhum achado ativo._',
       new_string: 'password: supersecret',
+    },
+  }).permission === 'deny'
+);
+
+assert(
+  'memories findings without automation -> deny',
+  runProtect({
+    tool_name: 'StrReplace',
+    tool_input: {
+      path: 'MEMORIES.md',
+      old_string: '_Nenhum achado ativo._',
+      new_string: '- [ ] Example finding — severity: low',
+    },
+  }).permission === 'deny'
+);
+
+assert(
+  'token embedded in longer identifier -> deny',
+  runProtect({
+    user_message: 'prefix_ALTERAR_ENTERPRISE_RULES_V2_suffix',
+    tool_name: 'StrReplace',
+    tool_input: {
+      path: '.cursor/rules/enterprise-security.mdc',
+      old_string: 'a',
+      new_string: 'b',
     },
   }).permission === 'deny'
 );
