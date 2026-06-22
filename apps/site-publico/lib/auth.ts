@@ -116,13 +116,17 @@ export async function register(data: {
   phone?: string;
   document?: string;
 }) {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
-  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+  const response = await fetch(AUTH_BFF.REGISTER, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.password,
+    }),
   });
 
   let result: any = {};
