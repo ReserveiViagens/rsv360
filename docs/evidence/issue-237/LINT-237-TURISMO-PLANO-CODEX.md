@@ -2,8 +2,8 @@
 
 **Issue:** [#237](https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/issues/237)  
 **App:** `apps/turismo`  
-**Atualizado:** 2026-06-21 (PR Draft **#548** → `main`; tracking **#549**)  
-**Baseline global:** **0** warnings (verificado `eslint-warnings-rank.cjs`)
+**Atualizado:** 2026-06-22 (**merged-to-main** via PR **#548**, merge `d71e8651`)  
+**Baseline global:** **0** warnings na `main` (verificado `eslint-warnings-rank.cjs` 2026-06-22)
 **Arquivos com débito:** **~285**  
 **Clusters planejados:** **120** (−3141 total)  
 **Máquina de clusters:** `apps/turismo/scripts/lint-237-clusters.json` (gerar: `node scripts/lint-237-generate-clusters.cjs`)
@@ -15,9 +15,9 @@
 | Warnings globais | **0** |
 | Clusters concluídos | **120** / 120 |
 | PR empilhada mais recente | **#542** (residual-zero, merged na stack) |
-| PR merge → `main` | **#548** (Draft) — `chore/lint-turismo-task-leiloes-marketplace` |
-| Issue tracking | **#549** |
-| Próximo passo | **merge #548** na `main` → validar 0 na `main` → fechar **#549** |
+| PR merge → `main` | **#548** **MERGED** (2026-06-22, `d71e8651`) |
+| Issue tracking | **#549** — fechada pós-merge |
+| Status | **GO** — baseline **0** na `main` |
 
 ## Padrão por cluster (repetir)
 
@@ -188,8 +188,9 @@ Base empilhada: última branch chore/lint-turismo-* mergeada ou PR aberta.
 - [x] Clusters **1–120** (baseline **0** confirmado 2026-06-21)
 - [x] Residual sweep pós-pilha (#30 + 35 arquivos avulsos)
 - [x] Merge da pilha #438→#542 na branch de stack
-- [x] PR Draft **#548** aberta (`stack` → `main`)
-- [x] PRs obsoletas #386–#406 fechadas (superseded)
-- [ ] Merge **#548** na `main`
-- [ ] `eslint-warnings-rank.cjs` na `main` = **0**
-- [ ] Fechar issue **#549**
+- [x] PR **#548** mergeada na `main` (2026-06-22)
+- [x] `eslint-warnings-rank.cjs` na `main` = **0** (2026-06-22)
+- [x] Issue **#549** fechada
+- [x] **merged-to-main** — ciclo lint turismo concluído
+
+> Issue **#237** permanece fechada (escopo original `site-publico`). Merge turismo → `main` rastreado por **#549**.
