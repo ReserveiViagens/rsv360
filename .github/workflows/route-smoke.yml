@@ -123,6 +123,12 @@ jobs:
           RSV_AUTH_V1_BACKEND_URL: http://localhost:3002
         run: npm run test:e2e:auth-v1
 
+      - name: Run turismo legacy auth smoke (D2.1)
+        env:
+          RSV_AUTH_V1_BACKEND_URL: http://localhost:3002
+          RSV_SMOKE_TURISMO_URL: http://localhost:3005
+        run: npm run test:e2e:turismo-legacy
+
       - name: Run guest E2E smoke (Phase 7-G.2)
         working-directory: apps/guest
         env:

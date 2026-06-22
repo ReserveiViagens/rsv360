@@ -1,7 +1,7 @@
 # Fila execução RSV360 — closeout
 
-**Data:** 2026-06-22  
-**Base final:** `main` pós-merges #555–#561
+**Data:** 2026-06-22 (atualizado pós D2 + Docker #569)  
+**Base final:** `main` pós-merges #555–#569
 
 ## PRs mergeados
 
@@ -15,6 +15,12 @@
 | #559 | F-029 guest redirect loop |
 | #560 | Dependabot triage 2026-06 |
 | #561 | PR auto-merge workflow (GitHub Free) |
+| #562 | Closeout matriz auth (T1.8/T1.9) |
+| #563 | Fix auth v1 E2E rate-limit no route-smoke |
+| #565 | D2.2 backend `POST /api/v1/auth/register` |
+| #567 | D2.3 turismo register → v1 |
+| #568 | D2.1 inventário + D1 register BFF + 2FA defer |
+| #569 | fix Docker backend build (`--ignore-scripts`) |
 
 ## Critérios de conclusão
 
@@ -22,7 +28,11 @@
 |----------|--------|
 | Matriz + T1.8 + T1.9 documentados | ✅ |
 | site-publico core auth via BFF proxy v1 | ✅ (#555) |
-| E2E #31 no route-smoke | ✅ implementado (#556); validar run CI |
+| site-publico register via BFF v1 | ✅ (#568) |
+| Turismo register via v1 | ✅ (#565–#567) |
+| E2E #31 + register (7 cenários) | ✅ local 7/7; CI route-smoke |
+| D2.1 legacy smoke turismo | ✅ `test:e2e:turismo-legacy` |
+| Docker backend build com register | ✅ (#569) |
 | Security scan F-027/F-028 + locks | ✅ (#557–#558) |
 | Guest sem redirect loop | ✅ (#559) |
 | Dependabot #367 + defer majors | ✅ (#367 merge + #560) |
@@ -34,6 +44,6 @@
 
 ## Gaps remanescentes (fora da fila)
 
-- **D2** turismo 2FA/register legado
-- **D3** guest namespace próprio (by design)
-- site-publico: register/OAuth/forgot ainda locais até backend v1 existir
+- **D2 parcial:** turismo 2FA/forgot/reset — defer cliente até backend v1 + spec segurança
+- **D3:** guest namespace próprio (by design)
+- site-publico: OAuth social ainda local

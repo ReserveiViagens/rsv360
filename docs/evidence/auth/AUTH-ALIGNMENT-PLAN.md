@@ -10,4 +10,12 @@
 ## Entregáveis
 
 - [x] Matriz de divergências em `docs/evidence/auth/AUTH-ALIGNMENT-MATRIX.md`
-- [x] Testes E2E ou integration para login/logout/session/expiração/RBAC — ver `docs/evidence/auth/T1.9-AUTH-V1-E2E-RESULT.md`
+- [x] Testes E2E ou integration para login/logout/session/expiração/RBAC — `T1.9-AUTH-V1-E2E-RESULT.md`
+- [x] Register v1 backend + turismo + site-publico BFF — D2.2/D2.3/D1 (#565–#568)
+- [x] D2.1 inventário legacy + smoke `test:e2e:turismo-legacy`
+- [x] Docker backend rebuild — #569
+
+## Próximo (fora escopo atual)
+
+- Turismo 2FA / forgot-reset quando backend v1 + spec segurança existir
+- site-publico OAuth social → BFF ou IdP canônico
