@@ -2,12 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
-import { ShoppingBag, DollarSign, TrendingUp, Users, CheckCircle, XCircle, Clock, Filter } from 'lucide-react'
-import { Button } from '../../src/components/ui/Button'
+import { ShoppingBag, DollarSign, CheckCircle, Clock } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/Card'
-import { Input } from '../../src/components/ui/Input'
-import { Label } from '../../src/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../src/components/ui/Select'
 import { Badge } from '../../src/components/ui/Badge'
 import { toast } from 'react-hot-toast'
 import { api } from '../../src/services/apiClient'
@@ -62,27 +58,19 @@ export default function MarketplacePage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [commissions, setCommissions] = useState<Commission[]>([])
   const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState({
-    status: 'all',
-    search: '',
-  })
-
-  useEffect(() => {
-    loadData()
-  }, [])
 
   const loadData = async () => {
     setLoading(true)
     try {
       const [listingsRes, ordersRes, commissionsRes] = await Promise.all([
-        api.get<Listing[]>('/api/v1/marketplace/listings', { status: filters.status === 'all' ? undefined : filters.status }),
+        api.get<Listing[]>('/api/v1/marketplace/listings'),
         api.get<Order[]>('/api/v1/marketplace/orders'),
         api.get<Commission[]>('/api/v1/marketplace/commissions'),
       ])
 
       setListings(listingsRes.data ?? [])
-      setOrders(Array.isArray(ordersRes) ? ordersRes : [])
-      setCommissions(Array.isArray(commissionsRes) ? commissionsRes : [])
+      setOrders(ordersRes.data ?? [])
+      setCommissions(commissionsRes.data ?? [])
     } catch (error) {
       console.error('Failed to load marketplace data:', error)
       toast.error('Erro ao carregar dados do marketplace.')
@@ -90,6 +78,13 @@ export default function MarketplacePage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void loadData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Calcular estatísticas
   const totalListings = listings.length

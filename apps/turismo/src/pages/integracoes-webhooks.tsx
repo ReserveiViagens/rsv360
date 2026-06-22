@@ -1,26 +1,34 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Switch } from '@/components/ui/Switch';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue } from '@/components/ui/Select';
 import {
   Webhook,
   Send,
-  Settings,
   Globe,
   Clock,
   Shield,
   Activity,
   CheckCircle,
-  XCircle,
-  AlertTriangle,
   RefreshCw,
   Save,
   TestTube,
@@ -32,15 +40,9 @@ import {
   Eye,
   EyeOff,
   Copy,
-  Download,
-  Filter,
   Search,
   BarChart3,
-  MessageSquare,
-  Key,
-  Lock,
   Zap,
-  Network,
   Info
 } from 'lucide-react';
 
@@ -78,7 +80,7 @@ interface WebhookEvent {
   name: string;
   description: string;
   category: 'booking' | 'payment' | 'customer' | 'system' | 'user';
-  payload_schema: Record<string, any>;
+  payload_schema: Record<string, string>;
   enabled: boolean;
 }
 
@@ -89,7 +91,7 @@ interface WebhookDelivery {
   status: 'success' | 'failed' | 'pending' | 'retry';
   status_code?: number;
   response_time: number;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   response_body?: string;
   error_message?: string;
   attempt_count: number;
@@ -439,7 +441,7 @@ export default function IntegracoesWebhooks() {
       ));
 
       alert('Teste do webhook realizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       setWebhooks(prev => prev.map(wh =>
         wh.id === webhook.id
           ? {
@@ -522,7 +524,10 @@ export default function IntegracoesWebhooks() {
     }
   };
 
-  const updateWebhookField = (field: string, value: any) => {
+  const updateWebhookField = (
+    field: string,
+    value: string | number | boolean | string[] | number[] | Record<string, string>
+  ) => {
     if (!selectedWebhook) return;
     setSelectedWebhook({ ...selectedWebhook, [field]: value });
   };
@@ -535,22 +540,6 @@ export default function IntegracoesWebhooks() {
       : [...selectedWebhook.events, eventId];
 
     setSelectedWebhook({ ...selectedWebhook, events });
-  };
-
-  const addHeader = (key: string, value: string) => {
-    if (!selectedWebhook || !key.trim() || !value.trim()) return;
-
-    setSelectedWebhook({
-      ...selectedWebhook,
-      headers: { ...selectedWebhook.headers, [key]: value }
-    });
-  };
-
-  const removeHeader = (key: string) => {
-    if (!selectedWebhook) return;
-
-    const { [key]: removed, ...rest } = selectedWebhook.headers;
-    setSelectedWebhook({ ...selectedWebhook, headers: rest });
   };
 
   const generateSecretKey = () => {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { PagamentoDividido } from '../../../src/components/viagens-grupo/PagamentoDividido'
@@ -20,16 +20,7 @@ export default function PagamentosPage() {
     valor_total: '',
   })
 
-  useEffect(() => {
-    // Tentar pegar do query ou da URL
-    const id = (router.query.grupo_id || router.query.id) as string
-    if (id) {
-      setGrupoId(id)
-      loadPagamentos(id)
-    }
-  }, [router.query])
-
-  const loadPagamentos = async (id: string) => {
+  const loadPagamentos = useCallback(async (id: string) => {
     try {
       setLoading(true)
       const data = await viagensGrupoApi.getPagamentos(id)
@@ -43,7 +34,17 @@ export default function PagamentosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Tentar pegar do query ou da URL
+    const id = (router.query.grupo_id || router.query.id) as string
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync grupo id from route query
+      setGrupoId(id)
+      loadPagamentos(id)
+    }
+  }, [router.query, loadPagamentos])
 
   const handleAdd = async () => {
     if (!newPagamento.descricao.trim() || !newPagamento.valor_total) {

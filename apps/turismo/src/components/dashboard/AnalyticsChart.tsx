@@ -15,7 +15,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieLabel,
 } from 'recharts';
 import { cn } from '../../utils/cn';
 
@@ -24,7 +23,7 @@ export type ChartType = 'line' | 'area' | 'bar' | 'pie';
 export interface ChartData {
   name: string;
   value: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface AnalyticsChartProps {

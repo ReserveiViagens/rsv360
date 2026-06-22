@@ -4,8 +4,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { ArrowLeft, Save, Upload } from 'lucide-react';
-import { BudgetTemplate, BudgetItem, Photo, Highlight, Benefit, ImportantNote } from '@/lib/types/budget';
+import { ArrowLeft, Save } from 'lucide-react';
+import { BudgetTemplate } from '@/lib/types/budget';
 import { templateStorage } from '@/lib/template-storage';
 import { generateId } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
@@ -37,7 +37,7 @@ export default function NewTemplatePage() {
     updatedAt: new Date().toISOString(),
   });
 
-  const updateTemplate = (field: string, value: any) => {
+  const updateTemplate = (field: string, value: BudgetTemplate[keyof BudgetTemplate] | string | number | boolean) => {
     setTemplate({
       ...template,
       [field]: value,

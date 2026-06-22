@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
@@ -7,19 +7,14 @@ import {
   Upload, 
   Download, 
   Search, 
-  Filter, 
-  Plus,
   Edit,
   Trash,
   Eye,
   Folder,
   File,
-  Image,
+  Image as ImageIcon,
   Video,
   Archive,
-  Calendar,
-  User,
-  Tag,
   MoreVertical,
   Grid,
   List,
@@ -53,7 +48,7 @@ interface DocumentCategory {
 }
 
 export default function DocumentsPage() {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,7 +56,6 @@ export default function DocumentsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'name' | 'date' | 'size' | 'type'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [isLoading, setIsLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Dados simulados - em produção viriam da API
@@ -190,7 +184,7 @@ export default function DocumentsPage() {
       case 'xls':
       case 'xlsx': return <FileText className="h-6 w-6 text-green-500" />;
       case 'jpg':
-      case 'png': return <Image className="h-6 w-6 text-purple-500" />;
+      case 'png': return <ImageIcon className="h-6 w-6 text-purple-500" aria-hidden="true" />;
       case 'mp4': return <Video className="h-6 w-6 text-red-500" />;
       case 'zip': return <Archive className="h-6 w-6 text-orange-500" />;
       default: return <File className="h-6 w-6 text-gray-500" />;
@@ -227,7 +221,8 @@ export default function DocumentsPage() {
   });
 
   const sortedDocuments = [...filteredDocuments].sort((a, b) => {
-    let aValue: any, bValue: any;
+    let aValue: string | number = '';
+    let bValue: string | number = '';
     
     switch (sortBy) {
       case 'name':
@@ -425,7 +420,7 @@ export default function DocumentsPage() {
 
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as 'name' | 'date' | 'size' | 'type')}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="date">Data</option>

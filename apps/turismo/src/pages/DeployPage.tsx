@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Rocket, Play, Activity, Save, CheckCircle, AlertTriangle, Clock, TrendingUp, Server, Database, Globe, Shield, Zap, BarChart3, Users, CheckCircle2, Activity2, Settings, Eye, Download, Share, Plus, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Rocket, Play, Activity, Save, CheckCircle, AlertTriangle, Clock, Server, CheckCircle2, Settings } from 'lucide-react';
 import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui';
 import {
   FinalDeploySystem,
@@ -9,9 +9,28 @@ import {
 } from '../components/deploy';
 import { useUIStore } from '../stores/useUIStore';
 
+interface EnvironmentEntity {
+  environment: string;
+}
+
+interface NamedEntity {
+  name: string;
+}
+
+interface DeployAlert {
+  title: string;
+  severity: string;
+}
+
+type BackupJob = NamedEntity;
+
+interface RecoveryPoint {
+  timestamp: string | number;
+}
+
 const DeployPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('deploy');
-  const [quickStats, setQuickStats] = useState({
+  const [quickStats] = useState({
     totalEnvironments: 3,
     activeDeploys: 1,
     servicesOnline: 5,
@@ -21,19 +40,19 @@ const DeployPage: React.FC = () => {
   });
   const { showNotification } = useUIStore();
 
-  const handleDeployStarted = (config: any) => {
+  const handleDeployStarted = (config: EnvironmentEntity) => {
     showNotification(`Deploy iniciado para ${config.environment}`, 'info');
   };
 
-  const handleDeployCompleted = (status: any) => {
+  const handleDeployCompleted = (status: EnvironmentEntity) => {
     showNotification(`Deploy concluído para ${status.environment}`, 'success');
   };
 
-  const handlePhaseStarted = (phase: any) => {
+  const handlePhaseStarted = (phase: NamedEntity) => {
     showNotification(`Fase "${phase.name}" iniciada`, 'info');
   };
 
-  const handlePhaseCompleted = (phase: any) => {
+  const handlePhaseCompleted = (phase: NamedEntity) => {
     showNotification(`Fase "${phase.name}" concluída`, 'success');
   };
 
@@ -41,19 +60,19 @@ const DeployPage: React.FC = () => {
     showNotification('🎉 GO-LIVE ATIVADO! Sistema RSV em produção!', 'success');
   };
 
-  const handleAlertCreated = (alert: any) => {
+  const handleAlertCreated = (alert: DeployAlert) => {
     showNotification(`Novo alerta: ${alert.title}`, alert.severity === 'critical' ? 'error' : 'warning');
   };
 
-  const handleAlertResolved = (alert: any) => {
+  const handleAlertResolved = (alert: DeployAlert) => {
     showNotification(`Alerta resolvido: ${alert.title}`, 'success');
   };
 
-  const handleBackupStarted = (job: any) => {
+  const handleBackupStarted = (job: BackupJob) => {
     showNotification(`Backup iniciado: ${job.name}`, 'info');
   };
 
-  const handleRecoveryStarted = (point: any) => {
+  const handleRecoveryStarted = (point: RecoveryPoint) => {
     showNotification(`Recuperação iniciada do backup ${new Date(point.timestamp).toLocaleDateString()}`, 'info');
   };
 

@@ -1,7 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { 
   BarChart3, 
-  TrendingUp, 
   Users, 
   Eye, 
   MousePointer,
@@ -13,12 +12,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
-  Calendar,
-  Filter,
   Search,
   Download
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import { useToast } from '../components/ToastContainer';
 
 interface AnalyticsMetrics {
@@ -123,11 +119,7 @@ const AnalyticsDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState('30d');
   const [view, setView] = useState('overview');
 
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [dateRange, view]);
-
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
     try {
       setLoading(true);
       // Simular dados de analytics (em produÃ§Ã£o, viria da API)
@@ -256,12 +248,17 @@ const AnalyticsDashboard: React.FC = () => {
       
       setMetrics(mockData);
       showSuccess('Sucesso', 'Dados de analytics carregados com sucesso');
-    } catch (error) {
+    } catch (_error) {
       showError('Erro', 'Falha ao carregar dados de analytics');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError, showSuccess]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load mock/API analytics when filters change
+    loadAnalyticsData();
+  }, [dateRange, view, loadAnalyticsData]);
 
   const formatNumber = (value: number) => {
     if (value >= 1000000) {

@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import { 
   Calendar, 
   Clock, 
-  Mail, 
-  Settings, 
   Play, 
   Pause, 
   Edit3, 
@@ -15,7 +13,6 @@ import {
   AlertCircle,
   Download,
   Plus,
-  Filter,
   Search
 } from 'lucide-react';
 
@@ -146,10 +143,10 @@ const mockExecutions: ReportExecution[] = [
 const ReportScheduler: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'schedules' | 'executions' | 'new'>('schedules');
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>(mockScheduledReports);
-  const [executions, setExecutions] = useState<ReportExecution[]>(mockExecutions);
+  const [executions] = useState<ReportExecution[]>(mockExecutions);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [showNewForm, setShowNewForm] = useState(false);
+  const [_showNewForm, setShowNewForm] = useState(false);
 
   // ===================================================================
   // FILTROS
@@ -273,7 +270,7 @@ const ReportScheduler: React.FC = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'schedules' | 'executions' | 'new')}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
@@ -307,7 +304,7 @@ const ReportScheduler: React.FC = () => {
                     </div>
                     <select
                       value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value as any)}
+                      onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       title="Filtrar por status"
                     >

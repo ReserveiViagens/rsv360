@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactNode } from 'react';
-import { Shield, Lock, UserCheck, AlertTriangle } from 'lucide-react';
+import { Lock, UserCheck, AlertTriangle } from 'lucide-react';
 import { Button, Alert, AlertDescription } from '../ui';
 
 export interface Permission {

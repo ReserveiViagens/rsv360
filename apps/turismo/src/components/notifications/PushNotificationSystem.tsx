@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, BellOff, Settings, Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -41,75 +41,75 @@ interface PushNotificationSystemProps {
   onTemplateCreated?: (template: NotificationTemplate) => void;
 }
 
+const MOCK_NOTIFICATIONS: PushNotification[] = [
+  {
+    id: '1',
+    title: 'Promoção Especial',
+    message: 'Desconto de 20% em todas as viagens!',
+    category: 'marketing',
+    targetAudience: 'all',
+    scheduledAt: new Date('2025-06-02T15:00:00'),
+    status: 'scheduled',
+    recipients: 1250,
+    opened: 890,
+    clicked: 234
+  },
+  {
+    id: '2',
+    title: 'Confirmação de Reserva',
+    message: 'Sua viagem para Paris foi confirmada!',
+    category: 'transactional',
+    targetAudience: 'specific',
+    sentAt: new Date('2025-06-01T10:00:00'),
+    status: 'sent',
+    recipients: 1,
+    opened: 1,
+    clicked: 0
+  }
+];
+
+const MOCK_TEMPLATES: NotificationTemplate[] = [
+  {
+    id: '1',
+    name: 'Promoção Padrão',
+    title: 'Promoção Especial',
+    message: 'Desconto exclusivo para você!',
+    category: 'marketing',
+    isDefault: true
+  },
+  {
+    id: '2',
+    name: 'Confirmação de Viagem',
+    title: 'Viagem Confirmada',
+    message: 'Sua viagem foi confirmada com sucesso!',
+    category: 'transactional',
+    isDefault: true
+  }
+];
+
+type StatusBadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+
 const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
   onNotificationSent,
   onTemplateCreated
 }) => {
-  const [notifications, setNotifications] = useState<PushNotification[]>([]);
-  const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
+  const [notifications, setNotifications] = useState<PushNotification[]>(MOCK_NOTIFICATIONS);
+  const [templates, setTemplates] = useState<NotificationTemplate[]>(MOCK_TEMPLATES);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<PushNotification | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
   const [activeTab, setActiveTab] = useState('compose');
   const { showNotification } = useUIStore();
+  const idRef = useRef(100);
 
-  // Mock data
-  useEffect(() => {
-    const mockNotifications: PushNotification[] = [
-      {
-        id: '1',
-        title: 'Promoção Especial',
-        message: 'Desconto de 20% em todas as viagens!',
-        category: 'marketing',
-        targetAudience: 'all',
-        scheduledAt: new Date(Date.now() + 3600000),
-        status: 'scheduled',
-        recipients: 1250,
-        opened: 890,
-        clicked: 234
-      },
-      {
-        id: '2',
-        title: 'Confirmação de Reserva',
-        message: 'Sua viagem para Paris foi confirmada!',
-        category: 'transactional',
-        targetAudience: 'specific',
-        sentAt: new Date(),
-        status: 'sent',
-        recipients: 1,
-        opened: 1,
-        clicked: 0
-      }
-    ];
-
-    const mockTemplates: NotificationTemplate[] = [
-      {
-        id: '1',
-        name: 'Promoção Padrão',
-        title: 'Promoção Especial',
-        message: 'Desconto exclusivo para você!',
-        category: 'marketing',
-        isDefault: true
-      },
-      {
-        id: '2',
-        name: 'Confirmação de Viagem',
-        title: 'Viagem Confirmada',
-        message: 'Sua viagem foi confirmada com sucesso!',
-        category: 'transactional',
-        isDefault: true
-      }
-    ];
-
-    setNotifications(mockNotifications);
-    setTemplates(mockTemplates);
-  }, []);
+  const nextId = () => {
+    idRef.current += 1;
+    return idRef.current.toString();
+  };
 
   const handleCreateNotification = (notification: Omit<PushNotification, 'id' | 'status' | 'recipients' | 'opened' | 'clicked'>) => {
     const newNotification: PushNotification = {
       ...notification,
-      id: Date.now().toString(),
+      id: nextId(),
       status: 'draft',
       recipients: 0,
       opened: 0,
@@ -132,7 +132,7 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
   const handleCreateTemplate = (template: Omit<NotificationTemplate, 'id'>) => {
     const newTemplate: NotificationTemplate = {
       ...template,
-      id: Date.now().toString()
+      id: nextId()
     };
 
     setTemplates(prev => [newTemplate, ...prev]);
@@ -141,13 +141,13 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
     onTemplateCreated?.(newTemplate);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadgeVariant = (status: string): StatusBadgeVariant => {
     switch (status) {
-      case 'draft': return 'gray';
-      case 'scheduled': return 'blue';
-      case 'sent': return 'green';
-      case 'failed': return 'red';
-      default: return 'gray';
+      case 'draft': return 'secondary';
+      case 'scheduled': return 'outline';
+      case 'sent': return 'default';
+      case 'failed': return 'destructive';
+      default: return 'secondary';
     }
   };
 
@@ -242,7 +242,7 @@ const PushNotificationSystem: React.FC<PushNotificationSystemProps> = ({
                         <h4 className="font-medium">{notification.title}</h4>
                         <p className="text-sm text-gray-600">{notification.message}</p>
                         <div className="flex items-center gap-4 mt-1">
-                          <Badge variant={getStatusColor(notification.status) as any}>
+                          <Badge variant={getStatusBadgeVariant(notification.status)}>
                             {notification.status}
                           </Badge>
                           <span className="text-sm text-gray-500">

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import apiClient from '../src/services/apiClient'
@@ -9,20 +9,14 @@ import {
   Upload,
   Download,
   Search,
-  Filter,
-  Plus,
   Edit,
   Trash2,
   Eye,
   Folder,
   File,
-  Image,
+  Image as ImageIcon,
   Video,
   Archive,
-  Calendar,
-  User,
-  Tag,
-  MoreVertical,
   Grid,
   List,
   SortAsc,
@@ -30,10 +24,7 @@ import {
   X,
   Save,
   CheckCircle,
-  XCircle,
-  HardDrive,
-  Clock,
-  BarChart3
+  HardDrive
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -95,14 +86,10 @@ export default function DocumentsPage() {
     tags: [] as string[]
   })
 
-  useEffect(() => {
-    loadData()
-  }, [activeTab, selectedCategory, sortBy, sortOrder])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
-      const params: any = {
+      const params: Record<string, string | undefined> = {
         status: activeTab !== 'all' ? activeTab : undefined,
         category: selectedCategory !== 'all' ? selectedCategory : undefined,
         search: searchTerm || undefined,
@@ -125,7 +112,14 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, selectedCategory, sortBy, sortOrder, searchTerm])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void loadData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [loadData])
 
   const handleUpload = async () => {
     if (!uploadFile) {
@@ -142,7 +136,7 @@ export default function DocumentsPage() {
       uploadFormData.append('category', formData.category || 'Geral')
       uploadFormData.append('tags', JSON.stringify(formData.tags))
 
-      const response = await apiClient.post('/api/v1/documents/upload', uploadFormData, {
+      await apiClient.post('/api/v1/documents/upload', uploadFormData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -299,7 +293,7 @@ export default function DocumentsPage() {
       case 'jpg':
       case 'jpeg':
       case 'png':
-      case 'gif': return <Image className="h-6 w-6 text-purple-500" />
+      case 'gif': return <ImageIcon className="h-6 w-6 text-purple-500" />
       case 'mp4':
       case 'avi': return <Video className="h-6 w-6 text-red-500" />
       case 'zip':

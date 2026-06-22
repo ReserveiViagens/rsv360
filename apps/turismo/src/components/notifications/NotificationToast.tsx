@@ -2,9 +2,10 @@
 // NOTIFICATION TOAST - SISTEMA DE TOAST PARA NOTIFICAÇÕES
 // ===================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNotifications } from '../../context/NotificationContext';
 import { useRouter } from 'next/router';
+import { NotificationData } from '../../services/websocket';
 import {
   Bell,
   X,
@@ -24,9 +25,14 @@ import {
 // ===================================================================
 
 interface ToastProps {
-  notification: any;
+  notification: NotificationData;
   onClose: () => void;
   onAction?: () => void;
+}
+
+interface ToastItem {
+  id: string;
+  notification: NotificationData;
 }
 
 // ===================================================================
@@ -37,11 +43,16 @@ const Toast: React.FC<ToastProps> = ({ notification, onClose, onAction }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [onClose]);
+
   useEffect(() => {
-    // Animar entrada
     const timer = setTimeout(() => setIsVisible(true), 100);
-    
-    // Auto-close após 5 segundos
+
     const autoCloseTimer = setTimeout(() => {
       handleClose();
     }, 5000);
@@ -50,14 +61,7 @@ const Toast: React.FC<ToastProps> = ({ notification, onClose, onAction }) => {
       clearTimeout(timer);
       clearTimeout(autoCloseTimer);
     };
-  }, []);
-
-  const handleClose = () => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
+  }, [handleClose]);
 
   const handleAction = () => {
     if (onAction) {
@@ -179,16 +183,16 @@ const Toast: React.FC<ToastProps> = ({ notification, onClose, onAction }) => {
 const NotificationToastContainer: React.FC = () => {
   const { state } = useNotifications();
   const router = useRouter();
-  const [toasts, setToasts] = useState<any[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   useEffect(() => {
-    // Adicionar nova notificação como toast
     if (state.lastNotification && !state.lastNotification.read) {
-      const newToast = {
+      const newToast: ToastItem = {
         id: state.lastNotification.id,
         notification: state.lastNotification
       };
-      
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- append toast when new notification arrives
       setToasts(prev => [...prev, newToast]);
     }
   }, [state.lastNotification]);
@@ -197,7 +201,7 @@ const NotificationToastContainer: React.FC = () => {
     setToasts(prev => prev.filter(toast => toast.id !== toastId));
   };
 
-  const handleToastAction = (notification: any) => {
+  const handleToastAction = (notification: NotificationData) => {
     if (notification.actionUrl) {
       router.push(notification.actionUrl);
     }

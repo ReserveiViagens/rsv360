@@ -1,13 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
-  MapPin, Phone, Mail, Globe, Users, Star, DollarSign, TrendingUp,
-  Plane, Camera, Gamepad2, Ticket, Megaphone, BarChart3, Search, Lightbulb,
-  Award, Trophy, Gift, ShoppingCart, ShoppingBag, Package, Store,
-  Calculator, FileText, CreditCard, RefreshCw, Image, Video,
-  MessageCircle, Bot, Bell, Settings, Zap, Edit3, FileCheck,
-  Shield, Passport, Car, Hotel, Map, User, Lock, UserCheck, Calendar,
-  Home
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Users,
+  DollarSign,
+  TrendingUp,
+  Plane,
+  Camera,
+  Ticket,
+  Megaphone,
+  BarChart3,
+  Award,
+  ShoppingCart,
+  Calculator,
+  CreditCard,
+  Image as ImageIcon,
+  MessageCircle,
+  Bot,
+  User,
+  UserCheck,
+  Calendar
 } from 'lucide-react';
 
 interface ReserveiStats {
@@ -53,33 +68,13 @@ interface ServiceStatus {
 }
 
 export default function DashboardReserveiViagensFixed() {
-  const [stats, setStats] = useState<ReserveiStats>({
+  const stats: ReserveiStats = {
     vendas: { mes: 125000, total: 2500000, crescimento: 15.2 },
     clientes: { total: 1500, novos: 45, crescimento: 8.5 },
     reservas: { ativas: 89, total: 1250, taxa_conclusao: 94.5 },
     receita: { total: 2500000, mes: 350000, crescimento: 12.8 },
     avaliacao: 4.8,
     destinos: 50
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    loadReserveiData();
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const loadReserveiData = async () => {
-    setLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setLoading(false);
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      setLoading(false);
-    }
   };
 
   const quickActions: QuickAction[] = [
@@ -139,7 +134,7 @@ export default function DashboardReserveiViagensFixed() {
     { category: 'Fidelização', status: 'online', total: 4, active: 4, icon: <Award className="w-5 h-5" /> },
     { category: 'E-commerce', status: 'online', total: 4, active: 4, icon: <ShoppingCart className="w-5 h-5" /> },
     { category: 'Financeiro', status: 'online', total: 4, active: 4, icon: <Calculator className="w-5 h-5" /> },
-    { category: 'Conteúdo', status: 'online', total: 4, active: 4, icon: <Image className="w-5 h-5" /> },
+    { category: 'Conteúdo', status: 'online', total: 4, active: 4, icon: <ImageIcon className="w-5 h-5" aria-hidden /> },
     { category: 'Automação', status: 'online', total: 4, active: 4, icon: <Bot className="w-5 h-5" /> }
   ];
 

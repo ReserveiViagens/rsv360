@@ -9,6 +9,11 @@ export interface UseApiState<T> {
   success: boolean;
 }
 
+export interface PaginationMeta {
+  totalPages?: number;
+  total?: number;
+}
+
 export interface UseApiOptions<T> {
   initialData?: T;
   onSuccess?: (data: T) => void;
@@ -18,13 +23,13 @@ export interface UseApiOptions<T> {
   toastMessage?: string;
   errorToastMessage?: string;
   autoExecute?: boolean;
-  dependencies?: any[];
+  dependencies?: unknown[];
   retryCount?: number;
   retryDelay?: number;
 }
 
 export interface UseApiReturn<T> extends UseApiState<T> {
-  execute: (...args: any[]) => Promise<T | null>;
+  execute: (...args: unknown[]) => Promise<T | null>;
   reset: () => void;
   setData: (data: T) => void;
   setError: (error: ApiError | null) => void;
@@ -32,8 +37,52 @@ export interface UseApiReturn<T> extends UseApiState<T> {
   refetch: () => Promise<T | null>;
 }
 
-export function useApi<T = any>(
-  apiFunction: (...args: any[]) => Promise<ApiResponse<T>>,
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'Erro desconhecido';
+}
+
+function getErrorStatus(error: unknown): number {
+  if (error && typeof error === 'object' && 'status' in error) {
+    const status = (error as { status?: number }).status;
+    if (typeof status === 'number') {
+      return status;
+    }
+  }
+  return 500;
+}
+
+function getErrorCode(error: unknown): string | undefined {
+  if (error && typeof error === 'object' && 'code' in error) {
+    const code = (error as { code?: string }).code;
+    return typeof code === 'string' ? code : undefined;
+  }
+  return undefined;
+}
+
+function getErrorDetails(error: unknown): unknown {
+  if (error && typeof error === 'object' && 'details' in error) {
+    return (error as { details?: unknown }).details;
+  }
+  return error;
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === 'AbortError';
+}
+
+function getItemId(item: unknown): string | number | undefined {
+  if (item && typeof item === 'object' && 'id' in item) {
+    const id = (item as { id?: string | number }).id;
+    return id;
+  }
+  return undefined;
+}
+
+export function useApi<T = unknown>(
+  apiFunction: (...args: unknown[]) => Promise<ApiResponse<T>>,
   options: UseApiOptions<T> = {}
 ): UseApiReturn<T> {
   const {
@@ -60,10 +109,11 @@ export function useApi<T = any>(
   const abortControllerRef = useRef<AbortController | null>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const currentRetryCount = useRef(0);
+  const executeRef = useRef<(...args: unknown[]) => Promise<T | null>>(async () => null);
 
   // Função para executar a API
   const execute = useCallback(
-    async (...args: any[]): Promise<T | null> => {
+    async (...args: unknown[]): Promise<T | null> => {
       // Cancelar requisição anterior se existir
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -104,17 +154,17 @@ export function useApi<T = any>(
         } else {
           throw new Error(response.message || 'Operação falhou');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Verificar se foi cancelado
-        if (error.name === 'AbortError') {
+        if (isAbortError(error)) {
           return null;
         }
 
         const apiError: ApiError = {
-          message: error.message || 'Erro desconhecido',
-          status: error.status || 500,
-          code: error.code,
-          details: error.details || error,
+          message: getErrorMessage(error),
+          status: getErrorStatus(error),
+          code: getErrorCode(error),
+          details: getErrorDetails(error),
         };
 
         setState(prev => ({
@@ -140,7 +190,7 @@ export function useApi<T = any>(
           currentRetryCount.current++;
           
           retryTimeoutRef.current = setTimeout(() => {
-            execute(...args);
+            void executeRef.current(...args);
           }, retryDelay * Math.pow(2, currentRetryCount.current - 1));
         }
 
@@ -155,7 +205,18 @@ export function useApi<T = any>(
     [apiFunction, onSuccess, onError, onFinally, showToast, toastMessage, errorToastMessage, retryCount, retryDelay]
   );
 
-  // Função para resetar o estado
+  useEffect(() => {
+    executeRef.current = execute;
+  }, [execute]);
+
+  // Execução automática se configurada
+  useEffect(() => {
+    if (autoExecute) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- autoExecute triggers initial fetch
+      void execute();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dynamic dependency list from options
+  }, [autoExecute, execute, ...dependencies]);
   const reset = useCallback(() => {
     setState({
       data: initialData,
@@ -207,13 +268,6 @@ export function useApi<T = any>(
     return null;
   }, [execute, state.data]);
 
-  // Execução automática se configurada
-  useEffect(() => {
-    if (autoExecute) {
-      execute();
-    }
-  }, [autoExecute, execute, ...dependencies]);
-
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
@@ -238,19 +292,20 @@ export function useApi<T = any>(
 }
 
 // Hook para operações de CRUD
-export function useCrudApi<T = any>(
+export function useCrudApi<T = unknown>(
   apiService: {
     get: (id: string) => Promise<ApiResponse<T>>;
-    create: (data: any) => Promise<ApiResponse<T>>;
-    update: (id: string, data: any) => Promise<ApiResponse<T>>;
+    create: (data: unknown) => Promise<ApiResponse<T>>;
+    update: (id: string, data: unknown) => Promise<ApiResponse<T>>;
     delete: (id: string) => Promise<ApiResponse<void>>;
-    list: (params?: any) => Promise<ApiResponse<{ data: T[]; pagination?: any }>>;
+    list: (params?: unknown) => Promise<ApiResponse<{ data: T[]; pagination?: PaginationMeta }>>;
   },
   options: UseApiOptions<T> = {}
 ) {
   const [items, setItems] = useState<T[]>([]);
-  const [pagination, setPagination] = useState<any>(null);
+  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
+  const pendingDeleteIdRef = useRef<string | null>(null);
 
   const listState = useApi(apiService.list, {
     ...options,
@@ -282,9 +337,9 @@ export function useCrudApi<T = any>(
   const updateState = useApi(apiService.update, {
     ...options,
     onSuccess: (data) => {
-      setItems(prev => prev.map(item => 
-        // Assumindo que o item tem um id
-        (item as any).id === (data as any).id ? data : item
+      const updatedId = getItemId(data);
+      setItems(prev => prev.map(item =>
+        getItemId(item) === updatedId ? data : item
       ));
       setSelectedItem(data);
     },
@@ -292,13 +347,16 @@ export function useCrudApi<T = any>(
 
   const deleteState = useApi(apiService.delete, {
     ...options,
-    onSuccess: (_, id: string) => {
-      setItems(prev => prev.filter(item => 
-        (item as any).id !== id
-      ));
-      if (selectedItem && (selectedItem as any).id === id) {
+    onSuccess: () => {
+      const id = pendingDeleteIdRef.current;
+      if (!id) {
+        return;
+      }
+      setItems(prev => prev.filter(item => String(getItemId(item)) !== id));
+      if (selectedItem && String(getItemId(selectedItem)) === id) {
         setSelectedItem(null);
       }
+      pendingDeleteIdRef.current = null;
     },
   });
 
@@ -306,19 +364,20 @@ export function useCrudApi<T = any>(
     return getState.execute(id);
   }, [getState]);
 
-  const createItem = useCallback(async (data: any) => {
+  const createItem = useCallback(async (data: unknown) => {
     return createState.execute(data);
   }, [createState]);
 
-  const updateItem = useCallback(async (id: string, data: any) => {
+  const updateItem = useCallback(async (id: string, data: unknown) => {
     return updateState.execute(id, data);
   }, [updateState]);
 
   const deleteItem = useCallback(async (id: string) => {
+    pendingDeleteIdRef.current = id;
     return deleteState.execute(id);
   }, [deleteState]);
 
-  const listItems = useCallback(async (params?: any) => {
+  const listItems = useCallback(async (params?: unknown) => {
     return listState.execute(params);
   }, [listState]);
 
@@ -355,20 +414,20 @@ export function useCrudApi<T = any>(
 }
 
 // Hook para operações de lista com paginação
-export function usePaginatedApi<T = any>(
-  apiFunction: (params: any) => Promise<ApiResponse<{ data: T[]; pagination: any }>>,
-  options: UseApiOptions<{ data: T[]; pagination: any }> = {}
+export function usePaginatedApi<T = unknown>(
+  apiFunction: (params: unknown) => Promise<ApiResponse<{ data: T[]; pagination: PaginationMeta }>>,
+  options: UseApiOptions<{ data: T[]; pagination: PaginationMeta }> = {}
 ) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>({});
 
   const apiState = useApi(apiFunction, {
     ...options,
     dependencies: [page, pageSize, filters],
   });
 
-  const loadPage = useCallback(async (newPage: number, newPageSize?: number, newFilters?: any) => {
+  const loadPage = useCallback(async (newPage: number, newPageSize?: number, newFilters?: Record<string, unknown>) => {
     if (newPageSize !== undefined) {
       setPageSize(newPageSize);
     }
@@ -390,7 +449,7 @@ export function usePaginatedApi<T = any>(
     if (apiState.data?.pagination && page < apiState.data.pagination.totalPages) {
       loadPage(page + 1);
     }
-  }, [loadPage, page, apiState.data?.pagination]);
+  }, [loadPage, page, apiState.data]);
 
   const prevPage = useCallback(() => {
     if (page > 1) {
@@ -402,9 +461,9 @@ export function usePaginatedApi<T = any>(
     if (newPage >= 1 && apiState.data?.pagination && newPage <= apiState.data.pagination.totalPages) {
       loadPage(newPage);
     }
-  }, [loadPage, apiState.data?.pagination]);
+  }, [loadPage, apiState.data]);
 
-  const applyFilters = useCallback((newFilters: any) => {
+  const applyFilters = useCallback((newFilters: Record<string, unknown>) => {
     setFilters(newFilters);
     setPage(1); // Reset para primeira página
     loadPage(1, pageSize, newFilters);

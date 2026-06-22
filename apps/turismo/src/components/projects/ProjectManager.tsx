@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Progress, Textarea } from '@/components/ui';
-import { Plus, Settings, Edit, Trash2, Users, Calendar, Target, TrendingUp, Eye, Copy, Download, Filter, Search, Star, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Card, Button, Input, Badge, Select, Avatar, Progress, Textarea } from '@/components/ui';
+import { Plus, Edit, Trash2, Users, Calendar, Target, Eye, Copy, Filter, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Project {
@@ -333,7 +333,7 @@ export default function ProjectManager({ onProjectSelect }: ProjectManagerProps)
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <Select value={newProject.status} onValueChange={(value: any) => setNewProject({...newProject, status: value})}>
+              <Select value={newProject.status} onValueChange={(value: Project['status']) => setNewProject({...newProject, status: value})}>
                 <option value="planning">Planejamento</option>
                 <option value="active">Ativo</option>
                 <option value="on-hold">Em Pausa</option>
@@ -343,7 +343,7 @@ export default function ProjectManager({ onProjectSelect }: ProjectManagerProps)
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
-              <Select value={newProject.priority} onValueChange={(value: any) => setNewProject({...newProject, priority: value})}>
+              <Select value={newProject.priority} onValueChange={(value: Project['priority']) => setNewProject({...newProject, priority: value})}>
                 <option value="low">Baixa</option>
                 <option value="medium">Média</option>
                 <option value="high">Alta</option>

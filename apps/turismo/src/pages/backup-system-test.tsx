@@ -24,15 +24,10 @@ import {
   ArrowRight,
   TrendingUp,
   Server,
-  Cloud,
   Database,
   Archive,
-  Router,
   Monitor,
-  Clock,
-  Target,
-  Gauge,
-  Zap
+  Target
 } from 'lucide-react'
 
 const BackupSystemTest: React.FC = () => {

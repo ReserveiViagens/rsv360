@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Mail, Plus, Edit, Trash2, Play, Pause, Eye, Download, Filter, Search, Calendar, Users, Target, BarChart3, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Mail, Plus, Edit, Trash2, Play, Pause, Eye, Users, BarChart3, Clock, CheckCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';

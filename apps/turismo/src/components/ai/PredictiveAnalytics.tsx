@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
-import { 
+import {
   TrendingUp,
   Brain,
   Target,
@@ -19,49 +19,29 @@ import {
   BarChart3,
   LineChart,
   Activity,
-  Zap,
   Clock,
-  Calendar,
   AlertTriangle,
   CheckCircle,
   Settings,
   RefreshCw,
   Play,
-  Pause,
   Download,
-  Upload,
-  Filter,
-  Search,
-  Database,
-  Layers,
   Network,
-  Cpu,
-  Globe,
-  ArrowRight,
   TrendingDown,
-  Plus,
   Edit,
-  Trash2,
-  BookOpen,
   Calculator
 } from 'lucide-react'
-import { 
-  LineChart as RechartsLineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  ScatterChart, 
-  Scatter,
-  ComposedChart,
-  RadialBarChart,
-  RadialBar
+import {
+  LineChart as RechartsLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  BarChart,
+  Bar
 } from 'recharts'
 
 // Tipos para análise preditiva
@@ -122,11 +102,170 @@ interface TrendAnalysis {
   confidence: number
 }
 
+const ModelForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="model-name">Nome do Modelo</Label>
+        <Input
+          id="model-name"
+          placeholder="Ex: Sales Forecaster"
+          title="Nome do modelo preditivo"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="model-type">Tipo de Modelo</Label>
+        <Select>
+          <SelectTrigger title="Selecionar tipo de modelo">
+            <SelectValue placeholder="Selecionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="time_series">Série Temporal</SelectItem>
+            <SelectItem value="regression">Regressão</SelectItem>
+            <SelectItem value="classification">Classificação</SelectItem>
+            <SelectItem value="clustering">Clustering</SelectItem>
+            <SelectItem value="neural_network">Rede Neural</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="target-variable">Variável Alvo</Label>
+        <Input
+          id="target-variable"
+          placeholder="Ex: monthly_revenue"
+          title="Variável que será predita"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="forecast-horizon">Horizonte de Previsão (dias)</Label>
+        <Input
+          id="forecast-horizon"
+          type="number"
+          placeholder="90"
+          title="Quantos dias no futuro prever"
+        />
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="features">Features/Variáveis</Label>
+      <Textarea
+        id="features"
+        placeholder="Lista as variáveis que influenciam a predição (uma por linha)"
+        title="Variáveis independentes do modelo"
+      />
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="algorithm">Algoritmo</Label>
+        <Select>
+          <SelectTrigger title="Selecionar algoritmo">
+            <SelectValue placeholder="Selecionar algoritmo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="arima">ARIMA</SelectItem>
+            <SelectItem value="prophet">Prophet</SelectItem>
+            <SelectItem value="lstm">LSTM</SelectItem>
+            <SelectItem value="random_forest">Random Forest</SelectItem>
+            <SelectItem value="gradient_boost">Gradient Boosting</SelectItem>
+            <SelectItem value="neural_network">Deep Neural Network</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confidence-interval">Intervalo de Confiança (%)</Label>
+        <Input
+          id="confidence-interval"
+          type="number"
+          placeholder="95"
+          min="80"
+          max="99"
+          title="Intervalo de confiança para as predições"
+        />
+      </div>
+    </div>
+  </form>
+)
+
+const ScenarioForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="space-y-2">
+      <Label htmlFor="scenario-name">Nome do Cenário</Label>
+      <Input
+        id="scenario-name"
+        placeholder="Ex: Expansão Agressiva Q2"
+        title="Nome do cenário de análise"
+      />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="scenario-description">Descrição</Label>
+      <Textarea
+        id="scenario-description"
+        placeholder="Descreva as condições e premissas deste cenário"
+        title="Descrição detalhada do cenário"
+      />
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="market-growth">Crescimento de Mercado (%)</Label>
+        <Input
+          id="market-growth"
+          type="number"
+          placeholder="3.5"
+          step="0.1"
+          title="Taxa de crescimento do mercado"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="marketing-budget">Orçamento Marketing</Label>
+        <Input
+          id="marketing-budget"
+          type="number"
+          placeholder="50000"
+          title="Orçamento de marketing para o período"
+        />
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="team-size">Tamanho da Equipe</Label>
+        <Input
+          id="team-size"
+          type="number"
+          placeholder="25"
+          title="Número de funcionários"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="price-change">Mudança de Preço (%)</Label>
+        <Input
+          id="price-change"
+          type="number"
+          placeholder="0"
+          step="0.1"
+          title="Percentual de mudança nos preços"
+        />
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="probability">Probabilidade (%)</Label>
+      <Input
+        id="probability"
+        type="number"
+        placeholder="65"
+        min="1"
+        max="100"
+        title="Probabilidade de ocorrência do cenário"
+      />
+    </div>
+  </form>
+)
+
 const PredictiveAnalytics: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isModelModalOpen, setIsModelModalOpen] = useState(false)
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false)
-  const [selectedTimeframe, setSelectedTimeframe] = useState('30-days')
 
   // Dados mock para demonstração
   const [models] = useState<PredictiveModel[]>([
@@ -423,173 +562,6 @@ const PredictiveAnalytics: React.FC = () => {
       default: return 'border-gray-300 bg-gray-50'
     }
   }
-
-  const ModelForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="model-name">Nome do Modelo</Label>
-          <Input 
-            id="model-name"
-            placeholder="Ex: Sales Forecaster"
-            title="Nome do modelo preditivo"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="model-type">Tipo de Modelo</Label>
-          <Select>
-            <SelectTrigger title="Selecionar tipo de modelo">
-              <SelectValue placeholder="Selecionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="time_series">Série Temporal</SelectItem>
-              <SelectItem value="regression">Regressão</SelectItem>
-              <SelectItem value="classification">Classificação</SelectItem>
-              <SelectItem value="clustering">Clustering</SelectItem>
-              <SelectItem value="neural_network">Rede Neural</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="target-variable">Variável Alvo</Label>
-          <Input 
-            id="target-variable"
-            placeholder="Ex: monthly_revenue"
-            title="Variável que será predita"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="forecast-horizon">Horizonte de Previsão (dias)</Label>
-          <Input 
-            id="forecast-horizon"
-            type="number" 
-            placeholder="90"
-            title="Quantos dias no futuro prever"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="features">Features/Variáveis</Label>
-        <Textarea 
-          id="features"
-          placeholder="Lista as variáveis que influenciam a predição (uma por linha)"
-          title="Variáveis independentes do modelo"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="algorithm">Algoritmo</Label>
-          <Select>
-            <SelectTrigger title="Selecionar algoritmo">
-              <SelectValue placeholder="Selecionar algoritmo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="arima">ARIMA</SelectItem>
-              <SelectItem value="prophet">Prophet</SelectItem>
-              <SelectItem value="lstm">LSTM</SelectItem>
-              <SelectItem value="random_forest">Random Forest</SelectItem>
-              <SelectItem value="gradient_boost">Gradient Boosting</SelectItem>
-              <SelectItem value="neural_network">Deep Neural Network</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confidence-interval">Intervalo de Confiança (%)</Label>
-          <Input 
-            id="confidence-interval"
-            type="number" 
-            placeholder="95"
-            min="80"
-            max="99"
-            title="Intervalo de confiança para as predições"
-          />
-        </div>
-      </div>
-    </form>
-  )
-
-  const ScenarioForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="space-y-2">
-        <Label htmlFor="scenario-name">Nome do Cenário</Label>
-        <Input 
-          id="scenario-name"
-          placeholder="Ex: Expansão Agressiva Q2"
-          title="Nome do cenário de análise"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="scenario-description">Descrição</Label>
-        <Textarea 
-          id="scenario-description"
-          placeholder="Descreva as condições e premissas deste cenário"
-          title="Descrição detalhada do cenário"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="market-growth">Crescimento de Mercado (%)</Label>
-          <Input 
-            id="market-growth"
-            type="number" 
-            placeholder="3.5"
-            step="0.1"
-            title="Taxa de crescimento do mercado"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="marketing-budget">Orçamento Marketing</Label>
-          <Input 
-            id="marketing-budget"
-            type="number" 
-            placeholder="50000"
-            title="Orçamento de marketing para o período"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="team-size">Tamanho da Equipe</Label>
-          <Input 
-            id="team-size"
-            type="number" 
-            placeholder="25"
-            title="Número de funcionários"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="price-change">Mudança de Preço (%)</Label>
-          <Input 
-            id="price-change"
-            type="number" 
-            placeholder="0"
-            step="0.1"
-            title="Percentual de mudança nos preços"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="probability">Probabilidade (%)</Label>
-        <Input 
-          id="probability"
-          type="number" 
-          placeholder="65"
-          min="1"
-          max="100"
-          title="Probabilidade de ocorrência do cenário"
-        />
-      </div>
-    </form>
-  )
 
   return (
     <div className="space-y-6">

@@ -54,7 +54,8 @@ export function useTheme() {
       const savedConfig = localStorage.getItem(STORAGE_KEY);
       if (savedConfig) {
         const parsedConfig = JSON.parse(savedConfig);
-        setThemeConfig(parsedConfig);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate theme config from localStorage
+      setThemeConfig(parsedConfig);
       }
     } catch (error) {
       console.warn('Erro ao carregar configuração do tema:', error);

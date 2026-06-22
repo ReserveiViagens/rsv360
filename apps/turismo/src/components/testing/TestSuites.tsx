@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Square, Settings, Plus, Edit, Trash2, Copy, Save, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal } from '../ui';
+import React, { useState } from 'react';
+import { Play, Plus, Edit, Trash2, Copy, Save, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface TestCase {
@@ -44,138 +44,132 @@ interface TestSuitesProps {
   onSuiteExecuted?: (suite: TestSuite, results: TestCase[]) => void;
 }
 
+const MOCK_TEST_SUITES: TestSuite[] = [
+  {
+    id: 'unit-tests',
+    name: 'Testes Unitários',
+    description: 'Suite completa de testes unitários para todos os componentes',
+    category: 'unit',
+    testCases: [
+      {
+        id: 'ut-1',
+        name: 'Teste de Renderização do Dashboard',
+        description: 'Verifica se o dashboard renderiza corretamente',
+        category: 'component',
+        priority: 'high',
+        status: 'passed',
+        duration: 150,
+        lastRun: new Date('2024-01-15T10:30:00'),
+        tags: ['dashboard', 'render', 'component']
+      },
+      {
+        id: 'ut-2',
+        name: 'Teste de Validação de Formulário',
+        description: 'Valida regras de formulário de reserva',
+        category: 'form',
+        priority: 'critical',
+        status: 'passed',
+        duration: 89,
+        lastRun: new Date('2024-01-15T10:32:00'),
+        tags: ['form', 'validation', 'booking']
+      }
+    ],
+    config: {
+      timeout: 5000,
+      retries: 2,
+      parallel: true,
+      environment: 'development',
+      tags: ['unit', 'fast']
+    },
+    status: 'completed',
+    lastRun: new Date('2024-01-15T10:35:00'),
+    totalTests: 45,
+    passedTests: 42,
+    failedTests: 3,
+    skippedTests: 0,
+    averageDuration: 120
+  },
+  {
+    id: 'integration-tests',
+    name: 'Testes de Integração',
+    description: 'Testes de integração entre componentes e APIs',
+    category: 'integration',
+    testCases: [
+      {
+        id: 'it-1',
+        name: 'Teste de Fluxo de Reserva',
+        description: 'Testa o fluxo completo de criação de reserva',
+        category: 'flow',
+        priority: 'high',
+        status: 'passed',
+        duration: 1200,
+        lastRun: new Date('2024-01-15T09:15:00'),
+        tags: ['booking', 'flow', 'api']
+      }
+    ],
+    config: {
+      timeout: 15000,
+      retries: 1,
+      parallel: false,
+      environment: 'staging',
+      tags: ['integration', 'api']
+    },
+    status: 'completed',
+    lastRun: new Date('2024-01-15T09:20:00'),
+    totalTests: 28,
+    passedTests: 26,
+    failedTests: 2,
+    skippedTests: 0,
+    averageDuration: 850
+  },
+  {
+    id: 'e2e-tests',
+    name: 'Testes End-to-End',
+    description: 'Testes de fluxos completos do usuário',
+    category: 'e2e',
+    testCases: [
+      {
+        id: 'e2e-1',
+        name: 'Teste de Reserva Completa',
+        description: 'Testa reserva completa do início ao fim',
+        category: 'user-flow',
+        priority: 'critical',
+        status: 'running',
+        duration: 0,
+        lastRun: null,
+        tags: ['e2e', 'user-flow', 'critical']
+      }
+    ],
+    config: {
+      timeout: 30000,
+      retries: 0,
+      parallel: false,
+      environment: 'production',
+      tags: ['e2e', 'user-flow']
+    },
+    status: 'running',
+    lastRun: new Date('2024-01-15T11:00:00'),
+    totalTests: 15,
+    passedTests: 14,
+    failedTests: 1,
+    skippedTests: 0,
+    averageDuration: 2500
+  }
+];
+
 const TestSuites: React.FC<TestSuitesProps> = ({ 
   onSuiteCreated, 
   onSuiteUpdated, 
   onSuiteDeleted, 
   onSuiteExecuted 
 }) => {
-  const [suites, setSuites] = useState<TestSuite[]>([]);
-  const [selectedSuite, setSelectedSuite] = useState<TestSuite | null>(null);
+  const [suites, setSuites] = useState<TestSuite[]>(MOCK_TEST_SUITES);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingSuite, setEditingSuite] = useState<Partial<TestSuite>>({});
-  const [activeTab, setActiveTab] = useState('overview');
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockSuites: TestSuite[] = [
-      {
-        id: 'unit-tests',
-        name: 'Testes Unitários',
-        description: 'Suite completa de testes unitários para todos os componentes',
-        category: 'unit',
-        testCases: [
-          {
-            id: 'ut-1',
-            name: 'Teste de Renderização do Dashboard',
-            description: 'Verifica se o dashboard renderiza corretamente',
-            category: 'component',
-            priority: 'high',
-            status: 'passed',
-            duration: 150,
-            lastRun: new Date('2024-01-15T10:30:00'),
-            tags: ['dashboard', 'render', 'component']
-          },
-          {
-            id: 'ut-2',
-            name: 'Teste de Validação de Formulário',
-            description: 'Valida regras de formulário de reserva',
-            category: 'form',
-            priority: 'critical',
-            status: 'passed',
-            duration: 89,
-            lastRun: new Date('2024-01-15T10:32:00'),
-            tags: ['form', 'validation', 'booking']
-          }
-        ],
-        config: {
-          timeout: 5000,
-          retries: 2,
-          parallel: true,
-          environment: 'development',
-          tags: ['unit', 'fast']
-        },
-        status: 'completed',
-        lastRun: new Date('2024-01-15T10:35:00'),
-        totalTests: 45,
-        passedTests: 42,
-        failedTests: 3,
-        skippedTests: 0,
-        averageDuration: 120
-      },
-      {
-        id: 'integration-tests',
-        name: 'Testes de Integração',
-        description: 'Testes de integração entre componentes e APIs',
-        category: 'integration',
-        testCases: [
-          {
-            id: 'it-1',
-            name: 'Teste de Fluxo de Reserva',
-            description: 'Testa o fluxo completo de criação de reserva',
-            category: 'flow',
-            priority: 'high',
-            status: 'passed',
-            duration: 1200,
-            lastRun: new Date('2024-01-15T09:15:00'),
-            tags: ['booking', 'flow', 'api']
-          }
-        ],
-        config: {
-          timeout: 15000,
-          retries: 1,
-          parallel: false,
-          environment: 'staging',
-          tags: ['integration', 'api']
-        },
-        status: 'completed',
-        lastRun: new Date('2024-01-15T09:20:00'),
-        totalTests: 28,
-        passedTests: 26,
-        failedTests: 2,
-        skippedTests: 0,
-        averageDuration: 850
-      },
-      {
-        id: 'e2e-tests',
-        name: 'Testes End-to-End',
-        description: 'Testes de fluxos completos do usuário',
-        category: 'e2e',
-        testCases: [
-          {
-            id: 'e2e-1',
-            name: 'Teste de Reserva Completa',
-            description: 'Testa reserva completa do início ao fim',
-            category: 'user-flow',
-            priority: 'critical',
-            status: 'running',
-            duration: 0,
-            lastRun: null,
-            tags: ['e2e', 'user-flow', 'critical']
-          }
-        ],
-        config: {
-          timeout: 30000,
-          retries: 0,
-          parallel: false,
-          environment: 'production',
-          tags: ['e2e', 'user-flow']
-        },
-        status: 'running',
-        lastRun: new Date('2024-01-15T11:00:00'),
-        totalTests: 15,
-        passedTests: 14,
-        failedTests: 1,
-        skippedTests: 0,
-        averageDuration: 2500
-      }
-    ];
-    setSuites(mockSuites);
-  }, []);
 
   const createSuite = () => {
     setIsCreating(true);

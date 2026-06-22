@@ -1,19 +1,16 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   Download, 
   FileText, 
   FileSpreadsheet, 
   File,
   Calendar,
-  Filter,
   Settings,
   CheckCircle,
   AlertCircle,
   Clock,
-  Eye,
-  Share2,
   Mail,
   Database,
   BarChart3,
@@ -31,7 +28,7 @@ interface ExportConfig {
   format: 'pdf' | 'excel' | 'csv' | 'json';
   dataSource: string;
   fields: string[];
-  filters: Record<string, any>;
+  filters: Record<string, string | number | boolean | string[]>;
   dateRange: {
     start: string;
     end: string;
@@ -119,13 +116,22 @@ const mockExportJobs: ExportJob[] = [
   }
 ];
 
+interface ExportTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  format: ExportConfig['format'];
+  fields: string[];
+}
+
 // ===================================================================
 // COMPONENTE PRINCIPAL
 // ===================================================================
 
 const DataExport: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'templates' | 'custom' | 'history'>('templates');
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<ExportTemplate | null>(null);
   const [exportConfig, setExportConfig] = useState<ExportConfig>({
     id: '',
     name: '',
@@ -140,13 +146,8 @@ const DataExport: React.FC = () => {
   });
   const [isExporting, setIsExporting] = useState(false);
   const [exportJobs, setExportJobs] = useState<ExportJob[]>(mockExportJobs);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ===================================================================
-  // HANDLERS
-  // ===================================================================
-
-  const handleTemplateSelect = (template: any) => {
+  const handleTemplateSelect = (template: ExportTemplate) => {
     setSelectedTemplate(template);
     setExportConfig(prev => ({
       ...prev,
@@ -257,7 +258,7 @@ const DataExport: React.FC = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
@@ -452,7 +453,7 @@ const DataExport: React.FC = () => {
                           ].map(format => (
                             <button
                               key={format.value}
-                              onClick={() => handleFormatChange(format.value as any)}
+                              onClick={() => handleFormatChange(format.value as ExportConfig['format'])}
                               className={`flex items-center space-x-2 p-3 border rounded-lg transition-colors ${
                                 exportConfig.format === format.value
                                   ? 'border-blue-300 bg-blue-50 text-blue-700'

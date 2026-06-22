@@ -15,7 +15,6 @@ import {
   BarChart3,
   TrendingUp,
   FileText,
-  Settings,
   Menu,
   X,
   LogOut
@@ -41,7 +40,7 @@ export default function AnalyticsDashboardPage() {
     router.push('/login');
   };
 
-  const handleGenerateReport = (config: any) => {
+  const handleGenerateReport = (config: Record<string, unknown>) => {
     console.log('Gerando relatório:', config);
     // Implementar geração de relatório
     alert('Relatório gerado com sucesso!');

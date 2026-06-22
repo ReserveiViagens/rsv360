@@ -1,35 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useRouter } from 'next/router';
-import { 
-  FileText, 
-  Image, 
-  Video, 
-  Globe, 
+import {
+  FileText,
+  Image as ImageIcon,
+  Video,
   Languages,
   Plus,
   Edit,
   Trash,
   Search,
-  Filter,
   Download,
   Upload,
   Eye,
-  Star,
   Heart,
-  Share,
   BookOpen,
   Camera,
-  Play,
   File,
   Folder,
-  Tag,
-  Calendar,
-  User,
-  EyeOff,
-  Lock,
-  Unlock,
   Settings,
   CheckCircle
 } from 'lucide-react';
@@ -76,17 +64,41 @@ interface Language {
   is_active: boolean;
 }
 
+interface ImportPreview {
+  fileName: string;
+  fileSize: string;
+  format?: string;
+  records: number;
+  lastModified: string;
+}
+
+interface ExportHistoryEntry {
+  timestamp: string;
+  format: string;
+  records: number;
+  size: string;
+  categories: string[];
+  languages: string[];
+}
+
+interface ImportHistoryEntry {
+  timestamp: string;
+  fileName?: string;
+  format: string;
+  records: number;
+  status: string;
+  errors: number;
+  warnings: number;
+}
+
 export default function ConteudoPage() {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState('overview');
+  const { user: _user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [showDetails, setShowDetails] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Content | Category | Language | null>(null);
   
   // Estados para formulários
   const [newContentForm, setNewContentForm] = useState({
@@ -110,7 +122,6 @@ export default function ConteudoPage() {
   const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
   
   // Estado para gerenciamento de conteúdo
-  const [showContentManager, setShowContentManager] = useState(false);
   const [selectedContentForEdit, setSelectedContentForEdit] = useState<Content | null>(null);
   const [selectedContentForDelete, setSelectedContentForDelete] = useState<Content | null>(null);
   
@@ -140,9 +151,9 @@ export default function ConteudoPage() {
     selectedFile: null as File | null
   });
   
-  const [importPreview, setImportPreview] = useState<any>(null);
-  const [exportHistory, setExportHistory] = useState<any[]>([]);
-  const [importHistory, setImportHistory] = useState<any[]>([]);
+  const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
+  const [exportHistory, setExportHistory] = useState<ExportHistoryEntry[]>([]);
+  const [importHistory, setImportHistory] = useState<ImportHistoryEntry[]>([]);
 
   // Funções auxiliares
   const formatNumber = (num: number) => {
@@ -432,9 +443,6 @@ export default function ConteudoPage() {
     ]
   });
 
-  const handleBackToDashboard = () => {
-    router.push('/dashboard');
-  };
 
   const handleCardClick = (cardType: string) => {
     setModalType(cardType);
@@ -490,25 +498,6 @@ export default function ConteudoPage() {
         setShowModal(true);
         break;
     }
-  };
-
-  // Funções antigas de exportação/importação (mantidas para compatibilidade)
-  const handleExportDataSimple = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalType('export_success');
-      setShowModal(true);
-    }, 2000);
-  };
-
-  const handleImportDataSimple = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalType('import_success');
-      setShowModal(true);
-    }, 2000);
   };
 
   // Funções de validação
@@ -680,11 +669,11 @@ export default function ConteudoPage() {
   };
 
   // Funções para módulo de exportação/importação
-  const handleExportFormChange = (field: string, value: any) => {
+  const handleExportFormChange = (field: string, value: unknown) => {
     setExportForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImportFormChange = (field: string, value: any) => {
+  const handleImportFormChange = (field: string, value: unknown) => {
     setImportForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -801,7 +790,7 @@ export default function ConteudoPage() {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'text': return <FileText className="w-5 h-5" />;
-      case 'image': return <Image className="w-5 h-5" />;
+      case 'image': return <ImageIcon className="w-5 h-5" aria-hidden />;
       case 'video': return <Video className="w-5 h-5" />;
       case 'document': return <File className="w-5 h-5" />;
       case 'gallery': return <Camera className="w-5 h-5" />;
@@ -1072,7 +1061,7 @@ export default function ConteudoPage() {
 
               {/* Modal Content */}
               <div className="space-y-4">
-                {modalType === 'content' && selectedItem && (
+                {modalType === 'content' && selectedItem && 'title' in selectedItem && (
                   <div>
                     <div className="flex items-start space-x-3 mb-4">
                       <div className={`p-3 rounded-lg ${getTypeColor(selectedItem.type)}`}>
@@ -1151,7 +1140,7 @@ export default function ConteudoPage() {
                   </div>
                 )}
 
-                {modalType === 'category' && selectedItem && (
+                {modalType === 'category' && selectedItem && 'color' in selectedItem && (
                   <div>
                     <div className="flex items-start space-x-3 mb-4">
                       <div className={`p-3 rounded-lg ${selectedItem.color}`}>
@@ -1190,7 +1179,7 @@ export default function ConteudoPage() {
                   </div>
                 )}
 
-                {modalType === 'language' && selectedItem && (
+                {modalType === 'language' && selectedItem && 'flag' in selectedItem && (
                   <div>
                     <div className="flex items-center space-x-3 mb-4">
                       <span className="text-4xl">{selectedItem.flag}</span>

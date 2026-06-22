@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { DollarSign, AlertCircle, CheckCircle, Clock, XCircle, RefreshCw, Search, Filter, Download, Eye, Ban, RotateCcw, FileText, User, Calendar, CreditCard } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { DollarSign, AlertCircle, CheckCircle, Clock, XCircle, Download, Eye, Ban, RotateCcw } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -283,7 +283,7 @@ const RefundManager: React.FC<RefundManagerProps> = ({ className }) => {
     return option ? option.label : method;
   };
 
-  const handleFilterChange = (field: keyof RefundFilters, value: any) => {
+  const handleFilterChange = (field: keyof RefundFilters, value: RefundFilters[keyof RefundFilters]) => {
     setFilters(prev => ({ ...prev, [field]: value }));
     setCurrentPage(1);
   };

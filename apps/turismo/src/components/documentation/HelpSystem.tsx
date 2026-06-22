@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { HelpCircle, Search, MessageCircle, Phone, Mail, FileText, Video, BookOpen, Plus, Edit, Trash2, ExternalLink, Star, Clock, User, Tag, Eye } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Input, Select, Modal, Textarea } from '../ui';
+import React, { useState } from 'react';
+import { MessageCircle, FileText, Plus, Edit, Trash2, ExternalLink, Star, Clock, User, Eye } from 'lucide-react';
+import { Card, Button, Badge, Input, Select, Modal, Textarea } from '../ui';
 import { useUIStore } from '../../stores/useUIStore';
 
 interface HelpArticle {
@@ -50,16 +50,80 @@ interface HelpSystemProps {
   onTicketUpdated?: (ticket: SupportTicket) => void;
 }
 
+const MOCK_CATEGORIES: HelpCategory[] = [
+  { id: 'getting-started', name: 'Primeiros Passos', description: 'Guia para iniciantes', articleCount: 8, icon: 'BookOpen', color: 'bg-blue-500' },
+  { id: 'reservations', name: 'Reservas', description: 'Como fazer e gerenciar reservas', articleCount: 12, icon: 'Calendar', color: 'bg-green-500' },
+  { id: 'customers', name: 'Clientes', description: 'Gestão de clientes e perfis', articleCount: 6, icon: 'Users', color: 'bg-purple-500' },
+  { id: 'payments', name: 'Pagamentos', description: 'Sistema de pagamentos e reembolsos', articleCount: 10, icon: 'CreditCard', color: 'bg-orange-500' },
+  { id: 'troubleshooting', name: 'Problemas', description: 'Solução de problemas comuns', articleCount: 15, icon: 'Wrench', color: 'bg-red-500' }
+];
+
+const MOCK_ARTICLES: HelpArticle[] = [
+  {
+    id: '1',
+    title: 'Como criar sua primeira reserva',
+    content: 'Passo a passo completo para criar sua primeira reserva no sistema RSV...',
+    category: 'reservations',
+    tags: ['reserva', 'primeira-vez', 'tutorial'],
+    author: 'Equipe RSV',
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-20',
+    status: 'published',
+    helpfulCount: 45,
+    notHelpfulCount: 2,
+    views: 234,
+    priority: 'high'
+  },
+  {
+    id: '2',
+    title: 'Configurando perfil de cliente',
+    content: 'Aprenda a configurar e personalizar perfis de clientes...',
+    category: 'customers',
+    tags: ['perfil', 'cliente', 'configuração'],
+    author: 'Suporte RSV',
+    createdAt: '2024-01-08',
+    updatedAt: '2024-01-15',
+    status: 'published',
+    helpfulCount: 32,
+    notHelpfulCount: 1,
+    views: 156,
+    priority: 'medium'
+  }
+];
+
+const MOCK_TICKETS: SupportTicket[] = [
+  {
+    id: '1',
+    title: 'Erro ao processar pagamento',
+    description: 'Estou recebendo erro 500 ao tentar processar pagamento...',
+    category: 'payments',
+    priority: 'high',
+    status: 'in-progress',
+    userId: 'user123',
+    assignedTo: 'suporte@rsv.com',
+    createdAt: '2024-01-20T10:30:00Z',
+    updatedAt: '2024-01-20T14:15:00Z',
+    lastResponse: 'Estamos investigando o problema...'
+  },
+  {
+    id: '2',
+    title: 'Dúvida sobre relatórios',
+    description: 'Como gerar relatório de vendas mensal?',
+    category: 'reports',
+    priority: 'medium',
+    status: 'open',
+    userId: 'user456',
+    createdAt: '2024-01-20T09:00:00Z',
+    updatedAt: '2024-01-20T09:00:00Z'
+  }
+];
+
 const HelpSystem: React.FC<HelpSystemProps> = ({
-  onArticleCreated,
-  onArticleUpdated,
-  onArticleDeleted,
-  onTicketCreated,
-  onTicketUpdated
+  onArticleDeleted
 }) => {
-  const [articles, setArticles] = useState<HelpArticle[]>([]);
-  const [categories, setCategories] = useState<HelpCategory[]>([]);
-  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [articles, setArticles] = useState<HelpArticle[]>(MOCK_ARTICLES);
+  const [categories] = useState<HelpCategory[]>(MOCK_CATEGORIES);
+  const [tickets] = useState<SupportTicket[]>(MOCK_TICKETS);
   const [selectedArticle, setSelectedArticle] = useState<HelpArticle | null>(null);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,84 +132,8 @@ const HelpSystem: React.FC<HelpSystemProps> = ({
   const [showEditArticleModal, setShowEditArticleModal] = useState(false);
   const [showCreateTicketModal, setShowCreateTicketModal] = useState(false);
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('articles');
-  
+
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockCategories: HelpCategory[] = [
-      { id: 'getting-started', name: 'Primeiros Passos', description: 'Guia para iniciantes', articleCount: 8, icon: 'BookOpen', color: 'bg-blue-500' },
-      { id: 'reservations', name: 'Reservas', description: 'Como fazer e gerenciar reservas', articleCount: 12, icon: 'Calendar', color: 'bg-green-500' },
-      { id: 'customers', name: 'Clientes', description: 'Gestão de clientes e perfis', articleCount: 6, icon: 'Users', color: 'bg-purple-500' },
-      { id: 'payments', name: 'Pagamentos', description: 'Sistema de pagamentos e reembolsos', articleCount: 10, icon: 'CreditCard', color: 'bg-orange-500' },
-      { id: 'troubleshooting', name: 'Problemas', description: 'Solução de problemas comuns', articleCount: 15, icon: 'Wrench', color: 'bg-red-500' }
-    ];
-
-    const mockArticles: HelpArticle[] = [
-      {
-        id: '1',
-        title: 'Como criar sua primeira reserva',
-        content: 'Passo a passo completo para criar sua primeira reserva no sistema RSV...',
-        category: 'reservations',
-        tags: ['reserva', 'primeira-vez', 'tutorial'],
-        author: 'Equipe RSV',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-20',
-        status: 'published',
-        helpfulCount: 45,
-        notHelpfulCount: 2,
-        views: 234,
-        priority: 'high'
-      },
-      {
-        id: '2',
-        title: 'Configurando perfil de cliente',
-        content: 'Aprenda a configurar e personalizar perfis de clientes...',
-        category: 'customers',
-        tags: ['perfil', 'cliente', 'configuração'],
-        author: 'Suporte RSV',
-        createdAt: '2024-01-08',
-        updatedAt: '2024-01-15',
-        status: 'published',
-        helpfulCount: 32,
-        notHelpfulCount: 1,
-        views: 156,
-        priority: 'medium'
-      }
-    ];
-
-    const mockTickets: SupportTicket[] = [
-      {
-        id: '1',
-        title: 'Erro ao processar pagamento',
-        description: 'Estou recebendo erro 500 ao tentar processar pagamento...',
-        category: 'payments',
-        priority: 'high',
-        status: 'in-progress',
-        userId: 'user123',
-        assignedTo: 'suporte@rsv.com',
-        createdAt: '2024-01-20T10:30:00Z',
-        updatedAt: '2024-01-20T14:15:00Z',
-        lastResponse: 'Estamos investigando o problema...'
-      },
-      {
-        id: '2',
-        title: 'Dúvida sobre relatórios',
-        description: 'Como gerar relatório de vendas mensal?',
-        category: 'reports',
-        priority: 'medium',
-        status: 'open',
-        userId: 'user456',
-        createdAt: '2024-01-20T09:00:00Z',
-        updatedAt: '2024-01-20T09:00:00Z'
-      }
-    ];
-
-    setCategories(mockCategories);
-    setArticles(mockArticles);
-    setTickets(mockTickets);
-  }, []);
 
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

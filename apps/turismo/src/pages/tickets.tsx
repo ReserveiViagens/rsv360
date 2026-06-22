@@ -1,34 +1,21 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useRouter } from 'next/router';
-import { 
-    MapPin, 
-    DollarSign, 
-    Calendar, 
-    CheckCircle, 
-    TrendingUp, 
-    Ticket, 
-    Star, 
-    Clock, 
-    Users, 
-    Mountain, 
-    Plus, 
-    Edit, 
-    Trash, 
-    X, 
-    Save, 
-    Upload, 
-    Image as ImageIcon,
-    Eye,
-    Search,
-    Download,
-    Phone,
-    Globe,
-    Play,
-    BarChart3
+import {
+  MapPin,
+  DollarSign,
+  Calendar,
+  CheckCircle,
+  TrendingUp,
+  Ticket,
+  Clock,
+  X,
+  Save,
+  Image as ImageIcon,
+  Eye,
+  Download,
+  Play,
+  BarChart3
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 
 interface TicketData {
     id: number;
@@ -65,6 +52,7 @@ interface TicketFormProps {
   initialData?: TicketData;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TicketForm: React.FC<TicketFormProps> = ({ onSubmit, onCancel, isEditing, initialData }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
@@ -345,7 +333,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ onSubmit, onCancel, isEditing, 
 
 export default function TicketsPage() {
     const [tickets, setTickets] = useState<TicketData[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [_loading, setLoading] = useState(true);
     const [showTicketDetails, setShowTicketDetails] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
     const [showStatsDetails, setShowStatsDetails] = useState(false);
@@ -361,7 +349,7 @@ export default function TicketsPage() {
     const [uploadingMedia, setUploadingMedia] = useState(false);
 
   // Dados mockados para ingressos
-  const mockTickets: TicketData[] = [
+  const mockTickets = useMemo<TicketData[]>(() => ([
         {
             id: 1,
             name: "Disney World - Magic Kingdom",
@@ -530,7 +518,7 @@ export default function TicketsPage() {
             photos: [],
             videos: []
         }
-    ];
+    ]), []);
 
     useEffect(() => {
         // Simular carregamento de dados
@@ -547,7 +535,7 @@ export default function TicketsPage() {
         };
 
         loadTickets();
-    }, []);
+    }, [mockTickets]);
 
     // Funções de detalhes e estatísticas
     const handleTicketClick = (ticket: TicketData) => {
@@ -669,17 +657,6 @@ export default function TicketsPage() {
             default: return 'bg-gray-100 text-gray-800';
         }
     };
-
-    const formatCurrency = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
 
   // Remover funções não utilizadas que estão causando erros
   // const handleNewTicket = () => {
@@ -804,13 +781,8 @@ export default function TicketsPage() {
   // Filtros - Remover referências a variáveis não definidas
   // const filteredTickets = tickets; // Usar diretamente os tickets carregados
 
-  // Estatísticas
-  const totalRevenue = tickets.reduce((sum, ticket) => sum + (ticket.price * (ticket.total - ticket.available)), 0);
-  const totalTickets = tickets.reduce((sum, ticket) => sum + ticket.total, 0);
-  const soldTickets = tickets.reduce((sum, ticket) => sum + (ticket.total - ticket.available), 0);
-  const activeTickets = tickets.filter(ticket => ticket.status === 'ativo').length;
-
-  // Componente TicketDetails
+  /* eslint-disable react-hooks/static-components */
+  // Componentes de modais
     const TicketDetails = ({ ticket, onClose }: { ticket: TicketData; onClose: () => void }) => {
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -961,6 +933,7 @@ export default function TicketsPage() {
                                 {ticket.photos.length > 0 ? (
                                     <div className="grid grid-cols-2 gap-2">
                                         {ticket.photos.slice(0, 4).map((photo, index) => (
+                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img
                                                 key={index}
                                                 src={photo}
@@ -1222,6 +1195,7 @@ export default function TicketsPage() {
                         {mediaList.map((media, index) => (
                             <div key={index} className="relative group">
                                 {type === 'photo' ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={media}
                                         alt={`${ticket.name} - ${mediaLabel} ${index + 1}`}
@@ -1250,6 +1224,7 @@ export default function TicketsPage() {
                         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60">
                             <div className="relative max-w-4xl max-h-[90vh]">
                                 {type === 'photo' ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={selectedMedia}
                                         alt="Preview"

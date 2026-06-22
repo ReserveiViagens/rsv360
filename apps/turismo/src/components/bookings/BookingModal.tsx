@@ -8,20 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   X,
-  Calendar,
-  Users,
-  MapPin,
-  DollarSign,
-  FileText,
   Save,
   User,
-  Phone,
-  Mail,
-  CreditCard,
-  Clock,
-  Building2,
-  Home,
-  Bed
+  Building2
 } from 'lucide-react';
 import type { BookingCalendarItem } from './BookingCalendar';
 
@@ -50,6 +39,17 @@ const bookingSchema = z.object({
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 type Booking = BookingCalendarItem;
+
+interface AccommodationOption {
+  id: number;
+  name: string;
+  maxGuests?: number;
+}
+
+interface NamedEntity {
+  id: number;
+  name: string;
+}
 
 export interface BookingModalProps {
   isOpen: boolean;
@@ -96,9 +96,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [enterprises, setEnterprises] = useState<any[]>([]);
-  const [properties, setProperties] = useState<any[]>([]);
-  const [accommodations, setAccommodations] = useState<any[]>([]);
+  const [enterprises, setEnterprises] = useState<NamedEntity[]>([]);
+  const [properties, setProperties] = useState<NamedEntity[]>([]);
+  const [accommodations, setAccommodations] = useState<AccommodationOption[]>([]);
 
   const {
     register,
@@ -127,13 +127,42 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form watch
   const watchedCheckIn = watch('checkIn');
   const watchedCheckOut = watch('checkOut');
   const watchedGuests = watch('guests');
   const watchedDestination = watch('destination');
   const watchedEnterpriseId = watch('enterpriseId');
   const watchedPropertyId = watch('propertyId');
-  const watchedAccommodationId = watch('accommodationId');
+
+  const calculateValue = async () => {
+    if (!watchedCheckIn || !watchedCheckOut || !watchedDestination) return;
+
+    setIsCalculating(true);
+
+    setTimeout(() => {
+      const checkIn = new Date(watchedCheckIn);
+      const checkOut = new Date(watchedCheckOut);
+      const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+
+      const basePrices: Record<string, number> = {
+        'Caldas Novas - GO': 200,
+        'Porto de Galinhas - PE': 300,
+        'Fernando de Noronha - PE': 500,
+        'Gramado - RS': 250,
+        'Búzios - RJ': 350,
+        'Florianópolis - SC': 280,
+        'Salvador - BA': 220,
+        'Fortaleza - CE': 200
+      };
+
+      const basePrice = basePrices[watchedDestination] || 200;
+      const totalValue = basePrice * nights * watchedGuests;
+
+      setValue('value', totalValue);
+      setIsCalculating(false);
+    }, 1000);
+  };
 
   // ===================================================================
   // EFEITOS
@@ -181,42 +210,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
     if (watchedCheckIn && watchedCheckOut && watchedDestination) {
       calculateValue();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recalc when booking fields change
   }, [watchedCheckIn, watchedCheckOut, watchedGuests, watchedDestination]);
 
   // ===================================================================
   // FUNÇÕES
   // ===================================================================
-
-  const calculateValue = async () => {
-    if (!watchedCheckIn || !watchedCheckOut || !watchedDestination) return;
-
-    setIsCalculating(true);
-    
-    // Simular cálculo de preço
-    setTimeout(() => {
-      const checkIn = new Date(watchedCheckIn);
-      const checkOut = new Date(watchedCheckOut);
-      const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-      
-      // Preços base por destino (por noite)
-      const basePrices: Record<string, number> = {
-        'Caldas Novas - GO': 200,
-        'Porto de Galinhas - PE': 300,
-        'Fernando de Noronha - PE': 500,
-        'Gramado - RS': 250,
-        'Búzios - RJ': 350,
-        'Florianópolis - SC': 280,
-        'Salvador - BA': 220,
-        'Fortaleza - CE': 200
-      };
-
-      const basePrice = basePrices[watchedDestination] || 200;
-      const totalValue = basePrice * nights * watchedGuests;
-      
-      setValue('value', totalValue);
-      setIsCalculating(false);
-    }, 1000);
-  };
 
   const handleCustomerSelect = (customerName: string) => {
     const customer = mockCustomers.find(c => c.name === customerName);

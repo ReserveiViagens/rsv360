@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import {
@@ -11,17 +10,8 @@ import {
   Edit,
   Trash,
   Eye,
-  Download,
   Search,
-  Filter,
   ArrowLeft,
-  Users,
-  MapPin,
-  DollarSign,
-  Clock,
-  Star,
-  Settings,
-  FileText,
   BarChart3,
   Ticket
 } from 'lucide-react';
@@ -87,16 +77,344 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
     );
 }
 
+const MOCK_TRAVELS: Travel[] = [
+    {
+        id: 1,
+        title: 'Férias em Paris',
+        destination: 'Paris, França',
+        departure_date: '2024-08-15',
+        return_date: '2024-08-22',
+        price: 4500.00,
+        status: 'active',
+        passengers: 2,
+        type: 'leisure',
+        description: 'Uma semana incrível na cidade luz',
+        rating: 4.8,
+        notes: 'Hotel próximo ao Louvre, passeios de barco no Sena'
+    },
+    {
+        id: 2,
+        title: 'Conferência Tech',
+        destination: 'São Paulo, Brasil',
+        departure_date: '2024-09-10',
+        return_date: '2024-09-12',
+        price: 1200.00,
+        status: 'active',
+        passengers: 1,
+        type: 'business',
+        description: 'Participação na conferência de tecnologia',
+        rating: 4.5,
+        notes: 'Hotel próximo ao centro de eventos, traslado incluído'
+    },
+    {
+        id: 3,
+        title: 'Grupo Família',
+        destination: 'Orlando, EUA',
+        departure_date: '2024-12-20',
+        return_date: '2024-12-27',
+        price: 8500.00,
+        status: 'active',
+        passengers: 4,
+        type: 'group',
+        description: 'Viagem em família para os parques da Disney',
+        rating: 4.9,
+        notes: 'Pacote completo com ingressos para todos os parques'
+    },
+    {
+        id: 4,
+        title: 'Lua de Mel',
+        destination: 'Maldives',
+        departure_date: '2024-10-15',
+        return_date: '2024-10-22',
+        price: 12000.00,
+        status: 'pending',
+        passengers: 2,
+        type: 'leisure',
+        description: 'Lua de mel em resort exclusivo',
+        rating: 5.0,
+        notes: 'Bangalô sobre a água, pensão completa'
+    },
+    {
+        id: 5,
+        title: 'Expedição Amazônica',
+        destination: 'Manaus, Brasil',
+        departure_date: '2024-07-01',
+        return_date: '2024-07-08',
+        price: 3200.00,
+        status: 'completed',
+        passengers: 6,
+        type: 'group',
+        description: 'Expedição científica na Amazônia',
+        rating: 4.7,
+        notes: 'Guia especializado, equipamentos incluídos'
+    }
+];
+
+function getStatusColor(status: string) {
+    switch (status) {
+        case 'active': return 'bg-green-100 text-green-800';
+        case 'completed': return 'bg-blue-100 text-blue-800';
+        case 'cancelled': return 'bg-red-100 text-red-800';
+        case 'pending': return 'bg-yellow-100 text-yellow-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function getTypeColor(type: string) {
+    switch (type) {
+        case 'business': return 'bg-purple-100 text-purple-800';
+        case 'leisure': return 'bg-orange-100 text-orange-800';
+        case 'group': return 'bg-pink-100 text-pink-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function formatDate(dateString: string) {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+}
+
+function formatPrice(price: number) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(price);
+}
+
+interface NewTravelFormProps {
+    onCancel: () => void;
+    onCreate: (travel: Travel) => void;
+}
+
+function NewTravelForm({ onCancel, onCreate }: NewTravelFormProps) {
+    const [formData, setFormData] = useState({
+        title: '',
+        destination: '',
+        departure_date: '',
+        return_date: '',
+        passengers: 1,
+        type: 'leisure',
+        price: '',
+        description: '',
+        notes: ''
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const newTravel: Travel = {
+            id: Date.now(),
+            title: formData.title,
+            destination: formData.destination,
+            departure_date: formData.departure_date,
+            return_date: formData.return_date,
+            price: parseFloat(formData.price),
+            status: 'pending',
+            passengers: formData.passengers,
+            type: formData.type as Travel['type'],
+            description: formData.description,
+            notes: formData.notes
+        };
+
+        onCreate(newTravel);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Título da Viagem</label>
+                <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
+                <input
+                    type="text"
+                    value={formData.destination}
+                    onChange={(e) => setFormData(prev => ({ ...prev, destination: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data Ida</label>
+                    <input
+                        type="date"
+                        value={formData.departure_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, departure_date: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data Volta</label>
+                    <input
+                        type="date"
+                        value={formData.return_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, return_date: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Passageiros</label>
+                    <input
+                        type="number"
+                        min="1"
+                        value={formData.passengers}
+                        onChange={(e) => setFormData(prev => ({ ...prev, passengers: parseInt(e.target.value) }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                    <select
+                        value={formData.type}
+                        onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="leisure">Lazer</option>
+                        <option value="business">Negócio</option>
+                        <option value="group">Grupo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4">
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                    Cancelar
+                </button>
+                <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                >
+                    Criar Viagem
+                </button>
+            </div>
+        </form>
+    );
+}
+
+interface TravelDetailsViewProps {
+    travel: Travel;
+    onClose: () => void;
+    onEdit: () => void;
+}
+
+function TravelDetailsView({ travel, onClose, onEdit }: TravelDetailsViewProps) {
+    return (
+        <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 mb-2">{travel.title}</h4>
+                <p className="text-gray-600">{travel.description}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Destino</label>
+                    <p className="text-sm text-gray-900">{travel.destination}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Passageiros</label>
+                    <p className="text-sm text-gray-900">{travel.passengers}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Data Ida</label>
+                    <p className="text-sm text-gray-900">{formatDate(travel.departure_date)}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Data Volta</label>
+                    <p className="text-sm text-gray-900">{formatDate(travel.return_date)}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Preço</label>
+                    <p className="text-sm text-gray-900">{formatPrice(travel.price)}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Status</label>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(travel.status)}`}>
+                        {travel.status}
+                    </span>
+                </div>
+            </div>
+
+            {travel.notes && (
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Observações</label>
+                    <p className="text-sm text-gray-900">{travel.notes}</p>
+                </div>
+            )}
+
+            <div className="flex justify-end space-x-3 pt-4">
+                <button
+                    onClick={onClose}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                    Fechar
+                </button>
+                <button
+                    onClick={onEdit}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                >
+                    Editar
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default function Travel() {
-    const { user } = useAuth();
     const router = useRouter();
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [travels, setTravels] = useState<Travel[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [travels, setTravels] = useState<Travel[]>(MOCK_TRAVELS);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [showNewTravel, setShowNewTravel] = useState(false);
-    const [showEditTravel, setShowEditTravel] = useState(false);
     const [showTravelDetails, setShowTravelDetails] = useState(false);
     const [selectedTravel, setSelectedTravel] = useState<Travel | null>(null);
 
@@ -136,125 +454,18 @@ export default function Travel() {
         }
     ];
 
-    // Dados mock de viagens
-    const mockTravels: Travel[] = [
-        {
-            id: 1,
-            title: 'Férias em Paris',
-            destination: 'Paris, França',
-            departure_date: '2024-08-15',
-            return_date: '2024-08-22',
-            price: 4500.00,
-            status: 'active',
-            passengers: 2,
-            type: 'leisure',
-            description: 'Uma semana incrível na cidade luz',
-            rating: 4.8,
-            notes: 'Hotel próximo ao Louvre, passeios de barco no Sena'
-        },
-        {
-            id: 2,
-            title: 'Conferência Tech',
-            destination: 'São Paulo, Brasil',
-            departure_date: '2024-09-10',
-            return_date: '2024-09-12',
-            price: 1200.00,
-            status: 'active',
-            passengers: 1,
-            type: 'business',
-            description: 'Participação na conferência de tecnologia',
-            rating: 4.5,
-            notes: 'Hotel próximo ao centro de eventos, traslado incluído'
-        },
-        {
-            id: 3,
-            title: 'Grupo Família',
-            destination: 'Orlando, EUA',
-            departure_date: '2024-12-20',
-            return_date: '2024-12-27',
-            price: 8500.00,
-            status: 'active',
-            passengers: 4,
-            type: 'group',
-            description: 'Viagem em família para os parques da Disney',
-            rating: 4.9,
-            notes: 'Pacote completo com ingressos para todos os parques'
-        },
-        {
-            id: 4,
-            title: 'Lua de Mel',
-            destination: 'Maldives',
-            departure_date: '2024-10-15',
-            return_date: '2024-10-22',
-            price: 12000.00,
-            status: 'pending',
-            passengers: 2,
-            type: 'leisure',
-            description: 'Lua de mel em resort exclusivo',
-            rating: 5.0,
-            notes: 'Bangalô sobre a água, pensão completa'
-        },
-        {
-            id: 5,
-            title: 'Expedição Amazônica',
-            destination: 'Manaus, Brasil',
-            departure_date: '2024-07-01',
-            return_date: '2024-07-08',
-            price: 3200.00,
-            status: 'completed',
-            passengers: 6,
-            type: 'group',
-            description: 'Expedição científica na Amazônia',
-            rating: 4.7,
-            notes: 'Guia especializado, equipamentos incluídos'
-        }
-    ];
-
-    useEffect(() => {
-        // Simular carregamento de dados
-        setTimeout(() => {
-            setTravels(mockTravels);
-            setLoading(false);
-        }, 1000);
-    }, []);
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'active': return 'bg-green-100 text-green-800';
-            case 'completed': return 'bg-blue-100 text-blue-800';
-            case 'cancelled': return 'bg-red-100 text-red-800';
-            case 'pending': return 'bg-yellow-100 text-yellow-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'business': return 'bg-purple-100 text-purple-800';
-            case 'leisure': return 'bg-orange-100 text-orange-800';
-            case 'group': return 'bg-pink-100 text-pink-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('pt-BR');
-    };
-
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(price);
-    };
-
     const handleNewTravel = () => {
         setShowNewTravel(true);
     };
 
+    const handleCreateTravel = (travel: Travel) => {
+        setTravels(prev => [...prev, travel]);
+        setShowNewTravel(false);
+    };
+
     const handleEditTravel = (travel: Travel) => {
         setSelectedTravel(travel);
-        setShowEditTravel(true);
+        setShowNewTravel(true);
     };
 
     const handleViewTravel = (travel: Travel) => {
@@ -296,245 +507,6 @@ export default function Travel() {
         const matchesFilter = selectedFilter === 'all' || travel.status === selectedFilter;
         return matchesSearch && matchesFilter;
     });
-
-    // Formulário de Nova Viagem
-    const NewTravelForm = () => {
-        const [formData, setFormData] = useState({
-            title: '',
-            destination: '',
-            departure_date: '',
-            return_date: '',
-            passengers: 1,
-            type: 'leisure',
-            price: '',
-            description: '',
-            notes: ''
-        });
-
-        const handleSubmit = (e: React.FormEvent) => {
-            e.preventDefault();
-            const newTravel: Travel = {
-                id: Date.now(),
-                title: formData.title,
-                destination: formData.destination,
-                departure_date: formData.departure_date,
-                return_date: formData.return_date,
-                price: parseFloat(formData.price),
-                status: 'pending',
-                passengers: formData.passengers,
-                type: formData.type as Travel['type'],
-                description: formData.description,
-                notes: formData.notes
-            };
-            
-            setTravels(prev => [...prev, newTravel]);
-            setShowNewTravel(false);
-        };
-
-        return (
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Título da Viagem</label>
-                    <input
-                        type="text"
-                        value={formData.title}
-                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-                
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
-                    <input
-                        type="text"
-                        value={formData.destination}
-                        onChange={(e) => setFormData(prev => ({ ...prev, destination: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Data Ida</label>
-                        <input
-                            type="date"
-                            value={formData.departure_date}
-                            onChange={(e) => setFormData(prev => ({ ...prev, departure_date: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Data Volta</label>
-                        <input
-                            type="date"
-                            value={formData.return_date}
-                            onChange={(e) => setFormData(prev => ({ ...prev, return_date: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Passageiros</label>
-                        <input
-                            type="number"
-                            min="1"
-                            value={formData.passengers}
-                            onChange={(e) => setFormData(prev => ({ ...prev, passengers: parseInt(e.target.value) }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                        <select
-                            value={formData.type}
-                            onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="leisure">Lazer</option>
-                            <option value="business">Negócio</option>
-                            <option value="group">Grupo</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
-                    <input
-                        type="number"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-                
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                    <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
-                    <textarea
-                        value={formData.notes}
-                        onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                        rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                
-                <div className="flex justify-end space-x-3 pt-4">
-                    <button
-                        type="button"
-                        onClick={() => setShowNewTravel(false)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                    >
-                        Criar Viagem
-                    </button>
-                </div>
-            </form>
-        );
-    };
-
-    // Detalhes da Viagem
-    const TravelDetails = () => {
-        if (!selectedTravel) return null;
-
-        return (
-            <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">{selectedTravel.title}</h4>
-                    <p className="text-gray-600">{selectedTravel.description}</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Destino</label>
-                        <p className="text-sm text-gray-900">{selectedTravel.destination}</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Passageiros</label>
-                        <p className="text-sm text-gray-900">{selectedTravel.passengers}</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Data Ida</label>
-                        <p className="text-sm text-gray-900">{formatDate(selectedTravel.departure_date)}</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Data Volta</label>
-                        <p className="text-sm text-gray-900">{formatDate(selectedTravel.return_date)}</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Preço</label>
-                        <p className="text-sm text-gray-900">{formatPrice(selectedTravel.price)}</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Status</label>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTravel.status)}`}>
-                            {selectedTravel.status}
-                        </span>
-                    </div>
-                </div>
-                
-                {selectedTravel.notes && (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Observações</label>
-                        <p className="text-sm text-gray-900">{selectedTravel.notes}</p>
-                    </div>
-                )}
-                
-                <div className="flex justify-end space-x-3 pt-4">
-                    <button
-                        onClick={() => setShowTravelDetails(false)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                    >
-                        Fechar
-                    </button>
-                    <button
-                        onClick={() => {
-                            setShowTravelDetails(false);
-                            handleEditTravel(selectedTravel);
-                        }}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                    >
-                        Editar
-                    </button>
-                </div>
-            </div>
-        );
-    };
-
-    if (loading) {
-        return (
-            <ProtectedRoute>
-                <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                    <div className="text-center">
-                        <Plane className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
-                        <p className="text-lg font-medium text-gray-900">Carregando viagens...</p>
-                    </div>
-                </div>
-            </ProtectedRoute>
-        );
-    }
 
     return (
         <ProtectedRoute>
@@ -765,7 +737,10 @@ export default function Travel() {
                     onClose={() => setShowNewTravel(false)}
                     title="Nova Viagem"
                 >
-                    <NewTravelForm />
+                    <NewTravelForm
+                        onCancel={() => setShowNewTravel(false)}
+                        onCreate={handleCreateTravel}
+                    />
                 </Modal>
 
                 <Modal
@@ -773,7 +748,16 @@ export default function Travel() {
                     onClose={() => setShowTravelDetails(false)}
                     title="Detalhes da Viagem"
                 >
-                    <TravelDetails />
+                    {selectedTravel && (
+                        <TravelDetailsView
+                            travel={selectedTravel}
+                            onClose={() => setShowTravelDetails(false)}
+                            onEdit={() => {
+                                setShowTravelDetails(false);
+                                handleEditTravel(selectedTravel);
+                            }}
+                        />
+                    )}
                 </Modal>
             </div>
         </ProtectedRoute>

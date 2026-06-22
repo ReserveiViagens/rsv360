@@ -1,53 +1,45 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Switch } from '@/components/ui/Switch';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue } from '@/components/ui/Select';
 import {
   Zap,
   Settings,
   Play,
   Pause,
   Clock,
-  GitBranch,
   Filter,
-  Send,
   MessageSquare,
   Mail,
   Bell,
   Database,
   Activity,
   CheckCircle,
-  XCircle,
-  AlertTriangle,
-  RefreshCw,
-  Save,
   Plus,
   Trash2,
-  Edit,
-  Eye,
-  Copy,
   ArrowRight,
-  ArrowDown,
-  Calendar,
-  User,
-  CreditCard,
   FileText,
-  Target,
   Globe,
-  Smartphone,
   Code,
   Workflow,
   Bot,
   Cpu,
-  Network,
   Info
 } from 'lucide-react';
 
@@ -60,18 +52,18 @@ interface AutomationRule {
     type: 'event' | 'schedule' | 'condition';
     event?: string;
     schedule?: string;
-    condition?: Record<string, any>;
+    condition?: Record<string, unknown>;
   };
   conditions: Array<{
     field: string;
     operator: string;
-    value: any;
+    value: unknown;
     logical_operator?: 'AND' | 'OR';
   }>;
   actions: Array<{
     type: string;
     service: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     delay?: number;
   }>;
   execution_count: number;
@@ -89,9 +81,9 @@ interface AutomationTemplate {
   description: string;
   category: 'booking' | 'customer' | 'payment' | 'marketing' | 'support';
   popularity: number;
-  trigger: any;
-  conditions: any[];
-  actions: any[];
+  trigger: AutomationRule['trigger'];
+  conditions: AutomationRule['conditions'];
+  actions: AutomationRule['actions'];
   estimated_time_saved: string;
 }
 
@@ -99,7 +91,7 @@ interface AutomationExecution {
   id: string;
   rule_id: string;
   status: 'success' | 'failed' | 'running' | 'cancelled';
-  trigger_data: Record<string, any>;
+  trigger_data: Record<string, unknown>;
   actions_executed: number;
   total_actions: number;
   execution_time: number;
@@ -400,10 +392,8 @@ export default function IntegracoesAutomacao() {
   const [executions] = useState<AutomationExecution[]>(MOCK_EXECUTIONS);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRule, setSelectedRule] = useState<AutomationRule | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<AutomationTemplate | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [, setIsCreating] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all');
 
   const filteredRules = rules.filter(rule => {
     const matchesStatus = filterStatus === 'all' || rule.status === filterStatus;
@@ -517,7 +507,7 @@ export default function IntegracoesAutomacao() {
 
   const handleCreateFromTemplate = (template: AutomationTemplate) => {
     const newRule: AutomationRule = {
-      id: Date.now().toString(),
+      id: `rule-${template.id}-${rules.length + 1}`,
       name: template.name,
       description: template.description,
       status: 'inactive',

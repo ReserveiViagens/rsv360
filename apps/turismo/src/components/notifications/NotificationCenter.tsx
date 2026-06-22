@@ -4,6 +4,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNotifications } from '../../context/NotificationContext';
+import { NotificationData } from '../../services/websocket';
 import { useRouter } from 'next/router';
 import {
   Bell,
@@ -11,11 +12,9 @@ import {
   Check,
   CheckCheck,
   Trash2,
-  Filter,
   Search,
   Clock,
   AlertCircle,
-  CheckCircle,
   Info,
   Star,
   Calendar,
@@ -43,7 +42,7 @@ type SortType = 'newest' | 'oldest' | 'priority';
 
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
-  const { state, markAsRead, markAllAsRead, removeNotification, getNotificationsByType } = useNotifications();
+  const { state, markAsRead, markAllAsRead, removeNotification } = useNotifications();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
@@ -73,7 +72,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
   // FUNÇÕES DE UTILIDADE
   // ===================================================================
 
-  const getNotificationIcon = (type: string, priority: string) => {
+  const getNotificationIcon = (type: string, _priority: string) => {
     const iconClass = "w-5 h-5";
     
     switch (type) {
@@ -182,7 +181,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
   // HANDLERS
   // ===================================================================
 
-  const handleNotificationClick = (notification: any) => {
+  const handleNotificationClick = (notification: NotificationData) => {
     if (!notification.read) {
       markAsRead(notification.id);
     }

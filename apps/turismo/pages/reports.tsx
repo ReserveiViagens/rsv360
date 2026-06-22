@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import {
@@ -21,10 +20,8 @@ import {
   AlertCircle,
   Clock,
   X,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 
 interface ReportMetrics {
   period: string;
@@ -137,8 +134,12 @@ interface ActivityDetails {
   yearly: ActivityItem[];
 }
 
+type DestinationMetric = MetricDetails['destinations'][number];
+type ChartListItem = ChartData | DestinationMetric;
+type CategoryBreakdown = MetricDetail['breakdown'][number];
+type ReportDetailItem = ReportData['details'][number];
+
 export default function ReportsPage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [showCheckpointModal, setShowCheckpointModal] = useState(false);
@@ -226,6 +227,7 @@ export default function ReportsPage() {
 
   // Dados mockados de checkpoints
   useEffect(() => {
+    const timer = setTimeout(() => {
     setCheckpoints([
       {
         id: '1',
@@ -935,6 +937,8 @@ export default function ReportsPage() {
         }
       ]
     });
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const formatCurrency = (value: number) => {
@@ -949,16 +953,6 @@ export default function ReportsPage() {
   };
 
   const handleDownloadReport = (type: string) => {
-    // Simular geração de PDF com opções
-    const reportTypes = {
-      financial: 'Relatório Financeiro',
-      performance: 'Relatório de Performance', 
-      customer: 'Relatório de Clientes'
-    };
-    
-    const reportName = reportTypes[type as keyof typeof reportTypes] || 'Relatório';
-    
-    // Criar modal de opções de PDF
     setShowPdfOptions(true);
     setSelectedReportType(type);
   };
@@ -1156,19 +1150,6 @@ export default function ReportsPage() {
     }
   };
 
-  const getReportTitle = (reportType: string) => {
-    switch (reportType) {
-      case 'financial':
-        return 'Relatório Financeiro';
-      case 'performance':
-        return 'Relatório de Performance';
-      case 'customer':
-        return 'Relatório de Clientes';
-      default:
-        return 'Detalhes do Relatório';
-    }
-  };
-
   const getReportIcon = (reportType: string) => {
     switch (reportType) {
       case 'financial':
@@ -1217,20 +1198,20 @@ export default function ReportsPage() {
     return report || null;
   };
 
-  const handleChartItemClick = (item: any) => {
-    if (selectedChart === 'revenue') {
+  const handleChartItemClick = (item: ChartListItem) => {
+    if (selectedChart === 'revenue' && 'month' in item) {
       setSelectedChartItem(item.month);
       setHighlightedChartItem(item.month);
-    } else if (selectedChart === 'destinations') {
+    } else if (selectedChart === 'destinations' && 'name' in item) {
       setSelectedChartItem(item.name);
       setHighlightedChartItem(item.name);
     }
   };
 
-  const getChartItemStyle = (item: any) => {
-    const isHighlighted = selectedChart === 'revenue' 
-      ? highlightedChartItem === item.month 
-      : highlightedChartItem === item.name;
+  const getChartItemStyle = (item: ChartListItem) => {
+    const isHighlighted = selectedChart === 'revenue' && 'month' in item
+      ? highlightedChartItem === item.month
+      : 'name' in item && highlightedChartItem === item.name;
     
     return isHighlighted 
       ? 'border-2 border-blue-500 bg-blue-50 shadow-lg' 
@@ -1454,20 +1435,6 @@ export default function ReportsPage() {
     
     setExportGenerating(false);
     setShowExportModal(false);
-  };
-
-  const getExportTitle = (type: string) => {
-    switch (type) {
-      case 'all': return 'Relatório Completo';
-      case 'financial': return 'Relatório Financeiro';
-      case 'performance': return 'Relatório de Performance';
-      case 'customer': return 'Relatório de Clientes';
-      case 'revenue': return 'Relatório de Receita';
-      case 'bookings': return 'Relatório de Reservas';
-      case 'destinations': return 'Relatório de Destinos';
-      case 'activity': return 'Relatório de Atividade';
-      default: return 'Relatório';
-    }
   };
 
   return (
@@ -2006,7 +1973,7 @@ export default function ReportsPage() {
                   {selectedMetric === 'destinations' ? (
                     // Destinations List
                     <div className="space-y-4">
-                      {getFilteredData().map((dest: any, index: number) => (
+                      {(getFilteredData() as DestinationMetric[]).map((dest, index) => (
                         <div key={index} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
@@ -2029,7 +1996,7 @@ export default function ReportsPage() {
                   ) : (
                     // Period Data
                     <div className="space-y-6">
-                      {getFilteredData().map((item: any, index: number) => (
+                      {(getFilteredData() as MetricDetail[]).map((item, index) => (
                         <div key={index} className="border rounded-lg p-6">
                           <div className="flex items-center justify-between mb-4">
                             <div>
@@ -2052,7 +2019,7 @@ export default function ReportsPage() {
                           <div>
                             <h5 className="font-semibold text-gray-700 mb-3">Detalhamento por Categoria</h5>
                             <div className="space-y-3">
-                              {item.breakdown.map((cat: any, catIndex: number) => (
+                              {item.breakdown.map((cat: CategoryBreakdown, catIndex: number) => (
                                 <div key={catIndex} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                   <div>
                                     <p className="font-medium text-gray-900">{cat.category}</p>
@@ -2149,7 +2116,7 @@ export default function ReportsPage() {
                 <div className="space-y-4">
                   {selectedChart === 'revenue' ? (
                     // Revenue Chart Data
-                    getFilteredChartData().map((item: any, index: number) => (
+                    (getFilteredChartData() as ChartData[]).map((item, index) => (
                       <div 
                         key={index} 
                         className={`rounded-lg p-4 transition-all duration-200 cursor-pointer ${getChartItemStyle(item)}`}
@@ -2183,7 +2150,7 @@ export default function ReportsPage() {
                     ))
                   ) : (
                     // Destinations Chart Data
-                    getFilteredChartData().map((item: any, index: number) => (
+                    (getFilteredChartData() as DestinationMetric[]).map((item, index) => (
                       <div 
                         key={index} 
                         className={`rounded-lg p-4 transition-all duration-200 cursor-pointer ${getChartItemStyle(item)}`}
@@ -2282,7 +2249,7 @@ export default function ReportsPage() {
                       {/* Report Details */}
                       <div className="space-y-4">
                         <h4 className="font-semibold text-gray-900">Detalhamento</h4>
-                        {report.details.map((detail: any, index: number) => (
+                        {report.details.map((detail: ReportDetailItem, index: number) => (
                           <div key={index} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                             <div className="flex items-center justify-between">
                               <div>
@@ -2384,7 +2351,7 @@ export default function ReportsPage() {
 
                 {/* Activity Data Display */}
                 <div className="space-y-4">
-                  {getFilteredActivityData().map((activity, index) => (
+                  {getFilteredActivityData().map((activity) => (
                     <div key={activity.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4">

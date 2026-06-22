@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -46,11 +46,7 @@ export default function SubscriptionsPage() {
     const [showPlanForm, setShowPlanForm] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<Partial<SubscriptionPlan>>({});
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [subscriptionsRes, plansRes, statsRes] = await Promise.all([
                 axios.get('/api/subscriptions/subscriptions/'),
@@ -65,7 +61,12 @@ export default function SubscriptionsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchData();
+    }, [fetchData]);
 
     const handleAddPlan = async (e: React.FormEvent) => {
         e.preventDefault();

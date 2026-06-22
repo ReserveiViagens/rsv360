@@ -6,10 +6,7 @@ import {
   Download, 
   Calendar, 
   Settings,
-  BarChart3,
-  Clock,
-  Users,
-  TrendingUp
+  BarChart3
 } from 'lucide-react';
 import { ReportBuilder, ReportTemplates, DataExport, ReportScheduler } from '../src/components/reports';
 
@@ -75,7 +72,7 @@ const ReportsPage: React.FC = () => {
             {sections.map(section => (
               <button
                 key={section.id}
-                onClick={() => setActiveSection(section.id as any)}
+                onClick={() => setActiveSection(section.id as typeof activeSection)}
                 className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeSection === section.id
                     ? 'border-blue-500 text-blue-600'

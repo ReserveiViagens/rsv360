@@ -6,69 +6,34 @@ import { api } from '../src/services/apiClient'
 import { useRouter } from 'next/navigation'
 import {
   CreditCard,
-  Calendar,
-  Users,
   MapPin,
-  Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
   Plus,
   Search,
-  Filter,
   Download,
   Upload,
   Edit,
   Trash2,
   Eye,
-  RefreshCw,
-  TrendingUp,
   DollarSign,
   FileText,
-  Send,
   Copy,
   QrCode,
   BarChart3,
   Settings,
-  MoreHorizontal,
-  ArrowRight,
-  CalendarDays,
   Hotel,
   Plane,
   Car,
   Camera,
   Gift,
-  Tag,
-  Percent,
-  Award,
-  Shield,
-  Zap,
-  Globe,
-  Smartphone,
-  Mail,
-  Phone,
-  User,
-  Building,
-  Receipt,
-  Wallet,
-  Key,
-  Lock,
-  Unlock,
-  EyeOff,
-  CheckSquare,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  ChevronLeft,
   Home,
   ArrowLeft,
   Palette,
-  Type,
-  Image,
   X,
   Save
-} from 'lucide-react'
+} from 'lucide-react';
 import { toast } from 'react-hot-toast'
 
 interface Voucher {
@@ -144,14 +109,10 @@ export default function VouchersPage() {
   })
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('')
 
-  useEffect(() => {
-    loadData()
-  }, [filterStatus, filterTipo, sortBy, sortOrder])
-
   const loadData = async () => {
     try {
       setLoading(true)
-      const params: any = {
+      const params: Record<string, string | undefined> = {
         search: searchTerm || undefined,
         sortBy: sortBy === 'dataCriacao' ? 'created_at' : sortBy,
         sortOrder
@@ -187,6 +148,12 @@ export default function VouchersPage() {
     }
   }
 
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch vouchers on filter/sort change
+    loadData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- reload on filter/sort change
+  }, [filterStatus, filterTipo, sortBy, sortOrder])
   const handleSave = async () => {
     try {
       const payload = {
@@ -690,7 +657,7 @@ export default function VouchersPage() {
                   {filteredVouchers.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
-                        Nenhum voucher encontrado. Clique em "Novo Voucher" para começar.
+                        Nenhum voucher encontrado. Clique em &quot;Novo Voucher&quot; para começar.
                       </td>
                     </tr>
                   ) : (
@@ -832,6 +799,7 @@ export default function VouchersPage() {
                 {modalType === 'qrcode' && qrCodeUrl && (
                   <div className="text-center space-y-4">
                     <div className="flex justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- dynamic QR code URL */}
                       <img src={qrCodeUrl} alt="QR Code" className="w-64 h-64 border-2 border-gray-200 rounded-lg" />
                     </div>
                     <p className="text-sm text-gray-600">

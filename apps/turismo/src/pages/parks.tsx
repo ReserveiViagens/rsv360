@@ -6,25 +6,15 @@ import {
     Clock, 
     DollarSign, 
     Users, 
-    Mountain, 
     Plus, 
     Edit, 
     Trash, 
     X, 
-    Save, 
-    Upload, 
     Image as ImageIcon,
-    Eye,
-    Search,
     Download,
-    Phone,
-    Globe,
-    Calendar,
-    Map,
     BarChart3,
     Play
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Park {
@@ -49,30 +39,16 @@ interface Park {
     videos: string[];
 }
 
-export default function ParksPage() {
-    const [parks, setParks] = useState<Park[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showNewParkModal, setShowNewParkModal] = useState(false);
-    const [showEditParkModal, setShowEditParkModal] = useState(false);
-    const [showImageModal, setShowImageModal] = useState(false);
-    const [editingPark, setEditingPark] = useState<Park | null>(null);
-    const [selectedPark, setSelectedPark] = useState<Park | null>(null);
-    const [selectedImage, setSelectedImage] = useState<string>('');
-    const [uploadingImage, setUploadingImage] = useState(false);
-    const [showStatsDetails, setShowStatsDetails] = useState(false);
-    const [selectedStatsType, setSelectedStatsType] = useState<string>('');
-    const [statsSearchTerm, setStatsSearchTerm] = useState('');
-    const [statsFilter, setStatsFilter] = useState('all');
-    const [statsPeriod, setStatsPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
-    const [exportGenerating, setExportGenerating] = useState(false);
-    const [showVideoModal, setShowVideoModal] = useState(false);
-    const [selectedVideo, setSelectedVideo] = useState<string>('');
-    const [uploadingVideo, setUploadingVideo] = useState(false);
+type StatsPeriod = 'daily' | 'weekly' | 'monthly' | 'annual';
 
-    // Dados mockados para parques
-    const mockParks: Park[] = [
+type StatsRow = {
+    name: string;
+    visitors: number;
+    revenue: number;
+    rating: number;
+};
+
+const MOCK_PARKS: Park[] = [
         {
             id: 1,
             name: "Parque Nacional da Tijuca",
@@ -201,13 +177,533 @@ export default function ParksPage() {
         }
     ];
 
+function getTypeColor(type: string) {
+    switch (type) {
+        case 'nacional': return 'bg-green-100 text-green-800';
+        case 'estadual': return 'bg-blue-100 text-blue-800';
+        case 'municipal': return 'bg-yellow-100 text-yellow-800';
+        case 'privado': return 'bg-purple-100 text-purple-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function getStatsTitle(statsType: string) {
+    switch (statsType) {
+        case 'total': return 'Total de Parques';
+        case 'visitors': return 'Visitantes/Ano';
+        case 'rating': return 'AvaliaÃ§Ã£o MÃ©dia';
+        case 'revenue': return 'Receita MÃ©dia';
+        default: return 'EstatÃ­sticas';
+    }
+}
+
+function getStatsIcon(statsType: string) {
+    switch (statsType) {
+        case 'total': return <TreePine className="w-6 h-6" />;
+        case 'visitors': return <Users className="w-6 h-6" />;
+        case 'rating': return <Star className="w-6 h-6" />;
+        case 'revenue': return <DollarSign className="w-6 h-6" />;
+        default: return <BarChart3 className="w-6 h-6" />;
+    }
+}
+
+// Componente ParkForm
+const ParkForm = ({ park, onSave, onCancel }: { 
+    park?: Park | null; 
+    onSave: (data: Partial<Park>) => void; 
+    onCancel: () => void; 
+}) => {
+    const [formData, setFormData] = useState({
+        name: park?.name || '',
+        location: park?.location || '',
+        description: park?.description || '',
+        type: park?.type || 'nacional' as const,
+        rating: park?.rating || 0,
+        price: park?.price || 0,
+        duration: park?.duration || '',
+        visitors: park?.visitors || 0,
+        area: park?.area || '',
+        category: park?.category || '',
+        contact: park?.contact || '',
+        website: park?.website || '',
+        openingHours: park?.openingHours || '',
+        bestTime: park?.bestTime || '',
+        facilities: park?.facilities || [],
+        restrictions: park?.restrictions || [],
+        images: park?.images || [],
+        videos: park?.videos || []
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSave(formData);
+    };
+
+    return (
+        <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto">
+            <h3 className="text-lg font-semibold mb-4">
+                {park ? 'Editar Parque' : 'Novo Parque'}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Nome do Parque
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            LocalizaÃ§Ã£o
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.location}
+                            onChange={(e) => setFormData({...formData, location: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Categoria
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.category}
+                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Tipo
+                        </label>
+                        <select
+                            value={formData.type}
+                            onChange={(e) => setFormData({...formData, type: e.target.value as Park['type']})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="nacional">Nacional</option>
+                            <option value="estadual">Estadual</option>
+                            <option value="municipal">Municipal</option>
+                            <option value="privado">Privado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            PreÃ§o (R$)
+                        </label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value) || 0})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            DuraÃ§Ã£o
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.duration}
+                            onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Visitantes/Ano
+                        </label>
+                        <input
+                            type="number"
+                            value={formData.visitors}
+                            onChange={(e) => setFormData({...formData, visitors: parseInt(e.target.value) || 0})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Ãrea
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.area}
+                            onChange={(e) => setFormData({...formData, area: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Contato
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.contact}
+                            onChange={(e) => setFormData({...formData, contact: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Website
+                        </label>
+                        <input
+                            type="url"
+                            value={formData.website}
+                            onChange={(e) => setFormData({...formData, website: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            HorÃ¡rio de Funcionamento
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.openingHours}
+                            onChange={(e) => setFormData({...formData, openingHours: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Melhor HorÃ¡rio
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.bestTime}
+                            onChange={(e) => setFormData({...formData, bestTime: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        DescriÃ§Ã£o
+                    </label>
+                    <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+                <div className="flex gap-4">
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        {park ? 'Atualizar' : 'Criar'} Parque
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+// Componente ImageModal
+function ImageModal({ park, onClose, onUploadImage, onDeleteImage, uploadingImage }: {
+    park: Park;
+    onClose: () => void;
+    onUploadImage: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onDeleteImage: (imageUrl: string) => void;
+    uploadingImage: boolean;
+}) {
+    const [selectedImage, setSelectedImage] = useState<string>('');
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Imagens - {park.name}</h3>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+                
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Adicionar Nova Imagem
+                    </label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onUploadImage}
+                        disabled={uploadingImage}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {uploadingImage && (
+                        <p className="text-sm text-blue-600 mt-1">Enviando imagem...</p>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {park.images.map((image, index) => (
+                        <div key={index} className="relative group">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- park gallery preview URLs */}
+                            <img
+                                src={image}
+                                alt={`${park.name} - Imagem ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                                onClick={() => setSelectedImage(image)}
+                            />
+                            <button
+                                onClick={() => onDeleteImage(image)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {selectedImage && (
+                    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60">
+                        <div className="relative max-w-4xl max-h-[90vh]">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- full-size preview */}
+                            <img
+                                src={selectedImage}
+                                alt="Preview"
+                                className="max-w-full max-h-full object-contain"
+                            />
+                            <button
+                                onClick={() => setSelectedImage('')}
+                                className="absolute top-4 right-4 bg-black bg-opacity-50 text-white rounded-full p-2"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// Componente StatsDetails
+function StatsDetails({ statsType, onClose, statsPeriod, setStatsPeriod, statsSearchTerm, setStatsSearchTerm, statsFilter, setStatsFilter, statsData, onExportReport }: {
+    statsType: string;
+    onClose: () => void;
+    statsPeriod: StatsPeriod;
+    setStatsPeriod: (period: StatsPeriod) => void;
+    statsSearchTerm: string;
+    setStatsSearchTerm: (term: string) => void;
+    statsFilter: string;
+    setStatsFilter: (filter: string) => void;
+    statsData: StatsRow[];
+    onExportReport: () => void;
+}) {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                        {getStatsIcon(statsType)}
+                        {getStatsTitle(statsType)} - {statsPeriod}
+                    </h3>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+
+                <div className="mb-4 flex gap-4">
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Buscar
+                        </label>
+                        <input
+                            type="text"
+                            value={statsSearchTerm}
+                            onChange={(e) => setStatsSearchTerm(e.target.value)}
+                            placeholder="Buscar por nome, localizaÃ§Ã£o ou categoria..."
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Filtro
+                        </label>
+                        <select
+                            value={statsFilter}
+                            onChange={(e) => setStatsFilter(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="all">Todos os Tipos</option>
+                            <option value="nacional">Nacional</option>
+                            <option value="estadual">Estadual</option>
+                            <option value="municipal">Municipal</option>
+                            <option value="privado">Privado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            PerÃ­odo
+                        </label>
+                        <select
+                            value={statsPeriod}
+                            onChange={(e) => setStatsPeriod(e.target.value as StatsPeriod)}
+                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="daily">DiÃ¡rio</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="monthly">Mensal</option>
+                            <option value="annual">Anual</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border border-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Parque
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Visitantes
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Receita
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    AvaliaÃ§Ã£o
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {statsData.map((item, index) => (
+                                <tr key={index} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {item.name}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {item.visitors.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        R$ {item.revenue.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {item.rating.toFixed(1)} â­
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                    <button
+                        onClick={onExportReport}
+                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                        Exportar RelatÃ³rio
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Componente ExportModal
+function ExportModal({ onClose, exportFormat, setExportFormat, exportGenerating, onExportSubmit }: {
+    onClose: () => void;
+    exportFormat: 'csv' | 'pdf';
+    setExportFormat: (format: 'csv' | 'pdf') => void;
+    exportGenerating: boolean;
+    onExportSubmit: () => void;
+}) {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Exportar RelatÃ³rio</h3>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Formato
+                        </label>
+                        <select
+                            value={exportFormat}
+                            onChange={(e) => setExportFormat(e.target.value as 'csv' | 'pdf')}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="csv">CSV</option>
+                            <option value="pdf">PDF</option>
+                        </select>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={onExportSubmit}
+                            disabled={exportGenerating}
+                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                        >
+                            {exportGenerating ? 'Gerando...' : 'Exportar'}
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function ParksPage() {
+    const [parks, setParks] = useState<Park[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showNewParkModal, setShowNewParkModal] = useState(false);
+    const [showEditParkModal, setShowEditParkModal] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [editingPark, setEditingPark] = useState<Park | null>(null);
+    const [selectedPark, setSelectedPark] = useState<Park | null>(null);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [showStatsDetails, setShowStatsDetails] = useState(false);
+    const [selectedStatsType, setSelectedStatsType] = useState<string>('');
+    const [statsSearchTerm, setStatsSearchTerm] = useState('');
+    const [statsFilter, setStatsFilter] = useState('all');
+    const [statsPeriod, setStatsPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
+    const [showExportModal, setShowExportModal] = useState(false);
+    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
+    const [exportGenerating, setExportGenerating] = useState(false);
+    const [showVideoModal, setShowVideoModal] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState<string>('');
+    const [uploadingVideo, setUploadingVideo] = useState(false);
+
+
     useEffect(() => {
         // Simular carregamento de dados
         const loadParks = async () => {
             try {
                 // Simular delay de carregamento
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                setParks(mockParks);
+                setParks(MOCK_PARKS);
             } catch (error) {
                 console.error('Erro ao carregar parques:', error);
             } finally {
@@ -412,36 +908,6 @@ export default function ParksPage() {
         }
     };
 
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'nacional': return 'bg-green-100 text-green-800';
-            case 'estadual': return 'bg-blue-100 text-blue-800';
-            case 'municipal': return 'bg-yellow-100 text-yellow-800';
-            case 'privado': return 'bg-purple-100 text-purple-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getStatsTitle = (statsType: string) => {
-        switch (statsType) {
-            case 'total': return 'Total de Parques';
-            case 'visitors': return 'Visitantes/Ano';
-            case 'rating': return 'AvaliaÃ§Ã£o MÃ©dia';
-            case 'revenue': return 'Receita MÃ©dia';
-            default: return 'EstatÃ­sticas';
-        }
-    };
-
-    const getStatsIcon = (statsType: string) => {
-        switch (statsType) {
-            case 'total': return <TreePine className="w-6 h-6" />;
-            case 'visitors': return <Users className="w-6 h-6" />;
-            case 'rating': return <Star className="w-6 h-6" />;
-            case 'revenue': return <DollarSign className="w-6 h-6" />;
-            default: return <BarChart3 className="w-6 h-6" />;
-        }
-    };
-
     const getFilteredStatsData = () => {
         let filteredParks = parks;
         
@@ -500,451 +966,6 @@ export default function ParksPage() {
                     rating: park.rating
                 }));
         }
-    };
-
-    // Componente ParkForm
-    const ParkForm = ({ park, onSave, onCancel }: { 
-        park?: Park | null; 
-        onSave: (data: Partial<Park>) => void; 
-        onCancel: () => void; 
-    }) => {
-        const [formData, setFormData] = useState({
-            name: park?.name || '',
-            location: park?.location || '',
-            description: park?.description || '',
-            type: park?.type || 'nacional' as const,
-            rating: park?.rating || 0,
-            price: park?.price || 0,
-            duration: park?.duration || '',
-            visitors: park?.visitors || 0,
-            area: park?.area || '',
-            category: park?.category || '',
-            contact: park?.contact || '',
-            website: park?.website || '',
-            openingHours: park?.openingHours || '',
-            bestTime: park?.bestTime || '',
-            facilities: park?.facilities || [],
-            restrictions: park?.restrictions || [],
-            images: park?.images || [],
-            videos: park?.videos || []
-        });
-
-        const handleSubmit = (e: React.FormEvent) => {
-            e.preventDefault();
-            onSave(formData);
-        };
-
-        return (
-            <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto">
-                <h3 className="text-lg font-semibold mb-4">
-                    {park ? 'Editar Parque' : 'Novo Parque'}
-                </h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nome do Parque
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                LocalizaÃ§Ã£o
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.location}
-                                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Categoria
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.category}
-                                onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Tipo
-                            </label>
-                            <select
-                                value={formData.type}
-                                onChange={(e) => setFormData({...formData, type: e.target.value as any})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="nacional">Nacional</option>
-                                <option value="estadual">Estadual</option>
-                                <option value="municipal">Municipal</option>
-                                <option value="privado">Privado</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                PreÃ§o (R$)
-                            </label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value) || 0})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                DuraÃ§Ã£o
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.duration}
-                                onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Visitantes/Ano
-                            </label>
-                            <input
-                                type="number"
-                                value={formData.visitors}
-                                onChange={(e) => setFormData({...formData, visitors: parseInt(e.target.value) || 0})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Ãrea
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.area}
-                                onChange={(e) => setFormData({...formData, area: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Contato
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.contact}
-                                onChange={(e) => setFormData({...formData, contact: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Website
-                            </label>
-                            <input
-                                type="url"
-                                value={formData.website}
-                                onChange={(e) => setFormData({...formData, website: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                HorÃ¡rio de Funcionamento
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.openingHours}
-                                onChange={(e) => setFormData({...formData, openingHours: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Melhor HorÃ¡rio
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.bestTime}
-                                onChange={(e) => setFormData({...formData, bestTime: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            DescriÃ§Ã£o
-                        </label>
-                        <textarea
-                            value={formData.description}
-                            onChange={(e) => setFormData({...formData, description: e.target.value})}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div className="flex gap-4">
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {park ? 'Atualizar' : 'Criar'} Parque
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        );
-    };
-
-    // Componente ImageModal
-    const ImageModal = ({ park, onClose }: { park: Park; onClose: () => void }) => {
-        const [selectedImage, setSelectedImage] = useState<string>('');
-
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">Imagens - {park.name}</h3>
-                        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                            <X className="w-6 h-6" />
-                        </button>
-                    </div>
-                    
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Adicionar Nova Imagem
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleUploadImage}
-                            disabled={uploadingImage}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {uploadingImage && (
-                            <p className="text-sm text-blue-600 mt-1">Enviando imagem...</p>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {park.images.map((image, index) => (
-                            <div key={index} className="relative group">
-                                <img
-                                    src={image}
-                                    alt={`${park.name} - Imagem ${index + 1}`}
-                                    className="w-full h-32 object-cover rounded-lg cursor-pointer"
-                                    onClick={() => setSelectedImage(image)}
-                                />
-                                <button
-                                    onClick={() => handleDeleteImage(image)}
-                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-
-                    {selectedImage && (
-                        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60">
-                            <div className="relative max-w-4xl max-h-[90vh]">
-                                <img
-                                    src={selectedImage}
-                                    alt="Preview"
-                                    className="max-w-full max-h-full object-contain"
-                                />
-                                <button
-                                    onClick={() => setSelectedImage('')}
-                                    className="absolute top-4 right-4 bg-black bg-opacity-50 text-white rounded-full p-2"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    // Componente StatsDetails
-    const StatsDetails = ({ statsType, onClose }: { statsType: string; onClose: () => void }) => {
-        const statsData = getStatsDataByPeriod();
-
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                            {getStatsIcon(statsType)}
-                            {getStatsTitle(statsType)} - {statsPeriod}
-                        </h3>
-                        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                            <X className="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <div className="mb-4 flex gap-4">
-                        <div className="flex-1">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Buscar
-                            </label>
-                            <input
-                                type="text"
-                                value={statsSearchTerm}
-                                onChange={(e) => setStatsSearchTerm(e.target.value)}
-                                placeholder="Buscar por nome, localizaÃ§Ã£o ou categoria..."
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Filtro
-                            </label>
-                            <select
-                                value={statsFilter}
-                                onChange={(e) => setStatsFilter(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="all">Todos os Tipos</option>
-                                <option value="nacional">Nacional</option>
-                                <option value="estadual">Estadual</option>
-                                <option value="municipal">Municipal</option>
-                                <option value="privado">Privado</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                PerÃ­odo
-                            </label>
-                            <select
-                                value={statsPeriod}
-                                onChange={(e) => setStatsPeriod(e.target.value as any)}
-                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="daily">DiÃ¡rio</option>
-                                <option value="weekly">Semanal</option>
-                                <option value="monthly">Mensal</option>
-                                <option value="annual">Anual</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Parque
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Visitantes
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Receita
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        AvaliaÃ§Ã£o
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {statsData.map((item, index) => (
-                                    <tr key={index} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {item.name}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {item.visitors.toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            R$ {item.revenue.toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {item.rating.toFixed(1)} â­
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="mt-4 flex justify-end">
-                        <button
-                            onClick={handleExportReport}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                        >
-                            Exportar RelatÃ³rio
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    // Componente ExportModal
-    const ExportModal = ({ onClose }: { onClose: () => void }) => {
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">Exportar RelatÃ³rio</h3>
-                        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                            <X className="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Formato
-                            </label>
-                            <select
-                                value={exportFormat}
-                                onChange={(e) => setExportFormat(e.target.value as 'csv' | 'pdf')}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="csv">CSV</option>
-                                <option value="pdf">PDF</option>
-                            </select>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <button
-                                onClick={handleExportSubmit}
-                                disabled={exportGenerating}
-                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                            >
-                                {exportGenerating ? 'Gerando...' : 'Exportar'}
-                            </button>
-                            <button
-                                onClick={onClose}
-                                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
     };
 
     if (loading) {
@@ -1167,6 +1188,9 @@ export default function ParksPage() {
                             setShowImageModal(false);
                             setSelectedPark(null);
                         }}
+                        onUploadImage={handleUploadImage}
+                        onDeleteImage={handleDeleteImage}
+                        uploadingImage={uploadingImage}
                     />
                 )}
 
@@ -1229,12 +1253,24 @@ export default function ParksPage() {
                     <StatsDetails
                         statsType={selectedStatsType}
                         onClose={() => setShowStatsDetails(false)}
+                        statsPeriod={statsPeriod}
+                        setStatsPeriod={setStatsPeriod}
+                        statsSearchTerm={statsSearchTerm}
+                        setStatsSearchTerm={setStatsSearchTerm}
+                        statsFilter={statsFilter}
+                        setStatsFilter={setStatsFilter}
+                        statsData={getStatsDataByPeriod()}
+                        onExportReport={handleExportReport}
                     />
                 )}
 
                 {showExportModal && (
                     <ExportModal
                         onClose={() => setShowExportModal(false)}
+                        exportFormat={exportFormat}
+                        setExportFormat={setExportFormat}
+                        exportGenerating={exportGenerating}
+                        onExportSubmit={handleExportSubmit}
                     />
                 )}
             </div>

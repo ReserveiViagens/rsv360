@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
 import { RefreshCw, CheckCircle, XCircle, Clock, Globe, Database } from 'lucide-react'
 import { api } from '../../src/services/apiClient'
@@ -35,16 +35,12 @@ export default function OTASyncPage() {
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [connectionsRes, logsRes] = await Promise.all([
-        api.get<any>('/api/v1/ota/connections'),
-        api.get<any>('/api/v1/ota/sync-logs', { limit: 50 }),
+        api.get<OTAConnection[] | { data: OTAConnection[] }>('/api/v1/ota/connections'),
+        api.get<OTASyncLog[] | { data: OTASyncLog[] }>('/api/v1/ota/sync-logs', { limit: 50 }),
       ])
 
       setConnections(
@@ -67,7 +63,12 @@ export default function OTASyncPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load OTA connections and sync logs on mount
+    loadData()
+  }, [loadData])
 
   const handleSync = async (connectionId: number, syncType: string = 'full') => {
     try {

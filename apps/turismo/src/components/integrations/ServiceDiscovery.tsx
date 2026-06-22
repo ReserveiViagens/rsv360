@@ -1,13 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Search,
@@ -21,42 +26,18 @@ import {
   RefreshCw,
   Eye,
   Edit,
-  Trash2,
   Plus,
   Download,
-  Upload,
-  Filter,
-  MapPin,
-  Cpu,
   Database,
-  Cloud,
   Router,
-  Shield,
-  Zap,
   Settings,
   Code,
-  Terminal,
   Monitor,
-  BarChart3,
-  TrendingUp,
-  Users,
-  Calendar,
   AlertCircle,
-  Play,
-  Pause,
   Square,
-  GitBranch,
-  Package,
-  Layers,
   Container,
-  HardDrive,
-  Memory,
-  Gauge,
-  Link2,
-  Workflow,
-  FileText,
-  Copy
-} from 'lucide-react'
+  Gauge
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -67,15 +48,9 @@ import {
   ResponsiveContainer, 
   AreaChart, 
   Area, 
-  BarChart, 
-  Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter
+  Pie
 } from 'recharts'
 
 // Tipos para Service Discovery
@@ -123,26 +98,7 @@ interface ServiceRegistry {
   status: 'connected' | 'disconnected' | 'error' | 'syncing'
   services: number
   lastSync: string
-  config: Record<string, any>
-}
-
-interface ServiceMesh {
-  id: string
-  name: string
-  type: 'istio' | 'linkerd' | 'consul_connect' | 'envoy' | 'custom'
-  status: 'active' | 'inactive' | 'deploying' | 'error'
-  services: string[]
-  policies: {
-    traffic: number
-    security: number
-    observability: number
-  }
-  metrics: {
-    successRate: number
-    avgLatency: number
-    requests: number
-    errors: number
-  }
+  config: Record<string, unknown>
 }
 
 interface LoadBalancer {
@@ -164,26 +120,8 @@ interface LoadBalancer {
   }
 }
 
-interface CircuitBreaker {
-  id: string
-  serviceId: string
-  status: 'closed' | 'open' | 'half_open'
-  config: {
-    failureThreshold: number
-    recoveryTimeout: number
-    successThreshold: number
-  }
-  metrics: {
-    failures: number
-    successes: number
-    totalRequests: number
-    lastStateChange: string
-  }
-}
-
 const ServiceDiscovery: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedService, setSelectedService] = useState<ServiceInstance | null>(null)
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -1352,7 +1290,7 @@ const ServiceDiscovery: React.FC = () => {
                 <div>
                   <h4 className="font-semibold mb-4">Estatísticas por Zona</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {['us-east-1a', 'us-east-1b', 'us-east-1c'].map((zone, index) => {
+                    {['us-east-1a', 'us-east-1b', 'us-east-1c'].map((zone) => {
                       const services = serviceInstances.filter(s => s.metadata.zone === zone)
                       const healthyServices = services.filter(s => s.status === 'healthy').length
                       

@@ -3,32 +3,11 @@ import {
   Building,
   MapPin,
   Star,
-  DollarSign,
-  Users,
-  Calendar,
   Search,
-  Filter,
   Plus,
   Edit,
   Trash2,
   Download,
-  Upload,
-  Eye,
-  Camera,
-  Video,
-  BarChart3,
-  FileText,
-  Settings,
-  MoreHorizontal,
-  Heart,
-  Share2,
-  MessageCircle,
-  Phone,
-  Mail,
-  Globe,
-  Clock,
-  CheckCircle,
-  AlertCircle,
   X,
   Save,
   Loader
@@ -91,12 +70,32 @@ export default function HotelsFuncional() {
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
 
-  // Carregar hotéis da API
-  useEffect(() => {
-    loadHotels();
-  }, []);
+  const getMockHotels = (): Hotel[] => [
+  {
+    id: 1,
+    name: "Copacabana Palace",
+    location: "Rio de Janeiro, RJ",
+    description: "Hotel histórico de luxo na praia de Copacabana, oferecendo experiências únicas e serviço de primeira classe.",
+    category: "luxo",
+    rating: 4.9,
+    price: 2500,
+    amenities: ["Piscina", "Spa", "Restaurante", "Concierge"],
+    facilities: ["Wi-Fi", "Estacionamento", "Academia", "Sala de conferências"],
+    restrictions: ["Não aceita pets"],
+    images: ["/images/hotels/copacabana-palace-1.jpg"],
+    videos: [],
+    contact: {
+      phone: "(21) 2548-7070",
+      email: "reservas@copacabanapalace.com",
+      website: "www.copacabanapalace.com"
+    },
+    status: "active",
+    createdAt: "2024-01-15",
+    updatedAt: "2024-01-20"
+  }
+];
 
-  const loadHotels = async () => {
+  async function loadHotels() {
     try {
       setLoading(true);
       setError('');
@@ -119,32 +118,13 @@ export default function HotelsFuncional() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const getMockHotels = (): Hotel[] => [
-    {
-      id: 1,
-      name: "Copacabana Palace",
-      location: "Rio de Janeiro, RJ",
-      description: "Hotel histórico de luxo na praia de Copacabana, oferecendo experiências únicas e serviço de primeira classe.",
-      category: "luxo",
-      rating: 4.9,
-      price: 2500,
-      amenities: ["Piscina", "Spa", "Restaurante", "Concierge"],
-      facilities: ["Wi-Fi", "Estacionamento", "Academia", "Sala de conferências"],
-      restrictions: ["Não aceita pets"],
-      images: ["/images/hotels/copacabana-palace-1.jpg"],
-      videos: [],
-      contact: {
-        phone: "(21) 2548-7070",
-        email: "reservas@copacabanapalace.com",
-        website: "www.copacabanapalace.com"
-      },
-      status: "active",
-      createdAt: "2024-01-15",
-      updatedAt: "2024-01-20"
-    }
-  ];
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial hotel load from API/mock
+    loadHotels();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, []);
 
   const handleCreateHotel = () => {
     setSelectedHotel(null);
@@ -204,9 +184,9 @@ export default function HotelsFuncional() {
         setSuccess('');
       }, 2000);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Erro ao salvar hotel:', error);
-      setError(`Erro ao salvar: ${error.message || 'Erro desconhecido'}`);
+      setError(`Erro ao salvar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
 
       // Se falhar na API, salvar localmente
       if (selectedHotel && selectedHotel.id) {
@@ -235,7 +215,7 @@ export default function HotelsFuncional() {
       setSuccess('Hotel excluído com sucesso!');
 
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Erro ao excluir hotel:', error);
 
       // Excluir localmente mesmo se API falhar
@@ -244,7 +224,7 @@ export default function HotelsFuncional() {
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       setFormData(prev => ({
@@ -259,22 +239,6 @@ export default function HotelsFuncional() {
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
-  };
-
-  const handleArrayAdd = (field: string, value: string) => {
-    if (value.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        [field]: [...(prev[field as keyof Hotel] as string[]), value.trim()]
-      }));
-    }
-  };
-
-  const handleArrayRemove = (field: string, index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: (prev[field as keyof Hotel] as string[]).filter((_, i) => i !== index)
-    }));
   };
 
   const filteredHotels = hotels.filter(hotel => {

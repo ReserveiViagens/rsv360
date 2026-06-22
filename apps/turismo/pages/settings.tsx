@@ -11,34 +11,17 @@ import {
   Database,
   Shield,
   Bell,
-  Palette,
-  Globe,
   CreditCard,
-  Users,
-  Building,
-  FileText,
-  Lock,
-  Eye,
-  EyeOff,
   Check,
-  X,
   AlertCircle,
   Info,
   Trash2,
-  Edit,
-  Plus,
   Search,
-  Filter,
   Download,
   Upload,
-  Calendar,
-  Clock,
-  Star,
-  Mail,
-  Phone,
   MapPin,
   CheckCircle
-} from 'lucide-react'
+} from 'lucide-react';
 import { toast } from 'react-hot-toast'
 
 interface Setting {
@@ -46,7 +29,7 @@ interface Setting {
   name: string
   description: string
   type: 'text' | 'number' | 'boolean' | 'select' | 'textarea'
-  value: any
+  value: string | number | boolean
   category: string
   required: boolean
   options?: string[]
@@ -60,6 +43,84 @@ interface SettingCategory {
   description: string
   href?: string
   countLabel?: string
+}
+
+function getSettingName(key: string): string {
+  const names: Record<string, string> = {
+    company_name: 'Nome da Empresa',
+    company_email: 'Email da Empresa',
+    company_phone: 'Telefone da Empresa',
+    company_address: 'Endereço da Empresa',
+    timezone: 'Fuso Horário',
+    language: 'Idioma Padrão',
+    password_min_length: 'Tamanho Mínimo de Senha',
+    password_require_special: 'Requer Caracteres Especiais',
+    session_timeout: 'Timeout de Sessão (minutos)',
+    two_factor_auth: 'Autenticação de Dois Fatores',
+    max_login_attempts: 'Tentativas Máximas de Login',
+    email_notifications: 'Notificações por Email',
+    sms_notifications: 'Notificações por SMS',
+    push_notifications: 'Notificações Push',
+    notification_sound: 'Som de Notificação',
+    payment_currency: 'Moeda Padrão',
+    payment_methods: 'Métodos de Pagamento',
+    auto_approve_payments: 'Aprovação Automática',
+    auto_backup: 'Backup Automático',
+    backup_retention_days: 'Retenção de Backup (dias)',
+    backup_encryption: 'Criptografia de Backup'
+  }
+  return names[key] || key
+}
+
+function getSettingDescription(key: string): string {
+  const descriptions: Record<string, string> = {
+    company_name: 'Nome oficial da empresa',
+    company_email: 'Email de contato principal',
+    company_phone: 'Telefone de contato principal',
+    company_address: 'Endereço completo da empresa',
+    timezone: 'Fuso horário padrão do sistema',
+    language: 'Idioma padrão do sistema',
+    password_min_length: 'Tamanho mínimo para senhas de usuários',
+    password_require_special: 'Senhas devem conter caracteres especiais',
+    session_timeout: 'Tempo de inatividade antes do logout',
+    two_factor_auth: 'Habilitar 2FA para todos os usuários',
+    max_login_attempts: 'Número máximo de tentativas de login',
+    email_notifications: 'Habilitar notificações por email',
+    sms_notifications: 'Habilitar notificações por SMS',
+    push_notifications: 'Habilitar notificações push',
+    notification_sound: 'Reproduzir som nas notificações',
+    payment_currency: 'Moeda padrão para pagamentos',
+    payment_methods: 'Métodos de pagamento aceitos',
+    auto_approve_payments: 'Aprovar pagamentos automaticamente',
+    auto_backup: 'Realizar backup automático diário',
+    backup_retention_days: 'Dias para manter backups',
+    backup_encryption: 'Criptografar arquivos de backup'
+  }
+  return descriptions[key] || ''
+}
+
+function getSettingType(key: string, value: unknown): Setting['type'] {
+  if (typeof value === 'boolean') return 'boolean'
+  if (typeof value === 'number') return 'number'
+  if (key.includes('address') || key.includes('description')) return 'textarea'
+  if (key === 'timezone' || key === 'language' || key === 'payment_currency' || key === 'payment_methods') return 'select'
+  return 'text'
+}
+
+function getSettingOptions(key: string): string[] | undefined {
+  if (key === 'timezone') {
+    return ['America/Sao_Paulo', 'UTC', 'America/New_York', 'Europe/London']
+  }
+  if (key === 'language') {
+    return ['pt-BR', 'en-US', 'es-ES']
+  }
+  if (key === 'payment_currency') {
+    return ['BRL', 'USD', 'EUR', 'GBP']
+  }
+  if (key === 'payment_methods') {
+    return ['credit_card', 'pix', 'bank_transfer', 'all']
+  }
+  return undefined
 }
 
 export default function SettingsPage() {
@@ -77,16 +138,7 @@ export default function SettingsPage() {
   const [backupGenerating, setBackupGenerating] = useState(false)
   const [restoreProcessing, setRestoreProcessing] = useState(false)
 
-  useEffect(() => {
-    loadCategories()
-    loadSettings()
-  }, [])
-
-  useEffect(() => {
-    // Não recarregar quando a categoria mudar, apenas filtrar
-  }, [selectedCategory])
-
-  const loadSettings = async () => {
+  async function loadSettings() {
     try {
       setLoading(true)
       
@@ -260,7 +312,7 @@ export default function SettingsPage() {
   }
 
 
-  const loadCategories = () => {
+  function loadCategories() {
     const mockCategories: SettingCategory[] = [
       {
         id: 'geral',
@@ -311,85 +363,14 @@ export default function SettingsPage() {
     setCategories(mockCategories)
   }
 
-  const getSettingName = (key: string): string => {
-    const names: Record<string, string> = {
-      company_name: 'Nome da Empresa',
-      company_email: 'Email da Empresa',
-      company_phone: 'Telefone da Empresa',
-      company_address: 'Endereço da Empresa',
-      timezone: 'Fuso Horário',
-      language: 'Idioma Padrão',
-      password_min_length: 'Tamanho Mínimo de Senha',
-      password_require_special: 'Requer Caracteres Especiais',
-      session_timeout: 'Timeout de Sessão (minutos)',
-      two_factor_auth: 'Autenticação de Dois Fatores',
-      max_login_attempts: 'Tentativas Máximas de Login',
-      email_notifications: 'Notificações por Email',
-      sms_notifications: 'Notificações por SMS',
-      push_notifications: 'Notificações Push',
-      notification_sound: 'Som de Notificação',
-      payment_currency: 'Moeda Padrão',
-      payment_methods: 'Métodos de Pagamento',
-      auto_approve_payments: 'Aprovação Automática',
-      auto_backup: 'Backup Automático',
-      backup_retention_days: 'Retenção de Backup (dias)',
-      backup_encryption: 'Criptografia de Backup'
-    }
-    return names[key] || key
-  }
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial categories and settings load
+    loadCategories()
+    void loadSettings()
+  }, [])
 
-  const getSettingDescription = (key: string): string => {
-    const descriptions: Record<string, string> = {
-      company_name: 'Nome oficial da empresa',
-      company_email: 'Email de contato principal',
-      company_phone: 'Telefone de contato principal',
-      company_address: 'Endereço completo da empresa',
-      timezone: 'Fuso horário padrão do sistema',
-      language: 'Idioma padrão do sistema',
-      password_min_length: 'Tamanho mínimo para senhas de usuários',
-      password_require_special: 'Senhas devem conter caracteres especiais',
-      session_timeout: 'Tempo de inatividade antes do logout',
-      two_factor_auth: 'Habilitar 2FA para todos os usuários',
-      max_login_attempts: 'Número máximo de tentativas de login',
-      email_notifications: 'Habilitar notificações por email',
-      sms_notifications: 'Habilitar notificações por SMS',
-      push_notifications: 'Habilitar notificações push',
-      notification_sound: 'Reproduzir som nas notificações',
-      payment_currency: 'Moeda padrão para pagamentos',
-      payment_methods: 'Métodos de pagamento aceitos',
-      auto_approve_payments: 'Aprovar pagamentos automaticamente',
-      auto_backup: 'Realizar backup automático diário',
-      backup_retention_days: 'Dias para manter backups',
-      backup_encryption: 'Criptografar arquivos de backup'
-    }
-    return descriptions[key] || ''
-  }
 
-  const getSettingType = (key: string, value: any): Setting['type'] => {
-    if (typeof value === 'boolean') return 'boolean'
-    if (typeof value === 'number') return 'number'
-    if (key.includes('address') || key.includes('description')) return 'textarea'
-    if (key === 'timezone' || key === 'language' || key === 'payment_currency' || key === 'payment_methods') return 'select'
-    return 'text'
-  }
-
-  const getSettingOptions = (key: string): string[] | undefined => {
-    if (key === 'timezone') {
-      return ['America/Sao_Paulo', 'UTC', 'America/New_York', 'Europe/London']
-    }
-    if (key === 'language') {
-      return ['pt-BR', 'en-US', 'es-ES']
-    }
-    if (key === 'payment_currency') {
-      return ['BRL', 'USD', 'EUR', 'GBP']
-    }
-    if (key === 'payment_methods') {
-      return ['credit_card', 'pix', 'bank_transfer', 'all']
-    }
-    return undefined
-  }
-
-  const handleSettingChange = async (settingId: string, newValue: any) => {
+  const handleSettingChange = async (settingId: string, newValue: string | number | boolean) => {
     const setting = settings.find(s => s.id === settingId)
     if (!setting) return
 
@@ -417,7 +398,7 @@ export default function SettingsPage() {
         }
         acc[setting.category][setting.id] = setting.value
         return acc
-      }, {} as Record<string, Record<string, any>>)
+      }, {} as Record<string, Record<string, string | number | boolean>>)
 
       // Salvar cada categoria
       await Promise.all(
@@ -524,7 +505,7 @@ export default function SettingsPage() {
         return (
           <input
             type="text"
-            value={setting.value}
+            value={String(setting.value)}
             onChange={(e) => handleSettingChange(setting.id, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder={setting.description}
@@ -534,7 +515,7 @@ export default function SettingsPage() {
         return (
           <input
             type="number"
-            value={setting.value}
+            value={typeof setting.value === 'number' ? setting.value : Number(setting.value)}
             onChange={(e) => handleSettingChange(setting.id, Number(e.target.value))}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             min="0"
@@ -563,7 +544,7 @@ export default function SettingsPage() {
       case 'select':
         return (
           <select
-            value={setting.value}
+            value={String(setting.value)}
             onChange={(e) => handleSettingChange(setting.id, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -577,7 +558,7 @@ export default function SettingsPage() {
       case 'textarea':
         return (
           <textarea
-            value={setting.value}
+            value={String(setting.value)}
             onChange={(e) => handleSettingChange(setting.id, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={3}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
-import { 
+import {
   Brain,
   Zap,
   Eye,
@@ -20,33 +20,20 @@ import {
   CheckCircle,
   Clock,
   Activity,
-  BarChart3,
   PieChart,
   Settings,
   RefreshCw,
   Play,
   Pause,
-  Square,
   Download,
   Upload,
   Database,
   Cpu,
-  Network,
-  Globe,
-  Shield,
-  Target,
-  Lightbulb,
-  Workflow,
-  Filter,
-  Search,
-  Bot,
   MessageSquare,
-  Users,
-  BookOpen,
-  Code,
-  Layers
+  Target,
+  Lightbulb
 } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, ScatterChart, Scatter, RadialBarChart, RadialBar } from 'recharts'
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar } from 'recharts'
 
 // Tipos de dados para o motor de IA
 interface AIModel {
@@ -76,7 +63,7 @@ interface AITask {
   progress: number
   startTime: string
   estimatedCompletion?: string
-  result?: any
+  result?: unknown
   modelUsed: string
   dataSource: string
   priority: 'low' | 'medium' | 'high' | 'critical'
@@ -107,6 +94,150 @@ interface DataPipeline {
   schedule: string
   transformations: string[]
 }
+
+const ModelForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="model-name">Nome do Modelo</Label>
+        <Input
+          id="model-name"
+          placeholder="Ex: Customer Segmentation Model"
+          title="Nome do modelo de IA"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="model-type">Tipo de Modelo</Label>
+        <Select>
+          <SelectTrigger title="Selecionar tipo de modelo">
+            <SelectValue placeholder="Selecionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="classification">Classificação</SelectItem>
+            <SelectItem value="regression">Regressão</SelectItem>
+            <SelectItem value="clustering">Clustering</SelectItem>
+            <SelectItem value="nlp">Processamento de Linguagem Natural</SelectItem>
+            <SelectItem value="computer_vision">Visão Computacional</SelectItem>
+            <SelectItem value="reinforcement">Aprendizado por Reforço</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="model-description">Descrição</Label>
+      <Textarea
+        id="model-description"
+        placeholder="Descrição do modelo e seus casos de uso"
+        title="Descrição detalhada do modelo"
+      />
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="data-source">Fonte de Dados</Label>
+        <Select>
+          <SelectTrigger title="Selecionar fonte de dados">
+            <SelectValue placeholder="Selecionar fonte" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="sales">Dados de Vendas</SelectItem>
+            <SelectItem value="customer">Dados de Clientes</SelectItem>
+            <SelectItem value="financial">Dados Financeiros</SelectItem>
+            <SelectItem value="operational">Dados Operacionais</SelectItem>
+            <SelectItem value="external">Fontes Externas</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="training-schedule">Cronograma de Treinamento</Label>
+        <Select>
+          <SelectTrigger title="Selecionar frequência de treinamento">
+            <SelectValue placeholder="Selecionar frequência" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="manual">Manual</SelectItem>
+            <SelectItem value="daily">Diário</SelectItem>
+            <SelectItem value="weekly">Semanal</SelectItem>
+            <SelectItem value="monthly">Mensal</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  </form>
+)
+
+const TaskForm: React.FC<{ models: AIModel[] }> = ({ models }) => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="task-name">Nome da Tarefa</Label>
+        <Input
+          id="task-name"
+          placeholder="Ex: Análise de Comportamento do Cliente"
+          title="Nome da tarefa de IA"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="task-type">Tipo de Tarefa</Label>
+        <Select>
+          <SelectTrigger title="Selecionar tipo de tarefa">
+            <SelectValue placeholder="Selecionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="data_analysis">Análise de Dados</SelectItem>
+            <SelectItem value="prediction">Predição</SelectItem>
+            <SelectItem value="classification">Classificação</SelectItem>
+            <SelectItem value="optimization">Otimização</SelectItem>
+            <SelectItem value="anomaly_detection">Detecção de Anomalias</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="model-select">Modelo a Usar</Label>
+        <Select>
+          <SelectTrigger title="Selecionar modelo">
+            <SelectValue placeholder="Selecionar modelo" />
+          </SelectTrigger>
+          <SelectContent>
+            {models.filter(m => m.status === 'ready').map(model => (
+              <SelectItem key={model.id} value={model.id}>{model.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="priority">Prioridade</Label>
+        <Select>
+          <SelectTrigger title="Selecionar prioridade">
+            <SelectValue placeholder="Selecionar prioridade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">Baixa</SelectItem>
+            <SelectItem value="medium">Média</SelectItem>
+            <SelectItem value="high">Alta</SelectItem>
+            <SelectItem value="critical">Crítica</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="data-source-task">Fonte de Dados</Label>
+      <Select>
+        <SelectTrigger title="Selecionar fonte de dados">
+          <SelectValue placeholder="Selecionar fonte" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="sales_db">Base de Vendas</SelectItem>
+          <SelectItem value="customer_db">Base de Clientes</SelectItem>
+          <SelectItem value="financial_db">Sistema Financeiro</SelectItem>
+          <SelectItem value="analytics_db">Analytics</SelectItem>
+          <SelectItem value="external_api">APIs Externas</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </form>
+)
 
 const AIEngine: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -433,154 +564,6 @@ const AIEngine: React.FC = () => {
     }, 5000)
   }
 
-  const ModelForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="model-name">Nome do Modelo</Label>
-          <Input 
-            id="model-name"
-            placeholder="Ex: Customer Segmentation Model"
-            title="Nome do modelo de IA"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="model-type">Tipo de Modelo</Label>
-          <Select>
-            <SelectTrigger title="Selecionar tipo de modelo">
-              <SelectValue placeholder="Selecionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="classification">Classificação</SelectItem>
-              <SelectItem value="regression">Regressão</SelectItem>
-              <SelectItem value="clustering">Clustering</SelectItem>
-              <SelectItem value="nlp">Processamento de Linguagem Natural</SelectItem>
-              <SelectItem value="computer_vision">Visão Computacional</SelectItem>
-              <SelectItem value="reinforcement">Aprendizado por Reforço</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="model-description">Descrição</Label>
-        <Textarea 
-          id="model-description"
-          placeholder="Descrição do modelo e seus casos de uso"
-          title="Descrição detalhada do modelo"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="data-source">Fonte de Dados</Label>
-          <Select>
-            <SelectTrigger title="Selecionar fonte de dados">
-              <SelectValue placeholder="Selecionar fonte" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="sales">Dados de Vendas</SelectItem>
-              <SelectItem value="customer">Dados de Clientes</SelectItem>
-              <SelectItem value="financial">Dados Financeiros</SelectItem>
-              <SelectItem value="operational">Dados Operacionais</SelectItem>
-              <SelectItem value="external">Fontes Externas</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="training-schedule">Cronograma de Treinamento</Label>
-          <Select>
-            <SelectTrigger title="Selecionar frequência de treinamento">
-              <SelectValue placeholder="Selecionar frequência" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="manual">Manual</SelectItem>
-              <SelectItem value="daily">Diário</SelectItem>
-              <SelectItem value="weekly">Semanal</SelectItem>
-              <SelectItem value="monthly">Mensal</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </form>
-  )
-
-  const TaskForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="task-name">Nome da Tarefa</Label>
-          <Input 
-            id="task-name"
-            placeholder="Ex: Análise de Comportamento do Cliente"
-            title="Nome da tarefa de IA"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="task-type">Tipo de Tarefa</Label>
-          <Select>
-            <SelectTrigger title="Selecionar tipo de tarefa">
-              <SelectValue placeholder="Selecionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="data_analysis">Análise de Dados</SelectItem>
-              <SelectItem value="prediction">Predição</SelectItem>
-              <SelectItem value="classification">Classificação</SelectItem>
-              <SelectItem value="optimization">Otimização</SelectItem>
-              <SelectItem value="anomaly_detection">Detecção de Anomalias</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="model-select">Modelo a Usar</Label>
-          <Select>
-            <SelectTrigger title="Selecionar modelo">
-              <SelectValue placeholder="Selecionar modelo" />
-            </SelectTrigger>
-            <SelectContent>
-              {aiModels.filter(m => m.status === 'ready').map(model => (
-                <SelectItem key={model.id} value={model.id}>{model.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="priority">Prioridade</Label>
-          <Select>
-            <SelectTrigger title="Selecionar prioridade">
-              <SelectValue placeholder="Selecionar prioridade" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="low">Baixa</SelectItem>
-              <SelectItem value="medium">Média</SelectItem>
-              <SelectItem value="high">Alta</SelectItem>
-              <SelectItem value="critical">Crítica</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="data-source-task">Fonte de Dados</Label>
-        <Select>
-          <SelectTrigger title="Selecionar fonte de dados">
-            <SelectValue placeholder="Selecionar fonte" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="sales_db">Base de Vendas</SelectItem>
-            <SelectItem value="customer_db">Base de Clientes</SelectItem>
-            <SelectItem value="financial_db">Sistema Financeiro</SelectItem>
-            <SelectItem value="analytics_db">Analytics</SelectItem>
-            <SelectItem value="external_api">APIs Externas</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </form>
-  )
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -629,7 +612,7 @@ const AIEngine: React.FC = () => {
                   Configure uma nova tarefa de análise ou predição
                 </DialogDescription>
               </DialogHeader>
-              <TaskForm />
+              <TaskForm models={aiModels} />
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsTaskModalOpen(false)}>
                   Cancelar

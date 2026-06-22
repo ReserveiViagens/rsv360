@@ -3,60 +3,41 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign,
+import {
+  TrendingUp,
   Calculator,
-  PieChart,
-  BarChart3,
   Activity,
-  Target,
   Zap,
   AlertTriangle,
   CheckCircle,
-  Calendar,
   Download,
-  Filter,
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,
-  Eye,
-  FileText,
-  Percent,
-  Globe,
-  Users,
   Building,
   CreditCard,
   Wallet
 } from 'lucide-react'
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  PieChart as RechartsPieChart, 
-  Cell, 
-  AreaChart, 
-  Area,
+import {
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
   RadialBarChart,
   RadialBar,
   ComposedChart,
   Scatter,
   ScatterChart
 } from 'recharts'
+
 
 // Tipos de dados para análise financeira
 interface FinancialIndicator {
@@ -105,8 +86,6 @@ interface ProfitabilityAnalysis {
 const FinancialAnalytics: React.FC = () => {
   const [activeTab, setActiveTab] = useState('indicadores')
   const [selectedPeriod, setSelectedPeriod] = useState('anual')
-  const [comparisonMode, setComparisonMode] = useState('periodo-anterior')
-
   // Dados mock para demonstração
   const [indicators] = useState<FinancialIndicator[]>([
     {

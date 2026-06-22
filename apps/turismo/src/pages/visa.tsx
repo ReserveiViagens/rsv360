@@ -1,32 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
-import { 
-  FileText, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
+import {
+  FileText,
+  Clock,
+  CheckCircle,
+  XCircle,
   AlertCircle,
   Search,
-  Filter,
   Plus,
   Edit,
   Eye,
   Download,
-  Upload,
-  Calendar,
-  MapPin,
-  User,
-  CreditCard,
-  Mail,
-  Phone,
-  Globe,
-  Flag,
-  TrendingUp,
-  BarChart3,
-  Settings,
-  Bell
+  TrendingUp
 } from 'lucide-react';
 
 interface VisaApplication {
@@ -64,13 +50,11 @@ interface VisaType {
 }
 
 export default function VisaPage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('applications');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showNewApplicationModal, setShowNewApplicationModal] = useState(false);
 
   // Dados simulados - em produção viriam da API

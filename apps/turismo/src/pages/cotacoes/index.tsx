@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Plus,
@@ -6,14 +6,12 @@ import {
   DollarSign,
   TrendingUp,
   Search,
-  MoreVertical,
   Eye,
   Edit,
   Trash2,
   Copy,
   Download,
   Layout,
-  ChevronDown,
   Calculator,
 } from 'lucide-react';
 import { Budget } from '../../lib/types/budget';
@@ -25,15 +23,16 @@ export default function CotacoesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-    loadBudgets();
-  }, []);
-
-  const loadBudgets = () => {
+  const loadBudgets = useCallback(() => {
     const allBudgets = budgetStorage.getAll();
     setBudgets(allBudgets);
-  };
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate client and load budgets from storage on mount
+    setIsClient(true);
+    loadBudgets();
+  }, [loadBudgets]);
 
   const handleDelete = (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta cotação?')) {

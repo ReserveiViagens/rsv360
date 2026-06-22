@@ -7,22 +7,15 @@ import { Badge } from '@/components/ui/Badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { 
   DollarSign,
-  Calculator, 
   BarChart3,
-  PieChart,
-  TrendingUp,
   Building,
   FileText,
   Shield,
   CheckCircle,
-  Calendar,
   Wallet,
-  CreditCard,
   Target,
   Activity,
-  Users,
   Globe,
-  Settings,
   RefreshCw
 } from 'lucide-react'
 

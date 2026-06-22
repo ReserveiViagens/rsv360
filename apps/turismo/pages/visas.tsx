@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import {
   FileText,
-  Globe,
   Tag,
   BarChart3,
   Settings,
@@ -18,14 +17,12 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  AlertCircle,
   TrendingUp,
   DollarSign,
-  Calendar,
   User,
-  MapPin,
   X,
-  Flag
+  Flag,
+  type LucideIcon
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -61,12 +58,26 @@ interface VisaStats {
   rejected: number
 }
 
+interface VisaType {
+  id: number | string
+  name?: string
+  label?: string
+  [key: string]: unknown
+}
+
+interface VisaCountry {
+  id: number | string
+  name?: string
+  code?: string
+  [key: string]: unknown
+}
+
 export default function VisasPage() {
   const [activeTab, setActiveTab] = useState<'applications' | 'types' | 'analytics' | 'settings'>('applications')
   const [applications, setApplications] = useState<Application[]>([])
   const [stats, setStats] = useState<VisaStats | null>(null)
-  const [types, setTypes] = useState<any[]>([])
-  const [countries, setCountries] = useState<any[]>([])
+  const [types, setTypes] = useState<VisaType[]>([])
+  const [countries, setCountries] = useState<VisaCountry[]>([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
@@ -96,16 +107,12 @@ export default function VisasPage() {
     auto_approve_simple: false
   })
 
-  useEffect(() => {
-    loadData()
-  }, [activeTab, filterStatus, filterCountry])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       
       if (activeTab === 'applications') {
-        const params: any = {
+        const params: Record<string, string | undefined> = {
           status: filterStatus !== 'all' ? filterStatus : undefined,
           country: filterCountry !== 'all' ? filterCountry : undefined,
           search: searchTerm || undefined
@@ -130,7 +137,14 @@ export default function VisasPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, filterStatus, filterCountry, searchTerm])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void loadData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [loadData])
 
   const handleExport = async () => {
     try {
@@ -263,7 +277,7 @@ export default function VisasPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const badges: Record<string, { color: string; icon: any; label: string }> = {
+    const badges: Record<string, { color: string; icon: LucideIcon; label: string }> = {
       pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pendente' },
       processing: { color: 'bg-blue-100 text-blue-800', icon: Clock, label: 'Processando' },
       approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Aprovado' },
@@ -435,7 +449,7 @@ export default function VisasPage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as typeof activeTab)}
                       className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
@@ -931,7 +945,7 @@ export default function VisasPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
                     <select
                       value={formData.priority}
-                      onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+                      onChange={(e) => setFormData({ ...formData, priority: e.target.value as Application['priority'] })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="low">Baixa</option>

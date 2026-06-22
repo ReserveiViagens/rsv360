@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Download, 
   FileText, 
   FileSpreadsheet, 
   FileBarChart, 
-  Mail, 
   Clock, 
   CheckCircle, 
-  AlertCircle, 
   XCircle,
-  Eye,
   Trash2,
   RefreshCw,
-  Settings,
-  Filter
 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -36,8 +31,10 @@ interface ExportJob {
   completedAt?: string;
   errorMessage?: string;
   requestedBy: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, string | number | boolean>;
 }
+
+type ExportParameterValue = string | number | boolean;
 
 interface ExportTemplate {
   id: string;
@@ -50,7 +47,7 @@ interface ExportTemplate {
     type: 'text' | 'number' | 'date' | 'select' | 'boolean';
     required: boolean;
     options?: string[];
-    defaultValue?: any;
+    defaultValue?: ExportParameterValue;
   }[];
 }
 
@@ -59,23 +56,7 @@ interface ReportExportProps {
   onExportCompleted?: (exportJob: ExportJob) => void;
 }
 
-const ReportExport: React.FC<ReportExportProps> = ({ 
-  onExportRequested,
-  onExportCompleted 
-}) => {
-  const [exportJobs, setExportJobs] = useState<ExportJob[]>([]);
-  const [exportTemplates, setExportTemplates] = useState<ExportTemplate[]>([]);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<ExportTemplate | null>(null);
-  const [exportParameters, setExportParameters] = useState<Record<string, any>>({});
-  const [activeTab, setActiveTab] = useState('recent');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const { showNotification } = useUIStore();
-
-  // Templates de exportação padrão
-  const defaultExportTemplates: ExportTemplate[] = [
+const DEFAULT_EXPORT_TEMPLATES: ExportTemplate[] = [
     {
       id: 'sales-report-pdf',
       name: 'Relatório de Vendas - PDF',
@@ -143,8 +124,7 @@ const ReportExport: React.FC<ReportExportProps> = ({
     }
   ];
 
-  // Jobs de exportação mock
-  const mockExportJobs: ExportJob[] = [
+const MOCK_EXPORT_JOBS: ExportJob[] = [
     {
       id: 'export-1',
       reportName: 'Relatório de Vendas - Janeiro 2025',
@@ -194,10 +174,20 @@ const ReportExport: React.FC<ReportExportProps> = ({
     }
   ];
 
-  useEffect(() => {
-    setExportTemplates(defaultExportTemplates);
-    setExportJobs(mockExportJobs);
-  }, []);
+const ReportExport: React.FC<ReportExportProps> = ({ 
+  onExportRequested,
+  onExportCompleted 
+}) => {
+  const [exportJobs, setExportJobs] = useState<ExportJob[]>(MOCK_EXPORT_JOBS);
+  const [exportTemplates] = useState<ExportTemplate[]>(DEFAULT_EXPORT_TEMPLATES);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<ExportTemplate | null>(null);
+  const [exportParameters, setExportParameters] = useState<Record<string, ExportParameterValue>>({});
+  const [activeTab, setActiveTab] = useState('recent');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const { showNotification } = useUIStore();
 
   const handleExportRequest = () => {
     if (!selectedTemplate) {
@@ -215,7 +205,7 @@ const ReportExport: React.FC<ReportExportProps> = ({
     }
 
     const exportJob: ExportJob = {
-      id: `export-${Date.now()}`,
+      id: `export-${exportJobs.length + 1}-${selectedTemplate.id}`,
       reportName: `${selectedTemplate.name} - ${new Date().toLocaleDateString()}`,
       format: selectedTemplate.format,
       status: 'pending',

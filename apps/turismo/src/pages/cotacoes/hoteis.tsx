@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { 
-  ArrowLeft, 
-  Hotel, 
-  Calendar, 
-  Users, 
-  MapPin, 
+import {
+  ArrowLeft,
+  Hotel,
   Plus,
   Save,
-  Trash2,
-  Upload,
-  Eye,
-  Edit,
-  Copy
+  Trash2
 } from 'lucide-react';
 import { HotelSelector } from '@/components/HotelSelector';
-import { Budget, BudgetItem, Photo, Highlight, Benefit, AccommodationDetail, ImportantNote } from '@/lib/types/budget';
+import { Budget, BudgetItem, Highlight } from '@/lib/types/budget';
 import { budgetStorage } from '@/lib/budget-storage';
 import { generateId } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -59,6 +52,7 @@ export default function HoteisPage() {
   }>({});
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount
     setIsClient(true);
   }, []);
 
@@ -106,7 +100,7 @@ export default function HoteisPage() {
     }));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: string, value: string | number) => {
     setBudget(prev => {
       const newItems = [...(prev.items || [])];
       if (field.startsWith('details.')) {
@@ -158,7 +152,7 @@ export default function HoteisPage() {
     }));
   };
 
-  const updateHighlight = (index: number, field: string, value: any) => {
+  const updateHighlight = (index: number, field: string, value: string | boolean) => {
     setBudget(prev => {
       const newHighlights = [...(prev.highlights || [])];
       newHighlights[index] = {
@@ -437,7 +431,7 @@ export default function HoteisPage() {
 
                 {budget.items?.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    Nenhum item adicionado. Clique em "Adicionar Item" para começar.
+                    Nenhum item adicionado. Clique em &quot;Adicionar Item&quot; para começar.
                   </div>
                 )}
               </div>
@@ -509,7 +503,7 @@ export default function HoteisPage() {
 
                 {budget.highlights?.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    Nenhum destaque adicionado. Clique em "Adicionar Destaque" para começar.
+                    Nenhum destaque adicionado. Clique em &quot;Adicionar Destaque&quot; para começar.
                   </div>
                 )}
               </div>

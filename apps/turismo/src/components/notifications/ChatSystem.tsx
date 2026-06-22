@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MessageCircle, Plus, Edit, Trash2, Eye, Send, Users, Clock, CheckCircle, AlertCircle, XCircle, Phone, Video, FileText, Smile } from 'lucide-react';
+import React, { useState } from 'react';
+import { MessageCircle, Plus, Send, Phone, Video, FileText, Smile } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -56,116 +56,110 @@ interface ChatSystemProps {
   onAgentAssigned?: (conversationId: string, agentId: string) => void;
 }
 
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+
+const MOCK_CONVERSATIONS: ChatConversation[] = [
+  {
+    id: '1',
+    customerId: 'cust1',
+    customerName: 'João Silva',
+    customerAvatar: 'https://via.placeholder.com/40',
+    agentId: 'agent1',
+    agentName: 'Maria Santos',
+    status: 'active',
+    priority: 'medium',
+    category: 'reservation',
+    lastMessage: 'Gostaria de saber sobre pacotes para Caldas Novas',
+    lastMessageTime: new Date('2024-01-20T10:55:00Z'),
+    unreadCount: 2,
+    createdAt: new Date('2024-01-20T10:00:00Z')
+  },
+  {
+    id: '2',
+    customerId: 'cust2',
+    customerName: 'Ana Costa',
+    customerAvatar: 'https://via.placeholder.com/40',
+    status: 'waiting',
+    priority: 'high',
+    category: 'support',
+    lastMessage: 'Preciso de ajuda com minha reserva',
+    lastMessageTime: new Date('2024-01-20T10:50:00Z'),
+    unreadCount: 1,
+    createdAt: new Date('2024-01-20T10:30:00Z')
+  }
+];
+
+const MOCK_MESSAGES: ChatMessage[] = [
+  {
+    id: '1',
+    conversationId: '1',
+    senderId: 'cust1',
+    senderName: 'João Silva',
+    senderType: 'customer',
+    message: 'Olá! Gostaria de saber sobre pacotes para Caldas Novas',
+    messageType: 'text',
+    timestamp: new Date('2024-01-20T10:00:00Z'),
+    isRead: true
+  },
+  {
+    id: '2',
+    conversationId: '1',
+    senderId: 'agent1',
+    senderName: 'Maria Santos',
+    senderType: 'agent',
+    message: 'Olá João! Temos ótimas opções para Caldas Novas. Qual período você tem em mente?',
+    messageType: 'text',
+    timestamp: new Date('2024-01-20T10:01:40Z'),
+    isRead: true
+  },
+  {
+    id: '3',
+    conversationId: '1',
+    senderId: 'cust1',
+    senderName: 'João Silva',
+    senderType: 'customer',
+    message: 'Estou pensando em janeiro, para 4 pessoas',
+    messageType: 'text',
+    timestamp: new Date('2024-01-20T10:55:00Z'),
+    isRead: false
+  }
+];
+
+const MOCK_AGENTS: ChatAgent[] = [
+  {
+    id: 'agent1',
+    name: 'Maria Santos',
+    avatar: 'https://via.placeholder.com/40',
+    status: 'online',
+    department: 'reservations',
+    activeConversations: 3,
+    totalResolved: 156,
+    rating: 4.8
+  },
+  {
+    id: 'agent2',
+    name: 'Pedro Oliveira',
+    avatar: 'https://via.placeholder.com/40',
+    status: 'busy',
+    department: 'support',
+    activeConversations: 2,
+    totalResolved: 89,
+    rating: 4.6
+  }
+];
+
 const ChatSystem: React.FC<ChatSystemProps> = ({
-  onConversationCreated,
   onMessageSent,
   onAgentAssigned
 }) => {
-  const [conversations, setConversations] = useState<ChatConversation[]>([]);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [agents, setAgents] = useState<ChatAgent[]>([]);
+  const [conversations, setConversations] = useState<ChatConversation[]>(MOCK_CONVERSATIONS);
+  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+  const [agents, setAgents] = useState<ChatAgent[]>(MOCK_AGENTS);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [activeTab, setActiveTab] = useState('conversations');
   const { showNotification } = useUIStore();
-
-  // Mock data
-  useEffect(() => {
-    const mockConversations: ChatConversation[] = [
-      {
-        id: '1',
-        customerId: 'cust1',
-        customerName: 'João Silva',
-        customerAvatar: 'https://via.placeholder.com/40',
-        agentId: 'agent1',
-        agentName: 'Maria Santos',
-        status: 'active',
-        priority: 'medium',
-        category: 'reservation',
-        lastMessage: 'Gostaria de saber sobre pacotes para Caldas Novas',
-        lastMessageTime: new Date(Date.now() - 300000),
-        unreadCount: 2,
-        createdAt: new Date(Date.now() - 3600000)
-      },
-      {
-        id: '2',
-        customerId: 'cust2',
-        customerName: 'Ana Costa',
-        customerAvatar: 'https://via.placeholder.com/40',
-        status: 'waiting',
-        priority: 'high',
-        category: 'support',
-        lastMessage: 'Preciso de ajuda com minha reserva',
-        lastMessageTime: new Date(Date.now() - 600000),
-        unreadCount: 1,
-        createdAt: new Date(Date.now() - 1800000)
-      }
-    ];
-
-    const mockMessages: ChatMessage[] = [
-      {
-        id: '1',
-        conversationId: '1',
-        senderId: 'cust1',
-        senderName: 'João Silva',
-        senderType: 'customer',
-        message: 'Olá! Gostaria de saber sobre pacotes para Caldas Novas',
-        messageType: 'text',
-        timestamp: new Date(Date.now() - 3600000),
-        isRead: true
-      },
-      {
-        id: '2',
-        conversationId: '1',
-        senderId: 'agent1',
-        senderName: 'Maria Santos',
-        senderType: 'agent',
-        message: 'Olá João! Temos ótimas opções para Caldas Novas. Qual período você tem em mente?',
-        messageType: 'text',
-        timestamp: new Date(Date.now() - 3500000),
-        isRead: true
-      },
-      {
-        id: '3',
-        conversationId: '1',
-        senderId: 'cust1',
-        senderName: 'João Silva',
-        senderType: 'customer',
-        message: 'Estou pensando em janeiro, para 4 pessoas',
-        messageType: 'text',
-        timestamp: new Date(Date.now() - 300000),
-        isRead: false
-      }
-    ];
-
-    const mockAgents: ChatAgent[] = [
-      {
-        id: 'agent1',
-        name: 'Maria Santos',
-        avatar: 'https://via.placeholder.com/40',
-        status: 'online',
-        department: 'reservations',
-        activeConversations: 3,
-        totalResolved: 156,
-        rating: 4.8
-      },
-      {
-        id: 'agent2',
-        name: 'Pedro Oliveira',
-        avatar: 'https://via.placeholder.com/40',
-        status: 'busy',
-        department: 'support',
-        activeConversations: 2,
-        totalResolved: 89,
-        rating: 4.6
-      }
-    ];
-
-    setConversations(mockConversations);
-    setMessages(mockMessages);
-    setAgents(mockAgents);
-  }, []);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
@@ -226,33 +220,33 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
     showNotification('Agente criado com sucesso!', 'success');
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): BadgeVariant => {
     switch (status) {
-      case 'active': return 'green';
-      case 'waiting': return 'yellow';
-      case 'resolved': return 'blue';
-      case 'closed': return 'gray';
-      default: return 'gray';
+      case 'active': return 'default';
+      case 'waiting': return 'secondary';
+      case 'resolved': return 'outline';
+      case 'closed': return 'destructive';
+      default: return 'outline';
     }
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority: string): BadgeVariant => {
     switch (priority) {
-      case 'low': return 'gray';
-      case 'medium': return 'blue';
-      case 'high': return 'orange';
-      case 'urgent': return 'red';
-      default: return 'gray';
+      case 'low': return 'outline';
+      case 'medium': return 'default';
+      case 'high': return 'secondary';
+      case 'urgent': return 'destructive';
+      default: return 'outline';
     }
   };
 
-  const getAgentStatusColor = (status: string) => {
+  const getAgentStatusColor = (status: string): BadgeVariant => {
     switch (status) {
-      case 'online': return 'green';
-      case 'busy': return 'yellow';
-      case 'away': return 'orange';
-      case 'offline': return 'gray';
-      default: return 'gray';
+      case 'online': return 'default';
+      case 'busy': return 'secondary';
+      case 'away': return 'outline';
+      case 'offline': return 'destructive';
+      default: return 'outline';
     }
   };
 
@@ -303,6 +297,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={conversation.customerAvatar || 'https://via.placeholder.com/40'}
                         alt={conversation.customerName}
@@ -321,10 +316,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                       </div>
                       <p className="text-xs text-gray-600 truncate mb-2">{conversation.lastMessage}</p>
                       <div className="flex items-center gap-2">
-                        <Badge variant={getStatusColor(conversation.status) as any} className="text-xs">
+                        <Badge variant={getStatusColor(conversation.status)} className="text-xs">
                           {conversation.status}
                         </Badge>
-                        <Badge variant={getPriorityColor(conversation.priority) as any} className="text-xs">
+                        <Badge variant={getPriorityColor(conversation.priority)} className="text-xs">
                           {conversation.priority}
                         </Badge>
                         {conversation.unreadCount > 0 && (
@@ -350,6 +345,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                 <div className="p-4 border-b bg-gray-50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={currentConversation?.customerAvatar || 'https://via.placeholder.com/40'}
                         alt={currentConversation?.customerName}
@@ -358,10 +354,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                       <div>
                         <h3 className="font-semibold">{currentConversation?.customerName}</h3>
                         <div className="flex items-center gap-2">
-                          <Badge variant={getStatusColor(currentConversation?.status || 'waiting') as any}>
+                          <Badge variant={getStatusColor(currentConversation?.status || 'waiting')}>
                             {currentConversation?.status}
                           </Badge>
-                          <Badge variant={getPriorityColor(currentConversation?.priority || 'medium') as any}>
+                          <Badge variant={getPriorityColor(currentConversation?.priority || 'medium')}>
                             {currentConversation?.priority}
                           </Badge>
                           <span className="text-sm text-gray-500">
@@ -495,6 +491,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                   <Card key={agent.id} className="p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={agent.avatar || 'https://via.placeholder.com/40'}
                           alt={agent.name}
@@ -507,7 +504,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                       <div>
                         <h4 className="font-medium">{agent.name}</h4>
                         <div className="flex items-center gap-2">
-                          <Badge variant={getAgentStatusColor(agent.status) as any}>
+                          <Badge variant={getAgentStatusColor(agent.status)}>
                             {agent.status}
                           </Badge>
                           <Badge variant="outline">{agent.department}</Badge>

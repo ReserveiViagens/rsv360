@@ -1,20 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { 
   FileText, 
   Search, 
-  Filter, 
   Download, 
   Eye,
   EyeOff,
   RefreshCw,
-  Calendar,
   User,
   Activity,
   Shield,
@@ -28,7 +25,6 @@ import {
   XCircle,
   Info
 } from 'lucide-react';
-import { useAuth } from './AuthProvider';
 import { cn } from '@/lib/utils';
 
 interface AuditEntry {
@@ -45,7 +41,7 @@ interface AuditEntry {
   timestamp: Date;
   status: 'success' | 'failure' | 'warning';
   severity: 'low' | 'medium' | 'high' | 'critical';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface AuditFilters {
@@ -58,11 +54,92 @@ interface AuditFilters {
   dateTo: string;
 }
 
+const MOCK_AUDIT_ENTRIES: AuditEntry[] = [
+  {
+    id: '1',
+    userId: '1',
+    userName: 'João Silva',
+    userEmail: 'joao.silva@rsv.com',
+    action: 'LOGIN_SUCCESS',
+    category: 'auth',
+    details: 'Login realizado com sucesso via email/senha',
+    ipAddress: '192.168.1.100',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    location: 'São Paulo, BR',
+    timestamp: new Date('2026-06-20T10:00:00'),
+    status: 'success',
+    severity: 'low',
+    metadata: { method: 'email', twoFactor: false }
+  },
+  {
+    id: '2',
+    userId: '2',
+    userName: 'Maria Santos',
+    userEmail: 'maria.santos@rsv.com',
+    action: 'USER_CREATED',
+    category: 'user',
+    details: 'Novo usuário criado: pedro.oliveira@rsv.com',
+    ipAddress: '192.168.1.101',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+    location: 'Rio de Janeiro, BR',
+    timestamp: new Date('2026-06-20T09:30:00'),
+    status: 'success',
+    severity: 'medium',
+    metadata: { newUserId: '3', role: 'user' }
+  },
+  {
+    id: '3',
+    userId: 'unknown',
+    userName: 'N/A',
+    userEmail: 'hacker@example.com',
+    action: 'LOGIN_FAILED',
+    category: 'security',
+    details: 'Tentativa de login falhou - credenciais inválidas',
+    ipAddress: '203.0.113.1',
+    userAgent: 'Mozilla/5.0 (compatible; Bot/1.0)',
+    location: 'Unknown',
+    timestamp: new Date('2026-06-20T09:45:00'),
+    status: 'failure',
+    severity: 'high',
+    metadata: { attempts: 5, blocked: true }
+  },
+  {
+    id: '4',
+    userId: '1',
+    userName: 'João Silva',
+    userEmail: 'joao.silva@rsv.com',
+    action: 'DATA_EXPORTED',
+    category: 'data',
+    details: 'Exportação de relatório de clientes em CSV',
+    ipAddress: '192.168.1.100',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    location: 'São Paulo, BR',
+    timestamp: new Date('2026-06-20T08:00:00'),
+    status: 'success',
+    severity: 'medium',
+    metadata: { reportType: 'clients', format: 'csv', recordCount: 156 }
+  },
+  {
+    id: '5',
+    userId: '1',
+    userName: 'João Silva',
+    userEmail: 'joao.silva@rsv.com',
+    action: 'SETTINGS_CHANGED',
+    category: 'system',
+    details: 'Configurações de segurança alteradas',
+    ipAddress: '192.168.1.100',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    location: 'São Paulo, BR',
+    timestamp: new Date('2026-06-20T06:00:00'),
+    status: 'success',
+    severity: 'high',
+    metadata: { setting: 'password_policy', oldValue: 'weak', newValue: 'strong' }
+  }
+];
+
 export const AuditLog: React.FC = () => {
-  const { user } = useAuth();
-  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
-  const [filteredEntries, setFilteredEntries] = useState<AuditEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [auditEntries] = useState<AuditEntry[]>(MOCK_AUDIT_ENTRIES);
+  const [loading] = useState(false);
   const [filters, setFilters] = useState<AuditFilters>({
     search: '',
     category: '',
@@ -76,98 +153,7 @@ export const AuditLog: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<AuditEntry | null>(null);
 
-  // Mock data - em produção viria da API
-  useEffect(() => {
-    const mockEntries: AuditEntry[] = [
-      {
-        id: '1',
-        userId: '1',
-        userName: 'João Silva',
-        userEmail: 'joao.silva@rsv.com',
-        action: 'LOGIN_SUCCESS',
-        category: 'auth',
-        details: 'Login realizado com sucesso via email/senha',
-        ipAddress: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        location: 'São Paulo, BR',
-        timestamp: new Date(),
-        status: 'success',
-        severity: 'low',
-        metadata: { method: 'email', twoFactor: false }
-      },
-      {
-        id: '2',
-        userId: '2',
-        userName: 'Maria Santos',
-        userEmail: 'maria.santos@rsv.com',
-        action: 'USER_CREATED',
-        category: 'user',
-        details: 'Novo usuário criado: pedro.oliveira@rsv.com',
-        ipAddress: '192.168.1.101',
-        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
-        location: 'Rio de Janeiro, BR',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        status: 'success',
-        severity: 'medium',
-        metadata: { newUserId: '3', role: 'user' }
-      },
-      {
-        id: '3',
-        userId: 'unknown',
-        userName: 'N/A',
-        userEmail: 'hacker@example.com',
-        action: 'LOGIN_FAILED',
-        category: 'security',
-        details: 'Tentativa de login falhou - credenciais inválidas',
-        ipAddress: '203.0.113.1',
-        userAgent: 'Mozilla/5.0 (compatible; Bot/1.0)',
-        location: 'Unknown',
-        timestamp: new Date(Date.now() - 15 * 60 * 1000),
-        status: 'failure',
-        severity: 'high',
-        metadata: { attempts: 5, blocked: true }
-      },
-      {
-        id: '4',
-        userId: '1',
-        userName: 'João Silva',
-        userEmail: 'joao.silva@rsv.com',
-        action: 'DATA_EXPORTED',
-        category: 'data',
-        details: 'Exportação de relatório de clientes em CSV',
-        ipAddress: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        location: 'São Paulo, BR',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        status: 'success',
-        severity: 'medium',
-        metadata: { reportType: 'clients', format: 'csv', recordCount: 156 }
-      },
-      {
-        id: '5',
-        userId: '1',
-        userName: 'João Silva',
-        userEmail: 'joao.silva@rsv.com',
-        action: 'SETTINGS_CHANGED',
-        category: 'system',
-        details: 'Configurações de segurança alteradas',
-        ipAddress: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        location: 'São Paulo, BR',
-        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-        status: 'success',
-        severity: 'high',
-        metadata: { setting: 'password_policy', oldValue: 'weak', newValue: 'strong' }
-      }
-    ];
-
-    setAuditEntries(mockEntries);
-    setFilteredEntries(mockEntries);
-    setLoading(false);
-  }, []);
-
-  // Filtrar entradas
-  useEffect(() => {
+  const filteredEntries = useMemo(() => {
     let filtered = auditEntries;
 
     if (filters.search) {
@@ -206,7 +192,7 @@ export const AuditLog: React.FC = () => {
       filtered = filtered.filter(entry => entry.timestamp <= dateTo);
     }
 
-    setFilteredEntries(filtered);
+    return filtered;
   }, [auditEntries, filters]);
 
   const refreshData = async () => {

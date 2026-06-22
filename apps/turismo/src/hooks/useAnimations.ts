@@ -9,9 +9,9 @@ export interface AnimationConfig {
 }
 
 export interface AnimationVariants {
-  hidden: any;
-  visible: any;
-  exit?: any;
+  hidden: Record<string, unknown>;
+  visible: Record<string, unknown>;
+  exit?: Record<string, unknown>;
 }
 
 export function useAnimations() {
@@ -19,6 +19,7 @@ export function useAnimations() {
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync reduced motion preference from accessibility hook
     setIsReducedMotion(config.reducedMotion);
   }, [config.reducedMotion]);
 

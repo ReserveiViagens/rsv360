@@ -1,23 +1,26 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Server,
   Cpu,
-  Database,
   Network,
-  Cloud,
   Activity,
   AlertTriangle,
-  CheckCircle,
   Clock,
   Settings,
   Play,
@@ -25,37 +28,15 @@ import {
   Square,
   RefreshCw,
   Monitor,
-  BarChart3,
   TrendingUp,
-  TrendingDown,
-  Layers,
-  GitBranch,
-  Package,
-  Code,
-  Terminal,
   Eye,
-  Edit,
-  Trash2,
   Plus,
   Download,
   Upload,
-  Filter,
-  Search,
-  Zap,
-  Shield,
-  Globe,
-  Router,
-  Users,
-  Calendar,
-  MapPin,
-  Gauge,
-  FileText,
-  Link2,
-  Workflow,
   Container,
   HardDrive,
   Memory
-} from 'lucide-react'
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -64,15 +45,11 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  AreaChart, 
-  Area, 
   BarChart, 
   Bar, 
   PieChart, 
   Cell,
-  Pie,
-  RadialBarChart,
-  RadialBar
+  Pie
 } from 'recharts'
 
 // Tipos para Microsserviços
@@ -113,68 +90,11 @@ interface ServiceLog {
   level: 'info' | 'warn' | 'error' | 'debug'
   message: string
   source: string
-  metadata?: Record<string, any>
-}
-
-interface ServiceMetrics {
-  serviceId: string
-  timestamp: string
-  cpu: number
-  memory: number
-  requests: number
-  errors: number
-  responseTime: number
-  diskUsage: number
-  networkIn: number
-  networkOut: number
-}
-
-interface DeploymentConfig {
-  id: string
-  serviceName: string
-  strategy: 'blue_green' | 'rolling' | 'canary' | 'recreate'
-  replicas: number
-  autoScaling: {
-    enabled: boolean
-    minReplicas: number
-    maxReplicas: number
-    targetCPU: number
-    targetMemory: number
-  }
-  resources: {
-    cpu: string
-    memory: string
-    storage: string
-  }
-  healthCheck: {
-    enabled: boolean
-    path: string
-    interval: number
-    timeout: number
-    retries: number
-  }
-  environment: Record<string, string>
-}
-
-interface ServiceTopology {
-  services: {
-    id: string
-    name: string
-    x: number
-    y: number
-    connections: string[]
-  }[]
-  connections: {
-    from: string
-    to: string
-    type: 'http' | 'grpc' | 'message_queue' | 'database'
-    latency: number
-  }[]
+  metadata?: Record<string, unknown>
 }
 
 const MicroservicesManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedService, setSelectedService] = useState<Microservice | null>(null)
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false)
 
   // Dados mock para demonstração

@@ -13,7 +13,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
 
   useEffect(() => {
     const unread = notifications.filter(n => !n.read).length;
-    setUnreadCount(unread);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync unread count from notifications
+      setUnreadCount(unread);
   }, [notifications]);
 
   const handleMarkAsRead = (id: string) => {

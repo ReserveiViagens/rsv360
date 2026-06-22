@@ -16,8 +16,7 @@ import {
   Zap,
   Shield,
   Eye,
-  MousePointer,
-  Command
+  MousePointer
 } from 'lucide-react';
 
 export default function AdvancedFeaturesDemo() {
@@ -195,7 +194,7 @@ export default function AdvancedFeaturesDemo() {
         {/* Status Alerts */}
         {updateAvailable && (
           <Alert variant="info" title="Atualização Disponível">
-            Uma nova versão do sistema está disponível. Clique em "Atualizar" para obter as últimas funcionalidades.
+            Uma nova versão do sistema está disponível. Clique em &quot;Atualizar&quot; para obter as últimas funcionalidades.
           </Alert>
         )}
 

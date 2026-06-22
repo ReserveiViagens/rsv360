@@ -5,10 +5,8 @@ import {
   Eye, 
   Type, 
   MousePointer, 
-  Volume2, 
   Settings,
   X,
-  Check,
   Minus,
   Plus
 } from 'lucide-react';
@@ -24,10 +22,7 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
     config, 
     updateConfig, 
     announce,
-    toggleReducedMotion,
-    toggleHighContrast,
     changeFontSize,
-    toggleFocusVisible
   } = useAccessibility();
 
   const [activeTab, setActiveTab] = useState<'visual' | 'motion' | 'keyboard'>('visual');
@@ -98,7 +93,7 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
                   activeTab === tab.id
                     ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'

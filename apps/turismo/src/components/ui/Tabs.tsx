@@ -14,8 +14,8 @@ import { radixCreate, radixRoot, radixUiExport } from "@/lib/radix-jsx"
 const Tabs = radixRoot(TabsPrimitive.Root)
 
 const TabsList = radixUiExport<TabsListProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, TabsListProps>(({ className, ...props }, ref) =>
-    radixCreate(TabsPrimitive.List, {
+  React.forwardRef<HTMLDivElement, TabsListProps>(function TabsList({ className, ...props }, ref) {
+    return radixCreate(TabsPrimitive.List, {
       ref,
       className: cn(
         "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
@@ -23,13 +23,13 @@ const TabsList = radixUiExport<TabsListProps, HTMLDivElement>(
       ),
       ...props,
     })
-  ) as React.FC<TabsListProps & React.RefAttributes<HTMLDivElement>>
+  }) as React.FC<TabsListProps & React.RefAttributes<HTMLDivElement>>
 )
 TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = radixUiExport<TabsTriggerProps, HTMLButtonElement>(
-  React.forwardRef<HTMLButtonElement, TabsTriggerProps>(({ className, ...props }, ref) =>
-    radixCreate(TabsPrimitive.Trigger, {
+  React.forwardRef<HTMLButtonElement, TabsTriggerProps>(function TabsTrigger({ className, ...props }, ref) {
+    return radixCreate(TabsPrimitive.Trigger, {
       ref,
       className: cn(
         "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
@@ -37,13 +37,13 @@ const TabsTrigger = radixUiExport<TabsTriggerProps, HTMLButtonElement>(
       ),
       ...props,
     })
-  ) as React.FC<TabsTriggerProps & React.RefAttributes<HTMLButtonElement>>
+  }) as React.FC<TabsTriggerProps & React.RefAttributes<HTMLButtonElement>>
 )
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
 const TabsContent = radixUiExport<TabsContentProps, HTMLDivElement>(
-  React.forwardRef<HTMLDivElement, TabsContentProps>(({ className, ...props }, ref) =>
-    radixCreate(TabsPrimitive.Content, {
+  React.forwardRef<HTMLDivElement, TabsContentProps>(function TabsContent({ className, ...props }, ref) {
+    return radixCreate(TabsPrimitive.Content, {
       ref,
       className: cn(
         "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -51,7 +51,7 @@ const TabsContent = radixUiExport<TabsContentProps, HTMLDivElement>(
       ),
       ...props,
     })
-  ) as React.FC<TabsContentProps & React.RefAttributes<HTMLDivElement>>
+  }) as React.FC<TabsContentProps & React.RefAttributes<HTMLDivElement>>
 )
 TabsContent.displayName = TabsPrimitive.Content.displayName
 

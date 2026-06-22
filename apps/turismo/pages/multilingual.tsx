@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import { api } from '../src/services/apiClient'
 import { Globe } from 'lucide-react'
@@ -36,11 +36,7 @@ export default function MultilingualPage() {
     const [selectedTranslation, setSelectedTranslation] = useState<Translation | null>(null);
     const [newLanguage, setNewLanguage] = useState<Partial<Language>>({});
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [translationsRes, languagesRes] = await Promise.all([
                 api.get('/api/v1/multilingual/translations'),
@@ -56,7 +52,12 @@ export default function MultilingualPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- load data on mount
+        fetchData();
+    }, [fetchData]);
 
     const handleAddTranslation = async (e: React.FormEvent) => {
         e.preventDefault();

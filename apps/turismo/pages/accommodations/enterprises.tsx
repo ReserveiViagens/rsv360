@@ -2,7 +2,7 @@
 // PÁGINA - GERENCIAMENTO DE EMPREENDIMENTOS
 // ===================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../src/context/AuthContext';
 import ProtectedRoute from '../../src/components/ProtectedRoute';
 import { EnterpriseCard, HierarchyView } from '../../src/components/accommodations';
@@ -11,7 +11,6 @@ import type { Enterprise } from '../../src/types/accommodations';
 import {
   Plus,
   Search,
-  Filter,
   Building2,
   Grid,
   List,
@@ -22,7 +21,7 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
 export default function EnterprisesPage() {
-  const { user } = useAuth();
+  useAuth();
   const router = useRouter();
   const [enterprises, setEnterprises] = useState<Enterprise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,11 +33,7 @@ export default function EnterprisesPage() {
     city: ''
   });
 
-  useEffect(() => {
-    loadEnterprises();
-  }, [filters]);
-
-  const loadEnterprises = async () => {
+  const loadEnterprises = useCallback(async () => {
     try {
       setLoading(true);
       const response = await enterprisesApi.list({
@@ -56,7 +51,12 @@ export default function EnterprisesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, searchTerm]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload enterprises when filters change
+    loadEnterprises();
+  }, [loadEnterprises]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja deletar este empreendimento?')) {

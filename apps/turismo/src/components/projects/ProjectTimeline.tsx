@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Progress, Textarea, Switch } from '@/components/ui';
-import { Plus, Settings, Edit, Trash2, Users, Calendar, Target, Clock, CheckCircle, AlertCircle, XCircle, Eye, Copy, Filter, Search, Star, User, Tag, Mail, Phone, MapPin, Award, TrendingUp, CalendarDays, Milestone, ArrowRight, ArrowLeft, Play, Pause, Square } from 'lucide-react';
+import { Card, Button, Input, Badge, Select, Progress, Textarea } from '@/components/ui';
+import { Plus, Edit, Calendar, Target, Clock, CheckCircle, Eye, User, Milestone, Play, Square } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Milestone {
@@ -41,7 +41,7 @@ interface ProjectTimelineProps {
   onPhaseSelect?: (phase: ProjectPhase) => void;
 }
 
-export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: ProjectTimelineProps) {
+export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect: _onPhaseSelect }: ProjectTimelineProps) {
   const [milestones, setMilestones] = useState<Milestone[]>([
     {
       id: '1',
@@ -316,11 +316,6 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
     toast.success('Milestone atualizado com sucesso!');
   };
 
-  const handleDeleteMilestone = (milestoneId: string) => {
-    setMilestones(milestones.filter(m => m.id !== milestoneId));
-    toast.success('Milestone removido com sucesso!');
-  };
-
   const handleStatusChange = (milestoneId: string, newStatus: Milestone['status']) => {
     setMilestones(milestones.map(m => 
       m.id === milestoneId ? { 
@@ -359,7 +354,7 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
           <div className="ml-6 border-l-2 border-gray-200 pl-6 space-y-4">
             {milestones
               .filter(milestone => phase.milestones.includes(milestone.id))
-              .map((milestone, index) => (
+              .map((milestone, _index) => (
                 <div key={milestone.id} className="relative">
                   <div className="absolute -left-8 top-2 w-4 h-4 bg-white border-2 border-gray-300 rounded-full"></div>
                   <Card className="p-4 hover:shadow-md transition-shadow">
@@ -667,7 +662,7 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Responsável *</label>
-              <Select value={newMilestone.assignee} onValueChange={(value: any) => setNewMilestone({...newMilestone, assignee: value})}>
+              <Select value={newMilestone.assignee} onValueChange={(value: string) => setNewMilestone({...newMilestone, assignee: value})}>
                 <option value="">Selecione um responsável</option>
                 <option value="João Silva">João Silva</option>
                 <option value="Maria Santos">Maria Santos</option>
@@ -694,7 +689,7 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <Select value={newMilestone.status} onValueChange={(value: any) => setNewMilestone({...newMilestone, status: value})}>
+              <Select value={newMilestone.status} onValueChange={(value: string) => setNewMilestone({...newMilestone, status: value})}>
                 <option value="pending">Pendente</option>
                 <option value="in-progress">Em Progresso</option>
                 <option value="completed">Concluído</option>
@@ -703,7 +698,7 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
-              <Select value={newMilestone.priority} onValueChange={(value: any) => setNewMilestone({...newMilestone, priority: value})}>
+              <Select value={newMilestone.priority} onValueChange={(value: string) => setNewMilestone({...newMilestone, priority: value})}>
                 <option value="low">Baixa</option>
                 <option value="medium">Média</option>
                 <option value="high">Alta</option>
@@ -772,7 +767,7 @@ export default function ProjectTimeline({ onMilestoneSelect, onPhaseSelect }: Pr
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <Select value={newPhase.status} onValueChange={(value: any) => setNewPhase({...newPhase, status: value})}>
+              <Select value={newPhase.status} onValueChange={(value: string) => setNewPhase({...newPhase, status: value})}>
                 <option value="planning">Planejamento</option>
                 <option value="active">Ativa</option>
                 <option value="completed">Concluída</option>

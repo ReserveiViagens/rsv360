@@ -410,7 +410,7 @@ export class BookingApi {
   }
 
   // Exportar reservas
-  static async exportBookings(filters: BookingFilters = {}): Promise<ApiResponse<string>> {
+  static async exportBookings(_filters: BookingFilters = {}): Promise<ApiResponse<string>> {
     try {
       await simulateNetworkDelay(1000); // Simular processamento mais longo
       simulateRandomError(0.15);

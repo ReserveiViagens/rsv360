@@ -2,7 +2,7 @@
 // BOOKING CALENDAR - CALENDÁRIO MODERNO E INTUITIVO
 // ===================================================================
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   DndContext as DndContextPrimitive,
   closestCenter,
@@ -12,33 +12,28 @@ import {
   useSensors,
   DragEndEvent,
   DragOverlay as DragOverlayPrimitive,
-  DragStartEvent,
-  UniqueIdentifier
+  DragStartEvent
 } from '@dnd-kit/core';
 import { radixRoot } from '@/lib/radix-jsx';
 const DndContext = radixRoot(DndContextPrimitive);
 const DragOverlay = radixRoot(DragOverlayPrimitive);
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import {
-  useSortable,
-  SortableContext as SortableContextType
+  useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   Calendar,
-  Clock,
   Users,
   MapPin,
   DollarSign,
   Edit,
   Trash2,
   Plus,
-  Filter,
   Search,
   Eye,
   CheckCircle,
@@ -49,7 +44,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
   CalendarDays,
-  X,
   Calendar as CalendarIcon
 } from 'lucide-react';
 
@@ -232,6 +226,69 @@ interface BookingCalendarProps {
   onDelete?: (booking: Booking | string) => void;
 }
 
+const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: '1',
+    customerName: 'João Silva',
+    customerEmail: 'joao.silva@email.com',
+    customerPhone: '(11) 99999-9999',
+    destination: 'Caldas Novas - GO',
+    checkIn: new Date(2026, 0, 15),
+    checkOut: new Date(2026, 0, 18),
+    value: 1500,
+    status: 'confirmed',
+    paymentStatus: 'paid',
+    guests: 4,
+    notes: 'Cliente preferiu quarto com vista para a piscina',
+    color: '#10B981'
+  },
+  {
+    id: '2',
+    customerName: 'Maria Santos',
+    customerEmail: 'maria.santos@email.com',
+    customerPhone: '(11) 88888-8888',
+    destination: 'Porto de Galinhas - PE',
+    checkIn: new Date(2026, 0, 20),
+    checkOut: new Date(2026, 0, 25),
+    value: 2200,
+    status: 'pending',
+    paymentStatus: 'pending',
+    guests: 2,
+    notes: 'Aguardando confirmação de pagamento',
+    color: '#F59E0B'
+  },
+  {
+    id: '3',
+    customerName: 'Pedro Costa',
+    customerEmail: 'pedro.costa@email.com',
+    customerPhone: '(11) 77777-7777',
+    destination: 'Fernando de Noronha - PE',
+    checkIn: new Date(2026, 0, 10),
+    checkOut: new Date(2026, 0, 15),
+    value: 4500,
+    status: 'confirmed',
+    paymentStatus: 'paid',
+    guests: 2,
+    notes: 'Pacote completo com mergulho incluído',
+    color: '#10B981'
+  },
+  {
+    id: '4',
+    customerName: 'Ana Oliveira',
+    customerEmail: 'ana.oliveira@email.com',
+    customerPhone: '(11) 66666-6666',
+    destination: 'Gramado - RS',
+    checkIn: new Date(2026, 0, 5),
+    checkOut: new Date(2026, 0, 9),
+    value: 2400,
+    status: 'cancelled',
+    paymentStatus: 'failed',
+    guests: 3,
+    notes: 'Reserva cancelada pelo cliente',
+    color: '#EF4444'
+  }
+];
+
 const BookingCalendar: React.FC<BookingCalendarProps> = ({
   bookings: externalBookings,
   onBookingsChange,
@@ -239,10 +296,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   onEdit,
   onDelete
 }) => {
-  const [internalBookings, setInternalBookings] = useState<Booking[]>([]);
+  const [internalBookings, setInternalBookings] = useState<Booking[]>(MOCK_BOOKINGS);
   
   // Usar bookings externos se fornecidos, caso contrário usar estado interno
-  const bookings = externalBookings || internalBookings;
+  const bookings = externalBookings && externalBookings.length > 0 ? externalBookings : internalBookings;
   
   const setBookings = (newBookings: Booking[]) => {
     if (onBookingsChange) {
@@ -251,13 +308,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       setInternalBookings(newBookings);
     }
   };
-  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [, setIsDragging] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
   const monthPickerRef = useRef<HTMLDivElement>(null);
@@ -274,11 +329,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   // GERAÇÃO DO CALENDÁRIO
   // ===================================================================
 
-  const generateCalendarDays = (bookingsData: Booking[]) => {
+  const calendarDays = useMemo((): CalendarDay[] => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -289,7 +343,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
 
-      const dayBookings = bookingsData.filter(booking => {
+      const dayBookings = bookings.filter(booking => {
         const checkIn = new Date(booking.checkIn);
         const checkOut = new Date(booking.checkOut);
         return date >= checkIn && date <= checkOut;
@@ -303,85 +357,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       });
     }
 
-    setCalendarDays(days);
-  };
-
-  // ===================================================================
-  // DADOS MOCK
-  // ===================================================================
-
-  // Carregar dados mock apenas se não houver bookings externos
-  useEffect(() => {
-    if (!externalBookings || externalBookings.length === 0) {
-      const mockBookings: Booking[] = [
-        {
-          id: '1',
-          customerName: 'João Silva',
-          customerEmail: 'joao.silva@email.com',
-          customerPhone: '(11) 99999-9999',
-          destination: 'Caldas Novas - GO',
-          checkIn: new Date(2026, 0, 15),
-          checkOut: new Date(2026, 0, 18),
-          value: 1500,
-          status: 'confirmed',
-          paymentStatus: 'paid',
-          guests: 4,
-          notes: 'Cliente preferiu quarto com vista para a piscina',
-          color: '#10B981'
-        },
-        {
-          id: '2',
-          customerName: 'Maria Santos',
-          customerEmail: 'maria.santos@email.com',
-          customerPhone: '(11) 88888-8888',
-          destination: 'Porto de Galinhas - PE',
-          checkIn: new Date(2026, 0, 20),
-          checkOut: new Date(2026, 0, 25),
-          value: 2200,
-          status: 'pending',
-          paymentStatus: 'pending',
-          guests: 2,
-          notes: 'Aguardando confirmação de pagamento',
-          color: '#F59E0B'
-        },
-        {
-          id: '3',
-          customerName: 'Pedro Costa',
-          customerEmail: 'pedro.costa@email.com',
-          customerPhone: '(11) 77777-7777',
-          destination: 'Fernando de Noronha - PE',
-          checkIn: new Date(2026, 0, 10),
-          checkOut: new Date(2026, 0, 15),
-          value: 4500,
-          status: 'confirmed',
-          paymentStatus: 'paid',
-          guests: 2,
-          notes: 'Pacote completo com mergulho incluído',
-          color: '#10B981'
-        },
-        {
-          id: '4',
-          customerName: 'Ana Oliveira',
-          customerEmail: 'ana.oliveira@email.com',
-          customerPhone: '(11) 66666-6666',
-          destination: 'Gramado - RS',
-          checkIn: new Date(2026, 0, 5),
-          checkOut: new Date(2026, 0, 9),
-          value: 2400,
-          status: 'cancelled',
-          paymentStatus: 'failed',
-          guests: 3,
-          notes: 'Reserva cancelada pelo cliente',
-          color: '#EF4444'
-        }
-      ];
-      setBookings(mockBookings);
-    }
-  }, [externalBookings]);
-
-  // Regenerar calendário quando currentDate ou bookings mudarem
-  useEffect(() => {
-    generateCalendarDays(bookings);
+    return days;
   }, [currentDate, bookings]);
 
   // ===================================================================
@@ -491,20 +467,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   };
 
   // ===================================================================
-  // FILTROS
-  // ===================================================================
-
-  const filteredBookings = bookings.filter(booking => {
-    const matchesSearch = 
-      booking.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.destination.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
-
-  // ===================================================================
   // ATALHOS DE TECLADO
   // ===================================================================
 
@@ -528,6 +490,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyboard shortcuts use current navigation handlers
   }, [currentDate]);
 
   // ===================================================================

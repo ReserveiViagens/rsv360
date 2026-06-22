@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { LeilaoDetalhes } from '../../../src/components/leiloes/LeilaoDetalhes'
@@ -22,14 +22,7 @@ export default function LeilaoDetalhesPage() {
   const [showFinalizeDialog, setShowFinalizeDialog] = useState(false)
   const [isSubmittingLance, setIsSubmittingLance] = useState(false)
 
-  useEffect(() => {
-    if (id) {
-      loadLeilao()
-      loadLances()
-    }
-  }, [id])
-
-  const loadLeilao = async () => {
+  const loadLeilao = useCallback(async () => {
     try {
       setLoading(true)
       const data = await leiloesApi.getLeilaoById(id as string)
@@ -41,16 +34,24 @@ export default function LeilaoDetalhesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, router])
 
-  const loadLances = async () => {
+  const loadLances = useCallback(async () => {
     try {
       const data = await leiloesApi.getLances(id as string)
       setLances(data)
     } catch (error) {
       console.error('Erro ao carregar lances:', error)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- load leilao and lances when route id is available
+      loadLeilao()
+      loadLances()
+    }
+  }, [id, loadLeilao, loadLances])
 
   const handleEdit = () => {
     router.push(`/dashboard/leiloes/${id}/editar`)
