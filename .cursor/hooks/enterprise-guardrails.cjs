@@ -46,23 +46,20 @@ const ask = (userMessage, agentMessage) => {
 const checkCommand = (cmd, payload) => {
   const c = cmd.trim();
 
-  if (
-    !policy.hasEnterpriseUnlockToken(payload) &&
-    policy.shellTargetsProtectedPath(c)
-  ) {
+  if (!policy.hasEnterpriseUnlockToken(payload) && policy.shellMutatesProtectedPath(c)) {
     return {
       action: 'deny',
       user: 'Alteração de arquivos enterprise via terminal bloqueada.',
       agent:
-        'Shell command targets protected enterprise policy files. Use ALTERAR_ENTERPRISE_RULES_V2 in owner message.',
+        'Shell command mutates protected enterprise policy files. Use ALTERAR_ENTERPRISE_RULES_V2 in owner message.',
     };
   }
 
   const denyRules = [
     {
-      test: /\bgit\s+push\b[^\n]*(-f|--force)\b/i,
+      test: /\bgit\s+push\b[^\n]*(-f\b|--force(?:-with-lease)?\b)/i,
       user: 'Push forçado bloqueado pela política enterprise.',
-      agent: 'git push --force is blocked by enterprise guardrails.',
+      agent: 'git push --force / --force-with-lease is blocked by enterprise guardrails.',
     },
     {
       test: /\bgit\s+clean\b[^\n]*(-f|--force)[^\n]*x/i,
@@ -73,6 +70,11 @@ const checkCommand = (cmd, payload) => {
       test: /(^|[;&|]\s*)(rm\s+-rf|rmdir\s+\/s)\b/i,
       user: 'Remoção recursiva agressiva bloqueada.',
       agent: 'Recursive delete commands are blocked.',
+    },
+    {
+      test: /\bRemove-Item\b[^\n]*(-Recurse|--Recurse)[^\n]*(-Force|--Force)/i,
+      user: 'Remove-Item recursivo destrutivo bloqueado.',
+      agent: 'Remove-Item -Recurse -Force is blocked.',
     },
     {
       test: /\b(DROP\s+DATABASE|DROP\s+TABLE|TRUNCATE\s+TABLE)\b/i,
@@ -100,9 +102,19 @@ const checkCommand = (cmd, payload) => {
       agent: 'Package publish is blocked.',
     },
     {
-      test: /(^|[;&|]\s*)(echo|set|Out-File|Add-Content)[^\n]*(\.env\b|\.env\.)/i,
+      test: /(^|[;&|]\s*)(echo|set|Out-File|Add-Content|Set-Content|New-Item|ni\b)[^\n]*(\.env\b|\.env\.)/i,
       user: 'Alteração de .env via terminal bloqueada.',
       agent: 'Shell modification of .env files is blocked.',
+    },
+    {
+      test: /\b(Set-Content|Add-Content|Out-File)\b[^\n]*(\.env\b|\.env\.)/i,
+      user: 'Escrita em .env via PowerShell bloqueada.',
+      agent: 'PowerShell writes to .env are blocked.',
+    },
+    {
+      test: /(^|[;&|]\s*)[^\n]*(\.env\b|\.env\.)[^\n]*>{1,2}/i,
+      user: 'Redirecionamento para .env bloqueado.',
+      agent: 'Shell redirect to .env is blocked.',
     },
     {
       test: /\bgit\s+commit\b[^\n]*(\.env\b|credentials|secret|private[_-]?key)/i,
@@ -144,29 +156,37 @@ const checkCommand = (cmd, payload) => {
   return { action: 'allow' };
 };
 
-readStdin()
-  .then((raw) => {
-    let payload = {};
-    try {
-      payload = JSON.parse(raw || '{}');
-    } catch {
+const runHook = () => {
+  readStdin()
+    .then((raw) => {
+      let payload = {};
+      try {
+        payload = JSON.parse(raw || '{}');
+      } catch {
+        allow();
+        return;
+      }
+
+      const command = String(payload.command || '');
+      const result = checkCommand(command, payload);
+
+      if (result.action === 'deny') {
+        deny(result.user, result.agent);
+        return;
+      }
+      if (result.action === 'ask') {
+        ask(result.user, result.agent);
+        return;
+      }
       allow();
-      return;
-    }
+    })
+    .catch(() => {
+      allow();
+    });
+};
 
-    const command = String(payload.command || '');
-    const result = checkCommand(command, payload);
+if (require.main === module) {
+  runHook();
+}
 
-    if (result.action === 'deny') {
-      deny(result.user, result.agent);
-      return;
-    }
-    if (result.action === 'ask') {
-      ask(result.user, result.agent);
-      return;
-    }
-    allow();
-  })
-  .catch(() => {
-    allow();
-  });
+module.exports = { checkCommand };
