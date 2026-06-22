@@ -1,5 +1,6 @@
 // Utilitários de autenticação
 import * as jwt from 'jsonwebtoken';
+import { AUTH_BFF, parseAuthV1LoginResponse } from '@/lib/auth-v1';
 
 export interface User {
   id: number;
@@ -31,6 +32,8 @@ export function setToken(token: string): void {
 export function removeToken(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
   }
 }
@@ -72,8 +75,7 @@ function traduzirErro(mensagem: string): string {
 }
 
 export async function login(email: string, password: string) {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const response = await fetch(AUTH_BFF.LOGIN, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -81,7 +83,7 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
-  let result: any = {};
+  let result: Record<string, unknown> = {};
   try {
     result = await response.json();
   } catch {
@@ -89,16 +91,21 @@ export async function login(email: string, password: string) {
   }
 
   if (response.status === 429) {
-    throw new Error(result.error || 'Muitas tentativas. Tente novamente mais tarde.');
+    throw new Error(String(result.error || 'Muitas tentativas. Tente novamente mais tarde.'));
   }
 
   if (result.success) {
-    const token = result.data?.token ?? result.data?.access_token;
+    const parsed = parseAuthV1LoginResponse(result);
+    const token = parsed?.access_token ?? (result.data as { token?: string })?.token;
     if (token) setToken(token);
+    if (parsed?.refresh_token && typeof window !== 'undefined') {
+      localStorage.setItem('refresh_token', parsed.refresh_token);
+      localStorage.setItem('access_token', parsed.access_token);
+    }
     return result.data;
   }
 
-  const msg = result.error || response.statusText || 'Erro ao fazer login';
+  const msg = String(result.error || response.statusText || 'Erro ao fazer login');
   throw new Error(traduzirErro(msg));
 }
 
@@ -140,6 +147,22 @@ export async function register(data: {
 }
 
 export function logout(): void {
+  if (typeof window !== 'undefined') {
+    const access =
+      localStorage.getItem('auth_token') ||
+      localStorage.getItem('access_token');
+    const refresh = localStorage.getItem('refresh_token');
+    if (access) {
+      void fetch(AUTH_BFF.LOGOUT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${access}`,
+        },
+        body: JSON.stringify({ refresh_token: refresh }),
+      }).catch(() => undefined);
+    }
+  }
   removeToken();
   if (typeof window !== 'undefined') {
     void fetch('/api/admin/auth/logout', {

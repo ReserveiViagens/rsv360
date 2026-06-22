@@ -14,11 +14,12 @@ let refreshPromise: Promise<string> | null = null;
 export function setTokens(access: string, refresh: string) {
   accessToken = access;
   refreshToken = refresh;
-  
-  // Salvar no localStorage
+
   if (typeof window !== 'undefined') {
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
+    localStorage.setItem('auth_token', access);
+    document.cookie = `auth_token=${encodeURIComponent(access)}; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`;
   }
 }
 
@@ -39,10 +40,12 @@ export function getTokens(): { accessToken: string | null; refreshToken: string 
 export function clearTokens() {
   accessToken = null;
   refreshToken = null;
-  
+
   if (typeof window !== 'undefined') {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('auth_token');
+    document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
   }
 }
 

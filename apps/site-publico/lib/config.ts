@@ -1,6 +1,6 @@
 // Configurações da aplicação
 // Exportar API_BASE_URL diretamente para compatibilidade
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export const config = {
   // URLs das APIs
