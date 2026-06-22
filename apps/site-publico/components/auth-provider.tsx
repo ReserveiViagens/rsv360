@@ -71,8 +71,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async (): Promise<void> => {
     try {
-      await authenticatedFetch('/api/auth/logout', { method: 'POST' });
-    } catch (error) {
+      const { accessToken: access, refreshToken: refresh } = getTokens();
+      const authToken =
+        access ||
+        (typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null);
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        },
+        body: JSON.stringify({ refresh_token: refresh }),
+      });
+    } catch {
       // Ignorar erro se já estiver deslogado
     } finally {
       clearTokens();
@@ -83,16 +94,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async (): Promise<void> => {
     try {
-      const response = await authenticatedFetch('/api/users/profile');
-      const result = await response.json();
+      const response = await authenticatedFetch('/api/auth/session');
+      const session = await response.json();
 
-      if (result.success) {
-        setUser(result.data);
+      if (session.authenticated && session.user) {
+        const roles = Array.isArray(session.user.roles)
+          ? session.user.roles
+          : session.user.role
+            ? [session.user.role]
+            : ['user'];
+        setUser({
+          id: Number(session.user.id) || session.user.id,
+          email: session.user.email ?? '',
+          name: session.user.name ?? '',
+          role: session.user.role ?? roles[0] ?? 'user',
+        });
       } else {
         clearTokens();
         setUser(null);
       }
-    } catch (error) {
+    } catch {
       clearTokens();
       setUser(null);
     } finally {
