@@ -17,6 +17,18 @@ function safeJsonParse<T>(value: string | null): T | null {
   }
 }
 
+export function getPortalCookieToken(): string | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const cookie = document.cookie
+    .split('; ')
+    .find((item) => item.startsWith(`${PORTAL_TOKEN_COOKIE}=`));
+
+  return cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : null;
+}
+
 export function getPortalToken(): string | null {
   if (typeof window === 'undefined') {
     return null;
@@ -27,11 +39,18 @@ export function getPortalToken(): string | null {
     return fromLocalStorage;
   }
 
-  const cookie = document.cookie
-    .split('; ')
-    .find((item) => item.startsWith(`${PORTAL_TOKEN_COOKIE}=`));
+  return getPortalCookieToken();
+}
 
-  return cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : null;
+/** Cookie e localStorage devem existir e coincidir (evita loop SSR/client). */
+export function hasValidPortalSession(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const fromLocalStorage = window.localStorage.getItem(PORTAL_TOKEN_COOKIE);
+  const fromCookie = getPortalCookieToken();
+  return Boolean(fromLocalStorage && fromCookie && fromLocalStorage === fromCookie);
 }
 
 export function getPortalGuest<T = Record<string, unknown>>() {
