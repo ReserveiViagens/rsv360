@@ -1,7 +1,7 @@
 # Auth alignment matrix — #56 / #31
 
-**Data:** 2026-06-22 (atualizado pós-fila #555–#559)  
-**Base:** `main` @ pós-merge T1.8/T1.9  
+**Data:** 2026-06-22 (atualizado pós D2 #565–#568, Docker #569)  
+**Base:** `main` @ pós-merge register v1  
 **Canônico:** `backend` `/api/v1/auth/*` + `@rsv360/shared` (`packages/shared/src/auth/session.ts`)
 
 ## Resumo executivo
@@ -9,7 +9,7 @@
 | App | Namespace auth | Alinhado v1 | Storage tokens | Status |
 |-----|----------------|-------------|----------------|--------|
 | **admin** | `/api/v1/auth/*` | Sim (T1.2) | `localStorage` (`rsv360_*`) | OK |
-| **turismo** | `/api/v1/auth/*` | Sim (T1.7 + D2.3 register) | `localStorage` + authService | OK (2FA legado) |
+| **turismo** | `/api/v1/auth/*` | Sim (T1.7 + D2.3 register) | `localStorage` + authService | OK (2FA defer cliente) |
 | **guest** | `/api/guest-portal/auth/*` | N/A (portal) | `portal-session` | OK — F-029 corrigido |
 | **site-publico** | `/api/auth/*` BFF → `:3002` v1 | **Sim (T1.8 + register BFF)** | `rsv360_*` via BFF | OAuth local |
 
@@ -42,6 +42,8 @@
 | 3 | Refresh válido | ✅ E2E |
 | 4 | Logout → refresh revogado | ✅ E2E |
 | 5 | RBAC / `enterpriseId` | ✅ E2E + tenant context |
+| 6 | Register v1 201/409 | ✅ E2E D2 |
+| 7 | Legado `/api/auth/register` 404 | ✅ E2E D2 |
 
 ## Trilha concluída
 
@@ -49,6 +51,8 @@
 2. ~~T1.8~~ — site-publico BFF proxy v1 (#555)
 3. ~~T1.9~~ — E2E auth #31 (#556)
 4. ~~F-029~~ — guest redirect (#559)
+5. ~~D2 register~~ — backend + turismo + site-publico BFF (#565–#568)
+6. ~~Docker backend build~~ — #569
 
 ## Referências
 
@@ -56,4 +60,6 @@
 - `docs/evidence/auth/AUTH-QUEUE-CLOSEOUT-2026-06.md`
 - `docs/evidence/trilha-0/T1.8-SITE-PUBLICO-AUTH-V1-RESULT.md`
 - `docs/evidence/auth/T1.9-AUTH-V1-E2E-RESULT.md`
-- `docs/evidence/auth/F029-GUEST-REDIRECT-RESULT.md`
+- `docs/evidence/auth/D2.3-TURISMO-REGISTER-V1-RESULT.md`
+- `docs/evidence/auth/D1-SITE-PUBLICO-REGISTER-BFF-RESULT.md`
+- `docs/evidence/auth/D2-DEFER-2FA-PASSWORD-RESET.md`
