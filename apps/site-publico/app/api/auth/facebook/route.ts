@@ -1,40 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getOAuthCallbackUrl, getSiteOrigin, parseOAuthState } from '@/lib/oauth-server';
 
-// GET /api/auth/facebook - Iniciar OAuth do Facebook
+export const dynamic = 'force-dynamic';
+
+/** GET /api/auth/facebook — inicia OAuth Facebook (BFF, D2.9). */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const redirect = searchParams.get('redirect') || '/minhas-reservas';
-    
-    // Em produção, você usaria as credenciais reais do Facebook OAuth
-    const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || '';
-    const REDIRECT_URI = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/facebook/callback`;
-    
-    if (!FACEBOOK_APP_ID) {
-      // Modo de desenvolvimento - simular OAuth
+    const appId = process.env.FACEBOOK_APP_ID || '';
+
+    if (!appId) {
+      if (process.env.OAUTH_DEV_MOCK === 'true') {
+        const state = encodeURIComponent(JSON.stringify({ redirect }));
+        const callback = `${getSiteOrigin()}/api/auth/facebook/callback?code=dev_mock&state=${state}`;
+        return NextResponse.redirect(callback);
+      }
       return NextResponse.json({
         success: false,
-        error: 'Facebook OAuth não configurado. Configure FACEBOOK_APP_ID no .env.local',
-        demo: true,
-        message: 'Em desenvolvimento, use o login normal ou configure as credenciais do Facebook OAuth'
-      });
+        error: 'Facebook OAuth não configurado. Defina FACEBOOK_APP_ID ou OAUTH_DEV_MOCK=true.',
+      }, { status: 503 });
     }
 
-    // URL de autorização do Facebook
-    const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?` +
-      `client_id=${FACEBOOK_APP_ID}&` +
-      `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+    const redirectUri = getOAuthCallbackUrl('facebook');
+    const authUrl =
+      `https://www.facebook.com/v18.0/dialog/oauth?` +
+      `client_id=${encodeURIComponent(appId)}&` +
+      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
       `response_type=code&` +
-      `scope=email public_profile&` +
+      `scope=${encodeURIComponent('email public_profile')}&` +
       `state=${encodeURIComponent(JSON.stringify({ redirect }))}`;
 
     return NextResponse.redirect(authUrl);
-  } catch (error: any) {
-    console.error('Erro ao iniciar OAuth Facebook:', error);
+  } catch (error) {
+    console.error('[OAuth] facebook start error:', error);
     return NextResponse.json(
       { success: false, error: 'Erro ao iniciar autenticação Facebook' },
       { status: 500 }
     );
   }
 }
-

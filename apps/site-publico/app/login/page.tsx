@@ -26,12 +26,35 @@ export default function LoginPage() {
   const redirectTo = searchParams?.get('redirect') || '/minhas-reservas'
 
   useEffect(() => {
-    const token = searchParams?.get('token')
-    if (token && typeof window !== 'undefined') {
-      setToken(token)
-      router.push(redirectTo)
+    const accessToken =
+      searchParams?.get('access_token') || searchParams?.get('token');
+    const refreshToken = searchParams?.get('refresh_token');
+    if (accessToken && typeof window !== 'undefined') {
+      setToken(accessToken);
+      if (refreshToken) {
+        localStorage.setItem('refresh_token', refreshToken);
+        localStorage.setItem('access_token', accessToken);
+      }
+      const provider = searchParams?.get('provider');
+      if (provider) {
+        toast.success(`Login com ${provider === 'google' ? 'Google' : 'Facebook'} realizado!`);
+      }
+      router.push(redirectTo);
     }
-  }, [searchParams, router, redirectTo])
+  }, [searchParams, router, redirectTo, toast])
+
+  useEffect(() => {
+    const oauthError = searchParams?.get('error');
+    if (oauthError?.startsWith('oauth')) {
+      const messages: Record<string, string> = {
+        oauth_cancelled: 'Login social cancelado.',
+        oauth_token_error: 'Não foi possível validar o login social.',
+        oauth_backend_error: 'Servidor de autenticação indisponível.',
+        oauth_error: 'Erro no login social. Tente novamente.',
+      };
+      setError(messages[oauthError] || 'Erro no login social.');
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const tab = searchParams?.get('tab')
@@ -87,8 +110,7 @@ export default function LoginPage() {
     setError("")
     setIsLoading(true)
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
-      window.location.href = `${API_BASE_URL}/api/auth/${provider}?redirect=${encodeURIComponent(redirectTo)}`
+      window.location.href = `/api/auth/${provider}?redirect=${encodeURIComponent(redirectTo)}`
     } catch (err: any) {
       setError(`Erro ao conectar com ${provider === 'google' ? 'Google' : 'Facebook'}`)
       setIsLoading(false)

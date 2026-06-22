@@ -6,6 +6,7 @@ export const AUTH_V1 = {
   REFRESH: '/api/v1/auth/refresh',
   SESSION: '/api/v1/auth/session',
   REGISTER: '/api/v1/auth/register',
+  OAUTH: '/api/v1/auth/oauth',
 } as const;
 
 /** Same-origin BFF routes (browser calls these; server proxies to v1). */

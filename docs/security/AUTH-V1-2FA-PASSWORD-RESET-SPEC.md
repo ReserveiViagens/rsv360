@@ -204,9 +204,9 @@ Ordem recomendada: **D2.4 → D2.5 → D2.6 → D2.7** (reset antes de 2FA reduz
 ## 8. Fora de escopo v1
 
 - SMS 2FA / WebAuthn / FIDO2
-- OAuth social (Google/Facebook) — site-publico permanece local
+- ~~OAuth social (Google/Facebook)~~ — entregue em **D2.9** (BFF site-publico → `/api/v1/auth/oauth`)
 - Admin enforcement “2FA obrigatório por role” (fase futura)
-- E-mail production (SES/SMTP): adapter com log em dev, igual padrão atual
+- ~~E-mail production (SES/SMTP)~~ — entregue em **D2.8** (`password-reset-email.service.js`)
 
 ## 9. Referências
 

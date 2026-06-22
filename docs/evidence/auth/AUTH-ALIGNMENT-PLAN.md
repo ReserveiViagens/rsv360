@@ -16,17 +16,18 @@
 - [x] Docker backend rebuild — #569
 
 - [x] Trilha **D2.4–D2.7** (forgot/reset + 2FA backend + turismo + site-publico BFF/UI)
+- [x] **D2.8** e-mail reset produção (webhook + SMTP/SES) — `D2.8-BACKEND-EMAIL-RESET-RESULT.md`
+- [x] **D2.9** OAuth social site-publico → v1 — `D2.9-SITE-PUBLICO-OAUTH-BFF-RESULT.md`
 
 ## Backlog auth (pós-plano)
 
-**Decisão 2026-06-22:** priorizar **E-mail reset produção (D2.8)** antes de OAuth social.
+**Decisão 2026-06-22:** trilha D2.8–D2.9 concluída.
 
 | Item | Prioridade | Notas |
 |------|------------|-------|
-| **E-mail reset produção (D2.8)** | **Alta (escolhido)** | SMTP/SES ou `PASSWORD_RESET_EMAIL_WEBHOOK`; desbloqueia forgot/reset end-to-end fora de dev log |
-| OAuth social site-publico | Média (próximo) | Google/Facebook locais → BFF ou IdP; escopo maior, sem dependência de D2.4 |
 | Admin UI 2FA | Baixa | Spec §5 backlog |
 | E2E 2FA fluxo completo | Baixa | setup→login→verify (manual hoje) |
+| E2E OAuth mock | Baixa | `OAUTH_DEV_MOCK` + Playwright |
 
 ## Fora de escopo
 
