@@ -11,7 +11,7 @@
 | **admin** | `/api/v1/auth/*` | Sim (T1.2) | `localStorage` (`rsv360_*`) | OK |
 | **turismo** | `/api/v1/auth/*` | Sim (T1.7 + D2.3–D2.6) | `localStorage` + authService | OK |
 | **guest** | `/api/guest-portal/auth/*` | N/A (portal) | `portal-session` | OK — F-029 corrigido |
-| **site-publico** | `/api/auth/*` BFF → `:3002` v1 | **Sim (T1.8 + register + forgot/reset BFF)** | `rsv360_*` via BFF | OAuth local |
+| **site-publico** | `/api/auth/*` BFF → `:3002` v1 | **Sim (T1.8 + register + forgot/reset + OAuth D2.9)** | `rsv360_*` via BFF | OK |
 
 ## Backend canônico (`:3002`)
 
@@ -25,13 +25,14 @@
 | `/api/v1/auth/forgot-password` | POST | 200 genérico | integration + E2E D2.4 |
 | `/api/v1/auth/reset-password` | POST | token opaco | integration + E2E D2.4 |
 | `/api/v1/auth/2fa/*` | POST | TOTP + backup codes | integration D2.5 |
+| `/api/v1/auth/oauth` | POST | login social (BFF) | integration D2.9 |
 | Rate limit | — | T1.5 + D2.4/D2.5 | integration |
 
 ## Divergências
 
 | ID | Severidade | Descrição | Status |
 |----|------------|-----------|--------|
-| D1 | ~~Média~~ | site-publico BFF `/api/auth/*` → proxy v1 | **Fechado (T1.8 + register BFF)** — OAuth fora |
+| D1 | ~~Média~~ | site-publico BFF `/api/auth/*` → proxy v1 | **Fechado (T1.8 + register + OAuth D2.9 BFF)** |
 | D2 | Baixa | 2FA + reset v1 | **Fechado (D2.4–D2.7)** |
 | D3 | Baixa | guest portal namespace próprio | Esperado |
 | D4 | ~~Ops~~ | F-029 guest redirect loop | **Fechado (#559)** |

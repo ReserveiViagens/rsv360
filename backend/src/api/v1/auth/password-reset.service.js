@@ -49,12 +49,19 @@ async function updateUserPassword(userId, passwordHash) {
 }
 
 function buildResetUrl(token) {
-  const base =
+  const base = (
+    process.env.PASSWORD_RESET_BASE_URL ||
     process.env.PASSWORD_RESET_URL_BASE ||
     process.env.FRONTEND_URL ||
-    'http://localhost:3000';
-  const separator = base.includes('?') ? '&' : '?';
-  return `${base.replace(/\/$/, '')}/redefinir-senha${separator}token=${encodeURIComponent(token)}`;
+    'http://localhost:3000'
+  ).replace(/\/$/, '');
+
+  if (base.includes('/redefinir-senha')) {
+    const separator = base.includes('?') ? '&' : '?';
+    return `${base}${separator}token=${encodeURIComponent(token)}`;
+  }
+
+  return `${base}/redefinir-senha?token=${encodeURIComponent(token)}`;
 }
 
 async function invalidateActiveResetTokens(userId) {
@@ -198,5 +205,6 @@ module.exports = {
   resetPasswordWithToken,
   isDbPasswordResetEnabled: isDbRefreshEnabled,
   hashToken,
+  buildResetUrl,
   GENERIC_FORGOT_MESSAGE,
 };
