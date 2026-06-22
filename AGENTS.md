@@ -62,7 +62,13 @@ Fase 0 Triagem → Fase 1 Hipóteses → Fase 2 Evidência read-only → Fase 3 
 Alteração bloqueada por hooks e política, salvo token do owner na mensagem:
 
 - `.cursor/rules/**`, `.cursor/automations/**`, `.cursor/hooks/**`, `.cursor/hooks.json`
-- `AGENTS.md`, `MEMORIES.md`, `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md`
+- `AGENTS.md`, `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md`
+
+**`MEMORIES.md` (política especial):**
+
+- A automação **Find critical bugs** pode atualizar apenas achados ativos/rejeitados recentes.
+- **Proibido** gravar secrets, tokens, CPF, telefone, e-mail de cliente, cookies, `.env`, chaves privadas ou dados pessoais sensíveis.
+- Alterações estruturais ou de política em `MEMORIES.md` exigem token do owner.
 
 **Tokens:**
 
@@ -95,7 +101,15 @@ Consulte regras modulares v2 para detalhes por área.
 
 ## Conflito de instruções
 
-Alertar o owner. Ordem: **segurança/LGPD > PACR-Ampla > regras enterprise v2 > instrução pontual da sessão** (exceto ordem explícita do owner com token válido).
+Alertar o owner. Ordem de precedência:
+
+1. **Segurança / LGPD** (regras `enterprise-security.mdc`, `enterprise-lgpd.mdc`)
+2. **`AGENTS.md`** (contrato central)
+3. **PACR-Ampla** (investigações manuais)
+4. **Regras enterprise v2** (`.cursor/rules/enterprise-*.mdc`)
+5. **Instrução pontual da sessão** (exceto ordem explícita do owner com token válido)
+
+Em conflito: seguir o nível mais restritivo de segurança.
 
 ## Confirmação de internalização
 
