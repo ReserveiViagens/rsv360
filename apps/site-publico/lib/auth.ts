@@ -150,6 +150,60 @@ export async function register(data: {
   throw new Error(traduzirErro(msg));
 }
 
+export async function requestPasswordReset(email: string): Promise<void> {
+  const response = await fetch(AUTH_BFF.FORGOT_PASSWORD, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  let result: Record<string, unknown> = {};
+  try {
+    result = await response.json();
+  } catch {
+    result = {};
+  }
+
+  if (response.status === 429) {
+    throw new Error(String(result.error || 'Muitas tentativas. Tente novamente mais tarde.'));
+  }
+
+  if (result.success === true) {
+    return;
+  }
+
+  throw new Error(traduzirErro(String(result.error || 'Erro ao solicitar recuperação')));
+}
+
+export async function resetPassword(payload: {
+  token: string;
+  password: string;
+  password_confirmation: string;
+}): Promise<void> {
+  const response = await fetch(AUTH_BFF.RESET_PASSWORD, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  let result: Record<string, unknown> = {};
+  try {
+    result = await response.json();
+  } catch {
+    result = {};
+  }
+
+  if (response.status === 429) {
+    throw new Error(String(result.error || 'Muitas tentativas. Tente novamente mais tarde.'));
+  }
+
+  if (result.success === true) {
+    return;
+  }
+
+  throw new Error(traduzirErro(String(result.error || 'Erro ao redefinir senha')));
+}
+
 export function logout(): void {
   if (typeof window !== 'undefined') {
     const access =

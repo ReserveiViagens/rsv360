@@ -6,6 +6,13 @@ export const AUTH_V1 = {
   REFRESH: '/api/v1/auth/refresh',
   SESSION: '/api/v1/auth/session',
   REGISTER: '/api/v1/auth/register',
+  FORGOT_PASSWORD: '/api/v1/auth/forgot-password',
+  RESET_PASSWORD: '/api/v1/auth/reset-password',
+  TWO_FA_SETUP: '/api/v1/auth/2fa/setup',
+  TWO_FA_VERIFY_SETUP: '/api/v1/auth/2fa/verify-setup',
+  TWO_FA_VERIFY: '/api/v1/auth/2fa/verify',
+  TWO_FA_DISABLE: '/api/v1/auth/2fa/disable',
+  TWO_FA_BACKUP_CODES: '/api/v1/auth/2fa/backup-codes',
 } as const;
 
 export const DEFAULT_API_URL =
@@ -34,9 +41,11 @@ export interface AuthV1SessionResponse {
 
 export interface AuthV1LoginPayload {
   user?: AuthV1UserPayload;
-  access_token: string;
-  refresh_token: string;
+  access_token?: string;
+  refresh_token?: string;
   expires_in?: number;
+  requires_2fa?: boolean;
+  temp_token?: string;
 }
 
 export interface MappedAuthUser {
@@ -86,6 +95,15 @@ export function parseAuthV1LoginResponse(
   json: Record<string, unknown>
 ): AuthV1LoginPayload | null {
   const payload = (json.data ?? json) as Record<string, unknown>;
+
+  if (payload.requires_2fa === true) {
+    return {
+      requires_2fa: true,
+      temp_token: String(payload.temp_token ?? ''),
+      expires_in: payload.expires_in as number | undefined,
+    };
+  }
+
   const access = payload.access_token ?? json.access_token;
   const refresh = payload.refresh_token ?? json.refresh_token;
 
