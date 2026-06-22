@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api, PortalApiError } from './api';
-import { clearPortalSession, getPortalGuest, getPortalToken, setPortalSession } from './portal-session';
+import { clearPortalSession, getPortalCookieToken, getPortalGuest, getPortalToken, hasValidPortalSession, PORTAL_TOKEN_COOKIE, setPortalSession } from './portal-session';
 import type { AuthState, LoginRequest, LoginResponse, GuestProfile } from '@/types/auth';
 
 type AuthContextValue = AuthState & {
@@ -54,7 +54,20 @@ export function AuthProvider({ children, initialGuest }: { children: ReactNode; 
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
+    const cookieToken = getPortalCookieToken();
+    const localToken =
+      typeof window !== 'undefined' ? window.localStorage.getItem(PORTAL_TOKEN_COOKIE) : null;
+
+    if (localToken && !cookieToken) {
+      clearPortalSession();
+      setHydrated(true);
+      return;
+    }
+
+    if (cookieToken && !localToken) {
+      window.localStorage.setItem(PORTAL_TOKEN_COOKIE, cookieToken);
+    }
+
     const storedToken = getPortalToken();
     const storedGuest = getPortalGuest<GuestProfile>();
 
@@ -65,6 +78,8 @@ export function AuthProvider({ children, initialGuest }: { children: ReactNode; 
     if (storedGuest) {
       setGuest(storedGuest);
     }
+
+    setHydrated(true);
   }, []);
 
   const refreshSession = () => {
@@ -103,11 +118,13 @@ export function AuthProvider({ children, initialGuest }: { children: ReactNode; 
   };
 
   const verify = async (candidateToken: string) => {
-    const response = (await tryVerifyEndpoint(candidateToken)) || {
-      success: true,
-      token: candidateToken,
-      guest,
-    };
+    const response = await tryVerifyEndpoint(candidateToken);
+    if (!response?.token) {
+      clearPortalSession();
+      setToken(null);
+      setGuest(null);
+      throw new Error('Token inválido ou expirado.');
+    }
 
     setPortalSession(response.token, response.guest);
     setToken(response.token);
@@ -131,7 +148,7 @@ export function AuthProvider({ children, initialGuest }: { children: ReactNode; 
     () => ({
       token,
       guest,
-      isAuthenticated: Boolean(token),
+      isAuthenticated: hydrated && hasValidPortalSession(),
       loading: !hydrated,
       login,
       verify,
