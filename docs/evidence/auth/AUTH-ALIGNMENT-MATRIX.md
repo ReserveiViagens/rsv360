@@ -29,7 +29,7 @@
 | ID | Severidade | Descrição | Status |
 |----|------------|-----------|--------|
 | D1 | ~~Média~~ | site-publico BFF `/api/auth/*` → proxy v1 | **Fechado (T1.8 + register BFF)** — OAuth fora |
-| D2 | Baixa | turismo 2FA/forgot defer no cliente; register v1 | **Parcial** (2FA backend defer) |
+| D2 | Baixa | turismo 2FA/forgot defer no cliente; spec **D2.4–D2.7** | **Spec pronta** — impl. pendente |
 | D3 | Baixa | guest portal namespace próprio | Esperado |
 | D4 | ~~Ops~~ | F-029 guest redirect loop | **Fechado (#559)** |
 
@@ -63,3 +63,4 @@
 - `docs/evidence/auth/D2.3-TURISMO-REGISTER-V1-RESULT.md`
 - `docs/evidence/auth/D1-SITE-PUBLICO-REGISTER-BFF-RESULT.md`
 - `docs/evidence/auth/D2-DEFER-2FA-PASSWORD-RESET.md`
+- `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`
