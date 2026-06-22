@@ -24,6 +24,12 @@ apps/atendimento-ia/ @ReserveiViagens/ai-team
 # Shared Packages
 /packages/ @ReserveiViagens/core-team
 
+# Enterprise agent policy (Cursor) — review obrigatório
+/.cursor/ @ReserveiViagens/devops-team @ReserveiViagens/core-team
+/AGENTS.md @ReserveiViagens/devops-team @ReserveiViagens/core-team
+/MEMORIES.md @ReserveiViagens/devops-team
+/docs/cursor/ @ReserveiViagens/devops-team @ReserveiViagens/core-team
+
 # Configurações & CI/CD
 /.github/ @ReserveiViagens/devops-team
 /scripts/ @ReserveiViagens/devops-team

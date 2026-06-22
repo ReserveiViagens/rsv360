@@ -1,0 +1,39 @@
+---
+description: "Enterprise security — auth, RBAC, OWASP, headers, rate limit e logs seguros"
+alwaysApply: true
+---
+
+# Enterprise Security (RSV360)
+
+## Verificações obrigatórias
+
+Toda rota API, server action, webhook ou job exposto deve validar:
+
+- **Autenticação** — sessão/token válido antes de lógica de negócio
+- **Autorização / RBAC** — papel e escopo corretos (admin vs cliente vs operador)
+- **Rotas admin** — nunca expostas sem middleware de role
+- **IDOR** — IDs de reserva, cliente, pagamento e hotel validados contra o usuário autenticado
+- **Input validation** — schema/tipo/tamanho/range antes de persistir
+- **Sanitização** — escape de HTML, normalização de strings, whitelist de enums
+- **Rate limit** — login, checkout, cupom, busca e webhooks
+- **Headers de segurança** — CSP, HSTS, X-Frame-Options onde aplicável
+- **Secrets scanning** — nunca commitar chaves; usar variáveis de ambiente
+
+## OWASP e vetores comuns
+
+- **SQL/NoSQL injection** — queries parametrizadas; sem concatenação de input
+- **XSS** — sem `dangerouslySetInnerHTML` sem sanitização; CSP quando possível
+- **CSRF** — tokens ou SameSite em mutações sensíveis
+- **SSRF** — validar URLs externas; bloquear metadata/IP interno em fetch de usuário
+
+## Logs e erros
+
+- Nunca logar senha, token, cookie, CPF, cartão ou documento completo
+- Respostas de erro de API não expõem stack trace nem dados de outro cliente
+- Falhas de auth retornam mensagem genérica; detalhe só em log interno mascarado
+
+## Proibições
+
+- Desabilitar auth, CORS permissivo ou validação para “passar teste”
+- Bypass de RBAC “temporário”
+- Expor endpoint admin sem auditoria

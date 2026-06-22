@@ -114,6 +114,12 @@ drizzle-kit-cli-windows*.log
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
+!.cursor/hooks.json
+!.cursor/hooks/
+!.cursor/hooks/**
+!.cursor/automations/
+!.cursor/automations/**
+!.cursor/mcp.json
 .windsurfrules
 .clinerules
 .codex/

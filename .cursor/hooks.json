@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/enterprise-guardrails.cjs",
+        "failClosed": false
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node .cursor/hooks/protect-enterprise-files.cjs",
+        "matcher": "Write|StrReplace|Delete|EditNotebook",
+        "failClosed": true
+      }
+    ]
+  }
+}

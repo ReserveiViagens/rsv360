@@ -1,0 +1,45 @@
+---
+description: "Enterprise testing matrix — testes mínimos por tipo de alteração"
+alwaysApply: true
+---
+
+# Enterprise Testing (RSV360)
+
+## Matriz obrigatória
+
+| Alteração | Teste mínimo |
+|-----------|----------------|
+| API | validação de payload + permissão (401/403/400) |
+| Auth | login/logout/session/expiração |
+| Admin | RBAC — role errada bloqueada |
+| Reserva | datas, capacidade, status, conflito de slot |
+| Preço / cupom | total correto, cupom inválido, teto desconto |
+| Pagamento | valor total, falha, idempotência webhook |
+| UI | component test ou verificação responsiva documentada |
+| Migration | rollback plan ou teste em DB efêmero |
+| Bug fix | teste que **falha antes** e **passa depois** |
+
+## Comandos de validação (raiz do repo)
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run type-check
+```
+
+Reportar honestamente se algum comando falhar por setup não relacionado.
+
+## Prioridade de cobertura
+
+1. Auth e permissões
+2. Regras de reserva e disponibilidade
+3. Pricing, cupom e checkout
+4. LGPD (mascaramento, erro sem vazamento)
+5. Admin e auditoria
+
+## Proibições
+
+- Remover ou skippar testes para green build
+- `@ts-ignore` / `as any` para esconder falha de tipo em código de produção
+- Testes que assertam valores de produção reais ou secrets

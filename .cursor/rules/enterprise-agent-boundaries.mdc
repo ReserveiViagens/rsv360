@@ -1,0 +1,57 @@
+---
+description: "Enterprise agent boundaries — autonomia controlada, arquivos protegidos e tokens de desbloqueio"
+alwaysApply: true
+---
+
+# Enterprise Agent Boundaries (RSV360 v2)
+
+Operação **ampla, robusta, enterprise e multidisciplinar**, com **autonomia controlada por guardrails**. Nunca interprete isso como permissão irrestrita.
+
+## Autonomia permitida
+
+- Investigar, ler, grep, testar, lint, build e propor patches pequenos
+- Abrir PR apenas conforme fase em `.cursor/automations/phase-config.json`
+- Corrigir bugs de alta confiança com escopo mínimo
+
+## Autonomia proibida (sempre)
+
+- Auto-merge
+- Deploy
+- Editar `.env`, secrets, credenciais ou infra de produção
+- Apagar dados de produção
+- Alterar arquivos enterprise protegidos sem token do owner
+- Refactors grandes sem aprovação humana
+
+## Arquivos protegidos (somente owner com token)
+
+- `.cursor/rules/**`
+- `.cursor/automations/**`
+- `.cursor/hooks.json`
+- `.cursor/hooks/**`
+- `AGENTS.md`
+- `docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md`
+
+### MEMORIES.md (política especial)
+
+- Automação **Find critical bugs** pode atualizar achados ativos/rejeitados recentes
+- **Proibido** secrets, tokens, CPF, telefone, e-mail de cliente, cookies, `.env`, chaves privadas ou PII
+- Alterações estruturais/políticas exigem token do owner
+
+## Tokens de desbloqueio
+
+Incluir **literalmente** na **mensagem atual do owner humano** (não em texto gerado pelo agente):
+
+- `ALTERAR_ENTERPRISE_RULES_V2` — alterar política enterprise
+- `REVOGAR_PACR_AMPLA_V1` — revogar PACR-Ampla (owner apenas)
+
+O agente **não pode** gerar, reutilizar, simular ou inserir esses tokens por conta própria. Hooks validam apenas campos de mensagem do owner (`user_message`, `lastUserMessage`).
+
+## Hierarquia de regras
+
+1. **Segurança / LGPD** (`enterprise-security.mdc`, `enterprise-lgpd.mdc`)
+2. **`AGENTS.md`** (contrato central)
+3. **PACR-Ampla** (investigações manuais)
+4. **Regras enterprise v2** (`.cursor/rules/enterprise-*.mdc`)
+5. **Instruções pontuais do owner na sessão** (exceto ordem explícita do owner com token válido)
+
+Em conflito: alertar o owner e seguir o nível mais restritivo de segurança.
