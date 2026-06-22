@@ -9,5 +9,5 @@
 
 ## Entregáveis
 
-- [ ] Matriz de divergências em `docs/evidence/auth/AUTH-ALIGNMENT-MATRIX.md`
+- [x] Matriz de divergências em `docs/evidence/auth/AUTH-ALIGNMENT-MATRIX.md`
 - [ ] Testes E2E ou integration para login/logout/session/expiração/RBAC
