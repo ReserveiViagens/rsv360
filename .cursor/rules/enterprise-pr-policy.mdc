@@ -1,0 +1,43 @@
+---
+description: "Enterprise PR policy — escopo, risco, evidência, rollback e checklist"
+alwaysApply: true
+---
+
+# Enterprise PR Policy (RSV360)
+
+## Elegibilidade de PR (agente automation)
+
+Abrir PR **somente** se:
+
+1. Bug concreto e reproduzível
+2. Fix mínimo (orientação: ≤5 arquivos, ≤150 linhas na fase intermediate)
+3. Lint + test + build executados (ou falha documentada)
+4. Fase em `phase-config.json` permite PR (`intermediate` ou `production`)
+5. **Nunca auto-merge**
+
+Confiança média/baixa → **report only**.
+
+## Checklist obrigatório no corpo do PR
+
+- [ ] Escopo pequeno e justificado
+- [ ] Descrição do **risco** e blast radius
+- [ ] **Evidência** do bug (passos, log mascarado, teste)
+- [ ] **Validação** executada (comandos + resultado)
+- [ ] **Comandos rodados** listados literalmente
+- [ ] **Screenshots** se alteração de UI
+- [ ] **Plano de rollback** se migration ou fluxo crítico
+- [ ] Nenhuma alteração em `.env`, secrets ou credenciais
+- [ ] Nenhuma alteração fora do escopo do bug
+- [ ] Revisão humana requerida antes do merge
+
+## Tipos de PR proibidos para agente
+
+- Refactor amplo “while here”
+- Mudança de arquitetura multi-camada sem aprovação
+- Alteração de política enterprise sem `ALTERAR_ENTERPRISE_RULES_V2`
+- Migration destrutiva
+- Desabilitar segurança ou testes
+
+## Template
+
+Usar `.github/pull_request_template.md` e preencher seção **Enterprise / Segurança**.

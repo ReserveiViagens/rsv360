@@ -1,0 +1,38 @@
+---
+description: "Enterprise architecture — camadas, domínio turismo/CRM/PMS e limites de módulo"
+alwaysApply: true
+---
+
+# Enterprise Architecture (RSV360)
+
+## Camadas (nunca misturar responsabilidades)
+
+UI/SSR → state/client → API route → service/domain → repository/DB → integrações externas
+
+- Regras de **reserva, preço, cupom, pagamento, permissão e LGPD** ficam no **servidor**
+- UI não decide preço final, elegibilidade de cupom ou permissão admin
+- Integrações (pagamento, e-mail, webhook) atrás de adapters com timeout e retry controlado
+
+## Domínios críticos deste sistema
+
+| Domínio | Onde vive | Não duplicar em |
+|---------|-----------|-----------------|
+| Disponibilidade / capacidade | service + DB | componente React |
+| Preço / taxas / cupom | service + regras de pricing | formulário só visual |
+| Reserva / status | service transacional | cache client-only |
+| Cliente / LGPD | service + audit | logs ou erro público |
+| Admin / RBAC | middleware + service | flag no frontend |
+
+## Qualidade arquitetural
+
+- Serviços coesos; evitar dependências circulares
+- Erros explícitos; sem catch silencioso retornando vazio
+- Operações de reserva/pagamento/estoque em **transação** quando consistência importa
+- Mudanças não bypassam regras de domínio existentes
+- Patch mínimo: uma PR não altera mais de uma camada sem racional documentado
+
+## Concorrência e multiusuário
+
+- Lock otimista ou transação para evitar double booking e lost update
+- Cache invalidado após mutação de disponibilidade ou preço
+- Idempotência em confirmação de pagamento e webhooks

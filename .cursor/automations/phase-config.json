@@ -1,0 +1,73 @@
+{
+  "rulesVersion": "v2",
+  "currentPhase": "initial",
+  "autoMerge": false,
+  "phases": {
+    "initial": {
+      "label": "Revisor forte",
+      "description": "Analisa commits recentes e publica relatório. Não abre PR.",
+      "openPullRequest": false,
+      "autoMerge": false,
+      "requireHumanReview": true,
+      "recommendedTrigger": "daily",
+      "recommendedBranches": []
+    },
+    "intermediate": {
+      "label": "Correções pequenas com testes",
+      "description": "PR apenas para bugs de alta confiança, diff pequeno e testes.",
+      "openPullRequest": true,
+      "autoMerge": false,
+      "requireHumanReview": true,
+      "maxFilesChanged": 5,
+      "maxLinesChanged": 150,
+      "recommendedTrigger": "push",
+      "recommendedBranches": ["develop", "development"]
+    },
+    "production": {
+      "label": "Enterprise com revisão humana obrigatória",
+      "description": "Segurança, arquitetura, LGPD, logs e testes rigorosos.",
+      "openPullRequest": true,
+      "autoMerge": false,
+      "requireHumanReview": true,
+      "enforceSecurityArchitectureLgpdReview": true,
+      "recommendedTrigger": "push_and_pr",
+      "recommendedBranches": ["main", "master", "develop", "development"]
+    }
+  },
+  "protectedPaths": [
+    ".cursor/rules/**",
+    ".cursor/automations/**",
+    ".cursor/hooks.json",
+    ".cursor/hooks/**",
+    "AGENTS.md",
+    "docs/cursor/ENTERPRISE-AUTOMATION-SETUP.md"
+  ],
+  "memoriesAutomationPolicy": {
+    "path": "MEMORIES.md",
+    "allowAutomationFindingsUpdates": true,
+    "forbidSensitiveContent": true,
+    "structuralEditsRequireToken": true
+  },
+  "unlockTokens": [
+    "ALTERAR_ENTERPRISE_RULES_V2",
+    "REVOGAR_PACR_AMPLA_V1"
+  ],
+  "outputs": {
+    "cursorSummary": true,
+    "githubPullRequest": true,
+    "slack": false
+  },
+  "blockedPaths": [
+    "**/.env",
+    "**/.env.*",
+    "**/credentials.json",
+    "**/*secret*",
+    "**/*private*key*"
+  ],
+  "blockedActions": [
+    "deploy",
+    "auto-merge",
+    "delete-production-data",
+    "modify-secrets"
+  ]
+}

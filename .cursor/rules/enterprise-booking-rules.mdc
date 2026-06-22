@@ -1,0 +1,45 @@
+---
+description: "Enterprise booking rules — reservas, turismo, preço, cupom, cancelamento e double booking"
+alwaysApply: true
+---
+
+# Enterprise Booking Rules (RSV360)
+
+Regras de negócio para **turismo, PMS, CRM, reservas e pagamentos**.
+
+## Datas e capacidade
+
+- **Check-in / check-out** — validar ordem, mínimo de diárias, blackout e timezone
+- **Capacidade máxima** — adultos, crianças, quartos/unidades; rejeitar overbooking
+- **Criança até idade limite** — regra configurável; nunca hardcode divergente UI vs API
+- **Disponibilidade** — consulta e reserva usam mesma fonte de verdade (servidor)
+- **Bloqueio de datas** — manutenção, feriado, inventário zerado
+
+## Preço e totais
+
+- **Preço por diária** + taxas extras + impostos/fees documentados
+- **Cupom** — validade, uso único, elegibilidade, teto de desconto
+- **Total auditável** — breakdown persistido; UI exibe o mesmo cálculo do servidor
+- Proibir desconto aplicado só no client sem validação server-side
+
+## Ciclo da reserva
+
+| Status | Regras |
+|--------|--------|
+| Rascunho | expira; não bloqueia inventário indefinidamente |
+| Pendente | timeout; libera slot se pagamento não confirmar |
+| Confirmada | idempotência; auditoria de quem confirmou |
+| Cancelada | política de reembolso; libera disponibilidade |
+| No-show | regra explícita; não corromper histórico |
+
+## Concorrência
+
+- Impedir **reserva duplicada** (mesmo usuário/recurso/slot concorrente)
+- Impedir **double booking** (duas confirmações no mesmo inventário)
+- Confirmação de pagamento **idempotente** (webhook/retry seguro)
+
+## Cancelamento e confirmação
+
+- Cancelamento respeita prazo e penalidade configurados
+- Confirmação só após validação de pagamento/disponibilidade
+- Toda mudança de status gera evento de auditoria
