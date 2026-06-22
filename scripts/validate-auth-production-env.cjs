@@ -29,18 +29,26 @@ const root = path.resolve(__dirname, '..');
 const fileEnv = loadDotEnv(path.join(root, '.env'));
 const nodeEnv = env('NODE_ENV', fileEnv) || 'development';
 const isProd = nodeEnv === 'production';
+const projectName = `${env('COMPOSE_PROJECT_NAME', fileEnv)} ${env('RSV360_DOCKER_PROJECT', fileEnv)}`.toLowerCase();
+const isStaging = projectName.includes('staging');
 
 const errors = [];
 const warnings = [];
 
 const oauthSecret = env('OAUTH_BFF_SECRET', fileEnv);
 if (!oauthSecret || oauthSecret.includes('CHANGE_ME') || oauthSecret === 'rsv360-docker-dev-oauth-bff') {
-  if (isProd) errors.push('OAUTH_BFF_SECRET: defina segredo forte (openssl rand -hex 32)');
-  else warnings.push('OAUTH_BFF_SECRET: usando default dev — OK para local Docker');
+  if (isProd && !isStaging) errors.push('OAUTH_BFF_SECRET: defina segredo forte (openssl rand -hex 32)');
+  else if (isProd && isStaging && oauthSecret.includes('CHANGE_ME')) {
+    errors.push('OAUTH_BFF_SECRET: preencha CHANGE_ME_STAGING_OAUTH_BFF_SECRET no .env');
+  } else warnings.push('OAUTH_BFF_SECRET: usando default dev — OK para local Docker');
 }
 
-if (isProd && env('OAUTH_DEV_MOCK', fileEnv) === 'true') {
+if (isProd && !isStaging && env('OAUTH_DEV_MOCK', fileEnv) === 'true') {
   errors.push('OAUTH_DEV_MOCK: deve ser false em produção');
+}
+
+if (isStaging && env('OAUTH_DEV_MOCK', fileEnv) === 'true') {
+  warnings.push('Staging: OAUTH_DEV_MOCK=true — OK até configurar Google/Facebook');
 }
 
 const siteUrl = env('NEXT_PUBLIC_SITE_URL', fileEnv);
@@ -68,7 +76,7 @@ if (isProd && hasGoogle) {
   }
 }
 
-console.log(`[auth-env] NODE_ENV=${nodeEnv}`);
+console.log(`[auth-env] NODE_ENV=${nodeEnv}${isStaging ? ' (staging)' : ''}`);
 for (const w of warnings) console.warn(`[auth-env] WARN: ${w}`);
 for (const e of errors) console.error(`[auth-env] ERROR: ${e}`);
 
