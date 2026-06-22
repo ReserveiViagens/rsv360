@@ -10,7 +10,8 @@ WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/package.json
 COPY .github/scripts .github/scripts
-RUN npm ci --workspace=backend --include-workspace-root=false --no-audit --no-fund
+# Backend runtime não usa @rsv360/shared; evita postinstall root (build:shared) no image.
+RUN npm ci --workspace=backend --include-workspace-root=false --no-audit --no-fund --ignore-scripts
 
 FROM node:24-alpine AS runtime
 WORKDIR /workspace
