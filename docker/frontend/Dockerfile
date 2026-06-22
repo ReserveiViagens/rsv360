@@ -12,15 +12,12 @@ ARG INTERNAL_API_URL
 WORKDIR /workspace
 RUN corepack enable
 
-COPY . .
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
-ENV INTERNAL_API_URL=${INTERNAL_API_URL}
-RUN cd "${APP_DIR}" && npm install --no-audit --no-fund \
-  && mkdir -p /workspace/node_modules \
-  && if [ -d "/workspace/${APP_DIR}/node_modules" ]; then cp -R "/workspace/${APP_DIR}/node_modules/." /workspace/node_modules/; fi \
-  && test -d /workspace/node_modules/react \
-  && test -d /workspace/node_modules/react-dom
+# Instalação isolada do app (evita postinstall root + hoist quebrado no Docker).
+COPY ${APP_DIR}/package.json ${APP_DIR}/package-lock.json* ./pkg/
+WORKDIR /workspace/pkg
+RUN npm install --no-audit --no-fund --ignore-scripts \
+  && test -d node_modules/next \
+  && test -d node_modules/react
 
 FROM node:24-alpine AS builder
 ARG APP_DIR
@@ -30,15 +27,17 @@ ARG INTERNAL_API_URL
 WORKDIR /workspace
 RUN corepack enable
 
-COPY --from=deps /workspace /workspace
+COPY . .
+COPY --from=deps /workspace/pkg/node_modules /workspace/${APP_DIR}/node_modules
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
+ENV PATH="/workspace/${APP_DIR}/node_modules/.bin:${PATH}"
 RUN cd "${APP_DIR}" && npm run build
 RUN mkdir -p /workspace/.deploy \
   && cp -R "${APP_DIR}/.next" /workspace/.deploy/.next \
   && cp "${APP_DIR}/package.json" /workspace/.deploy/package.json \
-  && cp -R /workspace/node_modules /workspace/.deploy/node_modules \
+  && cp -R "/workspace/${APP_DIR}/node_modules" /workspace/.deploy/node_modules \
   && mkdir -p /workspace/.deploy/public \
   && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." /workspace/.deploy/public/; fi
 

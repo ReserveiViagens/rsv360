@@ -29,6 +29,10 @@
 | E2E 2FA fluxo completo | Baixa | setup→login→verify (manual hoje) |
 | E2E OAuth mock | Baixa | `OAUTH_DEV_MOCK` + Playwright |
 
+## Produção
+
+Checklist deploy: `docs/evidence/auth/AUTH-PRODUCTION-DEPLOY.md` · template `.env.production.example`
+
 ## Fora de escopo
 
 - D3 guest namespace (by design)
