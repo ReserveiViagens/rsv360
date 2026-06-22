@@ -189,6 +189,41 @@ router.post('/refresh', async (req, res) => {
   });
 });
 
+/** POST /api/v1/auth/register — cria conta (DB); sem auto-login (D2.2) */
+router.post('/register', async (req, res) => {
+  const { registerWithDatabase, isDbRegisterEnabled } = require('./register.service');
+
+  if (!isDbRegisterEnabled()) {
+    return res.status(501).json({
+      success: false,
+      error: 'Registro indisponível. Configure DATABASE_URL.',
+    });
+  }
+
+  try {
+    const result = await registerWithDatabase(req.body);
+
+    if (result?.error === 'validation') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (result?.error === 'email_exists') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (!result?.user) {
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Conta criada com sucesso',
+      data: result.user,
+    });
+  } catch (error) {
+    console.error('[AUTH] register error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
 /** POST /api/v1/auth/login — DB (produção) ou piloto dev */
 router.post('/login', async (req, res) => {
   const { email, password } = req.body || {};
