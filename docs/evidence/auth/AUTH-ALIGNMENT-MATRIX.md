@@ -11,7 +11,7 @@
 | **admin** | `/api/v1/auth/*` | Sim (T1.2) | `localStorage` (`rsv360_*`) | OK |
 | **turismo** | `/api/v1/auth/*` | Sim (T1.7 + D2.3 register) | `localStorage` + authService | OK (2FA legado) |
 | **guest** | `/api/guest-portal/auth/*` | N/A (portal) | `portal-session` | OK — F-029 corrigido |
-| **site-publico** | `/api/auth/*` BFF → `:3002` v1 | **Core sim (T1.8)** | `rsv360_*` via BFF | register/OAuth local |
+| **site-publico** | `/api/auth/*` BFF → `:3002` v1 | **Sim (T1.8 + register BFF)** | `rsv360_*` via BFF | OAuth local |
 
 ## Backend canônico (`:3002`)
 
@@ -28,8 +28,8 @@
 
 | ID | Severidade | Descrição | Status |
 |----|------------|-----------|--------|
-| D1 | ~~Média~~ | site-publico BFF `/api/auth/*` → proxy v1 | **Mitigado (T1.8)** — register/OAuth fora |
-| D2 | Baixa | turismo 2FA fora de v1; register **fechado (D2.3)** | Parcial |
+| D1 | ~~Média~~ | site-publico BFF `/api/auth/*` → proxy v1 | **Fechado (T1.8 + register BFF)** — OAuth fora |
+| D2 | Baixa | turismo 2FA/forgot defer no cliente; register v1 | **Parcial** (2FA backend defer) |
 | D3 | Baixa | guest portal namespace próprio | Esperado |
 | D4 | ~~Ops~~ | F-029 guest redirect loop | **Fechado (#559)** |
 

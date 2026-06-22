@@ -8,6 +8,7 @@ import {
   mapAuthV1User,
   mapRegisterV1User,
 } from '../lib/auth-v1';
+import { rejectDeferredAuth } from '../lib/auth-legacy-deferred';
 
 // Types
 export interface User {
@@ -100,27 +101,9 @@ export const authService = {
     }
   },
 
-  // Verify 2FA
-  async verify2FA(verification: TwoFactorVerification): Promise<LoginResponse> {
-    try {
-      const response = await api.post<LoginResponse>('/api/auth/2fa/verify', verification);
-      
-      if (response.success && response.data) {
-        // Store tokens after successful 2FA
-        tokenManager.setTokens(response.data.access_token, response.data.refresh_token);
-        
-        // Connect WebSocket
-        wsClient.connect();
-        
-        toast.success('Autenticação concluída com sucesso!');
-        return response.data;
-      }
-      
-      throw new Error(response.message || 'Erro na verificação 2FA');
-    } catch (error: unknown) {
-      console.error('2FA verification error:', error);
-      throw error;
-    }
+  // Verify 2FA (defer — sem backend v1)
+  async verify2FA(_verification: TwoFactorVerification): Promise<LoginResponse> {
+    rejectDeferredAuth('twoFactor');
   },
 
   // Register (v1 — sem auto-login; D2.3)
@@ -230,109 +213,38 @@ export const authService = {
     }
   },
 
-  // Setup 2FA
+  // Setup 2FA (defer — sem backend v1)
   async setup2FA(): Promise<TwoFactorSetup> {
-    try {
-      const response = await api.post<TwoFactorSetup>('/api/auth/2fa/setup');
-      
-      if (response.success && response.data) {
-        return response.data;
-      }
-      
-      throw new Error(response.message || 'Erro ao configurar 2FA');
-    } catch (error: unknown) {
-      console.error('2FA setup error:', error);
-      throw error;
-    }
+    rejectDeferredAuth('twoFactor');
   },
 
-  // Verify 2FA setup
-  async verify2FASetup(token: string): Promise<{ backupCodes: string[] }> {
-    try {
-      const response = await api.post<{ backupCodes: string[] }>('/api/auth/2fa/verify-setup', { token });
-      
-      if (response.success && response.data) {
-        toast.success('Autenticação de dois fatores ativada com sucesso!');
-        return response.data;
-      }
-      
-      throw new Error(response.message || 'Erro ao verificar 2FA');
-    } catch (error: unknown) {
-      console.error('2FA verification error:', error);
-      throw error;
-    }
+  // Verify 2FA setup (defer)
+  async verify2FASetup(_token: string): Promise<{ backupCodes: string[] }> {
+    rejectDeferredAuth('twoFactor');
   },
 
-  // Disable 2FA
-  async disable2FA(currentPassword: string, twoFactorCode?: string, backupCode?: string): Promise<void> {
-    try {
-      const response = await api.post('/api/auth/2fa/disable', {
-        current_password: currentPassword,
-        two_factor_token: twoFactorCode,
-        backup_code: backupCode,
-      });
-      
-      if (response.success) {
-        toast.success('Autenticação de dois fatores desativada');
-      } else {
-        throw new Error(response.message || 'Erro ao desativar 2FA');
-      }
-    } catch (error: unknown) {
-      console.error('2FA disable error:', error);
-      throw error;
-    }
+  // Disable 2FA (defer)
+  async disable2FA(
+    _currentPassword: string,
+    _twoFactorCode?: string,
+    _backupCode?: string
+  ): Promise<void> {
+    rejectDeferredAuth('twoFactor');
   },
 
-  // Generate backup codes
-  async generateBackupCodes(currentPassword: string, twoFactorCode?: string): Promise<string[]> {
-    try {
-      const response = await api.post<{ backup_codes: string[] }>('/api/auth/2fa/backup-codes', {
-        current_password: currentPassword,
-        two_factor_token: twoFactorCode,
-      });
-      
-      if (response.success && response.data) {
-        toast.success('Novos códigos de backup gerados');
-        return response.data.backup_codes;
-      }
-      
-      throw new Error(response.message || 'Erro ao gerar códigos de backup');
-    } catch (error: unknown) {
-      console.error('Backup codes generation error:', error);
-      throw error;
-    }
+  // Generate backup codes (defer)
+  async generateBackupCodes(_currentPassword: string, _twoFactorCode?: string): Promise<string[]> {
+    rejectDeferredAuth('twoFactor');
   },
 
-  // Request password reset
-  async requestPasswordReset(email: string): Promise<void> {
-    try {
-      const response = await api.post('/api/auth/forgot-password', { email });
-      
-      if (response.success) {
-        toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
-      } else {
-        throw new Error(response.message || 'Erro ao solicitar recuperação');
-      }
-    } catch (error: unknown) {
-      console.error('Password reset request error:', error);
-      throw error;
-    }
+  // Request password reset (defer — sem backend v1)
+  async requestPasswordReset(_email: string): Promise<void> {
+    rejectDeferredAuth('passwordReset');
   },
 
-  // Reset password
-  async resetPassword(data: PasswordReset): Promise<void> {
-    try {
-      const response = await api.post('/api/auth/reset-password', data);
-      
-      if (response.success) {
-        toast.success('Senha redefinida com sucesso! Faça login com a nova senha.');
-      } else {
-        throw new Error(response.message || 'Erro ao redefinir senha');
-      }
-    } catch (error: unknown) {
-      console.error('Password reset error:', error);
-      throw error;
-    }
+  // Reset password (defer)
+  async resetPassword(_data: PasswordReset): Promise<void> {
+    rejectDeferredAuth('passwordReset');
   },
 
   // Verify token
