@@ -9,27 +9,19 @@
 | Fluxo | Endpoint turismo | Backend v1 |
 |-------|------------------|------------|
 | Login/session/refresh/logout | `/api/v1/auth/*` | ✅ T1.7 |
-| Register | `/api/auth/register` | ❌ legado (`authService`, `AuthContext`) |
-| 2FA setup/verify/disable | `/api/auth/2fa/*` | ❌ legado |
-| Forgot/reset password | `/api/auth/forgot-password`, `reset-password` | ❌ legado |
+| Register | `/api/auth/register` (legado) | ✅ `POST /api/v1/auth/register` (D2.2) |
+| 2FA setup/verify/disable | `/api/auth/2fa/*` | ❌ 404 |
+| Forgot/reset password | `/api/auth/forgot-password`, `reset-password` | ❌ 404 |
 
-Implementação legada referenciada em `apps/turismo/server/server-file-auth.ts` e `src/services/authService.ts`.
+## Fases
 
-## Opções (ADR-0004 H2)
+| Fase | Status | Evidência |
+|------|--------|-----------|
+| D2.1 Inventário + smoke | ✅ | `D2.1-TURISMO-LEGACY-AUTH-INVENTORY.md` |
+| D2.2 Backend register v1 | ✅ | `D2.2-BACKEND-AUTH-REGISTER-RESULT.md` |
+| D2.3 Turismo wire → v1 | Pendente | — |
+| 2FA | Defer | spec segurança |
 
-| Opção | Escopo | Risco |
-|-------|--------|-------|
-| **A — BFF proxy** | Rotas Next `/api/auth/register`, `/api/auth/2fa/*` fazem forward para futuro backend v1 | Médio |
-| **B — Manter legado documentado** | Sem mudança até backend expor v1 register/2FA | Baixo |
-| **C — Desabilitar UI** | Esconder register/2FA até v1 existir | Baixo (perda feature) |
+## Próximo PR
 
-## Recomendação
-
-1. **Fase D2.1** — Inventário + testes de contrato dos endpoints legado (read-only).
-2. **Fase D2.2** — Backend: `POST /api/v1/auth/register` (se produto exigir).
-3. **Fase D2.3** — Turismo BFF proxy (mesmo padrão T1.8 site-publico).
-4. **2FA** — defer até spec de segurança (fora sprint atual).
-
-## Próximo PR sugerido
-
-`chore/d2-turismo-auth-legacy-inventory` — apenas docs + testes de smoke dos endpoints legado, sem refactor.
+`feat/d2.3-turismo-auth-register-v1` — apontar `authService.register` para `/api/v1/auth/register`.
