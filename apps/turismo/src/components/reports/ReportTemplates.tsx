@@ -4,18 +4,13 @@ import React, { useState } from 'react';
 import { 
   FileText, 
   Eye, 
-  Edit3, 
-  Trash2, 
   Copy,
   Star,
   Calendar,
   BarChart3,
-  PieChart,
   TrendingUp,
   Users,
   DollarSign,
-  MapPin,
-  Clock,
   Filter,
   Search,
   Plus,
@@ -156,7 +151,7 @@ const ReportTemplates: React.FC = () => {
     console.log('Alternando favorito:', templateId);
   };
 
-  const handleDeleteTemplate = (templateId: string) => {
+  const _handleDeleteTemplate = (templateId: string) => {
     if (confirm('Tem certeza que deseja excluir este template?')) {
       console.log('Excluindo template:', templateId);
       alert('Template excluído com sucesso!');

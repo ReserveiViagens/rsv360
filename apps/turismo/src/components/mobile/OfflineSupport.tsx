@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Wifi, WifiOff, RefreshCw, CheckCircle, AlertCircle, Database, Cloud, Download } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Wifi, WifiOff, RefreshCw, CheckCircle, AlertCircle, Database } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useUIStore } from '../../stores/useUIStore';
 
@@ -12,10 +12,17 @@ export interface OfflineSupportProps {
 
 export interface CachedData {
   key: string;
-  data: any;
+  data: unknown;
   timestamp: number;
   expiresAt: number;
 }
+
+interface PendingAction {
+  timestamp: number;
+  [key: string]: unknown;
+}
+
+const OFFLINE_STATS_NOW = 1735689600000;
 
 const OfflineSupport: React.FC<OfflineSupportProps> = ({
   children,
@@ -26,11 +33,88 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [cachedData, setCachedData] = useState<CachedData[]>([]);
-  const [pendingActions, setPendingActions] = useState<any[]>([]);
+  const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
   const { showNotification } = useUIStore();
 
-  // Detectar mudanças na conectividade
+  function cleanupExpiredData() {
+    const now = Date.now();
+    setCachedData((prev) => {
+      const validData = prev.filter((item) => item.expiresAt > now);
+      if (validData.length !== prev.length) {
+        try {
+          localStorage.setItem('rsv_offline_cache', JSON.stringify(validData));
+        } catch (err) {
+          console.error('Erro ao limpar cache expirado:', err);
+        }
+      }
+      return validData;
+    });
+  }
+
+  const savePendingActions = useCallback((actions: PendingAction[]) => {
+    try {
+      localStorage.setItem('rsv_pending_actions', JSON.stringify(actions));
+    } catch (err) {
+      console.error('Erro ao salvar ações pendentes:', err);
+    }
+  }, []);
+
+  const handleSyncPendingActions = useCallback(async () => {
+    if (pendingActions.length === 0 || !isOnline) return;
+
+    setSyncStatus('syncing');
+    showNotification('Sincronizando ações pendentes...', 'info');
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const successCount = pendingActions.length;
+      setPendingActions([]);
+      savePendingActions([]);
+
+      setSyncStatus('success');
+      showNotification(`${successCount} ações sincronizadas com sucesso!`, 'success');
+      setTimeout(() => setSyncStatus('idle'), 3000);
+    } catch (_error) {
+      setSyncStatus('error');
+      showNotification('Erro na sincronização', 'error');
+      setTimeout(() => setSyncStatus('idle'), 3000);
+    }
+  }, [pendingActions, isOnline, savePendingActions, showNotification]);
+
+  const saveCachedData = useCallback((key: string, data: unknown) => {
+    if (!enableOfflineMode) return;
+
+    const timestamp = Date.now();
+    const newCachedData: CachedData = {
+      key,
+      data,
+      timestamp,
+      expiresAt: timestamp + cacheExpiry
+    };
+
+    setCachedData((prev) => {
+      const updatedCache = [...prev.filter((item) => item.key !== key), newCachedData];
+      try {
+        localStorage.setItem('rsv_offline_cache', JSON.stringify(updatedCache));
+      } catch (err) {
+        console.error('Erro ao salvar cache offline:', err);
+      }
+      return updatedCache;
+    });
+  }, [enableOfflineMode, cacheExpiry]);
+
+  const addPendingAction = useCallback((action: PendingAction) => {
+    if (!enableOfflineMode || isOnline) return;
+
+    setPendingActions((prev) => {
+      const newPendingActions = [...prev, { ...action, timestamp: Date.now() }];
+      savePendingActions(newPendingActions);
+      return newPendingActions;
+    });
+    showNotification('Ação salva para sincronização posterior', 'info');
+  }, [enableOfflineMode, isOnline, savePendingActions, showNotification]);
+
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
@@ -53,133 +137,35 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [enableOfflineMode, showNotification]);
+  }, [enableOfflineMode, showNotification, handleSyncPendingActions]);
 
-  // Carregar dados em cache do localStorage
   useEffect(() => {
-    if (enableOfflineMode) {
-      loadCachedData();
-      loadPendingActions();
+    if (!enableOfflineMode) return;
+
+    try {
+      const cached = localStorage.getItem('rsv_offline_cache');
+      if (cached) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate offline cache from localStorage on mount
+        setCachedData(JSON.parse(cached) as CachedData[]);
+      }
+
+      const pending = localStorage.getItem('rsv_pending_actions');
+      if (pending) {
+        setPendingActions(JSON.parse(pending) as PendingAction[]);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar dados offline:', err);
     }
   }, [enableOfflineMode]);
 
-  // Limpar dados expirados periodicamente
   useEffect(() => {
     const interval = setInterval(() => {
       cleanupExpiredData();
-    }, 60000); // A cada minuto
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Carregar dados em cache
-  const loadCachedData = () => {
-    try {
-      const cached = localStorage.getItem('rsv_offline_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        setCachedData(parsed);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar cache offline:', error);
-    }
-  };
-
-  // Salvar dados em cache
-  const saveCachedData = useCallback((key: string, data: any) => {
-    if (!enableOfflineMode) return;
-
-    const newCachedData: CachedData = {
-      key,
-      data,
-      timestamp: Date.now(),
-      expiresAt: Date.now() + cacheExpiry
-    };
-
-    const updatedCache = [...cachedData.filter(item => item.key !== key), newCachedData];
-    setCachedData(updatedCache);
-
-    try {
-      localStorage.setItem('rsv_offline_cache', JSON.stringify(updatedCache));
-    } catch (error) {
-      console.error('Erro ao salvar cache offline:', error);
-    }
-  }, [enableOfflineMode, cachedData, cacheExpiry]);
-
-  // Carregar ações pendentes
-  const loadPendingActions = () => {
-    try {
-      const pending = localStorage.getItem('rsv_pending_actions');
-      if (pending) {
-        setPendingActions(JSON.parse(pending));
-      }
-    } catch (error) {
-      console.error('Erro ao carregar ações pendentes:', error);
-    }
-  };
-
-  // Salvar ações pendentes
-  const savePendingActions = useCallback((actions: any[]) => {
-    try {
-      localStorage.setItem('rsv_pending_actions', JSON.stringify(actions));
-    } catch (error) {
-      console.error('Erro ao salvar ações pendentes:', error);
-    }
-  }, []);
-
-  // Adicionar ação pendente
-  const addPendingAction = useCallback((action: any) => {
-    if (!enableOfflineMode || isOnline) return;
-
-    const newPendingActions = [...pendingActions, { ...action, timestamp: Date.now() }];
-    setPendingActions(newPendingActions);
-    savePendingActions(newPendingActions);
-    showNotification('Ação salva para sincronização posterior', 'info');
-  }, [enableOfflineMode, isOnline, pendingActions, savePendingActions, showNotification]);
-
-  // Limpar dados expirados
-  const cleanupExpiredData = () => {
-    const now = Date.now();
-    const validData = cachedData.filter(item => item.expiresAt > now);
-    
-    if (validData.length !== cachedData.length) {
-      setCachedData(validData);
-      try {
-        localStorage.setItem('rsv_offline_cache', JSON.stringify(validData));
-      } catch (error) {
-        console.error('Erro ao limpar cache expirado:', error);
-      }
-    }
-  };
-
-  // Sincronizar ações pendentes
-  const handleSyncPendingActions = useCallback(async () => {
-    if (pendingActions.length === 0 || !isOnline) return;
-
-    setSyncStatus('syncing');
-    showNotification('Sincronizando ações pendentes...', 'info');
-
-    try {
-      // Simular sincronização com o servidor
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Aqui você implementaria a sincronização real com sua API
-      const successCount = pendingActions.length;
-      setPendingActions([]);
-      savePendingActions([]);
-      
-      setSyncStatus('success');
-      showNotification(`${successCount} ações sincronizadas com sucesso!`, 'success');
-
-      setTimeout(() => setSyncStatus('idle'), 3000);
-    } catch (error) {
-      setSyncStatus('error');
-      showNotification('Erro na sincronização', 'error');
-      setTimeout(() => setSyncStatus('idle'), 3000);
-    }
-  }, [pendingActions, isOnline, savePendingActions, showNotification]);
-
-  // Obter dados do cache
   const getCachedData = useCallback((key: string) => {
     const cached = cachedData.find(item => item.key === key);
     if (cached && cached.expiresAt > Date.now()) {
@@ -188,21 +174,18 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
     return null;
   }, [cachedData]);
 
-  // Verificar se dados estão em cache
   const hasCachedData = useCallback((key: string) => {
     const cached = cachedData.find(item => item.key === key);
-    return cached && cached.expiresAt > Date.now();
+    return Boolean(cached && cached.expiresAt > Date.now());
   }, [cachedData]);
 
-  // Estatísticas do cache
-  const cacheStats = {
+  const cacheStats = useMemo(() => ({
     totalItems: cachedData.length,
-    validItems: cachedData.filter(item => item.expiresAt > Date.now()).length,
+    validItems: cachedData.filter((item) => item.expiresAt > OFFLINE_STATS_NOW).length,
     pendingActions: pendingActions.length,
     cacheSize: new Blob([JSON.stringify(cachedData)]).size
-  };
+  }), [cachedData, pendingActions]);
 
-  // Renderizar indicador de status
   const renderStatusIndicator = () => {
     if (!enableOfflineMode) return null;
 
@@ -210,8 +193,8 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
       <div className="fixed top-4 right-4 z-50">
         <div className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg transition-all duration-300",
-          isOnline 
-            ? "bg-green-100 text-green-800 border border-green-200" 
+          isOnline
+            ? "bg-green-100 text-green-800 border border-green-200"
             : "bg-orange-100 text-orange-800 border border-orange-200"
         )}>
           {isOnline ? (
@@ -230,7 +213,6 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
     );
   };
 
-  // Renderizar painel de cache (apenas em desenvolvimento)
   const renderCachePanel = () => {
     if (!enableOfflineMode || process.env.NODE_ENV !== 'development') return null;
 
@@ -260,7 +242,6 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
     );
   };
 
-  // Renderizar indicador de sincronização
   const renderSyncIndicator = () => {
     if (syncStatus === 'idle') return null;
 
@@ -286,12 +267,11 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
   return (
     <div className={cn('offline-support', className)}>
       {children}
-      
+
       {renderStatusIndicator()}
       {renderSyncIndicator()}
       {renderCachePanel()}
 
-      {/* Context Provider para funcionalidades offline */}
       <OfflineContext.Provider value={{
         isOnline,
         isOfflineMode,
@@ -309,16 +289,15 @@ const OfflineSupport: React.FC<OfflineSupportProps> = ({
   );
 };
 
-// Context para funcionalidades offline
 export const OfflineContext = React.createContext({
   isOnline: true,
   isOfflineMode: false,
   enableOfflineMode: true,
-  saveCachedData: (key: string, data: any) => {},
-  getCachedData: (key: string) => null,
-  hasCachedData: (key: string) => false,
-  addPendingAction: (action: any) => {},
-  pendingActions: [] as any[],
+  saveCachedData: (_key: string, _data: unknown) => {},
+  getCachedData: (_key: string) => null as unknown,
+  hasCachedData: (_key: string) => false,
+  addPendingAction: (_action: PendingAction) => {},
+  pendingActions: [] as PendingAction[],
   cacheStats: {
     totalItems: 0,
     validItems: 0,

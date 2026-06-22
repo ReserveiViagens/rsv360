@@ -4,7 +4,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../../src/context/AuthContext';
 import ProtectedRoute from '../../src/components/ProtectedRoute';
 import { NotificationProvider } from '../../src/context/NotificationContext';
 import { NotificationToastContainer } from '../../src/components/notifications';

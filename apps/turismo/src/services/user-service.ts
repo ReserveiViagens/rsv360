@@ -45,7 +45,7 @@ export interface UserListResponse {
 export interface BulkUserOperation {
   userIds: string[];
   operation: 'activate' | 'deactivate' | 'delete' | 'changeRole' | 'sendEmail';
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface UserImportRequest {
@@ -94,7 +94,7 @@ export class UserService {
     limit = 20,
     filters?: UserFilters
   ): Promise<ApiResponse<UserListResponse>> {
-    const params: any = { page, limit };
+    const params: Record<string, string | number | boolean> = { page, limit };
     
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -218,7 +218,7 @@ export class UserService {
     format: 'csv' | 'excel' | 'json' = 'csv',
     filters?: UserFilters
   ): Promise<void> {
-    const params: any = { format };
+    const params: Record<string, string | number | boolean> = { format };
     
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -401,7 +401,7 @@ export class UserService {
       totalPages: number;
     };
   }>> {
-    const params: any = { page, limit };
+    const params: Record<string, string | number | boolean> = { page, limit };
     
     if (userId) params.userId = userId;
     if (filters) {
@@ -430,7 +430,7 @@ export class UserService {
     filters?: UserFilters,
     format: 'pdf' | 'csv' | 'excel' = 'pdf'
   ): Promise<void> {
-    const params: any = { reportType, format };
+    const params: Record<string, string | number | boolean> = { reportType, format };
     
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {

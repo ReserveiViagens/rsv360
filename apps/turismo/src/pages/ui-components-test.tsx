@@ -10,9 +10,6 @@ import {
 } from '../components/ui';
 import { 
   CheckCircle, 
-  AlertTriangle, 
-  XCircle, 
-  Info,
   FileText,
   MessageSquare
 } from 'lucide-react';
@@ -20,7 +17,6 @@ import {
 export default function UIComponentsTest() {
   const [progressValue, setProgressValue] = useState(45);
   const [textareaValue, setTextareaValue] = useState('');
-  const [showAlerts, setShowAlerts] = useState(true);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -154,7 +150,7 @@ export default function UIComponentsTest() {
                   </Button>
                 }
                 showCloseButton
-                onClose={() => setShowAlerts(false)}
+                onClose={() => {}}
               >
                 <p>Uma nova versão do sistema está disponível.</p>
               </Alert>

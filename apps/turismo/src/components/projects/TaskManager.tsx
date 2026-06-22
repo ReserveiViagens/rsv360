@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Progress, Textarea, Switch } from '@/components/ui';
-import { Plus, Settings, Edit, Trash2, Users, Calendar, Target, Clock, CheckCircle, AlertCircle, XCircle, Eye, Copy, Filter, Search, Star, User, Tag, Flag } from 'lucide-react';
+import { Card, Button, Input, Badge, Select, Progress, Textarea } from '@/components/ui';
+import { Plus, Edit, Trash2, Calendar, Target, Clock, Eye, Copy, Filter, User, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Task {
@@ -128,16 +128,6 @@ export default function TaskManager({ onTaskSelect }: TaskManagerProps) {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'low': return 'bg-gray-100 text-gray-800';
-      case 'medium': return 'bg-blue-100 text-blue-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'critical': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'low': return <Flag className="w-3 h-3 text-gray-500" />;
@@ -259,13 +249,6 @@ export default function TaskManager({ onTaskSelect }: TaskManagerProps) {
     };
     setTasks([...tasks, duplicatedTask]);
     toast.success('Tarefa duplicada com sucesso!');
-  };
-
-  const handleStatusChange = (taskId: string, newStatus: Task['status']) => {
-    setTasks(tasks.map(t => 
-      t.id === taskId ? { ...t, status: newStatus, updatedAt: new Date().toISOString().split('T')[0] } : t
-    ));
-    toast.success('Status da tarefa atualizado!');
   };
 
   const renderKanbanView = () => {
@@ -518,7 +501,7 @@ export default function TaskManager({ onTaskSelect }: TaskManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Responsável *</label>
-              <Select value={newTask.assignee} onValueChange={(value: any) => setNewTask({...newTask, assignee: value})}>
+              <Select value={newTask.assignee} onValueChange={(value: string) => setNewTask({...newTask, assignee: value})}>
                 <option value="">Selecione um responsável</option>
                 <option value="Maria Santos">Maria Santos</option>
                 <option value="Pedro Costa">Pedro Costa</option>
@@ -552,7 +535,7 @@ export default function TaskManager({ onTaskSelect }: TaskManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <Select value={newTask.status} onValueChange={(value: any) => setNewTask({...newTask, status: value})}>
+              <Select value={newTask.status} onValueChange={(value: Task['status']) => setNewTask({...newTask, status: value})}>
                 <option value="todo">A Fazer</option>
                 <option value="in-progress">Em Progresso</option>
                 <option value="review">Em Revisão</option>
@@ -562,7 +545,7 @@ export default function TaskManager({ onTaskSelect }: TaskManagerProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
-              <Select value={newTask.priority} onValueChange={(value: any) => setNewTask({...newTask, priority: value})}>
+              <Select value={newTask.priority} onValueChange={(value: Task['priority']) => setNewTask({...newTask, priority: value})}>
                 <option value="low">Baixa</option>
                 <option value="medium">Média</option>
                 <option value="high">Alta</option>

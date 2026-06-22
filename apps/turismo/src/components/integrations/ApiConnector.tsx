@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, Database, Wifi, AlertCircle, CheckCircle, Clock, RefreshCw, Plus, Edit, Trash2, TestTube, Key, Globe, Shield, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, Database, Wifi, AlertCircle, CheckCircle, RefreshCw, Plus, Edit, Trash2, TestTube, Globe, Shield, Zap } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Select, SelectOption } from '../ui/Select';
 import { Modal } from '../ui/Modal';
 import { Badge } from '../ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
 import { cn } from '../../utils/cn';
 
 export interface ApiConnection {
@@ -174,7 +173,7 @@ const syncFrequencies: SelectOption[] = [
 const ApiConnector: React.FC<ApiConnectorProps> = ({ className }) => {
   const [connections, setConnections] = useState<ApiConnection[]>(mockConnections);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [_isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTestModalOpen, setIsTestModalOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<ApiConnection | null>(null);
   const [newConnection, setNewConnection] = useState<Partial<ApiConnection>>({
@@ -187,21 +186,6 @@ const ApiConnector: React.FC<ApiConnectorProps> = ({ className }) => {
       retryAttempts: 3,
     },
   });
-
-  const getStatusIcon = (status: ApiConnection['status']) => {
-    switch (status) {
-      case 'active':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'inactive':
-        return <Clock className="w-5 h-5 text-gray-500" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-500" />;
-      case 'testing':
-        return <TestTube className="w-5 h-5 text-yellow-500" />;
-      default:
-        return <Clock className="w-5 h-5 text-gray-500" />;
-    }
-  };
 
   const getStatusColor = (status: ApiConnection['status']) => {
     switch (status) {
@@ -484,7 +468,7 @@ const ApiConnector: React.FC<ApiConnectorProps> = ({ className }) => {
               </label>
               <Select
                 value={newConnection.type || ''}
-                onValueChange={(value) => setNewConnection(prev => ({ ...prev, type: value as any }))}
+                onValueChange={(value) => setNewConnection(prev => ({ ...prev, type: value as ApiConnection['type'] }))}
                 options={connectionTypes}
                 placeholder="Selecionar tipo"
               />
@@ -495,7 +479,7 @@ const ApiConnector: React.FC<ApiConnectorProps> = ({ className }) => {
               </label>
               <Select
                 value={newConnection.syncFrequency || ''}
-                onValueChange={(value) => setNewConnection(prev => ({ ...prev, syncFrequency: value as any }))}
+                onValueChange={(value) => setNewConnection(prev => ({ ...prev, syncFrequency: value as ApiConnection['syncFrequency'] }))}
                 options={syncFrequencies}
                 placeholder="Selecionar frequência"
               />

@@ -139,12 +139,14 @@ const TouchInteractions: React.FC<TouchInteractionsProps> = ({
     if (e.touches.length === 2) {
       handlePinch(e.touches);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- gesture handlers share local pinch/swipe helpers
   }, [onLongPress, longPressDelay, showNotification]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 2) {
       handlePinch(e.touches);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- gesture handlers share local pinch/swipe helpers
   }, []);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
@@ -186,6 +188,7 @@ const TouchInteractions: React.FC<TouchInteractionsProps> = ({
     setTouchEnd(null);
     setInitialDistance(null);
     setCurrentDistance(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- gesture handlers share local pinch/swipe helpers
   }, [touchStart, touchEnd, longPressTimer, lastTap, onDoubleTap, showNotification]);
 
   // Cleanup

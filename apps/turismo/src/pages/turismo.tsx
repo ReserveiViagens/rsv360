@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import {
@@ -9,35 +9,17 @@ import {
   Car,
   Mountain,
   Ticket,
-  Star,
   TrendingUp,
   Users,
-  Globe,
-  Heart,
-  Plus,
   Search,
-  Filter,
   Settings,
-  Bell,
   X,
-  Edit,
-  Trash,
-  Eye,
   Download,
-  Upload,
   RefreshCw,
-  BarChart3,
-  PieChart,
-  Activity,
-  Clock,
-  DollarSign,
-  UserPlus,
-  FileText,
   CheckCircle,
   AlertCircle,
   Info
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 
 // Interfaces para tipagem
 interface ServiceCard {
@@ -141,6 +123,198 @@ function NotificationToast({ notification, onClose }: { notification: Notificati
   );
 }
 
+function NewTravelForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    destino: '',
+    dataInicio: '',
+    dataFim: '',
+    passageiros: 1,
+    tipo: 'lazer'
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSuccess();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
+        <input
+          type="text"
+          value={formData.destino}
+          onChange={(e) => setFormData(prev => ({ ...prev, destino: e.target.value }))}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
+          <input
+            type="date"
+            value={formData.dataInicio}
+            onChange={(e) => setFormData(prev => ({ ...prev, dataInicio: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
+          <input
+            type="date"
+            value={formData.dataFim}
+            onChange={(e) => setFormData(prev => ({ ...prev, dataFim: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Passageiros</label>
+          <input
+            type="number"
+            min="1"
+            value={formData.passageiros}
+            onChange={(e) => setFormData(prev => ({ ...prev, passageiros: parseInt(e.target.value) }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+          <select
+            value={formData.tipo}
+            onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="lazer">Lazer</option>
+            <option value="negocio">Negócio</option>
+            <option value="evento">Evento</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-3 pt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+        >
+          Criar Viagem
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function NewTicketForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    evento: '',
+    data: '',
+    quantidade: 1,
+    tipo: 'padrao',
+    preco: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSuccess();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Evento/Atração</label>
+        <input
+          type="text"
+          value={formData.evento}
+          onChange={(e) => setFormData(prev => ({ ...prev, evento: e.target.value }))}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+          <input
+            type="date"
+            value={formData.data}
+            onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+          <input
+            type="number"
+            min="1"
+            value={formData.quantidade}
+            onChange={(e) => setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+          <select
+            value={formData.tipo}
+            onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="padrao">Padrão</option>
+            <option value="vip">VIP</option>
+            <option value="familia">Família</option>
+            <option value="estudante">Estudante</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
+          <input
+            type="number"
+            step="0.01"
+            value={formData.preco}
+            onChange={(e) => setFormData(prev => ({ ...prev, preco: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-3 pt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700"
+        >
+          Vender Ingresso
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function Turismo() {
   const { user } = useAuth();
   const router = useRouter();
@@ -162,10 +336,9 @@ export default function Turismo() {
   const [showNewTicket, setShowNewTicket] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [notificationCounter, setNotificationCounter] = useState(0);
+  const notificationSeqRef = useRef(0);
 
-  // Dados dos serviços de turismo
-  const turismoServices: ServiceCard[] = [
+  const turismoServices = useMemo<ServiceCard[]>(() => [
     {
       id: 'travel',
       name: 'Viagens',
@@ -232,21 +405,41 @@ export default function Turismo() {
       count: 789,
       revenue: 9500
     }
-  ];
+  ], []);
 
-  // Simular carregamento de dados
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  const addNotification = useCallback((type: Notification['type'], title: string, message: string) => {
+    notificationSeqRef.current += 1;
+    const newId = `notification-${notificationSeqRef.current}`;
+    const newNotification: Notification = {
+      id: newId,
+      type,
+      title,
+      message,
+      timestamp: new Date()
+    };
+
+    setNotifications(prev => [...prev, newNotification]);
+
+    setTimeout(() => {
+      removeNotification(newId);
+    }, 5000);
+  }, [removeNotification]);
+
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      // Simular chamada API
       await new Promise(resolve => setTimeout(resolve, 1000));
       setTurismoData(prev => ({ ...prev, servicos: turismoServices }));
       setIsLoading(false);
       addNotification('success', 'Dados carregados', 'Informações de turismo atualizadas com sucesso!');
     };
-    
+
     loadData();
-  }, []);
+  }, [addNotification, turismoServices]);
 
   // Funções utilitárias
   const getStatusColor = (status: string) => {
@@ -265,31 +458,6 @@ export default function Turismo() {
       case 'warning': return 'ðŸŸ¡';
       default: return 'âšª';
     }
-  };
-
-  // Sistema de notificações com keys únicas
-  const addNotification = (type: Notification['type'], title: string, message: string) => {
-    const newId = `notification-${Date.now()}-${notificationCounter}`;
-    setNotificationCounter(prev => prev + 1);
-    
-    const newNotification: Notification = {
-      id: newId,
-      type,
-      title,
-      message,
-      timestamp: new Date()
-    };
-    
-    setNotifications(prev => [...prev, newNotification]);
-    
-    // Auto-remover após 5 segundos
-    setTimeout(() => {
-      removeNotification(newId);
-    }, 5000);
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
   // Funções de ação
@@ -320,202 +488,6 @@ export default function Turismo() {
     const matchesFilter = selectedFilter === 'all' || service.status === selectedFilter;
     return matchesSearch && matchesFilter;
   });
-
-  // Formulário de Nova Viagem
-  const NewTravelForm = () => {
-    const [formData, setFormData] = useState({
-      destino: '',
-      dataInicio: '',
-      dataFim: '',
-      passageiros: 1,
-      tipo: 'lazer'
-    });
-
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      addNotification('success', 'Viagem criada', 'Nova viagem registrada com sucesso!');
-      setShowNewTravel(false);
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
-          <input
-            type="text"
-            value={formData.destino}
-            onChange={(e) => setFormData(prev => ({ ...prev, destino: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
-            <input
-              type="date"
-              value={formData.dataInicio}
-              onChange={(e) => setFormData(prev => ({ ...prev, dataInicio: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
-            <input
-              type="date"
-              value={formData.dataFim}
-              onChange={(e) => setFormData(prev => ({ ...prev, dataFim: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Passageiros</label>
-            <input
-              type="number"
-              min="1"
-              value={formData.passageiros}
-              onChange={(e) => setFormData(prev => ({ ...prev, passageiros: parseInt(e.target.value) }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-            <select
-              value={formData.tipo}
-              onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="lazer">Lazer</option>
-              <option value="negocio">Negócio</option>
-              <option value="evento">Evento</option>
-            </select>
-          </div>
-        </div>
-        
-        <div className="flex justify-end space-x-3 pt-4">
-          <button
-            type="button"
-            onClick={() => setShowNewTravel(false)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-          >
-            Criar Viagem
-          </button>
-        </div>
-      </form>
-    );
-  };
-
-  // Formulário de Novo Ingresso
-  const NewTicketForm = () => {
-    const [formData, setFormData] = useState({
-      evento: '',
-      data: '',
-      quantidade: 1,
-      tipo: 'padrao',
-      preco: ''
-    });
-
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      addNotification('success', 'Ingresso vendido', 'Venda de ingresso registrada com sucesso!');
-      setShowNewTicket(false);
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Evento/Atração</label>
-          <input
-            type="text"
-            value={formData.evento}
-            onChange={(e) => setFormData(prev => ({ ...prev, evento: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-            <input
-              type="date"
-              value={formData.data}
-              onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
-            <input
-              type="number"
-              min="1"
-              value={formData.quantidade}
-              onChange={(e) => setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-            <select
-              value={formData.tipo}
-              onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="padrao">Padrão</option>
-              <option value="vip">VIP</option>
-              <option value="familia">Família</option>
-              <option value="estudante">Estudante</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
-            <input
-              type="number"
-              step="0.01"
-              value={formData.preco}
-              onChange={(e) => setFormData(prev => ({ ...prev, preco: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-        
-        <div className="flex justify-end space-x-3 pt-4">
-          <button
-            type="button"
-            onClick={() => setShowNewTicket(false)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700"
-          >
-            Vender Ingresso
-          </button>
-        </div>
-      </form>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -806,7 +778,13 @@ export default function Turismo() {
         onClose={() => setShowNewTravel(false)}
         title="Nova Viagem"
       >
-        <NewTravelForm />
+        <NewTravelForm
+          onSuccess={() => {
+            addNotification('success', 'Viagem criada', 'Nova viagem registrada com sucesso!');
+            setShowNewTravel(false);
+          }}
+          onCancel={() => setShowNewTravel(false)}
+        />
       </Modal>
 
       <Modal
@@ -814,7 +792,13 @@ export default function Turismo() {
         onClose={() => setShowNewTicket(false)}
         title="Vender Ingresso"
       >
-        <NewTicketForm />
+        <NewTicketForm
+          onSuccess={() => {
+            addNotification('success', 'Ingresso vendido', 'Venda de ingresso registrada com sucesso!');
+            setShowNewTicket(false);
+          }}
+          onCancel={() => setShowNewTicket(false)}
+        />
       </Modal>
 
       <Modal

@@ -225,13 +225,13 @@ export default function ComponentTestPage() {
             <Card className="p-8">
               <h3 className="text-xl font-semibold mb-6">Variantes Básicas</h3>
               <div className="flex flex-wrap gap-4">
-                <PrimaryBadge>Primary</PrimaryBadge>
-                <SecondaryBadge>Secondary</SecondaryBadge>
-                <AccentBadge>Accent</AccentBadge>
-                <SuccessBadge>Success</SuccessBadge>
-                <WarningBadge>Warning</WarningBadge>
-                <DangerBadge>Danger</DangerBadge>
-                <NeutralBadge>Neutral</NeutralBadge>
+                <Badge variant="default">Primary</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="outline">Accent</Badge>
+                <Badge className="border-transparent bg-green-100 text-green-800">Success</Badge>
+                <Badge className="border-transparent bg-yellow-100 text-yellow-800">Warning</Badge>
+                <Badge variant="destructive">Danger</Badge>
+                <Badge variant="outline">Neutral</Badge>
               </div>
             </Card>
 

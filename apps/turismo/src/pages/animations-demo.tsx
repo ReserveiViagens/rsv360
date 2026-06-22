@@ -1,38 +1,31 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Layout } from '../components/layout';
-import { Card, Button, Badge } from '../components/ui';
-import { AnimatedCard, AnimatedLoader, PageTransition } from '../components/ui';
+import { Card, Button, Badge, AnimatedCard, AnimatedLoader, PageTransition } from '../components/ui';
 import { useAnimations } from '../hooks/useAnimations';
-import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  Zap, 
-  Sparkles, 
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Zap,
+  Sparkles,
   Star,
   Heart,
   Award,
-  Trophy,
   Target,
   Rocket,
   Gem
 } from 'lucide-react';
 
+type CardAnimation = NonNullable<React.ComponentProps<typeof AnimatedCard>['animation']>;
+type CardHover = NonNullable<React.ComponentProps<typeof AnimatedCard>['hover']>;
+type LoaderType = NonNullable<React.ComponentProps<typeof AnimatedLoader>['type']>;
+
 export default function AnimationsDemo() {
-  const { 
-    fadeInUp, 
-    fadeInLeft, 
-    fadeInRight, 
-    scaleIn, 
-    slideInDown, 
-    slideInUp, 
-    rotateIn, 
-    bounceIn, 
-    flipIn,
+  const {
     hoverScale,
     hoverLift,
     hoverGlow,
-    staggerContainer,
     staggerItem,
     isReducedMotion
   } = useAnimations();
@@ -168,9 +161,9 @@ export default function AnimationsDemo() {
             {demoCards.map((card, index) => (
               <AnimatedCard
                 key={index}
-                animation={selectedAnimation as any}
+                animation={selectedAnimation as CardAnimation}
                 delay={index * 100}
-                hover={selectedHover as any}
+                hover={selectedHover as CardHover}
                 className="h-full"
               >
                 <div className="p-4 text-center">
@@ -225,7 +218,7 @@ export default function AnimationsDemo() {
                 </h3>
                 <div className="flex justify-center">
                   <AnimatedLoader
-                    type={loader.id as any}
+                    type={loader.id as LoaderType}
                     size="lg"
                     color="blue"
                     text={loader.id === 'custom' ? 'Carregando...' : undefined}

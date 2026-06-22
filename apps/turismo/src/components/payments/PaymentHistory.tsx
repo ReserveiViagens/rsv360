@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { CreditCard, Search, Filter, Download, Eye, RefreshCw, Calendar, DollarSign, User, MapPin, Clock, CheckCircle, AlertCircle, XCircle, Clock as ClockIcon } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { CreditCard, Download, Eye, RefreshCw, DollarSign, CheckCircle, XCircle, Clock as ClockIcon } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -283,7 +283,7 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ className }) => {
     }
   };
 
-  const handleFilterChange = (field: keyof TransactionFilters, value: any) => {
+  const handleFilterChange = (field: keyof TransactionFilters, value: TransactionFilters[keyof TransactionFilters]) => {
     setFilters(prev => ({ ...prev, [field]: value }));
     setCurrentPage(1);
   };

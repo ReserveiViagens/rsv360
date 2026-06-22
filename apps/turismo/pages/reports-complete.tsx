@@ -65,7 +65,7 @@ export default function ReportsCompletePage() {
         if (mResult.status === 'rejected' && tResult.status === 'rejected') {
           throw new Error('Falha ao carregar métricas e templates de relatórios')
         }
-      } catch (e: any) {
+      } catch (e: Record<string, unknown>) {
         setError(e?.message || 'Falha ao carregar relatórios')
       } finally {
         clearTimeout(timeout)

@@ -6,44 +6,36 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/Progress'
 import { 
-  Link2, 
   CheckCircle, 
   AlertTriangle, 
   Clock,
   Settings,
   RefreshCw,
   Database,
-  FileText,
   Download,
   Upload,
   Sync,
   BarChart3,
   Activity,
   Shield,
-  Key,
   Server,
   Cloud,
   AlertCircle,
   Plus,
   Edit,
-  Trash2,
   Eye,
   PlayCircle,
   StopCircle,
-  Calendar,
-  Filter,
-  Search,
   FileSpreadsheet,
   FileX,
   FileCheck
 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 // Tipos de dados para integração contábil
 interface AccountingSystem {
@@ -109,10 +101,115 @@ interface AccountingData {
   }[]
 }
 
+const AccountingSystemForm: React.FC = () => (
+  <form className="grid gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="system-name">Nome do Sistema</Label>
+        <Input 
+          id="system-name"
+          placeholder="Ex: Sistema Contábil XYZ"
+          title="Nome identificador do sistema"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="system-provider">Fornecedor</Label>
+        <Input 
+          id="system-provider"
+          placeholder="Ex: Empresa ABC"
+          title="Nome do fornecedor do sistema"
+        />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="system-type">Tipo de Sistema</Label>
+        <Select>
+          <SelectTrigger title="Selecionar tipo de sistema">
+            <SelectValue placeholder="Selecionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="cloud">Cloud/SaaS</SelectItem>
+            <SelectItem value="desktop">Desktop</SelectItem>
+            <SelectItem value="web">Web Application</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="sync-frequency">Frequência de Sincronização</Label>
+        <Select>
+          <SelectTrigger title="Selecionar frequência">
+            <SelectValue placeholder="Selecionar frequência" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tempo-real">Tempo Real</SelectItem>
+            <SelectItem value="horario">A cada hora</SelectItem>
+            <SelectItem value="diario">Diário</SelectItem>
+            <SelectItem value="semanal">Semanal</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="api-endpoint">Endpoint da API</Label>
+      <Input 
+        id="api-endpoint"
+        placeholder="https://api.sistema.com.br/v1"
+        title="URL do endpoint da API"
+      />
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="api-key">Chave da API</Label>
+        <Input 
+          id="api-key"
+          type="password"
+          placeholder="••••••••••••••••"
+          title="Chave de autenticação da API"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="api-secret">Secret Key</Label>
+        <Input 
+          id="api-secret"
+          type="password"
+          placeholder="••••••••••••••••"
+          title="Chave secreta da API"
+        />
+      </div>
+    </div>
+
+    <div className="space-y-3">
+      <Label>Dados para Sincronização</Label>
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { key: 'accounts', label: 'Plano de Contas' },
+          { key: 'transactions', label: 'Lançamentos' },
+          { key: 'customers', label: 'Clientes' },
+          { key: 'suppliers', label: 'Fornecedores' },
+          { key: 'products', label: 'Produtos/Serviços' }
+        ].map(item => (
+          <div key={item.key} className="flex items-center space-x-2">
+            <input 
+              type="checkbox" 
+              id={item.key}
+              className="rounded border-gray-300"
+              title={`Sincronizar ${item.label}`}
+            />
+            <Label htmlFor={item.key} className="text-sm">{item.label}</Label>
+          </div>
+        ))}
+      </div>
+    </div>
+  </form>
+)
+
 const AccountingIntegration: React.FC = () => {
   const [activeTab, setActiveTab] = useState('sistemas')
   const [isSystemModalOpen, setIsSystemModalOpen] = useState(false)
-  const [selectedSystem, setSelectedSystem] = useState<AccountingSystem | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
 
   // Dados mock para demonstração
@@ -309,118 +406,12 @@ const AccountingIntegration: React.FC = () => {
     }
   }
 
-  const handleConnect = async (systemId: string) => {
+  const handleConnect = async (_systemId: string) => {
     setIsConnecting(true)
     // Simular processo de conexão
     await new Promise(resolve => setTimeout(resolve, 2000))
     setIsConnecting(false)
   }
-
-  const SystemForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="system-name">Nome do Sistema</Label>
-          <Input 
-            id="system-name"
-            placeholder="Ex: Sistema Contábil XYZ"
-            title="Nome identificador do sistema"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="system-provider">Fornecedor</Label>
-          <Input 
-            id="system-provider"
-            placeholder="Ex: Empresa ABC"
-            title="Nome do fornecedor do sistema"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="system-type">Tipo de Sistema</Label>
-          <Select>
-            <SelectTrigger title="Selecionar tipo de sistema">
-              <SelectValue placeholder="Selecionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="cloud">Cloud/SaaS</SelectItem>
-              <SelectItem value="desktop">Desktop</SelectItem>
-              <SelectItem value="web">Web Application</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="sync-frequency">Frequência de Sincronização</Label>
-          <Select>
-            <SelectTrigger title="Selecionar frequência">
-              <SelectValue placeholder="Selecionar frequência" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="tempo-real">Tempo Real</SelectItem>
-              <SelectItem value="horario">A cada hora</SelectItem>
-              <SelectItem value="diario">Diário</SelectItem>
-              <SelectItem value="semanal">Semanal</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="api-endpoint">Endpoint da API</Label>
-        <Input 
-          id="api-endpoint"
-          placeholder="https://api.sistema.com.br/v1"
-          title="URL do endpoint da API"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="api-key">Chave da API</Label>
-          <Input 
-            id="api-key"
-            type="password"
-            placeholder="••••••••••••••••"
-            title="Chave de autenticação da API"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="api-secret">Secret Key</Label>
-          <Input 
-            id="api-secret"
-            type="password"
-            placeholder="••••••••••••••••"
-            title="Chave secreta da API"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <Label>Dados para Sincronização</Label>
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            { key: 'accounts', label: 'Plano de Contas' },
-            { key: 'transactions', label: 'Lançamentos' },
-            { key: 'customers', label: 'Clientes' },
-            { key: 'suppliers', label: 'Fornecedores' },
-            { key: 'products', label: 'Produtos/Serviços' }
-          ].map(item => (
-            <div key={item.key} className="flex items-center space-x-2">
-              <input 
-                type="checkbox" 
-                id={item.key}
-                className="rounded border-gray-300"
-                title={`Sincronizar ${item.label}`}
-              />
-              <Label htmlFor={item.key} className="text-sm">{item.label}</Label>
-            </div>
-          ))}
-        </div>
-      </div>
-    </form>
-  )
 
   return (
     <div className="space-y-6">
@@ -443,7 +434,7 @@ const AccountingIntegration: React.FC = () => {
                 Configure a integração com um novo sistema contábil
               </DialogDescription>
             </DialogHeader>
-            <SystemForm />
+            <AccountingSystemForm />
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsSystemModalOpen(false)}>
                 Cancelar

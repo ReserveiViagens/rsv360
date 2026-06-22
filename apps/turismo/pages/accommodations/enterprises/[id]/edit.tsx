@@ -2,7 +2,7 @@
 // PÁGINA - EDITAR EMPREENDIMENTO
 // ===================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../../../src/context/AuthContext';
 import ProtectedRoute from '../../../../src/components/ProtectedRoute';
@@ -16,18 +16,12 @@ import { toast } from 'react-hot-toast';
 export default function EditEnterprisePage() {
   const router = useRouter();
   const { id } = router.query;
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [enterprise, setEnterprise] = useState<Enterprise | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      loadEnterprise();
-    }
-  }, [id]);
-
-  const loadEnterprise = async () => {
+  const loadEnterprise = useCallback(async () => {
     try {
       setLoading(true);
       const response = await enterprisesApi.getById(Number(id));
@@ -44,7 +38,14 @@ export default function EditEnterprisePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, router]);
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- load enterprise when route id is available
+      void loadEnterprise();
+    }
+  }, [id, loadEnterprise]);
 
   const handleSubmit = async (data: Partial<Enterprise>) => {
     try {

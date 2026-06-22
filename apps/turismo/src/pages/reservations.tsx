@@ -1,37 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  Clock, 
-  Users, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  CreditCard, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Filter,
-  Search,
-  Download,
-  Printer,
-  Share2,
-  Star,
-  MessageSquare,
-  FileText,
+import React, { useState } from 'react';
+import {
   CalendarDays,
-  UserCheck,
-  CreditCard as CreditCardIcon,
-  DollarSign,
-  Percent,
-  TrendingUp,
-  BarChart3,
-  PieChart,
-  Activity,
-  Clock as ClockIcon,
   Calendar as CalendarIcon,
   Users as UsersIcon,
   MapPin as MapPinIcon,
@@ -39,27 +8,14 @@ import {
   Mail as MailIcon,
   CheckCircle as CheckCircleIcon,
   XCircle as XCircleIcon,
-  AlertCircle as AlertCircleIcon,
   Plus as PlusIcon,
   Edit as EditIcon,
   Trash2 as Trash2Icon,
   Eye as EyeIcon,
-  Filter as FilterIcon,
   Search as SearchIcon,
-  Download as DownloadIcon,
-  Printer as PrinterIcon,
-  Share2 as Share2Icon,
-  Star as StarIcon,
-  MessageSquare as MessageSquareIcon,
-  FileText as FileTextIcon,
-  CalendarDays as CalendarDaysIcon,
+  Clock as ClockIcon,
   UserCheck as UserCheckIcon,
   DollarSign as DollarSignIcon,
-  Percent as PercentIcon,
-  TrendingUp as TrendingUpIcon,
-  BarChart3 as BarChart3Icon,
-  PieChart as PieChartIcon,
-  Activity as ActivityIcon
 } from 'lucide-react';
 
 interface Reservation {
@@ -214,13 +170,13 @@ const ReservationsPage: React.FC = () => {
     totalCommission: reservations.reduce((sum, r) => sum + r.commission, 0)
   };
 
-  const handleStatusChange = (reservationId: string, newStatus: Reservation['status']) => {
+  const _handleStatusChange = (reservationId: string, newStatus: Reservation['status']) => {
     setReservations(prev => prev.map(r => 
       r.id === reservationId ? { ...r, status: newStatus } : r
     ));
   };
 
-  const handlePaymentStatusChange = (reservationId: string, newStatus: Reservation['paymentStatus']) => {
+  const _handlePaymentStatusChange = (reservationId: string, newStatus: Reservation['paymentStatus']) => {
     setReservations(prev => prev.map(r => 
       r.id === reservationId ? { ...r, paymentStatus: newStatus } : r
     ));

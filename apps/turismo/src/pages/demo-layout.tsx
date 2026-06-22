@@ -3,18 +3,10 @@ import { Layout } from '../components/layout';
 import { Card, Button, Badge, Progress, Alert } from '../components/ui';
 import { useTheme } from '../hooks/useTheme';
 import { 
-  Home, 
   Users, 
   Calendar, 
-  MapPin, 
-  CreditCard, 
-  Target, 
-  FileText, 
   Bell, 
   ShieldCheck, 
-  BookOpen, 
-  Cloud, 
-  Smartphone, 
   Settings,
   Plus,
   TrendingUp,
@@ -27,11 +19,12 @@ import {
   Zap,
   Star,
   Heart,
-  Award
+  Award,
+  Palette
 } from 'lucide-react';
 
 export default function DemoLayout() {
-  const { theme, colorScheme, colors } = useTheme();
+  const { theme, colorScheme } = useTheme();
 
   const stats = [
     {

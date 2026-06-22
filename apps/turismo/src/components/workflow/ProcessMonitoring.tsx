@@ -1,9 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Input, Badge, Tabs, Select, Progress } from '@/components/ui';
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, XCircle, Clock, Play, Pause, RefreshCw, Download, Filter, Eye, Settings } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Play, Pause, Download, Eye, Settings } from 'lucide-react';
 import { toast } from 'sonner';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 interface ProcessInstance {
   id: string;
@@ -20,15 +20,6 @@ interface ProcessInstance {
   assignee?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
-}
-
-interface ProcessMetric {
-  name: string;
-  value: number;
-  change: number;
-  trend: 'up' | 'down' | 'stable';
-  unit: string;
-  color: string;
 }
 
 interface ProcessAlert {
@@ -49,121 +40,125 @@ interface ProcessMonitoringProps {
   onProcessSelect?: (process: ProcessInstance) => void;
 }
 
-export default function ProcessMonitoring({ onProcessSelect }: ProcessMonitoringProps) {
-  const [processes, setProcesses] = useState<ProcessInstance[]>([
-    {
-      id: '1',
-      name: 'Processamento de Reserva #12345',
-      workflowId: 'workflow1',
-      workflowName: 'Aprovação de Reservas',
-      status: 'running',
-      currentStep: 'Aprovação Financeira',
-      progress: 75,
-      startedAt: new Date(Date.now() - 3600000),
-      estimatedCompletion: new Date(Date.now() + 7200000),
-      duration: 3600,
-      assignee: 'Ana Costa',
-      priority: 'high',
-      tags: ['Reserva', 'VIP', 'Aprovação'],
-    },
-    {
-      id: '2',
-      name: 'Processamento de Check-in #67890',
-      workflowId: 'workflow2',
-      workflowName: 'Check-in de Hóspedes',
-      status: 'completed',
-      currentStep: 'Check-in Concluído',
-      progress: 100,
-      startedAt: new Date(Date.now() - 1800000),
-      actualCompletion: new Date(Date.now() - 900000),
-      duration: 900,
-      assignee: 'João Silva',
-      priority: 'medium',
-      tags: ['Check-in', 'Hóspede'],
-    },
-    {
-      id: '3',
-      name: 'Processamento de Pagamento #11111',
-      workflowId: 'workflow3',
-      workflowName: 'Processamento de Pagamentos',
-      status: 'failed',
-      currentStep: 'Validação de Cartão',
-      progress: 45,
-      startedAt: new Date(Date.now() - 5400000),
-      duration: 5400,
-      assignee: 'Maria Santos',
-      priority: 'urgent',
-      tags: ['Pagamento', 'Erro'],
-    },
-    {
-      id: '4',
-      name: 'Processamento de Reembolso #22222',
-      workflowId: 'workflow4',
-      workflowName: 'Processamento de Reembolsos',
-      status: 'paused',
-      currentStep: 'Aprovação de Reembolso',
-      progress: 60,
-      startedAt: new Date(Date.now() - 7200000),
-      estimatedCompletion: new Date(Date.now() + 14400000),
-      duration: 7200,
-      assignee: 'Carlos Lima',
-      priority: 'medium',
-      tags: ['Reembolso', 'Pausado'],
-    },
-    {
-      id: '5',
-      name: 'Processamento de Upgrade #33333',
-      workflowId: 'workflow5',
-      workflowName: 'Processamento de Upgrades',
-      status: 'running',
-      currentStep: 'Verificação de Disponibilidade',
-      progress: 30,
-      startedAt: new Date(Date.now() - 1800000),
-      estimatedCompletion: new Date(Date.now() + 4200000),
-      duration: 1800,
-      assignee: 'Roberto Alves',
-      priority: 'low',
-      tags: ['Upgrade', 'Quarto'],
-    },
-  ]);
+const MOCK_PROCESSES: ProcessInstance[] = [
+  {
+    id: '1',
+    name: 'Processamento de Reserva #12345',
+    workflowId: 'workflow1',
+    workflowName: 'Aprovação de Reservas',
+    status: 'running',
+    currentStep: 'Aprovação Financeira',
+    progress: 75,
+    startedAt: new Date('2025-01-10T11:00:00Z'),
+    estimatedCompletion: new Date('2025-01-10T14:00:00Z'),
+    duration: 3600,
+    assignee: 'Ana Costa',
+    priority: 'high',
+    tags: ['Reserva', 'VIP', 'Aprovação'],
+  },
+  {
+    id: '2',
+    name: 'Processamento de Check-in #67890',
+    workflowId: 'workflow2',
+    workflowName: 'Check-in de Hóspedes',
+    status: 'completed',
+    currentStep: 'Check-in Concluído',
+    progress: 100,
+    startedAt: new Date('2025-01-10T11:30:00Z'),
+    actualCompletion: new Date('2025-01-10T12:15:00Z'),
+    duration: 900,
+    assignee: 'João Silva',
+    priority: 'medium',
+    tags: ['Check-in', 'Hóspede'],
+  },
+  {
+    id: '3',
+    name: 'Processamento de Pagamento #11111',
+    workflowId: 'workflow3',
+    workflowName: 'Processamento de Pagamentos',
+    status: 'failed',
+    currentStep: 'Validação de Cartão',
+    progress: 45,
+    startedAt: new Date('2025-01-10T10:30:00Z'),
+    duration: 5400,
+    assignee: 'Maria Santos',
+    priority: 'urgent',
+    tags: ['Pagamento', 'Erro'],
+  },
+  {
+    id: '4',
+    name: 'Processamento de Reembolso #22222',
+    workflowId: 'workflow4',
+    workflowName: 'Processamento de Reembolsos',
+    status: 'paused',
+    currentStep: 'Aprovação de Reembolso',
+    progress: 60,
+    startedAt: new Date('2025-01-10T10:00:00Z'),
+    estimatedCompletion: new Date('2025-01-10T16:00:00Z'),
+    duration: 7200,
+    assignee: 'Carlos Lima',
+    priority: 'medium',
+    tags: ['Reembolso', 'Pausado'],
+  },
+  {
+    id: '5',
+    name: 'Processamento de Upgrade #33333',
+    workflowId: 'workflow5',
+    workflowName: 'Processamento de Upgrades',
+    status: 'running',
+    currentStep: 'Verificação de Disponibilidade',
+    progress: 30,
+    startedAt: new Date('2025-01-10T11:30:00Z'),
+    estimatedCompletion: new Date('2025-01-10T13:30:00Z'),
+    duration: 1800,
+    assignee: 'Roberto Alves',
+    priority: 'low',
+    tags: ['Upgrade', 'Quarto'],
+  },
+];
 
-  const [alerts, setAlerts] = useState<ProcessAlert[]>([
-    {
-      id: '1',
-      type: 'error',
-      title: 'Processo Falhou',
-      message: 'O processo de pagamento #11111 falhou na validação de cartão',
-      processId: '3',
-      processName: 'Processamento de Pagamento #11111',
-      severity: 'high',
-      createdAt: new Date(Date.now() - 1800000),
-      acknowledged: false,
-    },
-    {
-      id: '2',
-      type: 'warning',
-      title: 'Processo Pausado',
-      message: 'O processo de reembolso #22222 foi pausado por 2 horas',
-      processId: '4',
-      processName: 'Processamento de Reembolso #22222',
-      severity: 'medium',
-      createdAt: new Date(Date.now() - 3600000),
-      acknowledged: false,
-    },
-    {
-      id: '3',
-      type: 'info',
-      title: 'Processo Lento',
-      message: 'O processo de reserva #12345 está demorando mais que o esperado',
-      processId: '1',
-      processName: 'Processamento de Reserva #12345',
-      severity: 'low',
-      createdAt: new Date(Date.now() - 900000),
-      acknowledged: true,
-      acknowledgedBy: 'Admin',
-      acknowledgedAt: new Date(Date.now() - 600000),
-    },
-  ]);
+const MOCK_ALERTS: ProcessAlert[] = [
+  {
+    id: '1',
+    type: 'error',
+    title: 'Processo Falhou',
+    message: 'O processo de pagamento #11111 falhou na validação de cartão',
+    processId: '3',
+    processName: 'Processamento de Pagamento #11111',
+    severity: 'high',
+    createdAt: new Date('2025-01-10T11:30:00Z'),
+    acknowledged: false,
+  },
+  {
+    id: '2',
+    type: 'warning',
+    title: 'Processo Pausado',
+    message: 'O processo de reembolso #22222 foi pausado por 2 horas',
+    processId: '4',
+    processName: 'Processamento de Reembolso #22222',
+    severity: 'medium',
+    createdAt: new Date('2025-01-10T11:00:00Z'),
+    acknowledged: false,
+  },
+  {
+    id: '3',
+    type: 'info',
+    title: 'Processo Lento',
+    message: 'O processo de reserva #12345 está demorando mais que o esperado',
+    processId: '1',
+    processName: 'Processamento de Reserva #12345',
+    severity: 'low',
+    createdAt: new Date('2025-01-10T11:45:00Z'),
+    acknowledged: true,
+    acknowledgedBy: 'Admin',
+    acknowledgedAt: new Date('2025-01-10T11:50:00Z'),
+  },
+];
+
+export default function ProcessMonitoring({ onProcessSelect }: ProcessMonitoringProps) {
+  const [processes, setProcesses] = useState<ProcessInstance[]>(MOCK_PROCESSES);
+
+  const [alerts, setAlerts] = useState<ProcessAlert[]>(MOCK_ALERTS);
 
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');

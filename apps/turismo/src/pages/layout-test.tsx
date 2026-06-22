@@ -2,24 +2,7 @@ import React from 'react';
 import { Layout } from '../components/layout';
 import { Card, Button, Badge } from '../components/ui';
 import { 
-  Home, 
-  Users, 
-  Calendar, 
-  MapPin, 
-  CreditCard, 
-  Target, 
-  FileText, 
-  Bell, 
-  ShieldCheck, 
-  BookOpen, 
-  Cloud, 
-  Smartphone, 
-  Settings,
-  Plus,
-  TrendingUp,
-  DollarSign,
-  UserPlus,
-  Plane
+  Users, Calendar, Bell, Settings, Plus, TrendingUp, DollarSign, UserPlus, Plane, CreditCard
 } from 'lucide-react';
 
 export default function LayoutTest() {

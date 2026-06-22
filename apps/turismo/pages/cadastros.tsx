@@ -1,36 +1,27 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { 
-    UserPlus, 
-    Building2, 
-    Home, 
-    Hotel, 
-    Mountain, 
-    TreePine, 
-    Users, 
-    Plus, 
-    Edit, 
-    Trash, 
-    X, 
-    Save, 
-    Upload, 
+import {
+    UserPlus,
+    Building2,
+    Home,
+    Hotel,
+    Mountain,
+    Users,
+    Plus,
+    Edit,
+    Trash,
+    X,
+    Upload,
     Image as ImageIcon,
     Eye,
-    Search,
     Download,
-    Phone,
-    Globe,
-    Calendar,
     MapPin,
     Star,
     DollarSign,
     Mail,
-    FileText,
     Shield,
-    Award,
     Play
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // Interfaces para diferentes tipos de proprietÃ¡rios
@@ -111,30 +102,9 @@ interface ApartmentOwner extends BaseUser {
 
 type Owner = Broker | HotelOwner | ChaletOwner | HostelOwner | ApartmentOwner;
 
-export default function CadastrosPage() {
-    const [activeTab, setActiveTab] = useState<'brokers' | 'hotels' | 'chalets' | 'hostels' | 'apartments'>('brokers');
-    const [users, setUsers] = useState<Owner[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showNewUserModal, setShowNewUserModal] = useState(false);
-    const [showEditUserModal, setShowEditUserModal] = useState(false);
-    const [showImageModal, setShowImageModal] = useState(false);
-    const [showVideoModal, setShowVideoModal] = useState(false);
-    const [editingUser, setEditingUser] = useState<Owner | null>(null);
-    const [selectedUser, setSelectedUser] = useState<Owner | null>(null);
-    const [selectedImage, setSelectedImage] = useState<string>('');
-    const [selectedVideo, setSelectedVideo] = useState<string>('');
-    const [uploadingImage, setUploadingImage] = useState(false);
-    const [uploadingVideo, setUploadingVideo] = useState(false);
-    const [showStatsDetails, setShowStatsDetails] = useState(false);
-    const [selectedStatsType, setSelectedStatsType] = useState<string>('');
-    const [statsSearchTerm, setStatsSearchTerm] = useState('');
-    const [statsFilter, setStatsFilter] = useState('all');
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
-    const [exportGenerating, setExportGenerating] = useState(false);
+type CadastrosTab = 'brokers' | 'hotels' | 'chalets' | 'hostels' | 'apartments';
 
-    // Dados mockados para corretores
-    const mockBrokers: Broker[] = [
+const MOCK_BROKERS: Broker[] = [
         {
             id: 1,
             type: 'corretor',
@@ -181,10 +151,9 @@ export default function CadastrosPage() {
             images: ["https://via.placeholder.com/300x200/10B981/FFFFFF?text=Maria+Santos"],
             videos: []
         }
-    ];
+];
 
-    // Dados mockados para proprietÃ¡rios de hotÃ©is
-    const mockHotelOwners: HotelOwner[] = [
+const MOCK_HOTEL_OWNERS: HotelOwner[] = [
         {
             id: 3,
             type: 'hotel',
@@ -235,10 +204,9 @@ export default function CadastrosPage() {
             images: ["https://via.placeholder.com/300x200/EF4444/FFFFFF?text=Pousada+ParaÃ­so"],
             videos: []
         }
-    ];
+];
 
-    // Dados mockados para proprietÃ¡rios de chalets
-    const mockChaletOwners: ChaletOwner[] = [
+const MOCK_CHALET_OWNERS: ChaletOwner[] = [
         {
             id: 5,
             type: 'chalet',
@@ -264,10 +232,9 @@ export default function CadastrosPage() {
             images: ["https://via.placeholder.com/300x200/8B5CF6/FFFFFF?text=Chalet+Montanha"],
             videos: []
         }
-    ];
+];
 
-    // Dados mockados para proprietÃ¡rios de hostels
-    const mockHostelOwners: HostelOwner[] = [
+const MOCK_HOSTEL_OWNERS: HostelOwner[] = [
         {
             id: 6,
             type: 'hostel',
@@ -293,10 +260,9 @@ export default function CadastrosPage() {
             images: ["https://via.placeholder.com/300x200/06B6D4/FFFFFF?text=Hostel+Backpacker"],
             videos: []
         }
-    ];
+];
 
-    // Dados mockados para proprietÃ¡rios de apartamentos
-    const mockApartmentOwners: ApartmentOwner[] = [
+const MOCK_APARTMENT_OWNERS: ApartmentOwner[] = [
         {
             id: 7,
             type: 'apartment',
@@ -322,41 +288,66 @@ export default function CadastrosPage() {
             images: ["https://via.placeholder.com/300x200/84CC16/FFFFFF?text=Apt+Executivo"],
             videos: []
         }
-    ];
+];
 
-    const loadUsers = useCallback(async () => {
-        try {
-            // Simular carregamento de dados
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            switch (activeTab) {
-                case 'brokers':
-                    setUsers(mockBrokers);
-                    break;
-                case 'hotels':
-                    setUsers(mockHotelOwners);
-                    break;
-                case 'chalets':
-                    setUsers(mockChaletOwners);
-                    break;
-                case 'hostels':
-                    setUsers(mockHostelOwners);
-                    break;
-                case 'apartments':
-                    setUsers(mockApartmentOwners);
-                    break;
-            }
-        } catch (error) {
-            console.error('Erro ao carregar usuários:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [activeTab]);
+function getUsersForTab(tab: CadastrosTab): Owner[] {
+    switch (tab) {
+        case 'brokers':
+            return MOCK_BROKERS;
+        case 'hotels':
+            return MOCK_HOTEL_OWNERS;
+        case 'chalets':
+            return MOCK_CHALET_OWNERS;
+        case 'hostels':
+            return MOCK_HOSTEL_OWNERS;
+        case 'apartments':
+            return MOCK_APARTMENT_OWNERS;
+    }
+}
+
+export default function CadastrosPage() {
+    const [activeTab, setActiveTab] = useState<CadastrosTab>('brokers');
+    const [users, setUsers] = useState<Owner[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showNewUserModal, setShowNewUserModal] = useState(false);
+    const [showEditUserModal, setShowEditUserModal] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [showVideoModal, setShowVideoModal] = useState(false);
+    const [editingUser, setEditingUser] = useState<Owner | null>(null);
+    const [selectedUser, setSelectedUser] = useState<Owner | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string>('');
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [uploadingVideo, setUploadingVideo] = useState(false);
+    const [showStatsDetails, setShowStatsDetails] = useState(false);
+    const [selectedStatsType, setSelectedStatsType] = useState<string>('');
+    const [statsSearchTerm, setStatsSearchTerm] = useState('');
+    const [statsFilter, setStatsFilter] = useState('all');
+    const [showExportModal, setShowExportModal] = useState(false);
+    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
+    const [exportGenerating, setExportGenerating] = useState(false);
 
     useEffect(() => {
+        let active = true;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- mock async tab load
         setLoading(true);
-        loadUsers();
-    }, [loadUsers]);
+        void (async () => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if (active) {
+                    setUsers(getUsersForTab(activeTab));
+                }
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            } finally {
+                if (active) {
+                    setLoading(false);
+                }
+            }
+        })();
+        return () => {
+            active = false;
+        };
+    }, [activeTab]);
 
     // FunÃ§Ãµes de gestÃ£o de usuÃ¡rios
     const handleNewUser = () => {
@@ -1341,14 +1332,14 @@ export default function CadastrosPage() {
 // Componente de formulÃ¡rio genÃ©rico
 interface UserFormProps {
     type: string;
-    onSubmit: (data: any) => void;
+    onSubmit: (data: Owner) => void;
     onCancel: () => void;
     isEditing: boolean;
     initialData?: Owner;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing, initialData }) => {
-    const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<Record<string, string | number | boolean | string[] | undefined>>({
         name: '',
         email: '',
         phone: '',
@@ -1406,13 +1397,21 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
 
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- populate edit form
+            setFormData(initialData as unknown as Record<string, string | number | boolean | string[] | undefined>);
         }
     }, [initialData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmit(formData as unknown as Owner);
+    };
+
+    const getFormField = (key: string): string => {
+        const value = formData[key];
+        if (typeof value === 'string') return value;
+        if (typeof value === 'number') return String(value);
+        return '';
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -1434,7 +1433,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="text"
                         name="name"
-                        value={formData.name}
+                        value={getFormField('name')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1448,7 +1447,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="email"
                         name="email"
-                        value={formData.email}
+                        value={getFormField('email')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1462,7 +1461,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="tel"
                         name="phone"
-                        value={formData.phone}
+                        value={getFormField('phone')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1476,7 +1475,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="text"
                         name="document"
-                        value={formData.document}
+                        value={getFormField('document')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1490,7 +1489,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="text"
                         name="address"
-                        value={formData.address}
+                        value={getFormField('address')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1504,7 +1503,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="text"
                         name="city"
-                        value={formData.city}
+                        value={getFormField('city')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1517,7 +1516,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     </label>
                     <select
                         name="state"
-                        value={formData.state}
+                        value={getFormField('state')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1560,7 +1559,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     <input
                         type="text"
                         name="zipCode"
-                        value={formData.zipCode}
+                        value={getFormField('zipCode')}
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1573,7 +1572,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                     </label>
                     <select
                         name="status"
-                        value={formData.status}
+                        value={getFormField('status')}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
@@ -1594,7 +1593,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="text"
                             name="license"
-                            value={formData.license}
+                            value={getFormField('license')}
                             onChange={handleChange}
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1608,7 +1607,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="number"
                             name="commission"
-                            value={formData.commission}
+                            value={getFormField('commission')}
                             onChange={handleChange}
                             step="0.1"
                             min="0"
@@ -1628,7 +1627,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="text"
                             name="propertyName"
-                            value={formData.propertyName}
+                            value={getFormField('propertyName')}
                             onChange={handleChange}
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1641,7 +1640,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         </label>
                         <select
                             name="propertyType"
-                            value={formData.propertyType}
+                            value={getFormField('propertyType')}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -1682,7 +1681,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="number"
                             name={type === 'hostels' ? 'beds' : 'rooms'}
-                            value={formData[type === 'hostels' ? 'beds' : 'rooms']}
+                            value={getFormField(type === 'hostels' ? 'beds' : 'rooms')}
                             onChange={handleChange}
                             min="1"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1696,7 +1695,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="number"
                             name="capacity"
-                            value={formData.capacity}
+                            value={getFormField('capacity')}
                             onChange={handleChange}
                             min="1"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1710,7 +1709,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                         <input
                             type="number"
                             name="averagePrice"
-                            value={formData.averagePrice}
+                            value={getFormField('averagePrice')}
                             onChange={handleChange}
                             min="0"
                             step="0.01"
@@ -1725,7 +1724,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                             </label>
                             <select
                                 name="category"
-                                value={formData.category}
+                                value={getFormField('category')}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -1744,7 +1743,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                             </label>
                             <select
                                 name="location"
-                                value={formData.location}
+                                value={getFormField('location')}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -1763,7 +1762,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                             </label>
                             <select
                                 name="targetAudience"
-                                value={formData.targetAudience}
+                                value={getFormField('targetAudience')}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -1782,7 +1781,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                             </label>
                             <select
                                 name="buildingType"
-                                value={formData.buildingType}
+                                value={getFormField('buildingType')}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -1801,7 +1800,7 @@ const UserForm: React.FC<UserFormProps> = ({ type, onSubmit, onCancel, isEditing
                             <input
                                 type="number"
                                 name="floor"
-                                value={formData.floor}
+                                value={getFormField('floor')}
                                 onChange={handleChange}
                                 min="1"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

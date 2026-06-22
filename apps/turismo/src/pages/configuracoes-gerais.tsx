@@ -4,32 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
-import { Checkbox } from '@/components/ui/Checkbox';
 import {
-  Settings,
   Save,
   RefreshCw,
   Globe,
-  Clock,
-  Mail,
   Bell,
   Shield,
   Palette,
-  Database,
   Server,
-  Users,
-  MapPin,
-  Phone,
   CreditCard,
-  FileText,
   AlertTriangle,
-  CheckCircle,
   Info,
   Eye,
   EyeOff
@@ -170,16 +159,10 @@ export default function ConfiguracoesGerais() {
   const [showApiKeys, setShowApiKeys] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  useEffect(() => {
-    loadConfig();
-  }, []);
-
   const loadConfig = async () => {
     try {
-      // Simular carregamento de configurações
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Em produção, isso viria do backend
       const savedConfig = localStorage.getItem('system_config');
       if (savedConfig) {
         setConfig(JSON.parse(savedConfig));
@@ -188,6 +171,11 @@ export default function ConfiguracoesGerais() {
       console.error('Erro ao carregar configurações:', error);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load saved config on mount
+    loadConfig();
+  }, []);
 
   const saveConfig = async () => {
     setIsSaving(true);
@@ -208,7 +196,11 @@ export default function ConfiguracoesGerais() {
     }
   };
 
-  const updateConfig = (section: keyof SystemConfig, field: string, value: any) => {
+  const updateConfig = <S extends keyof SystemConfig>(
+    section: S,
+    field: keyof SystemConfig[S] & string,
+    value: SystemConfig[S][keyof SystemConfig[S]]
+  ) => {
     setConfig(prev => ({
       ...prev,
       [section]: {
@@ -267,7 +259,7 @@ export default function ConfiguracoesGerais() {
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="h-5 w-5 text-orange-600" />
                 <span className="text-orange-800 font-medium">
-                  Você possui alterações não salvas. Clique em "Salvar Alterações" para aplicá-las.
+                  Você possui alterações não salvas. Clique em &quot;Salvar Alterações&quot; para aplicá-las.
                 </span>
               </div>
             </CardContent>
@@ -974,7 +966,7 @@ export default function ConfiguracoesGerais() {
                 <p className="font-medium">Dica:</p>
                 <p className="text-sm">
                   As configurações são salvas automaticamente no navegador.
-                  Para aplicar em produção, clique em "Salvar Alterações".
+                  Para aplicar em produção, clique em &quot;Salvar Alterações&quot;.
                 </p>
               </div>
             </div>

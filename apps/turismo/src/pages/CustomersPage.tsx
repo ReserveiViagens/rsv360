@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Users, User, FileText, Plus, RefreshCw, Download } from 'lucide-react';
 import { CustomerProfile, CustomerProfileData } from '../components/customers/CustomerProfile';
 import { CustomerModal, CustomerFormData } from '../components/customers/CustomerModal';
 import { CustomerList, CustomerListData } from '../components/customers/CustomerList';
 import { DocumentManager, CustomerDocument } from '../components/customers/DocumentManager';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { useUIStore } from '../stores/useUIStore';
@@ -273,7 +272,7 @@ const CustomersPage: React.FC = () => {
         showNotification('Cliente atualizado com sucesso!', 'success');
       }
       setShowCustomerModal(false);
-    } catch (error) {
+    } catch (_error) {
       showNotification('Erro ao salvar cliente', 'error');
     }
   };
@@ -285,7 +284,7 @@ const CustomersPage: React.FC = () => {
     const newDocuments: CustomerDocument[] = files.map((file, index) => ({
       id: Date.now().toString() + index,
       name: file.name,
-      type: type as any,
+      type: type as CustomerDocument['type'],
       url: URL.createObjectURL(file),
       size: file.size,
       uploadedAt: new Date(),

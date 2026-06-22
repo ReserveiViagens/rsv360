@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { GrupoForm } from '../../../src/components/viagens-grupo/GrupoForm'
@@ -20,13 +20,7 @@ export default function GrupoDetalhesPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  useEffect(() => {
-    if (id) {
-      loadGrupo()
-    }
-  }, [id])
-
-  const loadGrupo = async () => {
+  const loadGrupo = useCallback(async () => {
     try {
       setLoading(true)
       const data = await viagensGrupoApi.getGrupoById(id as string)
@@ -38,13 +32,20 @@ export default function GrupoDetalhesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, router])
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- load grupo when route id is available
+      loadGrupo()
+    }
+  }, [id, loadGrupo])
 
   const handleEdit = () => {
     setEditing(true)
   }
 
-  const handleSave = async (data: any) => {
+  const handleSave = async (data: Partial<Grupo>) => {
     try {
       setIsSaving(true)
       await viagensGrupoApi.updateGrupo(id as string, data)

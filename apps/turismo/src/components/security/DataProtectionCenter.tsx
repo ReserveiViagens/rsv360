@@ -1,93 +1,55 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Shield,
-  Lock,
-  Unlock,
-  Key,
   Eye,
-  EyeOff,
   Database,
   FileText,
-  Settings,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  Clock,
   User,
   Users,
-  Globe,
   Trash2,
   Archive,
-  Download,
-  Upload,
-  Search,
-  Filter,
-  RefreshCw,
   Plus,
   Edit,
-  Info,
-  Fingerprint,
-  Cpu,
-  HardDrive,
-  Cloud,
   Server,
   Network,
-  Router,
-  Wifi,
-  Building,
-  MapPin,
-  Phone,
-  Mail,
-  Calendar,
   History,
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
   Activity,
-  FileCheck,
-  FileLock,
-  FileX,
   Folder,
-  FolderOpen,
-  Code,
-  ExternalLink,
-  Bell,
-  BellOff,
-  Warning,
-  ShieldCheck,
-  ShieldAlert,
-  Scan,
-  Target,
-  Zap,
-  Layers
-} from 'lucide-react'
+  Code
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
   AreaChart, 
-  Area, 
+  Area,
+  Line,
   BarChart, 
   Bar, 
   PieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
   ScatterChart,
   Scatter
 } from 'recharts'
@@ -148,56 +110,6 @@ interface PrivacyRequest {
   approvedAt?: string
 }
 
-interface DataFlow {
-  id: string
-  name: string
-  source: {
-    name: string
-    type: 'internal' | 'external'
-    location: string
-  }
-  destination: {
-    name: string
-    type: 'internal' | 'external'
-    location: string
-  }
-  dataTypes: string[]
-  frequency: 'real-time' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'on-demand'
-  encryption: 'in-transit' | 'at-rest' | 'both' | 'none'
-  volume: number
-  lastTransfer: string
-  status: 'active' | 'inactive' | 'error'
-  complianceStatus: 'compliant' | 'non-compliant' | 'review-required'
-  riskLevel: 'low' | 'medium' | 'high' | 'critical'
-  monitoringEnabled: boolean
-  alerts: number
-  legalBasis: string[]
-  purpose: string
-  retentionPeriod: number
-}
-
-interface DataSubject {
-  id: string
-  identifier: string
-  type: 'customer' | 'employee' | 'partner' | 'vendor' | 'other'
-  status: 'active' | 'inactive' | 'deleted'
-  jurisdiction: string
-  consentStatus: {
-    marketing: boolean
-    analytics: boolean
-    profiling: boolean
-    thirdParty: boolean
-    updatedAt: string
-  }
-  dataCategories: string[]
-  lastActivity: string
-  requestHistory: string[]
-  riskProfile: 'low' | 'medium' | 'high'
-  specialCategories: string[]
-  retentionPeriod: number
-  deletionScheduled?: string
-}
-
 interface BreachIncident {
   id: string
   title: string
@@ -256,7 +168,6 @@ interface ComplianceFramework {
 
 const DataProtectionCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedAsset, setSelectedAsset] = useState<DataAsset | null>(null)
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
 
   // Dados mock para demonstração

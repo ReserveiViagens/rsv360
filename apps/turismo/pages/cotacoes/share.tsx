@@ -14,7 +14,6 @@ import {
 import { Budget } from '@/lib/types/budget';
 import { 
   exportToPDF, 
-  exportToHTML, 
   exportToDOC, 
   copyShareLink, 
   shareByEmail 
@@ -33,14 +32,15 @@ export default function SharePage() {
     if (data && typeof data === 'string') {
       try {
         const decodedBudget = JSON.parse(decodeURIComponent(data));
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- decode shared budget from query string
         setBudget(decodedBudget);
-      } catch (err) {
+      } catch (_err) {
         setError('Dados da cotação inválidos');
       }
     } else if (router.isReady) {
       setError('Nenhuma cotação encontrada');
     }
-    
+
     setIsLoading(false);
   }, [router.query, router.isReady]);
 

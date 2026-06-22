@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
-import { DollarSign, TrendingUp, TrendingDown, BarChart3, Calendar, Download } from 'lucide-react'
+import { DollarSign, TrendingUp, TrendingDown, BarChart3, Download } from 'lucide-react'
 import { api } from '../../src/services/apiClient'
 
 interface FinancialMetrics {
@@ -30,17 +30,22 @@ interface RevenueBreakdown {
   change: number
 }
 
+interface AuctionSummary {
+  current_price?: number
+}
+
+interface FlashDealSummary {
+  current_price?: number
+  units_sold?: number
+}
+
 export default function AnalyticsFinanceiroPage() {
   const [metrics, setMetrics] = useState<FinancialMetrics | null>(null)
   const [revenueBreakdown, setRevenueBreakdown] = useState<RevenueBreakdown[]>([])
   const [loading, setLoading] = useState(true)
   const [period, setPeriod] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
 
-  useEffect(() => {
-    loadAnalytics()
-  }, [period])
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -65,16 +70,15 @@ export default function AnalyticsFinanceiroPage() {
       // TODO: Implementar endpoint real de analytics financeiro
       // Por enquanto, usar dados mockados baseados em leilões e flash deals
       const [auctionsRes, flashDealsRes] = await Promise.all([
-        api.get<any>('/api/v1/auctions', { status: 'finished' }),
-        api.get<any>('/api/v1/flash-deals', { status: 'sold_out' }),
+        api.get<AuctionSummary[]>('/api/v1/auctions', { status: 'finished' }),
+        api.get<FlashDealSummary[]>('/api/v1/flash-deals', { status: 'sold_out' }),
       ])
 
       const auctions = Array.isArray(auctionsRes.data) ? auctionsRes.data : Array.isArray(auctionsRes) ? auctionsRes : []
       const flashDeals = Array.isArray(flashDealsRes.data) ? flashDealsRes.data : Array.isArray(flashDealsRes) ? flashDealsRes : []
 
-      // Calcular métricas
-      const auctionRevenue = auctions.reduce((sum: number, a: any) => sum + (a.current_price || 0), 0)
-      const flashDealRevenue = flashDeals.reduce((sum: number, fd: any) => sum + (fd.current_price || 0) * (fd.units_sold || 0), 0)
+      const auctionRevenue = auctions.reduce((sum: number, a: AuctionSummary) => sum + (a.current_price || 0), 0)
+      const flashDealRevenue = flashDeals.reduce((sum: number, fd: FlashDealSummary) => sum + (fd.current_price || 0) * (fd.units_sold || 0), 0)
       const totalRevenue = auctionRevenue + flashDealRevenue
       const totalExpenses = totalRevenue * 0.3 // Estimativa: 30% de custos
       const netProfit = totalRevenue - totalExpenses
@@ -138,7 +142,12 @@ export default function AnalyticsFinanceiroPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [period])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- API load on period change
+    void loadAnalytics()
+  }, [loadAnalytics])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -167,7 +176,7 @@ export default function AnalyticsFinanceiroPage() {
           <div className="flex items-center gap-2">
             <select
               value={period}
-              onChange={(e) => setPeriod(e.target.value as any)}
+              onChange={(e) => setPeriod(e.target.value as typeof period)}
               className="px-4 py-2 border rounded-md"
             >
               <option value="7d">Últimos 7 dias</option>

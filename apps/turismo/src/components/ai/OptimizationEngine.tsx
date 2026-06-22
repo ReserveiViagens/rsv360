@@ -1,13 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 
 import { Progress } from '@/components/ui/Progress'
 import { 
@@ -24,31 +29,17 @@ import {
   Clock,
   Activity,
   Cpu,
-  Database,
-  Network,
   DollarSign,
-  Users,
-  Calendar,
   Eye,
   Edit,
-  Trash2,
   Plus,
   Download,
-  Upload,
-  Filter,
-  Search,
   ArrowUp,
   ArrowDown,
   Lightbulb,
   Gauge,
-  Layers,
-  Building,
-  Workflow,
-  Timer,
-  PieChart,
-  Globe,
-  Code
-} from 'lucide-react'
+  Workflow
+} from 'lucide-react';
 import { 
   LineChart, 
   Line, 
@@ -64,10 +55,6 @@ import {
   PieChart as RechartsPieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter
 } from 'recharts'
 
 // Tipos para motor de otimização
@@ -152,7 +139,6 @@ interface OptimizationInsight {
 const OptimizationEngine: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isRuleModalOpen, setIsRuleModalOpen] = useState(false)
-  const [selectedRule, setSelectedRule] = useState<OptimizationRule | null>(null)
   const [runningOptimizations, setRunningOptimizations] = useState<string[]>([])
 
   // Dados mock para demonstração
@@ -511,114 +497,6 @@ const OptimizationEngine: React.FC = () => {
     }, 5000)
   }
 
-  const RuleForm: React.FC = () => (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="rule-name" className="text-sm font-medium">Nome da Regra</label>
-          <Input 
-            id="rule-name"
-            placeholder="Ex: Otimização de Performance"
-            title="Nome da regra de otimização"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="rule-category" className="text-sm font-medium">Categoria</label>
-          <Select 
-            title="Selecionar categoria"
-            options={[
-              { value: 'performance', label: 'Performance' },
-              { value: 'cost', label: 'Custo' },
-              { value: 'resource', label: 'Recursos' },
-              { value: 'workflow', label: 'Workflow' },
-              { value: 'quality', label: 'Qualidade' }
-            ]}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="rule-description" className="text-sm font-medium">Descrição</label>
-        <Textarea 
-          id="rule-description"
-          placeholder="Descreva o objetivo desta otimização"
-          title="Descrição detalhada da regra"
-        />
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="target-metric" className="text-sm font-medium">Métrica Alvo</label>
-          <Input 
-            id="target-metric"
-            placeholder="Ex: response_time"
-            title="Métrica que será otimizada"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="current-value" className="text-sm font-medium">Valor Atual</label>
-          <Input 
-            id="current-value"
-            type="number" 
-            placeholder="450"
-            title="Valor atual da métrica"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="target-value" className="text-sm font-medium">Valor Alvo</label>
-          <Input 
-            id="target-value"
-            type="number" 
-            placeholder="200"
-            title="Valor desejado da métrica"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="algorithm" className="text-sm font-medium">Algoritmo</label>
-          <Select
-            title="Selecionar algoritmo de otimização"
-            options={[
-              { value: 'genetic', label: 'Algoritmo Genético' },
-              { value: 'gradient_descent', label: 'Gradient Descent' },
-              { value: 'simulated_annealing', label: 'Simulated Annealing' },
-              { value: 'particle_swarm', label: 'Particle Swarm' },
-              { value: 'reinforcement_learning', label: 'Reinforcement Learning' }
-            ]}
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="unit" className="text-sm font-medium">Unidade</label>
-          <Input 
-            id="unit"
-            placeholder="ms, %, BRL, etc."
-            title="Unidade de medida da métrica"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="constraints" className="text-sm font-medium">Restrições (uma por linha)</label>
-        <Textarea 
-          id="constraints"
-          placeholder="memory_usage < 80%&#10;cpu_usage < 70%&#10;availability > 99%"
-          title="Restrições que devem ser respeitadas"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="parameters" className="text-sm font-medium">Parâmetros Iniciais (JSON)</label>
-        <Textarea 
-          id="parameters"
-          placeholder='{"cache_size": 512, "connections": 20}'
-          title="Parâmetros iniciais em formato JSON"
-        />
-      </div>
-    </form>
-  )
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -789,10 +667,7 @@ const OptimizationEngine: React.FC = () => {
             <CardContent>
               <div className="space-y-4">
                 {optimizationTargets.slice(0, 4).map((target) => {
-                  const progress = target.optimal_value 
-                    ? ((target.current_value / target.optimal_value) * 100)
-                    : target.optimization_potential
-                  const isMaximize = target.type === 'maximize'
+                                    const isMaximize = target.type === 'maximize'
                   
                   return (
                     <div key={target.id} className="flex items-center justify-between p-4 border rounded-lg">
@@ -1108,7 +983,10 @@ const OptimizationEngine: React.FC = () => {
                 {executions.map((execution) => {
                   const rule = optimizationRules.find(r => r.id === execution.ruleId)
                   const progressPercentage = (execution.currentIteration / execution.totalIterations) * 100
-                  const improvement = ((rule?.target.current_value! - execution.bestValue) / rule?.target.current_value!) * 100
+                  const baseValue = rule?.target.current_value ?? 0
+                  const improvement = baseValue
+                    ? ((baseValue - execution.bestValue) / baseValue) * 100
+                    : 0
 
                   return (
                     <div key={execution.id} className="border rounded-lg p-4">

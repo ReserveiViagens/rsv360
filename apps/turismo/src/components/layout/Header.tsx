@@ -19,7 +19,6 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Palette,
   Monitor,
   HelpCircle,
   Accessibility
@@ -41,7 +40,7 @@ interface HeaderProps {
 export default function Header({ 
   onToggleSidebar, 
   onToggleMobileSidebar, 
-  isSidebarCollapsed,
+  isSidebarCollapsed: _isSidebarCollapsed,
   theme,
   colorScheme,
   onToggleTheme,
@@ -271,7 +270,7 @@ export default function Header({
                          Esquema de Cores
                        </p>
                        <div className="grid grid-cols-2 gap-2">
-                         {Object.entries(RESERVEI_COLORS).map(([scheme, colors]) => (
+                         {Object.entries(RESERVEI_COLORS).map(([scheme, _colors]) => (
                            <button
                              key={scheme}
                              onClick={() => {

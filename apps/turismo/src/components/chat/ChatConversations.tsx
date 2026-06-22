@@ -1,7 +1,8 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Badge, Tabs, Avatar, Select, ScrollArea } from '@/components/ui';
-import { Search, Filter, Download, Eye, MessageSquare, Clock, User, Star, FileText, Image, Phone, Video } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card, Button, Input, Badge, Tabs, Select, ScrollArea } from '@/components/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/Avatar';
+import { Search, Download, Eye, MessageSquare, Clock, Star, FileText, Phone, Video } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ChatConversation {
@@ -29,111 +30,111 @@ interface ChatConversationsProps {
   onConversationSelect?: (conversation: ChatConversation) => void;
 }
 
+const MOCK_CONVERSATIONS: ChatConversation[] = [
+  {
+    id: '1',
+    customerName: 'Carlos Oliveira',
+    customerEmail: 'carlos.oliveira@email.com',
+    customerAvatar: '/avatars/customer1.jpg',
+    agentName: 'João Silva',
+    agentAvatar: '/avatars/joao.jpg',
+    status: 'resolved',
+    priority: 'high',
+    subject: 'Problema com reserva de hotel',
+    lastMessage: 'Reserva confirmada e enviada por email. Obrigado!',
+    messageCount: 15,
+    startTime: new Date('2025-05-31T10:00:00'),
+    endTime: new Date('2025-06-01T11:00:00'),
+    duration: 45,
+    rating: 5,
+    tags: ['reserva', 'hotel', 'problema'],
+    category: 'Reservas',
+    channel: 'chat',
+  },
+  {
+    id: '2',
+    customerName: 'Ana Costa',
+    customerEmail: 'ana.costa@email.com',
+    customerAvatar: '/avatars/customer2.jpg',
+    agentName: 'Maria Santos',
+    agentAvatar: '/avatars/maria.jpg',
+    status: 'active',
+    priority: 'medium',
+    subject: 'Consulta sobre pacotes de viagem',
+    lastMessage: 'Gostaria de mais informações sobre o pacote para Caldas Novas',
+    messageCount: 8,
+    startTime: new Date('2025-06-01T08:00:00'),
+    duration: 25,
+    tags: ['consulta', 'pacotes', 'caldas novas'],
+    category: 'Consultas',
+    channel: 'chat',
+  },
+  {
+    id: '3',
+    customerName: 'Roberto Silva',
+    customerEmail: 'roberto.silva@email.com',
+    customerAvatar: '/avatars/customer3.jpg',
+    agentName: 'Pedro Costa',
+    agentAvatar: '/avatars/pedro.jpg',
+    status: 'pending',
+    priority: 'low',
+    subject: 'Solicitação de reembolso',
+    lastMessage: 'Aguardando aprovação do financeiro',
+    messageCount: 12,
+    startTime: new Date('2025-05-30T09:00:00'),
+    duration: 60,
+    tags: ['reembolso', 'financeiro'],
+    category: 'Financeiro',
+    channel: 'email',
+  },
+  {
+    id: '4',
+    customerName: 'Fernanda Lima',
+    customerEmail: 'fernanda.lima@email.com',
+    customerAvatar: '/avatars/customer4.jpg',
+    agentName: 'Ana Tech',
+    agentAvatar: '/avatars/ana.jpg',
+    status: 'closed',
+    priority: 'urgent',
+    subject: 'Erro no sistema de pagamento',
+    lastMessage: 'Problema resolvido. Sistema funcionando normalmente',
+    messageCount: 20,
+    startTime: new Date('2025-05-29T14:00:00'),
+    endTime: new Date('2025-05-31T12:00:00'),
+    duration: 90,
+    rating: 4,
+    tags: ['erro', 'pagamento', 'sistema'],
+    category: 'Suporte Técnico',
+    channel: 'phone',
+  },
+  {
+    id: '5',
+    customerName: 'Lucas Mendes',
+    customerEmail: 'lucas.mendes@email.com',
+    customerAvatar: '/avatars/customer5.jpg',
+    agentName: 'Bot RSV',
+    agentAvatar: '/avatars/bot.jpg',
+    status: 'resolved',
+    priority: 'low',
+    subject: 'Informações sobre check-in',
+    lastMessage: 'Check-in disponível a partir das 14h. Documentos necessários enviados',
+    messageCount: 6,
+    startTime: new Date('2025-05-31T16:00:00'),
+    endTime: new Date('2025-06-01T11:30:00'),
+    duration: 10,
+    rating: 4,
+    tags: ['check-in', 'documentos', 'horário'],
+    category: 'Check-in/Check-out',
+    channel: 'chat',
+  },
+];
+
 export default function ChatConversations({ onConversationSelect }: ChatConversationsProps) {
-  const [conversations, setConversations] = useState<ChatConversation[]>([
-    {
-      id: '1',
-      customerName: 'Carlos Oliveira',
-      customerEmail: 'carlos.oliveira@email.com',
-      customerAvatar: '/avatars/customer1.jpg',
-      agentName: 'João Silva',
-      agentAvatar: '/avatars/joao.jpg',
-      status: 'resolved',
-      priority: 'high',
-      subject: 'Problema com reserva de hotel',
-      lastMessage: 'Reserva confirmada e enviada por email. Obrigado!',
-      messageCount: 15,
-      startTime: new Date(Date.now() - 86400000),
-      endTime: new Date(Date.now() - 3600000),
-      duration: 45,
-      rating: 5,
-      tags: ['reserva', 'hotel', 'problema'],
-      category: 'Reservas',
-      channel: 'chat',
-    },
-    {
-      id: '2',
-      customerName: 'Ana Costa',
-      customerEmail: 'ana.costa@email.com',
-      customerAvatar: '/avatars/customer2.jpg',
-      agentName: 'Maria Santos',
-      agentAvatar: '/avatars/maria.jpg',
-      status: 'active',
-      priority: 'medium',
-      subject: 'Consulta sobre pacotes de viagem',
-      lastMessage: 'Gostaria de mais informações sobre o pacote para Caldas Novas',
-      messageCount: 8,
-      startTime: new Date(Date.now() - 7200000),
-      duration: 25,
-      tags: ['consulta', 'pacotes', 'caldas novas'],
-      category: 'Consultas',
-      channel: 'chat',
-    },
-    {
-      id: '3',
-      customerName: 'Roberto Silva',
-      customerEmail: 'roberto.silva@email.com',
-      customerAvatar: '/avatars/customer3.jpg',
-      agentName: 'Pedro Costa',
-      agentAvatar: '/avatars/pedro.jpg',
-      status: 'pending',
-      priority: 'low',
-      subject: 'Solicitação de reembolso',
-      lastMessage: 'Aguardando aprovação do financeiro',
-      messageCount: 12,
-      startTime: new Date(Date.now() - 172800000),
-      duration: 60,
-      tags: ['reembolso', 'financeiro'],
-      category: 'Financeiro',
-      channel: 'email',
-    },
-    {
-      id: '4',
-      customerName: 'Fernanda Lima',
-      customerEmail: 'fernanda.lima@email.com',
-      customerAvatar: '/avatars/customer4.jpg',
-      agentName: 'Ana Tech',
-      agentAvatar: '/avatars/ana.jpg',
-      status: 'closed',
-      priority: 'urgent',
-      subject: 'Erro no sistema de pagamento',
-      lastMessage: 'Problema resolvido. Sistema funcionando normalmente',
-      messageCount: 20,
-      startTime: new Date(Date.now() - 259200000),
-      endTime: new Date(Date.now() - 86400000),
-      duration: 90,
-      rating: 4,
-      tags: ['erro', 'pagamento', 'sistema'],
-      category: 'Suporte Técnico',
-      channel: 'phone',
-    },
-    {
-      id: '5',
-      customerName: 'Lucas Mendes',
-      customerEmail: 'lucas.mendes@email.com',
-      customerAvatar: '/avatars/customer5.jpg',
-      agentName: 'Bot RSV',
-      agentAvatar: '/avatars/bot.jpg',
-      status: 'resolved',
-      priority: 'low',
-      subject: 'Informações sobre check-in',
-      lastMessage: 'Check-in disponível a partir das 14h. Documentos necessários enviados',
-      messageCount: 6,
-      startTime: new Date(Date.now() - 43200000),
-      endTime: new Date(Date.now() - 1800000),
-      duration: 10,
-      rating: 4,
-      tags: ['check-in', 'documentos', 'horário'],
-      category: 'Check-in/Check-out',
-      channel: 'chat',
-    },
-  ]);
+  const [conversations] = useState<ChatConversation[]>(MOCK_CONVERSATIONS);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [channelFilter, setChannelFilter] = useState<string>('all');
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState<string>('recent');
 
@@ -144,10 +145,9 @@ export default function ChatConversations({ onConversationSelect }: ChatConversa
       conversation.customerEmail.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || conversation.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || conversation.priority === priorityFilter;
-    const matchesCategory = categoryFilter === 'all' || conversation.category === categoryFilter;
-    const matchesChannel = channelFilter === 'all' || conversation.channel === channelFilter;
+    const matchesTab = activeTab === 'all' || conversation.status === activeTab;
     
-    return matchesSearch && matchesStatus && matchesPriority && matchesCategory && matchesChannel;
+    return matchesSearch && matchesStatus && matchesPriority && matchesTab;
   });
 
   const sortedConversations = [...filteredConversations].sort((a, b) => {
@@ -414,7 +414,8 @@ export default function ChatConversations({ onConversationSelect }: ChatConversa
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4 flex-1">
                         <Avatar className="h-12 w-12">
-                          <img src={conversation.customerAvatar} alt={conversation.customerName} />
+                          <AvatarImage src={conversation.customerAvatar} alt={conversation.customerName} />
+                          <AvatarFallback>{conversation.customerName.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">

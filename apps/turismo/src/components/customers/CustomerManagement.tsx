@@ -5,31 +5,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Search,
-  Filter,
   Plus,
   Edit,
   Trash2,
   Eye,
-  Mail,
   Phone,
   MapPin,
   Calendar,
   Star,
   Users,
   UserCheck,
-  UserX,
   Download,
-  Upload,
-  MoreVertical,
   Heart,
   MessageSquare,
   CreditCard,
-  History,
   FileText,
-  Camera,
-  CheckCircle,
-  AlertCircle,
-  Clock
+  DollarSign
 } from 'lucide-react';
 
 // ===================================================================
@@ -148,6 +139,7 @@ const CustomerCard: React.FC<CustomerCardProps> = ({
           <div className="flex items-center space-x-3">
             <div className="relative">
               {customer.avatar ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- avatar URL from mock */
                 <img
                   src={customer.avatar}
                   alt={customer.name}
@@ -295,7 +287,6 @@ const CustomerManagement: React.FC = () => {
   const [loyaltyFilter, setLoyaltyFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'totalSpent' | 'totalBookings' | 'lastBooking'>('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showFilters, setShowFilters] = useState(false);
 
   // ===================================================================
   // DADOS MOCK
@@ -615,7 +606,7 @@ const CustomerManagement: React.FC = () => {
           </select>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
             className="border border-gray-300 rounded-md px-3 py-2"
             title="Ordenar clientes"
             aria-label="Ordenar lista de clientes"

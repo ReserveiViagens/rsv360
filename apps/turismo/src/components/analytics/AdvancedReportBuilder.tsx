@@ -8,32 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/Textarea';
-import { Separator } from '@/components/ui/separator';
-import { 
-  BarChart3, 
-  LineChart, 
-  PieChart, 
-  Table, 
-  Filter, 
-  Download, 
-  Save, 
-  Plus, 
-  Trash2, 
-  Settings, 
-  Eye, 
-  EyeOff,
-  Calendar,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Package,
-  MapPin,
-  Clock,
-  Target
+import {
+  BarChart3,
+  Filter,
+  Download,
+  Save,
+  Plus,
+  Trash2,
+  Settings,
+  Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { DndContext as DndContextPrimitive, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext as DndContextPrimitive, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { radixRoot } from '@/lib/radix-jsx';
 const DndContext = radixRoot(DndContextPrimitive);
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -48,15 +34,15 @@ interface ReportField {
   label: string;
   required: boolean;
   options?: string[];
-  defaultValue?: any;
+  defaultValue?: string | number | boolean;
 }
 
 interface ReportFilter {
   id: string;
   field: string;
   operator: 'equals' | 'contains' | 'greater' | 'less' | 'between' | 'in';
-  value: any;
-  value2?: any;
+  value: string | number | boolean | string[];
+  value2?: string | number | boolean;
 }
 
 interface ReportChart {
@@ -274,7 +260,7 @@ export default function AdvancedReportBuilder() {
   };
 
   // Drag & Drop handlers
-  const handleDragEnd = useCallback((event: any) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     
     if (active.id !== over?.id) {

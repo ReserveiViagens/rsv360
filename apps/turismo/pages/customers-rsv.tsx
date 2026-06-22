@@ -1,48 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
+import React, { useState, useMemo } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Users, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar,
-  Star,
-  Heart,
+import {
+  Plus,
+  Search,
+  Users,
+  User,
+  Mail,
+  Phone,
+  MapPin,
   Edit,
   Trash2,
   Eye,
   Download,
-  Upload,
   MoreHorizontal,
   ChevronDown,
   ChevronUp,
   X,
   CheckCircle,
-  XCircle,
-  AlertCircle,
-  Clock,
   DollarSign,
-  Award,
-  FileText,
-  Camera,
-  Settings,
-  Bell,
-  Globe,
-  Building,
-  Plane,
-  Car,
-  Bus,
-  Train,
-  Ship,
-  Bike,
-  Footprints
+  Award
 } from 'lucide-react';
 
 interface Customer {
@@ -89,23 +66,7 @@ interface CustomerStats {
   topDestination: string;
 }
 
-export default function CustomersRSV() {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [viewMode, setViewMode] = useState<'list' | 'cards'>('list');
-
-  // Dados simulados - em produção viriam da API
-  useEffect(() => {
-    const mockCustomers: Customer[] = [
+const MOCK_CUSTOMERS: Customer[] = [
       {
         id: '1',
         name: 'João Silva',
@@ -211,48 +172,50 @@ export default function CustomersRSV() {
       }
     ];
 
-    setCustomers(mockCustomers);
-    setFilteredCustomers(mockCustomers);
-  }, []);
+export default function CustomersRSV() {
+  const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [viewMode, setViewMode] = useState<'list' | 'cards'>('list');
 
-  // Filtros e busca
-  useEffect(() => {
-    let filtered = customers.filter(customer => {
-      const matchesSearch = 
+
+  const filteredCustomers = useMemo(() => {
+    const filtered = customers.filter(customer => {
+      const matchesSearch =
         customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.phone.includes(searchTerm) ||
         customer.city.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const matchesStatus = statusFilter === 'all' || customer.status === statusFilter;
-      
+
       return matchesSearch && matchesStatus;
     });
 
-    // Ordenação
-    filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof Customer];
-      let bValue: any = b[sortBy as keyof Customer];
+    return [...filtered].sort((a, b) => {
+      const aValue = a[sortBy as keyof Customer];
+      const bValue = b[sortBy as keyof Customer];
 
       if (sortBy === 'totalSpent' || sortBy === 'totalBookings') {
-        aValue = Number(aValue) || 0;
-        bValue = Number(bValue) || 0;
+        const aNum = Number(aValue) || 0;
+        const bNum = Number(bValue) || 0;
+        return sortOrder === 'asc' ? aNum - bNum : bNum - aNum;
       }
 
-      if (typeof aValue === 'string') {
-        aValue = aValue.toLowerCase();
-        bValue = bValue.toLowerCase();
-      }
-
+      const aStr = String(aValue ?? '').toLowerCase();
+      const bStr = String(bValue ?? '').toLowerCase();
       if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
+        return aStr > bStr ? 1 : -1;
       }
+      return aStr < bStr ? 1 : -1;
     });
-
-    setFilteredCustomers(filtered);
   }, [customers, searchTerm, statusFilter, sortBy, sortOrder]);
+
 
   const stats: CustomerStats = {
     totalCustomers: customers.length,

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LeilaoCard } from './LeilaoCard'
 import { leiloesApi, Leilao, LeilaoFilters } from '../../services/api/leiloesApi'
 import { FilterBar } from '../shared/FilterBar'
@@ -27,11 +27,7 @@ export function AuctionList({ filters: initialFilters, showFilters = true, onAuc
     totalPages: 0,
   })
 
-  useEffect(() => {
-    loadAuctions()
-  }, [filters])
-
-  const loadAuctions = async () => {
+  const loadAuctions = useCallback(async () => {
     try {
       setLoading(true)
       const response = await leiloesApi.getLeiloes(filters)
@@ -48,7 +44,12 @@ export function AuctionList({ filters: initialFilters, showFilters = true, onAuc
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reload auctions when filters change
+    loadAuctions()
+  }, [loadAuctions])
 
   const handleSearchChange = (value: string) => {
     setFilters(prev => ({ ...prev, search: value, page: 1 }))

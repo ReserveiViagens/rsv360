@@ -15,7 +15,7 @@ import { toast } from 'react-hot-toast';
 
 export default function NewEnterprisePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (data: Partial<Enterprise>) => {

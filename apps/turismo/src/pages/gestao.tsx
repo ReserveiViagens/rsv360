@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
     Users,
     Building,
@@ -6,32 +7,63 @@ import {
     BarChart3,
     FileText,
     Shield,
-    Plus,
     Download,
     Upload,
     Edit,
     Trash2,
     Eye,
-    CheckCircle,
-    AlertCircle,
-    Clock,
-    Star,
-    TrendingUp,
-    Activity,
     UserPlus,
     Building2,
     Cog,
     FileText as FileTextIcon,
-    Database,
     UserCheck,
     X
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
+interface StatsCard {
+    id: number;
+    title: string;
+    value: string;
+    change: string;
+    changeType: 'positive' | 'negative';
+    icon: LucideIcon;
+    color: string;
+}
+
+interface QuickAction {
+    id: number;
+    title: string;
+    description: string;
+    icon: LucideIcon;
+    color: string;
+    action: string;
+}
+
+interface GestaoUser {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    department: string;
+    avatar: string;
+}
+
+interface Department {
+    id: number;
+    name: string;
+    manager: string;
+    employees: number;
+    budget: string;
+    color: string;
+}
+
+type ModalItem = StatsCard | QuickAction | GestaoUser | Department | { title: string };
+
 export default function GestaoSimple() {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('');
-    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [selectedItem, setSelectedItem] = useState<ModalItem | null>(null);
 
     // Estados para formulários
     const [newUserForm, setNewUserForm] = useState({
@@ -141,26 +173,26 @@ export default function GestaoSimple() {
     ];
 
     // Handlers para funcionalidades
-    const handleCardClick = (card: any) => {
+    const handleCardClick = (card: StatsCard) => {
         setSelectedItem(card);
         setModalType('stats-details');
         setShowModal(true);
     };
 
-    const handleQuickAction = (action: any) => {
+    const handleQuickAction = (action: QuickAction) => {
         setSelectedItem(action);
         setModalType(action.action);
         setShowModal(true);
         setFormErrors({});
     };
 
-    const handleUserClick = (user: any) => {
+    const handleUserClick = (user: GestaoUser) => {
         setSelectedItem(user);
         setModalType('user-details');
         setShowModal(true);
     };
 
-    const handleDepartmentClick = (department: any) => {
+    const handleDepartmentClick = (department: Department) => {
         setSelectedItem(department);
         setModalType('department-details');
         setShowModal(true);
@@ -168,8 +200,8 @@ export default function GestaoSimple() {
 
     // Funções de validação
     const validateForm = (formType: string) => {
-        const errors: any = {};
-        let form: any;
+        const errors: Record<string, string> = {};
+        let form: typeof newUserForm | typeof newDepartmentForm;
 
         if (formType === 'user') {
             form = newUserForm;
@@ -253,7 +285,7 @@ export default function GestaoSimple() {
     };
 
     // Funções de input
-    const handleInputChange = (formType: string, field: string, value: any) => {
+    const handleInputChange = (formType: string, field: string, value: string | boolean | File | null | undefined) => {
         if (formType === 'user') {
             setNewUserForm(prev => ({ ...prev, [field]: value }));
         } else if (formType === 'department') {

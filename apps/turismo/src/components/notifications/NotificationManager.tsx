@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -8,25 +8,18 @@ import { Badge } from '@/components/ui/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { 
   Bell, 
-  BellOff, 
   Settings, 
   Send, 
   Clock, 
   Repeat, 
   Trash2, 
-  Eye, 
-  EyeOff,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Info,
-  Zap,
-  Smartphone,
-  Monitor,
-  Globe
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 import PushNotificationService, { 
@@ -54,6 +47,41 @@ interface ScheduledNotification {
   intervalId?: NodeJS.Timeout;
 }
 
+const NOTIFICATION_TEMPLATES: NotificationTemplate[] = [
+  {
+    id: 'welcome',
+    name: 'Bem-vindo',
+    title: 'Bem-vindo ao Sistema RSV!',
+    body: 'Seu sistema de onboarding está pronto para uso.',
+    category: 'success',
+    icon: '/icons/welcome.png'
+  },
+  {
+    id: 'reminder',
+    name: 'Lembrete',
+    title: 'Lembrete Importante',
+    body: 'Você tem tarefas pendentes para completar.',
+    category: 'info',
+    icon: '/icons/reminder.png'
+  },
+  {
+    id: 'alert',
+    name: 'Alerta',
+    title: 'Atenção Necessária',
+    body: 'Há uma situação que requer sua atenção imediata.',
+    category: 'warning',
+    icon: '/icons/alert.png'
+  },
+  {
+    id: 'error',
+    name: 'Erro',
+    title: 'Erro Detectado',
+    body: 'Ocorreu um erro no sistema. Verifique os logs.',
+    category: 'error',
+    icon: '/icons/error.png'
+  }
+];
+
 export default function NotificationManager() {
   const [notificationService] = useState(() => PushNotificationService.getInstance());
   const [isInitialized, setIsInitialized] = useState(false);
@@ -74,75 +102,35 @@ export default function NotificationManager() {
   const [scheduleInterval, setScheduleInterval] = useState(30000);
   const [maxNotifications, setMaxNotifications] = useState(5);
   
-  // Estados para templates
-  const [templates, setTemplates] = useState<NotificationTemplate[]>([
-    {
-      id: 'welcome',
-      name: 'Bem-vindo',
-      title: 'Bem-vindo ao Sistema RSV!',
-      body: 'Seu sistema de onboarding está pronto para uso.',
-      category: 'success',
-      icon: '/icons/welcome.png'
-    },
-    {
-      id: 'reminder',
-      name: 'Lembrete',
-      title: 'Lembrete Importante',
-      body: 'Você tem tarefas pendentes para completar.',
-      category: 'info',
-      icon: '/icons/reminder.png'
-    },
-    {
-      id: 'alert',
-      name: 'Alerta',
-      title: 'Atenção Necessária',
-      body: 'Há uma situação que requer sua atenção imediata.',
-      category: 'warning',
-      icon: '/icons/alert.png'
-    },
-    {
-      id: 'error',
-      name: 'Erro',
-      title: 'Erro Detectado',
-      body: 'Ocorreu um erro no sistema. Verifique os logs.',
-      category: 'error',
-      icon: '/icons/error.png'
-    }
-  ]);
-  
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-
-  // Inicializar serviço
-  useEffect(() => {
-    initializeService();
-    return () => {
-      notificationService.destroy();
-    };
-  }, []);
-
-  const initializeService = async () => {
-    try {
-      const success = await notificationService.initialize();
-      if (success) {
-        setIsInitialized(true);
-        await checkPermission();
-        await checkSubscription();
-      }
-    } catch (error) {
-      console.error('Erro ao inicializar serviço:', error);
-      toast.error('Erro ao inicializar notificações');
-    }
-  };
-
-  const checkPermission = async () => {
-    const currentPermission = await notificationService.getCurrentPermission();
-    setPermission(currentPermission);
-  };
 
   const checkSubscription = async () => {
     const subscribed = await notificationService.isSubscribed();
     setIsSubscribed(subscribed);
   };
+
+  // Inicializar serviço
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const success = await notificationService.initialize();
+          if (success) {
+            setIsInitialized(true);
+            setPermission(await notificationService.getCurrentPermission());
+            setIsSubscribed(await notificationService.isSubscribed());
+          }
+        } catch (error) {
+          console.error('Erro ao inicializar serviço:', error);
+          toast.error('Erro ao inicializar notificações');
+        }
+      })();
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      notificationService.destroy();
+    };
+  }, [notificationService]);
 
   const requestPermission = async () => {
     try {
@@ -319,7 +307,7 @@ export default function NotificationManager() {
     }
   };
 
-  const useTemplate = (template: NotificationTemplate) => {
+  const applyTemplate = (template: NotificationTemplate) => {
     setNotificationTitle(template.title);
     setNotificationBody(template.body);
     setNotificationIcon(template.icon || '');
@@ -746,7 +734,7 @@ export default function NotificationManager() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {templates.map((template) => (
+                {NOTIFICATION_TEMPLATES.map((template) => (
                   <div
                     key={template.id}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -754,7 +742,7 @@ export default function NotificationManager() {
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
-                    onClick={() => useTemplate(template)}
+                    onClick={() => applyTemplate(template)}
                   >
                     <div className="flex items-start gap-3">
                       {getCategoryIcon(template.category)}
@@ -780,7 +768,7 @@ export default function NotificationManager() {
               {selectedTemplate && (
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
-                    Template Selecionado: {templates.find(t => t.id === selectedTemplate)?.name}
+                    Template Selecionado: {NOTIFICATION_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
                   </h4>
                   <p className="text-sm text-blue-800 dark:text-blue-200">
                     Use os botões acima para enviar ou agendar esta notificação

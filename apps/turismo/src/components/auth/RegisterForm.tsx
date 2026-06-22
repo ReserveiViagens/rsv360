@@ -60,6 +60,7 @@ export function RegisterForm({
     mode: 'onChange',
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form watch
   const password = watch('password');
   const acceptTerms = watch('acceptTerms');
   const marketingOptIn = watch('marketingOptIn');

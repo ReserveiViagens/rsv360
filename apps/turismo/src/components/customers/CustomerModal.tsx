@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { 
   User, 
   Mail, 
@@ -15,16 +13,13 @@ import {
   X, 
   Plus, 
   Trash2,
-  Save,
-  Eye,
-  Download
+  Save
 } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Select, SelectOption } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { cn } from '../../utils/cn';
 
 // Schema de validação para o formulário
 const customerSchema = z.object({
@@ -161,6 +156,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form watch for tags/preferences
   const watchedTags = watch('tags') || [];
   const watchedPreferences = watch('preferences') || [];
 
@@ -442,7 +438,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
               <Select
                 options={categoryOptions}
                 value={newPreference.category}
-                onChange={(value) => setNewPreference(prev => ({ ...prev, category: value as any }))}
+                onChange={(value) => setNewPreference(prev => ({ ...prev, category: value as typeof prev.category }))}
                 className="w-32"
               />
               <Input
@@ -454,7 +450,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
               <Select
                 options={priorityOptions}
                 value={newPreference.priority}
-                onChange={(value) => setNewPreference(prev => ({ ...prev, priority: value as any }))}
+                onChange={(value) => setNewPreference(prev => ({ ...prev, priority: value as typeof prev.priority }))}
                 className="w-24"
               />
               <Button

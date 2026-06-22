@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Layout } from '../components/layout';
 import { Card, Button } from '../components/ui';
 import { AnimatedCard, PageTransition } from '../components/ui';
@@ -132,7 +133,7 @@ export default function DashboardNew() {
                 ⌨️ Keyboard Shortcuts
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Pressione "?" para ver todos os atalhos disponíveis
+                Pressione &quot;?&quot; para ver todos os atalhos disponíveis
               </p>
             </div>
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">

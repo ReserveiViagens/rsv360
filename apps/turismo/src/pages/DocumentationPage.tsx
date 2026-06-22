@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FileText, GraduationCap, HelpCircle, BookOpen, MessageCircle, Plus, BarChart3, Users, CheckCircle, Star, Activity, Clock, TrendingUp } from 'lucide-react';
-import { Card, Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui';
+import { FileText, GraduationCap, HelpCircle, BookOpen, MessageCircle, Plus, Users, CheckCircle, Star } from 'lucide-react';
+import { Card, Button, Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui';
 import {
   DocumentationSystem,
   TrainingSystem,
@@ -25,7 +25,7 @@ const DocumentationPage: React.FC = () => {
   
   const { showNotification } = useUIStore();
 
-  const handleDocumentCreated = (document: any) => {
+  const handleDocumentCreated = (_document: unknown) => {
     showNotification('Documento criado com sucesso!', 'success');
     // Atualizar estatísticas
     setQuickStats(prev => ({
@@ -34,11 +34,11 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleDocumentUpdated = (document: any) => {
+  const handleDocumentUpdated = (_document: unknown) => {
     showNotification('Documento atualizado com sucesso!', 'success');
   };
 
-  const handleDocumentDeleted = (id: string) => {
+  const handleDocumentDeleted = (_id: string) => {
     showNotification('Documento excluído com sucesso!', 'success');
     // Atualizar estatísticas
     setQuickStats(prev => ({
@@ -47,7 +47,7 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleCourseCreated = (course: any) => {
+  const handleCourseCreated = (_course: unknown) => {
     showNotification('Curso criado com sucesso!', 'success');
     setQuickStats(prev => ({
       ...prev,
@@ -55,11 +55,11 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleCourseUpdated = (course: any) => {
+  const handleCourseUpdated = (_course: unknown) => {
     showNotification('Curso atualizado com sucesso!', 'success');
   };
 
-  const handleCourseDeleted = (id: string) => {
+  const handleCourseDeleted = (_id: string) => {
     showNotification('Curso excluído com sucesso!', 'success');
     setQuickStats(prev => ({
       ...prev,
@@ -67,15 +67,15 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleUserEnrolled = (userId: string, courseId: string) => {
+  const handleUserEnrolled = (_userId: string, _courseId: string) => {
     showNotification('Usuário inscrito no curso!', 'success');
   };
 
-  const handleUserStarted = (userId: string, tutorialId: string) => {
+  const handleUserStarted = (_userId: string, _tutorialId: string) => {
     showNotification('Usuário iniciou tutorial!', 'success');
   };
 
-  const handleUserCompleted = (userId: string, tutorialId: string) => {
+  const handleUserCompleted = (_userId: string, _tutorialId: string) => {
     showNotification('Usuário concluiu tutorial!', 'success');
     setQuickStats(prev => ({
       ...prev,
@@ -83,7 +83,7 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleFAQCreated = (faq: any) => {
+  const handleFAQCreated = (_faq: unknown) => {
     showNotification('FAQ criada com sucesso!', 'success');
     setQuickStats(prev => ({
       ...prev,
@@ -91,11 +91,11 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleFAQUpdated = (faq: any) => {
+  const handleFAQUpdated = (_faq: unknown) => {
     showNotification('FAQ atualizada com sucesso!', 'success');
   };
 
-  const handleFAQDeleted = (id: string) => {
+  const handleFAQDeleted = (_id: string) => {
     showNotification('FAQ excluída com sucesso!', 'success');
     setQuickStats(prev => ({
       ...prev,
@@ -103,30 +103,30 @@ const DocumentationPage: React.FC = () => {
     }));
   };
 
-  const handleFAQViewed = (id: string) => {
+  const handleFAQViewed = (_id: string) => {
     setQuickStats(prev => ({
       ...prev,
       totalViews: prev.totalViews + 1
     }));
   };
 
-  const handleArticleCreated = (article: any) => {
+  const handleArticleCreated = (_article: unknown) => {
     showNotification('Artigo de ajuda criado com sucesso!', 'success');
   };
 
-  const handleArticleUpdated = (article: any) => {
+  const handleArticleUpdated = (_article: unknown) => {
     showNotification('Artigo de ajuda atualizado com sucesso!', 'success');
   };
 
-  const handleArticleDeleted = (id: string) => {
+  const handleArticleDeleted = (_id: string) => {
     showNotification('Artigo de ajuda excluído com sucesso!', 'success');
   };
 
-  const handleTicketCreated = (ticket: any) => {
+  const handleTicketCreated = (_ticket: unknown) => {
     showNotification('Ticket de suporte criado com sucesso!', 'success');
   };
 
-  const handleTicketUpdated = (ticket: any) => {
+  const handleTicketUpdated = (_ticket: unknown) => {
     showNotification('Ticket de suporte atualizado com sucesso!', 'success');
   };
 
@@ -350,7 +350,7 @@ const DocumentationPage: React.FC = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-900">Curso concluído</p>
-              <p className="text-xs text-gray-500">João Silva completou "Introdução ao Sistema RSV"</p>
+              <p className="text-xs text-gray-500">João Silva completou &quot;Introdução ao Sistema RSV&quot;</p>
             </div>
             <span className="text-xs text-gray-400">15 min atrás</span>
           </div>
@@ -372,7 +372,7 @@ const DocumentationPage: React.FC = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-900">Tutorial iniciado</p>
-              <p className="text-xs text-gray-500">Maria Santos começou "Gestão de Clientes"</p>
+              <p className="text-xs text-gray-500">Maria Santos começou &quot;Gestão de Clientes&quot;</p>
             </div>
             <span className="text-xs text-gray-400">2 horas atrás</span>
           </div>

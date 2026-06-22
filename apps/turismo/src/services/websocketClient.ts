@@ -11,7 +11,7 @@ export interface Notification {
   type: 'info' | 'success' | 'warning' | 'error' | 'booking' | 'payment' | 'system';
   title: string;
   message: string;
-  data?: any;
+  data?: unknown;
   timestamp: string;
   read: boolean;
 }
@@ -27,7 +27,7 @@ export interface UserStatus {
 // Real-time update interface
 export interface RealTimeUpdate {
   type: string;
-  data: any;
+  data: unknown;
   timestamp: string;
 }
 

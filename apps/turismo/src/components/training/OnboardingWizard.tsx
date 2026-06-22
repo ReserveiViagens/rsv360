@@ -1,12 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
 import { Progress } from '@/components/ui/Progress'
 import { 
   ArrowRight,
@@ -20,46 +24,16 @@ import {
   Play,
   BookOpen,
   Award,
-  Lightbulb,
   Users,
   TrendingUp,
   Rocket,
-  Shield,
   Calendar,
-  MapPin,
   Phone,
   Mail,
-  Building,
-  GraduationCap,
-  Briefcase,
-  Code,
-  Database,
-  Globe,
-  Smartphone,
-  Monitor,
-  Tablet,
-  Laptop,
-  Wifi,
   Download,
-  Upload,
-  Eye,
-  EyeOff,
-  Settings,
-  Info,
-  Warning,
-  AlertTriangle,
-  CheckSquare,
-  Square,
-  ChevronDown,
-  ChevronUp,
-  Plus,
-  Minus,
-  Zap,
-  Activity,
-  BarChart3,
-  PieChart,
-  LineChart
-} from 'lucide-react'
+  Edit,
+  Settings
+} from 'lucide-react';
 
 // Tipos para Onboarding Wizard
 interface OnboardingStep {
@@ -90,7 +64,7 @@ interface OnboardingComponent {
 
 interface ValidationRule {
   type: 'required' | 'minLength' | 'maxLength' | 'email' | 'phone' | 'custom'
-  value?: any
+  value?: unknown
   message: string
 }
 
@@ -229,8 +203,7 @@ interface AIRecommendation {
 
 const OnboardingWizard: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
-  const [profile, setProfile] = useState<Partial<OnboardingProfile>>({})
-  const [answers, setAnswers] = useState<Record<string, any>>({})
+  const [answers, setAnswers] = useState<Record<string, unknown>>({})
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
   const [generatedPlan, setGeneratedPlan] = useState<OnboardingPlan | null>(null)
 
@@ -808,7 +781,7 @@ const OnboardingWizard: React.FC = () => {
     }
   }
 
-  const handleInputChange = (componentId: string, value: any) => {
+  const handleInputChange = (componentId: string, value: unknown) => {
     setAnswers(prev => ({
       ...prev,
       [componentId]: value
@@ -825,9 +798,6 @@ const OnboardingWizard: React.FC = () => {
     }, 3000)
   }
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
-  }
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60)

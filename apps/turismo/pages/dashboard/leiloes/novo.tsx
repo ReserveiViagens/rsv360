@@ -13,7 +13,7 @@ export default function NovoLeilaoPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Leilao>) => {
     try {
       setIsLoading(true)
       await leiloesApi.createLeilao(data)

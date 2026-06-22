@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   MapPin, Phone, Mail, Globe, Users, Star, DollarSign, TrendingUp,
   Plane, Camera, Gamepad2, Ticket, Megaphone, BarChart3, Search, Lightbulb,
   Award, Trophy, Gift, ShoppingCart, ShoppingBag, Package, Store,
-  Calculator, FileText, CreditCard, RefreshCw, Image, Video, Heart,
-  MessageCircle, Bot, Bell, Settings, Zap, Edit3, FileCheck,
+  Calculator, FileText, CreditCard, RefreshCw, Image as ImageIcon, Video,
+  Bot, Bell, Settings, Zap, Edit3, FileCheck,
   Shield, IdCard, Car, Hotel, Map, CreditCard as SubscriptionIcon, CreditCard as CardIcon,
   Cpu, Activity,
   TrendingUp as UpgradeIcon, User, Lock, UserCheck, Calendar,
-  Home, Facebook, Instagram, Twitter, MessageSquare, ExternalLink
+  Facebook, Instagram, Twitter, MessageSquare
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
 
@@ -73,7 +73,7 @@ interface ServiceStatus {
 }
 
 export default function DashboardReserveiViagens() {
-  const [stats, setStats] = useState<ReserveiStats>({
+  const [stats] = useState<ReserveiStats>({
     vendas: { mes: 125000, total: 2500000, crescimento: 15.2 },
     clientes: { total: 1500, novos: 45, crescimento: 8.5 },
     reservas: { ativas: 89, total: 1250, taxa_conclusao: 94.5 },
@@ -81,27 +81,6 @@ export default function DashboardReserveiViagens() {
     avaliacao: 4.8,
     destinos: 50
   });
-
-  const [loading, setLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    loadReserveiData();
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const loadReserveiData = async () => {
-    setLoading(true);
-    try {
-      // Simular carregamento de dados da Reservei Viagens
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setLoading(false);
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      setLoading(false);
-    }
-  };
 
   const quickActions: QuickAction[] = [
     {
@@ -228,12 +207,12 @@ export default function DashboardReserveiViagens() {
     {
       id: 'conteudo',
       title: 'Conteúdo',
-      icon: <Image className="w-8 h-8" />,
+      icon: <ImageIcon className="w-8 h-8" />,
       description: 'Mídia e avaliações',
       color: 'bg-pink-50 border-pink-200 text-pink-700',
       status: '4/4',
       items: [
-        { name: 'Fotos', href: '/reservei/fotos', icon: <Image className="w-4 h-4" /> },
+        { name: 'Fotos', href: '/reservei/fotos', icon: <ImageIcon className="w-4 h-4" /> },
         { name: 'Vídeos', href: '/reservei/videos', icon: <Video className="w-4 h-4" /> },
         { name: 'Avaliações', href: '/reservei/avaliacoes', icon: <Star className="w-4 h-4" /> },
         { name: 'Multilíngue', href: '/reservei/multilingue', icon: <Globe className="w-4 h-4" /> }
@@ -345,7 +324,7 @@ export default function DashboardReserveiViagens() {
     { category: 'Fidelização', status: 'online', total: 4, active: 4, icon: <Award className="w-5 h-5" /> },
     { category: 'E-commerce', status: 'online', total: 4, active: 4, icon: <ShoppingCart className="w-5 h-5" /> },
     { category: 'Financeiro', status: 'online', total: 4, active: 4, icon: <Calculator className="w-5 h-5" /> },
-    { category: 'Conteúdo', status: 'online', total: 4, active: 4, icon: <Image className="w-5 h-5" /> },
+    { category: 'Conteúdo', status: 'online', total: 4, active: 4, icon: <ImageIcon className="w-5 h-5" /> },
     { category: 'Automação', status: 'online', total: 4, active: 4, icon: <Bot className="w-5 h-5" /> }
   ];
 

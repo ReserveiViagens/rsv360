@@ -1,30 +1,38 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs';
 import { Badge } from '@/components/ui/Badge';
 import { 
-  Server, 
-  Database, 
-  Globe, 
+  Server,
+  Database,
+  Globe,
   Shield,
   CheckCircle,
   XCircle,
-  AlertTriangle,
   RefreshCw,
-  Download,
-  Upload,
   Activity,
   Settings,
   Code,
   Zap
 } from 'lucide-react';
-import { useApi, useCrudApi, usePaginatedApi } from '@/hooks/useApi';
 import { AuthService } from '@/services/auth';
 import { UserService } from '@/services/user';
-import { currentConfig, isDevelopment, isProduction, isStaging } from '@/config/env';
+import { currentConfig, isProduction, isStaging } from '@/config/env';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
 
 export default function BackendIntegrationTestPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -344,16 +352,16 @@ function AuthServiceTest() {
     // Teste de verificação de token
     try {
       setTestResults(prev => [...prev, { service: 'Verify Token', status: 'pending', message: 'Testando...' }]);
-      const response = await AuthService.verifyToken();
+      await AuthService.verifyToken();
       setTestResults(prev => prev.map(r => 
         r.service === 'Verify Token' 
           ? { ...r, status: 'success', message: 'Token verificado com sucesso' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'Verify Token' 
-          ? { ...r, status: 'error', message: error.message || 'Erro na verificação' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro na verificação') }
           : r
       ));
     }
@@ -361,16 +369,16 @@ function AuthServiceTest() {
     // Teste de verificação de email
     try {
       setTestResults(prev => [...prev, { service: 'Check Email', status: 'pending', message: 'Testando...' }]);
-      const response = await AuthService.checkEmailAvailability('test@example.com');
+      await AuthService.checkEmailAvailability('test@example.com');
       setTestResults(prev => prev.map(r => 
         r.service === 'Check Email' 
           ? { ...r, status: 'success', message: 'Email verificado com sucesso' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'Check Email' 
-          ? { ...r, status: 'error', message: error.message || 'Erro na verificação' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro na verificação') }
           : r
       ));
     }
@@ -384,10 +392,10 @@ function AuthServiceTest() {
           ? { ...r, status: 'success', message: `Força da senha: ${response.data?.score}/4` }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'Password Strength' 
-          ? { ...r, status: 'error', message: error.message || 'Erro na verificação' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro na verificação') }
           : r
       ));
     }
@@ -441,10 +449,10 @@ function UserServiceTest() {
           ? { ...r, status: 'success', message: `Total: ${response.data?.totalUsers || 0} usuários` }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'User Stats' 
-          ? { ...r, status: 'error', message: error.message || 'Erro na obtenção' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro na obtenção') }
           : r
       ));
     }
@@ -458,10 +466,10 @@ function UserServiceTest() {
           ? { ...r, status: 'success', message: `${response.data?.length || 0} roles disponíveis` }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'Available Roles' 
-          ? { ...r, status: 'error', message: error.message || 'Erro na obtenção' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro na obtenção') }
           : r
       ));
     }
@@ -475,10 +483,10 @@ function UserServiceTest() {
           ? { ...r, status: 'success', message: 'Template baixado com sucesso' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.service === 'Import Template' 
-          ? { ...r, status: 'error', message: error.message || 'Erro no download' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro no download') }
           : r
       ));
     }
@@ -535,10 +543,10 @@ function ApiHooksTest() {
           ? { ...r, status: 'success', message: 'Hook funcionando corretamente' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.hook === 'useApi' 
-          ? { ...r, status: 'error', message: error.message || 'Erro no hook' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro no hook') }
           : r
       ));
     }
@@ -554,10 +562,10 @@ function ApiHooksTest() {
           ? { ...r, status: 'success', message: 'Hook CRUD funcionando' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.hook === 'useCrudApi' 
-          ? { ...r, status: 'error', message: error.message || 'Erro no hook' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro no hook') }
           : r
       ));
     }
@@ -573,10 +581,10 @@ function ApiHooksTest() {
           ? { ...r, status: 'success', message: 'Hook de paginação funcionando' }
           : r
       ));
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResults(prev => prev.map(r => 
         r.hook === 'usePaginatedApi' 
-          ? { ...r, status: 'error', message: error.message || 'Erro no hook' }
+          ? { ...r, status: 'error', message: getErrorMessage(error, 'Erro no hook') }
           : r
       ));
     }

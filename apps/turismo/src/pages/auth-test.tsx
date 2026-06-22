@@ -5,7 +5,6 @@ import {
   LoginForm, 
   RegisterForm, 
   ProtectedRoute, 
-  useProtectedRoute, 
   PermissionGate, 
   MultiPermissionGate, 
   UserPermissionsInfo,
@@ -22,8 +21,6 @@ import {
   Lock, 
   Key, 
   Eye, 
-  EyeOff,
-  LogOut,
   Settings,
   UserCheck,
   AlertTriangle

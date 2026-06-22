@@ -1,13 +1,19 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   BarChart3,
@@ -18,54 +24,17 @@ import {
   Target,
   Zap,
   Clock,
-  Calendar,
   Download,
-  Upload,
   Database,
-  Server,
-  Cloud,
   Archive,
   RefreshCw,
-  Settings,
-  Eye,
-  Filter,
-  Search,
-  FileText,
-  PieChart,
-  LineChart,
-  AreaChart,
-  MapPin,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Warning,
-  Star,
-  Bookmark,
   Share,
-  ExternalLink,
-  Maximize,
-  Minimize,
   Copy,
   Edit,
-  Trash2,
   Plus,
-  Save,
-  Users,
-  Building,
-  Globe,
-  Shield,
-  Lock,
-  Network,
-  Router,
-  Monitor,
-  HardDrive,
-  Memory,
-  Cpu,
-  Wifi
-} from 'lucide-react'
+  HardDrive
+} from 'lucide-react';
 import { 
-  LineChart as RechartsLineChart, 
   Line, 
   XAxis, 
   YAxis, 
@@ -79,12 +48,7 @@ import {
   PieChart as RechartsPieChart, 
   Cell,
   Pie,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter,
-  ComposedChart,
-  RechartsTooltip
+  ComposedChart
 } from 'recharts'
 
 // Tipos para Backup Analytics
@@ -201,7 +165,6 @@ interface BackupForecast {
 const BackupAnalytics: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedPeriod, setSelectedPeriod] = useState('month')
-  const [selectedMetric, setSelectedMetric] = useState('all')
 
   // Dados mock para demonstração
   const [analytics] = useState<BackupAnalytics>({
@@ -951,7 +914,7 @@ const BackupAnalytics: React.FC = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: any) => `${value} GB`} />
+                    <Tooltip formatter={(value: number) => `${value} GB`} />
                   </RechartsPieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -977,7 +940,7 @@ const BackupAnalytics: React.FC = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: any) => `${value} GB`} />
+                    <Tooltip formatter={(value: number) => `${value} GB`} />
                   </RechartsPieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -997,7 +960,7 @@ const BackupAnalytics: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip formatter={(value: any) => formatCurrency(value)} />
+                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
                     <Bar dataKey="value" name="Custo">
                       {costAnalysisData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />

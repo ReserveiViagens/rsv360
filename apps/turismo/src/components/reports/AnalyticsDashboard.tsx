@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { Calendar, TrendingUp, Users, DollarSign, MapPin, Filter, Download, RefreshCw, Eye, BarChart3, PieChart as PieChartIcon, Activity } from 'lucide-react';
+import { Calendar, TrendingUp, Users, DollarSign, Download, RefreshCw, BarChart3, Activity } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
-import { Badge } from '../ui/Badge';
 import { cn } from '../../utils/cn';
 
 export interface AnalyticsData {

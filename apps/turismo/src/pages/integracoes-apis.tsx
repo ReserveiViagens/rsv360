@@ -9,23 +9,17 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Switch } from '@/components/ui/Switch';
 import { Progress } from '@/components/ui/Progress';
 import {
   Globe,
-  Zap,
   Settings,
   Key,
-  Mail,
   MessageSquare,
   CreditCard,
   MapPin,
   Cloud,
-  Database,
-  Smartphone,
   Users,
   BarChart3,
-  Bell,
   RefreshCw,
   Save,
   TestTube,
@@ -35,16 +29,13 @@ import {
   Info,
   Eye,
   EyeOff,
-  Copy,
   Plus,
   Trash2,
   Edit,
   Play,
   Pause,
   Activity,
-  Clock,
-  Shield,
-  Network
+  Clock
 } from 'lucide-react';
 
 interface APIIntegration {
@@ -344,7 +335,7 @@ export default function IntegracoesAPIs() {
       ));
 
       alert('Teste realizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       // Simular erro no teste
       setIntegrations(prev => prev.map(int =>
         int.id === integration.id
@@ -426,7 +417,7 @@ export default function IntegracoesAPIs() {
     }
   };
 
-  const updateIntegrationField = (field: string, value: any) => {
+  const updateIntegrationField = <K extends keyof APIIntegration>(field: K, value: APIIntegration[K]) => {
     if (!selectedIntegration) return;
     setSelectedIntegration({ ...selectedIntegration, [field]: value });
   };
@@ -443,7 +434,7 @@ export default function IntegracoesAPIs() {
   const removeHeader = (key: string) => {
     if (!selectedIntegration) return;
 
-    const { [key]: removed, ...rest } = selectedIntegration.headers;
+    const { [key]: _removed, ...rest } = selectedIntegration.headers;
     setSelectedIntegration({ ...selectedIntegration, headers: rest });
   };
 
@@ -451,10 +442,12 @@ export default function IntegracoesAPIs() {
     return Math.min(Math.round((calls / limit) * 100), 100);
   };
 
-  const getUsageColor = (percentage: number) => {
-    if (percentage < 50) return 'bg-green-500';
-    if (percentage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
+  const getMockResponseTime = (id: string) => {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    }
+    return 100 + (Math.abs(hash) % 500);
   };
 
   return (
@@ -1119,7 +1112,7 @@ export default function IntegracoesAPIs() {
                 <CardContent>
                   <div className="space-y-4">
                     {integrations.map(integration => {
-                      const avgResponseTime = Math.floor(Math.random() * 500) + 100; // Mock data
+                      const avgResponseTime = getMockResponseTime(integration.id);
                       return (
                         <div key={integration.id} className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">

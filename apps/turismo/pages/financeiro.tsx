@@ -1,38 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { 
-    TrendingUp, 
-    TrendingDown, 
-    DollarSign, 
-    CreditCard, 
-    Wallet, 
-    PiggyBank, 
-    BarChart3, 
-    PieChart, 
-    Calendar, 
-    Download, 
-    Upload, 
-    Plus, 
-    Edit, 
-    Trash, 
-    X, 
-    Save, 
-    Search, 
-    Filter,
-    Eye,
-    FileText,
-    Receipt,
-    Banknote,
-    Coins,
-    Calculator,
-    Target,
-    AlertCircle,
-    CheckCircle,
-    Clock,
-    RefreshCw,
-    Trash2
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  BarChart3,
+  Download,
+  Plus,
+  Edit,
+  Search,
+  Trash2
 } from 'lucide-react';
 import NavigationButtons from '../components/NavigationButtons';
-import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Transaction {
     id: number;
@@ -48,100 +26,94 @@ interface Transaction {
     customer?: string; // Added for new mock data
 }
 
-interface FinancialMetric {
-    name: string;
-    value: number;
-    change: number;
-    changeType: 'increase' | 'decrease';
-    icon: React.ReactNode;
-    color: string;
-}
+// Dados mockados de transações
+const MOCK_TRANSACTIONS: Transaction[] = [
+    {
+        id: 1,
+        date: '2024-01-15',
+        type: 'income',
+        amount: 2500.00,
+        description: 'Venda pacote Disney',
+        category: 'Vendas',
+        paymentMethod: 'Cartão de Crédito',
+        status: 'completed',
+        customer: 'Maria Silva',
+        reference: 'DIS-001'
+    },
+    {
+        id: 2,
+        date: '2024-01-14',
+        type: 'income',
+        amount: 1800.00,
+        category: 'Comissões',
+        description: 'Comissão de venda Disney',
+        paymentMethod: 'Transferência',
+        status: 'completed',
+        customer: 'João Santos',
+        reference: 'COM-002'
+    },
+    {
+        id: 3,
+        date: '2024-01-13',
+        type: 'expense',
+        amount: -450.00,
+        description: 'Compra passagens aéreas',
+        category: 'Transporte',
+        paymentMethod: 'Cartão de Débito',
+        status: 'completed',
+        customer: 'Sistema',
+        reference: 'EXP-003'
+    },
+    {
+        id: 4,
+        date: '2024-01-12',
+        type: 'expense',
+        amount: -120.00,
+        description: 'Manutenção sistema',
+        category: 'Tecnologia',
+        paymentMethod: 'Transferência',
+        status: 'completed',
+        customer: 'Sistema',
+        reference: 'EXP-004'
+    },
+    {
+        id: 5,
+        date: '2024-01-11',
+        type: 'income',
+        amount: 3200.00,
+        category: 'Hotéis',
+        description: 'Comissão hotel Marina',
+        paymentMethod: 'Cartão de Crédito',
+        status: 'completed',
+        customer: 'Ana Costa',
+        reference: 'HOT-005'
+    }
+];
+
+
+const PERIOD_CUTOFFS: Record<string, Date> = {
+    week: new Date('2024-01-08'),
+    month: new Date('2023-12-15'),
+    quarter: new Date('2023-10-15'),
+    year: new Date('2023-01-15'),
+};
 
 export default function FinanceiroPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [showTransactionDetails, setShowTransactionDetails] = useState(false);
-    const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [, setShowAddModal] = useState(false);
+    const [, setShowEditModal] = useState(false);
+    const [, setSelectedTransaction] = useState<Transaction | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     const [selectedPeriod, setSelectedPeriod] = useState('all');
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
-    const [exportGenerating, setExportGenerating] = useState(false);
-
-    // Dados mockados de transações
-    const mockTransactions: Transaction[] = [
-        {
-            id: 1,
-            date: '2024-01-15',
-            type: 'income',
-            amount: 2500.00,
-            description: 'Venda pacote Disney',
-            category: 'Vendas',
-            paymentMethod: 'Cartão de Crédito',
-            status: 'completed',
-            customer: 'Maria Silva',
-            reference: 'DIS-001'
-        },
-        {
-            id: 2,
-            date: '2024-01-14',
-            type: 'income',
-            amount: 1800.00,
-            category: 'Comissões',
-            description: 'Comissão de venda Disney',
-            paymentMethod: 'Transferência',
-            status: 'completed',
-            customer: 'João Santos',
-            reference: 'COM-002'
-        },
-        {
-            id: 3,
-            date: '2024-01-13',
-            type: 'expense',
-            amount: -450.00,
-            description: 'Compra passagens aéreas',
-            category: 'Transporte',
-            paymentMethod: 'Cartão de Débito',
-            status: 'completed',
-            customer: 'Sistema',
-            reference: 'EXP-003'
-        },
-        {
-            id: 4,
-            date: '2024-01-12',
-            type: 'expense',
-            amount: -120.00,
-            description: 'Manutenção sistema',
-            category: 'Tecnologia',
-            paymentMethod: 'Transferência',
-            status: 'completed',
-            customer: 'Sistema',
-            reference: 'EXP-004'
-        },
-        {
-            id: 5,
-            date: '2024-01-11',
-            type: 'income',
-            amount: 3200.00,
-            category: 'Hotéis',
-            description: 'Comissão hotel Marina',
-            paymentMethod: 'Cartão de Crédito',
-            status: 'completed',
-            customer: 'Ana Costa',
-            reference: 'HOT-005'
-        }
-    ];
 
     useEffect(() => {
         const loadTransactions = async () => {
             try {
                 // Simular carregamento de dados
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                setTransactions(mockTransactions);
+                setTransactions(MOCK_TRANSACTIONS);
             } catch (error) {
                 console.error('Erro ao carregar transações:', error);
             } finally {
@@ -246,11 +218,8 @@ export default function FinanceiroPage() {
         const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                              transaction.customer?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = selectedType === 'all' || transaction.type === selectedType;
-        const matchesPeriod = selectedPeriod === 'all' || 
-            (selectedPeriod === 'week' && new Date(transaction.date) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
-            (selectedPeriod === 'month' && new Date(transaction.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) ||
-            (selectedPeriod === 'quarter' && new Date(transaction.date) >= new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)) ||
-            (selectedPeriod === 'year' && new Date(transaction.date) >= new Date(Date.now() - 365 * 24 * 60 * 60 * 1000));
+        const matchesPeriod = selectedPeriod === 'all' ||
+            (selectedPeriod in PERIOD_CUTOFFS && new Date(transaction.date) >= PERIOD_CUTOFFS[selectedPeriod]);
         
         return matchesSearch && matchesType && matchesPeriod;
     });

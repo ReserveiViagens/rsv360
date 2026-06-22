@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import ProtectedRoute from '../../../src/components/ProtectedRoute'
 import { ParticipantesList } from '../../../src/components/excursoes/ParticipantesList'
@@ -15,16 +15,7 @@ export default function ParticipantesPage() {
   const [loading, setLoading] = useState(true)
   const [excursaoId, setExcursaoId] = useState<string>('')
 
-  useEffect(() => {
-    // Tentar pegar do query ou da URL
-    const id = (router.query.excursao_id || router.query.id) as string
-    if (id) {
-      setExcursaoId(id)
-      loadParticipantes(id)
-    }
-  }, [router.query])
-
-  const loadParticipantes = async (id: string) => {
+  const loadParticipantes = useCallback(async (id: string) => {
     try {
       setLoading(true)
       const data = await excursoesApi.getParticipantes(id)
@@ -35,7 +26,17 @@ export default function ParticipantesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Tentar pegar do query ou da URL
+    const id = (router.query.excursao_id || router.query.id) as string
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync excursao id from route query
+      setExcursaoId(id)
+      loadParticipantes(id)
+    }
+  }, [router.query, loadParticipantes])
 
   const handleRemove = async (userId: string) => {
     if (!confirm('Tem certeza que deseja remover este participante?')) return

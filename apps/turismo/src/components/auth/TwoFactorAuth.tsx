@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Shield, QrCode, Smartphone, Key, Download, RefreshCw, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Shield, QrCode, Key, Download, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button, Input, Alert, AlertDescription } from '../ui';
 
 const enable2FASchema = z.object({
@@ -22,7 +22,7 @@ export interface TwoFactorAuthProps {
 
 export const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ onBack }) => {
   const [step, setStep] = useState<'setup' | 'verify' | 'enabled' | 'disabled'>('setup');
-  const [qrCode, setQrCode] = useState<string>('');
+  const [_qrCode, setQrCode] = useState<string>('');
   const [secretKey, setSecretKey] = useState<string>('');
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,27 +37,25 @@ export const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ onBack }) => {
     resolver: zodResolver(verify2FASchema),
   });
 
-  // Gerar QR code e chave secreta
-  useEffect(() => {
-    if (step === 'setup') {
-      generate2FASetup();
-    }
-  }, [step]);
-
-  const generate2FASetup = () => {
-    // Em produção, chamar API para gerar chave secreta
+  const generate2FASetup = useCallback(() => {
     const mockSecret = 'JBSWY3DPEHPK3PXP';
     const mockQRCode = `otpauth://totp/ReserveiViagens:admin@reserveiviagens.com.br?secret=${mockSecret}&issuer=ReserveiViagens`;
     
     setSecretKey(mockSecret);
     setQrCode(mockQRCode);
     
-    // Gerar códigos de backup
     const codes = Array.from({ length: 10 }, () => 
       Math.random().toString(36).substring(2, 8).toUpperCase()
     );
     setBackupCodes(codes);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (step === 'setup') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize 2FA mock setup when entering setup step
+      generate2FASetup();
+    }
+  }, [step, generate2FASetup]);
 
   const handleEnable2FA = async (data: Enable2FAData) => {
     setIsLoading(true);
@@ -73,7 +71,7 @@ export const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ onBack }) => {
       } else {
         setError('Código inválido. Verifique o código no seu app de autenticação.');
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao ativar 2FA. Tente novamente.');
     } finally {
       setIsLoading(false);
@@ -94,7 +92,7 @@ export const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ onBack }) => {
       } else {
         setError('Código inválido. Verifique o código no seu app de autenticação.');
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao verificar código. Tente novamente.');
     } finally {
       setIsLoading(false);
@@ -110,7 +108,7 @@ export const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ onBack }) => {
       
       setIs2FAEnabled(false);
       setStep('setup');
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao desativar 2FA. Tente novamente.');
     } finally {
       setIsLoading(false);

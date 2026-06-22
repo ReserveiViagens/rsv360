@@ -1,32 +1,24 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { 
-    Truck, 
-    MapPin, 
-    Star, 
-    Clock, 
-    DollarSign, 
-    Users, 
-    Plus, 
-    Edit, 
-    Trash, 
-    X, 
-    Save, 
-    Upload, 
+import {
+    Truck,
+    MapPin,
+    Star,
+    DollarSign,
+    Users,
+    Plus,
+    Edit,
+    Trash,
+    X,
+    Upload,
     Image as ImageIcon,
     Eye,
-    Search,
     Download,
-    Phone,
-    Globe,
-    Calendar,
     Car,
     Plane,
     Ship,
-    Bus,
     Train,
     Play
 } from 'lucide-react';
-import NavigationButtons from '../components/NavigationButtons';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Transport {
@@ -52,17 +44,104 @@ interface Transport {
     videos: string[];
 }
 
+const MOCK_TRANSPORTS: Transport[] = [
+    {
+        id: 1,
+        name: "Aeroporto de Congonhas",
+        location: "São Paulo, SP",
+        description: "Aeroporto doméstico principal de São Paulo, com voos para todo o Brasil.",
+        type: "aéreo",
+        category: "privado",
+        rating: 4.2,
+        price: 150.00,
+        duration: "1-2 horas",
+        capacity: 8000000,
+        frequency: "Diário",
+        amenities: ["Wi-Fi", "Entretenimento", "Refeição", "Bagagem"],
+        contact: "0800 123 4567",
+        website: "https://www.congonhas.com",
+        departureTime: "08:00",
+        arrivalTime: "10:30",
+        facilities: ["Wi-Fi", "Entretenimento", "Refeição", "Bagagem"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/transport/congonhas-1.jpg", "/images/transport/congonhas-2.jpg"],
+        videos: ["/videos/transport/congonhas.mp4"]
+    },
+    {
+        id: 2,
+        name: "Metrô de São Paulo",
+        location: "São Paulo, SP",
+        description: "Sistema de metrô da cidade de São Paulo, com 6 linhas e 89 estações.",
+        type: "terrestre",
+        category: "público",
+        rating: 4.5,
+        price: 4.50,
+        duration: "30-60 minutos",
+        capacity: 12000000,
+        frequency: "A cada 3 min",
+        amenities: ["Ar condicionado", "Wi-Fi", "Acessibilidade"],
+        contact: "0800 770 7722",
+        website: "https://www.metrosp.com",
+        departureTime: "05:00",
+        arrivalTime: "00:00",
+        facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/transport/metro-sp-1.jpg", "/images/transport/metro-sp-2.jpg"],
+        videos: ["/videos/transport/metro-sp.mp4"]
+    },
+    {
+        id: 3,
+        name: "Rodoviária Tietê",
+        location: "São Paulo, SP",
+        description: "Terminal rodoviário principal de São Paulo, com ônibus para todo o Brasil.",
+        type: "marítimo",
+        category: "público",
+        rating: 3.8,
+        price: 80.00,
+        duration: "2-8 horas",
+        capacity: 5000000,
+        frequency: "Sob demanda",
+        amenities: ["Wi-Fi", "Restaurante", "Loja de conveniência"],
+        contact: "0800 721 1010",
+        website: "https://www.tiete.com",
+        departureTime: "Sob demanda",
+        arrivalTime: "Sob demanda",
+        facilities: ["Estacionamento", "Banheiros", "Guichês"],
+        restrictions: ["Não aceita pets"],
+        images: ["/images/transport/tiete-1.jpg", "/images/transport/tiete-2.jpg"],
+        videos: ["/videos/transport/tiete.mp4"]
+    },
+    {
+        id: 4,
+        name: "Porto de Santos",
+        location: "Santos, SP",
+        description: "Maior porto da América Latina, com cruzeiros e navios de carga.",
+        type: "ferroviário",
+        category: "turístico",
+        rating: 4.0,
+        price: 200.00,
+        duration: "1-7 dias",
+        capacity: 2000000,
+        frequency: "Semanal",
+        amenities: ["Wi-Fi", "Restaurante", "Loja de souvenirs"],
+        contact: "0800 333 9999",
+        website: "https://www.santos.com",
+        departureTime: "18:00",
+        arrivalTime: "08:00",
+        facilities: ["Estacionamento", "Banheiros", "Terminal"],
+        restrictions: ["Documentação obrigatória"],
+        images: ["/images/transport/santos-1.jpg", "/images/transport/santos-2.jpg"],
+        videos: ["/videos/transport/santos.mp4"]
+    }
+];
+
 export default function TransportPage() {
     const [transports, setTransports] = useState<Transport[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showNewTransportModal, setShowNewTransportModal] = useState(false);
-    const [showEditTransportModal, setShowEditTransportModal] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
     const [showVideoModal, setShowVideoModal] = useState(false);
-    const [editingTransport, setEditingTransport] = useState<Transport | null>(null);
     const [selectedTransport, setSelectedTransport] = useState<Transport | null>(null);
     const [selectedImage, setSelectedImage] = useState<string>('');
-    const [selectedVideo, setSelectedVideo] = useState<string>('');
     const [uploadingImage, setUploadingImage] = useState(false);
     const [uploadingVideo, setUploadingVideo] = useState(false);
     const [showStatsDetails, setShowStatsDetails] = useState(false);
@@ -74,104 +153,11 @@ export default function TransportPage() {
     const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
     const [exportGenerating, setExportGenerating] = useState(false);
 
-    // Dados mockados para transportes
-    const mockTransports: Transport[] = [
-        {
-            id: 1,
-            name: "Aeroporto de Congonhas",
-            location: "São Paulo, SP",
-            description: "Aeroporto doméstico principal de São Paulo, com voos para todo o Brasil.",
-            type: "aéreo",
-            category: "privado",
-            rating: 4.2,
-            price: 150.00,
-            duration: "1-2 horas",
-            capacity: 8000000,
-            frequency: "Diário",
-            amenities: ["Wi-Fi", "Entretenimento", "Refeição", "Bagagem"],
-            contact: "0800 123 4567",
-            website: "https://www.congonhas.com",
-            departureTime: "08:00",
-            arrivalTime: "10:30",
-            facilities: ["Wi-Fi", "Entretenimento", "Refeição", "Bagagem"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/transport/congonhas-1.jpg", "/images/transport/congonhas-2.jpg"],
-            videos: ["/videos/transport/congonhas.mp4"]
-        },
-        {
-            id: 2,
-            name: "Metrô de São Paulo",
-            location: "São Paulo, SP",
-            description: "Sistema de metrô da cidade de São Paulo, com 6 linhas e 89 estações.",
-            type: "terrestre",
-            category: "público",
-            rating: 4.5,
-            price: 4.50,
-            duration: "30-60 minutos",
-            capacity: 12000000,
-            frequency: "A cada 3 min",
-            amenities: ["Ar condicionado", "Wi-Fi", "Acessibilidade"],
-            contact: "0800 770 7722",
-            website: "https://www.metrosp.com",
-            departureTime: "05:00",
-            arrivalTime: "00:00",
-            facilities: ["Estacionamento", "Banheiros", "Loja de souvenirs"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/transport/metro-sp-1.jpg", "/images/transport/metro-sp-2.jpg"],
-            videos: ["/videos/transport/metro-sp.mp4"]
-        },
-        {
-            id: 3,
-            name: "Rodoviária Tietê",
-            location: "São Paulo, SP",
-            description: "Terminal rodoviário principal de São Paulo, com ônibus para todo o Brasil.",
-            type: "marítimo",
-            category: "público",
-            rating: 3.8,
-            price: 80.00,
-            duration: "2-8 horas",
-            capacity: 5000000,
-            frequency: "Sob demanda",
-            amenities: ["Wi-Fi", "Restaurante", "Loja de conveniência"],
-            contact: "0800 721 1010",
-            website: "https://www.tiete.com",
-            departureTime: "Sob demanda",
-            arrivalTime: "Sob demanda",
-            facilities: ["Estacionamento", "Banheiros", "Guichês"],
-            restrictions: ["Não aceita pets"],
-            images: ["/images/transport/tiete-1.jpg", "/images/transport/tiete-2.jpg"],
-            videos: ["/videos/transport/tiete.mp4"]
-        },
-        {
-            id: 4,
-            name: "Porto de Santos",
-            location: "Santos, SP",
-            description: "Maior porto da América Latina, com cruzeiros e navios de carga.",
-            type: "ferroviário",
-            category: "turístico",
-            rating: 4.0,
-            price: 200.00,
-            duration: "1-7 dias",
-            capacity: 2000000,
-            frequency: "Semanal",
-            amenities: ["Wi-Fi", "Restaurante", "Loja de souvenirs"],
-            contact: "0800 333 9999",
-            website: "https://www.santos.com",
-            departureTime: "18:00",
-            arrivalTime: "08:00",
-            facilities: ["Estacionamento", "Banheiros", "Terminal"],
-            restrictions: ["Documentação obrigatória"],
-            images: ["/images/transport/santos-1.jpg", "/images/transport/santos-2.jpg"],
-            videos: ["/videos/transport/santos.mp4"]
-        }
-    ];
-
     useEffect(() => {
         const loadTransports = async () => {
             try {
-                // Simular carregamento de dados
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                setTransports(mockTransports);
+                setTransports(MOCK_TRANSPORTS);
             } catch (error) {
                 console.error('Erro ao carregar transportes:', error);
             } finally {
@@ -182,14 +168,12 @@ export default function TransportPage() {
         loadTransports();
     }, []);
 
-    // Funções de gestão de transportes
     const handleNewTransport = () => {
-        setShowNewTransportModal(true);
+        alert('Funcionalidade em desenvolvimento');
     };
 
-    const handleEditTransport = (transport: Transport) => {
-        setEditingTransport(transport);
-        setShowEditTransportModal(true);
+    const handleEditTransport = (_transport: Transport) => {
+        alert('Funcionalidade em desenvolvimento');
     };
 
     const handleDeleteTransport = (transportId: number) => {
@@ -546,6 +530,7 @@ export default function TransportPage() {
                         {transports.map((transport) => (
                             <div key={transport.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                                 <div className="relative">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- transport gallery mock URLs */}
                                     <img
                                         src={transport.images[0] || "https://via.placeholder.com/300x200"}
                                         alt={transport.name}
@@ -672,6 +657,7 @@ export default function TransportPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {selectedTransport.images.map((image, index) => (
                                         <div key={index} className="relative group">
+                                            {/* eslint-disable-next-line @next/next/no-img-element -- transport gallery mock URLs */}
                                             <img
                                                 src={image}
                                                 alt={`${selectedTransport.name} - Imagem ${index + 1}`}
@@ -860,7 +846,7 @@ export default function TransportPage() {
                                     </select>
                                     <select
                                         value={statsPeriod}
-                                        onChange={(e) => setStatsPeriod(e.target.value as any)}
+                                        onChange={(e) => setStatsPeriod(e.target.value as 'daily' | 'weekly' | 'monthly' | 'annual')}
                                         className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
                                         <option value="daily">Diário</option>
@@ -972,6 +958,7 @@ export default function TransportPage() {
                 {selectedImage && (
                     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60">
                         <div className="relative max-w-4xl max-h-[90vh]">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- transport image preview modal */}
                             <img
                                 src={selectedImage}
                                 alt="Preview"

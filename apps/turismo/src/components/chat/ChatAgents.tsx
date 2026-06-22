@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Card, Button, Input, Badge, Tabs, Avatar, Switch, Select } from '@/components/ui';
-import { Plus, Search, Edit, Trash2, MessageSquare, Clock, Users, Star, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, MessageSquare, Clock, Users, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ChatAgent {
@@ -73,7 +73,7 @@ export default function ChatAgents({ onAgentSelect }: ChatAgentsProps) {
       totalChats: 850,
       avgResponseTime: 3.2,
       isActive: true,
-      lastActive: new Date(Date.now() - 1800000),
+      lastActive: new Date('2024-06-01T09:30:00'),
     },
     {
       id: '4',
@@ -330,6 +330,7 @@ export default function ChatAgents({ onAgentSelect }: ChatAgentsProps) {
                     <div className="flex items-center space-x-4">
                       <div className="relative">
                         <Avatar className="h-12 w-12">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- agent avatar from mock data */}
                           <img src={agent.avatar} alt={agent.name} />
                         </Avatar>
                         <div className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white ${getStatusColor(agent.status)}`} />

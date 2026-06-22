@@ -145,8 +145,8 @@ export class AuthService {
   }
 
   // Obter sessões ativas
-  static async getActiveSessions(): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>('/auth/sessions');
+  static async getActiveSessions(): Promise<ApiResponse<Record<string, unknown>[]>> {
+    return apiClient.get<Record<string, unknown>[]>('/auth/sessions');
   }
 
   // Encerrar sessão específica

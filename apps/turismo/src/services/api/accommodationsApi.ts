@@ -8,7 +8,6 @@ import type {
   Property,
   Accommodation,
   AccommodationAvailability,
-  PricingRule,
   AccommodationSearchFilters,
   AccommodationSearchResult,
   PriceCalculation

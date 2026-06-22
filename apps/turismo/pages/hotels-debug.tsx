@@ -1,34 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Building,
   MapPin,
   Star,
-  DollarSign,
-  Users,
-  Calendar,
   Search,
-  Filter,
   Plus,
   Edit,
   Trash2,
-  Download,
-  Upload,
-  Eye,
-  Camera,
-  Video,
-  BarChart3,
-  FileText,
-  Settings,
-  MoreHorizontal,
-  Heart,
-  Share2,
-  MessageCircle,
-  Phone,
-  Mail,
-  Globe,
-  Clock,
-  CheckCircle,
-  AlertCircle,
   X,
   Save,
   Loader
@@ -78,9 +56,33 @@ const initialHotelData: Hotel = {
   status: 'active'
 };
 
+const MOCK_HOTELS: Hotel[] = [
+  {
+    id: 1,
+    name: "Hotel Teste",
+    location: "São Paulo, SP",
+    description: "Hotel para testes do sistema",
+    category: "turístico",
+    rating: 4.5,
+    price: 350,
+    amenities: ["Wi-Fi", "Piscina"],
+    facilities: ["Estacionamento", "Café da manhã"],
+    restrictions: [],
+    images: [],
+    videos: [],
+    contact: {
+      phone: "(11) 1234-5678",
+      email: "teste@hotel.com",
+      website: "www.hotel.com"
+    },
+    status: "active",
+    createdAt: "2025-01-01",
+    updatedAt: "2025-01-01"
+  }
+];
+
 export default function HotelsDebug() {
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [hotels, setHotels] = useState<Hotel[]>(MOCK_HOTELS);
   const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -89,7 +91,7 @@ export default function HotelsDebug() {
   const [formData, setFormData] = useState<Hotel>(initialHotelData);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [debugLog, setDebugLog] = useState<string[]>([]);
+  const [debugLog, setDebugLog] = useState<string[]>(['Componente iniciado - dados mock carregados']);
 
   // Função para adicionar logs de debug
   const addDebugLog = (message: string) => {
@@ -99,36 +101,6 @@ export default function HotelsDebug() {
     setDebugLog(prev => [...prev.slice(-4), logMessage]); // Manter apenas últimos 5 logs
   };
 
-  // Carregar hotéis mock na inicialização
-  useEffect(() => {
-    addDebugLog('Componente iniciado - carregando dados mock');
-    const mockHotels: Hotel[] = [
-      {
-        id: 1,
-        name: "Hotel Teste",
-        location: "São Paulo, SP",
-        description: "Hotel para testes do sistema",
-        category: "turístico",
-        rating: 4.5,
-        price: 350,
-        amenities: ["Wi-Fi", "Piscina"],
-        facilities: ["Estacionamento", "Café da manhã"],
-        restrictions: [],
-        images: [],
-        videos: [],
-        contact: {
-          phone: "(11) 1234-5678",
-          email: "teste@hotel.com",
-          website: "www.hotel.com"
-        },
-        status: "active",
-        createdAt: "2025-01-01",
-        updatedAt: "2025-01-01"
-      }
-    ];
-    setHotels(mockHotels);
-    addDebugLog(`${mockHotels.length} hotéis carregados`);
-  }, []);
 
   const handleCreateHotel = () => {
     addDebugLog('Botão "Novo Hotel" clicado');
@@ -139,8 +111,8 @@ export default function HotelsDebug() {
       setError('');
       setSuccess('');
       addDebugLog('Modal aberto para criar novo hotel');
-    } catch (err: any) {
-      addDebugLog(`ERRO ao abrir modal: ${err.message}`);
+    } catch (err: unknown) {
+      addDebugLog(`ERRO ao abrir modal: ${err instanceof Error ? err.message : 'Erro desconhecido'}`);
       setError('Erro ao abrir modal de criação');
     }
   };
@@ -154,8 +126,8 @@ export default function HotelsDebug() {
       setError('');
       setSuccess('');
       addDebugLog('Modal aberto para editar hotel');
-    } catch (err: any) {
-      addDebugLog(`ERRO ao editar hotel: ${err.message}`);
+    } catch (err: unknown) {
+      addDebugLog(`ERRO ao editar hotel: ${err instanceof Error ? err.message : 'Erro desconhecido'}`);
       setError('Erro ao abrir modal de edição');
     }
   };
@@ -199,8 +171,8 @@ export default function HotelsDebug() {
         addDebugLog('Modal fechado após salvamento');
       }, 1500);
 
-    } catch (error: any) {
-      const errorMsg = `Erro ao salvar: ${error.message || 'Erro desconhecido'}`;
+    } catch (error: unknown) {
+      const errorMsg = `Erro ao salvar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`;
       addDebugLog(`ERRO: ${errorMsg}`);
       setError(errorMsg);
     } finally {
@@ -220,14 +192,14 @@ export default function HotelsDebug() {
       addDebugLog(`Hotel ID ${hotelId} excluído`);
       setSuccess('Hotel excluído com sucesso!');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      const errorMsg = `Erro ao excluir: ${error.message}`;
+    } catch (error: unknown) {
+      const errorMsg = `Erro ao excluir: ${error instanceof Error ? error.message : 'Erro desconhecido'}`;
       addDebugLog(`ERRO: ${errorMsg}`);
       setError(errorMsg);
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     addDebugLog(`Campo alterado: ${field} = ${value}`);
     if (field.includes('.')) {
       const [parent, child] = field.split('.');

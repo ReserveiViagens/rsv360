@@ -1,0 +1,2289 @@
+{
+  "generatedAt": "2026-06-16T13:49:38.452Z",
+  "totalWarnings": 3141,
+  "fileCount": 360,
+  "clusterCount": 120,
+  "baselineGlobal": 3141,
+  "clusters": [
+    {
+      "id": 1,
+      "delta": 86,
+      "files": [
+        {
+          "path": "src/components/integrations/IntegrationHub.tsx",
+          "warnings": 29
+        },
+        {
+          "path": "src/components/projects/ProjectTimeline.tsx",
+          "warnings": 29
+        },
+        {
+          "path": "pages/cotacoes/atracoes.tsx",
+          "warnings": 28
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 2,
+      "delta": 84,
+      "files": [
+        {
+          "path": "pages/dashboard-master.tsx",
+          "warnings": 28
+        },
+        {
+          "path": "pages/hotels-funcional.tsx",
+          "warnings": 28
+        },
+        {
+          "path": "src/components/financial/FinancialAnalytics.tsx",
+          "warnings": 28
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 3,
+      "delta": 82,
+      "files": [
+        {
+          "path": "src/components/layout/Sidebar.tsx",
+          "warnings": 28
+        },
+        {
+          "path": "pages/customers-rsv.tsx",
+          "warnings": 27
+        },
+        {
+          "path": "src/pages/NotificationsPage.tsx",
+          "warnings": 27
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 4,
+      "delta": 78,
+      "files": [
+        {
+          "path": "pages/customers-complete.tsx",
+          "warnings": 26
+        },
+        {
+          "path": "src/components/analytics/AdvancedCharts.tsx",
+          "warnings": 26
+        },
+        {
+          "path": "src/components/workflow/ApprovalSystem.tsx",
+          "warnings": 26
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 5,
+      "delta": 73,
+      "files": [
+        {
+          "path": "pages/cotacoes/parques.tsx",
+          "warnings": 25
+        },
+        {
+          "path": "pages/settings.tsx",
+          "warnings": 24
+        },
+        {
+          "path": "src/components/ai/OptimizationEngine.tsx",
+          "warnings": 24
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 6,
+      "delta": 72,
+      "files": [
+        {
+          "path": "src/components/ai/PredictiveAnalytics.tsx",
+          "warnings": 24
+        },
+        {
+          "path": "src/components/ai/SmartAutomation.tsx",
+          "warnings": 24
+        },
+        {
+          "path": "src/components/mobile/OfflineSupport.tsx",
+          "warnings": 24
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 7,
+      "delta": 69,
+      "files": [
+        {
+          "path": "src/pages/DeployPage.tsx",
+          "warnings": 23
+        },
+        {
+          "path": "src/pages/turismo.tsx",
+          "warnings": 23
+        },
+        {
+          "path": "src/components/ai/AIEngine.tsx",
+          "warnings": 23
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 8,
+      "delta": 67,
+      "files": [
+        {
+          "path": "src/components/projects/TeamManager.tsx",
+          "warnings": 23
+        },
+        {
+          "path": "pages/cotacoes/hoteis.tsx",
+          "warnings": 22
+        },
+        {
+          "path": "pages/permissions.tsx",
+          "warnings": 22
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 9,
+      "delta": 66,
+      "files": [
+        {
+          "path": "pages/turismo.tsx",
+          "warnings": 22
+        },
+        {
+          "path": "src/pages/parks.tsx",
+          "warnings": 22
+        },
+        {
+          "path": "src/pages/permissions.tsx",
+          "warnings": 22
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 10,
+      "delta": 63,
+      "files": [
+        {
+          "path": "src/pages/api-publica.tsx",
+          "warnings": 21
+        },
+        {
+          "path": "src/components/dashboard/Dashboard.tsx",
+          "warnings": 21
+        },
+        {
+          "path": "src/components/workflow/ProcessMonitoring.tsx",
+          "warnings": 21
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 11,
+      "delta": 60,
+      "files": [
+        {
+          "path": "src/pages/cadastros.tsx",
+          "warnings": 20
+        },
+        {
+          "path": "src/pages/security-system-test.tsx",
+          "warnings": 20
+        },
+        {
+          "path": "src/components/workflow/TaskAutomation.tsx",
+          "warnings": 20
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 12,
+      "delta": 57,
+      "files": [
+        {
+          "path": "pages/automacao.tsx",
+          "warnings": 19
+        },
+        {
+          "path": "pages/rsv-360-ecosystem.tsx",
+          "warnings": 19
+        },
+        {
+          "path": "src/pages/automacao.tsx",
+          "warnings": 19
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 13,
+      "delta": 55,
+      "files": [
+        {
+          "path": "src/components/deploy/ProductionMonitoring.tsx",
+          "warnings": 19
+        },
+        {
+          "path": "pages/dashboard-personalizado.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/analytics-avancados.tsx",
+          "warnings": 18
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 14,
+      "delta": 54,
+      "files": [
+        {
+          "path": "src/pages/animations-demo.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/backend-integration-test.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/configuracoes-sistema.tsx",
+          "warnings": 18
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 15,
+      "delta": 54,
+      "files": [
+        {
+          "path": "src/pages/cotacoes/hoteis.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/dashboard-personalizado.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/insurance.tsx",
+          "warnings": 18
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 16,
+      "delta": 54,
+      "files": [
+        {
+          "path": "src/pages/integracoes-webhooks.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/pages/transport.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/components/analytics/AdvancedReportBuilder.tsx",
+          "warnings": 18
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 17,
+      "delta": 54,
+      "files": [
+        {
+          "path": "src/components/deploy/GoLiveSystem.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/components/documentation/HelpSystem.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "src/components/notifications/ChatSystem.tsx",
+          "warnings": 18
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 18,
+      "delta": 52,
+      "files": [
+        {
+          "path": "src/components/workflow/WorkflowTemplates.tsx",
+          "warnings": 18
+        },
+        {
+          "path": "pages/visa.tsx",
+          "warnings": 17
+        },
+        {
+          "path": "src/pages/configuracoes-gerais.tsx",
+          "warnings": 17
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 19,
+      "delta": 51,
+      "files": [
+        {
+          "path": "src/pages/visa.tsx",
+          "warnings": 17
+        },
+        {
+          "path": "src/components/bookings/BookingCalendar.tsx",
+          "warnings": 17
+        },
+        {
+          "path": "src/components/bookings/BookingModal.tsx",
+          "warnings": 17
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 20,
+      "delta": 49,
+      "files": [
+        {
+          "path": "src/services/apiClient.ts",
+          "warnings": 17
+        },
+        {
+          "path": "pages/cadastros.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "pages/gestao.tsx",
+          "warnings": 16
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 21,
+      "delta": 48,
+      "files": [
+        {
+          "path": "pages/hotels-complete.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "pages/reports.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "pages/travel.tsx",
+          "warnings": 16
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 22,
+      "delta": 48,
+      "files": [
+        {
+          "path": "src/pages/chatbot-ia.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "src/pages/gestao.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "src/pages/reports.tsx",
+          "warnings": 16
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 23,
+      "delta": 48,
+      "files": [
+        {
+          "path": "src/components/chat/ChatConversations.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "src/components/notifications/NotificationManager.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "src/components/notifications/PushNotificationSystem.tsx",
+          "warnings": 16
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 24,
+      "delta": 47,
+      "files": [
+        {
+          "path": "src/components/projects/TaskManager.tsx",
+          "warnings": 16
+        },
+        {
+          "path": "src/services/api/leiloesApi.ts",
+          "warnings": 16
+        },
+        {
+          "path": "pages/dashboard/marketplace.tsx",
+          "warnings": 15
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 25,
+      "delta": 45,
+      "files": [
+        {
+          "path": "src/components/customers/CustomerManagement.tsx",
+          "warnings": 15
+        },
+        {
+          "path": "src/components/deploy/FinalDeploySystem.tsx",
+          "warnings": 15
+        },
+        {
+          "path": "src/components/financial/AccountingIntegration.tsx",
+          "warnings": 15
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 26,
+      "delta": 42,
+      "files": [
+        {
+          "path": "pages/documents.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "pages/groups.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/pages/TestingPage.tsx",
+          "warnings": 14
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 27,
+      "delta": 42,
+      "files": [
+        {
+          "path": "src/pages/configuracoes-avancadas.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/pages/configuracoes-usuarios.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/pages/groups.tsx",
+          "warnings": 14
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 28,
+      "delta": 42,
+      "files": [
+        {
+          "path": "src/pages/integracoes-apis.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/pages/marketplace-parceiros.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/pages/notification-system-test.tsx",
+          "warnings": 14
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 29,
+      "delta": 42,
+      "files": [
+        {
+          "path": "src/pages/relatorios-personalizados.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/components/analytics/DataExportSystem.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/components/deploy/BackupRecoverySystem.tsx",
+          "warnings": 14
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 30,
+      "delta": 42,
+      "files": [
+        {
+          "path": "src/components/documentation/TrainingSystem.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/components/marketing/LeadCapture.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "src/components/settings/SettingsPanel.tsx",
+          "warnings": 14
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 31,
+      "delta": 40,
+      "files": [
+        {
+          "path": "src/components/testing/PerformanceTesting.tsx",
+          "warnings": 14
+        },
+        {
+          "path": "pages/cotacoes/templates.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "pages/dashboard-rsv-backup.tsx",
+          "warnings": 13
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 32,
+      "delta": 39,
+      "files": [
+        {
+          "path": "pages/dashboard-rsv.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "pages/dashboard/voice-commerce.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "pages/e-commerce.tsx",
+          "warnings": 13
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 33,
+      "delta": 39,
+      "files": [
+        {
+          "path": "src/pages/documents.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "src/pages/e-commerce.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "src/components/documentation/TutorialSystem.tsx",
+          "warnings": 13
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 34,
+      "delta": 39,
+      "files": [
+        {
+          "path": "src/components/financial/TaxManagement.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "src/components/payments/PaymentModal.tsx",
+          "warnings": 13
+        },
+        {
+          "path": "src/components/reports/CustomReportBuilder.tsx",
+          "warnings": 13
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 35,
+      "delta": 37,
+      "files": [
+        {
+          "path": "src/services/authService.ts",
+          "warnings": 13
+        },
+        {
+          "path": "pages/visas.tsx",
+          "warnings": 12
+        },
+        {
+          "path": "pages/workflows.tsx",
+          "warnings": 12
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 36,
+      "delta": 36,
+      "files": [
+        {
+          "path": "src/components/analytics/ExecutiveDashboard.tsx",
+          "warnings": 12
+        },
+        {
+          "path": "src/components/auth/UserManagement.tsx",
+          "warnings": 12
+        },
+        {
+          "path": "src/components/documentation/DocumentationSystem.tsx",
+          "warnings": 12
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 37,
+      "delta": 35,
+      "files": [
+        {
+          "path": "src/components/documentation/FAQSystem.tsx",
+          "warnings": 12
+        },
+        {
+          "path": "src/components/payments/FinancialDashboard.tsx",
+          "warnings": 12
+        },
+        {
+          "path": "pages/dashboard-reservei-viagens.tsx",
+          "warnings": 11
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 38,
+      "delta": 33,
+      "files": [
+        {
+          "path": "pages/dashboard/google-hotel-ads.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "pages/giftcards.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "pages/marketing-dashboard.tsx",
+          "warnings": 11
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 39,
+      "delta": 33,
+      "files": [
+        {
+          "path": "pages/reports-dashboard.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "pages/travel-catalog-rsv.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "src/pages/marketing-dashboard.tsx",
+          "warnings": 11
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 40,
+      "delta": 33,
+      "files": [
+        {
+          "path": "src/pages/reports-dashboard.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "src/components/Navigation.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "src/components/marketing/CampaignManager.tsx",
+          "warnings": 11
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 41,
+      "delta": 33,
+      "files": [
+        {
+          "path": "src/components/projects/ProjectManager.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "src/components/reports/ReportExport.tsx",
+          "warnings": 11
+        },
+        {
+          "path": "src/components/testing/TestSuites.tsx",
+          "warnings": 11
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 42,
+      "delta": 31,
+      "files": [
+        {
+          "path": "src/services/bookingService.ts",
+          "warnings": 11
+        },
+        {
+          "path": "pages/accommodations/analytics.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "pages/cotacoes/templates/page.tsx",
+          "warnings": 10
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 43,
+      "delta": 30,
+      "files": [
+        {
+          "path": "pages/dashboard.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "pages/dashboard/affiliates.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "pages/roles.tsx",
+          "warnings": 10
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 44,
+      "delta": 30,
+      "files": [
+        {
+          "path": "src/pages/dashboard.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/analytics/ReportBuilder.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/auth/AuditLog.tsx",
+          "warnings": 10
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 45,
+      "delta": 30,
+      "files": [
+        {
+          "path": "src/components/chat/ChatAnalytics.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/integrations/ApiConnector.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/notifications/NotificationSettings.tsx",
+          "warnings": 10
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 46,
+      "delta": 30,
+      "files": [
+        {
+          "path": "src/components/reports/ReportBuilder.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/testing/CodeCoverage.tsx",
+          "warnings": 10
+        },
+        {
+          "path": "src/components/travel/TravelCatalog.tsx",
+          "warnings": 10
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 47,
+      "delta": 27,
+      "files": [
+        {
+          "path": "pages/cotacoes/index.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "pages/cotacoes/test-page.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "pages/insurance.tsx",
+          "warnings": 9
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 48,
+      "delta": 27,
+      "files": [
+        {
+          "path": "pages/notifications.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/pages/DevOpsPage.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/pages/demo-layout.tsx",
+          "warnings": 9
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 49,
+      "delta": 27,
+      "files": [
+        {
+          "path": "src/components/chat/ChatSystem.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/components/marketing/SocialMediaIntegration.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/components/payments/PaymentHistory.tsx",
+          "warnings": 9
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 50,
+      "delta": 27,
+      "files": [
+        {
+          "path": "src/components/payments/RefundManager.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/components/reports/DataExport.tsx",
+          "warnings": 9
+        },
+        {
+          "path": "src/components/testing/TestRunner.tsx",
+          "warnings": 9
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 51,
+      "delta": 24,
+      "files": [
+        {
+          "path": "pages/dashboard/analytics-financeiro.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "pages/recommendations.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "pages/sales-dashboard.tsx",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 52,
+      "delta": 24,
+      "files": [
+        {
+          "path": "pages/seo.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/ReportsPage.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/bookings/BookingsPage.tsx",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 53,
+      "delta": 24,
+      "files": [
+        {
+          "path": "src/pages/chat-system-test.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/clients.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/layout-test.tsx",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 54,
+      "delta": 24,
+      "files": [
+        {
+          "path": "src/pages/ml-recomendacoes.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/navigation-test.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/pages/sales-dashboard.tsx",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 55,
+      "delta": 24,
+      "files": [
+        {
+          "path": "src/pages/travel.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/components/customers/CustomerModal.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/components/marketing/EmailAutomation.tsx",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 56,
+      "delta": 24,
+      "files": [
+        {
+          "path": "src/components/reports/ReportGenerator.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/components/workflow/WorkflowEngine.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "src/services/paymentService.ts",
+          "warnings": 8
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 57,
+      "delta": 23,
+      "files": [
+        {
+          "path": "src/services/websocket.ts",
+          "warnings": 8
+        },
+        {
+          "path": "src/context/AuthContext.tsx",
+          "warnings": 8
+        },
+        {
+          "path": "pages/calendar.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 58,
+      "delta": 21,
+      "files": [
+        {
+          "path": "pages/cotacoes/templates/new.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "pages/loyalty.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/pages/analytics-dashboard.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 59,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/pages/analytics-system-test.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/pages/calendar.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/pages/component-test.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 60,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/pages/dashboard-new.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/pages/financial-system-test.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/pages/loyalty.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 61,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/components/auth/TwoFactorAuth.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/bookings/BookingTable.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/customers/CustomerList.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 62,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/components/customers/DocumentManager.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/financial/BudgetSystem.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/financial/FinancialManager.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 63,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/components/layout/ModernSidebar.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/marketing/MarketingAnalytics.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/mobile/PushNotifications.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 64,
+      "delta": 21,
+      "files": [
+        {
+          "path": "src/components/reports/ReportScheduler.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/training/AITutor.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "src/components/ui/Select.tsx",
+          "warnings": 7
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 65,
+      "delta": 19,
+      "files": [
+        {
+          "path": "src/context/NotificationContext.tsx",
+          "warnings": 7
+        },
+        {
+          "path": "pages/finance.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "pages/notifications-dashboard.tsx",
+          "warnings": 6
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 66,
+      "delta": 18,
+      "files": [
+        {
+          "path": "src/pages/attractions.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/pages/integration-system-test.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/pages/notifications-dashboard.tsx",
+          "warnings": 6
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 67,
+      "delta": 18,
+      "files": [
+        {
+          "path": "src/components/analytics/AnalyticsDashboard.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/auth/AdminPanel.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/auth/AuthPage.tsx",
+          "warnings": 6
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 68,
+      "delta": 18,
+      "files": [
+        {
+          "path": "src/components/customers/CustomerProfile.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/layout/Layout.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/notifications/NotificationToast.tsx",
+          "warnings": 6
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 69,
+      "delta": 18,
+      "files": [
+        {
+          "path": "src/components/notifications/SMSSystem.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/payments/PaymentGateway.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "src/components/reports/ReportTemplates.tsx",
+          "warnings": 6
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 70,
+      "delta": 16,
+      "files": [
+        {
+          "path": "src/components/ui/AccessibilityPanel.tsx",
+          "warnings": 6
+        },
+        {
+          "path": "pages/finance-dashboard.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "pages/parks.tsx",
+          "warnings": 5
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 71,
+      "delta": 15,
+      "files": [
+        {
+          "path": "pages/reservations-rsv 14012026as2012.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "pages/reservations-rsv.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/pages/backup-system-test.tsx",
+          "warnings": 5
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 72,
+      "delta": 15,
+      "files": [
+        {
+          "path": "src/pages/finance-dashboard.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/pages/login.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/pages/project-management-test.tsx",
+          "warnings": 5
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 73,
+      "delta": 15,
+      "files": [
+        {
+          "path": "src/components/accommodations/EnterpriseForm.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/components/accommodations/HierarchyView.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/components/notifications/EmailMarketing.tsx",
+          "warnings": 5
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 74,
+      "delta": 15,
+      "files": [
+        {
+          "path": "src/components/notifications/NotificationCenter.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/components/reports/AnalyticsDashboard.tsx",
+          "warnings": 5
+        },
+        {
+          "path": "src/hooks/usePWA.ts",
+          "warnings": 5
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 75,
+      "delta": 13,
+      "files": [
+        {
+          "path": "src/services/user-service.ts",
+          "warnings": 5
+        },
+        {
+          "path": "pages/accommodations/enterprises.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "pages/reports-rsv.tsx",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 76,
+      "delta": 12,
+      "files": [
+        {
+          "path": "pages/tickets.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "pages/transport.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/pages/CustomersPage.tsx",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 77,
+      "delta": 12,
+      "files": [
+        {
+          "path": "src/pages/cotacoes/index.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/pages/ui-components-test.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/components/HotelSelector.tsx",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 78,
+      "delta": 12,
+      "files": [
+        {
+          "path": "src/components/auth/PasswordReset.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/components/navigation/NavigationMenu.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/components/notifications/BroadcastSystem.tsx",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 79,
+      "delta": 12,
+      "files": [
+        {
+          "path": "src/components/reports/ReportNotifications.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/components/testing/QualityMetrics.tsx",
+          "warnings": 4
+        },
+        {
+          "path": "src/components/ui/dialog.tsx",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 80,
+      "delta": 12,
+      "files": [
+        {
+          "path": "src/hooks/useAccessibility.ts",
+          "warnings": 4
+        },
+        {
+          "path": "src/hooks/useAnimations.ts",
+          "warnings": 4
+        },
+        {
+          "path": "src/hooks/useAuth.ts",
+          "warnings": 4
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 81,
+      "delta": 9,
+      "files": [
+        {
+          "path": "pages/accommodations/enterprises/[id]/edit.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/analytics-complete.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/cotacoes/share.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 82,
+      "delta": 9,
+      "files": [
+        {
+          "path": "pages/dashboard/excursoes/[id].tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/dashboard/leiloes/[id].tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/dashboard/leiloes/index.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 83,
+      "delta": 9,
+      "files": [
+        {
+          "path": "pages/dashboard/leiloes/relatorios.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/dashboard/ota-sync.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "pages/dashboard/viagens-grupo/[id].tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 84,
+      "delta": 9,
+      "files": [
+        {
+          "path": "pages/dashboard/viagens-grupo/wishlists.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/pages/advanced-features-demo.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/pages/auth-test.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 85,
+      "delta": 9,
+      "files": [
+        {
+          "path": "src/pages/workflow-system-test.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/auth/SessionManager.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/bookings/Calendar.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 86,
+      "delta": 9,
+      "files": [
+        {
+          "path": "src/components/chat/ChatAgents.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/dashboard/BookingsList.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/dashboard/QuickActions.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 87,
+      "delta": 9,
+      "files": [
+        {
+          "path": "src/components/layout/Header.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/layout/ModernLayout.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/leiloes/LeilaoForm.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 88,
+      "delta": 9,
+      "files": [
+        {
+          "path": "src/components/mobile/TouchInteractions.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/notifications/PushNotificationService.ts",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/reports/ReportSharing.tsx",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 89,
+      "delta": 9,
+      "files": [
+        {
+          "path": "src/components/travel/TravelPackageModal.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/components/ui/Tabs.tsx",
+          "warnings": 3
+        },
+        {
+          "path": "src/services/notifications.ts",
+          "warnings": 3
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 90,
+      "delta": 6,
+      "files": [
+        {
+          "path": "pages/analytics-dashboard.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/cotacoes/new.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/coupons.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 91,
+      "delta": 6,
+      "files": [
+        {
+          "path": "pages/dashboard/excursoes/index.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/dashboard/excursoes/participantes.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/dashboard/excursoes/roteiros.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 92,
+      "delta": 6,
+      "files": [
+        {
+          "path": "pages/dashboard/leiloes/flash-deals.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/dashboard/viagens-grupo/index.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/dashboard/viagens-grupo/pagamentos.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 93,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/pages/ai-system-test.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/pages/coupons.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/pages/training-system-test.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 94,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/components/auth/UserProfile.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/dashboard/AnalyticsChart.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/excursoes/ExcursaoForm.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 95,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/components/excursoes/ParticipantesList.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/leiloes/AuctionList.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/leiloes/AuctionStats.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 96,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/components/navigation/Breadcrumbs.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/navigation/PageTransition.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/notifications/NotificationBell.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 97,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/components/reports/ReportAnalytics.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/ui/PageTransition.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/ui/SkipLinks.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 98,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/components/ui/radio-group.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/viagens-grupo/GrupoForm.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "src/components/viagens-grupo/PagamentoDividido.tsx",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 99,
+      "delta": 6,
+      "files": [
+        {
+          "path": "src/hooks/useKeyboardShortcuts.ts",
+          "warnings": 2
+        },
+        {
+          "path": "src/services/auth-service.ts",
+          "warnings": 2
+        },
+        {
+          "path": "src/services/websocketClient.ts",
+          "warnings": 2
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 100,
+      "delta": 4,
+      "files": [
+        {
+          "path": "src/context/ThemeContext.tsx",
+          "warnings": 2
+        },
+        {
+          "path": "pages/ANALYTICS-INTELLIGENCE.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/BUSINESS-MODULES.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 101,
+      "delta": 3,
+      "files": [
+        {
+          "path": "pages/ECOSYSTEM-MASTER.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/accommodations/enterprises/new.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/analytics.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 102,
+      "delta": 3,
+      "files": [
+        {
+          "path": "pages/attractions.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/dashboard/excursoes/nova.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/dashboard/leiloes/novo.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 103,
+      "delta": 3,
+      "files": [
+        {
+          "path": "pages/dashboard/viagens-grupo/nova.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/login.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/multilingual.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 104,
+      "delta": 3,
+      "files": [
+        {
+          "path": "pages/register.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/reports-complete.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/reservations/[id].tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 105,
+      "delta": 3,
+      "files": [
+        {
+          "path": "pages/rewards.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "pages/subscriptions.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/admin-test.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 106,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/pages/analytics.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/cotacoes/templates.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/giftcards.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 107,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/pages/multilingual.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/offline.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/recommendations.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 108,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/pages/register.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/rewards.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/seo.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 109,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/pages/settings.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/pages/subscriptions.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/NotificationBell.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 110,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/ProtectedRoute.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ToastContainer.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/accommodations/EnterpriseCard.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 111,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/auth/AuthProvider.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/auth/LoginForm.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/auth/RegisterForm.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 112,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/bookings/BookingViewModal.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/dashboard/AnalyticsCharts.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/excursoes/ExcursoesDashboard.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 113,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/excursoes/RoteiroEditor.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/leiloes/LeilaoDetalhes.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/leiloes/LeiloesDashboard.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 114,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/navigation/NavigationGuard.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/reports/ReportHistory.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/security/index.ts",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 115,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/shared/DataTable.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/AnimatedLoader.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/Card.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 116,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/ui/Checkbox.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/Input.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/KeyboardShortcutsHelp.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 117,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/ui/label.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/separator.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/components/ui/switch.tsx",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 118,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/components/viagens-grupo/ViagensGrupoDashboard.tsx",
+          "warnings": 1
+        },
+        {
+          "path": "src/hooks/use-toast.ts",
+          "warnings": 1
+        },
+        {
+          "path": "src/hooks/useSidebar.ts",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 119,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/hooks/useTheme.ts",
+          "warnings": 1
+        },
+        {
+          "path": "src/hooks/useTravelPackages.ts",
+          "warnings": 1
+        },
+        {
+          "path": "src/services/api/accommodationsApi.ts",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    },
+    {
+      "id": 120,
+      "delta": 3,
+      "files": [
+        {
+          "path": "src/services/api/bookingApi.ts",
+          "warnings": 1
+        },
+        {
+          "path": "src/services/api/excursoesApi.ts",
+          "warnings": 1
+        },
+        {
+          "path": "src/services/api/viagensGrupoApi.ts",
+          "warnings": 1
+        }
+      ],
+      "status": "done"
+    }
+  ]
+}

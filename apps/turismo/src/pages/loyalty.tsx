@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useRouter } from 'next/router';
 import { 
@@ -13,7 +12,6 @@ import {
   Edit,
   Trash,
   Search,
-  Filter,
   Download,
   Upload
 } from 'lucide-react';
@@ -57,16 +55,14 @@ interface LoyaltyCampaign {
 }
 
 export default function LoyaltyPage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [showDetails, setShowDetails] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<LoyaltyTier | LoyaltyCampaign | UserLoyalty | null>(null);
+  const [_showDetails, setShowDetails] = useState(false);
 
   // Dados simulados - em produção viriam da API
   const [loyaltyTiers] = useState<LoyaltyTier[]>([

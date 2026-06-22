@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useAnimations } from '../../hooks/useAnimations';
-import { Loader2, Zap, Sparkles } from 'lucide-react';
+import { Loader2, Zap } from 'lucide-react';
 
 interface AnimatedLoaderProps {
   type?: 'spinner' | 'pulse' | 'bounce' | 'dots' | 'bars' | 'custom';

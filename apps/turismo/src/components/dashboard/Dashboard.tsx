@@ -1,25 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  TrendingUp, 
   Users, 
   Calendar, 
   DollarSign,
   MapPin,
-  Clock,
-  Star,
-  RefreshCw,
-  AlertCircle
 } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { AnalyticsChart } from './AnalyticsChart';
 import { BookingsList, Booking } from './BookingsList';
 import { DefaultQuickActions } from './QuickActions';
 import { useUIStore } from '../../stores/useUIStore';
-import { useAuth, usePermissions } from '../../hooks/useAuth';
-import { bookingService, BookingStats } from '../../services/bookingService';
-import { paymentService, PaymentStats } from '../../services/paymentService';
-import { useWebSocket } from '../../services/websocketClient';
-import { toast } from 'react-hot-toast';
 
 // Dados mock para demonstração
 const mockBookings: Booking[] = [
@@ -106,107 +96,7 @@ const mockDestinationsData = [
 
 const Dashboard: React.FC = () => {
   const { addNotification } = useUIStore();
-  const { user } = useAuth();
-  const { hasPermission } = usePermissions();
-  const { isConnected, onRealTimeUpdate } = useWebSocket();
-  
-  const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
-  const [refreshing, setRefreshing] = useState(false);
-  
-  // Real data states
-  const [bookingStats, setBookingStats] = useState<BookingStats | null>(null);
-  const [paymentStats, setPaymentStats] = useState<PaymentStats | null>(null);
-  const [recentBookings, setRecentBookings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
   const [bookings, setBookings] = useState<Booking[]>(mockBookings);
-
-  // Load dashboard data
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const promises: Promise<any>[] = [];
-
-      // Load booking stats if user has permission
-      if (hasPermission('bookings.stats')) {
-        promises.push(bookingService.getBookingStats());
-      }
-
-      // Load payment stats if user has permission
-      if (hasPermission('payments.stats')) {
-        promises.push(paymentService.getPaymentStats());
-      }
-
-      // Load recent bookings
-      promises.push(bookingService.getBookings({ 
-        limit: 10, 
-        sort_by: 'created_at', 
-        sort_order: 'desc' 
-      }));
-
-      const results = await Promise.allSettled(promises);
-      let resultIndex = 0;
-
-      // Process booking stats
-      if (hasPermission('bookings.stats')) {
-        const bookingStatsResult = results[resultIndex++];
-        if (bookingStatsResult.status === 'fulfilled') {
-          setBookingStats(bookingStatsResult.value);
-        }
-      }
-
-      // Process payment stats
-      if (hasPermission('payments.stats')) {
-        const paymentStatsResult = results[resultIndex++];
-        if (paymentStatsResult.status === 'fulfilled') {
-          setPaymentStats(paymentStatsResult.value);
-        }
-      }
-
-      // Process recent bookings
-      const bookingsResult = results[resultIndex++];
-      if (bookingsResult.status === 'fulfilled') {
-        setRecentBookings(bookingsResult.value.bookings || []);
-      }
-
-    } catch (error: any) {
-      console.error('Dashboard data load error:', error);
-      setError('Erro ao carregar dados do dashboard');
-      toast.error('Erro ao carregar dados do dashboard');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Refresh data
-  const refreshData = async () => {
-    setRefreshing(true);
-    await loadDashboardData();
-    setRefreshing(false);
-    toast.success('Dados atualizados!');
-  };
-
-  // Load data on component mount
-  useEffect(() => {
-    if (user) {
-      loadDashboardData();
-    }
-  }, [user]);
-
-  // Setup real-time updates
-  useEffect(() => {
-    const unsubscribe = onRealTimeUpdate((update) => {
-      if (update.type === 'booking_update' || update.type === 'payment_update') {
-        // Refresh specific data based on update type
-        loadDashboardData();
-      }
-    });
-
-    return unsubscribe;
-  }, [onRealTimeUpdate]);
 
   // Handlers para as ações rápidas
   const handleNewBooking = () => {

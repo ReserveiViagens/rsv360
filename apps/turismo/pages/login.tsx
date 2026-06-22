@@ -23,7 +23,7 @@ export default function Login() {
             } else {
                 setError('Credenciais inválidas. Tente novamente.');
             }
-        } catch (error) {
+        } catch (_error) {
             setError('Erro ao fazer login. Tente novamente.');
         } finally {
             setIsLoggingIn(false);

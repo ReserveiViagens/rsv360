@@ -51,14 +51,14 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ onBackToLogin }) =
       
       setEmail(data.email);
       setStep('reset');
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao enviar email de recuperação. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResetPassword = async (data: ResetPasswordData) => {
+  const handleResetPassword = async (_data: ResetPasswordData) => {
     setIsLoading(true);
     setError(null);
     
@@ -67,7 +67,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ onBackToLogin }) =
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setStep('success');
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao redefinir senha. Verifique o token e tente novamente.');
     } finally {
       setIsLoading(false);
@@ -82,7 +82,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ onBackToLogin }) =
       // Simular reenvio
       await new Promise(resolve => setTimeout(resolve, 1000));
       setError(null);
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao reenviar email. Tente novamente.');
     } finally {
       setIsLoading(false);

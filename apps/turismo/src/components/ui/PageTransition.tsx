@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAnimations } from '../../hooks/useAnimations';
 
 interface PageTransitionProps {
@@ -17,7 +17,7 @@ export default function PageTransition({
 }: PageTransitionProps) {
   const { 
     pageTransition, 
-    slideTransition,
+    _slideTransition,
     scaleIn,
     flipIn,
     isReducedMotion 

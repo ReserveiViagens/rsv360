@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button, Input, Badge, Tabs, Select, Avatar, Switch } from '@/components/ui';
-import { Plus, Settings, Check, X, Clock, AlertTriangle, CheckCircle, XCircle, Edit, Copy, Trash2, Users, FileText, Send, History } from 'lucide-react';
+import { Card, Button, Input, Badge, Tabs, Select, Avatar } from '@/components/ui';
+import { Plus, Check, X, Clock, AlertTriangle, CheckCircle, Edit, Trash2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ApprovalRequest {
@@ -72,6 +72,11 @@ interface ApprovalSystemProps {
   onRequestSelect?: (request: ApprovalRequest) => void;
 }
 
+const APPROVAL_MOCK_BASE_MS = 1737374400000;
+function approvalMockDate(offsetMs: number): Date {
+  return new Date(APPROVAL_MOCK_BASE_MS + offsetMs);
+}
+
 export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps) {
   const [requests, setRequests] = useState<ApprovalRequest[]>([
     {
@@ -108,9 +113,9 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
       ],
       amount: 2500,
       currency: 'BRL',
-      dueDate: new Date(Date.now() + 86400000),
-      createdAt: new Date(Date.now() - 3600000),
-      updatedAt: new Date(Date.now() - 3600000),
+      dueDate: approvalMockDate(86400000),
+      createdAt: approvalMockDate(-3600000),
+      updatedAt: approvalMockDate(-3600000),
       workflow: {
         id: 'workflow1',
         name: 'Aprovação de Reservas VIP',
@@ -159,9 +164,9 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
       ],
       amount: 1200,
       currency: 'BRL',
-      dueDate: new Date(Date.now() + 172800000),
-      createdAt: new Date(Date.now() - 7200000),
-      updatedAt: new Date(Date.now() - 7200000),
+      dueDate: approvalMockDate(172800000),
+      createdAt: approvalMockDate(-7200000),
+      updatedAt: approvalMockDate(-7200000),
       workflow: {
         id: 'workflow2',
         name: 'Aprovação de Reembolsos',
@@ -193,7 +198,7 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
           avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
           status: 'approved',
           comment: 'Aprovado - Cliente estratégico com histórico positivo',
-          respondedAt: new Date(Date.now() - 86400000),
+          respondedAt: approvalMockDate(-86400000),
         },
         {
           id: 'user3',
@@ -203,14 +208,14 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
           avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
           status: 'approved',
           comment: 'Aprovado - Margem ainda viável com volume',
-          respondedAt: new Date(Date.now() - 86400000),
+          respondedAt: approvalMockDate(-86400000),
         },
       ],
       amount: 15000,
       currency: 'BRL',
-      dueDate: new Date(Date.now() + 259200000),
-      createdAt: new Date(Date.now() - 172800000),
-      updatedAt: new Date(Date.now() - 86400000),
+      dueDate: approvalMockDate(259200000),
+      createdAt: approvalMockDate(-172800000),
+      updatedAt: approvalMockDate(-86400000),
       workflow: {
         id: 'workflow3',
         name: 'Aprovação de Descontos',
@@ -221,7 +226,7 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
     },
   ]);
 
-  const [workflows, setWorkflows] = useState<ApprovalWorkflow[]>([
+  const [workflows] = useState<ApprovalWorkflow[]>([
     {
       id: 'workflow1',
       name: 'Aprovação de Reservas VIP',
@@ -248,8 +253,8 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
           order: 2,
         },
       ],
-      createdAt: new Date(Date.now() - 2592000000),
-      updatedAt: new Date(Date.now() - 86400000),
+      createdAt: approvalMockDate(-2592000000),
+      updatedAt: approvalMockDate(-86400000),
       createdBy: 'Admin',
     },
     {
@@ -269,8 +274,8 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
           order: 1,
         },
       ],
-      createdAt: new Date(Date.now() - 5184000000),
-      updatedAt: new Date(Date.now() - 172800000),
+      createdAt: approvalMockDate(-5184000000),
+      updatedAt: approvalMockDate(-172800000),
       createdBy: 'Admin',
     },
   ]);
@@ -423,16 +428,6 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
       case 'cancelled': return 'Cancelado';
       default: return status;
     }
-  };
-
-  const getApprovalStatus = (request: ApprovalRequest) => {
-    const totalApprovers = request.approvers.length;
-    const approvedCount = request.approvers.filter(a => a.status === 'approved').length;
-    const rejectedCount = request.approvers.filter(a => a.status === 'rejected').length;
-    
-    if (rejectedCount > 0) return 'rejected';
-    if (approvedCount === totalApprovers) return 'approved';
-    return 'pending';
   };
 
   const formatFileSize = (bytes: number) => {
@@ -622,6 +617,7 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
                         <div className="flex items-center space-x-4 mb-3">
                           <div className="flex items-center space-x-2">
                             <Avatar className="h-6 w-6">
+                              {/* eslint-disable-next-line @next/next/no-img-element -- avatar URL from mock */}
                               <img src={request.requester.avatar} alt={request.requester.name} />
                             </Avatar>
                             <span className="text-sm text-gray-600">
@@ -679,6 +675,7 @@ export default function ApprovalSystem({ onRequestSelect }: ApprovalSystemProps)
                               <div key={approver.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                                 <div className="flex items-center space-x-2">
                                   <Avatar className="h-6 w-6">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- avatar URL from mock */}
                                     <img src={approver.avatar} alt={approver.name} />
                                   </Avatar>
                                   <div>

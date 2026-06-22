@@ -3,7 +3,7 @@
 // ===================================================================
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Image as ImageIcon, MapPin, Building2, Phone, Mail, Globe } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, MapPin, Building2, Phone } from 'lucide-react';
 import type { Enterprise, EnterpriseType } from '../../types/accommodations';
 
 interface EnterpriseFormProps {
@@ -53,6 +53,7 @@ export const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
 
   useEffect(() => {
     if (enterprise) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync form fields when editing existing enterprise
       setFormData({
         ...enterprise,
         images: enterprise.images || [],
@@ -82,7 +83,7 @@ export const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     'Cofre', 'Frigobar', 'Varanda', 'Vista para o Mar', 'Praia Privada'
   ];
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean | string[]) => {
     if (field.startsWith('address.')) {
       const addressField = field.replace('address.', '');
       setFormData(prev => ({
@@ -539,6 +540,7 @@ export const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {formData.images.map((image, index) => (
               <div key={index} className="relative group">
+                {/* eslint-disable-next-line @next/next/no-img-element -- enterprise image upload preview */}
                 <img
                   src={image}
                   alt={`Imagem ${index + 1}`}

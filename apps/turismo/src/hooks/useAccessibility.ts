@@ -19,38 +19,9 @@ export function useAccessibility() {
 
   const [announcements, setAnnouncements] = useState<string[]>([]);
 
-  // Detectar preferências do sistema
-  useEffect(() => {
-    // Reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    // High contrast
-    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
-    
-    // Screen reader detection
-    const hasScreenReader = window.speechSynthesis !== undefined;
-
-    setConfig(prev => ({
-      ...prev,
-      reducedMotion: prefersReducedMotion,
-      highContrast: prefersHighContrast,
-      screenReader: hasScreenReader
-    }));
-
-    // Aplicar preferências
-    applyAccessibilityConfig({
-      ...config,
-      reducedMotion: prefersReducedMotion,
-      highContrast: prefersHighContrast,
-      screenReader: hasScreenReader
-    });
-  }, []);
-
-  // Aplicar configurações de acessibilidade
   const applyAccessibilityConfig = useCallback((newConfig: AccessibilityConfig) => {
     const root = document.documentElement;
-    
-    // Reduced motion
+
     if (newConfig.reducedMotion) {
       root.style.setProperty('--animation-duration', '0.01ms');
       root.style.setProperty('--animation-iteration-count', '1');
@@ -59,14 +30,12 @@ export function useAccessibility() {
       root.style.removeProperty('--animation-iteration-count');
     }
 
-    // High contrast
     if (newConfig.highContrast) {
       root.classList.add('high-contrast');
     } else {
       root.classList.remove('high-contrast');
     }
 
-    // Font size
     const fontSizeMap = {
       small: '14px',
       medium: '16px',
@@ -74,13 +43,39 @@ export function useAccessibility() {
     };
     root.style.setProperty('--base-font-size', fontSizeMap[newConfig.fontSize]);
 
-    // Focus visible
     if (newConfig.focusVisible) {
       root.classList.add('focus-visible');
     } else {
       root.classList.remove('focus-visible');
     }
   }, []);
+
+  // Detectar preferências do sistema
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+    const hasScreenReader = window.speechSynthesis !== undefined;
+
+    const systemPreferences = {
+      reducedMotion: prefersReducedMotion,
+      highContrast: prefersHighContrast,
+      screenReader: hasScreenReader
+    };
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- apply OS accessibility preferences on mount
+    setConfig(prev => ({
+      ...prev,
+      ...systemPreferences
+    }));
+
+    applyAccessibilityConfig({
+      reducedMotion: prefersReducedMotion,
+      highContrast: prefersHighContrast,
+      fontSize: 'medium',
+      focusVisible: true,
+      screenReader: hasScreenReader
+    });
+  }, [applyAccessibilityConfig]);
 
   // Atualizar configuração
   const updateConfig = useCallback((updates: Partial<AccessibilityConfig>) => {
@@ -98,6 +93,7 @@ export function useAccessibility() {
     if (savedConfig) {
       try {
         const parsedConfig = JSON.parse(savedConfig);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- restore saved accessibility config from localStorage
         setConfig(parsedConfig);
         applyAccessibilityConfig(parsedConfig);
       } catch (error) {

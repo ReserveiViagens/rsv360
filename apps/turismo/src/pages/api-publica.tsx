@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -13,26 +13,18 @@ import {
   Key,
   Globe,
   Zap,
-  Shield,
   BookOpen,
   Eye,
   Copy,
   Download,
-  Settings,
   Plus,
   Edit,
   Trash2,
   CheckCircle,
   AlertTriangle,
-  Clock,
-  TrendingUp,
   BarChart3,
-  Users,
   Webhook,
   Terminal,
-  FileText,
-  Link,
-  ExternalLink,
   PlayCircle,
   RefreshCw
 } from 'lucide-react';
@@ -183,15 +175,24 @@ const API_DOCUMENTATION = {
   ]
 };
 
+type TestApiResponse =
+  | { loading: true }
+  | {
+      status: number;
+      data: unknown;
+      headers: Record<string, string>;
+      responseTime: string;
+    };
+
 export default function ApiPublica() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>(MOCK_API_KEYS);
   const [webhooks, setWebhooks] = useState<WebhookConfig[]>(MOCK_WEBHOOKS);
-  const [stats, setStats] = useState<ApiStats>(MOCK_STATS);
+  const stats = MOCK_STATS;
   const [selectedEndpoint, setSelectedEndpoint] = useState(API_DOCUMENTATION.endpoints[0]);
   const [newKeyName, setNewKeyName] = useState('');
   const [newWebhookUrl, setNewWebhookUrl] = useState('');
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [testResponse, setTestResponse] = useState<any>(null);
+  const [testResponse, setTestResponse] = useState<TestApiResponse | null>(null);
 
   const getTierColor = (tier: string) => {
     const colors = {
@@ -451,7 +452,7 @@ export default function ApiPublica() {
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">🚀 Primeiros Passos</h4>
                     <ol className="text-sm space-y-2 text-gray-700">
-                      <li>1. Gere sua API Key na aba "API Keys"</li>
+                      <li>1. Gere sua API Key na aba &quot;API Keys&quot;</li>
                       <li>2. Inclua o header X-API-Key em suas requisições</li>
                       <li>3. Use a URL base: {API_DOCUMENTATION.baseUrl}</li>
                       <li>4. Configure webhooks para receber eventos</li>
@@ -476,7 +477,7 @@ export default function ApiPublica() {
                       {API_DOCUMENTATION.authentication}
                     </p>
                     <div className="mt-2 p-2 bg-gray-900 rounded text-green-400 text-xs font-mono">
-                      curl -H "X-API-Key: sua_api_key_aqui" \<br />
+                      curl -H &quot;X-API-Key: sua_api_key_aqui&quot; \<br />
                       &nbsp;&nbsp;&nbsp;&nbsp;{API_DOCUMENTATION.baseUrl}/hotels
                     </div>
                   </div>
@@ -757,9 +758,9 @@ export default function ApiPublica() {
                     <h4 className="font-semibold mb-2">Exemplo de Requisição</h4>
                     <div className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm font-mono overflow-x-auto">
                       <div>curl -X {selectedEndpoint.method} \</div>
-                      <div>&nbsp;&nbsp;-H "X-API-Key: sua_api_key" \</div>
-                      <div>&nbsp;&nbsp;-H "Content-Type: application/json" \</div>
-                      <div>&nbsp;&nbsp;"{API_DOCUMENTATION.baseUrl}{selectedEndpoint.path}"</div>
+                      <div>&nbsp;&nbsp;-H &quot;X-API-Key: sua_api_key&quot; \</div>
+                      <div>&nbsp;&nbsp;-H &quot;Content-Type: application/json&quot; \</div>
+                      <div>&nbsp;&nbsp;&quot;{API_DOCUMENTATION.baseUrl}{selectedEndpoint.path}&quot;</div>
                     </div>
                   </div>
 
@@ -826,7 +827,7 @@ export default function ApiPublica() {
                 </CardHeader>
                 <CardContent>
                   {testResponse ? (
-                    testResponse.loading ? (
+                    'loading' in testResponse && testResponse.loading ? (
                       <div className="flex items-center space-x-2">
                         <RefreshCw className="h-4 w-4 animate-spin" />
                         <span>Executando requisição...</span>

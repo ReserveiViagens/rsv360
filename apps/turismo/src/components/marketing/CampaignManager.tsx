@@ -1,5 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Megaphone, Target, Users, TrendingUp, Calendar, Mail, Share2, BarChart3, Plus, Edit, Trash2, Play, Pause, Eye, Download, Filter, Search, DollarSign, MessageSquare, Bell, Image } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+  Megaphone,
+  TrendingUp,
+  Calendar,
+  Mail,
+  Share2,
+  BarChart3,
+  Plus,
+  Edit,
+  Trash2,
+  Play,
+  Pause,
+  DollarSign,
+  MessageSquare,
+  Bell,
+  Image as ImageIcon
+} from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -290,12 +306,12 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({ className }) => {
       case 'social': return <Share2 className="w-4 h-4" />;
       case 'sms': return <MessageSquare className="w-4 h-4" />;
       case 'push': return <Bell className="w-4 h-4" />;
-      case 'banner': return <Image className="w-4 h-4" />;
+      case 'banner': return <ImageIcon className="w-4 h-4" aria-hidden="true" />;
       default: return <Megaphone className="w-4 h-4" />;
     }
   };
 
-  const handleFilterChange = (field: keyof CampaignFilters, value: any) => {
+  const handleFilterChange = <K extends keyof CampaignFilters>(field: K, value: CampaignFilters[K]) => {
     setFilters(prev => ({ ...prev, [field]: value }));
     setCurrentPage(1);
   };
@@ -315,14 +331,10 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({ className }) => {
     setShowEditModal(true);
   };
 
-  const handleToggleStatus = (campaignId: string, newStatus: string) => {
+  const handleToggleStatus = (campaignId: string, newStatus: Campaign['status']) => {
     setCampaigns(prev => prev.map(c => 
-      c.id === campaignId ? { ...c, status: newStatus as any } : c
+      c.id === campaignId ? { ...c, status: newStatus } : c
     ));
-  };
-
-  const handleDeleteCampaign = (campaignId: string) => {
-    setCampaigns(prev => prev.filter(c => c.id !== campaignId));
   };
 
   const formatCurrency = (amount: number) => {

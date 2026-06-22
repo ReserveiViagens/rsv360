@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -7,14 +7,12 @@ import {
   DollarSign,
   TrendingUp,
   Search,
-  MoreVertical,
   Eye,
   Edit,
   Trash2,
   Copy,
   Download,
   Layout,
-  ChevronDown,
   Calculator,
   Calendar,
 } from 'lucide-react';
@@ -25,6 +23,8 @@ import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '../.
 import { BudgetTypeSelector } from '@/components/budget-type-selector';
 import { BudgetEditSelector } from '@/components/budget-edit-selector';
 
+type BudgetWithExpiry = Budget & { expiresAt?: string };
+
 export default function CotacoesPage() {
   const router = useRouter();
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -34,15 +34,16 @@ export default function CotacoesPage() {
   const [isTypeSelectorOpen, setIsTypeSelectorOpen] = useState(false);
   const [isEditSelectorOpen, setIsEditSelectorOpen] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-    loadBudgets();
-  }, []);
-
-  const loadBudgets = () => {
+  const loadBudgets = useCallback(() => {
     const allBudgets = budgetStorage.getAll();
     setBudgets(allBudgets);
-  };
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only cotacoes list init
+    setIsClient(true);
+    loadBudgets();
+  }, [loadBudgets]);
 
   const handleDelete = (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta cotação?')) {
@@ -131,7 +132,8 @@ export default function CotacoesPage() {
   const stats = budgetStorage.getStats();
 
   const computeValidUntil = (b: Budget) => {
-    const base = b.validUntil || (b as any).expiresAt;
+    const extended = b as BudgetWithExpiry;
+    const base = b.validUntil || extended.expiresAt;
     if (base) return new Date(base).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     const created = b.createdAt ? new Date(b.createdAt) : new Date();
     const d = new Date(created);
@@ -143,7 +145,8 @@ export default function CotacoesPage() {
     try {
       const b = budgets.find((x) => x.id === id);
       if (!b) return;
-      const base = (b as any).validUntil || (b as any).expiresAt;
+      const extended = b as BudgetWithExpiry;
+      const base = b.validUntil || extended.expiresAt;
       const fallback = (() => {
         const created = b.createdAt ? new Date(b.createdAt) : new Date();
         const d = new Date(created);
@@ -472,16 +475,7 @@ export default function CotacoesPage() {
       <BudgetTypeSelector
         open={isTypeSelectorOpen}
         onOpenChange={setIsTypeSelectorOpen}
-        onSelect={(type) => {
-          // Redirecionar baseado no tipo ou para galeria de templates
-          const routes = {
-            hotel: '/cotacoes/hoteis',
-            parque: '/cotacoes/parques',
-            atracao: '/cotacoes/atracoes',
-            passeio: '/cotacoes/passeios',
-            personalizado: '/cotacoes/new'
-          };
-          // Opção: redirecionar para galeria de templates primeiro (recomendado)
+        onSelect={(_type) => {
           router.push('/cotacoes/templates');
         }}
       />

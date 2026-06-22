@@ -1,63 +1,45 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Badge } from '@/components/ui/Badge'
-import { Textarea } from '@/components/ui/Textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger } from '@/components/ui/Tabs'
 import { Progress } from '@/components/ui/Progress'
 import { 
   Webhook,
   Send,
-  Archive,
   CheckCircle,
   AlertTriangle,
   Clock,
   RefreshCw,
-  Play,
-  Pause,
   Eye,
   Edit,
-  Trash2,
   Plus,
   Download,
-  Upload,
   Filter,
-  Search,
-  Code,
-  Globe,
   Shield,
   Key,
   Lock,
   Unlock,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
   Activity,
   BarChart3,
   TrendingUp,
-  Settings,
   Bell,
-  MessageSquare,
-  Zap,
-  Router,
-  Database,
-  Server,
-  Network,
-  FileText,
-  Calendar,
-  Users,
   AlertCircle,
-  Copy,
-  ExternalLink,
-  GitBranch
-} from 'lucide-react'
+  Copy
+} from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -107,7 +89,7 @@ interface WebhookEvent {
   id: string
   type: string
   timestamp: string
-  payload: Record<string, any>
+  payload: Record<string, unknown>
   endpoints: string[]
   status: 'pending' | 'processing' | 'delivered' | 'failed' | 'retry'
   attempts: number
@@ -118,33 +100,8 @@ interface WebhookEvent {
   source: string
 }
 
-interface WebhookDelivery {
-  id: string
-  eventId: string
-  endpointId: string
-  timestamp: string
-  status: 'success' | 'failed' | 'timeout' | 'retry'
-  httpStatus: number
-  responseTime: number
-  responseBody?: string
-  errorMessage?: string
-  attempt: number
-  nextRetry?: string
-}
-
-interface WebhookSubscription {
-  id: string
-  service: string
-  events: string[]
-  endpoint: string
-  filters: Record<string, any>
-  active: boolean
-  createdAt: string
-}
-
 const WebhookManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [selectedEndpoint, setSelectedEndpoint] = useState<WebhookEndpoint | null>(null)
   const [isEndpointModalOpen, setIsEndpointModalOpen] = useState(false)
 
   // Dados mock para demonstração
@@ -381,13 +338,6 @@ const WebhookManager: React.FC = () => {
     return new Intl.NumberFormat('pt-BR').format(num)
   }
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {

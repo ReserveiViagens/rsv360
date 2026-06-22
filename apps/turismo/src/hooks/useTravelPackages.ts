@@ -23,7 +23,7 @@ export interface TravelPackage {
   season: 'summer' | 'winter' | 'spring' | 'autumn' | 'all';
   difficulty: 'easy' | 'medium' | 'hard';
   highlights: string[];
-  itinerary: any[];
+  itinerary: unknown[];
   inclusions: string[];
   exclusions: string[];
   cancellationPolicy: string;

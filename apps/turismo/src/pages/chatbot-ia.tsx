@@ -12,7 +12,6 @@ import {
   User,
   Mic,
   MicOff,
-  Settings,
   Minimize2,
   Maximize2,
   RotateCcw,
@@ -20,7 +19,6 @@ import {
   Star,
   MapPin,
   Phone,
-  Download,
   Share,
   Copy,
   ThumbsUp,
@@ -33,6 +31,18 @@ import {
   VolumeX
 } from 'lucide-react';
 
+interface MessageAction {
+  type: string;
+  data?: HotelPreview[];
+  message?: string;
+}
+
+interface HotelPreview {
+  name: string;
+  location: string;
+  rating: number;
+}
+
 interface Message {
   id: string;
   text: string;
@@ -40,21 +50,29 @@ interface Message {
   timestamp: Date;
   intent?: string;
   confidence?: number;
-  actions?: Array<{
-    type: string;
-    data?: any;
-    message?: string;
-  }>;
+  actions?: MessageAction[];
   suggestions?: string[];
   loading?: boolean;
 }
 
-interface ChatbotStats {
-  totalConversations: number;
-  avgConfidence: number;
-  avgProcessingTime: number;
-  recentActivity24h: number;
+interface SpeechRecognitionResultEvent {
+  results: Array<{ [index: number]: { transcript: string } }>;
 }
+
+interface SpeechRecognitionInstance {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type WebkitWindow = Window & {
+  webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+};
 
 const INITIAL_BOT_MESSAGE: Message = {
   id: 'welcome',
@@ -77,11 +95,17 @@ export default function ChatbotIA() {
   const [isMuted, setIsMuted] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [stats, setStats] = useState<ChatbotStats | null>(null);
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const messageIdRef = useRef(0);
+
+  const nextMessageId = () => {
+    messageIdRef.current += 1;
+    return messageIdRef.current.toString();
+  };
 
   // Auto scroll para a última mensagem
   useEffect(() => {
@@ -90,28 +114,32 @@ export default function ChatbotIA() {
 
   // Inicializar reconhecimento de voz
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'pt-BR';
+    const timer = setTimeout(() => {
+      if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+        const recognition = new (window as WebkitWindow).webkitSpeechRecognition!();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'pt-BR';
 
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputText(transcript);
-        setIsListening(false);
-      };
+        recognition.onresult = (event: SpeechRecognitionResultEvent) => {
+          const transcript = event.results[0][0].transcript;
+          setInputText(transcript);
+          setIsListening(false);
+        };
 
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
+        recognition.onerror = () => {
+          setIsListening(false);
+        };
 
-      recognition.onend = () => {
-        setIsListening(false);
-      };
+        recognition.onend = () => {
+          setIsListening(false);
+        };
 
-      recognitionRef.current = recognition;
-    }
+        recognitionRef.current = recognition;
+        setSpeechSupported(true);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Enviar mensagem
@@ -119,7 +147,7 @@ export default function ChatbotIA() {
     if (!inputText.trim() || isLoading) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: nextMessageId(),
       text: inputText,
       sender: 'user',
       timestamp: new Date()
@@ -134,7 +162,7 @@ export default function ChatbotIA() {
       const response = await simulateChatbotResponse(inputText, conversationId);
 
       const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: nextMessageId(),
         text: response.response,
         sender: 'bot',
         timestamp: new Date(),
@@ -155,9 +183,9 @@ export default function ChatbotIA() {
         speakText(response.response);
       }
 
-    } catch (error) {
+    } catch (_error) {
       const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: nextMessageId(),
         text: 'Desculpe, houve um problema. Posso transferir você para um atendente humano.',
         sender: 'bot',
         timestamp: new Date(),
@@ -274,7 +302,7 @@ export default function ChatbotIA() {
   };
 
   // Usar sugestão
-  const useSuggestion = (suggestion: string) => {
+  const applySuggestion = (suggestion: string) => {
     setInputText(suggestion);
     inputRef.current?.focus();
   };
@@ -488,7 +516,7 @@ export default function ChatbotIA() {
                                   {action.type === 'show_hotels' && action.data && (
                                     <div className="space-y-2">
                                       <p className="font-medium text-sm">Hotéis encontrados:</p>
-                                      {action.data.map((hotel: any, hotelIndex: number) => (
+                                      {action.data.map((hotel: HotelPreview, hotelIndex: number) => (
                                         <div key={hotelIndex} className="flex items-center justify-between p-2 bg-white rounded border">
                                           <div>
                                             <p className="font-medium">{hotel.name}</p>
@@ -530,7 +558,7 @@ export default function ChatbotIA() {
                                   key={index}
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => useSuggestion(suggestion)}
+                                  onClick={() => applySuggestion(suggestion)}
                                   className="text-xs"
                                 >
                                   {suggestion}
@@ -604,7 +632,7 @@ export default function ChatbotIA() {
                     />
 
                     {/* Voice button */}
-                    {recognitionRef.current && (
+                    {speechSupported && (
                       <Button
                         type="button"
                         variant="ghost"
