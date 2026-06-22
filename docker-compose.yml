@@ -137,6 +137,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
       backend:
         condition: service_healthy
     ports:
@@ -150,6 +152,10 @@ services:
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      REDIS_ENABLED: 'true'
 
   turismo:
     build:

@@ -19,6 +19,12 @@ coverage/
 .env.*.local
 .env.*.json
 .env.production
+.env.staging
+*.pem
+*.p12
+credentials.json
+**/secrets.json
+**/*-credentials.json
 
 # IDE
 .vscode/
