@@ -31,7 +31,7 @@
 
 ## Produção
 
-Checklist deploy: `docs/evidence/auth/AUTH-PRODUCTION-DEPLOY.md` · template `.env.production.example`
+Checklist deploy: `docs/evidence/auth/AUTH-PRODUCTION-DEPLOY.md` · templates `.env.production.example` · `.env.staging.example`
 
 ## Fora de escopo
 

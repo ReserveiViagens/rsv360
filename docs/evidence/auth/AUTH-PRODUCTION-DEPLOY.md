@@ -1,7 +1,14 @@
 # Auth produção — checklist deploy (D2.8 + D2.9)
 
 **Data:** 2026-06-22  
-**Template:** copie `.env.production.example` → `.env` e preencha secrets.
+**Templates (só referência no git — edite livremente no servidor):**
+
+| Ambiente | Arquivo modelo | Copiar para |
+|----------|----------------|-------------|
+| Produção | `.env.production.example` | `.env` |
+| Staging | `.env.staging.example` | `.env` |
+
+O `.env` real fica no servidor e **não é commitado**; você pode alterar URLs, secrets e `OAUTH_DEV_MOCK` a qualquer momento.
 
 ## 1. Build Docker site-publico
 
