@@ -233,5 +233,6 @@ export function buildDevMockProfile(provider: OAuthProvider): OAuthProfile {
 }
 
 export function isOAuthDevMockEnabled(): boolean {
-  return process.env.OAUTH_DEV_MOCK === 'true' && process.env.NODE_ENV !== 'production';
+  // OAUTH_DEV_MOCK=false em produção real; true habilita mock em Docker/staging/dev.
+  return process.env.OAUTH_DEV_MOCK === 'true';
 }
