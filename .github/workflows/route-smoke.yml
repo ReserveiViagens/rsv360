@@ -25,7 +25,7 @@ jobs:
       POSTGRES_DB: rsv_360_ecosystem
       JWT_SECRET: ci_route_smoke_jwt_secret_minimum_32_chars
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           lfs: true
 
@@ -131,7 +131,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: route-smoke-artifacts
           path: tests/e2e/artifacts/**
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload failure logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compose-failure-logs
           path: |
