@@ -4,7 +4,9 @@ import { toast } from 'react-hot-toast';
 import {
   AUTH_V1,
   AuthV1SessionResponse,
+  AuthV1UserPayload,
   mapAuthV1User,
+  mapRegisterV1User,
 } from '../lib/auth-v1';
 
 // Types
@@ -121,17 +123,35 @@ export const authService = {
     }
   },
 
-  // Register
+  // Register (v1 — sem auto-login; D2.3)
   async register(userData: RegisterData): Promise<User> {
     try {
-      const response = await api.post<User>('/api/auth/register', userData);
-      
+      const response = await api.post<AuthV1UserPayload>(AUTH_V1.REGISTER, {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        password_confirmation: userData.password_confirmation,
+        ...(userData.role ? { role: userData.role } : {}),
+      });
+
       if (response.success && response.data) {
         toast.success('Conta criada com sucesso! Faça login para continuar.');
-        return response.data;
+        const mapped = mapRegisterV1User(response.data);
+        return {
+          id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+          name: mapped.name,
+          email: mapped.email,
+          role: (mapped.role as User['role']) || 'user',
+          status: mapped.is_active ? 'active' : 'inactive',
+          two_factor_enabled: false,
+          created_at: mapped.created_at,
+          updated_at: mapped.created_at,
+        };
       }
-      
-      throw new Error(response.message || 'Erro no cadastro');
+
+      throw new Error(
+        response.message || (response as { error?: string }).error || 'Erro no cadastro'
+      );
     } catch (error: unknown) {
       console.error('Registration error:', error);
       throw error;

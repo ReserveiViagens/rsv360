@@ -5,6 +5,7 @@ export const AUTH_V1 = {
   LOGOUT: '/api/v1/auth/logout',
   REFRESH: '/api/v1/auth/refresh',
   SESSION: '/api/v1/auth/session',
+  REGISTER: '/api/v1/auth/register',
 } as const;
 
 export const DEFAULT_API_URL =
@@ -98,6 +99,31 @@ export function parseAuthV1LoginResponse(
     refresh_token: String(refresh),
     expires_in: payload.expires_in as number | undefined,
   };
+}
+
+export interface AuthV1RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  role?: 'user' | 'manager';
+}
+
+export function mapRegisterV1User(u: AuthV1UserPayload): MappedAuthUser {
+  return mapAuthV1User(u);
+}
+
+export function parseAuthV1RegisterResponse(
+  json: Record<string, unknown>
+): AuthV1UserPayload | null {
+  if (json.success === false) {
+    return null;
+  }
+  const payload = (json.data ?? json) as AuthV1UserPayload;
+  if (!payload?.email) {
+    return null;
+  }
+  return payload;
 }
 
 export function parseAuthV1RefreshResponse(

@@ -432,19 +432,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = async (email: string, full_name: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}${AUTH_V1.REGISTER}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: full_name, email, password }),
+        body: JSON.stringify({
+          name: full_name,
+          email,
+          password,
+          password_confirmation: password,
+        }),
       });
 
       if (response.ok) {
         return true;
       } else {
         const err = await response.json().catch(() => ({}));
-        throw new Error(err?.message || 'Falha no registro');
+        throw new Error(err?.error || err?.message || 'Falha no registro');
       }
     } catch (error) {
       console.error('Erro no registro:', error);

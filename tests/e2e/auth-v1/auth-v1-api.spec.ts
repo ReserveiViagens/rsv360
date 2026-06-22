@@ -99,4 +99,38 @@ test.describe('Auth v1 API — cenários #31', () => {
     const body = await login.json();
     expect(body.success).toBe(false);
   });
+
+  test('6. register v1 → 201 sem tokens (D2.2/D2.3)', async ({ request }) => {
+    const uniqueEmail = `d2-register-${Date.now()}@test.local`;
+    const register = await request.post('/api/v1/auth/register', {
+      data: {
+        name: 'E2E Register',
+        email: uniqueEmail,
+        password: 'TestPass123',
+        password_confirmation: 'TestPass123',
+      },
+    });
+    expect(register.status()).toBe(201);
+    const body = await register.json();
+    expect(body.success).toBe(true);
+    expect(body.data?.email).toBe(uniqueEmail);
+    expect(body.data?.access_token).toBeUndefined();
+
+    const duplicate = await request.post('/api/v1/auth/register', {
+      data: {
+        name: 'E2E Register Dup',
+        email: uniqueEmail,
+        password: 'TestPass123',
+        password_confirmation: 'TestPass123',
+      },
+    });
+    expect(duplicate.status()).toBe(409);
+  });
+
+  test('7. legado /api/auth/register → 404', async ({ request }) => {
+    const legacy = await request.post('/api/auth/register', {
+      data: { name: 'Legacy', email: 'legacy@test.local', password: 'TestPass123' },
+    });
+    expect(legacy.status()).toBe(404);
+  });
 });
