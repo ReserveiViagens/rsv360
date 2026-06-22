@@ -7,6 +7,15 @@ const RATE_LIMIT_CONFIGS = {
     ? { maxAttempts: 50, windowMs: 15 * 60 * 1000, blockDurationMs: 60 * 1000 }
     : { maxAttempts: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 30 * 60 * 1000 },
   refresh: { maxAttempts: 10, windowMs: 60 * 1000, blockDurationMs: 5 * 60 * 1000 },
+  'forgot-password': isDev
+    ? { maxAttempts: 50, windowMs: 60 * 60 * 1000, blockDurationMs: 60 * 1000 }
+    : { maxAttempts: 5, windowMs: 60 * 60 * 1000, blockDurationMs: 60 * 60 * 1000 },
+  'reset-password': isDev
+    ? { maxAttempts: 50, windowMs: 60 * 60 * 1000, blockDurationMs: 60 * 1000 }
+    : { maxAttempts: 10, windowMs: 60 * 60 * 1000, blockDurationMs: 30 * 60 * 1000 },
+  '2fa-verify': isDev
+    ? { maxAttempts: 50, windowMs: 15 * 60 * 1000, blockDurationMs: 60 * 1000 }
+    : { maxAttempts: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 15 * 60 * 1000 },
 };
 
 function isRateLimitEnabled() {
@@ -120,6 +129,20 @@ async function resetLoginRateLimit(email, ipAddress) {
   await resetRateLimit(email.toLowerCase(), 'email', 'login');
 }
 
+async function enforceForgotPasswordRateLimit(email, ipAddress) {
+  const ipCheck = await checkRateLimit(ipAddress || 'unknown', 'ip', 'forgot-password');
+  if (!ipCheck.allowed) return ipCheck;
+  return checkRateLimit(email.toLowerCase(), 'email', 'forgot-password');
+}
+
+async function enforceResetPasswordRateLimit(ipAddress) {
+  return checkRateLimit(ipAddress || 'unknown', 'ip', 'reset-password');
+}
+
+async function enforceTwoFactorVerifyRateLimit(identifier) {
+  return checkRateLimit(identifier || 'unknown', 'temp_token', '2fa-verify');
+}
+
 function getClientIp(req) {
   return (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
 }
@@ -128,6 +151,9 @@ module.exports = {
   isRateLimitEnabled,
   checkRateLimit,
   enforceLoginRateLimit,
+  enforceForgotPasswordRateLimit,
+  enforceResetPasswordRateLimit,
+  enforceTwoFactorVerifyRateLimit,
   resetLoginRateLimit,
   recordLoginAttempt,
   getClientIp,

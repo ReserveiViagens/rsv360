@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button, Input, Alert, AlertDescription } from '../ui';
+import { authService } from '../../services/authService';
 
 const requestResetSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -46,29 +47,29 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ onBackToLogin }) =
     setError(null);
     
     try {
-      // Simular chamada de API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await authService.requestPasswordReset(data.email);
       setEmail(data.email);
       setStep('reset');
-    } catch (_error) {
-      setError('Erro ao enviar email de recuperação. Tente novamente.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao enviar email de recuperação. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResetPassword = async (_data: ResetPasswordData) => {
+  const handleResetPassword = async (data: ResetPasswordData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Simular chamada de API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await authService.resetPassword({
+        token: data.token,
+        password: data.newPassword,
+        password_confirmation: data.confirmPassword,
+      });
       setStep('success');
-    } catch (_error) {
-      setError('Erro ao redefinir senha. Verifique o token e tente novamente.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao redefinir senha. Verifique o token e tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -79,11 +80,10 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ onBackToLogin }) =
     setError(null);
     
     try {
-      // Simular reenvio
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await authService.requestPasswordReset(email);
       setError(null);
-    } catch (_error) {
-      setError('Erro ao reenviar email. Tente novamente.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao reenviar email. Tente novamente.');
     } finally {
       setIsLoading(false);
     }

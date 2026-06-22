@@ -15,7 +15,20 @@
 - [x] D2.1 inventário legacy + smoke `test:e2e:turismo-legacy`
 - [x] Docker backend rebuild — #569
 
-## Próximo (fora escopo atual)
+- [x] Trilha **D2.4–D2.7** (forgot/reset + 2FA backend + turismo + site-publico BFF/UI)
 
-- Implementar trilha **D2.4–D2.7** conforme `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`
-- site-publico OAuth social → BFF ou IdP canônico
+## Backlog auth (pós-plano)
+
+**Decisão 2026-06-22:** priorizar **E-mail reset produção (D2.8)** antes de OAuth social.
+
+| Item | Prioridade | Notas |
+|------|------------|-------|
+| **E-mail reset produção (D2.8)** | **Alta (escolhido)** | SMTP/SES ou `PASSWORD_RESET_EMAIL_WEBHOOK`; desbloqueia forgot/reset end-to-end fora de dev log |
+| OAuth social site-publico | Média (próximo) | Google/Facebook locais → BFF ou IdP; escopo maior, sem dependência de D2.4 |
+| Admin UI 2FA | Baixa | Spec §5 backlog |
+| E2E 2FA fluxo completo | Baixa | setup→login→verify (manual hoje) |
+
+## Fora de escopo
+
+- D3 guest namespace (by design)
+- SMS/WebAuthn 2FA (spec §8)

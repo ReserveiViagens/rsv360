@@ -7,8 +7,8 @@ import {
   AuthV1UserPayload,
   mapAuthV1User,
   mapRegisterV1User,
+  parseAuthV1LoginResponse,
 } from '../lib/auth-v1';
-import { rejectDeferredAuth } from '../lib/auth-legacy-deferred';
 
 // Types
 export interface User {
@@ -75,25 +75,42 @@ export const authService = {
   // Login
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await api.post<LoginResponse>(AUTH_V1.LOGIN, credentials);
-      
+      const response = await api.post<Record<string, unknown>>(AUTH_V1.LOGIN, credentials);
+
       if (response.success && response.data) {
-        if (response.data.requiresTwoFactor) {
-          // 2FA required - don't store tokens yet
+        const parsed = parseAuthV1LoginResponse({
+          success: true,
+          data: response.data as Record<string, unknown>,
+        });
+
+        if (parsed?.requires_2fa) {
           toast.info('Código de autenticação de dois fatores necessário');
-          return response.data;
-        } else {
-          // Normal login - store tokens
-          tokenManager.setTokens(response.data.access_token, response.data.refresh_token);
-          
-          // Connect WebSocket
+          return {
+            requiresTwoFactor: true,
+            tempToken: parsed.temp_token,
+            expires_in: parsed.expires_in ?? 300,
+            user: {} as User,
+            access_token: '',
+            refresh_token: '',
+          };
+        }
+
+        if (parsed?.access_token && parsed.refresh_token) {
+          tokenManager.setTokens(parsed.access_token, parsed.refresh_token);
           wsClient.connect();
-          
           toast.success('Login realizado com sucesso!');
-          return response.data;
+          const userPayload = parsed.user;
+          return {
+            user: userPayload
+              ? (mapAuthV1User(userPayload) as unknown as User)
+              : (response.data as LoginResponse).user,
+            access_token: parsed.access_token,
+            refresh_token: parsed.refresh_token,
+            expires_in: parsed.expires_in ?? 900,
+          };
         }
       }
-      
+
       throw new Error(response.message || 'Erro no login');
     } catch (error: unknown) {
       console.error('Login error:', error);
@@ -101,9 +118,37 @@ export const authService = {
     }
   },
 
-  // Verify 2FA (defer — sem backend v1)
-  async verify2FA(_verification: TwoFactorVerification): Promise<LoginResponse> {
-    rejectDeferredAuth('twoFactor');
+  async verify2FA(verification: TwoFactorVerification): Promise<LoginResponse> {
+    try {
+      const response = await api.post<Record<string, unknown>>(AUTH_V1.TWO_FA_VERIFY, verification);
+
+      if (response.success && response.data) {
+        const parsed = parseAuthV1LoginResponse({
+          success: true,
+          data: response.data as Record<string, unknown>,
+        });
+
+        if (parsed?.access_token && parsed.refresh_token) {
+          tokenManager.setTokens(parsed.access_token, parsed.refresh_token);
+          wsClient.connect();
+          toast.success('Autenticação concluída com sucesso!');
+          const userPayload = parsed.user;
+          return {
+            user: userPayload
+              ? (mapAuthV1User(userPayload) as unknown as User)
+              : (response.data as LoginResponse).user,
+            access_token: parsed.access_token,
+            refresh_token: parsed.refresh_token,
+            expires_in: parsed.expires_in ?? 900,
+          };
+        }
+      }
+
+      throw new Error(response.message || 'Erro na verificação 2FA');
+    } catch (error: unknown) {
+      console.error('2FA verification error:', error);
+      throw error;
+    }
   },
 
   // Register (v1 — sem auto-login; D2.3)
@@ -213,38 +258,119 @@ export const authService = {
     }
   },
 
-  // Setup 2FA (defer — sem backend v1)
   async setup2FA(): Promise<TwoFactorSetup> {
-    rejectDeferredAuth('twoFactor');
+    try {
+      const response = await api.post<{
+        secret: string;
+        qr_code: string;
+        otpauth_url?: string;
+      }>(AUTH_V1.TWO_FA_SETUP);
+
+      if (response.success && response.data) {
+        return {
+          secret: response.data.secret,
+          qrCode: response.data.qr_code,
+          backupCodes: [],
+        };
+      }
+
+      throw new Error(response.message || 'Erro ao configurar 2FA');
+    } catch (error: unknown) {
+      console.error('2FA setup error:', error);
+      throw error;
+    }
   },
 
-  // Verify 2FA setup (defer)
-  async verify2FASetup(_token: string): Promise<{ backupCodes: string[] }> {
-    rejectDeferredAuth('twoFactor');
+  async verify2FASetup(token: string): Promise<{ backupCodes: string[] }> {
+    try {
+      const response = await api.post<{ backup_codes: string[] }>(
+        AUTH_V1.TWO_FA_VERIFY_SETUP,
+        { code: token }
+      );
+
+      if (response.success && response.data) {
+        return { backupCodes: response.data.backup_codes ?? [] };
+      }
+
+      throw new Error(response.message || 'Erro ao verificar 2FA');
+    } catch (error: unknown) {
+      console.error('2FA verify setup error:', error);
+      throw error;
+    }
   },
 
-  // Disable 2FA (defer)
   async disable2FA(
-    _currentPassword: string,
-    _twoFactorCode?: string,
-    _backupCode?: string
+    currentPassword: string,
+    twoFactorCode?: string,
+    backupCode?: string
   ): Promise<void> {
-    rejectDeferredAuth('twoFactor');
+    try {
+      const body: Record<string, string> = { password: currentPassword };
+      if (twoFactorCode) body.code = twoFactorCode;
+      if (backupCode) body.code = backupCode;
+
+      const response = await api.post(AUTH_V1.TWO_FA_DISABLE, body);
+      if (response.success) {
+        toast.success('2FA desativado');
+        return;
+      }
+      throw new Error(response.message || 'Erro ao desativar 2FA');
+    } catch (error: unknown) {
+      console.error('2FA disable error:', error);
+      throw error;
+    }
   },
 
-  // Generate backup codes (defer)
-  async generateBackupCodes(_currentPassword: string, _twoFactorCode?: string): Promise<string[]> {
-    rejectDeferredAuth('twoFactor');
+  async generateBackupCodes(currentPassword: string, twoFactorCode?: string): Promise<string[]> {
+    try {
+      const response = await api.post<{ backup_codes: string[] }>(
+        AUTH_V1.TWO_FA_BACKUP_CODES,
+        { password: currentPassword, code: twoFactorCode }
+      );
+
+      if (response.success && response.data?.backup_codes) {
+        return response.data.backup_codes;
+      }
+
+      throw new Error(response.message || 'Erro ao gerar códigos de backup');
+    } catch (error: unknown) {
+      console.error('Backup codes error:', error);
+      throw error;
+    }
   },
 
-  // Request password reset (defer — sem backend v1)
-  async requestPasswordReset(_email: string): Promise<void> {
-    rejectDeferredAuth('passwordReset');
+  async requestPasswordReset(email: string): Promise<void> {
+    try {
+      const response = await api.post(AUTH_V1.FORGOT_PASSWORD, { email });
+      if (response.success) {
+        toast.success(response.message || 'Se o e-mail existir, enviaremos instruções.');
+        return;
+      }
+      throw new Error(response.message || 'Erro ao solicitar recuperação');
+    } catch (error: unknown) {
+      console.error('Password reset request error:', error);
+      throw error;
+    }
   },
 
-  // Reset password (defer)
-  async resetPassword(_data: PasswordReset): Promise<void> {
-    rejectDeferredAuth('passwordReset');
+  async resetPassword(data: PasswordReset): Promise<void> {
+    try {
+      const response = await api.post(AUTH_V1.RESET_PASSWORD, {
+        token: data.token,
+        password: data.password,
+        password_confirmation: data.password_confirmation,
+      });
+
+      if (response.success) {
+        toast.success(response.message || 'Senha alterada. Faça login.');
+        return;
+      }
+
+      throw new Error(response.message || 'Erro ao redefinir senha');
+    } catch (error: unknown) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
   },
 
   // Verify token

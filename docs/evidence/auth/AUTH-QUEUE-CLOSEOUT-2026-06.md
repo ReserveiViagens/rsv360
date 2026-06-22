@@ -21,6 +21,7 @@
 | #567 | D2.3 turismo register → v1 |
 | #568 | D2.1 inventário + D1 register BFF + 2FA defer |
 | #569 | fix Docker backend build (`--ignore-scripts`) |
+| #572 | D2.4–D2.7 forgot/reset + 2FA v1 + closeout |
 
 ## Critérios de conclusão
 
@@ -29,8 +30,11 @@
 | Matriz + T1.8 + T1.9 documentados | ✅ |
 | site-publico core auth via BFF proxy v1 | ✅ (#555) |
 | site-publico register via BFF v1 | ✅ (#568) |
+| site-publico forgot/reset BFF + UI | ✅ (#572) |
 | Turismo register via v1 | ✅ (#565–#567) |
-| E2E #31 + register (7 cenários) | ✅ local 7/7; CI route-smoke |
+| Turismo 2FA + reset via v1 | ✅ (#572) |
+| Backend forgot/reset + 2FA TOTP | ✅ (#572) |
+| E2E auth-v1 (9 cenários) | ✅ local; CI route-smoke |
 | D2.1 legacy smoke turismo | ✅ `test:e2e:turismo-legacy` |
 | Docker backend build com register | ✅ (#569) |
 | Security scan F-027/F-028 + locks | ✅ (#557–#558) |
@@ -42,8 +46,9 @@
 - **route-smoke:** https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/actions/workflows/route-smoke.yml
 - **security-scan:** https://github.com/ReserveiViagens/PMS-CRM-RSV360-Versao-Oficial-definitivo/actions/workflows/security-scan.yml
 
-## Gaps remanescentes (fora da fila)
+## Gaps remanescentes (backlog)
 
-- **D2 parcial:** spec 2FA/reset em `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`; implementação D2.4–D2.7 pendente
 - **D3:** guest namespace próprio (by design)
-- site-publico: OAuth social ainda local
+- **OAuth** site-publico (Google/Facebook) — local, fora do canônico v1
+- **Admin** telas 2FA enforcement por role (spec backlog)
+- **E-mail produção** reset (SES/SMTP) — adapter log em dev

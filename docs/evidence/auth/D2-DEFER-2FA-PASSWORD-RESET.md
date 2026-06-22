@@ -1,25 +1,19 @@
 # D2 — 2FA / password reset defer (turismo)
 
 **Data:** 2026-06-22  
-**Status:** Spec aprovada — ver `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`
+**Status:** **Fechado** — implementado em D2.4–D2.7 (#572)
 
-## Decisão
+## Histórico
 
-Sem endpoints `/api/v1/auth/2fa/*` nem forgot/reset no backend, o turismo **não chama** mais `/api/auth/*` (404).
+Durante D2.1–D2.3 o turismo exibia defer no cliente até existir backend v1 + spec.
 
-## Implementação cliente
+## Resolução (#572)
 
-| Arquivo | Comportamento |
-|---------|---------------|
-| `apps/turismo/src/lib/auth-legacy-deferred.ts` | Mensagens e `rejectDeferredAuth()` |
-| `apps/turismo/src/services/authService.ts` | 2FA/forgot/reset → erro explícito |
-| `apps/turismo/src/components/auth/AuthPage.tsx` | "Esqueceu senha" → mensagem defer |
+| Fase | Entregável |
+|------|------------|
+| D2.4 | Backend forgot/reset v1 |
+| D2.5 | Backend 2FA TOTP |
+| D2.6 | Turismo wire; `auth-legacy-deferred.ts` removido |
+| D2.7 | site-publico BFF + telas recuperar/redefinir senha |
 
-## Próximo (spec D2.4–D2.7)
-
-Ver `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`:
-
-1. **D2.4** — Backend forgot/reset password v1
-2. **D2.5** — Backend 2FA TOTP v1
-3. **D2.6** — Wire turismo + remover defer
-4. **D2.7** — site-publico BFF
+Ver `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md` e evidências `D2.4`–`D2.7`.

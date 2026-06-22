@@ -133,4 +133,31 @@ test.describe('Auth v1 API — cenários #31', () => {
     });
     expect(legacy.status()).toBe(404);
   });
+
+  test('8. forgot-password v1 → 200 genérico (D2.4)', async ({ request }) => {
+    const e2eIp = `10.200.${Date.now() % 250}.${Math.floor(Math.random() * 200) + 1}`;
+    const response = await request.post('/api/v1/auth/forgot-password', {
+      headers: { 'X-Forwarded-For': e2eIp },
+      data: { email: `forgot-e2e-${Date.now()}@test.local` },
+    });
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.success).toBe(true);
+    expect(body.message).toBeTruthy();
+  });
+
+  test('9. reset-password v1 → 401 token inválido (D2.4)', async ({ request }) => {
+    const e2eIp = `10.201.${Date.now() % 250}.${Math.floor(Math.random() * 200) + 1}`;
+    const reset = await request.post('/api/v1/auth/reset-password', {
+      headers: { 'X-Forwarded-For': e2eIp },
+      data: {
+        token: 'invalid-opaque-token',
+        password: 'NewPass123',
+        password_confirmation: 'NewPass123',
+      },
+    });
+    expect(reset.status()).toBe(401);
+    const body = await reset.json();
+    expect(body.success).toBe(false);
+  });
 });

@@ -90,6 +90,20 @@ async function loginWithDatabase(email, password, meta = {}) {
     await updateUserPassword(user.id, hashedPassword);
   }
 
+  const twoFactor = require('./two-factor.service');
+  if (await twoFactor.isTwoFactorEnabled(user.id)) {
+    const challenge = await twoFactor.createLoginChallenge(user.id);
+    return {
+      requires_2fa: true,
+      temp_token: challenge.temp_token,
+      expires_in: challenge.expires_in,
+    };
+  }
+
+  return issueLoginTokens(user, meta);
+}
+
+async function issueLoginTokens(user, meta = {}) {
   await touchLastLogin(user.id);
 
   const accessSecret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
@@ -127,4 +141,10 @@ async function loginWithDatabase(email, password, meta = {}) {
   };
 }
 
-module.exports = { loginWithDatabase, isDbLoginEnabled: isDbRefreshEnabled };
+module.exports = {
+  loginWithDatabase,
+  isDbLoginEnabled: isDbRefreshEnabled,
+  issueLoginTokens,
+  comparePassword,
+  getStoredPasswordHash,
+};
