@@ -36,7 +36,7 @@ export const API_CONFIG = {
     // Auth
     AUTH: {
       LOGIN: '/api/v1/auth/login',
-      REGISTER: '/api/auth/register',
+      REGISTER: '/api/v1/auth/register',
       LOGOUT: '/api/v1/auth/logout',
       REFRESH: '/api/v1/auth/refresh',
       SESSION: '/api/v1/auth/session',
