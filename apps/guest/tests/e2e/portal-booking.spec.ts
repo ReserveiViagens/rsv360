@@ -44,6 +44,19 @@ test.describe('Phase 7-G.2 — Portal Booking smoke', () => {
     ).toBeTruthy()
   })
 
+  test('localStorage sem cookie: permanece em /login sem loop', async ({ page }) => {
+    await page.context().clearCookies()
+    await page.goto('/login')
+    await page.evaluate((cookieName) => {
+      window.localStorage.setItem(cookieName, 'orphan-local-token-f029')
+    }, COOKIE_NAME)
+
+    await page.goto('/login', { waitUntil: 'networkidle' })
+    await page.waitForTimeout(1500)
+
+    expect(page.url()).toContain('/login')
+  })
+
   test('token inválido: redireciona para /login', async ({ page }) => {
     await page.goto('/')
     await setPortalCookie(page, 'invalid-token-xxx-7g2')
