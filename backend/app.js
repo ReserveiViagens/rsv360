@@ -90,7 +90,7 @@ async function createApp() {
   }
 
   try {
-    const crmModule = require('../server/modules/crm/index.ts');
+    const crmModule = require('../server/modules/crm');
     await crmModule.registerCrmModule(app);
     console.log('[BOOT] CRM & Loyalty module loaded');
   } catch (err) {

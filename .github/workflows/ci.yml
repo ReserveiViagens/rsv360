@@ -95,4 +95,35 @@ jobs:
 
       - name: Type check (workspaces)
         run: npm run type-check --workspaces --if-present
-        continue-on-error: true
+
+  turismo-eslint-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+      - run: npm ci
+      - name: ESLint turismo baseline 0
+        run: |
+          out=$(node apps/turismo/scripts/eslint-warnings-rank.cjs)
+          echo "$out"
+          echo "$out" | grep -q "Total warnings (excl voucher-editor + validation): 0"
+
+  monorepo-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+      - run: npm ci
+      - run: npm run build

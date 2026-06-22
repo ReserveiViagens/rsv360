@@ -1,5 +1,6 @@
 import type React from 'react';
 import '../styles/globals.css';
+import { Providers } from './providers';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
