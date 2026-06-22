@@ -44,6 +44,6 @@
 
 ## Gaps remanescentes (fora da fila)
 
-- **D2 parcial:** turismo 2FA/forgot/reset — defer cliente até backend v1 + spec segurança
+- **D2 parcial:** spec 2FA/reset em `docs/security/AUTH-V1-2FA-PASSWORD-RESET-SPEC.md`; implementação D2.4–D2.7 pendente
 - **D3:** guest namespace próprio (by design)
 - site-publico: OAuth social ainda local
