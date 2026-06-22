@@ -1,7 +1,6 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 **/node_modules/
-package-lock.json
 yarn.lock
 
 # Build outputs
@@ -131,7 +130,7 @@ drizzle-kit-cli-windows*.log
 .codex/
 .audit/
 
-# Fase 3.A híbrida
+# Fase 3.A hÃ­brida
 .fase3a-logs/
 *.bak.fase3a.*
 .husky/_/
