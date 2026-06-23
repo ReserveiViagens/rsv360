@@ -57,6 +57,13 @@
       "when": 1782201000000,
       "tag": "0007_create_user_2fa",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782202000000,
+      "tag": "0008_modulos_novos_0008",
+      "breakpoints": true
     }
   ]
 }
