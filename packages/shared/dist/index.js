@@ -19,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./types/index.js"), exports);
 __exportStar(require("./types/tenant.js"), exports);
 __exportStar(require("./auth/session.js"), exports);
+__exportStar(require("./tenant/routing.js"), exports);
 // Validators
 __exportStar(require("./validators/checkout.validator.js"), exports);
 __exportStar(require("./validators/booking.validator.js"), exports);
@@ -26,3 +27,5 @@ __exportStar(require("./validators/booking.validator.js"), exports);
 __exportStar(require("./constants/index.js"), exports);
 // Utils
 __exportStar(require("./utils/index.js"), exports);
+// Drizzle schemas (Fase 1 migração)
+__exportStar(require("./schema.js"), exports);
