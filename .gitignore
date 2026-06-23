@@ -134,3 +134,6 @@ drizzle-kit-cli-windows*.log
 .fase3a-logs/
 *.bak.fase3a.*
 .husky/_/
+
+# Migração Sistema A — dados locais (PII)
+data/db.json
