@@ -97,6 +97,13 @@ async function createApp() {
     console.warn('[BOOT] CRM module failed:', err.message);
   }
 
+  try {
+    const { registerMigracaoFase1Modules } = require('../server/app');
+    registerMigracaoFase1Modules(app);
+  } catch (err) {
+    console.warn('[BOOT] Módulos Fase 1 falharam:', err.message);
+  }
+
   app.use((err, req, res, next) => {
     console.error('[SERVER] Error:', err.message);
     res.status(500).json({ success: false, error: 'Internal server error' });
