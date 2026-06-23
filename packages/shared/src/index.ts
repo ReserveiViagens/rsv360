@@ -18,3 +18,6 @@ export * from './utils/index.js';
 
 // Drizzle schemas (Fase 1 migração)
 export * from './schema.js';
+
+// Fase 1 API types & paths
+export * from './fase1-api.js';

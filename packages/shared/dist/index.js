@@ -29,3 +29,5 @@ __exportStar(require("./constants/index.js"), exports);
 __exportStar(require("./utils/index.js"), exports);
 // Drizzle schemas (Fase 1 migração)
 __exportStar(require("./schema.js"), exports);
+// Fase 1 API types & paths
+__exportStar(require("./fase1-api.js"), exports);

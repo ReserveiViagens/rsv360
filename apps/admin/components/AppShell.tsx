@@ -18,6 +18,13 @@ const titles: Record<string, { title: string; description: string }> = {
   '/crm': { title: 'CRM & Loyalty', description: 'Hóspedes, fidelidade, campanhas e segmentos.' },
   '/properties': { title: 'Multi-property', description: 'Propriedades, usuários e consolidado.' },
   '/fiscal': { title: 'Fiscal & LGPD', description: 'Recibos, FNRH, consentimentos e auditoria.' },
+  '/orcamentos': { title: 'Orçamentos', description: 'Módulo Fase 1 — orçamentos comerciais.' },
+  '/propostas': { title: 'Propostas', description: 'Propostas comerciais e links públicos.' },
+  '/passageiros': { title: 'Passageiros', description: 'Cadastro e documentos de passageiros.' },
+  '/financeiro': { title: 'Financeiro', description: 'Transações, contas e fluxo de caixa.' },
+  '/campanhas': { title: 'Campanhas', description: 'Campanhas de marketing e cupons.' },
+  '/logistica': { title: 'Logística', description: 'Fornecedores, reservas e vouchers.' },
+  '/relatorios': { title: 'Relatórios', description: 'Dashboards e exportações.' },
 };
 
 export function AppShell({ children }: { children: ReactNode }) {

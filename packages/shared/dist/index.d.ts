@@ -7,3 +7,4 @@ export * from './validators/booking.validator.js';
 export * from './constants/index.js';
 export * from './utils/index.js';
 export * from './schema.js';
+export * from './fase1-api.js';

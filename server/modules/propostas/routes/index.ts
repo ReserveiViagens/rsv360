@@ -170,6 +170,23 @@ router.post('/:id/hitl/release', ...agentAuth, async (req, res) => {
   }
 });
 
+router.post('/:id/responder', optionalJwt, async (req, res) => {
+  try {
+    const action = req.body.action as 'accept' | 'reject';
+    if (!action || !['accept', 'reject'].includes(action)) {
+      return res.status(400).json({ success: false, error: 'action deve ser accept ou reject' });
+    }
+    const updated = await propostasService.respondPublic(
+      Number(req.params.id),
+      action,
+      req.body.clientName ?? req.user?.name,
+    );
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 export default router;
 
 module.exports = router;

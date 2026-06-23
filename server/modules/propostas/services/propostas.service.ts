@@ -261,6 +261,30 @@ export class PropostasService {
       .returning();
     return created;
   }
+
+  async respondPublic(propostaId: number, action: 'accept' | 'reject', clientName?: string) {
+    const [row] = await db.select().from(propostas).where(eq(propostas.id, propostaId));
+    if (!row) throw new Error('Proposta não encontrada');
+    if (!row.isPublica) throw new Error('Proposta não disponível publicamente');
+    if (['accepted', 'rejected', 'cancelled'].includes(row.status)) {
+      throw new Error('Proposta já foi respondida');
+    }
+
+    const status = action === 'accept' ? 'accepted' : 'rejected';
+    const updated = await this.changeStatus(propostaId, status);
+    await this.addChatMessage(propostaId, {
+      senderType: 'system',
+      senderName: 'Sistema',
+      message: `${clientName ?? 'Cliente'} ${action === 'accept' ? 'aceitou' : 'recusou'} a proposta.`,
+    });
+    await this.logEvent(
+      propostaId,
+      `public_${action}`,
+      action === 'accept' ? 'Proposta aceita pelo cliente' : 'Proposta recusada pelo cliente',
+      { clientName },
+    );
+    return updated;
+  }
 }
 
 export const propostasService = new PropostasService();
