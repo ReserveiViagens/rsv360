@@ -18,6 +18,7 @@
 - [x] Trilha **D2.4–D2.7** (forgot/reset + 2FA backend + turismo + site-publico BFF/UI)
 - [x] **D2.8** e-mail reset produção (webhook + SMTP/SES) — `D2.8-BACKEND-EMAIL-RESET-RESULT.md`
 - [x] **D2.9** OAuth social site-publico → v1 — `D2.9-SITE-PUBLICO-OAUTH-BFF-RESULT.md`
+- [x] **D2.10** E2E OAuth mock + guia IdP — `D2.10-OAUTH-IDP-SETUP-GUIDE.md`
 
 ## Backlog auth (pós-plano)
 
@@ -27,7 +28,7 @@
 |------|------------|-------|
 | Admin UI 2FA | Baixa | Spec §5 backlog |
 | E2E 2FA fluxo completo | Baixa | setup→login→verify (manual hoje) |
-| E2E OAuth mock | Baixa | `OAUTH_DEV_MOCK` + Playwright |
+| E2E OAuth mock | — | Concluído — `test:e2e:auth-oauth-mock` |
 
 ## Produção
 
