@@ -22,12 +22,17 @@
 
 ## Backlog auth (pós-plano)
 
-**Decisão 2026-06-22:** trilha D2.8–D2.9 concluída.
+**Roadmap completo:** `docs/evidence/auth/AUTH-BACKLOG-ROADMAP.md` (Fases A–F)
+
+**Decisão 2026-06-22:** trilha D2.8–D2.10 concluída no código.
 
 | Item | Prioridade | Notas |
 |------|------------|-------|
-| Admin UI 2FA | Baixa | Spec §5 backlog |
-| E2E 2FA fluxo completo | Baixa | setup→login→verify (manual hoje) |
+| Deploy produção (Fase A) | Alta | `AUTH-PRODUCTION-DEPLOY.md` |
+| OAuth real IdP (Fase B) | Média | `D2.10-OAUTH-IDP-SETUP-GUIDE.md` — mock OK até lá |
+| Admin UI 2FA (Fase C / D2.12) | Baixa | Spec §5 backlog |
+| E2E 2FA fluxo completo (Fase D / D2.13) | Baixa | setup→login→verify |
+| site-publico 2FA BFF (Fase E / D2.14) | Baixa | Paridade turismo |
 | E2E OAuth mock | — | Concluído — `test:e2e:auth-oauth-mock` |
 
 ## Produção
