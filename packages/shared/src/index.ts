@@ -15,3 +15,6 @@ export * from './constants/index.js';
 
 // Utils
 export * from './utils/index.js';
+
+// Drizzle schemas (Fase 1 migração)
+export * from './schema.js';
