@@ -58,6 +58,46 @@ router.delete('/:id', ...staffAuth, async (req, res) => {
   }
 });
 
+router.post('/:id/documentos', ...staffAuth, async (req, res) => {
+  try {
+    const updated = await passageirosService.addDocumento(Number(req.params.id), req.body);
+    res.status(201).json({ success: true, data: updated });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.delete('/:id/documentos/:index', ...staffAuth, async (req, res) => {
+  try {
+    const updated = await passageirosService.removeDocumento(
+      Number(req.params.id),
+      Number(req.params.index),
+    );
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/fnrh', ...staffAuth, async (req, res) => {
+  try {
+    const created = await passageirosService.createFnrh(Number(req.params.id), req.body);
+    res.status(201).json({ success: true, data: created });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.put('/fnrh/:fnrhId', ...staffAuth, async (req, res) => {
+  try {
+    const updated = await passageirosService.updateFnrh(Number(req.params.fnrhId), req.body);
+    if (!updated) return res.status(404).json({ success: false, error: 'FNRH não encontrado' });
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.post('/:id/excursoes', ...staffAuth, async (req, res) => {
   try {
     const linked = await passageirosService.linkExcursao(Number(req.params.id), req.body);

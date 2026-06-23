@@ -64,6 +64,13 @@
       "when": 1782202000000,
       "tag": "0008_modulos_novos_0008",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782203000000,
+      "tag": "0009_fase4_extensoes",
+      "breakpoints": true
     }
   ]
 }

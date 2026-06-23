@@ -1,10 +1,41 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fase1Api } from '../lib/fase1-api';
 
+export function useOrcamentos() {
+  return useQuery({ queryKey: ['orcamentos'], queryFn: fase1Api.listOrcamentos });
+}
+
+export function useOrcamento(id?: number) {
+  return useQuery({
+    queryKey: ['orcamentos', id],
+    queryFn: () => fase1Api.getOrcamento(Number(id)),
+    enabled: Boolean(id),
+  });
+}
+
+export function useCreateOrcamento() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: fase1Api.createOrcamento,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['orcamentos'] }),
+  });
+}
+
+export function useConvertOrcamento() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => fase1Api.convertOrcamento(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['orcamentos'] });
+      qc.invalidateQueries({ queryKey: ['propostas'] });
+    },
+  });
+}
+
 export function usePropostas(status?: string) {
   return useQuery({
     queryKey: ['propostas', status],
-    queryFn: () => fase1Api.listPropostas(status ? { status } : undefined),
+    queryFn: () => fase1Api.listPropostas(status),
   });
 }
 
@@ -27,7 +58,8 @@ export function useCreateProposta() {
 export function useUpdateProposta() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id: number; body: Record<string, unknown> }) => fase1Api.updateProposta(id, body),
+    mutationFn: ({ id, body }: { id: number; body: Record<string, unknown> }) =>
+      fase1Api.updateProposta(id, body),
     onSuccess: (_d, v) => {
       qc.invalidateQueries({ queryKey: ['propostas'] });
       qc.invalidateQueries({ queryKey: ['propostas', v.id] });
@@ -35,23 +67,68 @@ export function useUpdateProposta() {
   });
 }
 
-export function useChangePropostaStatus() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, status }: { id: number; status: string }) => fase1Api.changePropostaStatus(id, status),
-    onSuccess: (_d, v) => {
-      qc.invalidateQueries({ queryKey: ['propostas'] });
-      qc.invalidateQueries({ queryKey: ['propostas', v.id] });
-    },
+export function usePropostaTemplates() {
+  return useQuery({ queryKey: ['propostas', 'templates'], queryFn: fase1Api.listTemplates });
+}
+
+export function usePassageiros() {
+  return useQuery({ queryKey: ['passageiros'], queryFn: fase1Api.listPassageiros });
+}
+
+export function usePassageiro(id?: number) {
+  return useQuery({
+    queryKey: ['passageiros', id],
+    queryFn: () => fase1Api.getPassageiro(Number(id)),
+    enabled: Boolean(id),
   });
 }
 
-export function useCreatePropostaFromOrcamento() {
+export function useCreatePassageiro() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (orcamentoId: number) => fase1Api.createFromOrcamento(orcamentoId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['propostas'] }),
+    mutationFn: fase1Api.createPassageiro,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['passageiros'] }),
   });
+}
+
+export function useFinanceiroDashboard() {
+  return useQuery({ queryKey: ['financeiro', 'dashboard'], queryFn: fase1Api.financeiroDashboard });
+}
+
+export function useFluxoCaixa() {
+  return useQuery({ queryKey: ['financeiro', 'fluxo'], queryFn: fase1Api.fluxoCaixa });
+}
+
+export function useTransacoes() {
+  return useQuery({ queryKey: ['financeiro', 'transacoes'], queryFn: fase1Api.listTransacoes });
+}
+
+export function useCampanhas() {
+  return useQuery({ queryKey: ['campanhas'], queryFn: fase1Api.listCampanhas });
+}
+
+export function useCampanhasMetricas() {
+  return useQuery({ queryKey: ['campanhas', 'metricas'], queryFn: fase1Api.campanhasMetricas });
+}
+
+export function useCupons() {
+  return useQuery({ queryKey: ['cupons'], queryFn: fase1Api.listCupons });
+}
+
+export function useLogisticaDashboard() {
+  return useQuery({ queryKey: ['logistica'], queryFn: fase1Api.logisticaDashboard });
+}
+
+export function useFornecedores() {
+  return useQuery({ queryKey: ['logistica', 'fornecedores'], queryFn: fase1Api.listFornecedores });
+}
+
+export function useVouchers() {
+  return useQuery({ queryKey: ['logistica', 'vouchers'], queryFn: fase1Api.listVouchers });
+}
+
+export function useRelatoriosDashboard() {
+  return useQuery({ queryKey: ['relatorios'], queryFn: fase1Api.relatoriosDashboard });
 }
 
 export function usePropostaHitl(id?: number) {
@@ -79,14 +156,14 @@ export function useReleaseHitl() {
   });
 }
 
-export function useOrcamentos() {
-  return useQuery({ queryKey: ['orcamentos'], queryFn: fase1Api.listOrcamentos });
+export function useChangePropostaStatus() {
+  const update = useUpdateProposta();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: number; status: string }) =>
+      update.mutateAsync({ id, body: { status } }),
+  });
 }
 
-export function useOrcamento(id?: number) {
-  return useQuery({
-    queryKey: ['orcamentos', id],
-    queryFn: () => fase1Api.getOrcamento(Number(id)),
-    enabled: Boolean(id),
-  });
+export function useCreatePropostaFromOrcamento() {
+  return useConvertOrcamento();
 }

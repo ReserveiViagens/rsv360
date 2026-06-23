@@ -18,3 +18,4 @@ export * from './financeiro';
 export * from './marketing';
 export * from './logistica';
 export * from './relatorios';
+export * from './fase1-ext';

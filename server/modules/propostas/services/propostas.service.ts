@@ -262,6 +262,25 @@ export class PropostasService {
     return created;
   }
 
+  async getTemplate(id: number) {
+    const [row] = await db.select().from(pacotesTemplate).where(eq(pacotesTemplate.id, id));
+    return row ?? null;
+  }
+
+  async updateTemplate(id: number, data: Record<string, unknown>) {
+    const [updated] = await db
+      .update(pacotesTemplate)
+      .set({ ...data, updatedAt: new Date() } as Partial<typeof pacotesTemplate.$inferInsert>)
+      .where(eq(pacotesTemplate.id, id))
+      .returning();
+    return updated ?? null;
+  }
+
+  async deleteTemplate(id: number) {
+    const [deleted] = await db.delete(pacotesTemplate).where(eq(pacotesTemplate.id, id)).returning();
+    return deleted ?? null;
+  }
+
   async respondPublic(propostaId: number, action: 'accept' | 'reject', clientName?: string) {
     const [row] = await db.select().from(propostas).where(eq(propostas.id, propostaId));
     if (!row) throw new Error('Proposta não encontrada');
