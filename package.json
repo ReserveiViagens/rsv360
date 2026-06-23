@@ -29,6 +29,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "migrate": "npm run migrate --workspace=backend",
+    "migrate:db-json": "tsx scripts/migrate-db-json.ts",
     "migrate:new": "npm run migrate:new --workspace=backend",
     "migrate:rollback": "npm run migrate:rollback --workspace=backend",
     "seed": "npm run seed --workspace=backend",
