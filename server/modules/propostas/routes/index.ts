@@ -41,6 +41,36 @@ router.post('/templates', ...staffAuth, async (req, res) => {
   }
 });
 
+router.get('/templates/:templateId', ...staffAuth, async (req, res) => {
+  try {
+    const item = await propostasService.getTemplate(Number(req.params.templateId));
+    if (!item) return res.status(404).json({ success: false, error: 'Template não encontrado' });
+    res.json({ success: true, data: item });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.put('/templates/:templateId', ...staffAuth, async (req, res) => {
+  try {
+    const updated = await propostasService.updateTemplate(Number(req.params.templateId), req.body);
+    if (!updated) return res.status(404).json({ success: false, error: 'Template não encontrado' });
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.delete('/templates/:templateId', ...staffAuth, async (req, res) => {
+  try {
+    const deleted = await propostasService.deleteTemplate(Number(req.params.templateId));
+    if (!deleted) return res.status(404).json({ success: false, error: 'Template não encontrado' });
+    res.json({ success: true, data: deleted });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.post('/from-orcamento/:orcamentoId', ...staffAuth, async (req, res) => {
   try {
     const created = await propostasService.createFromOrcamento(

@@ -4,9 +4,7 @@ import { usePropostas } from '@/hooks/useFase1Modules';
 
 export default function PropostasListPage() {
   const { data, isLoading } = usePropostas();
-  const fromOrcamento = useCreatePropostaFromOrcamento();
-
-  const items = data?.data ?? [];
+  const items = (data as { data?: unknown[] })?.data ?? [];
 
   return (
     <>
@@ -26,6 +24,9 @@ export default function PropostasListPage() {
               </Link>
               <Link href="/propostas/nova" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">
                 Nova proposta
+              </Link>
+              <Link href="/modulos" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
+                Hub Fase 4
               </Link>
             </div>
           </div>

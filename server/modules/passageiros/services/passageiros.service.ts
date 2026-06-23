@@ -1,6 +1,14 @@
 import { desc, eq } from 'drizzle-orm';
 import { db } from '../../../lib/db';
+import { fnrhRegistros } from '../../../../backend/src/db/schema/fase1-ext';
 import { passageiroExcursao, passageiros } from '../../../../backend/src/db/schema/passageiros';
+
+type Documento = { tipo: string; numero?: string; url?: string; validade?: string };
+
+function parseDocs(raw: unknown): Documento[] {
+  if (Array.isArray(raw)) return raw as Documento[];
+  return [];
+}
 
 export class PassageirosService {
   async list(enterpriseId?: number) {
@@ -17,7 +25,8 @@ export class PassageirosService {
       .select()
       .from(passageiroExcursao)
       .where(eq(passageiroExcursao.passageiroId, id));
-    return { ...row, excursao };
+    const fnrh = await db.select().from(fnrhRegistros).where(eq(fnrhRegistros.passageiroId, id));
+    return { ...row, excursao, fnrh };
   }
 
   async create(data: Record<string, unknown>) {
@@ -42,6 +51,37 @@ export class PassageirosService {
     return deleted ?? null;
   }
 
+  async addDocumento(passageiroId: number, doc: Documento) {
+    const [row] = await db.select().from(passageiros).where(eq(passageiros.id, passageiroId));
+    if (!row) throw new Error('Passageiro não encontrado');
+    const docs = [...parseDocs(row.documentos), doc];
+    return this.update(passageiroId, { documentos: docs });
+  }
+
+  async removeDocumento(passageiroId: number, index: number) {
+    const [row] = await db.select().from(passageiros).where(eq(passageiros.id, passageiroId));
+    if (!row) throw new Error('Passageiro não encontrado');
+    const docs = parseDocs(row.documentos).filter((_, i) => i !== index);
+    return this.update(passageiroId, { documentos: docs });
+  }
+
+  async createFnrh(passageiroId: number, data: Record<string, unknown>) {
+    const [created] = await db
+      .insert(fnrhRegistros)
+      .values({ ...data, passageiroId } as typeof fnrhRegistros.$inferInsert)
+      .returning();
+    return created;
+  }
+
+  async updateFnrh(id: number, data: Record<string, unknown>) {
+    const [updated] = await db
+      .update(fnrhRegistros)
+      .set({ ...data, updatedAt: new Date() } as Partial<typeof fnrhRegistros.$inferInsert>)
+      .where(eq(fnrhRegistros.id, id))
+      .returning();
+    return updated ?? null;
+  }
+
   async linkExcursao(passageiroId: number, data: Record<string, unknown>) {
     const [created] = await db
       .insert(passageiroExcursao)
@@ -52,5 +92,4 @@ export class PassageirosService {
 }
 
 export const passageirosService = new PassageirosService();
-
 module.exports = { PassageirosService, passageirosService };

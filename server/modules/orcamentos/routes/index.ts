@@ -68,6 +68,38 @@ router.post('/:id/itens', ...staffAuth, async (req, res) => {
   }
 });
 
-export default router;
+router.put('/:id/itens/:itemId', ...staffAuth, async (req, res) => {
+  try {
+    const item = await orcamentosService.updateItem(
+      Number(req.params.id),
+      Number(req.params.itemId),
+      req.body,
+    );
+    if (!item) return res.status(404).json({ success: false, error: 'Item não encontrado' });
+    res.json({ success: true, data: item });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
 
+router.delete('/:id/itens/:itemId', ...staffAuth, async (req, res) => {
+  try {
+    const deleted = await orcamentosService.removeItem(Number(req.params.id), Number(req.params.itemId));
+    if (!deleted) return res.status(404).json({ success: false, error: 'Item não encontrado' });
+    res.json({ success: true, data: deleted });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/converter-proposta', ...staffAuth, async (req, res) => {
+  try {
+    const proposta = await orcamentosService.convertToProposta(Number(req.params.id), req.user?.id);
+    res.status(201).json({ success: true, data: proposta });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+export default router;
 module.exports = router;
