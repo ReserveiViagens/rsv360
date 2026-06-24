@@ -90,6 +90,18 @@ async function main() {
 	}
 	console.log("OK /pricing/dashboard -> 200");
 
+	const calendarHtml = await (await fetch(`${lab}/pricing/calendar`)).text();
+	if (calendarHtml.includes("Em construção")) {
+		fail("/pricing/calendar still shows stub");
+	}
+	console.log("OK /pricing/calendar MVP");
+
+	const rulesStatus = await getStatus(`${lab}/pricing/rules`);
+	if (rulesStatus !== 200) {
+		fail(`/pricing/rules returned ${rulesStatus}`);
+	}
+	console.log("OK /pricing/rules -> 200");
+
 	try {
 		const s1Res = await fetch(`${s1}/health`, { signal: AbortSignal.timeout(3000) });
 		if (s1Res.status === 200) {

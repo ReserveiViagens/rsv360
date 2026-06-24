@@ -11,7 +11,7 @@ import {
   updatePricingRule,
   deletePricingRule,
 } from '@/lib/pricing-rules-service';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { pricingLabAuth } from '@/lib/pricing-lab-auth';
 
 // GET /api/pricing/rules - Listar regras
 export async function GET(request: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 // POST /api/pricing/rules - Criar regra
 export async function POST(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await pricingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/pricing/rules - Atualizar regra
 export async function PUT(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await pricingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
@@ -138,7 +138,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/pricing/rules - Deletar regra
 export async function DELETE(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await pricingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
