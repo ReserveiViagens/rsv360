@@ -54,20 +54,22 @@ interface CampaignListProps {
   onEdit?: (campaignId: number) => void;
   onCreate?: () => void;
   className?: string;
+  defaultCampaignType?: string;
 }
 
 export function CampaignList({ 
   onView, 
   onEdit, 
   onCreate,
-  className 
+  className,
+  defaultCampaignType = '',
 }: CampaignListProps) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     status: '',
-    campaign_type: '',
+    campaign_type: defaultCampaignType,
   });
 
   useEffect(() => {
