@@ -54,6 +54,18 @@ jobs:
           corepack prepare npm@10.9.7 --activate
       - run: bash .github/scripts/check-lockfiles.sh . backend
       - run: npm ci
+      - name: Wait for PostgreSQL
+        run: |
+          for i in $(seq 1 30); do
+            if pg_isready -h localhost -p 5432 -U rsv360 -d rsv_360_ecosystem 2>/dev/null; then
+              echo "Postgres ready"
+              exit 0
+            fi
+            echo "Waiting for postgres... ($i/30)"
+            sleep 2
+          done
+          echo "Postgres not ready after 60s"
+          exit 1
       - name: Run migrations
         working-directory: backend
         run: npm run migrate
@@ -136,6 +148,33 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: docker compose up -d postgres redis
+      - name: Wait for PostgreSQL (Docker)
+        run: |
+          for i in $(seq 1 30); do
+            if docker compose exec -T postgres pg_isready -U rsv360 -d rsv_360_ecosystem; then
+              echo "Postgres ready"
+              exit 0
+            fi
+            echo "Waiting for postgres... ($i/30)"
+            sleep 2
+          done
+          echo "Postgres not ready after 60s"
+          exit 1
+      - name: Configure seed credentials
+        run: |
+          if [ -z "${SEED_TEST_USER_EMAIL}" ]; then
+            echo "SEED_TEST_USER_EMAIL=test@local.dev" >> "$GITHUB_ENV"
+          else
+            echo "SEED_TEST_USER_EMAIL=${SEED_TEST_USER_EMAIL}" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${SEED_TEST_USER_PASSWORD}" ]; then
+            echo "SEED_TEST_USER_PASSWORD=dev-only-fallback-do-not-use-in-prod" >> "$GITHUB_ENV"
+          else
+            echo "SEED_TEST_USER_PASSWORD=${SEED_TEST_USER_PASSWORD}" >> "$GITHUB_ENV"
+          fi
+        env:
+          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
       - name: Migrate + seed
         working-directory: backend
         run: |
@@ -144,6 +183,8 @@ jobs:
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           JWT_SECRET: ${{ env.JWT_SECRET }}
+          SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
       - run: docker compose up -d --build backend site-publico turismo
       - name: Wait for stack
         run: |
@@ -160,6 +201,8 @@ jobs:
           RSV_FASE5_SITE_URL: http://localhost:3000
           RSV_FASE5_TURISMO_URL: http://localhost:3005
           JWT_SECRET: ${{ env.JWT_SECRET }}
+          SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
