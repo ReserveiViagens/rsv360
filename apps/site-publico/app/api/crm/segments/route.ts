@@ -11,12 +11,12 @@ import {
   getSegmentById,
   calculateSegmentCustomers,
 } from '@/lib/crm-service';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 
 // GET /api/crm/segments - Listar segmentos
 export async function GET(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await marketingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 // POST /api/crm/segments - Criar segmento
 export async function POST(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await marketingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
