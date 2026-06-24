@@ -1,0 +1,52 @@
+export type AppMode = 'public' | 'marketing-lab';
+
+const rawMode =
+  process.env.RSV360_APP_MODE ?? process.env.NEXT_PUBLIC_APP_MODE ?? 'public';
+
+export const APP_MODE: AppMode =
+  rawMode === 'marketing-lab' ? 'marketing-lab' : 'public';
+
+export const PRIMARY_SITE_URL = (
+  process.env.NEXT_PUBLIC_PRIMARY_SITE_URL ?? 'http://localhost:5000'
+).replace(/\/$/, '');
+
+const LAB_ROUTE_PREFIXES = [
+  '/lab',
+  '/analytics',
+  '/marketing',
+  '/crm',
+  '/admin',
+  '/pricing',
+  '/dashboard-estatisticas',
+  '/dashboard',
+  '/login',
+  '/recuperar-senha',
+  '/redefinir-senha',
+] as const;
+
+export function isMarketingLabMode(): boolean {
+  return APP_MODE === 'marketing-lab';
+}
+
+export function isStaticAssetPath(pathname: string): boolean {
+  return (
+    pathname.startsWith('/_next') ||
+    pathname === '/favicon.ico' ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map|woff2?|ttf)$/i.test(pathname)
+  );
+}
+
+export function isLabApiPath(pathname: string): boolean {
+  return pathname.startsWith('/api');
+}
+
+export function isLabUiPath(pathname: string): boolean {
+  return LAB_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+export function buildPrimarySiteUrl(pathname: string, search: string): string {
+  const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  return `${PRIMARY_SITE_URL}${path}${search}`;
+}

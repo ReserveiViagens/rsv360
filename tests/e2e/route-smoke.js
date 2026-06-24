@@ -34,11 +34,56 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const ARTIFACTS_DIR = path.resolve(ROOT, "tests", "e2e", "artifacts");
 
 const APPS = {
-	"site-publico": { baseUrl: "http://localhost:3000", routers: ["pages", "app"] },
-	admin:          { baseUrl: "http://localhost:3004", routers: ["pages"] },
-	turismo:        { baseUrl: "http://localhost:3005", routers: ["pages"] },
-	guest:          { baseUrl: "http://localhost:3006", routers: ["pages"] },
+	"site-publico": {
+		baseUrl: process.env.RSV_SMOKE_SITE_PUBLICO_URL || "http://localhost:3000",
+		routers: ["pages", "app"],
+	},
+	admin: {
+		baseUrl: process.env.RSV_SMOKE_ADMIN_URL || "http://localhost:3004",
+		routers: ["pages"],
+	},
+	turismo: {
+		baseUrl: process.env.RSV_SMOKE_TURISMO_URL || "http://localhost:3005",
+		routers: ["pages"],
+	},
+	guest: {
+		baseUrl: process.env.RSV_SMOKE_GUEST_URL || "http://localhost:3006",
+		routers: ["pages"],
+	},
 };
+
+const MARKETING_LAB_MODE =
+	process.env.RSV360_APP_MODE === "marketing-lab" ||
+	process.env.NEXT_PUBLIC_APP_MODE === "marketing-lab" ||
+	process.env.RSV_SMOKE_MARKETING_LAB === "true";
+
+/** Mirrors apps/site-publico/lib/app-mode.ts allowlist */
+const LAB_ROUTE_PREFIXES = [
+	"/lab",
+	"/analytics",
+	"/marketing",
+	"/crm",
+	"/admin",
+	"/pricing",
+	"/dashboard-estatisticas",
+	"/dashboard",
+	"/login",
+	"/recuperar-senha",
+	"/redefinir-senha",
+];
+
+function isLabUiPath(pathname) {
+	return LAB_ROUTE_PREFIXES.some(
+		(prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+	);
+}
+
+function shouldSkipMarketingLabB2c(appName, routePath) {
+	if (appName !== "site-publico" || !MARKETING_LAB_MODE) return null;
+	if (routePath === "/") return null;
+	if (isLabUiPath(routePath)) return null;
+	return "marketing-lab-b2c-external";
+}
 
 const RSV_SMOKE_ID = process.env.RSV_SMOKE_ID || "";
 const RSV_SMOKE_SLUG = process.env.RSV_SMOKE_SLUG || "";
@@ -238,6 +283,22 @@ async function main() {
 
 	for (const route of routes) {
 		counters.total++;
+		const labSkip = shouldSkipMarketingLabB2c(route.app, route.routePath);
+		if (labSkip) {
+			counters.skipped++;
+			results.push({
+				app: route.app,
+				sourceFile: route.sourceFile,
+				routePath: route.routePath,
+				status: "skipped",
+				reason: labSkip,
+			});
+			console.log(
+				`  SKIP  ${route.app.padEnd(14)} ${route.routePath}  (${labSkip})`,
+			);
+			continue;
+		}
+
 		const { resolved, skipReason } = resolveDynamicSegments(route.routePath);
 
 		if (skipReason) {
@@ -330,6 +391,7 @@ async function main() {
 			RSV_SMOKE_SLUG: RSV_SMOKE_SLUG ? "(set)" : "(unset)",
 			RSV_SMOKE_CATCHALL: RSV_SMOKE_CATCHALL ? "(set)" : "(unset)",
 			RSV_SMOKE_CONSOLE_IGNORE: CONSOLE_IGNORE_RAW,
+			MARKETING_LAB_MODE,
 		},
 		counters,
 		results,
