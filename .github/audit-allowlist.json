@@ -1,4 +1,20 @@
 {
   "_doc": "Audit allowlist for known tech-debt vulnerabilities. Each entry MUST have severity, reason, and expires (YYYY-MM-DD). Expired entries become BLOCKING violations. See .github/scripts/audit-gate.py.",
-    "allow": {}
+  "allow": {
+    "engine.io-client": {
+      "severity": "high",
+      "reason": "Dependência transitiva do socket.io — sem patch disponível",
+      "expires": "2026-09-30"
+    },
+    "nodemailer": {
+      "severity": "high",
+      "reason": "Usado para envio de emails — avaliar upgrade para v7",
+      "expires": "2026-09-30"
+    },
+    "ws": {
+      "severity": "high",
+      "reason": "Dependência transitiva do Socket.IO — aguardar patch upstream",
+      "expires": "2026-09-30"
+    }
+  }
 }
