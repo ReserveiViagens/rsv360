@@ -2,20 +2,6 @@ import type { NextFunction, Request, Response } from 'express';
 
 const { extractBearerToken, verifyAccessToken } = require('../../backend/src/api/v1/auth/jwt-verify');
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: number;
-        email?: string;
-        name?: string;
-        role?: string;
-        enterpriseId?: string | number;
-      };
-    }
-  }
-}
-
 function getJwtSecret(): string {
   return process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 }

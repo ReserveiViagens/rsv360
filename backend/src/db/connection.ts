@@ -1,8 +1,8 @@
-function maskDatabaseUrl(connectionString) {
+function maskDatabaseUrl(connectionString: string): string {
   return connectionString.replace(/:([^@]+)@/, ':***@');
 }
 
-function requireDatabaseUrl() {
+export function requireDatabaseUrl(): string {
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -11,7 +11,7 @@ function requireDatabaseUrl() {
     );
   }
 
-  let parsedUrl;
+  let parsedUrl: URL;
   try {
     parsedUrl = new URL(databaseUrl);
   } catch {
@@ -39,5 +39,3 @@ function requireDatabaseUrl() {
 
   return databaseUrl;
 }
-
-module.exports = { requireDatabaseUrl };
