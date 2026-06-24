@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { pricingLabAuth } from '@/lib/pricing-lab-auth';
 import {
   checkAndGenerateAlerts,
   getUnreadAlerts,
@@ -17,7 +17,7 @@ import {
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await advancedAuthMiddleware(request);
+    const auth = await pricingLabAuth(request);
     if (!auth.user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await advancedAuthMiddleware(request);
+    const auth = await pricingLabAuth(request);
     if (!auth.user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
@@ -82,8 +82,11 @@ export async function POST(request: NextRequest) {
     const checkDate = date ? new Date(date) : new Date();
     const alerts = await checkAndGenerateAlerts(property_id, checkDate);
 
-    // Enviar notificações
-    await sendAlertNotifications(alerts, auth.user.id, ['in-app']);
+    try {
+      await sendAlertNotifications(alerts, auth.user.id, ['in-app']);
+    } catch {
+      /* lab pode não ter canal de notificação */
+    }
 
     return NextResponse.json({
       success: true,
@@ -107,7 +110,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const auth = await advancedAuthMiddleware(request);
+    const auth = await pricingLabAuth(request);
     if (!auth.user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }

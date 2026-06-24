@@ -1,8 +1,13 @@
-export default function Page() {
+'use client';
+
+import { MarketingCampaignsPanel } from '@/components/marketing/MarketingCampaignsPanel';
+
+export default function MarketingBroadcastsPage() {
   return (
-    <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col justify-center px-4 py-16 text-center">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900">Em construção</h1>
-      <p className="mt-4 text-slate-600">Esta rota legada foi simplificada para manter o build verde nesta etapa.</p>
-    </main>
+    <MarketingCampaignsPanel
+      title="Broadcasts"
+      description="Disparos em massa por e-mail, push ou WhatsApp. Filtre por canal na lista abaixo ou crie uma nova campanha."
+      defaultCampaignType="email"
+    />
   );
 }

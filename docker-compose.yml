@@ -141,6 +141,9 @@ services:
         APP_DIR: apps/site-publico
         APP_PORT: 3000
         <<: *app-env
+        NEXT_PUBLIC_APP_MODE: ${NEXT_PUBLIC_APP_MODE:-marketing-lab}
+        NEXT_PUBLIC_PRIMARY_SITE_URL: ${NEXT_PUBLIC_PRIMARY_SITE_URL:-http://localhost:5000}
+        NEXT_PUBLIC_LAB_TITLE: ${NEXT_PUBLIC_LAB_TITLE:-RSV360 Marketing Lab}
     container_name: ${RSV360_DOCKER_PROJECT:-rsv360}-site-publico
     networks:
       - rsv360_net
@@ -177,6 +180,10 @@ services:
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
       FACEBOOK_REDIRECT_URI: ${FACEBOOK_REDIRECT_URI:-}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      RSV360_APP_MODE: ${RSV360_APP_MODE:-marketing-lab}
+      NEXT_PUBLIC_APP_MODE: ${NEXT_PUBLIC_APP_MODE:-marketing-lab}
+      NEXT_PUBLIC_PRIMARY_SITE_URL: ${NEXT_PUBLIC_PRIMARY_SITE_URL:-http://localhost:5000}
+      NEXT_PUBLIC_LAB_TITLE: ${NEXT_PUBLIC_LAB_TITLE:-RSV360 Marketing Lab}
 
   turismo:
     build:
