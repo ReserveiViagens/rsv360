@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         cp.*,
         u.name as user_name,
         u.email as user_email,
-        u.phone as user_phone,
+        c.phone as user_phone,
         c.name as customer_name,
         c.email as customer_email
       FROM customer_profiles cp
