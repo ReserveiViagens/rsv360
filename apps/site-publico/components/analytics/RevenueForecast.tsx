@@ -68,12 +68,12 @@ export function RevenueForecast({ propertyId, className }: RevenueForecastProps)
       }
 
       const response = await fetch(`/api/analytics/revenue-forecast?${params.toString()}`);
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar previsão');
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Erro ao carregar previsão');
       }
 
-      const result = await response.json();
       setData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar previsão');
