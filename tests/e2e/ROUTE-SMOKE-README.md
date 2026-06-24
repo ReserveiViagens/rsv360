@@ -25,6 +25,24 @@ npx playwright install --with-deps chromium
 node tests/e2e/route-smoke.js
 ```
 
+### Modo marketing-lab (`:3000`)
+
+Com `RSV360_APP_MODE=marketing-lab` (default no Docker local), rotas B2C do `site-publico` que redirecionam para o S1 (`:5000`) são **SKIP** com motivo `marketing-lab-b2c-external` — o CI não sobe o S1.
+
+Smoke dedicado do lab:
+
+```bash
+npm run smoke:marketing-lab
+```
+
+Valida redirects `/` → `/lab`, `/hoteis` → `:5000`, LabShell em `/analytics` e hub `/marketing`.
+
+Forçar skip no route-smoke sem depender do container:
+
+```bash
+RSV_SMOKE_MARKETING_LAB=true npm run test:e2e:routes
+```
+
 Artefatos em:
 
 - `tests/e2e/artifacts/route-smoke_<timestamp>/report.json`

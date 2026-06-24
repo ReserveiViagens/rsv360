@@ -93,7 +93,7 @@ jobs:
         run: |
           urls=(
             "http://localhost:3002/health"
-            "http://localhost:3000/"
+            "http://localhost:3000/lab"
             "http://localhost:3004/"
             "http://localhost:3005/"
             "http://localhost:3006/"
@@ -138,12 +138,21 @@ jobs:
           PORTAL_TEST_PATH: /reservations
         run: npx playwright test --reporter=list
 
+      - name: Run marketing lab smoke (Fase 3 coexistência)
+        env:
+          RSV_SMOKE_SITE_PUBLICO_URL: http://localhost:3000
+          RSV_SMOKE_PRIMARY_SITE_URL: http://localhost:5000
+          RSV_SMOKE_MARKETING_LAB: "true"
+        run: npm run smoke:marketing-lab
+
       - name: Run route smoke
         env:
           RSV_SMOKE_SITE_PUBLICO_URL: http://localhost:3000
           RSV_SMOKE_ADMIN_URL: http://localhost:3004
           RSV_SMOKE_TURISMO_URL: http://localhost:3005
           RSV_SMOKE_GUEST_URL: http://localhost:3006
+          RSV360_APP_MODE: marketing-lab
+          NEXT_PUBLIC_APP_MODE: marketing-lab
         run: npm run test:e2e:routes
 
       - name: Upload artifacts
