@@ -26,6 +26,7 @@ permissions:
 jobs:
   try-merge:
     runs-on: ubuntu-latest
+    continue-on-error: true
     if: >-
       github.event_name != 'check_suite' ||
       github.event.check_suite.conclusion == 'success' ||
