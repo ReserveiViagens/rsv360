@@ -75,6 +75,21 @@ async function main() {
 	}
 	console.log("OK /marketing/campaigns -> 200");
 
+	const pricingHtml = await (await fetch(`${lab}/pricing`)).text();
+	if (pricingHtml.includes("Em construção")) {
+		fail("/pricing still shows stub");
+	}
+	if (!pricingHtml.includes("Dashboard")) {
+		fail("/pricing missing hub modules");
+	}
+	console.log("OK /pricing hub MVP");
+
+	const pricingDashStatus = await getStatus(`${lab}/pricing/dashboard`);
+	if (pricingDashStatus !== 200) {
+		fail(`/pricing/dashboard returned ${pricingDashStatus}`);
+	}
+	console.log("OK /pricing/dashboard -> 200");
+
 	try {
 		const s1Res = await fetch(`${s1}/health`, { signal: AbortSignal.timeout(3000) });
 		if (s1Res.status === 200) {

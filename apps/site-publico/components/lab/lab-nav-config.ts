@@ -30,7 +30,7 @@ export const LAB_NAV_GROUPS: LabNavGroup[] = [
       { label: 'Analytics', href: '/analytics', icon: BarChart3 },
       { label: 'Campanhas', href: '/crm', icon: Users },
       { label: 'Marketing', href: '/marketing/campaigns', icon: Megaphone },
-      { label: 'Precificação', href: '/pricing/calendar', icon: Calendar },
+      { label: 'Precificação', href: '/pricing', icon: Calendar },
       { label: 'Admin', href: '/admin/dashboard', icon: Settings },
     ],
   },

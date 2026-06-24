@@ -16,8 +16,8 @@ const modules = [
     description: 'Receita, demanda, concorrentes e insights.',
     href: '/analytics',
     icon: BarChart3,
-    status: 'Pronto',
-    statusClass: 'bg-emerald-100 text-emerald-800',
+    status: 'MVP',
+    statusClass: 'bg-amber-100 text-amber-800',
   },
   {
     title: 'CRM e campanhas',
@@ -37,10 +37,10 @@ const modules = [
   },
   {
     title: 'Precificação',
-    description: 'Calendário, regras, concorrentes e alertas.',
-    href: '/pricing/calendar',
+    description: 'Dashboard, smart pricing e rotas em evolução.',
+    href: '/pricing',
     icon: Calendar,
-    status: 'Parcial',
+    status: 'MVP',
     statusClass: 'bg-amber-100 text-amber-800',
   },
   {

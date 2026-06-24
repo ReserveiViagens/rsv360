@@ -105,12 +105,12 @@ export function AnalyticsDashboard({ propertyId, className }: AnalyticsDashboard
       }
 
       const response = await fetch(`/api/analytics/dashboard?${params.toString()}`);
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar dashboard');
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Erro ao carregar dashboard');
       }
 
-      const result = await response.json();
       setDashboardData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar dashboard');
