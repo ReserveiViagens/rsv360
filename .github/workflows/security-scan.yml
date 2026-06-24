@@ -70,20 +70,10 @@ jobs:
           npm audit --omit=dev --json > /tmp/audit-backend.json 2>/dev/null || true
           python3 ../.github/scripts/audit-gate.py /tmp/audit-backend.json ../.github/audit-allowlist.json
 
-    - name: Enable Corepack (frontend)
-      run: |
-        corepack enable
-        corepack prepare npm@10.9.7 --activate
-
-    - name: Install dependencies (frontend)
-      working-directory: ./apps/site-publico
-      run: npm ci
-
     - name: NPM Audit (frontend)
-      working-directory: ./apps/site-publico
       run: |
-          npm audit --omit=dev --json > /tmp/audit-front.json 2>/dev/null || true
-          python3 ../../.github/scripts/audit-gate.py /tmp/audit-front.json ../../.github/audit-allowlist.json
+          npm audit --omit=dev --workspace=apps/site-publico --json > /tmp/audit-front.json 2>/dev/null || true
+          python3 .github/scripts/audit-gate.py /tmp/audit-front.json .github/audit-allowlist.json
 
   trivy-scan:
     name: Trivy Scan Backend Image
