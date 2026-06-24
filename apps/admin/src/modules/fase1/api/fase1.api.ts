@@ -10,15 +10,18 @@ const ENDPOINTS: Record<string, string> = {
   relatorios: '/api/v1/relatorios/dashboard',
 };
 
+export type Fase1ListResponse = {
+  success: boolean;
+  data: Record<string, unknown>[] | Record<string, unknown>;
+  total?: number;
+};
+
 export type Fase1ModuleKey = keyof typeof ENDPOINTS;
 
 export const fase1AdminApi = {
-  list: (module: Fase1ModuleKey) => {
+  list: (module: Fase1ModuleKey): Promise<Fase1ListResponse> => {
     const path = ENDPOINTS[module];
-    if (module === 'financeiro' || module === 'logistica' || module === 'relatorios') {
-      return api.get<{ success: boolean; data: Record<string, unknown> }>(path);
-    }
-    return api.get<{ success: boolean; data: Record<string, unknown>[]; total?: number }>(path);
+    return api.get<Fase1ListResponse>(path);
   },
   health: (module: Fase1ModuleKey) => {
     const base = ENDPOINTS[module].replace('/dashboard', '');
