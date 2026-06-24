@@ -1,0 +1,228 @@
+name: Fase 5 — Testes + Deploy readiness
+
+on:
+  pull_request:
+    branches: [main, feat/migracao-sistema-a-para-b]
+    paths:
+      - 'backend/**'
+      - 'server/**'
+      - 'apps/**'
+      - 'tests/e2e/**'
+      - 'docker/**'
+      - 'docker-compose.prod.yml'
+      - 'scripts/migrate-db-json.ts'
+      - '.github/workflows/fase5-tests.yml'
+  push:
+    branches: [main, feat/migracao-sistema-a-para-b]
+  workflow_dispatch:
+
+env:
+  POSTGRES_USER: rsv360
+  POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
+  POSTGRES_DB: rsv_360_ecosystem
+  JWT_SECRET: ci_fase5_jwt_secret_minimum_32_chars
+  DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5432/rsv_360_ecosystem
+
+jobs:
+  backend-fase5:
+    name: Jest — módulos + WebSocket
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: rsv360
+          POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
+          POSTGRES_DB: rsv_360_ecosystem
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+      - run: bash .github/scripts/check-lockfiles.sh . backend
+      - run: npm ci
+      - name: Wait for PostgreSQL
+        run: |
+          for i in $(seq 1 30); do
+            if pg_isready -h localhost -p 5432 -U rsv360 -d rsv_360_ecosystem 2>/dev/null; then
+              echo "Postgres ready"
+              exit 0
+            fi
+            echo "Waiting for postgres... ($i/30)"
+            sleep 2
+          done
+          echo "Postgres not ready after 60s"
+          exit 1
+      - name: Run migrations
+        working-directory: backend
+        run: npm run migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+      - name: Backend tests (Fase 5 modules)
+        run: npm run test --workspace=backend -- --testPathPattern="fase1-modules|propostas-websocket"
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          NODE_ENV: test
+          MP_ACCESS_TOKEN: test-token
+
+  migrate-db-json-smoke:
+    name: migrate:db-json (dry-run)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Exit 0 sem db.json
+        run: npm run migrate:db-json
+      - name: Valida exemplo db.json
+        run: |
+          cp data/db.json.example /tmp/db-smoke.json
+          echo "Exemplo válido ($(wc -c < /tmp/db-smoke.json) bytes)"
+
+  docker-prod-build:
+    name: Docker prod build (backend + frontends)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: docker/setup-buildx-action@v4
+      - name: Build backend production image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/backend/Dockerfile
+          push: false
+          tags: rsv360/backend:fase5-ci
+          build-args: NODE_ENV=production
+      - name: Build site-publico production image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          push: false
+          tags: rsv360/site-publico:fase5-ci
+          build-args: |
+            APP_DIR=apps/site-publico
+            APP_PORT=3000
+            NEXT_PUBLIC_API_URL=http://localhost:3002
+            NEXT_PUBLIC_BACKEND_URL=http://localhost:3002
+            INTERNAL_API_URL=http://backend:3002
+
+  playwright-fase5:
+    name: Playwright E2E — propostas
+    runs-on: ubuntu-latest
+    needs: [backend-fase5]
+    timeout-minutes: 35
+    env:
+      SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
+      SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: docker compose up -d postgres redis
+      - name: Wait for PostgreSQL (Docker)
+        run: |
+          for i in $(seq 1 30); do
+            if docker compose exec -T postgres pg_isready -U rsv360 -d rsv_360_ecosystem; then
+              echo "Postgres ready"
+              exit 0
+            fi
+            echo "Waiting for postgres... ($i/30)"
+            sleep 2
+          done
+          echo "Postgres not ready after 60s"
+          exit 1
+      - name: Configure seed credentials
+        run: |
+          if [ -z "${SEED_TEST_USER_EMAIL}" ]; then
+            echo "SEED_TEST_USER_EMAIL=test@local.dev" >> "$GITHUB_ENV"
+          else
+            echo "SEED_TEST_USER_EMAIL=${SEED_TEST_USER_EMAIL}" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${SEED_TEST_USER_PASSWORD}" ]; then
+            echo "SEED_TEST_USER_PASSWORD=dev-only-fallback-do-not-use-in-prod" >> "$GITHUB_ENV"
+          else
+            echo "SEED_TEST_USER_PASSWORD=${SEED_TEST_USER_PASSWORD}" >> "$GITHUB_ENV"
+          fi
+        env:
+          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
+      - name: Migrate + seed
+        working-directory: backend
+        run: |
+          npm run migrate
+          npm run seed
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
+      - run: docker compose up -d --build backend site-publico turismo
+      - name: Wait for stack
+        run: |
+          for url in http://localhost:3002/health http://localhost:3000/ http://localhost:3005/; do
+            for i in $(seq 1 30); do
+              curl -sf "$url" && break
+              sleep 5
+            done
+          done
+      - name: Playwright Fase 5
+        run: npm run test:e2e:fase5
+        env:
+          RSV_FASE5_BACKEND_URL: http://localhost:3002
+          RSV_FASE5_SITE_URL: http://localhost:3000
+          RSV_FASE5_TURISMO_URL: http://localhost:3005
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: fase5-playwright-report
+          path: tests/e2e/artifacts/fase5-report
+
+  validate-prod-env:
+    name: Validar vars produção
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: validate:auth-env (template)
+        run: |
+          cp .env.production.example .env.ci-prod
+          sed -i 's/CHANGE_ME_JWT_SECRET_MIN_32_CHARS/ci_prod_jwt_secret_minimum_32_chars/g' .env.ci-prod
+          sed -i 's/CHANGE_ME_OAUTH_BFF_SECRET/ci_prod_oauth_bff_secret_32chars/g' .env.ci-prod
+          sed -i 's/CHANGE_ME_STRONG_POSTGRES_PASSWORD/ci_prod_postgres_password/g' .env.ci-prod
+          set -a && source .env.ci-prod && set +a
+          NODE_ENV=production npm run validate:auth-env || true

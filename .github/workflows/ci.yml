@@ -60,10 +60,17 @@ jobs:
       - name: Validate Drizzle journal consistency
         run: cd backend && npm run db:validate-journal
 
+      - name: Run database migrations
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+        run: npm run migrate
+
       - name: Run backend tests (coverage)
         run: npm run test:ci --workspace=backend
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rsv360_test
+          JWT_SECRET: ci_jwt_secret_minimum_32_chars
           NODE_ENV: test
           MP_ACCESS_TOKEN: test-token
 

@@ -1,0 +1,44 @@
+{
+  "excursaoStore": [
+    {
+      "id": "exc-001",
+      "nome": "Caldas Novas — Fim de Semana",
+      "destino": "Caldas Novas",
+      "dataIda": "2026-08-01",
+      "dataVolta": "2026-08-03",
+      "precoAdulto": 450,
+      "capacidade": 44,
+      "status": "aberta",
+      "wizard": {
+        "quem": {
+          "passageiros": [
+            { "nome": "Maria Exemplo", "contato": "62999990000", "cpf": "12345678901" }
+          ]
+        }
+      }
+    }
+  ],
+  "budgetStore": [
+    {
+      "title": "Orçamento Exemplo Sistema A",
+      "clientName": "João Cliente",
+      "clientEmail": "joao@exemplo.com",
+      "status": "draft",
+      "total": 1800,
+      "items": [
+        {
+          "name": "Hotel 2 noites",
+          "quantity": 1,
+          "unitPrice": 1200,
+          "totalPrice": 1200
+        },
+        {
+          "name": "Transporte",
+          "quantity": 2,
+          "unitPrice": 300,
+          "totalPrice": 600
+        }
+      ]
+    }
+  ]
+}
