@@ -88,27 +88,72 @@ jobs:
           build-args: |
             NODE_ENV=production
 
-      - name: Extract metadata for frontend
-        id: frontend-meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
-          tags: |
-            type=raw,value=latest
-            type=raw,value=${{ steps.version.outputs.version }}
-            type=raw,value=${{ steps.version.outputs.version_clean }}
-
-      - name: Build and push frontend image
+      - name: Build and push site-publico image
         uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/frontend/Dockerfile
           push: true
-          tags: ${{ steps.frontend-meta.outputs.tags }}
-          labels: ${{ steps.frontend-meta.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/site-publico:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/site-publico:${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
+            APP_DIR=apps/site-publico
+            APP_PORT=3000
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://www.reserveiviagens.com.br' }}
+            NEXT_PUBLIC_BACKEND_URL=${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api.reserveiviagens.com.br' }}
+            INTERNAL_API_URL=http://backend:3002
+            NODE_ENV=production
+
+      - name: Build and push turismo image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/turismo:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/turismo:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_DIR=apps/turismo
+            APP_PORT=3005
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://api.reserveiviagens.com.br' }}
+            NEXT_PUBLIC_BACKEND_URL=${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api.reserveiviagens.com.br' }}
+            INTERNAL_API_URL=http://backend:3002
+            NODE_ENV=production
+
+      - name: Build and push admin image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/admin:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/admin:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_DIR=apps/admin
+            APP_PORT=3004
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://api.reserveiviagens.com.br' }}
+            NEXT_PUBLIC_BACKEND_URL=${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api.reserveiviagens.com.br' }}
+            INTERNAL_API_URL=http://backend:3002
+            NODE_ENV=production
+
+      - name: Build and push guest image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/guest:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/guest:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_DIR=apps/guest
+            APP_PORT=3006
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://api.reserveiviagens.com.br' }}
+            NEXT_PUBLIC_BACKEND_URL=${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api.reserveiviagens.com.br' }}
+            INTERNAL_API_URL=http://backend:3002
             NODE_ENV=production
 
       - name: Database backup
@@ -147,9 +192,12 @@ jobs:
             mkdir -p backups
             cp -r docker-compose.prod.yml backups/docker-compose.prod.yml.$(date +%Y%m%d_%H%M%S)
 
-            # Update docker-compose.prod.yml with new image tags
-            sed -i 's|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest|g' docker-compose.prod.yml
-            sed -i 's|image: .*frontend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest|g' docker-compose.prod.yml
+            # Pull new images (tags latest via GHCR)
+            export REGISTRY="${{ env.REGISTRY }}"
+            export IMAGE="${{ env.IMAGE_NAME }}"
+            for svc in backend site-publico turismo admin guest; do
+              sed -i "s|ghcr.io/reserveiviagens/rsv360/${svc}:.*|${REGISTRY}/${IMAGE}/${svc}:latest|g" docker-compose.prod.yml || true
+            done
 
             # Login to GitHub Container Registry
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin

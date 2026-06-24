@@ -96,4 +96,4 @@ cd apps/admin; npm run dev     # :3004/orcamentos
 
 - [ ] Smoke Fase 3 — `FASE3-SMOKE-RESULT.md`
 - [ ] Fase 1.6 — `npm run migrate:db-json` quando tiver `db.json`
-- [ ] Fase 5 — testes E2E + deploy
+- [x] Fase 5 — testes E2E + deploy (`FASE5-TESTES-DEPLOY.md`)
