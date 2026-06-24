@@ -33,6 +33,18 @@ const groups: Array<{ label: string; items: NavItem[] }> = [
     items: [
       { href: '/revenue', label: 'Revenue', icon: TrendingUp },
       { href: '/crm', label: 'CRM & Fidelidade', icon: Users },
+      { href: '/orcamentos', label: 'Orçamentos', icon: FileText },
+      { href: '/propostas', label: 'Propostas', icon: MessageSquare },
+      { href: '/campanhas', label: 'Campanhas', icon: Sparkles },
+    ],
+  },
+  {
+    label: 'Operações Fase 1',
+    items: [
+      { href: '/passageiros', label: 'Passageiros', icon: Users },
+      { href: '/financeiro', label: 'Financeiro', icon: TrendingUp },
+      { href: '/logistica', label: 'Logística', icon: Building2 },
+      { href: '/relatorios', label: 'Relatórios', icon: FileText },
     ],
   },
   {

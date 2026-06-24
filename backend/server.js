@@ -1,13 +1,32 @@
 require('dotenv').config();
+require('tsx/cjs');
+
+const http = require('http');
+const { Server } = require('socket.io');
 const PORT = process.env.PORT || 3001;
 const { createApp } = require('./app');
 
 async function startServer() {
   try {
     const app = await createApp();
-    app.listen(PORT, () => {
+    const server = http.createServer(app);
+
+    const io = new Server(server, {
+      cors: { origin: process.env.CORS_ORIGIN || '*', methods: ['GET', 'POST'] },
+      path: '/socket.io',
+    });
+
+    try {
+      const { registerPropostaChatSocket } = require('../server/modules/propostas/websocket/proposta-chat.socket');
+      registerPropostaChatSocket(io);
+    } catch (err) {
+      console.warn('[WS] Propostas Chat HITL não disponível:', err.message);
+    }
+
+    server.listen(PORT, () => {
       console.log(`[SERVER] RSV360 Backend API Server running on port ${PORT}`);
       console.log(`[SERVER] Health check: http://localhost:${PORT}/health`);
+      console.log(`[WS] Socket.IO: ws://localhost:${PORT}/propostas`);
       console.log(`[SECURITY] Security health check: http://localhost:${PORT}/health/security`);
     });
   } catch (error) {
