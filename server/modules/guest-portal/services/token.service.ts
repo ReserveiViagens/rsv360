@@ -11,9 +11,13 @@ export class TokenService {
     }
 
     const token = crypto.randomBytes(32).toString('hex');
-    const checkoutDate = this.pickDate(booking, ['check_out_date', 'checkout_date', 'departure_date', 'end_date']);
+    const checkoutDate = this.pickDate(booking, ['check_out_date', 'checkout_date', 'departure_date', 'end_date', 'endDate']);
     const ttlDays = Number(process.env.PORTAL_TOKEN_EXPIRY_DAYS || 7);
-    const expiresAt = checkoutDate ? addDays(checkoutDate, ttlDays) : addDays(new Date(), ttlDays);
+    const fromCheckout = checkoutDate ? addDays(checkoutDate, ttlDays) : null;
+    const fromNow = addDays(new Date(), ttlDays);
+    // Tokens de bookings com checkout no passado (ex.: seed SEED-ACC-001) ainda precisam expirar no futuro.
+    const expiresAt =
+      fromCheckout && fromCheckout.getTime() > Date.now() ? fromCheckout : fromNow;
 
     await this.repository.insertPortalToken({
       booking_id: bookingId,
