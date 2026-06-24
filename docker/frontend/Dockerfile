@@ -10,14 +10,18 @@ ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BACKEND_URL
 ARG INTERNAL_API_URL
 WORKDIR /workspace
-RUN corepack enable
+RUN corepack enable && corepack prepare npm@10.9.7 --activate
 
-# Instalação isolada do app (evita postinstall root + hoist quebrado no Docker).
-COPY ${APP_DIR}/package.json ${APP_DIR}/package-lock.json* ./pkg/
-WORKDIR /workspace/pkg
-RUN npm install --no-audit --no-fund --ignore-scripts \
-  && test -d node_modules/next \
-  && test -d node_modules/react
+# Monorepo workspace install — resolve @rsv360/shared localmente (não está no npm registry).
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json packages/shared/tsconfig.json ./
+COPY packages/shared/src ./packages/shared/src/
+COPY ${APP_DIR}/package.json ${APP_DIR}/
+
+RUN npm ci --workspace=${APP_DIR} --include-workspace-root=false --ignore-scripts \
+  && if grep -q '"@rsv360/shared"' "${APP_DIR}/package.json"; then npm run build --workspace=@rsv360/shared; fi \
+  && test -d node_modules/next -o -d ${APP_DIR}/node_modules/next \
+  && test -d node_modules/react -o -d ${APP_DIR}/node_modules/react
 
 FROM node:24-alpine AS builder
 ARG APP_DIR
@@ -25,10 +29,13 @@ ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BACKEND_URL
 ARG INTERNAL_API_URL
 WORKDIR /workspace
-RUN corepack enable
+RUN corepack enable && corepack prepare npm@10.9.7 --activate
 
 COPY . .
-COPY --from=deps /workspace/pkg/node_modules /workspace/${APP_DIR}/node_modules
+COPY --from=deps /workspace/node_modules ./node_modules
+COPY --from=deps /workspace/packages/shared/dist ./packages/shared/dist
+COPY --from=deps /workspace/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /workspace/${APP_DIR}/node_modules ./${APP_DIR}/node_modules
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
