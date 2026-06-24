@@ -107,7 +107,7 @@ describeDb('Fase 1 — CRUD integrado (7 módulos)', () => {
     const cupom = await request(app)
       .post('/api/v1/campanhas/cupons')
       .set(authHeader())
-      .send({ campanhaId, codigo: `JEST${Date.now()}`, descontoPercentual: 10, status: 'ativo' });
+      .send({ codigo: `JEST${Date.now()}`, tipoDesconto: 'percentage', valorDesconto: '10.00' });
     expect(cupom.status).toBe(201);
 
     const metricas = await request(app).get('/api/v1/campanhas/metricas').set(authHeader());
@@ -124,7 +124,7 @@ describeDb('Fase 1 — CRUD integrado (7 módulos)', () => {
     const voucher = await request(app)
       .post('/api/v1/logistica/vouchers')
       .set(authHeader())
-      .send({ codigo: `VCH-${Date.now()}`, tipo: 'hotel', status: 'emitido' });
+      .send({ codigo: `VCH-${Date.now()}`, titulo: 'Voucher Jest Test' });
     expect(voucher.status).toBe(201);
   });
 

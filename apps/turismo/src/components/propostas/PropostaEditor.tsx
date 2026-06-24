@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useProposta, useUpdateProposta } from '@/hooks/useFase1Modules';
 import type { Proposta } from '@rsv360/shared';
@@ -10,30 +10,21 @@ function formatCurrency(value: string | number, moeda = 'BRL') {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(num || 0);
 }
 
-export function PropostaEditor({ propostaId }: { propostaId: number }) {
-  const { data, isLoading } = useProposta(propostaId);
+function buildFormFromProposta(proposta: Proposta): Partial<Proposta> {
+  return {
+    titulo: proposta.titulo,
+    clienteNome: proposta.clienteNome,
+    clienteEmail: proposta.clienteEmail ?? '',
+    clienteTelefone: proposta.clienteTelefone ?? '',
+    valorTotal: proposta.valorTotal,
+    status: proposta.status,
+    isPublica: proposta.isPublica ?? false,
+  };
+}
+
+function PropostaEditorForm({ proposta, propostaId }: { proposta: Proposta; propostaId: number }) {
   const update = useUpdateProposta();
-
-  const proposta = data?.data;
-  const [form, setForm] = useState<Partial<Proposta>>({});
-
-  useEffect(() => {
-    if (proposta) {
-      setForm({
-        titulo: proposta.titulo,
-        clienteNome: proposta.clienteNome,
-        clienteEmail: proposta.clienteEmail ?? '',
-        clienteTelefone: proposta.clienteTelefone ?? '',
-        valorTotal: proposta.valorTotal,
-        status: proposta.status,
-        isPublica: proposta.isPublica ?? false,
-      });
-    }
-  }, [proposta]);
-
-  if (isLoading || !proposta) {
-    return <div className="p-6 text-slate-600">Carregando editor...</div>;
-  }
+  const [form, setForm] = useState(() => buildFormFromProposta(proposta));
 
   const preview = { ...proposta, ...form };
 
@@ -125,4 +116,15 @@ export function PropostaEditor({ propostaId }: { propostaId: number }) {
       </section>
     </div>
   );
+}
+
+export function PropostaEditor({ propostaId }: { propostaId: number }) {
+  const { data, isLoading } = useProposta(propostaId);
+  const proposta = data?.data;
+
+  if (isLoading || !proposta) {
+    return <div className="p-6 text-slate-600">Carregando editor...</div>;
+  }
+
+  return <PropostaEditorForm key={proposta.id} proposta={proposta} propostaId={propostaId} />;
 }
