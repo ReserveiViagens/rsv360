@@ -12,16 +12,21 @@ ARG INTERNAL_API_URL
 WORKDIR /workspace
 RUN corepack enable && corepack prepare npm@10.9.7 --activate
 
-# Monorepo workspace install — resolve @rsv360/shared localmente (não está no npm registry).
+# Monorepo workspace install — resolve @rsv360/shared via link local (não está no npm registry).
+# Stubs de todos os workspaces referenciados no lockfile (apps/*, packages/*, backend).
 COPY package.json package-lock.json ./
-COPY packages/shared/package.json packages/shared/tsconfig.json ./
+COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/shared/src ./packages/shared/src/
-COPY ${APP_DIR}/package.json ${APP_DIR}/
+COPY apps/admin/package.json apps/admin/
+COPY apps/guest/package.json apps/guest/
+COPY apps/site-publico/package.json apps/site-publico/
+COPY apps/turismo/package.json apps/turismo/
+COPY backend/package.json backend/
 
-RUN npm ci --workspace=${APP_DIR} --include-workspace-root=false --ignore-scripts \
-  && if grep -q '"@rsv360/shared"' "${APP_DIR}/package.json"; then npm run build --workspace=@rsv360/shared; fi \
-  && test -d node_modules/next -o -d ${APP_DIR}/node_modules/next \
-  && test -d node_modules/react -o -d ${APP_DIR}/node_modules/react
+RUN npm ci --ignore-scripts \
+  && npm run build --workspace=@rsv360/shared \
+  && test -d node_modules/next \
+  && test -d node_modules/react
 
 FROM node:24-alpine AS builder
 ARG APP_DIR
@@ -34,17 +39,23 @@ RUN corepack enable && corepack prepare npm@10.9.7 --activate
 COPY . .
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY --from=deps /workspace/packages/shared/dist ./packages/shared/dist
-COPY --from=deps /workspace/packages/shared/node_modules ./packages/shared/node_modules
-COPY --from=deps /workspace/${APP_DIR}/node_modules ./${APP_DIR}/node_modules
+# Pacotes não hoisted (ex.: lucide-react) ficam em <workspace>/node_modules após npm ci.
+RUN --mount=type=bind,from=deps,source=/workspace,target=/deps \
+  for ws in apps/site-publico apps/turismo apps/admin apps/guest packages/shared backend; do \
+    if [ -d "/deps/${ws}/node_modules" ]; then \
+      mkdir -p "/workspace/${ws}" && cp -R "/deps/${ws}/node_modules" "/workspace/${ws}/node_modules"; \
+    fi; \
+  done
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
-ENV PATH="/workspace/${APP_DIR}/node_modules/.bin:${PATH}"
-RUN cd "${APP_DIR}" && npm run build
+ENV PATH="/workspace/node_modules/.bin:${PATH}"
+RUN npm run build --workspace="${APP_DIR}"
 RUN mkdir -p /workspace/.deploy \
   && cp -R "${APP_DIR}/.next" /workspace/.deploy/.next \
   && cp "${APP_DIR}/package.json" /workspace/.deploy/package.json \
-  && cp -R "/workspace/${APP_DIR}/node_modules" /workspace/.deploy/node_modules \
+  && cp -R /workspace/node_modules /workspace/.deploy/node_modules \
+  && if [ -d "${APP_DIR}/node_modules" ]; then cp -R "${APP_DIR}/node_modules/." /workspace/.deploy/node_modules/; fi \
   && mkdir -p /workspace/.deploy/public \
   && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." /workspace/.deploy/public/; fi
 
