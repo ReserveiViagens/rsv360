@@ -11,7 +11,7 @@ import {
   updatePricingRule,
   deletePricingRule,
 } from '@/lib/pricing-rules-service';
-import { pricingLabAuth } from '@/lib/pricing-lab-auth';
+import { marketingLabAuth as pricingLabAuth } from '@/lib/marketing-lab-auth';
 
 // GET /api/pricing/rules - Listar regras
 export async function GET(request: NextRequest) {

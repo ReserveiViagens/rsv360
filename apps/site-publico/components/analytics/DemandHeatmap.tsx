@@ -74,12 +74,12 @@ export function DemandHeatmap({ propertyId, className }: DemandHeatmapProps) {
       }
 
       const response = await fetch(`/api/analytics/demand-heatmap?${params.toString()}`);
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar heatmap');
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Erro ao carregar heatmap');
       }
 
-      const result = await response.json();
       setData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar heatmap');

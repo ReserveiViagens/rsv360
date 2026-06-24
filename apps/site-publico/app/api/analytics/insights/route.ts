@@ -1,17 +1,18 @@
 /**
- * API de Insights de Analytics
- * GET /api/analytics/insights - Obter insights gerais e recomendações
+ * GET /api/analytics/insights — insights alinhados ao schema S2.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
 import { AnalyticsInsightsQuerySchema } from '@/lib/schemas/analytics-schemas';
 
+const REVENUE_STATUSES = "('confirmed')";
+const BOOKING_STATUSES = "('confirmed', 'pending')";
+
 export async function GET(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
-
+    const { user, error } = await marketingLabAuth(request);
     if (error || !user) {
       return NextResponse.json(
         { success: false, error: error || 'Não autenticado' },
@@ -23,43 +24,48 @@ export async function GET(request: NextRequest) {
     const query = {
       start_date: searchParams.get('start_date') || undefined,
       end_date: searchParams.get('end_date') || undefined,
-      property_id: searchParams.get('property_id') ? parseInt(searchParams.get('property_id')!) : undefined,
-      insight_types: searchParams.get('insight_types')?.split(',') as any,
+      property_id: searchParams.get('property_id')
+        ? parseInt(searchParams.get('property_id')!, 10)
+        : undefined,
+      insight_types: searchParams.get('insight_types')?.split(',') as string[] | undefined,
     };
 
-    // Validar query
     const validatedQuery = AnalyticsInsightsQuerySchema.parse(query);
 
-    const startDate = validatedQuery.start_date 
+    const startDate = validatedQuery.start_date
       ? new Date(validatedQuery.start_date)
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const endDate = validatedQuery.end_date 
-      ? new Date(validatedQuery.end_date)
-      : new Date();
+    const endDate = validatedQuery.end_date ? new Date(validatedQuery.end_date) : new Date();
+    const startStr = startDate.toISOString().split('T')[0];
+    const endStr = endDate.toISOString().split('T')[0];
 
-    const insights: any[] = [];
+    const itemFilter = validatedQuery.property_id ? 'AND item_id = $3' : '';
+    const rangeParams = validatedQuery.property_id
+      ? [startDate, endDate, validatedQuery.property_id]
+      : [startDate, endDate];
+    const dateParams = validatedQuery.property_id
+      ? [startStr, endStr, validatedQuery.property_id]
+      : [startStr, endStr];
 
-    // Insight 1: Receita em declínio
+    const insights: Array<Record<string, unknown>> = [];
+
     const revenueData = await queryDatabase(
-      `SELECT 
-        DATE_TRUNC('month', created_at) as month,
-        SUM(total) as revenue
-      FROM bookings
-      WHERE status IN ('confirmed', 'completed')
-        AND created_at >= $1
-        AND created_at <= $2
-        ${validatedQuery.property_id ? 'AND item_id = $3' : ''}
-      GROUP BY DATE_TRUNC('month', created_at)
-      ORDER BY month DESC
-      LIMIT 3`,
-      validatedQuery.property_id 
-        ? [startDate, endDate, validatedQuery.property_id]
-        : [startDate, endDate]
+      `SELECT
+         TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month,
+         SUM(total_amount) AS revenue
+       FROM bookings
+       WHERE status IN ${REVENUE_STATUSES}
+       AND created_at >= $1 AND created_at <= $2
+       ${itemFilter}
+       GROUP BY DATE_TRUNC('month', created_at)
+       ORDER BY month DESC
+       LIMIT 3`,
+      rangeParams
     );
 
     if (revenueData.length >= 2) {
-      const recent = parseFloat(revenueData[0]?.revenue || 0);
-      const previous = parseFloat(revenueData[1]?.revenue || 0);
+      const recent = parseFloat(revenueData[0]?.revenue || '0');
+      const previous = parseFloat(revenueData[1]?.revenue || '0');
       const change = previous > 0 ? ((recent - previous) / previous) * 100 : 0;
 
       if (change < -10) {
@@ -69,7 +75,8 @@ export async function GET(request: NextRequest) {
           title: 'Receita em Declínio',
           description: `Receita diminuiu ${Math.abs(change).toFixed(1)}% comparado ao mês anterior`,
           severity: 'warning',
-          recommendation: 'Considere campanhas de marketing ou ajustes de preço para aumentar a demanda',
+          recommendation:
+            'Considere campanhas de marketing ou ajustes de preço para aumentar a demanda',
           metrics: { change, recent, previous },
           created_at: new Date().toISOString(),
         });
@@ -87,101 +94,101 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Insight 2: Ocupação baixa
-    const occupancyData = await queryDatabase(
-      `SELECT 
-        COUNT(DISTINCT b.id) as bookings,
-        COUNT(DISTINCT a.date) as total_days
-      FROM bookings b
-      LEFT JOIN availability a ON a.property_id = b.item_id
-      WHERE b.check_in >= $1::date
-        AND b.check_in <= $2::date
-        AND b.status IN ('confirmed', 'completed')
-        ${validatedQuery.property_id ? 'AND b.item_id = $3' : ''}
-      GROUP BY b.item_id`,
-      validatedQuery.property_id 
-        ? [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], validatedQuery.property_id]
-        : [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+    const occupancyRow = await queryDatabase(
+      `SELECT
+         COUNT(DISTINCT b.id) AS bookings,
+         GREATEST(
+           (MAX(b.end_date::date) - MIN(b.start_date::date) + 1),
+           1
+         ) AS span_days
+       FROM bookings b
+       WHERE b.start_date::date >= $1::date
+       AND b.start_date::date <= $2::date
+       AND b.status IN ${REVENUE_STATUSES}
+       ${validatedQuery.property_id ? 'AND b.item_id = $3' : ''}`,
+      dateParams
     );
 
-    if (occupancyData.length > 0) {
-      const avgOccupancy = occupancyData.reduce((sum: number, row: any) => {
-        const days = parseInt(row.total_days || 0);
-        const bookings = parseInt(row.bookings || 0);
-        return sum + (days > 0 ? (bookings / days) * 100 : 0);
-      }, 0) / occupancyData.length;
+    if (occupancyRow[0]) {
+      const bookings = parseInt(occupancyRow[0].bookings || '0', 10);
+      const spanDays = parseInt(occupancyRow[0].span_days || '1', 10);
+      const occupancyRate = spanDays > 0 ? (bookings / spanDays) * 100 : 0;
 
-      if (avgOccupancy < 50) {
+      if (occupancyRate < 50 && bookings > 0) {
         insights.push({
           id: 'low_occupancy',
           type: 'occupancy',
           title: 'Ocupação Baixa',
-          description: `Taxa média de ocupação está em ${avgOccupancy.toFixed(1)}%`,
+          description: `Taxa estimada de ocupação em ${occupancyRate.toFixed(1)}% no período`,
           severity: 'warning',
-          recommendation: 'Considere estratégias de precificação dinâmica ou promoções para aumentar a ocupação',
-          metrics: { occupancy: avgOccupancy },
+          recommendation:
+            'Considere estratégias de precificação dinâmica ou promoções para aumentar a ocupação',
+          metrics: { occupancy: occupancyRate },
           created_at: new Date().toISOString(),
         });
       }
     }
 
-    // Insight 3: Preços acima da média do mercado
     if (validatedQuery.property_id) {
-      const benchmarkData = await queryDatabase(
-        `SELECT 
-          AVG(price) as market_avg
-        FROM competitor_prices
-        WHERE property_id = $1
-          AND scraped_at >= NOW() - INTERVAL '30 days'`,
-        [validatedQuery.property_id]
-      );
+      try {
+        const benchmarkData = await queryDatabase(
+          `SELECT AVG(price) AS market_avg
+           FROM competitor_prices
+           WHERE item_id = $1
+           AND scraped_at >= NOW() - INTERVAL '30 days'`,
+          [validatedQuery.property_id]
+        );
 
-      const propertyData = await queryDatabase(
-        `SELECT base_price FROM properties WHERE id = $1`,
-        [validatedQuery.property_id]
-      );
+        const propertyData = await queryDatabase(
+          `SELECT base_price_per_night FROM properties WHERE id = $1`,
+          [validatedQuery.property_id]
+        );
 
-      if (benchmarkData[0] && propertyData[0]) {
-        const marketAvg = parseFloat(benchmarkData[0].market_avg || 0);
-        const propertyPrice = parseFloat(propertyData[0].base_price || 0);
-        const difference = marketAvg > 0 ? ((propertyPrice - marketAvg) / marketAvg) * 100 : 0;
+        if (benchmarkData[0]?.market_avg && propertyData[0]?.base_price_per_night) {
+          const marketAvg = parseFloat(benchmarkData[0].market_avg);
+          const propertyPrice = parseFloat(propertyData[0].base_price_per_night);
+          const difference =
+            marketAvg > 0 ? ((propertyPrice - marketAvg) / marketAvg) * 100 : 0;
 
-        if (difference > 20) {
-          insights.push({
-            id: 'price_above_market',
-            type: 'pricing',
-            title: 'Preço Acima da Média do Mercado',
-            description: `Seu preço está ${difference.toFixed(1)}% acima da média dos concorrentes`,
-            severity: 'warning',
-            recommendation: 'Considere ajustar preços para aumentar competitividade, ou destacar diferenciais que justifiquem o preço',
-            metrics: { difference, propertyPrice, marketAvg },
-            created_at: new Date().toISOString(),
-          });
+          if (difference > 20) {
+            insights.push({
+              id: 'price_above_market',
+              type: 'pricing',
+              title: 'Preço Acima da Média do Mercado',
+              description: `Seu preço está ${difference.toFixed(1)}% acima da média dos concorrentes`,
+              severity: 'warning',
+              recommendation:
+                'Considere ajustar preços para aumentar competitividade, ou destacar diferenciais',
+              metrics: { difference, propertyPrice, marketAvg },
+              created_at: new Date().toISOString(),
+            });
+          }
         }
+      } catch {
+        /* competitor_prices / properties podem não existir no lab */
       }
     }
 
-    // Insight 4: Alta demanda em períodos específicos
     const demandData = await queryDatabase(
-      `SELECT 
-        DATE(check_in) as date,
-        COUNT(*) as bookings
-      FROM bookings
-      WHERE check_in >= $1::date
-        AND check_in <= $2::date
-        AND status IN ('confirmed', 'completed', 'pending')
-        ${validatedQuery.property_id ? 'AND item_id = $3' : ''}
-      GROUP BY DATE(check_in)
-      ORDER BY bookings DESC
-      LIMIT 10`,
-      validatedQuery.property_id 
-        ? [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], validatedQuery.property_id]
-        : [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+      `SELECT start_date::date AS date, COUNT(*) AS bookings
+       FROM bookings
+       WHERE start_date::date >= $1::date
+       AND start_date::date <= $2::date
+       AND status IN ${BOOKING_STATUSES}
+       ${itemFilter}
+       GROUP BY start_date::date
+       ORDER BY bookings DESC
+       LIMIT 10`,
+      dateParams
     );
 
     if (demandData.length > 0) {
-      const maxBookings = Math.max(...demandData.map((row: any) => parseInt(row.bookings || 0)));
-      const highDemandDates = demandData.filter((row: any) => parseInt(row.bookings || 0) >= maxBookings * 0.8);
+      const maxBookings = Math.max(
+        ...demandData.map((row: { bookings: string }) => parseInt(row.bookings || '0', 10))
+      );
+      const highDemandDates = demandData.filter(
+        (row: { bookings: string }) => parseInt(row.bookings || '0', 10) >= maxBookings * 0.8
+      );
 
       if (highDemandDates.length > 0) {
         insights.push({
@@ -197,12 +204,23 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Contar insights por severidade
+    if (insights.length === 0) {
+      insights.push({
+        id: 'lab_ok',
+        type: 'performance',
+        title: 'Período estável',
+        description: 'Nenhum alerta crítico detectado com os dados atuais de reservas.',
+        severity: 'info',
+        recommendation: 'Adicione mais reservas ou filtre por propriedade para insights detalhados.',
+        created_at: new Date().toISOString(),
+      });
+    }
+
     const summary = {
       total_insights: insights.length,
-      critical_count: insights.filter(i => i.severity === 'critical').length,
-      warning_count: insights.filter(i => i.severity === 'warning').length,
-      info_count: insights.filter(i => i.severity === 'info').length,
+      critical_count: insights.filter((i) => i.severity === 'critical').length,
+      warning_count: insights.filter((i) => i.severity === 'warning').length,
+      info_count: insights.filter((i) => i.severity === 'info').length,
     };
 
     return NextResponse.json({
@@ -216,12 +234,9 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch (error: any) {
-    console.error('Erro ao gerar insights:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao gerar insights' },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Erro ao gerar insights';
+    console.error('Erro ao gerar insights:', err);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-
