@@ -1,17 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id?: string | number;
-        role?: string;
-        email?: string;
-      };
-    }
-  }
-}
-
 export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const headerRole = typeof req.header('x-user-role') === 'string' ? req.header('x-user-role') : undefined;
