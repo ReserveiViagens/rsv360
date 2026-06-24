@@ -87,7 +87,7 @@ jobs:
         run: npx tsx ../server/modules/guest-portal/portal-booking-write.smoke.ts
 
       - name: Build & start Docker stack
-        run: docker compose up -d --build
+        run: docker compose up -d --build --wait --wait-timeout 600
 
       - name: Wait for services (URL readiness)
         run: |
@@ -95,7 +95,7 @@ jobs:
             "http://localhost:3002/health"
             "http://localhost:3000/lab"
             "http://localhost:3004/"
-            "http://localhost:3005/"
+            "http://localhost:3005/api/health"
             "http://localhost:3006/"
           )
           deadline=$((SECONDS + 300))
