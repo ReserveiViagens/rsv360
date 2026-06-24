@@ -141,6 +141,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (!data) {
           throw new Error('Resposta de refresh inválida');
         }
+        if (!data.access_token) {
+          throw new Error('Resposta de refresh sem access_token');
+        }
         setAccessToken(data.access_token);
         localStorage.setItem('access_token', data.access_token);
         if (data.refresh_token) {
@@ -403,6 +406,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const loginPayload = parseAuthV1LoginResponse(await response.json());
         if (!loginPayload) {
           throw new Error('Resposta de login inválida');
+        }
+
+        if (!loginPayload.access_token || !loginPayload.refresh_token) {
+          throw new Error('Resposta de login sem tokens');
         }
 
         setAccessToken(loginPayload.access_token);
