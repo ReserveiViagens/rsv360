@@ -75,12 +75,12 @@ export function AnalyticsInsights({ propertyId, className }: AnalyticsInsightsPr
       }
 
       const response = await fetch(`/api/analytics/insights?${params.toString()}`);
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar insights');
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Erro ao carregar insights');
       }
 
-      const result = await response.json();
       setData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar insights');
