@@ -37,7 +37,7 @@ const modules = [
   },
   {
     title: 'Precificação',
-    description: 'Dashboard, smart pricing e rotas em evolução.',
+    description: 'Dashboard, smart pricing e módulos operacionais no lab.',
     href: '/pricing',
     icon: Calendar,
     status: 'MVP',
