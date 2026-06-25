@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-const email = process.env.SEED_TEST_USER_EMAIL || 'test@local.dev';
+const email = (process.env.SEED_TEST_USER_EMAIL?.trim() || 'test@local.dev');
 const password =
-  process.env.SEED_TEST_USER_PASSWORD || 'dev-only-fallback-do-not-use-in-prod';
+  process.env.SEED_TEST_USER_PASSWORD?.trim() ||
+  'dev-only-fallback-do-not-use-in-prod';
 
 test.describe.configure({ mode: 'serial' });
 

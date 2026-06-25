@@ -102,6 +102,24 @@ async function main() {
 	}
 	console.log("OK /pricing/rules -> 200");
 
+	const crmStatus = await getStatus(`${lab}/crm`);
+	if (crmStatus !== 200) {
+		fail(`/crm returned ${crmStatus}`);
+	}
+	console.log("OK /crm -> 200");
+
+	const crmDash = await (await fetch(`${lab}/api/crm/dashboard`)).json();
+	if (!crmDash.success) {
+		fail(`/api/crm/dashboard: ${crmDash.error || "not success"}`);
+	}
+	console.log("OK /api/crm/dashboard -> success");
+
+	const analyticsForecast = await (await fetch(`${lab}/api/analytics/revenue-forecast?months=6`)).json();
+	if (!analyticsForecast.success) {
+		fail(`/api/analytics/revenue-forecast: ${analyticsForecast.error || "not success"}`);
+	}
+	console.log("OK /api/analytics/revenue-forecast -> success");
+
 	try {
 		const s1Res = await fetch(`${s1}/health`, { signal: AbortSignal.timeout(3000) });
 		if (s1Res.status === 200) {

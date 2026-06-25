@@ -115,6 +115,8 @@ npm run test:e2e:routes
 - [x] Smoke automatizado (`smoke:marketing-lab`)
 - [x] CI route-smoke compatível com modo lab
 - [x] S1 intocável (sem commits em `Crm-RSV-360`)
+- [x] CRM migrations Drizzle `0010_crm_tables` (004+009+021)
+- [x] CRM marketing-lab: `marketingLabAuth` + smoke `/crm` + `/api/crm/dashboard`
 
 ---
 

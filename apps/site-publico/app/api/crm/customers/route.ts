@@ -6,13 +6,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { CustomerProfileQuerySchema, CreateCustomerProfileSchema, type CreateCustomerProfile } from '@/lib/schemas/crm-schemas';
 
 // GET /api/crm/customers - Listar perfis de clientes
 export async function GET(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await marketingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         cp.*,
         u.name as user_name,
         u.email as user_email,
-        u.phone as user_phone,
+        c.phone as user_phone,
         c.name as customer_name,
         c.email as customer_email
       FROM customer_profiles cp
@@ -204,7 +204,7 @@ export async function GET(request: NextRequest) {
 // POST /api/crm/customers - Criar perfil de cliente
 export async function POST(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await marketingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(

@@ -71,12 +71,12 @@ export function CompetitorBenchmark({ propertyId, className }: CompetitorBenchma
 
     try {
       const response = await fetch(`/api/analytics/competitor-benchmarking?property_id=${propertyId}`);
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar benchmark');
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Erro ao carregar benchmark');
       }
 
-      const result = await response.json();
       setData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar benchmark');

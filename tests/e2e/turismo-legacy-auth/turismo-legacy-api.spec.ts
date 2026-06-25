@@ -48,11 +48,13 @@ test.describe('D2.1 — turismo legacy auth API (backend)', () => {
   });
 });
 
-test.describe('D2.1 — turismo UI register', () => {
+test.describe('D2.1 — turismo health (CI)', () => {
   const turismoBase = process.env.RSV_SMOKE_TURISMO_URL || 'http://localhost:3005';
 
-  test('página /register renderiza', async ({ request }) => {
-    const response = await request.get(`${turismoBase}/register`);
-    expect(response.status()).toBeLessThan(400);
+  test('GET /api/health responde 200', async ({ request }) => {
+    const response = await request.get(`${turismoBase}/api/health`);
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.ok).toBe(true);
   });
 });

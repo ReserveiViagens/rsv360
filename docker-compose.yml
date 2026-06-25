@@ -205,6 +205,12 @@ services:
     environment:
       <<: *app-env
       PORT: 3005
+    healthcheck:
+      test: ['CMD-SHELL', 'wget --no-verbose --tries=1 -O /dev/null http://127.0.0.1:3005/api/health || exit 1']
+      interval: 20s
+      timeout: 8s
+      retries: 6
+      start_period: 90s
 
   prometheus:
     image: prom/prometheus:v2.54.1
