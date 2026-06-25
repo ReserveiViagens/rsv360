@@ -1,7 +1,7 @@
 # Fase 5 — API leilões `:3002` — resultado
 
-**Data:** 2026-06-25 (atualizado pós 5.2 + 5.3)  
-**Base:** `main` @ PR #34 merged + Crm PR #11 merged
+**Data:** 2026-06-25 (atualizado pós 5.3 merged + 5.4 E2E)  
+**Base:** `main` @ PR #34 + #35 merged + Crm PR #11 merged
 
 ---
 
@@ -59,11 +59,36 @@ npm run smoke:auctions
 
 Env opcionais: `RSV_AUCTIONS_BACKEND_URL`, `RSV_SMOKE_PRIMARY_SITE_URL`, `SEED_TEST_USER_EMAIL`, `SEED_TEST_USER_PASSWORD`.
 
+**Merge:** rsv360 PR #35 (`f6f1718e`)
+
 ---
 
-## Pendente (5.4)
+## 5.4 — E2E Playwright S1 → :3002 ✅
 
-- [ ] E2E Playwright: login S1 → `/leiloes` → dar lance → validar no `:3002`
+| Artefato | Repo | Status |
+|----------|------|--------|
+| `POST /api/leiloes/:id/bids` (proxy lance) | Crm-RSV-360 | ✅ |
+| `leiloes.tsx` → `placeLeilaoBid` quando live | Crm-RSV-360 | ✅ |
+| `tests/e2e/auctions-e2e.spec.ts` | Crm-RSV-360 | ✅ |
+| `npm run e2e:auctions` | Crm-RSV-360 | ✅ |
+
+### Fluxo validado
+
+1. Login demo em `/entrar` (sessão S1)
+2. `/leiloes` — card do leilão ativo via proxy
+3. Modal → confirmar lance
+4. `GET :3002/api/v1/auctions/:id/bids` — novo lance registrado
+
+```powershell
+cd Crm-RSV-360
+# :3002 up + seed; reinicie S1 se já estava rodando (nova rota POST)
+npm run e2e:auctions
+```
+
+---
+
+## Backlog
+
 - [ ] WebSocket live bids (opcional)
 
 ---
