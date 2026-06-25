@@ -24,6 +24,8 @@ jobs:
       POSTGRES_PASSWORD: rsv360_dev_2024
       POSTGRES_DB: rsv_360_ecosystem
       JWT_SECRET: ci_route_smoke_jwt_secret_minimum_32_chars
+      SEED_TEST_USER_EMAIL: test@local.dev
+      SEED_TEST_USER_PASSWORD: dev-only-fallback-do-not-use-in-prod
     steps:
       - uses: actions/checkout@v7
         with:
@@ -67,8 +69,6 @@ jobs:
         working-directory: backend
         env:
           DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
-          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
-          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
           SEED_TEST_USER_ROLE: admin
         run: npm run seed
 
@@ -118,8 +118,6 @@ jobs:
 
       - name: Run auth v1 E2E (T1.9 — cenários #31)
         env:
-          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
-          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
           RSV_AUTH_V1_BACKEND_URL: http://localhost:3002
         run: npm run test:e2e:auth-v1
 
