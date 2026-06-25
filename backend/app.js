@@ -68,6 +68,8 @@ async function createApp() {
   app.use('/api/v1/payments', paymentsRoutes);
   const { authRouter } = require('./src/api/v1/auth/routes');
   app.use('/api/v1/auth', authRouter);
+  const { auctionsRouter } = require('./src/api/v1/auctions/routes');
+  app.use('/api/v1/auctions', auctionsRouter);
   const { tenantRouter } = require('./src/api/v1/tenant/routes');
   app.use('/api/v1/tenant', tenantRouter);
   app.use('/api/portal', portalRouter);

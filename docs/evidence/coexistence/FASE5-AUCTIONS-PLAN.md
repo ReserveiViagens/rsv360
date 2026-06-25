@@ -32,12 +32,13 @@ flowchart LR
 
 ## Entregas (rsv360)
 
-### 5.1 — Schema + migration
+### 5.1 — Schema + migration ✅
 
-- Tabelas `auctions`, `bids` (alinhar com `003_create_auctions_tables` ou schema auditado)
-- Migration Drizzle + snapshot + journal
+- Tabelas `auctions`, `bids` — migration `0012_auctions_bids.sql`
+- API v1 básica + seed demo Caldas Novas
+- Evidência: `FASE5-AUCTIONS-RESULT.md`
 
-### 5.2 — API v1
+### 5.2 — API v1 (complementar)
 
 | Método | Rota | Auth |
 |--------|------|------|
