@@ -85,6 +85,13 @@
       "when": 1782205000000,
       "tag": "0011_auth_sso_codes",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1782206000000,
+      "tag": "0012_auctions_bids",
+      "breakpoints": true
     }
   ]
 }
