@@ -733,34 +733,34 @@ export async function getCustomerDashboardMetrics(
   const average_order_value = parseFloat(avgResult[0]?.total || '0');
 
   // Total de interações
-  let interactionsQuery = `SELECT COUNT(*) as count FROM interactions WHERE 1=1`;
+  let interactionsFilter = ' WHERE 1=1';
   const interactionsParams: any[] = [];
   paramIndex = 1;
 
   if (date_from) {
-    interactionsQuery += ` AND interaction_date >= $${paramIndex}`;
+    interactionsFilter += ` AND interaction_date >= $${paramIndex}`;
     interactionsParams.push(date_from);
     paramIndex++;
   }
 
   if (date_to) {
-    interactionsQuery += ` AND interaction_date <= $${paramIndex}`;
+    interactionsFilter += ` AND interaction_date <= $${paramIndex}`;
     interactionsParams.push(date_to);
     paramIndex++;
   }
 
   if (segment_id) {
-    interactionsQuery += ` AND customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $${paramIndex})`;
+    interactionsFilter += ` AND customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $${paramIndex})`;
     interactionsParams.push(segment_id);
     paramIndex++;
   }
 
+  const interactionsQuery = `SELECT COUNT(*) as count FROM interactions${interactionsFilter}`;
   const interactionsResult = await queryDatabase(interactionsQuery, interactionsParams);
   const total_interactions = parseInt(interactionsResult[0]?.count || '0');
 
   // Interações por tipo
-  const typeQuery = interactionsQuery.replace('COUNT(*)', 'interaction_type, COUNT(*)');
-  const typeQueryFinal = typeQuery.replace('SELECT COUNT(*)', 'SELECT interaction_type, COUNT(*)') + ' GROUP BY interaction_type';
+  const typeQueryFinal = `SELECT interaction_type, COUNT(*) as count FROM interactions${interactionsFilter} GROUP BY interaction_type`;
   const typeResult = await queryDatabase(typeQueryFinal, interactionsParams);
   const interactions_by_type: Record<string, number> = {};
   typeResult.forEach((row: any) => {
@@ -778,7 +778,7 @@ export async function getCustomerDashboardMetrics(
   const segmentsResult = await queryDatabase(segmentsQuery, []);
 
   // Interações recentes
-  const recentQuery = interactionsQuery + ' ORDER BY interaction_date DESC LIMIT 10';
+  const recentQuery = `SELECT * FROM interactions${interactionsFilter} ORDER BY interaction_date DESC LIMIT 10`;
   const recentResult = await queryDatabase(recentQuery, interactionsParams);
 
   return {
