@@ -1,4 +1,4 @@
-﻿-- 0010 CRM tables (site-publico migrations 004 + 009 + 021)
+-- 0010 CRM tables (site-publico migrations 004 + 009 + 021)
 -- customers, interactions, segments, campaigns, customer_profiles, customer_preferences
 
 -- âœ… Migration 004: Criar tabela customers
