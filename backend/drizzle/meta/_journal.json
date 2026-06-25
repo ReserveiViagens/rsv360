@@ -78,6 +78,13 @@
       "when": 1782204000000,
       "tag": "0010_crm_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782205000000,
+      "tag": "0011_auth_sso_codes",
+      "breakpoints": true
     }
   ]
 }
