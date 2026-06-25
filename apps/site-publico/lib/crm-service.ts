@@ -662,28 +662,22 @@ export async function getCustomerDashboardMetrics(
            WHERE created_at >= CURRENT_DATE - INTERVAL '90 days'`;
       activeParams = segment_id ? [segment_id] : [];
     } else {
-      // Tabela bookings tem user_id, usar bookings_rsv360 ou customers
+      // Schema S2: bookings sem customer_id — usar last_booking_at em customer_profiles
       activeQuery = segment_id
-        ? `SELECT COUNT(DISTINCT b.customer_id) as count 
-           FROM bookings_rsv360 b
-           WHERE b.customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $1)
-           AND b.created_at >= CURRENT_DATE - INTERVAL '90 days'`
-        : `SELECT COUNT(DISTINCT customer_id) as count 
-           FROM bookings_rsv360 
-           WHERE created_at >= CURRENT_DATE - INTERVAL '90 days'`;
+        ? `SELECT COUNT(DISTINCT cp.customer_id) as count
+           FROM customer_profiles cp
+           WHERE cp.customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $1)
+           AND cp.last_booking_at >= CURRENT_DATE - INTERVAL '90 days'`
+        : `SELECT COUNT(DISTINCT customer_id) as count
+           FROM customer_profiles
+           WHERE last_booking_at >= CURRENT_DATE - INTERVAL '90 days'`;
       activeParams = segment_id ? [segment_id] : [];
     }
   } catch {
-    // Fallback: usar bookings_rsv360
-    activeQuery = segment_id
-      ? `SELECT COUNT(DISTINCT b.customer_id) as count 
-         FROM bookings_rsv360 b
-         WHERE b.customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $1)
-         AND b.created_at >= CURRENT_DATE - INTERVAL '90 days'`
-      : `SELECT COUNT(DISTINCT customer_id) as count 
-         FROM bookings_rsv360 
-         WHERE created_at >= CURRENT_DATE - INTERVAL '90 days'`;
-    activeParams = segment_id ? [segment_id] : [];
+    activeQuery = `SELECT COUNT(DISTINCT customer_id) as count
+                   FROM customer_profiles
+                   WHERE last_booking_at >= CURRENT_DATE - INTERVAL '90 days'`;
+    activeParams = [];
   }
   
   const activeResult = await queryDatabase(activeQuery, activeParams);
@@ -711,9 +705,8 @@ export async function getCustomerDashboardMetrics(
   const newResult = await queryDatabase(newQuery, newParams);
   const new_customers = parseInt(newResult[0]?.count || '0');
 
-  // Receita total
-  // Usar bookings_rsv360 que tem customer_id, ou fazer JOIN
-  let revenueQuery = `SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings_rsv360 WHERE status = 'confirmed'`;
+  // Receita total (schema S2: bookings.total_amount)
+  let revenueQuery = `SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings WHERE status IN ('confirmed')`;
   const revenueParams: any[] = [];
   paramIndex = 1;
 
@@ -729,11 +722,7 @@ export async function getCustomerDashboardMetrics(
     paramIndex++;
   }
 
-  if (segment_id) {
-    revenueQuery += ` AND customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $${paramIndex})`;
-    revenueParams.push(segment_id);
-    paramIndex++;
-  }
+  // segment_id não filtra bookings diretamente no schema S2 (sem customer_id)
 
   const revenueResult = await queryDatabase(revenueQuery, revenueParams);
   const total_revenue = parseFloat(revenueResult[0]?.total || '0');
@@ -744,34 +733,34 @@ export async function getCustomerDashboardMetrics(
   const average_order_value = parseFloat(avgResult[0]?.total || '0');
 
   // Total de interações
-  let interactionsQuery = `SELECT COUNT(*) as count FROM interactions WHERE 1=1`;
+  let interactionsFilter = ' WHERE 1=1';
   const interactionsParams: any[] = [];
   paramIndex = 1;
 
   if (date_from) {
-    interactionsQuery += ` AND interaction_date >= $${paramIndex}`;
+    interactionsFilter += ` AND interaction_date >= $${paramIndex}`;
     interactionsParams.push(date_from);
     paramIndex++;
   }
 
   if (date_to) {
-    interactionsQuery += ` AND interaction_date <= $${paramIndex}`;
+    interactionsFilter += ` AND interaction_date <= $${paramIndex}`;
     interactionsParams.push(date_to);
     paramIndex++;
   }
 
   if (segment_id) {
-    interactionsQuery += ` AND customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $${paramIndex})`;
+    interactionsFilter += ` AND customer_id IN (SELECT customer_id FROM customer_segments WHERE segment_id = $${paramIndex})`;
     interactionsParams.push(segment_id);
     paramIndex++;
   }
 
+  const interactionsQuery = `SELECT COUNT(*) as count FROM interactions${interactionsFilter}`;
   const interactionsResult = await queryDatabase(interactionsQuery, interactionsParams);
   const total_interactions = parseInt(interactionsResult[0]?.count || '0');
 
   // Interações por tipo
-  const typeQuery = interactionsQuery.replace('COUNT(*)', 'interaction_type, COUNT(*)');
-  const typeQueryFinal = typeQuery.replace('SELECT COUNT(*)', 'SELECT interaction_type, COUNT(*)') + ' GROUP BY interaction_type';
+  const typeQueryFinal = `SELECT interaction_type, COUNT(*) as count FROM interactions${interactionsFilter} GROUP BY interaction_type`;
   const typeResult = await queryDatabase(typeQueryFinal, interactionsParams);
   const interactions_by_type: Record<string, number> = {};
   typeResult.forEach((row: any) => {
@@ -789,7 +778,7 @@ export async function getCustomerDashboardMetrics(
   const segmentsResult = await queryDatabase(segmentsQuery, []);
 
   // Interações recentes
-  const recentQuery = interactionsQuery + ' ORDER BY interaction_date DESC LIMIT 10';
+  const recentQuery = `SELECT * FROM interactions${interactionsFilter} ORDER BY interaction_date DESC LIMIT 10`;
   const recentResult = await queryDatabase(recentQuery, interactionsParams);
 
   return {

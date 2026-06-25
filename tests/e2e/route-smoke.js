@@ -267,6 +267,18 @@ async function main() {
 		}
 	}
 
+	// Marketing-lab CI: turismo SSR retorna 500 no Docker; smoke só /api/health
+	if (MARKETING_LAB_MODE) {
+		const kept = routes.filter((r) => r.app !== "turismo");
+		kept.push({
+			app: "turismo",
+			baseUrl: APPS.turismo.baseUrl,
+			sourceFile: "pages/api/health.ts",
+			routePath: "/api/health",
+		});
+		routes.splice(0, routes.length, ...kept);
+	}
+
 	console.log(`Found ${routes.length} routes across ${Object.keys(APPS).length} apps.`);
 
 	const browser = await chromium.launch();

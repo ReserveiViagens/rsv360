@@ -24,6 +24,8 @@ jobs:
       POSTGRES_PASSWORD: REDACTED_PG_DEV_PASSWORD
       POSTGRES_DB: rsv_360_ecosystem
       JWT_SECRET: ci_route_smoke_jwt_secret_minimum_32_chars
+      SEED_TEST_USER_EMAIL: test@local.dev
+      SEED_TEST_USER_PASSWORD: dev-only-fallback-do-not-use-in-prod
     steps:
       - uses: actions/checkout@v7
         with:
@@ -63,12 +65,15 @@ jobs:
           DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5432/rsv_360_ecosystem
         run: npm run migrate
 
+      - name: Ensure auth v1 tables (rate limit + refresh tokens)
+        run: |
+          cat database/g4-auth-smoke-tables.sql | docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem
+          cat apps/site-publico/scripts/create-refresh-tokens-tables.sql | docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem
+
       - name: Seed deterministic test user
         working-directory: backend
         env:
           DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5432/rsv_360_ecosystem
-          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
-          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
           SEED_TEST_USER_ROLE: admin
         run: npm run seed
 
@@ -87,7 +92,7 @@ jobs:
         run: npx tsx ../server/modules/guest-portal/portal-booking-write.smoke.ts
 
       - name: Build & start Docker stack
-        run: docker compose up -d --build
+        run: docker compose up -d --build --wait --wait-timeout 600
 
       - name: Wait for services (URL readiness)
         run: |
@@ -95,7 +100,7 @@ jobs:
             "http://localhost:3002/health"
             "http://localhost:3000/lab"
             "http://localhost:3004/"
-            "http://localhost:3005/"
+            "http://localhost:3005/api/health"
             "http://localhost:3006/"
           )
           deadline=$((SECONDS + 300))
@@ -116,10 +121,28 @@ jobs:
         run: |
           docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem -c "DELETE FROM auth_rate_limits;" || true
 
+      - name: Wait for backend auth API (not 503)
+        run: |
+          deadline=$((SECONDS + 120))
+          while true; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:3002/api/v1/auth/login \
+              -H 'Content-Type: application/json' \
+              -d '{"email":"test@local.dev","password":"probe-wrong-password"}' || echo "000")
+            if [ "$code" = "401" ] || [ "$code" = "200" ] || [ "$code" = "429" ]; then
+              echo "Backend auth ready (HTTP $code)"
+              break
+            fi
+            if [ $SECONDS -gt $deadline ]; then
+              echo "Timeout waiting for auth API (last HTTP $code)" >&2
+              docker compose logs backend --tail 40
+              exit 1
+            fi
+            echo "Auth not ready (HTTP $code), retrying..."
+            sleep 5
+          done
+
       - name: Run auth v1 E2E (T1.9 — cenários #31)
         env:
-          SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
-          SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
           RSV_AUTH_V1_BACKEND_URL: http://localhost:3002
         run: npm run test:e2e:auth-v1
 

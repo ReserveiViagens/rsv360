@@ -10,17 +10,17 @@ jest.mock('@/lib/db', () => ({
   queryDatabase: jest.fn(),
 }));
 
-jest.mock('@/lib/advanced-auth', () => ({
-  advancedAuthMiddleware: jest.fn(),
+jest.mock('@/lib/marketing-lab-auth', () => ({
+  marketingLabAuth: jest.fn(),
 }));
 
 import { queryDatabase } from '@/lib/db';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 
 describe('API /api/crm/customers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (advancedAuthMiddleware as jest.Mock).mockResolvedValue({
+    (marketingLabAuth as jest.Mock).mockResolvedValue({
       user: { id: 1, email: 'admin@example.com' },
       error: null,
     });
@@ -50,7 +50,7 @@ describe('API /api/crm/customers', () => {
     });
 
     it('deve retornar erro 401 quando não autenticado', async () => {
-      (advancedAuthMiddleware as jest.Mock).mockResolvedValueOnce({
+      (marketingLabAuth as jest.Mock).mockResolvedValueOnce({
         user: null,
         error: 'Não autenticado',
       });

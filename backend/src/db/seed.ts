@@ -15,7 +15,7 @@ async function seedDeterministicTestUser() {
     return;
   }
 
-  const email = (process.env.SEED_TEST_USER_EMAIL ?? 'test@local.dev').toLowerCase();
+  const email = (process.env.SEED_TEST_USER_EMAIL?.trim() || 'test@local.dev').toLowerCase();
   const role = process.env.SEED_TEST_USER_ROLE ?? 'admin';
   const password = process.env.SEED_TEST_USER_PASSWORD;
 
@@ -54,7 +54,7 @@ async function seedDeterministicTestUser() {
 }
 
 async function seedBookings() {
-  const seedEmail = (process.env.SEED_TEST_USER_EMAIL ?? 'test@local.dev').toLowerCase();
+  const seedEmail = (process.env.SEED_TEST_USER_EMAIL?.trim() || 'test@local.dev').toLowerCase();
 
   const [seedUser] = await db
     .select()

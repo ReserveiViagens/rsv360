@@ -5,11 +5,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getCustomerDashboardMetrics } from '@/lib/crm-service';
-import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const { user, error } = await advancedAuthMiddleware(request);
+    const { user, error } = await marketingLabAuth(request);
 
     if (error || !user) {
       return NextResponse.json(
