@@ -8,6 +8,7 @@ import {
   isMarketingLabMode,
   isStaticAssetPath,
 } from '@/lib/app-mode';
+import { isMarketingLabAuthRequired } from '@/lib/sso-config';
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -39,6 +40,23 @@ export async function middleware(req: NextRequest) {
 
     if (!isLabUiPath(pathname)) {
       return NextResponse.redirect(buildPrimarySiteUrl(pathname, search));
+    }
+
+    if (isMarketingLabAuthRequired()) {
+      const publicLabPaths = ['/login', '/auth/sso', '/recuperar-senha', '/redefinir-senha', '/admin/login'];
+      const isPublicLab = publicLabPaths.some(
+        (p) => pathname === p || pathname.startsWith(`${p}/`),
+      );
+      if (!isPublicLab) {
+        const userToken = req.cookies.get('auth_token')?.value;
+        if (!userToken) {
+          const url = req.nextUrl.clone();
+          url.pathname = '/login';
+          url.searchParams.set('redirect', pathname);
+          url.searchParams.set('sso', '1');
+          return NextResponse.redirect(url);
+        }
+      }
     }
   }
 

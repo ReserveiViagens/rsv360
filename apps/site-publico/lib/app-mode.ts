@@ -20,6 +20,7 @@ const LAB_ROUTE_PREFIXES = [
   '/dashboard-estatisticas',
   '/dashboard',
   '/login',
+  '/auth/sso',
   '/recuperar-senha',
   '/redefinir-senha',
 ] as const;

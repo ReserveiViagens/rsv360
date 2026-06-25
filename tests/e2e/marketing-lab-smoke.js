@@ -120,6 +120,21 @@ async function main() {
 	}
 	console.log("OK /api/analytics/revenue-forecast -> success");
 
+	if (process.env.SSO_DEV_MOCK !== "false") {
+		const handoff = await head(
+			`${lab}/api/auth/sso/dev-handoff?return=/lab&email=test@local.dev`,
+		);
+		if (handoff.status === 404) {
+			console.log("WARN SSO dev-handoff disabled (set SSO_DEV_MOCK=true)");
+		} else if (![301, 302, 307, 308].includes(handoff.status)) {
+			fail(`SSO dev-handoff expected redirect, got ${handoff.status}`);
+		} else if (!handoff.location.includes("/auth/sso/callback")) {
+			fail(`SSO dev-handoff missing callback, got ${handoff.location}`);
+		} else {
+			console.log(`OK SSO dev-handoff -> ${handoff.location.split("?")[0]}`);
+		}
+	}
+
 	try {
 		const s1Res = await fetch(`${s1}/health`, { signal: AbortSignal.timeout(3000) });
 		if (s1Res.status === 200) {

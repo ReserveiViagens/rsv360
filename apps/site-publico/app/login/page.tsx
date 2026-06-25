@@ -13,6 +13,7 @@ import { login, register, setToken } from "@/lib/auth"
 import { FormField, Validators } from "@/components/form-with-validation"
 import { formatPhone, formatCPFCNPJ } from "@/lib/validations"
 import { useToast } from "@/components/providers/toast-wrapper"
+import { MarketingLabSsoPanel } from "@/components/lab/MarketingLabSsoPanel"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const toast = useToast()
 
   const redirectTo = searchParams?.get('redirect') || '/minhas-reservas'
+  const showSsoHint = searchParams?.get('sso') === '1'
 
   useEffect(() => {
     const accessToken =
@@ -219,6 +221,8 @@ export default function LoginPage() {
               Entre na sua conta ou crie uma nova
             </p>
           </div>
+
+          <MarketingLabSsoPanel returnPath={redirectTo} showSsoHint={showSsoHint} />
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
             <Tabs value={activeTab} onValueChange={(v: string) => { setActiveTab(v); setError(""); }}>

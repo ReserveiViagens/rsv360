@@ -137,7 +137,7 @@ OK /marketing/campaigns -> 200
 
 | Fase | Escopo |
 |------|--------|
-| **4** | SSO S1 ↔ S2 |
+| **4** | SSO S1 ↔ S2 | `FASE4-SSO-RESULT.md` |
 | **5** | API leilões em `:3002` |
 | **6** | Domínios prod (`www.` / `lab.`) |
 
