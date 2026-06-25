@@ -1,8 +1,8 @@
 # Fase 4 — SSO S1 (:5000) ↔ S2 (:3000) Marketing Lab
 
-**Data:** 2026-06-24  
-**Branch:** `feat/coexistence-fase4-sso`  
-**Pré-requisito:** Fase 3 (`RSV360_APP_MODE=marketing-lab`)
+**Data:** 2026-06-24 (S2) · **Smoke S1:** 2026-06-25  
+**Branch rsv360:** `feat/coexistence-fase4-sso` · **PR:** #33  
+**Branch S1:** `feat/marketing-lab-sso-handoff` · **PR Crm-RSV-360:** #10
 
 ---
 
@@ -67,20 +67,39 @@ start "http://localhost:3000/login?sso=1&redirect=/lab"
 
 ---
 
-## Integração S1 (Crm-RSV-360 — repo separado)
+## Integração S1 (Crm-RSV-360 — repo separado) ✅
 
-Endpoint sugerido no S1 (`:5000`):
+**PR:** https://github.com/ReserveiViagens/Crm-RSV-360/pull/10
+
+| Artefato S1 | Descrição |
+|-------------|-----------|
+| `GET /api/auth/lab-handoff` | Sessão obrigatória → `302` callback S2 |
+| `server/services/marketing-lab-sso.service.ts` | `POST :3002/api/v1/auth/sso/issue` |
+| `client/src/pages/perfil.tsx` | Menu admin **Marketing Lab** |
+| `client/src/hooks/use-auth.ts` | `lab_return` pós-login |
+
+**Env S1** (`.env.example`):
+
+```env
+RSV360_BACKEND_URL=http://127.0.0.1:3002
+SSO_BFF_SECRET=…   # igual ao rsv360 backend + site-publico
+VITE_MARKETING_LAB_URL=http://localhost:3000
+```
+
+**Notas Windows:** usar `127.0.0.1` (não `localhost`) no `RSV360_BACKEND_URL`; S1 carrega `.env` via `process.loadEnvFile()` no boot.
+
+Endpoint:
 
 ```
-GET /api/auth/lab-handoff?return=/lab&lab_url=http://localhost:3000
+GET /api/auth/lab-handoff?return=/lab
 ```
 
 1. Verificar `req.session.userId`
 2. Carregar e-mail/nome do usuário
-3. `POST http://localhost:3002/api/v1/auth/sso/issue` com header `X-Sso-Bff-Secret`
+3. `POST http://127.0.0.1:3002/api/v1/auth/sso/issue` com header `X-Sso-Bff-Secret`
 4. `302` para `callback_url` retornado
 
-**Regra Fase 3:** commits S1 ficam no repo `Crm-RSV-360`; este PR só documenta o contrato.
+**Regra Fase 3:** commits S1 ficam no repo `Crm-RSV-360`.
 
 ---
 
@@ -90,8 +109,28 @@ GET /api/auth/lab-handoff?return=/lab&lab_url=http://localhost:3000
 - [x] S2 callback grava tokens e redireciona para `/lab`
 - [x] Dev mock sem S1 (`SSO_DEV_MOCK=true`)
 - [x] Painel SSO em `/login` no modo lab
-- [ ] S1 `lab-handoff` implementado (repo externo)
+- [x] S1 `lab-handoff` implementado (Crm-RSV-360 PR #10)
 - [ ] `MARKETING_LAB_REQUIRE_AUTH=true` em staging/prod
+
+---
+
+## Smoke — resultado local (2026-06-25)
+
+```
+OK S1 login demo@reservei.com.br → 200
+OK GET /api/auth/lab-handoff → 302 → :3000/auth/sso/callback?code=…
+OK POST :3000/api/auth/sso/exchange → tokens + return_url /lab
+OK browser manual: perfil → Marketing Lab → /lab autenticado
+```
+
+---
+
+## Fases seguintes
+
+| Fase | Escopo |
+|------|--------|
+| **5** | API leilões em `:3002` (S1 consome ou proxy) |
+| **6** | Domínios prod (`www.` / `lab.`) |
 
 ---
 
