@@ -224,6 +224,115 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/** POST /api/v1/auth/sso/issue — emite código one-time (S1 → S2, Fase 4) */
+router.post('/sso/issue', async (req, res) => {
+  const { issueSsoCode, isSsoBffAuthorized, isSsoDbEnabled } = require('./sso.service');
+
+  if (!isSsoBffAuthorized(req)) {
+    return res.status(403).json({ success: false, error: 'Não autorizado' });
+  }
+
+  if (!isSsoDbEnabled()) {
+    return res.status(501).json({
+      success: false,
+      error: 'SSO indisponível. Configure DATABASE_URL.',
+    });
+  }
+
+  try {
+    const result = await issueSsoCode(req.body);
+
+    if (result?.error === 'validation') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (!result) {
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
+
+    return res.json({
+      success: true,
+      message: 'Código SSO emitido',
+      data: result,
+    });
+  } catch (error) {
+    console.error('[AUTH] sso/issue error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
+/** POST /api/v1/auth/sso/exchange — troca código por tokens JWT (S2 BFF) */
+router.post('/sso/exchange', async (req, res) => {
+  const { exchangeSsoCode, isSsoDbEnabled } = require('./sso.service');
+
+  if (!isSsoDbEnabled()) {
+    return res.status(501).json({
+      success: false,
+      error: 'SSO indisponível. Configure DATABASE_URL.',
+    });
+  }
+
+  try {
+    const { getClientIp } = require('./rate-limit.service');
+    const ipAddress = getClientIp(req);
+    const userAgent = req.get('user-agent');
+
+    const result = await exchangeSsoCode(req.body?.code, {
+      ipAddress,
+      userAgent,
+    });
+
+    if (result?.error === 'validation') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (result?.error === 'invalid_code') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (result?.error === 'account_disabled') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (result?.error === 'user_sync') {
+      return res.status(result.status).json({ success: false, error: result.message });
+    }
+    if (!result) {
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
+
+    if (result.requires_2fa) {
+      return res.json({
+        success: true,
+        message: 'Autenticação em dois fatores necessária',
+        data: {
+          requires_2fa: true,
+          temp_token: result.temp_token,
+          expires_in: result.expires_in ?? 300,
+          return_url: result.return_url ?? '/lab',
+        },
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: 'SSO realizado',
+      data: {
+        user: {
+          id: String(result.user.id),
+          email: result.user.email,
+          name: result.user.name,
+          role: result.user.role,
+          enterpriseId: result.user.enterpriseId ?? 'ent_1',
+        },
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+        expires_in: result.expires_in ?? 900,
+        return_url: result.return_url ?? '/lab',
+      },
+    });
+  } catch (error) {
+    console.error('[AUTH] sso/exchange error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
 /** POST /api/v1/auth/oauth — login/cadastro via perfil OAuth (BFF site-publico, D2.9) */
 router.post('/oauth', async (req, res) => {
   const {

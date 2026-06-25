@@ -85,6 +85,8 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       SMTP_SECURE: ${SMTP_SECURE:-false}
       OAUTH_BFF_SECRET: ${OAUTH_BFF_SECRET:-rsv360-docker-dev-oauth-bff}
+      SSO_BFF_SECRET: ${SSO_BFF_SECRET:-${OAUTH_BFF_SECRET:-rsv360-docker-dev-oauth-bff}}
+      MARKETING_LAB_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
     healthcheck:
       test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1']
       interval: 20s
@@ -172,6 +174,9 @@ services:
       REDIS_ENABLED: 'true'
       BACKEND_INTERNAL_URL: http://backend:3002
       OAUTH_BFF_SECRET: ${OAUTH_BFF_SECRET:-rsv360-docker-dev-oauth-bff}
+      SSO_BFF_SECRET: ${SSO_BFF_SECRET:-${OAUTH_BFF_SECRET:-rsv360-docker-dev-oauth-bff}}
+      SSO_DEV_MOCK: ${SSO_DEV_MOCK:-true}
+      MARKETING_LAB_REQUIRE_AUTH: ${MARKETING_LAB_REQUIRE_AUTH:-false}
       OAUTH_DEV_MOCK: ${OAUTH_DEV_MOCK:-false}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
