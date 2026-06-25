@@ -194,6 +194,9 @@ jobs:
               sleep 5
             done
           done
+      - name: Reset auth rate limits before Playwright
+        run: |
+          docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem -c "DELETE FROM auth_rate_limits;" || true
       - name: Playwright Fase 5
         run: npm run test:e2e:fase5
         env:
