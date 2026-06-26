@@ -21,6 +21,7 @@ export async function getRedisConnection(): Promise<Redis> {
     maxRetriesPerRequest: null,
     enableReadyCheck: true,
     lazyConnect: true,
+    connectTimeout: 5_000,
   });
   await client.connect();
   sharedClient = client;
@@ -37,6 +38,7 @@ export async function createBullMQConnection(): Promise<Redis> {
     maxRetriesPerRequest: null,
     enableReadyCheck: true,
     lazyConnect: true,
+    connectTimeout: 5_000,
   });
   await client.connect();
   return client;

@@ -8,17 +8,29 @@ import {
   isRedisRequiredForLocks,
 } from '../../../../server/modules/fornecedores-hub/redis-connection';
 
-const redisOk = isRedisRequiredForLocks();
-
 describe('fornecedores-hub — lock (Redis real)', () => {
-  afterAll(async () => {
-    await disconnectRedisConnection();
+  let redisOk = false;
+
+  beforeAll(async () => {
+    if (!isRedisRequiredForLocks()) {
+      console.warn('[lock.test] Pulando — defina REDIS_URL e REDIS_DISABLED≠true');
+      return;
+    }
+    try {
+      const { getRedisConnection } = await import(
+        '../../../../server/modules/fornecedores-hub/redis-connection'
+      );
+      const client = await getRedisConnection();
+      await client.ping();
+      redisOk = true;
+    } catch {
+      console.warn('[lock.test] Pulando — Redis indisponível em REDIS_URL');
+      redisOk = false;
+    }
   });
 
-  beforeAll(() => {
-    if (!redisOk) {
-      console.warn('[lock.test] Pulando — defina REDIS_URL e REDIS_DISABLED≠true');
-    }
+  afterAll(async () => {
+    await disconnectRedisConnection();
   });
 
   it('apenas um adquirirLock simultâneo vence a corrida', async () => {
