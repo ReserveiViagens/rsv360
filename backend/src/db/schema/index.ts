@@ -19,3 +19,6 @@ export * from './marketing';
 export * from './logistica';
 export * from './relatorios';
 export * from './fase1-ext';
+export * from './fornecedores-api';
+export * from './indicacoes';
+export * from './auditoria';

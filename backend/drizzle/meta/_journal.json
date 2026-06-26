@@ -92,6 +92,13 @@
       "when": 1782206000000,
       "tag": "0012_auctions_bids",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782207000000,
+      "tag": "0013_cotacao_interativa_v2",
+      "breakpoints": true
     }
   ]
 }
