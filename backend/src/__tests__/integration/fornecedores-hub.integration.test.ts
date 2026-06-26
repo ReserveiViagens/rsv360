@@ -24,9 +24,13 @@ describeDb('Fornecedores Hub — CRUD admin', () => {
     const { disconnectRedisConnection } = await import(
       '../../../../server/modules/fornecedores-hub/redis-connection'
     );
+    const { closeReservasQueue } = await import(
+      '../../../../server/modules/fornecedores-hub/reservas.queue'
+    );
     const { closeDbPool } = await import('../../db/drizzle');
     await disconnectRedisCache();
     await disconnectRedisConnection().catch(() => undefined);
+    await closeReservasQueue().catch(() => undefined);
     await closeDbPool();
   });
 

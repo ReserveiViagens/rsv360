@@ -28,7 +28,7 @@
     "start:apps": "concurrently \"npm run start --workspace=apps/turismo\" \"npm run start --workspace=apps/site-publico\"",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "test:hub": "npm run test --workspace=backend -- --testPathPattern=fornecedores-hub",
+    "test:hub": "npm run test --workspace=backend -- --testPathPattern=fornecedores-hub --forceExit",
     "migrate": "npm run migrate --workspace=backend",
     "migrate:db-json": "tsx scripts/migrate-db-json.ts",
     "migrate:new": "npm run migrate:new --workspace=backend",
