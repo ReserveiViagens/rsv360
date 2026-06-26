@@ -10,6 +10,8 @@ describeDb('Fornecedores Hub — CRUD admin', () => {
   let fornecedorId: string;
 
   beforeAll(async () => {
+    process.env.FORNECEDORES_ENCRYPTION_KEY =
+      process.env.FORNECEDORES_ENCRYPTION_KEY || 'integration-test-key-32-chars-min!!';
     applyTestMigrations();
     app = await createApp();
   });
@@ -44,10 +46,15 @@ describeDb('Fornecedores Hub — CRUD admin', () => {
     expect(create.status).toBe(201);
     fornecedorId = create.body.data.id;
     expect(fornecedorId).toBeTruthy();
+    expect(create.body.data.apiKey).toBeUndefined();
+    expect(create.body.data.hasApiKey).toBe(true);
 
     const list = await request(app).get('/api/v1/fornecedores-api').set(authHeader());
     expect(list.status).toBe(200);
-    expect(list.body.data.some((f: { id: string }) => f.id === fornecedorId)).toBe(true);
+    const found = list.body.data.find((f: { id: string }) => f.id === fornecedorId);
+    expect(found).toBeTruthy();
+    expect(found.apiKey).toBeUndefined();
+    expect(found.hasApiKey).toBe(true);
   });
 
   it('PATCH atualiza fornecedor API', async () => {

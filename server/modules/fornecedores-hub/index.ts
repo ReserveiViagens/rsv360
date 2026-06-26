@@ -2,12 +2,14 @@ import type { Express } from 'express';
 import fornecedoresHubRouter from './routes/index';
 import { makeGenericHotelAdapter } from './adapters/generic-hotel.adapter';
 import { registrarAdapterFactory } from './registry';
+import { registerFornecedoresHubMetrics } from './metrics';
 
 let bootstrapped = false;
 
 export function bootstrapFornecedoresAdapters() {
   if (bootstrapped) return;
   registrarAdapterFactory('generic-hotel', (cfg) => makeGenericHotelAdapter(cfg));
+  registerFornecedoresHubMetrics();
   bootstrapped = true;
 }
 
