@@ -79,7 +79,7 @@ export class PropostasService {
     return deleted ?? null;
   }
 
-  async createFromOrcamento(orcamentoId: number, actorId?: number) {
+  async createFromOrcamento(orcamentoId: number, actorId?: number, options?: { destino?: string }) {
     const orc = await db.select().from(orcamentos).where(eq(orcamentos.id, orcamentoId));
     const [budget] = orc;
     if (!budget) throw new Error('Orçamento não encontrado');
@@ -88,6 +88,22 @@ export class PropostasService {
       .select()
       .from(orcamentoItens)
       .where(eq(orcamentoItens.orcamentoId, orcamentoId));
+
+    const precoAgencia = Number(budget.total);
+    const destino =
+      options?.destino ??
+      (typeof budget.metadata === 'object' &&
+      budget.metadata &&
+      'destino' in (budget.metadata as object)
+        ? String((budget.metadata as Record<string, unknown>).destino)
+        : 'Caldas Novas');
+
+    const { montarComparativoProposta } = await import('./montar-proposta');
+    const ancoragem = await montarComparativoProposta({
+      precoAgencia,
+      destino,
+      tipo: 'hospedagem',
+    });
 
     const [created] = await db
       .insert(propostas)
@@ -100,12 +116,28 @@ export class PropostasService {
         valorTotal: budget.total,
         moeda: budget.moeda,
         status: 'draft',
-        conteudo: { itens, origem: 'orcamento', orcamentoId },
-        metadata: { hitlMode: 'ai' satisfies HitlMode },
+        comparativoCache: ancoragem.comparativo,
+        exibirComparativo: false,
+        conteudo: {
+          itens,
+          origem: 'orcamento',
+          orcamentoId,
+          temAncora: ancoragem.temAncora,
+          comparativoOrigem: ancoragem.origem,
+        },
+        metadata: { hitlMode: 'ai' satisfies HitlMode, temAncora: ancoragem.temAncora },
       })
       .returning();
 
     await this.logEvent(created.id, 'from_orcamento', `Gerada a partir do orçamento #${orcamentoId}`, { orcamentoId }, actorId);
+
+    try {
+      const { agendarAvaliarObjecao } = await import('../propostas.queue');
+      await agendarAvaliarObjecao(created.id, 24 * 60 * 60 * 1000);
+    } catch {
+      /* Redis/BullMQ opcional em dev */
+    }
+
     return created;
   }
 
@@ -127,6 +159,18 @@ export class PropostasService {
       })
       .returning();
     return evento;
+  }
+
+  async registrarVisualizacao(propostaId: number, actorId?: number) {
+    await this.logEvent(propostaId, 'visualizacao', 'Proposta visualizada', {}, actorId);
+    return { propostaId };
+  }
+
+  async revelarComparativoManual(propostaId: number) {
+    const { revelarComparativo } = await import('../objecao');
+    const result = await revelarComparativo(propostaId, 'manual');
+    if (!result) throw new Error('Comparativo já revelado ou indisponível');
+    return result;
   }
 
   async listChat(propostaId: number) {
@@ -155,6 +199,13 @@ export class PropostasService {
       senderType: input.senderType,
       messageId: msg.id,
     });
+
+    if (input.senderType === 'client') {
+      const { detectarObjecaoPreco, revelarComparativo } = await import('../objecao');
+      if (detectarObjecaoPreco(input.message)) {
+        await revelarComparativo(propostaId, 'ia');
+      }
+    }
 
     return msg;
   }

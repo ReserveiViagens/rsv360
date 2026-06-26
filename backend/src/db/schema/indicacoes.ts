@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, numeric, timestamp, integer, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, numeric, timestamp, integer, index, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const indicacoes = pgTable(
   'indicacoes',
@@ -17,6 +17,10 @@ export const indicacoes = pgTable(
   (t) => ({
     idxIndicador: index('idx_indicacoes_indicador').on(t.indicadorId),
     idxToken: index('idx_indicacoes_token').on(t.tokenProposta),
+    uniqTokenIndicador: uniqueIndex('idx_indicacoes_token_indicador_unique').on(
+      t.tokenProposta,
+      t.indicadorId,
+    ),
   }),
 );
 

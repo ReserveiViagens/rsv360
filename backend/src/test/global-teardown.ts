@@ -16,6 +16,11 @@ export default async function globalTeardown(): Promise<void> {
   });
 
   await safe(async () => {
+    const { closePropostasQueue } = await import('../../../server/modules/propostas/propostas.queue');
+    await closePropostasQueue();
+  });
+
+  await safe(async () => {
     const { disconnectRedisConnection } = await import(
       '../../../server/modules/fornecedores-hub/redis-connection'
     );

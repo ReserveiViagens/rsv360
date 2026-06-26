@@ -83,6 +83,117 @@ router.post('/from-orcamento/:orcamentoId', ...staffAuth, async (req, res) => {
   }
 });
 
+router.post('/:id/visualizacao', optionalJwt, async (req, res) => {
+  try {
+    const data = await propostasService.registrarVisualizacao(Number(req.params.id), req.user?.id);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/revelar-comparativo', ...staffAuth, async (req, res) => {
+  try {
+    const data = await propostasService.revelarComparativoManual(Number(req.params.id));
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/aprovacao/solicitar', ...staffAuth, async (req, res) => {
+  try {
+    const { solicitarAlteracao } = await import('../aprovacao');
+    const data = await solicitarAlteracao(Number(req.params.id), {
+      id: req.user!.id,
+      role: req.user!.role ?? 'user',
+    });
+    res.json({ success: true, data });
+  } catch (error) {
+    const err = error as Error & { statusCode?: number };
+    res.status(err.statusCode ?? 400).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/:id/aprovacao/aprovar', ...staffAuth, async (req, res) => {
+  try {
+    const { aprovar } = await import('../aprovacao');
+    const { hasMinRole } = await import('../rbac');
+    if (!hasMinRole(req.user?.role, 'supervisor')) {
+      return res.status(403).json({ success: false, error: 'Acesso negado' });
+    }
+    const data = await aprovar(Number(req.params.id), {
+      id: req.user!.id,
+      role: req.user!.role ?? 'admin',
+    });
+    res.json({ success: true, data });
+  } catch (error) {
+    const err = error as Error & { statusCode?: number };
+    res.status(err.statusCode ?? 400).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/:id/aprovacao/negar', ...staffAuth, async (req, res) => {
+  try {
+    const { negar } = await import('../aprovacao');
+    const { hasMinRole } = await import('../rbac');
+    if (!hasMinRole(req.user?.role, 'supervisor')) {
+      return res.status(403).json({ success: false, error: 'Acesso negado' });
+    }
+    const data = await negar(Number(req.params.id), {
+      id: req.user!.id,
+      role: req.user!.role ?? 'admin',
+    }, String(req.body.motivo ?? ''));
+    res.json({ success: true, data });
+  } catch (error) {
+    const err = error as Error & { statusCode?: number };
+    res.status(err.statusCode ?? 400).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/:id/indicacao', optionalJwt, async (req, res) => {
+  try {
+    const { registrarIndicacao } = await import('../mgm');
+    const item = await propostasService.getById(Number(req.params.id));
+    if (!item?.tokenPublico) {
+      return res.status(400).json({ success: false, error: 'Proposta sem token público' });
+    }
+    const data = await registrarIndicacao({
+      indicadorId: Number(req.body.indicadorId),
+      tokenProposta: item.tokenPublico,
+      canal: req.body.canal,
+      indicadoEmail: req.body.indicadoEmail,
+      indicadoTelefone: req.body.indicadoTelefone,
+    });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/ia-sugerir', ...staffAuth, async (req, res) => {
+  try {
+    const { sugerirPacoteFromProposta } = await import('../ia-copiloto');
+    const data = await sugerirPacoteFromProposta(Number(req.params.id));
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:id/pacotes-template/from-proposta', ...staffAuth, async (req, res) => {
+  try {
+    const { criarTemplateFromProposta } = await import('../ia-copiloto');
+    const data = await criarTemplateFromProposta(
+      Number(req.params.id),
+      req.body.enterpriseId ? Number(req.body.enterpriseId) : undefined,
+    );
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.get('/:id', optionalJwt, async (req, res) => {
   try {
     const item = await propostasService.getById(Number(req.params.id));

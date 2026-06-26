@@ -34,6 +34,7 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
   const [guestName, setGuestName] = useState('');
   const [message, setMessage] = useState('');
   const [liveMessages, setLiveMessages] = useState<PropostaChatMessage[]>([]);
+  const [exibirComparativo, setExibirComparativo] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
   const { data: propostaRes, isLoading, error } = usePropostaPublica(propostaId);
@@ -46,6 +47,21 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
   const proposta = propostaRes?.data;
   const hitl = hitlRes?.data;
   const canRespond = proposta && !['accepted', 'rejected', 'cancelled'].includes(proposta.status);
+  const comparativo = (proposta?.comparativoCache ?? []) as Array<{
+    titulo: string;
+    preco: number;
+    fornecedor: string;
+    fonte?: string;
+  }>;
+
+  useEffect(() => {
+    if (proposta?.exibirComparativo) setExibirComparativo(true);
+  }, [proposta?.exibirComparativo]);
+
+  useEffect(() => {
+    if (!propostaId) return;
+    void fetch(`/api/propostas/${propostaId}/visualizacao`, { method: 'POST' }).catch(() => undefined);
+  }, [propostaId]);
 
   useEffect(() => {
     if (chatRes?.data) setLiveMessages(chatRes.data);
@@ -67,6 +83,10 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
         if (prev.some((m) => m.id === payload.message.id)) return prev;
         return [...prev, payload.message];
       });
+    });
+
+    socket.on('comparativo:revelado', () => {
+      setExibirComparativo(true);
     });
 
     return () => {
@@ -133,6 +153,26 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
               <li key={i} className="flex justify-between border-b border-slate-100 py-2 text-sm">
                 <span>{String(item.descricao ?? item.nome ?? `Item ${i + 1}`)}</span>
                 {item.valor != null && <span>{formatCurrency(String(item.valor), proposta.moeda)}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {exibirComparativo && comparativo.length > 0 && (
+        <section className="mb-8 animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-amber-200 bg-amber-50 p-6 duration-500">
+          <h2 className="mb-2 text-lg font-semibold text-amber-900">Referências de mercado</h2>
+          <p className="mb-4 text-sm text-amber-800">
+            Valores de referência coletados em fontes públicas — apenas para comparação.
+          </p>
+          <ul className="space-y-3">
+            {comparativo.map((o, i) => (
+              <li key={i} className="flex items-center justify-between rounded-lg bg-white px-4 py-3 text-sm shadow-sm">
+                <div>
+                  <p className="font-medium text-slate-900">{o.titulo}</p>
+                  <p className="text-xs text-slate-500">{o.fornecedor}</p>
+                </div>
+                <span className="font-semibold text-slate-700">{formatCurrency(o.preco, proposta.moeda)}</span>
               </li>
             ))}
           </ul>
