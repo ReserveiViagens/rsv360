@@ -108,3 +108,12 @@ export function limparMemoryCacheRedis(): void {
   memoryStore.clear();
   redisClient = undefined;
 }
+
+/** Encerra cliente Redis aberto (testes — evita Jest pendurado). */
+export async function disconnectRedisCache(): Promise<void> {
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  redisClient = undefined;
+  memoryStore.clear();
+}
