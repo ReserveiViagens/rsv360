@@ -32,6 +32,13 @@ async function startServer() {
       console.warn('[fornecedores-hub] Worker reservas não disponível:', err.message);
     }
 
+    try {
+      const { startPropostasWorker } = require('../server/modules/propostas/propostas.worker');
+      void startPropostasWorker();
+    } catch (err) {
+      console.warn('[propostas] Worker objeção não disponível:', err.message);
+    }
+
     server.listen(PORT, () => {
       console.log(`[SERVER] RSV360 Backend API Server running on port ${PORT}`);
       console.log(`[SERVER] Health check: http://localhost:${PORT}/health`);
