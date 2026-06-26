@@ -40,6 +40,11 @@ services:
     command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - rsv360_prod_redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   backend:
     image: ${RSV360_BACKEND_IMAGE:-ghcr.io/reserveiviagens/rsv360/backend:latest}
@@ -52,12 +57,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - '3002:3002'
     environment:
       PORT: 3002
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      FORNECEDORES_ENCRYPTION_KEY: ${FORNECEDORES_ENCRYPTION_KEY}
       JWT_SECRET: ${JWT_SECRET}
       OAUTH_BFF_SECRET: ${OAUTH_BFF_SECRET}
       OAUTH_DEV_MOCK: ${OAUTH_DEV_MOCK:-false}
