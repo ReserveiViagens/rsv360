@@ -50,6 +50,11 @@ services:
       - '6379:6379'
     volumes:
       - rsv360_redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   backend:
     build:
@@ -62,13 +67,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - '3002:3002'
     environment:
       PORT: 3002
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      REDIS_DISABLED: 'true'
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET}
       MP_ACCESS_TOKEN: test-token
       META_PIXEL_ID: G-XXXXXXXXXX
@@ -156,7 +163,7 @@ services:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       backend:
         condition: service_healthy
     ports:
