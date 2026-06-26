@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { invalidarCache, resolverOfertas } from '../resolver';
+import { ConflictError } from '../lock';
+import { reservarVaga } from '../services/reservar-vaga';
 import { fornecedoresApiService } from '../services/fornecedores-api.service';
 
 const router = Router();
@@ -76,6 +78,25 @@ router.post('/invalidar-cache', ...adminAuth, async (req, res) => {
     const chave = await invalidarCache(tipo, destino);
     res.json({ success: true, chave });
   } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/reservar-vaga', ...adminAuth, async (req, res) => {
+  try {
+    const parceiroId = String(req.body?.parceiroId ?? '');
+    const ofertaId = String(req.body?.ofertaId ?? '');
+    if (!parceiroId || !ofertaId) {
+      return res.status(400).json({ success: false, error: 'parceiroId e ofertaId obrigatórios' });
+    }
+    const propostaId =
+      req.body?.propostaId != null ? Number(req.body.propostaId) : undefined;
+    const data = await reservarVaga({ parceiroId, ofertaId, propostaId });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    if (error instanceof ConflictError) {
+      return res.status(409).json({ success: false, error: error.message });
+    }
     res.status(500).json({ success: false, error: (error as Error).message });
   }
 });

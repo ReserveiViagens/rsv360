@@ -1,5 +1,6 @@
 import type { Server, Socket } from 'socket.io';
 import { propostasService } from '../services/propostas.service';
+import { parceiroRoomName } from './proposta-broadcast';
 
 const { verifyAccessToken } = require('../../../../backend/src/api/v1/auth/jwt-verify');
 
@@ -135,6 +136,21 @@ export function registerPropostaChatSocket(io: Server) {
       } catch (error) {
         socket.emit('error', { message: (error as Error).message });
       }
+    });
+
+    socket.on('join:parceiro', (payload: { parceiroId: string; token?: string }) => {
+      const parceiroId = String(payload?.parceiroId ?? '').trim();
+      if (!parceiroId) {
+        socket.emit('error', { message: 'parceiroId obrigatório' });
+        return;
+      }
+      const user = verifySocketToken(payload.token ?? undefined);
+      if (!user) {
+        socket.emit('error', { message: 'Token obrigatório para canal parceiro' });
+        return;
+      }
+      socket.join(parceiroRoomName(parceiroId));
+      socket.emit('joined:parceiro', { parceiroId });
     });
   });
 

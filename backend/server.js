@@ -18,9 +18,18 @@ async function startServer() {
 
     try {
       const { registerPropostaChatSocket } = require('../server/modules/propostas/websocket/proposta-chat.socket');
+      const { setPropostaIo } = require('../server/modules/propostas/websocket/proposta-broadcast');
       registerPropostaChatSocket(io);
+      setPropostaIo(io);
     } catch (err) {
       console.warn('[WS] Propostas Chat HITL não disponível:', err.message);
+    }
+
+    try {
+      const { startReservasWorker } = require('../server/modules/fornecedores-hub/reservas.worker');
+      void startReservasWorker();
+    } catch (err) {
+      console.warn('[fornecedores-hub] Worker reservas não disponível:', err.message);
     }
 
     server.listen(PORT, () => {
