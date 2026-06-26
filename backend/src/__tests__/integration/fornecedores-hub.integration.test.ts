@@ -12,8 +12,18 @@ describeDb('Fornecedores Hub — CRUD admin', () => {
   beforeAll(async () => {
     process.env.FORNECEDORES_ENCRYPTION_KEY =
       process.env.FORNECEDORES_ENCRYPTION_KEY || 'integration-test-key-32-chars-min!!';
+    process.env.REDIS_DISABLED = process.env.REDIS_DISABLED ?? 'true';
     applyTestMigrations();
     app = await createApp();
+  });
+
+  afterAll(async () => {
+    const { disconnectRedisCache } = await import(
+      '../../../../server/modules/fornecedores-hub/cache'
+    );
+    const { closeDbPool } = await import('../../db/drizzle');
+    await disconnectRedisCache();
+    await closeDbPool();
   });
 
   it('GET /health sem auth', async () => {
