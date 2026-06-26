@@ -29,7 +29,7 @@ export async function agendarExpiracaoLock(data: ExpirarLockJobData & { delayMs:
       parceiroId: data.parceiroId,
     },
     {
-      jobId: `expirar-lock:${data.reservaId}`,
+      jobId: `expirar-lock-${data.reservaId}`,
       delay: data.delayMs,
       removeOnComplete: 100,
       removeOnFail: 50,

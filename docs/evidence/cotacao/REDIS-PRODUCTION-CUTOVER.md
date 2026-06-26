@@ -54,4 +54,25 @@ npx tsx server/scripts/smoke-redis-cutover.ts
 | Script | Commit ref | Escopo |
 |--------|------------|--------|
 | `server/scripts/smoke-aprovacao.ts` | `fcf4bc58` | PR 8 auditoria |
-| `server/scripts/smoke-redis-cutover.ts` | (este patch) | PR 4 + PR 5 Redis |
+| `server/scripts/smoke-redis-cutover.ts` | `2a1b1d70` | PR 4 + PR 5 Redis |
+| `server/scripts/smoke-e2e-cotacao.ts` | (este patch) | Funil E2E PR 4–10 com Redis ON |
+
+## Ensaio geral local (sem VPS)
+
+```powershell
+cd "C:\Users\RSV 360\Documents\rsv360"
+$env:DATABASE_URL="postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@127.0.0.1:5433/rsv_360_ecosystem"
+$env:REDIS_URL="redis://127.0.0.1:6379"
+$env:FORNECEDORES_ENCRYPTION_KEY="integration-test-key-32-chars-min!!"
+$env:FORNECEDORES_ALLOW_PLAINTEXT_API_KEY="true"   # só dev/smoke
+Remove-Item Env:REDIS_DISABLED -ErrorAction SilentlyContinue
+docker compose up -d postgres redis backend site-publico
+
+npm run test:hub
+.\scripts\local-checks.ps1 -Action all
+npx tsx server/scripts/smoke-aprovacao.ts
+npx tsx server/scripts/smoke-redis-cutover.ts
+npx tsx server/scripts/smoke-e2e-cotacao.ts
+```
+
+**Nota:** `jobId` BullMQ não pode conter `:` (BullMQ v5) — usar hífen (`expirar-lock-{uuid}`, `avaliar-objecao-{id}`).

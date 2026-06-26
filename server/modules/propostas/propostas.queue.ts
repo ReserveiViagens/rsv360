@@ -21,7 +21,7 @@ export async function agendarAvaliarObjecao(propostaId: number, delayMs: number)
     JOB_AVALIAR_OBJECAO,
     { propostaId },
     {
-      jobId: `avaliar-objecao:${propostaId}`,
+      jobId: `avaliar-objecao-${propostaId}`,
       delay: delayMs,
       removeOnComplete: 100,
       removeOnFail: 50,
