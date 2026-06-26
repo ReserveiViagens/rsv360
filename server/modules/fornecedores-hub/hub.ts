@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm';
-import { db } from '../../lib/db';
-import { fornecedoresApi } from '../../../backend/src/db/schema/fornecedores-api';
+import { decryptApiKey } from './crypto';
+import { comBreaker } from './breaker';
 import { getAdapterFactory } from './registry';
 import type { BuscaParams, OfertaNormalizada } from './types';
+import { fornecedoresApiService } from './services/fornecedores-api.service';
 
 export function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -21,6 +21,23 @@ export type FornecedorHubRow = {
   timeoutMs: number;
 };
 
+function instantiateAdapter(row: FornecedorHubRow) {
+  const factory = getAdapterFactory(row.adapter);
+  if (!factory) return null;
+
+  const inner = factory({
+    nome: row.nome,
+    endpoint: row.endpoint,
+    apiKey: row.apiKey,
+  });
+
+  return comBreaker(inner, {
+    fornecedor: row.nome,
+    adapterKey: row.adapter,
+    timeoutMs: row.timeoutMs ?? 3000,
+  });
+}
+
 /** Núcleo testável: consulta adapters em paralelo sem travar por um fornecedor lento. */
 export async function buscarComFornecedores(
   destino: string,
@@ -29,14 +46,9 @@ export async function buscarComFornecedores(
 ): Promise<OfertaNormalizada[]> {
   const resultados = await Promise.allSettled(
     rows.map(async (row) => {
-      const factory = getAdapterFactory(row.adapter);
-      if (!factory) return [] as OfertaNormalizada[];
-      const adapter = factory({
-        nome: row.nome,
-        endpoint: row.endpoint,
-        apiKey: row.apiKey,
-      });
-      return withTimeout(adapter.buscar(destino, params), row.timeoutMs ?? 3000);
+      const adapter = instantiateAdapter(row);
+      if (!adapter) return [] as OfertaNormalizada[];
+      return adapter.buscar(destino, params);
     }),
   );
 
@@ -49,22 +61,13 @@ export async function buscarPrecosConcorrencia(
   destino: string,
   params: BuscaParams = {},
 ): Promise<OfertaNormalizada[]> {
-  const ativos = await db
-    .select({
-      nome: fornecedoresApi.nome,
-      adapter: fornecedoresApi.adapter,
-      endpoint: fornecedoresApi.endpoint,
-      apiKey: fornecedoresApi.apiKey,
-      timeoutMs: fornecedoresApi.timeoutMs,
-    })
-    .from(fornecedoresApi)
-    .where(eq(fornecedoresApi.ativo, true));
+  const ativos = await fornecedoresApiService.listAtivosForHub();
 
   const rows: FornecedorHubRow[] = ativos.map((row) => ({
     nome: row.nome,
     adapter: row.adapter,
     endpoint: row.endpoint,
-    apiKey: row.apiKey,
+    apiKey: decryptApiKey(row.apiKey),
     timeoutMs: row.timeoutMs ?? 3000,
   }));
 
