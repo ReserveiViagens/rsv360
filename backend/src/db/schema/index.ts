@@ -22,3 +22,4 @@ export * from './fase1-ext';
 export * from './fornecedores-api';
 export * from './indicacoes';
 export * from './auditoria';
+export * from './ofertas-cache';

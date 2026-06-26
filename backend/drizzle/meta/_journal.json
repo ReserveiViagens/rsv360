@@ -99,6 +99,13 @@
       "when": 1782207000000,
       "tag": "0013_cotacao_interativa_v2",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1782208000000,
+      "tag": "0014_ofertas_cache",
+      "breakpoints": true
     }
   ]
 }
