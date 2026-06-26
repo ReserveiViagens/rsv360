@@ -31,3 +31,5 @@ __exportStar(require("./utils/index.js"), exports);
 __exportStar(require("./schema.js"), exports);
 // Fase 1 API types & paths
 __exportStar(require("./fase1-api.js"), exports);
+// Cotação interativa v2 — contrato Hub / comparativo_cache
+__exportStar(require("./cotacao/oferta-normalizada.js"), exports);

@@ -21,3 +21,6 @@ export * from './schema.js';
 
 // Fase 1 API types & paths
 export * from './fase1-api.js';
+
+// Cotação interativa v2 — contrato Hub / comparativo_cache
+export * from './cotacao/oferta-normalizada.js';
