@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
-import { buscarPrecosConcorrencia } from '../hub';
+import { invalidarCache, resolverOfertas } from '../resolver';
 import { fornecedoresApiService } from '../services/fornecedores-api.service';
 
 const router = Router();
@@ -58,8 +58,23 @@ router.post('/buscar', ...adminAuth, async (req, res) => {
     if (!destino) {
       return res.status(400).json({ success: false, error: 'destino obrigatório' });
     }
-    const ofertas = await buscarPrecosConcorrencia(destino, req.body?.params ?? {});
-    res.json({ success: true, data: ofertas });
+    const tipo = String(req.body?.tipo ?? 'hospedagem');
+    const { ofertas, origem, chave } = await resolverOfertas(tipo, destino, req.body?.params ?? {});
+    res.json({ success: true, data: ofertas, origem, chave });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/invalidar-cache', ...adminAuth, async (req, res) => {
+  try {
+    const destino = String(req.body?.destino ?? '');
+    const tipo = String(req.body?.tipo ?? 'hospedagem');
+    if (!destino) {
+      return res.status(400).json({ success: false, error: 'destino obrigatório' });
+    }
+    const chave = await invalidarCache(tipo, destino);
+    res.json({ success: true, chave });
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
   }
