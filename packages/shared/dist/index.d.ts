@@ -9,3 +9,6 @@ export * from './utils/index.js';
 export * from './schema.js';
 export * from './fase1-api.js';
 export * from './cotacao/oferta-normalizada.js';
+export * from './cotacao/kit-capacidade.js';
+export * from './cotacao/buscar-por-relevancia.js';
+export * from './cotacao/intencao-acomodacao.js';

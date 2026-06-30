@@ -33,3 +33,6 @@ __exportStar(require("./schema.js"), exports);
 __exportStar(require("./fase1-api.js"), exports);
 // Cotação interativa v2 — contrato Hub / comparativo_cache
 __exportStar(require("./cotacao/oferta-normalizada.js"), exports);
+__exportStar(require("./cotacao/kit-capacidade.js"), exports);
+__exportStar(require("./cotacao/buscar-por-relevancia.js"), exports);
+__exportStar(require("./cotacao/intencao-acomodacao.js"), exports);

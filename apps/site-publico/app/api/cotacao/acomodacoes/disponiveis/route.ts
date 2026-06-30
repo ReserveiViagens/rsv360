@@ -1,0 +1,25 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+function backendUrl(): string {
+  return (
+    process.env.BACKEND_INTERNAL_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
+    'http://localhost:3002'
+  ).replace(/\/$/, '');
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const qs = req.nextUrl.searchParams.toString();
+    const upstream = await fetch(`${backendUrl()}/api/v1/acomodacoes/disponiveis?${qs}`, {
+      cache: 'no-store',
+    });
+    const json = await upstream.json();
+    return NextResponse.json(json, { status: upstream.status });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: (error as Error).message },
+      { status: 500 },
+    );
+  }
+}
