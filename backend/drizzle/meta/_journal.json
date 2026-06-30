@@ -120,6 +120,13 @@
       "when": 1782211000000,
       "tag": "0017_conhecimento_chunks",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1782215000000,
+      "tag": "0021_acomodacoes_tipologia",
+      "breakpoints": true
     }
   ]
 }

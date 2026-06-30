@@ -24,3 +24,6 @@ export * from './indicacoes';
 export * from './auditoria';
 export * from './ofertas-cache';
 export * from './reservas-cotacao';
+export * from './tipos-acomodacao';
+export * from './acomodacoes';
+export * from './wizard-addons';

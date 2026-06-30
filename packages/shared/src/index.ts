@@ -24,3 +24,6 @@ export * from './fase1-api.js';
 
 // Cotação interativa v2 — contrato Hub / comparativo_cache
 export * from './cotacao/oferta-normalizada.js';
+export * from './cotacao/kit-capacidade.js';
+export * from './cotacao/buscar-por-relevancia.js';
+export * from './cotacao/intencao-acomodacao.js';
