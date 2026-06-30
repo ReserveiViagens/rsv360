@@ -35,6 +35,7 @@ const groups: Array<{ label: string; items: NavItem[] }> = [
       { href: '/crm', label: 'CRM & Fidelidade', icon: Users },
       { href: '/orcamentos', label: 'Orçamentos', icon: FileText },
       { href: '/propostas', label: 'Propostas', icon: MessageSquare },
+      { href: '/acomodacoes/import', label: 'Importar inventário', icon: FileText },
       { href: '/campanhas', label: 'Campanhas', icon: Sparkles },
     ],
   },

@@ -39,6 +39,13 @@ async function startServer() {
       console.warn('[propostas] Worker objeção não disponível:', err.message);
     }
 
+    try {
+      const { startImportacoesWorker } = require('../server/modules/acomodacoes/importacoes.worker');
+      void startImportacoesWorker();
+    } catch (err) {
+      console.warn('[importacoes] Worker importações não disponível:', err.message);
+    }
+
     server.listen(PORT, () => {
       console.log(`[SERVER] RSV360 Backend API Server running on port ${PORT}`);
       console.log(`[SERVER] Health check: http://localhost:${PORT}/health`);
