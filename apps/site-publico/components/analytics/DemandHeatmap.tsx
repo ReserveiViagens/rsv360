@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { BookingBreakdownTable, type BookingBreakdownItem } from './BookingBreakdownTable';
 
 interface HeatmapDataPoint {
   date: string;
@@ -38,6 +39,7 @@ interface DemandHeatmapData {
     start: string;
     end: string;
   };
+  breakdown?: BookingBreakdownItem[];
 }
 
 interface DemandHeatmapProps {
@@ -56,6 +58,13 @@ export function DemandHeatmap({ propertyId, className }: DemandHeatmapProps) {
     new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  const selectedBreakdown =
+    data?.breakdown?.filter((b) => {
+      if (!selectedDate) return true;
+      const bookingDate = b.start_date.slice(0, 10);
+      return bookingDate === selectedDate;
+    }) ?? [];
 
   useEffect(() => {
     fetchHeatmap();
@@ -285,6 +294,17 @@ export function DemandHeatmap({ propertyId, className }: DemandHeatmapProps) {
                   </div>
                 );
               })()}
+            </div>
+          )}
+
+          {data.breakdown && data.breakdown.length > 0 && (
+            <div className="space-y-3 pt-4 border-t">
+              <h3 className="font-semibold text-lg">
+                {selectedDate
+                  ? `Reservas em ${formatDate(selectedDate)}`
+                  : 'Todas as reservas no período'}
+              </h3>
+              <BookingBreakdownTable bookings={selectedBreakdown} />
             </div>
           )}
 

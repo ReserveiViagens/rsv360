@@ -1,4 +1,7 @@
 import type { Server, Socket } from 'socket.io';
+import { eq } from 'drizzle-orm';
+import { db } from '../../../lib/db';
+import { propostas } from '../../../../backend/src/db/schema/propostas';
 import { propostasService } from '../services/propostas.service';
 import { parceiroRoomName } from './proposta-broadcast';
 
@@ -41,11 +44,22 @@ export function registerPropostaChatSocket(io: Server) {
   const nsp = io.of('/propostas');
 
   nsp.on('connection', (socket: Socket) => {
-    socket.on('join', async (payload: { propostaId: number; token?: string; guestName?: string }) => {
+    socket.on('join', async (payload: { propostaId?: number; tokenPublico?: string; token?: string; guestName?: string }) => {
       try {
-        const propostaId = Number(payload?.propostaId);
+        let propostaId = Number(payload?.propostaId);
+        const tokenPublico = payload.tokenPublico;
+
+        if (!propostaId && tokenPublico) {
+          const [row] = await db
+            .select({ id: propostas.id })
+            .from(propostas)
+            .where(eq(propostas.tokenPublico, tokenPublico))
+            .limit(1);
+          propostaId = row?.id ?? 0;
+        }
+
         if (!propostaId) {
-          socket.emit('error', { message: 'propostaId obrigatório' });
+          socket.emit('error', { message: 'propostaId ou tokenPublico obrigatório' });
           return;
         }
 
@@ -54,6 +68,19 @@ export function registerPropostaChatSocket(io: Server) {
         socket.data.user = user;
         socket.data.guestName = payload.guestName;
         socket.join(roomName(propostaId));
+
+        if (tokenPublico) {
+          socket.join(roomName(tokenPublico));
+        } else {
+          const [row] = await db
+            .select({ tokenPublico: propostas.tokenPublico })
+            .from(propostas)
+            .where(eq(propostas.id, propostaId))
+            .limit(1);
+          if (row?.tokenPublico) {
+            socket.join(roomName(row.tokenPublico));
+          }
+        }
 
         const hitl = await propostasService.getHitlState(propostaId);
         const history = await propostasService.listChat(propostaId);

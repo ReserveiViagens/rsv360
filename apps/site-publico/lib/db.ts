@@ -100,8 +100,10 @@ export async function queryDb(
 
 // Helper to get website content by type
 export async function getWebsiteContent(pageType: string) {
-  const rows = await queryDatabase(
-    `SELECT 
+  let rows: any[];
+  try {
+    rows = await queryDatabase(
+      `SELECT 
       id,
       page_type,
       content_id,
@@ -117,8 +119,16 @@ export async function getWebsiteContent(pageType: string) {
     FROM website_content 
     WHERE page_type = $1 
     ORDER BY order_index ASC, created_at DESC`,
-    [pageType]
-  );
+      [pageType],
+    );
+  } catch (error: unknown) {
+    const pgCode = (error as { code?: string })?.code;
+    if (pgCode === '42P01') {
+      console.warn(`website_content ausente — retornando lista vazia para ${pageType}`);
+      return [];
+    }
+    throw error;
+  }
 
   return rows.map((row: any) => ({
     id: row.id,

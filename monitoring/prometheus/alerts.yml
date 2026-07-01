@@ -15,7 +15,7 @@ groups:
           description: 'O job rsv360-backend parou de responder.'
 
       - alert: RSV360BackendHighMemory
-        expr: process_resident_memory_bytes{job="rsv360-backend"} > 900000000
+        expr: rsv360_process_resident_memory_bytes{job="rsv360-backend"} > 900000000
         for: 10m
         labels:
           severity: warning
@@ -35,9 +35,9 @@ groups:
       - alert: RSV360BackendHigh5xxRate
         expr: |
           (
-            sum(rate(http_requests_total{job="rsv360-backend",status=~"5.."}[5m]))
+            sum(rate(rsv360_http_requests_total{job="rsv360-backend",status_code=~"5.."}[5m]))
             /
-            sum(rate(http_requests_total{job="rsv360-backend"}[5m]))
+            sum(rate(rsv360_http_requests_total{job="rsv360-backend"}[5m]))
           ) > 0.05
         for: 1h
         labels:
@@ -45,3 +45,21 @@ groups:
         annotations:
           summary: 'Taxa 5xx backend > 5% (1h)'
           description: 'Alinhado ao critério F5 do soak 72h.'
+
+      - alert: RSV360AvisoExpiracaoFailed
+        expr: increase(rsv360_avisos_recuperacao_total{result="failed"}[15m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Falha no aviso proativo de expiração'
+          description: 'Pelo menos um aviso_expiracao_failed nos últimos 15 min — verificar EvolutionAPI/SMTP.'
+
+      - alert: RSV360PropostasJobFailed
+        expr: increase(rsv360_propostas_jobs_failed_total[15m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Job BullMQ de propostas falhou'
+          description: 'Ver logs JSON com event aviso_expiracao_job_failed ou expirar-proposta.'

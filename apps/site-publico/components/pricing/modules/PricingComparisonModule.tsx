@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { PricingBookingsBreakdown } from '../PricingBookingsBreakdown';
+import type { BookingBreakdownItem } from '@/components/analytics/BookingBreakdownTable';
 
 type CompareData = {
   current_price: number;
@@ -23,10 +25,15 @@ type CompareData = {
   recommendation: string;
 };
 
+type CompareResponse = {
+  data: CompareData;
+  breakdown: BookingBreakdownItem[];
+};
+
 function ComparisonPanel({ itemId }: { itemId: string }) {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
-  const { data, isLoading, error } = useQuery({
+  const { data: response, isLoading, error } = useQuery({
     queryKey: ['pricing-compare', itemId, date],
     queryFn: async () => {
       const res = await fetch(
@@ -34,9 +41,12 @@ function ComparisonPanel({ itemId }: { itemId: string }) {
       );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Erro na comparação');
-      return json.data as CompareData;
+      return json as CompareResponse;
     },
   });
+
+  const data = response?.data;
+  const breakdown = response?.breakdown ?? [];
 
   const positionLabel: Record<string, string> = {
     competitive: 'Competitivo',
@@ -100,6 +110,13 @@ function ComparisonPanel({ itemId }: { itemId: string }) {
             competitors={data.competitors}
             currentPrice={data.current_price}
             title="Comparativo detalhado"
+          />
+
+          <PricingBookingsBreakdown
+            title={`Reservas em ${new Date(date + 'T12:00:00').toLocaleDateString('pt-BR')}`}
+            description="Clientes e valores das reservas na data de referência do comparativo."
+            bookings={breakdown}
+            showProperty={false}
           />
         </>
       ) : null}

@@ -36,6 +36,8 @@
   --success-foreground: hsl(355.7 100% 97.3%);
   --warning: hsl(38.7 92% 50%);
   --warning-foreground: hsl(48 96% 89%);
+  --accent-lime: #D0F308;
+  --accent-lime-foreground: #1a1a1a;
   --radius: 0.5rem;
   --chart-1: hsl(12 76% 61%);
   --chart-2: hsl(173 58% 39%);
@@ -115,6 +117,8 @@
   --color-ring: var(--ring);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-accent-lime: var(--accent-lime);
+  --color-accent-lime-foreground: var(--accent-lime-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

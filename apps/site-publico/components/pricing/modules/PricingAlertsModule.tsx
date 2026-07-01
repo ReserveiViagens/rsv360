@@ -7,6 +7,8 @@ import { PricingModuleShell } from '../PricingModuleShell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PricingBookingsBreakdown } from '../PricingBookingsBreakdown';
+import type { BookingBreakdownItem } from '@/components/analytics/BookingBreakdownTable';
 
 type AlertRow = {
   id: number;
@@ -30,15 +32,21 @@ const severityClass: Record<string, string> = {
 function AlertsPanel({ itemId }: { itemId: string }) {
   const qc = useQueryClient();
 
-  const { data: alerts, isLoading, refetch, isFetching } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['pricing-alerts', itemId],
     queryFn: async () => {
       const res = await fetch(`/api/pricing/alerts?property_id=${itemId}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Erro ao carregar alertas');
-      return (json.data as AlertRow[]) || [];
+      return {
+        alerts: (json.data as AlertRow[]) || [],
+        breakdown: (json.breakdown as BookingBreakdownItem[]) || [],
+      };
     },
   });
+
+  const alerts = data?.alerts;
+  const breakdown = data?.breakdown ?? [];
 
   const generate = useMutation({
     mutationFn: async () => {
@@ -115,6 +123,15 @@ function AlertsPanel({ itemId }: { itemId: string }) {
             </Card>
           ))}
         </div>
+      )}
+
+      {breakdown.length > 0 && (
+        <PricingBookingsBreakdown
+          title="Reservas relacionadas à propriedade"
+          description="Contexto operacional das notificações — clientes, datas e valores."
+          bookings={breakdown}
+          showProperty={false}
+        />
       )}
     </div>
   );

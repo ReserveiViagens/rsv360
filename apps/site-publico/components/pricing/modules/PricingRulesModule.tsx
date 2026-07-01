@@ -17,6 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { PricingBookingsBreakdown } from '../PricingBookingsBreakdown';
+import type { BookingBreakdownItem } from '@/components/analytics/BookingBreakdownTable';
 import {
   Select,
   SelectContent,
@@ -52,15 +54,21 @@ function RulesPanel({ itemId }: { itemId: string }) {
     multiplier: 1.15,
   });
 
-  const { data: rules, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['pricing-rules', itemId],
     queryFn: async () => {
       const res = await fetch(`/api/pricing/rules?item_id=${itemId}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Erro ao carregar regras');
-      return (json.data as PricingRule[]).filter((r) => r.rule_type !== 'seasonal');
+      return {
+        rules: (json.data as PricingRule[]).filter((r) => r.rule_type !== 'seasonal'),
+        breakdown: (json.breakdown as BookingBreakdownItem[]) || [],
+      };
     },
   });
+
+  const rules = data?.rules;
+  const breakdown = data?.breakdown ?? [];
 
   const createRule = useMutation({
     mutationFn: async () => {
@@ -221,6 +229,15 @@ function RulesPanel({ itemId }: { itemId: string }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {breakdown.length > 0 && (
+        <PricingBookingsBreakdown
+          title="Reservas da propriedade (contexto das regras)"
+          description="Reservas confirmadas usadas para validar o impacto das regras de tarifa."
+          bookings={breakdown}
+          showProperty={false}
+        />
+      )}
     </div>
   );
 }

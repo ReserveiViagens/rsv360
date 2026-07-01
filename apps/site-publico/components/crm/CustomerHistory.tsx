@@ -80,10 +80,16 @@ export function CustomerHistory({ customerId, className }: CustomerHistoryProps)
         setInteractions(interactionsData.data || []);
       }
 
-      // Buscar reservas (assumindo que existe uma API de bookings)
-      // Por enquanto, vamos usar dados mockados ou deixar vazio
-      // TODO: Integrar com API de bookings quando disponível
-      setBookings([]);
+      const bookingsResponse = await fetch(
+        `/api/crm/customers/${customerId}/bookings`
+      );
+
+      if (bookingsResponse.ok) {
+        const bookingsData = await bookingsResponse.json();
+        setBookings(bookingsData.data || []);
+      } else {
+        setBookings([]);
+      }
 
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar histórico');

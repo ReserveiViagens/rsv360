@@ -28,6 +28,8 @@ export const propostas = pgTable(
     valorTotal: numeric('valor_total', { precision: 12, scale: 2 }).notNull().default('0'),
     moeda: varchar('moeda', { length: 3 }).notNull().default('BRL'),
     validoAte: timestamp('valido_ate'),
+    avisoExpiracaoEnviado: boolean('aviso_expiracao_enviado').default(false),
+    roteiroEntregue: boolean('roteiro_entregue').notNull().default(false),
     versao: integer('versao').notNull().default(1),
     isPublica: boolean('is_publica').default(false),
     tokenPublico: varchar('token_publico', { length: 64 }),

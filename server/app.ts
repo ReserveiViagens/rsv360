@@ -9,6 +9,9 @@ import { registerLogisticaModule } from './modules/logistica';
 import { registerRelatoriosModule } from './modules/relatorios';
 import { registerFornecedoresHubModule } from './modules/fornecedores-hub';
 import { registerAcomodacoesModule } from './modules/acomodacoes';
+import { registerCotacaoPublicaModule } from './modules/cotacao-publica';
+import { registerConfiguracoesModule } from './modules/configuracoes';
+import { registerVouchersModule } from './modules/vouchers';
 
 /**
  * Registra os 7 módulos backend da Fase 1 (migração Sistema A → B).
@@ -24,7 +27,12 @@ export function registerMigracaoFase1Modules(app: Express, io?: Server) {
   registerRelatoriosModule(app);
   registerFornecedoresHubModule(app);
   registerAcomodacoesModule(app);
-  console.log('[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações registrados ✓');
+  registerCotacaoPublicaModule(app);
+  registerConfiguracoesModule(app);
+  registerVouchersModule(app);
+  console.log(
+    '[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações + Cotação Pública + Configurações registrados ✓',
+  );
 }
 
 module.exports = { registerMigracaoFase1Modules };

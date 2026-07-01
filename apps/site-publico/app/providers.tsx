@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastWrapper } from '@/components/providers/toast-wrapper';
 import { AuthProvider } from '@/components/auth-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { PwaRegister } from '@/components/pwa-register';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -27,7 +29,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ToastWrapper>
         <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {children}
+            <PwaRegister />
+            <Toaster richColors closeButton position="top-center" />
+          </ThemeProvider>
         </AuthProvider>
       </ToastWrapper>
     </QueryClientProvider>

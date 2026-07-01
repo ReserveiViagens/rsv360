@@ -6,9 +6,10 @@
  */
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   DollarSign, TrendingUp, Calendar, Download,
-  Loader2, RefreshCw, BarChart3, Filter
+  Loader2, RefreshCw, BarChart3, Filter, ChevronRight
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -404,30 +405,36 @@ export function AnalyticsDashboard({ propertyId, className }: AnalyticsDashboard
           <CardContent>
             <div className="space-y-2">
               {dashboardData.topProperties.map((property, index) => (
-                <div
+                <Link
                   key={property.property_id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  href={`/analytics/properties/${property.property_id}`}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <div>
-                      <div className="font-medium">{property.property_name}</div>
+                      <div className="font-medium group-hover:text-primary">
+                        {property.property_name}
+                      </div>
                       <div className="text-sm text-gray-500">
                         {property.bookings} reservas
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-primary">
-                      {formatCurrency(property.revenue)}
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <div className="font-bold text-primary">
+                        {formatCurrency(property.revenue)}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {formatCurrency(property.avg_booking_value)} médio
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {formatCurrency(property.avg_booking_value)} médio
-                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </CardContent>

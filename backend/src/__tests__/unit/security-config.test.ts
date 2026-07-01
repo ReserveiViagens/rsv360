@@ -2,9 +2,11 @@ const express = require('express');
 const { SecurityConfig } = require('../../middleware/security-config');
 
 describe('SecurityConfig', () => {
-  it('retorna configuração padrão de CORS', () => {
+  it('retorna configuração padrão de CORS com múltiplas origens', () => {
     const corsOptions = SecurityConfig.getCorsOptions();
     expect(corsOptions.credentials).toBe(true);
+    expect(Array.isArray(corsOptions.origin)).toBe(true);
+    expect(corsOptions.origin.length).toBeGreaterThan(0);
   });
 
   it('adiciona endpoint de health check', async () => {

@@ -8,6 +8,9 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   globalTeardown: '<rootDir>/src/test/global-teardown.ts',
   moduleFileExtensions: ['ts', 'js', 'json'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/../apps/site-publico/$1',
+  },
   transform: {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',

@@ -1,6 +1,7 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, or, sql } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { tiposAcomodacao } from '../../../../backend/src/db/schema/tipos-acomodacao';
+import { empreendimentos } from '../../../../backend/src/db/schema/empreendimentos';
 import {
   acomodacaoImportSchema,
   type AcomodacaoImportDTO,
@@ -48,6 +49,9 @@ export const MAPA_CABECALHOS: Record<string, string> = {
   eletrodomesticos: 'eletrodomesticos',
   amenidades: 'amenidades',
   midia: 'midia',
+  fonte: 'fonte',
+  obs: 'obs',
+  observacoes: 'obs',
 };
 
 const MAPA_CONFIG_SALA: Record<string, AcomodacaoImportDTO['configSala']> = {
@@ -79,13 +83,35 @@ export function slugify(valor: string): string {
 
 export function splitLista(valor: unknown): string[] {
   if (Array.isArray(valor)) return valor.map(String).map((s) => s.trim()).filter(Boolean);
-  if (typeof valor === 'string') {
-    return valor
-      .split(';')
-      .map((s) => s.trim())
-      .filter(Boolean);
+  if (typeof valor !== 'string') return [];
+
+  const parts: string[] = [];
+  let current = '';
+  let depth = 0;
+
+  for (const ch of valor) {
+    if (ch === '(') {
+      depth += 1;
+      current += ch;
+      continue;
+    }
+    if (ch === ')') {
+      depth = Math.max(0, depth - 1);
+      current += ch;
+      continue;
+    }
+    if (ch === ';' && depth === 0) {
+      const trimmed = current.trim();
+      if (trimmed) parts.push(trimmed);
+      current = '';
+      continue;
+    }
+    current += ch;
   }
-  return [];
+
+  const tail = current.trim();
+  if (tail) parts.push(tail);
+  return parts;
 }
 
 export function normalizarEnumSala(valor: unknown): AcomodacaoImportDTO['configSala'] {
@@ -128,8 +154,38 @@ export function normalizarLinhaBruta(
 }
 
 export async function resolverHotel(empreendimento: string): Promise<string | null> {
+  const meta = await resolverHotelComMeta(empreendimento);
+  return meta.hotelId;
+}
+
+export async function resolverHotelComMeta(
+  empreendimento: string,
+): Promise<{ hotelId: string | null; resolvido: boolean }> {
   const trimmed = empreendimento.trim();
-  if (!trimmed) return null;
+  if (!trimmed) return { hotelId: null, resolvido: false };
+
+  const slug = slugify(trimmed);
+  const normalized = removerAcentos(trimmed).toLowerCase().trim();
+
+  try {
+    const [row] = await db
+      .select({ hotelId: empreendimentos.hotelId })
+      .from(empreendimentos)
+      .where(
+        or(
+          eq(empreendimentos.slug, slug),
+          eq(empreendimentos.hotelId, slug),
+          eq(empreendimentos.hotelId, trimmed),
+          sql`lower(${empreendimentos.nomeNormalizado}) = ${normalized}`,
+          sql`lower(${empreendimentos.nomeOficial}) = lower(${trimmed})`,
+          sql`lower(${empreendimentos.nomeNormalizado}) LIKE ${'%' + normalized + '%'}`,
+        ),
+      )
+      .limit(1);
+    if (row?.hotelId) return { hotelId: row.hotelId, resolvido: true };
+  } catch {
+    /* tabela opcional em ambientes de teste */
+  }
 
   try {
     const result = await db.execute<{ content_id: string }>(sql`
@@ -142,13 +198,13 @@ export async function resolverHotel(empreendimento: string): Promise<string | nu
         )
       LIMIT 1
     `);
-    const row = result.rows?.[0];
-    if (row?.content_id) return row.content_id;
+    const cmsRow = result.rows?.[0];
+    if (cmsRow?.content_id) return { hotelId: cmsRow.content_id, resolvido: true };
   } catch {
     /* tabela opcional em ambientes de teste */
   }
 
-  return slugify(trimmed) || null;
+  return { hotelId: slug || null, resolvido: false };
 }
 
 export async function resolverOuCriarTipo(
@@ -179,8 +235,23 @@ export async function normalizarLinha(
   linha: Record<string, unknown>,
   indice: number,
   options?: { criarTipoSeAusente?: boolean },
-): Promise<{ ok: true; dto: AcomodacaoImportResolved } | { ok: false; erros: string[]; indice: number }> {
+): Promise<
+  | { ok: true; dto: AcomodacaoImportResolved }
+  | { ok: false; skip: true; indice: number; erros: string[] }
+  | { ok: false; skip?: false; erros: string[]; indice: number }
+> {
   const normalizada = normalizarLinhaBruta(linha);
+
+  const tipoRaw = String(normalizada.tipo ?? '').trim();
+  if (slugify(tipoRaw) === 'predio') {
+    return {
+      ok: false,
+      skip: true,
+      indice,
+      erros: ['tipo=predio excluído pela política de import'],
+    };
+  }
+
   const parsed = acomodacaoImportSchema.safeParse(normalizada);
 
   if (!parsed.success) {
@@ -191,9 +262,14 @@ export async function normalizarLinha(
     };
   }
 
-  const hotelId = await resolverHotel(parsed.data.empreendimento);
+  const { hotelId, resolvido } = await resolverHotelComMeta(parsed.data.empreendimento);
   if (!hotelId) {
-    return { ok: false, indice, erros: ['empreendimento não resolvido para hotel_id'] };
+    return { ok: false, indice, erros: ['empreendimento sem hotel_id derivável'] };
+  }
+
+  const avisos: string[] = [];
+  if (!resolvido) {
+    avisos.push(`empreendimento não resolvido no catálogo: ${parsed.data.empreendimento}`);
   }
 
   const tipoId = await resolverOuCriarTipo(
@@ -210,6 +286,8 @@ export async function normalizarLinha(
       ...parsed.data,
       hotelId,
       tipoId,
+      empreendimentoResolvido: resolvido,
+      avisos: avisos.length ? avisos : undefined,
     },
   };
 }
@@ -220,9 +298,11 @@ export async function normalizarLote(
 ): Promise<{
   validos: AcomodacaoImportResolved[];
   erros: Array<{ linha: number; erros: string[] }>;
+  ignorados: Array<{ linha: number; erros: string[] }>;
 }> {
   const validos: AcomodacaoImportResolved[] = [];
   const erros: Array<{ linha: number; erros: string[] }> = [];
+  const ignorados: Array<{ linha: number; erros: string[] }> = [];
 
   for (let i = 0; i < linhas.length; i++) {
     const row = linhas[i];
@@ -231,12 +311,14 @@ export async function normalizarLote(
     const result = await normalizarLinha(row, i + 2, options);
     if (result.ok) {
       validos.push(result.dto);
+    } else if ('skip' in result && result.skip) {
+      ignorados.push({ linha: result.indice, erros: result.erros });
     } else {
       erros.push({ linha: result.indice, erros: result.erros });
     }
   }
 
-  return { validos, erros };
+  return { validos, erros, ignorados };
 }
 
 module.exports = {
@@ -248,6 +330,7 @@ module.exports = {
   splitLista,
   slugify,
   resolverHotel,
+  resolverHotelComMeta,
   resolverOuCriarTipo,
   normalizarLinha,
   normalizarLote,

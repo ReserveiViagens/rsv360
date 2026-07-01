@@ -23,6 +23,10 @@ const LAB_ROUTE_PREFIXES = [
   '/auth/sso',
   '/recuperar-senha',
   '/redefinir-senha',
+  // Cotação Interativa v2 — permanece no S2 (API :3002), não no site B2C :5000
+  '/proposta',
+  '/cotacao',
+  '/roteiro',
 ] as const;
 
 export function isMarketingLabMode(): boolean {

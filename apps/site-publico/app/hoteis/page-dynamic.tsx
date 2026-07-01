@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import Link from "next/link"
+import { montarUrlCotacaoContextual } from "@/lib/cotacao-entrada-url"
 import { useWebsiteContent } from "@/hooks/useWebsiteData"
 
 interface ImageGalleryProps {
@@ -240,6 +241,13 @@ export default function HoteisPageDynamic() {
             {activeHotels.map((hotel, index) => {
               const discount = calculateDiscount(hotel.price, hotel.original_price)
               const isPopular = index === 0 // Primeiro hotel é o mais procurado
+              const hotelRef = String(
+                (hotel as { content_id?: string }).content_id ?? hotel.id,
+              )
+              const cotacaoHref = montarUrlCotacaoContextual('', {
+                hotel: hotelRef,
+                canal: 'vitrine-hoteis',
+              })
 
               return (
                 <Card
@@ -325,6 +333,15 @@ export default function HoteisPageDynamic() {
                       </div>
 
                       <div className="space-y-2">
+                        <Link
+                          href={cotacaoHref}
+                          className="block"
+                          data-testid="btn-reservar-contextual"
+                        >
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-lg">
+                            Montar minha viagem
+                          </Button>
+                        </Link>
                         <Button
                           className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 text-lg"
                           onClick={() =>
@@ -334,7 +351,7 @@ export default function HoteisPageDynamic() {
                             )
                           }
                         >
-                          💚 RESERVAR AGORA {discount > 0 ? `- ${discount}% OFF` : ''}
+                          💬 Falar com especialista {discount > 0 ? `· ${discount}% OFF` : ''}
                         </Button>
                         <Button
                           variant="outline"

@@ -16,6 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { PricingBookingsBreakdown } from '../PricingBookingsBreakdown';
+import type { BookingBreakdownItem } from '@/components/analytics/BookingBreakdownTable';
 
 type SeasonRule = {
   id: number;
@@ -27,11 +29,25 @@ type SeasonRule = {
 function SeasonsPanel({ itemId }: { itemId: string }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [expandedSeasonId, setExpandedSeasonId] = useState<number | null>(null);
   const [form, setForm] = useState({
     rule_name: '',
     start_date: '',
     end_date: '',
     multiplier: 1.3,
+  });
+
+  const { data: seasonBreakdown } = useQuery({
+    queryKey: ['pricing-season-breakdown', itemId, expandedSeasonId],
+    enabled: expandedSeasonId != null,
+    queryFn: async () => {
+      const res = await fetch(
+        `/api/pricing/seasons?item_id=${itemId}&season_id=${expandedSeasonId}`
+      );
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Erro');
+      return (json.breakdown as BookingBreakdownItem[]) || [];
+    },
   });
 
   const { data: seasons, isLoading } = useQuery({
@@ -118,11 +134,28 @@ function SeasonsPanel({ itemId }: { itemId: string }) {
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <p className="text-sm">
                   Multiplicador:{' '}
                   <strong>{s.config.multiplier ?? 1}x</strong>
                 </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setExpandedSeasonId(expandedSeasonId === s.id ? null : s.id)
+                  }
+                >
+                  {expandedSeasonId === s.id
+                    ? 'Ocultar reservas do período'
+                    : 'Ver reservas do período'}
+                </Button>
+                {expandedSeasonId === s.id && seasonBreakdown && (
+                  <PricingBookingsBreakdown
+                    bookings={seasonBreakdown}
+                    showProperty={false}
+                  />
+                )}
               </CardContent>
             </Card>
           ))}

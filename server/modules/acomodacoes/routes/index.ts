@@ -3,6 +3,7 @@ import { montarCardsPasso2 } from '@rsv360/shared';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { publicLimiter } from '../../../middleware/public-limiter';
 import { acomodacoesService } from '../services/acomodacoes.service';
+import { resolverHotelIdParaAcomodacoes } from '../services/resolve-hotel-id';
 
 const router = Router();
 const staffAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
@@ -15,16 +16,19 @@ router.get('/health', (_req, res) => {
 /** Público — listagem paginada para wizard Passo 2 (filtro no banco). */
 router.get('/disponiveis', publicLimiter, async (req, res) => {
   try {
-    const hotelId = String(req.query.hotelId ?? '');
+    const hotelIdRaw = String(req.query.hotelId ?? '');
+    const titulo = req.query.titulo != null ? String(req.query.titulo) : undefined;
     const hospedes = Number(req.query.hospedes ?? 2);
     const adults = Number(req.query.adults ?? hospedes);
     const children = Number(req.query.children ?? 0);
     const perfil = String(req.query.perfil ?? 'casal') as 'familia' | 'casal' | 'aventura';
     const page = Number(req.query.page ?? 1);
 
-    if (!hotelId) {
+    if (!hotelIdRaw) {
       return res.status(400).json({ success: false, error: 'hotelId é obrigatório' });
     }
+
+    const hotelId = await resolverHotelIdParaAcomodacoes(hotelIdRaw, titulo);
 
     const listed = await acomodacoesService.listarDisponiveis({
       hotelId,
@@ -41,6 +45,7 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
       success: true,
       data: {
         ...listed,
+        hotelIdResolvido: hotelId,
         cards,
         fallbackHotelUnico: listed.items.length === 0,
       },

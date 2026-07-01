@@ -22,6 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  BookingBreakdownTable,
+  type BookingBreakdownItem,
+} from './BookingBreakdownTable';
 
 interface Insight {
   id: string;
@@ -31,6 +35,7 @@ interface Insight {
   severity: 'info' | 'warning' | 'critical';
   recommendation?: string;
   metrics?: Record<string, any>;
+  related_bookings?: BookingBreakdownItem[];
   created_at: string;
 }
 
@@ -46,6 +51,7 @@ interface AnalyticsInsightsData {
     start: string;
     end: string;
   };
+  breakdown?: BookingBreakdownItem[];
 }
 
 interface AnalyticsInsightsProps {
@@ -59,6 +65,7 @@ export function AnalyticsInsights({ propertyId, className }: AnalyticsInsightsPr
   const [error, setError] = useState<string | null>(null);
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [expandedInsightId, setExpandedInsightId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInsights();
@@ -331,6 +338,27 @@ export function AnalyticsInsights({ propertyId, className }: AnalyticsInsightsPr
                               ))}
                             </div>
                           )}
+
+                          {insight.related_bookings && insight.related_bookings.length > 0 && (
+                            <div className="pt-2 border-t space-y-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  setExpandedInsightId(
+                                    expandedInsightId === insight.id ? null : insight.id
+                                  )
+                                }
+                              >
+                                {expandedInsightId === insight.id
+                                  ? 'Ocultar reservas relacionadas'
+                                  : `Ver ${insight.related_bookings.length} reserva(s) relacionada(s)`}
+                              </Button>
+                              {expandedInsightId === insight.id && (
+                                <BookingBreakdownTable bookings={insight.related_bookings} />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -341,6 +369,13 @@ export function AnalyticsInsights({ propertyId, className }: AnalyticsInsightsPr
           ) : (
             <div className="text-center py-12 text-gray-500">
               Nenhum insight encontrado com os filtros selecionados
+            </div>
+          )}
+
+          {data.breakdown && data.breakdown.length > 0 && (
+            <div className="space-y-3 pt-4 border-t">
+              <h3 className="font-semibold text-lg">Todas as reservas do período analisado</h3>
+              <BookingBreakdownTable bookings={data.breakdown} />
             </div>
           )}
 

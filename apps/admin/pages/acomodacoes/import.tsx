@@ -45,6 +45,7 @@ type Relatorio = {
 
 export default function ImportAcomodacoesPage() {
   const [arquivo, setArquivo] = useState<File | null>(null);
+  const [proprietarioId, setProprietarioId] = useState('');
   const [relatorio, setRelatorio] = useState<Relatorio | null>(null);
   const [loading, setLoading] = useState<'preview' | 'commit' | 'modelo' | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -77,6 +78,9 @@ export default function ImportAcomodacoesPage() {
     try {
       const form = new FormData();
       form.append('file', arquivo);
+      if (proprietarioId.trim()) {
+        form.append('proprietarioId', proprietarioId.trim());
+      }
       const path =
         modo === 'preview'
           ? '/api/v1/acomodacoes/import/preview'
@@ -136,6 +140,17 @@ export default function ImportAcomodacoesPage() {
           )}
           Baixar modelo .xlsx
         </button>
+        <label className="flex items-center gap-2 text-sm text-slate-700">
+          <span className="font-medium">Proprietário (users.id):</span>
+          <input
+            type="number"
+            min={1}
+            placeholder="opcional"
+            value={proprietarioId}
+            onChange={(e) => setProprietarioId(e.target.value)}
+            className="w-32 rounded-lg border border-slate-200 px-3 py-2"
+          />
+        </label>
       </div>
 
       <div

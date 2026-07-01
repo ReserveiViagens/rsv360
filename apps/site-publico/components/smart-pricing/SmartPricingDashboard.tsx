@@ -62,12 +62,22 @@ interface PricingTrends {
   dataPoints: number;
 }
 
-export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
+export function SmartPricingDashboard({
+  propertyId,
+  defaultBasePrice,
+  hidePropertyInput = false,
+  onCalculated,
+}: {
+  propertyId?: number;
+  defaultBasePrice?: number;
+  hidePropertyInput?: boolean;
+  onCalculated?: (checkIn: string, checkOut: string) => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [itemId, setItemId] = useState(propertyId?.toString() || '');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
-  const [basePrice, setBasePrice] = useState('');
+  const [basePrice, setBasePrice] = useState(defaultBasePrice?.toString() || '');
   const [location, setLocation] = useState('');
   const [pricingFactors, setPricingFactors] = useState<PricingFactors | null>(null);
   const [history, setHistory] = useState<PricingHistory[]>([]);
@@ -76,6 +86,16 @@ export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
 
   const user = getUser();
   const token = getToken();
+
+  useEffect(() => {
+    if (propertyId) setItemId(propertyId.toString());
+  }, [propertyId]);
+
+  useEffect(() => {
+    if (defaultBasePrice && !basePrice) {
+      setBasePrice(defaultBasePrice.toString());
+    }
+  }, [defaultBasePrice, basePrice]);
 
   useEffect(() => {
     if (itemId) {
@@ -119,6 +139,7 @@ export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
         loadHistory();
         loadTrends();
         setActiveTab('results');
+        onCalculated?.(checkIn, checkOut);
       }
     } catch (error: any) {
       toast.error(error.message || 'Erro ao calcular preço');
@@ -227,7 +248,7 @@ export function SmartPricingDashboard({ propertyId }: { propertyId?: number }) {
                     value={itemId}
                     onChange={(e) => setItemId(e.target.value)}
                     placeholder="Ex: 1"
-                    disabled={!!propertyId}
+                    disabled={hidePropertyInput || !!propertyId}
                   />
                 </div>
                 <div>

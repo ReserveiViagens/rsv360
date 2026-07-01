@@ -17,11 +17,24 @@ export async function pipelineImportacao(
   options: ProcessarImportOptions = {},
 ): Promise<PipelineImportResult> {
   const linhasBrutas = await parseArquivo(buffer, nomeArquivo);
-  const { validos, erros: errosNormalizacao } = await normalizarLote(linhasBrutas, {
+
+  if (options.maxLinhasParceiro != null && linhasBrutas.length > options.maxLinhasParceiro) {
+    throw new Error(
+      `Import parceiro limitado a ${options.maxLinhasParceiro} linhas (arquivo tem ${linhasBrutas.length})`,
+    );
+  }
+  const { validos, erros: errosNormalizacao, ignorados } = await normalizarLote(linhasBrutas, {
     criarTipoSeAusente: options.criarTipoSeAusente,
   });
 
   const relatorio = await processarImport(validos, options);
+
+  const linhasIgnorados = ignorados.map((e) => ({
+    linha: e.linha,
+    status: 'ignorado' as const,
+    acao: 'skip' as const,
+    erros: e.erros,
+  }));
 
   const linhasErroNorm = errosNormalizacao.map((e) => ({
     linha: e.linha,
@@ -33,9 +46,10 @@ export async function pipelineImportacao(
     ...relatorio,
     formato: nomeArquivo.split('.').pop()?.toLowerCase() ?? 'desconhecido',
     errosNormalizacao,
-    total: relatorio.total + errosNormalizacao.length,
+    ignorados: ignorados.length,
+    total: relatorio.total + errosNormalizacao.length + ignorados.length,
     erros: relatorio.erros + errosNormalizacao.length,
-    linhas: [...linhasErroNorm, ...relatorio.linhas],
+    linhas: [...linhasIgnorados, ...linhasErroNorm, ...relatorio.linhas],
   };
 }
 

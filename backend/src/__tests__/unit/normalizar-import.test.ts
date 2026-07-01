@@ -45,4 +45,8 @@ describe('normalizar-import', () => {
     expect(splitLista(['x', 'y'])).toEqual(['x', 'y']);
     expect(splitLista('')).toEqual([]);
   });
+
+  it('splitLista preserva ; dentro de parênteses', () => {
+    expect(splitLista('tv;ar (cond; min)')).toEqual(['tv', 'ar (cond; min)']);
+  });
 });

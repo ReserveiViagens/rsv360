@@ -14,9 +14,12 @@ const { docsRouter, openApiSpec } = require('./src/routes/docs.route');
 async function createApp() {
   const app = express();
 
+  // PR 17 — Cloudflare/nginx: IP real para rate limit e logs (antes de qualquer middleware)
+  app.set('trust proxy', 1);
+
   await SecurityConfig.initialize(app);
 
-  app.use(cors());
+  app.use(cors(SecurityConfig.getCorsOptions()));
   app.use(brandingHeaders);
   app.use(canonicalRedirect);
   app.use(metricsMiddleware);
@@ -97,6 +100,14 @@ async function createApp() {
     console.log('[BOOT] CRM & Loyalty module loaded');
   } catch (err) {
     console.warn('[BOOT] CRM module failed:', err.message);
+  }
+
+  try {
+    const { initPublicLimiter } = require('../server/middleware/public-limiter');
+    await initPublicLimiter();
+    console.log('[BOOT] publicLimiter Redis/memória inicializado ✓');
+  } catch (err) {
+    console.warn('[BOOT] publicLimiter não inicializado:', err.message);
   }
 
   try {

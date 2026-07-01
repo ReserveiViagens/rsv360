@@ -1,0 +1,44 @@
+﻿{
+  "csvPath": "C:\\Users\\RSV 360\\Downloads\\inventario_caldas_novas436 acomoda├º├úo.csv",
+  "resumo": {
+    "total_linhas_arquivo": 436,
+    "ignorados": 3,
+    "erros_normalizacao": 0,
+    "validos": 433,
+    "total_contabilizado": 436
+  },
+  "errosNormalizacao": [],
+  "ignorados_predio": [
+    {
+      "linha": 259,
+      "erros": [
+        "tipo=predio exclu├¡do pela pol├¡tica de import"
+      ]
+    },
+    {
+      "linha": 260,
+      "erros": [
+        "tipo=predio exclu├¡do pela pol├¡tica de import"
+      ]
+    },
+    {
+      "linha": 261,
+      "erros": [
+        "tipo=predio exclu├¡do pela pol├¡tica de import"
+      ]
+    }
+  ],
+  "breakdown_commit": {
+    "publicado_esperado": 433,
+    "rascunho_esperado": 0,
+    "rascunho_motivos": {
+      "sem_preco": 0,
+      "empreendimento_nao_resolvido": 0,
+      "ambos": 0
+    },
+    "quartos_zero": 24,
+    "sem_preco": 0,
+    "empreendimento_nao_resolvido": 0
+  },
+  "empreendimentos_nao_resolvidos": []
+}

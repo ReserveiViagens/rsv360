@@ -9,6 +9,7 @@ import {
   getCompetitorPrices,
   saveCompetitorPrice,
 } from '@/lib/smart-pricing-service';
+import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
 
 // GET /api/pricing/competitors - Listar preços
 export async function GET(request: NextRequest) {
@@ -29,9 +30,16 @@ export async function GET(request: NextRequest) {
       date ? new Date(date) : new Date()
     );
 
+    const breakdown = await fetchPropertyBookings(parseInt(itemId, 10), {
+      startDate: date || undefined,
+      endDate: date || undefined,
+      limit: 20,
+    });
+
     return NextResponse.json({
       success: true,
       data: prices,
+      breakdown,
     });
   } catch (error: any) {
     console.error('Erro ao listar preços de competidores:', error);

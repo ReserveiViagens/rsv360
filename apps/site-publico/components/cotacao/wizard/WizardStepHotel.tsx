@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building2, ChevronDown, Sparkles } from 'lucide-react';
 import type { CardArquetipoPasso2 } from '@rsv360/shared';
+import { formatAcomodacaoConfigLabel } from '@rsv360/shared';
 import { trackCotacaoEvent } from '@/lib/cotacao-analytics';
 import { getBehaviorBadge, sortCatalogItems } from './wizard-behavior';
 import { ItineraryCard } from './ItineraryCard';
@@ -16,18 +17,6 @@ import { cn } from '@/lib/utils';
 
 const FALLBACK =
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop';
-
-function configLabel(configSala: string, configBanheiro: string, quartos: number, cap: number) {
-  const sala =
-    configSala === 'sofa_cama' ? 'sofá-cama' : configSala === 'cama_na_sala' ? 'cama na sala' : '';
-  const banheiro =
-    configBanheiro === 'so_suite'
-      ? 'suíte'
-      : configBanheiro === 'suite_wc_social'
-        ? 'suíte + WC social'
-        : 'WC social';
-  return `${quartos} qt · ${banheiro}${sala ? ` · ${sala}` : ''} · até ${cap} pessoa(s)`;
-}
 
 export function WizardStepHotel() {
   const {
@@ -53,6 +42,7 @@ export function WizardStepHotel() {
   const [loadingAcomod, setLoadingAcomod] = useState(false);
 
   const hotelRef = state.hotelId != null ? String(state.hotelId) : null;
+  const hotelTitulo = selectedHotel?.title ?? null;
 
   const loadAcomodacoes = useCallback(async () => {
     if (!hotelRef) {
@@ -69,6 +59,7 @@ export function WizardStepHotel() {
         hospedes: String(state.adults + state.children),
         perfil: state.profile,
       });
+      if (hotelTitulo) params.set('titulo', hotelTitulo);
       const res = await fetch(`/api/cotacao/acomodacoes/disponiveis?${params}`);
       const json = await res.json();
       if (res.ok && json.success) {
@@ -84,7 +75,7 @@ export function WizardStepHotel() {
     } finally {
       setLoadingAcomod(false);
     }
-  }, [hotelRef, state.adults, state.children, state.profile]);
+  }, [hotelRef, hotelTitulo, state.adults, state.children, state.profile]);
 
   useEffect(() => {
     void loadAcomodacoes();
@@ -254,7 +245,7 @@ export function WizardStepHotel() {
                       </Badge>
                     </div>
                     <p className="text-xs text-gray-600">
-                      {configLabel(acc.configSala, acc.configBanheiro, acc.quartos, acc.capacidadeMax)}
+                      {formatAcomodacaoConfigLabel(acc.configSala, acc.configBanheiro, acc.quartos, acc.capacidadeMax)}
                     </p>
                     <p className="text-sm font-bold text-primary">
                       {formatBRL(acc.precoDiaria * Math.max(nights, 1))}
