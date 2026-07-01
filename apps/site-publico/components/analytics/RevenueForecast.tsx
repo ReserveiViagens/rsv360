@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { BookingBreakdownTable, type BookingBreakdownItem } from './BookingBreakdownTable';
 
 interface RevenueForecastData {
   historical: Array<{
@@ -39,6 +40,7 @@ interface RevenueForecastData {
   average_revenue: number;
   growth_rate: number;
   months_ahead: number;
+  breakdown?: BookingBreakdownItem[];
 }
 
 interface RevenueForecastProps {
@@ -309,6 +311,16 @@ export function RevenueForecast({ propertyId, className }: RevenueForecastProps)
               </div>
             </div>
           </div>
+
+          {data.breakdown && data.breakdown.length > 0 && (
+            <div className="space-y-3 pt-4 border-t">
+              <h3 className="font-semibold text-lg">Reservas que compõem o histórico</h3>
+              <p className="text-sm text-gray-500">
+                Propriedades, clientes, datas e valores das reservas confirmadas usadas na previsão.
+              </p>
+              <BookingBreakdownTable bookings={data.breakdown} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -1,0 +1,141 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "targets": [
+        {
+          "expr": "sum by (origem) (increase(rsv360_propostas_geradas_total[24h]))",
+          "legendFormat": "Geradas — {{origem}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Propostas geradas (24h)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(rsv360_roteiro_views_total[24h]))",
+          "legendFormat": "Roteiro views",
+          "refId": "A"
+        }
+      ],
+      "title": "Visualizações roteiro premium (24h)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "sum by (result, channel) (increase(rsv360_avisos_recuperacao_total[24h]))",
+          "legendFormat": "{{result}} / {{channel}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Avisos de recuperação (24h)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "sum(increase(rsv360_propostas_aceitas_total[24h]))",
+          "legendFormat": "Aceitas",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(rsv360_propostas_expiradas_total[24h]))",
+          "legendFormat": "Expiradas",
+          "refId": "B"
+        }
+      ],
+      "title": "Conversões vs expirações (24h)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "percentunit" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(increase(rsv360_propostas_aceitas_total[7d])) / clamp_min(sum(increase(rsv360_propostas_geradas_total[7d])), 1)",
+          "legendFormat": "Taxa aceite / geradas (7d)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(rsv360_roteiro_views_total[7d])) / clamp_min(sum(increase(rsv360_propostas_aceitas_total[7d])), 1)",
+          "legendFormat": "Views roteiro / aceitas (7d)",
+          "refId": "B"
+        }
+      ],
+      "title": "Funil de conversão (7d)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["rsv360", "conversao", "propostas"],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "timezone": "America/Cuiaba",
+  "title": "RSV360 — Funil de Conversão",
+  "uid": "rsv360-conversao",
+  "version": 1
+}

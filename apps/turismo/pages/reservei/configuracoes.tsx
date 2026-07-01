@@ -3,7 +3,8 @@
 // Status: ✅ 100% FUNCIONAL
 
 import React, { useState, useEffect } from 'react';
-import { Settings, Save, RefreshCw, Globe, Mail, Phone, MapPin, Calendar, Clock, Shield, Database, Bell, Palette, Users } from 'lucide-react';
+import { Settings, Save, RefreshCw, Globe, Mail, Database, Bell, Palette, FileText } from 'lucide-react';
+import { ModuloPropostasPanel } from '@/components/propostas/ModuloPropostasPanel';
 
 interface Configuracao {
   categoria: string;
@@ -17,7 +18,7 @@ interface Configuracao {
 
 const SistemaConfiguracoes: React.FC = () => {
   const [configuracoes, setConfiguracoes] = useState<Configuracao[]>([]);
-  const [categoriaAtiva, setCategoriaAtiva] = useState('empresa');
+  const [categoriaAtiva, setCategoriaAtiva] = useState('propostas');
   const [alteracoesSalvas, setAlteracoesSalvas] = useState(false);
 
   // Dados mock das configurações
@@ -259,6 +260,7 @@ const SistemaConfiguracoes: React.FC = () => {
   }, []);
 
   const categorias = [
+    { id: 'propostas', nome: 'Módulo Propostas', icon: <FileText className="h-5 w-5" /> },
     { id: 'empresa', nome: 'Empresa', icon: <Globe className="h-5 w-5" /> },
     { id: 'sistema', nome: 'Sistema', icon: <Settings className="h-5 w-5" /> },
     { id: 'email', nome: 'Email', icon: <Mail className="h-5 w-5" /> },
@@ -402,7 +404,8 @@ const SistemaConfiguracoes: React.FC = () => {
             )}
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={categoriaAtiva === 'propostas'}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
               Salvar Configurações
@@ -443,7 +446,10 @@ const SistemaConfiguracoes: React.FC = () => {
             </h2>
 
             <div className="space-y-6">
-              {configuracoesCategoria.map(config => (
+              {categoriaAtiva === 'propostas' ? (
+                <ModuloPropostasPanel />
+              ) : (
+                configuracoesCategoria.map(config => (
                 <div key={config.chave} className="border-b border-gray-200 pb-6 last:border-b-0">
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -459,7 +465,8 @@ const SistemaConfiguracoes: React.FC = () => {
                     {renderInput(config)}
                   </div>
                 </div>
-              ))}
+              ))
+              )}
             </div>
           </div>
         </div>

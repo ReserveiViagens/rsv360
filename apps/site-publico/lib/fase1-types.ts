@@ -12,8 +12,11 @@ export interface Proposta {
   moeda: string;
   validoAte?: string | null;
   isPublica?: boolean | null;
+  tokenPublico?: string | null;
   conteudo?: Record<string, unknown> | null;
   orcamentoId?: number | null;
+  comparativoCache?: unknown;
+  exibirComparativo?: boolean;
 }
 
 export interface PropostaChatMessage {

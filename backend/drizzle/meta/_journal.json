@@ -127,6 +127,41 @@
       "when": 1782215000000,
       "tag": "0021_acomodacoes_tipologia",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1782216000000,
+      "tag": "0022_empreendimentos_parceiros",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1782217000000,
+      "tag": "0023_carteira_corretor",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1782218000000,
+      "tag": "0024_disponibilidade_acomodacao",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1782219000000,
+      "tag": "0025_propostas_roteiro_entregue",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1782220000000,
+      "tag": "0026_vouchers_validacao",
+      "breakpoints": true
     }
   ]
 }

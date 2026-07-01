@@ -13,7 +13,9 @@ export async function processImportJob(job: { data: ImportarAcomodacoesJobData }
   const buffer = Buffer.from(job.data.bufferBase64, 'base64');
   const relatorio = await pipelineImportacao(buffer, job.data.nomeArquivo, {
     dryRun: false,
-    anfitriaoId: job.data.anfitriaoId ?? null,
+    proprietarioId: job.data.proprietarioId ?? null,
+    bulkPublicado: job.data.bulkPublicado,
+    statusPublicacao: job.data.statusPublicacao,
   });
 
   console.log('[importacoes] import concluído', {

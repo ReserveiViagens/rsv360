@@ -31,6 +31,7 @@ const dtoBase: AcomodacaoImportResolved = {
   codigoExterno: 'X1',
   empreendimento: 'hotel-demo-1',
   hotelId: 'hotel-demo-1',
+  empreendimentoResolvido: true,
   tipo: 'apto',
   tipoId: 1,
   titulo: 'Apto Teste',
@@ -80,6 +81,7 @@ describe('importar-upsert', () => {
     expect(mockInsert).toHaveBeenCalled();
     const values = mockInsert.mock.results[0].value.values.mock.calls[0][0];
     expect(values.dadosCompletos).toBe(false);
+    expect(values.statusPublicacao).toBe('rascunho');
   });
 
   it('re-import atualiza sem duplicar por codigo_externo', async () => {

@@ -9,6 +9,7 @@ const MODULOS = [
   { href: '/campanhas', label: 'Campanhas', desc: 'Campanhas + cupons + métricas' },
   { href: '/logistica', label: 'Logística', desc: 'Fornecedores + reservas + vouchers' },
   { href: '/relatorios', label: 'Relatórios', desc: 'Dashboard + export CSV/PDF' },
+  { href: '/anfitriao', label: 'Anfitrião', desc: 'Unidades parceiro + aprovação' },
 ];
 
 export default function ModulosHubPage() {

@@ -1,6 +1,15 @@
 import { Router } from 'express';
 import { authenticateJwt, optionalJwt, requireRole, staffAuth } from '../../../middleware/auth.middleware';
+import { publicLimiter } from '../../../middleware/public-limiter';
+import { requireTurnstile } from '../../../middleware/turnstile.middleware';
 import { propostasService } from '../services/propostas.service';
+import { recordPropostaGerada } from '../metrics';
+import { PropostaExpiradaError, isPropostaExpiradaError } from '../proposta-validade';
+import {
+  recotarPropostaPorToken,
+  isPropostaRecotacaoError,
+} from '../services/proposta-recotacao.service';
+import { gerarQrVoucherPng, isQrVoucherError } from '../services/qr-voucher.service';
 
 const router = Router();
 const agentAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
@@ -77,7 +86,103 @@ router.post('/from-orcamento/:orcamentoId', ...staffAuth, async (req, res) => {
       Number(req.params.orcamentoId),
       req.user?.id,
     );
+    recordPropostaGerada('from_orcamento');
     res.status(201).json({ success: true, data: created });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/:token/og', publicLimiter, async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    if (!token.startsWith('rt-')) return next();
+    const { buildPropostaOgByToken } = await import('../services/proposta-og.service');
+    const data = await buildPropostaOgByToken(token);
+    if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:token/recotar', publicLimiter, async (req, res) => {
+  try {
+    const { token } = req.params;
+    if (!token || /^\d+$/.test(token)) {
+      return res.status(400).json({ success: false, error: 'Token público inválido' });
+    }
+
+    const data = await recotarPropostaPorToken(token);
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    if (isPropostaRecotacaoError(error)) {
+      const err = error as Error & { statusCode?: number };
+      return res.status(err.statusCode ?? 403).json({ success: false, error: err.message });
+    }
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/:token/vouchers/:voucherId/qr.png', publicLimiter, async (req, res) => {
+  try {
+    const { token, voucherId } = req.params;
+    if (!token || /^\d+$/.test(token)) {
+      return res.status(400).json({ success: false, error: 'Token público inválido' });
+    }
+
+    const png = await gerarQrVoucherPng(token, voucherId);
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    res.send(png);
+  } catch (error) {
+    if (isQrVoucherError(error)) {
+      const err = error as Error & { statusCode?: number };
+      return res.status(err.statusCode ?? 403).json({ success: false, error: err.message });
+    }
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/:token/validade', publicLimiter, optionalJwt, async (req, res) => {
+  try {
+    const { cotacaoPublicaService } = await import('../../cotacao-publica/services/cotacao-publica.service');
+    const data = await cotacaoPublicaService.getValidadeByToken(req.params.token);
+    if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/:token/eventos', publicLimiter, async (req, res) => {
+  try {
+    const { token } = req.params;
+    if (!token || /^\d+$/.test(token)) {
+      return res.status(400).json({ success: false, error: 'Token público inválido' });
+    }
+
+    const {
+      resolvePropostaPublicaByToken,
+      registrarEventosCinematicos,
+    } = await import('../services/proposta-cinematic-events.service');
+
+    const resolved = await resolvePropostaPublicaByToken(token);
+    if (resolved.kind === 'not_found') {
+      return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
+    }
+    if (resolved.kind === 'forbidden') {
+      return res.status(403).json({ success: false, error: 'Proposta não é pública' });
+    }
+
+    const body = req.body ?? {};
+    const data = await registrarEventosCinematicos(resolved.propostaId, {
+      session_id: String(body.session_id ?? ''),
+      tempo_pagina_segundos: body.tempo_pagina_segundos,
+      scroll: body.scroll,
+    });
+
+    res.status(201).json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, error: (error as Error).message });
   }
@@ -250,7 +355,7 @@ router.delete('/:id', ...agentAuth, async (req, res) => {
   }
 });
 
-router.get('/:id/chat', optionalJwt, async (req, res) => {
+router.get('/:id/chat', publicLimiter, optionalJwt, async (req, res) => {
   try {
     const messages = await propostasService.listChat(Number(req.params.id));
     res.json({ success: true, data: messages });
@@ -259,7 +364,7 @@ router.get('/:id/chat', optionalJwt, async (req, res) => {
   }
 });
 
-router.post('/:id/chat', optionalJwt, async (req, res) => {
+router.post('/:id/chat', publicLimiter, requireTurnstile, optionalJwt, async (req, res) => {
   try {
     const saved = await propostasService.addChatMessage(Number(req.params.id), req.body);
     res.status(201).json({ success: true, data: saved });
@@ -311,7 +416,7 @@ router.post('/:id/hitl/release', ...agentAuth, async (req, res) => {
   }
 });
 
-router.post('/:id/responder', optionalJwt, async (req, res) => {
+router.post('/:id/responder', publicLimiter, requireTurnstile, optionalJwt, async (req, res) => {
   try {
     const action = req.body.action as 'accept' | 'reject';
     if (!action || !['accept', 'reject'].includes(action)) {
@@ -322,8 +427,15 @@ router.post('/:id/responder', optionalJwt, async (req, res) => {
       action,
       req.body.clientName ?? req.user?.name,
     );
-    res.json({ success: true, data: updated });
+    const payload: Record<string, unknown> = { success: true, data: updated };
+    if (action === 'accept' && updated?.tokenPublico) {
+      payload.proximoDestino = `/roteiro/${updated.tokenPublico}`;
+    }
+    res.json(payload);
   } catch (error) {
+    if (isPropostaExpiradaError(error)) {
+      return res.status(403).json({ success: false, error: error.message });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });

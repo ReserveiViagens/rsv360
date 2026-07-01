@@ -1,11 +1,27 @@
-'use client'
+'use client';
+
+import { useEffect } from 'react';
 
 type ErrorProps = {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
+};
+
+function isChunkLoadError(error: Error): boolean {
+  return (
+    error.name === 'ChunkLoadError' ||
+    error.message.includes('Loading chunk') ||
+    error.message.includes('Failed to load')
+  );
 }
 
-export default function Error({ reset }: ErrorProps) {
+export default function Error({ error, reset }: ErrorProps) {
+  useEffect(() => {
+    if (isChunkLoadError(error)) {
+      window.location.reload();
+    }
+  }, [error]);
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-white px-6">
       <div className="max-w-md text-center space-y-4">
@@ -16,14 +32,14 @@ export default function Error({ reset }: ErrorProps) {
         </p>
         <button
           type="button"
-          onClick={() => reset()}
+          onClick={() => (isChunkLoadError(error) ? window.location.reload() : reset())}
           className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           Tentar novamente
         </button>
       </div>
     </main>
-  )
+  );
 }
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';

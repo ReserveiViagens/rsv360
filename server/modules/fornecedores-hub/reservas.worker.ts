@@ -7,7 +7,7 @@ import {
   type ExpirarLockJobData,
 } from './reservas.queue';
 import { reservasCotacaoService } from './services/reservas-cotacao.service';
-import { propostaBroadcast } from '../../propostas/websocket/proposta-broadcast';
+import { propostaBroadcast } from '../propostas/websocket/proposta-broadcast';
 
 let worker: Worker<ExpirarLockJobData> | null = null;
 

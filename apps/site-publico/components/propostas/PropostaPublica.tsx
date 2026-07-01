@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { io, type Socket } from 'socket.io-client';
 import {
+  useAceitarPropostaPublica,
   useEnviarChatProposta,
   usePropostaChat,
   usePropostaHitl,
@@ -11,6 +13,17 @@ import {
   useSolicitarHitl,
   getPropostaWsUrl,
 } from '@/hooks/usePropostas';
+import {
+  propostaAceiteBloqueado,
+  useRoteiroValidade,
+} from '@/hooks/useRoteiroValidade';
+import { PropostaExpiradaPanel } from '@/components/propostas/PropostaExpiradaPanel';
+import { UrgenciaValidade } from '@/components/propostas/UrgenciaValidade';
+import { TurnstileWidget } from '@/components/security/TurnstileWidget';
+import { buildConsultorWhatsAppUrl } from '@/lib/proposta-consultor';
+import { buildRecotacaoUrlFromProposta } from '@/lib/proposta-recotacao-url';
+import { useCinematicTelemetry } from '@/hooks/useCinematicTelemetry';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import type { PropostaChatMessage } from '@/lib/fase1-types';
 
 function formatCurrency(value: string | number, moeda = 'BRL') {
@@ -26,13 +39,23 @@ function statusLabel(status: string) {
     accepted: 'Aceita',
     rejected: 'Recusada',
     cancelled: 'Cancelada',
+    expired: 'Expirada',
   };
   return map[status] ?? status;
 }
 
-export function PropostaPublica({ propostaId }: { propostaId: number }) {
+export function PropostaPublica({
+  propostaId,
+  publicToken,
+}: {
+  propostaId: number;
+  publicToken?: string;
+}) {
+  const router = useRouter();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [guestName, setGuestName] = useState('');
   const [message, setMessage] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [liveMessages, setLiveMessages] = useState<PropostaChatMessage[]>([]);
   const [exibirComparativo, setExibirComparativo] = useState(false);
   const socketRef = useRef<Socket | null>(null);
@@ -41,12 +64,83 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
   const { data: chatRes } = usePropostaChat(propostaId);
   const { data: hitlRes } = usePropostaHitl(propostaId);
   const responder = useResponderProposta();
+  const aceitarPublico = useAceitarPropostaPublica();
   const enviarChat = useEnviarChatProposta();
   const solicitarHitl = useSolicitarHitl();
 
   const proposta = propostaRes?.data;
   const hitl = hitlRes?.data;
-  const canRespond = proposta && !['accepted', 'rejected', 'cancelled'].includes(proposta.status);
+  const roteiroToken = publicToken ?? proposta?.tokenPublico ?? null;
+
+  useCinematicTelemetry(roteiroToken);
+
+  const {
+    restanteMs,
+    expirada: validadeExpirada,
+    validoAte,
+    urgenciaEstilo,
+    loading: validadeLoading,
+    markExpirada,
+  } = useRoteiroValidade(roteiroToken ?? '', { fallbackPollIntervalMs: 30_000 });
+
+  const markExpiradaRef = useRef(markExpirada);
+  markExpiradaRef.current = markExpirada;
+
+  const expirada = validadeExpirada || proposta?.status === 'expired';
+  const aceiteBloqueado = propostaAceiteBloqueado(proposta?.status, expirada);
+  const canRespond = Boolean(proposta) && !aceiteBloqueado;
+  const roteiroHref = roteiroToken ? `/roteiro/${roteiroToken}` : null;
+  const isRoteiroReady = proposta && ['accepted', 'paid'].includes(proposta.status);
+  const consultorWhatsAppUrl =
+    proposta && roteiroToken
+      ? buildConsultorWhatsAppUrl(proposta.titulo, roteiroToken)
+      : 'https://wa.me/5564999999999';
+  const recotacaoUrl = buildRecotacaoUrlFromProposta({
+    tokenPublico: roteiroToken,
+    metadata: (proposta as { metadata?: Record<string, unknown> } | undefined)?.metadata,
+    conteudo: proposta?.conteudo as Record<string, unknown> | null | undefined,
+  });
+
+  useEffect(() => {
+    if (!isRoteiroReady || !roteiroHref) return;
+    router.replace(roteiroHref);
+  }, [isRoteiroReady, roteiroHref, router]);
+
+  const handleAccept = async () => {
+    if (aceiteBloqueado) return;
+    const clientName = guestName || proposta?.clienteNome;
+    if (roteiroToken) {
+      const result = await aceitarPublico.mutateAsync({
+        token: roteiroToken,
+        clientName,
+        turnstileToken: turnstileToken || undefined,
+      });
+      const destino = result.data?.proximoDestino ?? `/roteiro/${roteiroToken}`;
+      router.push(destino);
+      return;
+    }
+    await responder.mutateAsync({
+      id: propostaId,
+      action: 'accept',
+      clientName,
+      turnstileToken: turnstileToken || undefined,
+    });
+    if (proposta?.tokenPublico) {
+      router.push(`/roteiro/${proposta.tokenPublico}`);
+    }
+  };
+
+  const handleReject = () => {
+    if (aceiteBloqueado) return;
+    return responder.mutateAsync({
+      id: propostaId,
+      action: 'reject',
+      clientName: guestName || proposta?.clienteNome,
+      turnstileToken: turnstileToken || undefined,
+    });
+  };
+
+  const acceptPending = aceitarPublico.isPending || responder.isPending;
   const comparativo = (proposta?.comparativoCache ?? []) as Array<{
     titulo: string;
     preco: number;
@@ -72,7 +166,11 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
     const socket = io(`${wsBase}/propostas`, { path: '/socket.io', transports: ['websocket', 'polling'] });
     socketRef.current = socket;
 
-    socket.emit('join', { propostaId, guestName: guestName || undefined });
+    socket.emit('join', {
+      propostaId,
+      tokenPublico: roteiroToken ?? undefined,
+      guestName: guestName || undefined,
+    });
 
     socket.on('joined', (payload: { history?: PropostaChatMessage[] }) => {
       if (payload.history?.length) setLiveMessages(payload.history);
@@ -89,11 +187,19 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
       setExibirComparativo(true);
     });
 
+    const onExpirada = (payload: { token?: string }) => {
+      if (roteiroToken && payload?.token && payload.token !== roteiroToken) return;
+      markExpiradaRef.current();
+    };
+
+    socket.on('proposta:expirada', onExpirada);
+
     return () => {
+      socket.off('proposta:expirada', onExpirada);
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [propostaId, guestName]);
+  }, [propostaId, guestName, roteiroToken]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -109,6 +215,7 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
       id: propostaId,
       message: text,
       senderName: guestName || 'Visitante',
+      turnstileToken: turnstileToken || undefined,
     });
   };
 
@@ -136,14 +243,31 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
         <p className="mt-2 text-slate-600">
           Olá, <strong>{proposta.clienteNome}</strong>
         </p>
-        <div className="mt-4 flex flex-wrap gap-4 text-sm">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
           <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">{statusLabel(proposta.status)}</span>
           <span className="font-semibold text-emerald-700">{formatCurrency(proposta.valorTotal, proposta.moeda)}</span>
-          {proposta.validoAte && (
-            <span className="text-slate-500">Válida até {new Date(proposta.validoAte).toLocaleDateString('pt-BR')}</span>
+          {roteiroToken ? (
+            <UrgenciaValidade
+              urgenciaEstilo={urgenciaEstilo}
+              restanteMs={restanteMs}
+              validoAte={validoAte ?? proposta.validoAte ?? null}
+              expirada={expirada}
+              loading={validadeLoading}
+              prefersReducedMotion={prefersReducedMotion}
+            />
+          ) : (
+            proposta.validoAte && (
+              <span className="text-slate-500">
+                Válida até {new Date(proposta.validoAte).toLocaleDateString('pt-BR')}
+              </span>
+            )
           )}
         </div>
       </header>
+
+      {expirada && (
+        <PropostaExpiradaPanel whatsappUrl={consultorWhatsAppUrl} recotacaoUrl={recotacaoUrl} />
+      )}
 
       {itens.length > 0 && (
         <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6">
@@ -160,7 +284,13 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
       )}
 
       {exibirComparativo && comparativo.length > 0 && (
-        <section className="mb-8 animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-amber-200 bg-amber-50 p-6 duration-500">
+        <section
+          className={
+            prefersReducedMotion
+              ? 'mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-6'
+              : 'mb-8 animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-amber-200 bg-amber-50 p-6 duration-500'
+          }
+        >
           <h2 className="mb-2 text-lg font-semibold text-amber-900">Referências de mercado</h2>
           <p className="mb-4 text-sm text-amber-800">
             Valores de referência coletados em fontes públicas — apenas para comparação.
@@ -179,8 +309,19 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
         </section>
       )}
 
+      {isRoteiroReady && roteiroHref && (
+        <section className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+          <p className="text-sm text-emerald-800">Sua proposta foi aceita. Redirecionando para o roteiro premium…</p>
+          <a href={roteiroHref} className="mt-3 inline-block text-sm font-medium text-emerald-700 underline">
+            Abrir roteiro cinematográfico
+          </a>
+        </section>
+      )}
+
       {canRespond && (
-        <section className="mb-8 flex flex-wrap gap-3">
+        <section className="mb-8 space-y-3">
+          <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
+          <div className="flex flex-wrap gap-3">
           <input
             type="text"
             placeholder="Seu nome (opcional)"
@@ -190,20 +331,21 @@ export function PropostaPublica({ propostaId }: { propostaId: number }) {
           />
           <button
             type="button"
-            disabled={responder.isPending}
-            onClick={() => responder.mutate({ id: propostaId, action: 'accept', clientName: guestName || proposta.clienteNome })}
+            disabled={acceptPending || aceiteBloqueado}
+            onClick={() => void handleAccept()}
             className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
           >
             Aceitar proposta
           </button>
           <button
             type="button"
-            disabled={responder.isPending}
-            onClick={() => responder.mutate({ id: propostaId, action: 'reject', clientName: guestName || proposta.clienteNome })}
+            disabled={responder.isPending || aceiteBloqueado}
+            onClick={() => void handleReject()}
             className="rounded-lg border border-red-300 px-5 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
           >
             Recusar
           </button>
+          </div>
         </section>
       )}
 

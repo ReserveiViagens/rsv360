@@ -7,6 +7,9 @@ import {
   propostas,
 } from '../../../../backend/src/db/schema/propostas';
 import { orcamentos, orcamentoItens } from '../../../../backend/src/db/schema/orcamentos';
+import { montarComparativoProposta } from './montar-proposta';
+import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
+import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 
 type HitlMode = 'ai' | 'waiting' | 'human';
 
@@ -54,6 +57,7 @@ export class PropostasService {
       .returning();
 
     await this.logEvent(created.id, 'created', 'Proposta criada', { actorId }, actorId);
+    recordPropostaGerada('staff');
     return created;
   }
 
@@ -71,7 +75,20 @@ export class PropostasService {
   }
 
   async changeStatus(id: number, status: string, actorId?: number) {
-    return this.update(id, { status }, actorId);
+    const updated = await this.update(id, { status }, actorId);
+    if (updated && (status === 'accepted' || status === 'paid')) {
+      recordPropostaAceita(actorId ? 'staff' : 'public');
+      try {
+        const { agendarEntregaRoteiro } = await import('../propostas.queue');
+        const { ConfigService } = await import('../../configuracoes/config.service');
+        const config = await ConfigService.obterRegrasCotacao();
+        const delayMs = (config.delayDisparoMinutos ?? 0) * 60_000;
+        await agendarEntregaRoteiro(id, delayMs);
+      } catch (queueErr) {
+        console.warn('[propostas] agendarEntregaRoteiro ignorado:', (queueErr as Error).message);
+      }
+    }
+    return updated;
   }
 
   async remove(id: number) {
@@ -79,7 +96,11 @@ export class PropostasService {
     return deleted ?? null;
   }
 
-  async createFromOrcamento(orcamentoId: number, actorId?: number, options?: { destino?: string }) {
+  async createFromOrcamento(
+    orcamentoId: number,
+    actorId?: number,
+    options?: { destino?: string; skipValidade?: boolean },
+  ) {
     const orc = await db.select().from(orcamentos).where(eq(orcamentos.id, orcamentoId));
     const [budget] = orc;
     if (!budget) throw new Error('Orçamento não encontrado');
@@ -98,7 +119,6 @@ export class PropostasService {
         ? String((budget.metadata as Record<string, unknown>).destino)
         : 'Caldas Novas');
 
-    const { montarComparativoProposta } = await import('./montar-proposta');
     const ancoragem = await montarComparativoProposta({
       precoAgencia,
       destino,
@@ -136,6 +156,16 @@ export class PropostasService {
       await agendarAvaliarObjecao(created.id, 24 * 60 * 60 * 1000);
     } catch {
       /* Redis/BullMQ opcional em dev */
+    }
+
+    if (!options?.skipValidade) {
+      try {
+        const { aplicarValidadeProposta } = await import('../aplicar-validade-proposta');
+        const validoAte = await aplicarValidadeProposta(created.id);
+        return { ...created, validoAte };
+      } catch (validadeErr) {
+        console.warn('[propostas] aplicarValidadeProposta ignorado:', (validadeErr as Error).message);
+      }
     }
 
     return created;
@@ -340,6 +370,10 @@ export class PropostasService {
       throw new Error('Proposta já foi respondida');
     }
 
+    if (action === 'accept') {
+      await assertPropostaNaoExpirada(row);
+    }
+
     const status = action === 'accept' ? 'accepted' : 'rejected';
     const updated = await this.changeStatus(propostaId, status);
     await this.addChatMessage(propostaId, {
@@ -353,10 +387,11 @@ export class PropostasService {
       action === 'accept' ? 'Proposta aceita pelo cliente' : 'Proposta recusada pelo cliente',
       { clientName },
     );
+
     return updated;
   }
 }
 
 export const propostasService = new PropostasService();
 
-module.exports = { PropostasService, propostasService };
+module.exports = { PropostasService, propostasService, PropostaExpiradaError };

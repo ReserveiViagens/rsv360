@@ -35,7 +35,7 @@ export const acomodacoesService = {
     const conditions = and(
       eq(acomodacoes.hotelId, input.hotelId),
       eq(acomodacoes.ativo, true),
-      eq(acomodacoes.dadosCompletos, true),
+      eq(acomodacoes.statusPublicacao, 'publicado'),
     );
 
     const [rows, countRow] = await Promise.all([

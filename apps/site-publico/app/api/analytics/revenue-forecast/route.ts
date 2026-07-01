@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
+import { fetchBookingBreakdown } from '@/lib/analytics-booking-breakdown';
 
 const REVENUE_STATUSES = "('confirmed')";
 
@@ -83,6 +84,11 @@ export async function GET(request: NextRequest) {
       })
     );
 
+    const breakdown = await fetchBookingBreakdown({
+      propertyId,
+      limit: 50,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -91,6 +97,7 @@ export async function GET(request: NextRequest) {
         average_revenue: avgRevenue,
         growth_rate: growthRate,
         months_ahead: months,
+        breakdown,
       },
     });
   } catch (err: unknown) {

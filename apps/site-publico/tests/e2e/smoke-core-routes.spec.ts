@@ -58,7 +58,7 @@ test.describe("Smoke - rotas centrais e protecao", () => {
   test("cotacao carrega fluxo em passos", async ({ page }) => {
     await page.goto("/cotacao");
     await waitForTerminalState(page, {
-      successRegex: /Passo \d de 5|Nenhum item disponivel/i,
+      successRegex: /Passo \d de 8|Datas e hóspedes|Nenhum item dispon/i,
       errorRegex: /Nao foi possivel carregar/i,
       loadingRegex: /Carregando op[cç][oõ]es/i,
       timeoutMs: 16000,

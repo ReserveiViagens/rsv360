@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
 import { AnalyticsInsightsQuerySchema } from '@/lib/schemas/analytics-schemas';
+import { fetchBookingBreakdown, type BookingBreakdownRow } from '@/lib/analytics-booking-breakdown';
 
 const REVENUE_STATUSES = "('confirmed')";
 const BOOKING_STATUSES = "('confirmed', 'pending')";
@@ -48,6 +49,15 @@ export async function GET(request: NextRequest) {
       : [startStr, endStr];
 
     const insights: Array<Record<string, unknown>> = [];
+    const propertyId = validatedQuery.property_id;
+
+    const attachBreakdown = async (
+      insight: Record<string, unknown>,
+      filters: Parameters<typeof fetchBookingBreakdown>[0]
+    ) => {
+      insight.related_bookings = await fetchBookingBreakdown({ ...filters, limit: 20 });
+      return insight;
+    };
 
     const revenueData = await queryDatabase(
       `SELECT
@@ -69,28 +79,38 @@ export async function GET(request: NextRequest) {
       const change = previous > 0 ? ((recent - previous) / previous) * 100 : 0;
 
       if (change < -10) {
-        insights.push({
-          id: 'revenue_decline',
-          type: 'revenue',
-          title: 'Receita em Declínio',
-          description: `Receita diminuiu ${Math.abs(change).toFixed(1)}% comparado ao mês anterior`,
-          severity: 'warning',
-          recommendation:
-            'Considere campanhas de marketing ou ajustes de preço para aumentar a demanda',
-          metrics: { change, recent, previous },
-          created_at: new Date().toISOString(),
-        });
+        insights.push(
+          await attachBreakdown(
+            {
+              id: 'revenue_decline',
+              type: 'revenue',
+              title: 'Receita em Declínio',
+              description: `Receita diminuiu ${Math.abs(change).toFixed(1)}% comparado ao mês anterior`,
+              severity: 'warning',
+              recommendation:
+                'Considere campanhas de marketing ou ajustes de preço para aumentar a demanda',
+              metrics: { change, recent, previous },
+              created_at: new Date().toISOString(),
+            },
+            { propertyId, month: revenueData[0]?.month as string | undefined }
+          )
+        );
       } else if (change > 10) {
-        insights.push({
-          id: 'revenue_growth',
-          type: 'revenue',
-          title: 'Crescimento de Receita',
-          description: `Receita aumentou ${change.toFixed(1)}% comparado ao mês anterior`,
-          severity: 'info',
-          recommendation: 'Mantenha as estratégias atuais que estão gerando resultados positivos',
-          metrics: { change, recent, previous },
-          created_at: new Date().toISOString(),
-        });
+        insights.push(
+          await attachBreakdown(
+            {
+              id: 'revenue_growth',
+              type: 'revenue',
+              title: 'Crescimento de Receita',
+              description: `Receita aumentou ${change.toFixed(1)}% comparado ao mês anterior`,
+              severity: 'info',
+              recommendation: 'Mantenha as estratégias atuais que estão gerando resultados positivos',
+              metrics: { change, recent, previous },
+              created_at: new Date().toISOString(),
+            },
+            { propertyId, month: revenueData[0]?.month as string | undefined }
+          )
+        );
       }
     }
 
@@ -115,17 +135,22 @@ export async function GET(request: NextRequest) {
       const occupancyRate = spanDays > 0 ? (bookings / spanDays) * 100 : 0;
 
       if (occupancyRate < 50 && bookings > 0) {
-        insights.push({
-          id: 'low_occupancy',
-          type: 'occupancy',
-          title: 'Ocupação Baixa',
-          description: `Taxa estimada de ocupação em ${occupancyRate.toFixed(1)}% no período`,
-          severity: 'warning',
-          recommendation:
-            'Considere estratégias de precificação dinâmica ou promoções para aumentar a ocupação',
-          metrics: { occupancy: occupancyRate },
-          created_at: new Date().toISOString(),
-        });
+        insights.push(
+          await attachBreakdown(
+            {
+              id: 'low_occupancy',
+              type: 'occupancy',
+              title: 'Ocupação Baixa',
+              description: `Taxa estimada de ocupação em ${occupancyRate.toFixed(1)}% no período`,
+              severity: 'warning',
+              recommendation:
+                'Considere estratégias de precificação dinâmica ou promoções para aumentar a ocupação',
+              metrics: { occupancy: occupancyRate },
+              created_at: new Date().toISOString(),
+            },
+            { propertyId, startDate: startStr, endDate: endStr }
+          )
+        );
       }
     }
 
@@ -191,16 +216,30 @@ export async function GET(request: NextRequest) {
       );
 
       if (highDemandDates.length > 0) {
-        insights.push({
-          id: 'high_demand_periods',
-          type: 'demand',
-          title: 'Períodos de Alta Demanda Identificados',
-          description: `${highDemandDates.length} datas com demanda acima de 80% do pico`,
-          severity: 'info',
-          recommendation: 'Considere aumentar preços nestes períodos para maximizar receita',
-          metrics: { highDemandDates: highDemandDates.length, peakBookings: maxBookings },
-          created_at: new Date().toISOString(),
-        });
+        const peakDate =
+          typeof highDemandDates[0].date === 'string'
+            ? highDemandDates[0].date.slice(0, 10)
+            : new Date(highDemandDates[0].date).toISOString().slice(0, 10);
+
+        insights.push(
+          await attachBreakdown(
+            {
+              id: 'high_demand_periods',
+              type: 'demand',
+              title: 'Períodos de Alta Demanda Identificados',
+              description: `${highDemandDates.length} datas com demanda acima de 80% do pico`,
+              severity: 'info',
+              recommendation: 'Considere aumentar preços nestes períodos para maximizar receita',
+              metrics: {
+                highDemandDates: highDemandDates.length,
+                peakBookings: maxBookings,
+                peakDate,
+              },
+              created_at: new Date().toISOString(),
+            },
+            { propertyId, startDate: peakDate, endDate: peakDate }
+          )
+        );
       }
     }
 
@@ -223,6 +262,13 @@ export async function GET(request: NextRequest) {
       info_count: insights.filter((i) => i.severity === 'info').length,
     };
 
+    const breakdown: BookingBreakdownRow[] = await fetchBookingBreakdown({
+      propertyId,
+      startDate: startStr,
+      endDate: endStr,
+      limit: 50,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -232,6 +278,7 @@ export async function GET(request: NextRequest) {
           start: startDate.toISOString(),
           end: endDate.toISOString(),
         },
+        breakdown,
       },
     });
   } catch (err: unknown) {

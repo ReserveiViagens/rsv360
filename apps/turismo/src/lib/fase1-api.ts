@@ -90,6 +90,51 @@ export const fase1Api = {
   relatoriosDashboard: () => fetchJson<{ success: boolean; data: unknown }>('/api/v1/relatorios/dashboard'),
   exportCsvUrl: (tipo: string) => `${FASE1_API_BASE}/api/v1/relatorios/export/csv?tipo=${tipo}`,
   exportPdfUrl: (tipo: string) => `${FASE1_API_BASE}/api/v1/relatorios/export/pdf?tipo=${tipo}`,
+
+  // Configurações — modulo_propostas (configuracoes_sistema)
+  getModuloPropostas: () =>
+    fetchJson<{
+      success: boolean;
+      data: {
+        validadeCotacaoHoras: number;
+        urgenciaEstilo: 'countdown' | 'badge' | 'nenhum';
+        avisoExpiracaoHoras: number;
+        permitirApenasHotel?: boolean;
+        disparoAutomatizadoCaldasAi?: boolean;
+        delayDisparoMinutos?: number;
+      };
+    }>('/api/v1/configuracoes/modulo-propostas'),
+  updateModuloPropostas: (body: {
+    validadeCotacaoHoras?: number;
+    urgenciaEstilo?: 'countdown' | 'badge' | 'nenhum';
+    avisoExpiracaoHoras?: number;
+  }) =>
+    fetchJson('/api/v1/configuracoes/modulo-propostas', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+
+  // Anfitrião / parceiros (PR 24B)
+  anfitriaoDashboard: () =>
+    fetchJson<{ success: boolean; data: { total: number; incompletas: number; emAprovacao: number; publicadas: number } }>(
+      '/api/v1/acomodacoes/anfitriao/dashboard',
+    ),
+  anfitriaoMinhas: (page = 1) =>
+    fetchJson<{ success: boolean; data: { items: unknown[]; total: number; page: number; pageSize: number } }>(
+      `/api/v1/acomodacoes/anfitriao/minhas?page=${page}`,
+    ),
+  anfitriaoUnidade: (id: number) =>
+    fetchJson<{ success: boolean; data: unknown }>(`/api/v1/acomodacoes/anfitriao/unidades/${id}`),
+  atualizarAnfitriaoUnidade: (id: number, body: Record<string, unknown>) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
+  enviarAprovacaoUnidade: (id: number) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}/enviar-aprovacao`, {
+      method: 'POST',
+      body: '{}',
+    }),
 };
 
 export function getWsBaseUrl(): string {

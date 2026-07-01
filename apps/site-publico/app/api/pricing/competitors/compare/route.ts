@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
+import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
 
 // GET /api/pricing/competitors/compare - Comparar preços
 export async function GET(request: NextRequest) {
@@ -50,6 +51,11 @@ export async function GET(request: NextRequest) {
 
     // Calcular estatísticas
     if (competitors.length === 0) {
+      const breakdown = await fetchPropertyBookings(parseInt(itemId, 10), {
+        startDate: date,
+        endDate: date,
+        limit: 20,
+      });
       return NextResponse.json({
         success: true,
         data: {
@@ -65,6 +71,7 @@ export async function GET(request: NextRequest) {
           position: 'no_data',
           recommendation: 'Sem dados de competidores disponíveis',
         },
+        breakdown,
       });
     }
 
@@ -91,6 +98,12 @@ export async function GET(request: NextRequest) {
       recommendation = 'Preço abaixo da média. Oportunidade de aumento.';
     }
 
+    const breakdown = await fetchPropertyBookings(parseInt(itemId, 10), {
+      startDate: date,
+      endDate: date,
+      limit: 20,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -112,6 +125,7 @@ export async function GET(request: NextRequest) {
           percentage_vs_average: Math.round(((currentPrice - average) / average) * 100 * 100) / 100,
         },
       },
+      breakdown,
     });
   } catch (error: any) {
     console.error('Erro ao comparar preços:', error);

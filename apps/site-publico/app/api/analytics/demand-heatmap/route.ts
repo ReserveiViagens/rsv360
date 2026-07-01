@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
+import { fetchBookingBreakdown } from '@/lib/analytics-booking-breakdown';
 
 const BOOKING_STATUSES = "('confirmed', 'pending')";
 
@@ -72,12 +73,20 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    const breakdown = await fetchBookingBreakdown({
+      propertyId,
+      startDate,
+      endDate,
+      limit: 100,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
         heatmap: heatmapData,
         max_demand: maxBookings,
         date_range: { start: startDate, end: endDate },
+        breakdown,
       },
     });
   } catch (err: unknown) {

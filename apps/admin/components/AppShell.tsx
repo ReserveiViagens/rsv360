@@ -20,6 +20,10 @@ const titles: Record<string, { title: string; description: string }> = {
   '/fiscal': { title: 'Fiscal & LGPD', description: 'Recibos, FNRH, consentimentos e auditoria.' },
   '/orcamentos': { title: 'Orçamentos', description: 'Módulo Fase 1 — orçamentos comerciais.' },
   '/propostas': { title: 'Propostas', description: 'Propostas comerciais e links públicos.' },
+  '/configuracoes/modulo-propostas': {
+    title: 'Módulo Propostas',
+    description: 'Validade, urgência e regras de expiração (configuracoes_sistema).',
+  },
   '/passageiros': { title: 'Passageiros', description: 'Cadastro e documentos de passageiros.' },
   '/financeiro': { title: 'Financeiro', description: 'Transações, contas e fluxo de caixa.' },
   '/campanhas': { title: 'Campanhas', description: 'Campanhas de marketing e cupons.' },

@@ -8,7 +8,9 @@ export type ImportarAcomodacoesJobData = {
   jobId: string;
   nomeArquivo: string;
   bufferBase64: string;
-  anfitriaoId?: string | null;
+  proprietarioId?: number | null;
+  bulkPublicado?: boolean;
+  statusPublicacao?: 'rascunho' | 'completo' | 'em_aprovacao' | 'publicado' | 'rejeitado';
   userId?: number;
 };
 

@@ -52,6 +52,39 @@ export function usePropostaHitl(id?: number) {
   });
 }
 
+export function useAceitarPropostaPublica() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      token,
+      clientName,
+      turnstileToken,
+    }: {
+      token: string;
+      clientName?: string;
+      turnstileToken?: string;
+    }) => {
+      const res = await fetch(`/api/cotacao/proposta/${encodeURIComponent(token)}/aceitar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientName, turnstileToken }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || res.statusText);
+      return json as {
+        success: boolean;
+        data: { proximoDestino?: string; proposta?: Proposta };
+      };
+    },
+    onSuccess: async (data) => {
+      const id = data.data?.proposta?.id;
+      if (id) {
+        await qc.invalidateQueries({ queryKey: ['propostas', 'public', id] });
+      }
+    },
+  });
+}
+
 export function useResponderProposta() {
   const qc = useQueryClient();
   return useMutation({
@@ -59,14 +92,16 @@ export function useResponderProposta() {
       id,
       action,
       clientName,
+      turnstileToken,
     }: {
       id: number;
       action: 'accept' | 'reject';
       clientName?: string;
+      turnstileToken?: string;
     }) =>
       fetchJson<ApiItemResponse<Proposta>>(`/${id}/responder`, {
         method: 'POST',
-        body: JSON.stringify({ action, clientName }),
+        body: JSON.stringify({ action, clientName, turnstileToken }),
       }),
     onSuccess: async (_data, vars) => {
       await qc.invalidateQueries({ queryKey: ['propostas', 'public', vars.id] });
@@ -82,15 +117,22 @@ export function useEnviarChatProposta() {
       message,
       senderName,
       senderType,
+      turnstileToken,
     }: {
       id: number;
       message: string;
       senderName?: string;
       senderType?: string;
+      turnstileToken?: string;
     }) =>
       fetchJson<ApiItemResponse<PropostaChatMessage>>(`/${id}/chat`, {
         method: 'POST',
-        body: JSON.stringify({ message, senderName, senderType: senderType ?? 'client' }),
+        body: JSON.stringify({
+          message,
+          senderName,
+          senderType: senderType ?? 'client',
+          turnstileToken,
+        }),
       }),
     onSuccess: async (_data, vars) => {
       await qc.invalidateQueries({ queryKey: ['propostas', vars.id, 'chat'] });

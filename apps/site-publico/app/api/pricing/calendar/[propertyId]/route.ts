@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { pricingLabAuth } from '@/lib/pricing-lab-auth';
+import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
 
 function demandToScore(level?: string | null): number {
   switch (level) {
@@ -44,6 +45,7 @@ export async function GET(
     const itemId = parseInt(propertyId, 10);
     const { searchParams } = new URL(request.url);
     const month = searchParams.get('month') || new Date().toISOString().slice(0, 7);
+    const detailDate = searchParams.get('detail_date');
 
     const [year, mon] = month.split('-').map(Number);
     const startDate = `${month}-01`;
@@ -83,7 +85,19 @@ export async function GET(
       });
     }
 
-    return NextResponse.json({ success: true, data });
+    const breakdown = detailDate
+      ? await fetchPropertyBookings(itemId, {
+          startDate: detailDate,
+          endDate: detailDate,
+          limit: 20,
+        })
+      : undefined;
+
+    return NextResponse.json({
+      success: true,
+      data,
+      ...(breakdown !== undefined ? { breakdown } : {}),
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Erro ao buscar calendário';
     return NextResponse.json({ success: false, error: message }, { status: 500 });

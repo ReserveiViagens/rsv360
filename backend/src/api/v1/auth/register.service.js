@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { queryDatabase, isDbRefreshEnabled } = require('./refresh-token.service');
 
 const ALLOWED_REGISTER_ROLES = new Set(['user', 'manager']);
+/** Papéis parceiros (`anfitriao`, `corretor`): criados apenas por admin/staff — não no registro público. */
 
 async function hashPassword(password) {
   return bcrypt.hash(password, 12);

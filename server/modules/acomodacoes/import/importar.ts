@@ -27,10 +27,34 @@ async function buscarExistente(dto: AcomodacaoImportResolved) {
   return byHotelTitulo ?? null;
 }
 
-function montarPayload(dto: AcomodacaoImportResolved, anfitriaoId?: string | null) {
+function montarPayload(
+  dto: AcomodacaoImportResolved,
+  proprietarioId?: number | null,
+  options: ProcessarImportOptions = {},
+) {
+  let statusPublicacao = options.bulkPublicado
+    ? 'publicado'
+    : (options.statusPublicacao ?? 'rascunho');
+
+  if (options.bulkPublicado) {
+    const integra =
+      dto.precoDiaria != null &&
+      dto.empreendimentoResolvido !== false;
+    if (!integra) statusPublicacao = 'rascunho';
+  }
+
+  const dadosCompletos = ['completo', 'em_aprovacao', 'publicado'].includes(statusPublicacao);
+  const metadata: Record<string, unknown> = {};
+  if (dto.fonte || dto.obs) {
+    metadata.fonte = dto.fonte ?? null;
+    metadata.obs = dto.obs ?? null;
+  }
+  if (dto.avisos?.length) metadata.avisosImport = dto.avisos;
+  const metadataPayload = Object.keys(metadata).length ? metadata : null;
+
   return {
     hotelId: dto.hotelId,
-    anfitriaoId: anfitriaoId ?? null,
+    proprietarioId: proprietarioId ?? null,
     tipoId: dto.tipoId,
     titulo: dto.titulo,
     quartos: dto.quartos,
@@ -44,7 +68,9 @@ function montarPayload(dto: AcomodacaoImportResolved, anfitriaoId?: string | nul
     amenidades: dto.amenidades?.length ? dto.amenidades : null,
     midia: dto.midia?.length ? dto.midia : null,
     codigoExterno: dto.codigoExterno ?? null,
-    dadosCompletos: false,
+    dadosCompletos,
+    statusPublicacao,
+    metadata: metadataPayload,
     ativo: true,
     atualizadoEm: new Date(),
   };
@@ -55,7 +81,7 @@ export async function upsertAcomodacao(
   options: ProcessarImportOptions = {},
 ): Promise<LinhaImportResultado> {
   const existente = await buscarExistente(dto);
-  const payload = montarPayload(dto, options.anfitriaoId);
+  const payload = montarPayload(dto, options.proprietarioId, options);
 
   if (options.dryRun) {
     return {
@@ -65,6 +91,7 @@ export async function upsertAcomodacao(
       acomodacaoId: existente?.id,
       titulo: dto.titulo,
       codigoExterno: dto.codigoExterno ?? null,
+      avisos: dto.avisos,
     };
   }
 
@@ -82,6 +109,7 @@ export async function upsertAcomodacao(
       acomodacaoId: updated?.id ?? existente.id,
       titulo: dto.titulo,
       codigoExterno: dto.codigoExterno ?? null,
+      avisos: dto.avisos,
     };
   }
 
@@ -93,6 +121,7 @@ export async function upsertAcomodacao(
     acomodacaoId: inserted?.id,
     titulo: dto.titulo,
     codigoExterno: dto.codigoExterno ?? null,
+    avisos: dto.avisos,
   };
 }
 
@@ -109,7 +138,12 @@ export async function processarImport(
     const dto = dtos[i];
     try {
       const result = await upsertAcomodacao(dto, { ...options, dryRun });
-      linhas.push({ ...result, linha: i + 1, acao: dryRun ? 'preview' : result.acao });
+      linhas.push({
+        ...result,
+        linha: i + 1,
+        acao: dryRun ? 'preview' : result.acao,
+        avisos: dto.avisos,
+      });
       sucesso += 1;
     } catch (error) {
       erros += 1;

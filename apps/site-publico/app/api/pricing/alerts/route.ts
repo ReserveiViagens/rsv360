@@ -10,6 +10,7 @@ import {
   markAlertAsRead,
   sendAlertNotifications,
 } from '@/lib/pricing-alerts-service';
+import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
 
 /**
  * GET /api/pricing/alerts
@@ -48,9 +49,12 @@ export async function GET(request: NextRequest) {
       [propertyId]
     );
 
+    const breakdown = await fetchPropertyBookings(propertyId, { limit: 30 });
+
     return NextResponse.json({
       success: true,
       data: alerts,
+      breakdown,
     });
   } catch (error: any) {
     console.error('Erro ao obter alertas:', error);

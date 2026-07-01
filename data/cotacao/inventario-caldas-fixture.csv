@@ -1,0 +1,6 @@
+codigo_externo,empreendimento,tipo,titulo,quartos,capacidade_max,config_sala,config_banheiro,preco_diaria,fonte,obs
+CAL-PZ-101,Piazza DiRoma,apto,Apto 101 Piazza,2,6,nenhum,so_wc_social,320,inventario_fixture,demo
+CAL-PZ-102,Piazza DiRoma,apto,Apto 102 Piazza,2,5,nenhum,so_wc_social,300,inventario_fixture,demo
+CAL-LQ-201,Lagoa Eco Towers,apto,Torre A 201,3,8,nenhum,so_suite,450,inventario_fixture,demo
+CAL-SP-301,Spazzio DiRoma,apto,Spazzio 301,1,4,nenhum,so_wc_social,280,inventario_fixture,demo
+CAL-GD-401,Golden Dolphin Gran Hotel,apto,GD 401,2,6,sofa_cama,so_wc_social,350,inventario_fixture,demo

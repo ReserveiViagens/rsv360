@@ -12,6 +12,7 @@ import {
   deletePricingRule,
 } from '@/lib/pricing-rules-service';
 import { marketingLabAuth as pricingLabAuth } from '@/lib/marketing-lab-auth';
+import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
 
 // GET /api/pricing/rules - Listar regras
 export async function GET(request: NextRequest) {
@@ -29,9 +30,12 @@ export async function GET(request: NextRequest) {
 
     const rules = await getPricingRules(parseInt(itemId), activeOnly);
 
+    const breakdown = await fetchPropertyBookings(parseInt(itemId, 10), { limit: 30 });
+
     return NextResponse.json({
       success: true,
       data: rules,
+      breakdown,
     });
   } catch (error: any) {
     console.error('Erro ao listar regras:', error);

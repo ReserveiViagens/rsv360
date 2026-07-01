@@ -9,9 +9,9 @@ WORKDIR /workspace
 
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/package.json
+COPY packages/shared/package.json packages/shared/package.json
 COPY .github/scripts .github/scripts
-# Backend runtime não usa @rsv360/shared; evita postinstall root (build:shared) no image.
-RUN npm ci --workspace=backend --include-workspace-root=false --no-audit --no-fund --ignore-scripts
+RUN npm ci --workspace=backend --workspace=@rsv360/shared --include-workspace-root=false --no-audit --no-fund --ignore-scripts
 
 FROM node:24-alpine AS runtime
 WORKDIR /workspace
@@ -25,6 +25,8 @@ ENV PORT=3002
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY backend ./backend
 COPY server ./server
+COPY packages/shared ./packages/shared
+RUN cd packages/shared && npx tsc
 WORKDIR /workspace/backend
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \

@@ -16,6 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { PricingBookingsBreakdown } from '../PricingBookingsBreakdown';
+import type { BookingBreakdownItem } from '@/components/analytics/BookingBreakdownTable';
 
 function CompetitorsPanel({ itemId, basePrice }: { itemId: string; basePrice: number }) {
   const qc = useQueryClient();
@@ -28,13 +30,16 @@ function CompetitorsPanel({ itemId, basePrice }: { itemId: string; basePrice: nu
       const res = await fetch(`/api/pricing/competitors?item_id=${itemId}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Erro ao carregar concorrentes');
-      return json.data as Array<{
-        competitor_name: string;
-        price: number;
-        currency: string;
-        availability_status: string;
-        scraped_at: string;
-      }>;
+      return {
+        competitors: json.data as Array<{
+          competitor_name: string;
+          price: number;
+          currency: string;
+          availability_status: string;
+          scraped_at: string;
+        }>,
+        breakdown: (json.breakdown as BookingBreakdownItem[]) || [],
+      };
     },
   });
 
@@ -78,10 +83,19 @@ function CompetitorsPanel({ itemId, basePrice }: { itemId: string; basePrice: nu
         <p className="text-sm text-slate-500">Carregando…</p>
       ) : (
         <CompetitorTable
-          competitors={data || []}
+          competitors={data?.competitors || []}
           currentPrice={basePrice}
           title="Monitoramento de concorrentes"
           description="Tarifas coletadas hoje ou registradas manualmente no laboratório."
+        />
+      )}
+
+      {data?.breakdown && data.breakdown.length > 0 && (
+        <PricingBookingsBreakdown
+          title="Suas reservas recentes"
+          description="Compare tarifas praticadas nas reservas reais versus concorrentes."
+          bookings={data.breakdown}
+          showProperty={false}
         />
       )}
 
