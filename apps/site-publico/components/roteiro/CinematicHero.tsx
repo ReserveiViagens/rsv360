@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { shouldAutoplayCinematicVideo } from '@/lib/roteiro-engagement';
+import { SmartVideo } from '@/components/media/SmartVideo';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { AnticlonagemWatermark } from './AnticlonagemWatermark';
 
@@ -15,7 +15,6 @@ interface CinematicHeroProps {
 
 export function CinematicHero({ title, subtitle, clienteNome, poster, videoSrc }: CinematicHeroProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const showVideo = shouldAutoplayCinematicVideo(videoSrc, prefersReducedMotion);
 
   const motionProps = (y: number, delay = 0) =>
     prefersReducedMotion
@@ -35,19 +34,14 @@ export function CinematicHero({ title, subtitle, clienteNome, poster, videoSrc }
         fetchPriority="high"
       />
 
-      {showVideo ? (
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
+      {videoSrc ? (
+        <SmartVideo
+          className="absolute inset-0"
+          srcMp4={videoSrc}
           poster={poster}
-          muted
+          background
           loop
-          playsInline
-          preload="none"
-          autoPlay
-          aria-hidden
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
+        />
       ) : null}
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/90" />
