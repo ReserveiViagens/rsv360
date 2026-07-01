@@ -137,3 +137,6 @@ drizzle-kit-cli-windows*.log
 
 # Migração Sistema A — dados locais (PII)
 data/db.json
+
+backups/
+backend/data/
