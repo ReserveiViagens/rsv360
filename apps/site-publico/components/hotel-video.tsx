@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Play, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { SmartVideo } from "@/components/media/SmartVideo"
 
 interface HotelVideoProps {
   hotelName: string
@@ -87,11 +88,12 @@ export function HotelVideo({ hotelName, videoUrl, youtubeId }: HotelVideoProps) 
                   allowFullScreen
                 />
               ) : videoData.videoUrl ? (
-                <video
+                <SmartVideo
                   className="w-full h-full rounded-lg"
-                  src={videoData.videoUrl}
+                  srcMp4={videoData.videoUrl}
+                  poster=""
                   controls
-                  autoPlay
+                  playOnView
                 />
               ) : null}
               <Button
