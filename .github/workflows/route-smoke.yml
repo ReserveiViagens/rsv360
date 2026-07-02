@@ -23,6 +23,8 @@ jobs:
       POSTGRES_USER: rsv360
       POSTGRES_PASSWORD: rsv360_dev_2024
       POSTGRES_DB: rsv_360_ecosystem
+      # docker-compose.yml mapeia postgres 5433:5432 (evita conflito local); no runner CI usar 5433.
+      DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5433/rsv_360_ecosystem
       JWT_SECRET: ci_route_smoke_jwt_secret_minimum_32_chars
       SEED_TEST_USER_EMAIL: test@local.dev
       SEED_TEST_USER_PASSWORD: dev-only-fallback-do-not-use-in-prod
@@ -61,8 +63,6 @@ jobs:
 
       - name: Run database migrations
         working-directory: backend
-        env:
-          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
         run: npm run migrate
 
       - name: Ensure auth v1 tables (rate limit + refresh tokens)
@@ -73,21 +73,18 @@ jobs:
       - name: Seed deterministic test user
         working-directory: backend
         env:
-          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
           SEED_TEST_USER_ROLE: admin
         run: npm run seed
 
       - name: Run portal booking read smoke
         working-directory: backend
         env:
-          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
           PORTAL_SMOKE_BOOKING_CODE: SEED-ACC-001
         run: npm run smoke:portal-booking
 
       - name: Run portal booking write smoke
         working-directory: backend
         env:
-          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
           PORTAL_SMOKE_BOOKING_CODE: SEED-ACC-001
         run: npx tsx ../server/modules/guest-portal/portal-booking-write.smoke.ts
 
@@ -155,7 +152,6 @@ jobs:
       - name: Run guest E2E smoke (Phase 7-G.2)
         working-directory: apps/guest
         env:
-          DATABASE_URL: postgresql://rsv360:rsv360_dev_2024@localhost:5432/rsv_360_ecosystem
           GUEST_BASE_URL: http://localhost:3006
           PORTAL_TEST_BOOKING_CODE: SEED-ACC-001
           PORTAL_TEST_PATH: /reservations
