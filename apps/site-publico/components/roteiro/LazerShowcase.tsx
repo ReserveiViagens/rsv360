@@ -26,7 +26,7 @@ export function LazerShowcase({ lazer, unlocked = true }: LazerShowcaseProps) {
   }
 
   return (
-    <section className="border-t border-white/10 px-4 py-12 md:px-8">
+    <section id="lazer" className="border-t border-white/10 px-4 py-12 md:px-8">
       <h2 className="mb-6 text-2xl font-bold tracking-tight">Lazer e bem-estar</h2>
       <div className="grid gap-4 md:grid-cols-2">
         {piscinas.map((item) => (

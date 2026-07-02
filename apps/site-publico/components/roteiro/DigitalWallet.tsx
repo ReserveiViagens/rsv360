@@ -30,13 +30,14 @@ interface DigitalWalletProps {
   token: string;
   status: string;
   checkOut?: string;
+  onCarteiraOpen?: () => void;
 }
 
 function isWalletUnlocked(status: string): boolean {
   return status === 'accepted' || status === 'paid';
 }
 
-export function DigitalWallet({ token, status, checkOut }: DigitalWalletProps) {
+export function DigitalWallet({ token, status, checkOut, onCarteiraOpen }: DigitalWalletProps) {
   const unlocked = isWalletUnlocked(status);
 
   return (
@@ -70,6 +71,11 @@ export function DigitalWallet({ token, status, checkOut }: DigitalWalletProps) {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
                 className="group rounded-2xl border border-white/10 bg-white/5 open:bg-white/[0.07]"
+                onToggle={(e) => {
+                  if ((e.currentTarget as HTMLDetailsElement).open) {
+                    onCarteiraOpen?.();
+                  }
+                }}
               >
                 <summary className="flex cursor-pointer list-none items-center gap-4 px-4 py-4 sm:px-5">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">

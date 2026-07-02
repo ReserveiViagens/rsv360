@@ -30,3 +30,5 @@ export * from './empreendimentos';
 export * from './carteira-corretor';
 export * from './disponibilidade-acomodacao';
 export * from './wizard-addons';
+export * from './proposta-vouchers';
+export * from './roteiro-analytics';
