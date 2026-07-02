@@ -63,25 +63,6 @@ export const acomodacoesService = {
     return row ?? null;
   },
 
-  async updateAnfitriao(
-    id: number,
-    patch: Partial<{
-      utensilios: unknown;
-      eletrodomesticos: unknown;
-      amenidades: unknown;
-      midia: unknown;
-      capacidadeMax: number;
-      dadosCompletos: boolean;
-    }>,
-  ) {
-    const [row] = await db
-      .update(acomodacoes)
-      .set({ ...patch, atualizadoEm: new Date() })
-      .where(eq(acomodacoes.id, id))
-      .returning();
-    return row ?? null;
-  },
-
   async listarAddons(escopo = 'hotel') {
     return db
       .select()

@@ -64,17 +64,6 @@ router.get('/addons', publicLimiter, async (_req, res) => {
   }
 });
 
-router.patch('/anfitriao/:id', ...staffAuth, async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const row = await acomodacoesService.updateAnfitriao(id, req.body ?? {});
-    if (!row) return res.status(404).json({ success: false, error: 'Acomodação não encontrada' });
-    res.json({ success: true, data: row });
-  } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
-  }
-});
-
 router.get('/admin/tipos', ...adminAuth, async (_req, res) => {
   try {
     const data = await acomodacoesService.listarTipos();
