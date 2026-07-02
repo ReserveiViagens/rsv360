@@ -1,4 +1,7 @@
 import { normalizeImageList } from '@/lib/cotacao-image-utils';
+import { countWizardNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
+
+export { WIZARD_MIN_NIGHTS, countWizardNights as countNights };
 
 export type WizardProfile = 'familia' | 'casal' | 'aventura';
 export type PaymentMethod = 'pix' | 'credit';
@@ -147,13 +150,6 @@ export function catalogItemFromAttraction(a: Attraction, available = true): Avai
   };
 }
 
-export function countNights(checkIn: string, checkOut: string): number {
-  if (!checkIn || !checkOut) return 0;
-  const start = new Date(checkIn);
-  const end = new Date(checkOut);
-  const diff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  return diff > 0 ? diff : 0;
-}
 
 export function formatDateBR(iso: string): string {
   if (!iso) return '';

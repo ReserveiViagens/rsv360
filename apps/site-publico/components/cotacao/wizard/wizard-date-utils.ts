@@ -1,7 +1,14 @@
 import { format, startOfDay } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
+import { countWizardNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export { WIZARD_MIN_NIGHTS };
+
+export function wizardMinNightsLabel(): string {
+  return `Estadia mínima de ${WIZARD_MIN_NIGHTS} noites para reservar.`;
+}
 
 export function parseWizardDateString(value: string): Date | undefined {
   if (!value || !ISO_DATE.test(value)) return undefined;
@@ -19,7 +26,8 @@ export function isPastDate(date: Date): boolean {
   return startOfDay(date) < startOfDay(new Date());
 }
 
-export function isValidWizardRange(checkIn: string, checkOut: string): boolean {
+/** Check-out após check-in, sem datas passadas (não exige mínimo comercial). */
+export function isWizardDateOrderValid(checkIn: string, checkOut: string): boolean {
   const from = parseWizardDateString(checkIn);
   const to = parseWizardDateString(checkOut);
   if (!from || !to) return false;
@@ -27,7 +35,21 @@ export function isValidWizardRange(checkIn: string, checkOut: string): boolean {
   return startOfDay(to) > startOfDay(from);
 }
 
+export function isValidWizardRange(checkIn: string, checkOut: string): boolean {
+  if (!isWizardDateOrderValid(checkIn, checkOut)) return false;
+  return countWizardNights(checkIn, checkOut) >= WIZARD_MIN_NIGHTS;
+}
+
 export function isValidDateRange(
+  range: DateRange | undefined,
+): range is DateRange & { from: Date; to: Date } {
+  if (!range?.from || !range.to) return false;
+  const checkIn = formatWizardDateString(range.from);
+  const checkOut = formatWizardDateString(range.to);
+  return isValidWizardRange(checkIn, checkOut);
+}
+
+export function isWizardDateOrderRange(
   range: DateRange | undefined,
 ): range is DateRange & { from: Date; to: Date } {
   if (!range?.from || !range.to) return false;
@@ -48,7 +70,7 @@ export function wizardStateToDateRange(checkIn: string, checkOut: string): DateR
   if (!from) return undefined;
   const to = parseWizardDateString(checkOut);
   if (!to) return { from };
-  if (!isValidWizardRange(checkIn, checkOut)) return { from };
+  if (!isWizardDateOrderValid(checkIn, checkOut)) return { from };
   return { from, to };
 }
 

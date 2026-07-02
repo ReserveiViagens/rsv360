@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { getWebsiteContent } from '@/lib/db';
 import { normalizeImageList } from '@/lib/cotacao-image-utils';
 import {
@@ -144,6 +145,16 @@ export async function GET(request: NextRequest) {
     const children = parseInt(sp.get('children') ?? '0', 10) || 0;
     const guests = adults + children;
     const nights = countNights(checkIn, checkOut);
+
+    if (checkIn && checkOut && !meetsWizardMinNights(checkIn, checkOut)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Estadia mínima de ${WIZARD_MIN_NIGHTS} noites para reservar.`,
+        },
+        { status: 400 },
+      );
+    }
 
     const hubData = await fetchFromHub(checkIn, checkOut, guests);
 

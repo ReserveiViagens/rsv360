@@ -13,4 +13,5 @@ export * from './cotacao/kit-capacidade.js';
 export * from './cotacao/buscar-por-relevancia.js';
 export * from './cotacao/intencao-acomodacao.js';
 export * from './cotacao/acomodacao-config-label.js';
+export * from './cotacao/wizard-estadia.js';
 export * from './cotacao/entrada-contextual.js';

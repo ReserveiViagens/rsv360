@@ -23,7 +23,7 @@ import { WizardStepAccommodation } from './WizardStepAccommodation';
 import { WizardStepItinerary } from './WizardStepItinerary';
 import { WizardStepReview } from './WizardStepReview';
 import type { WizardCatalog } from './wizard-types';
-import { isValidWizardRange } from './wizard-date-utils';
+import { isValidWizardRange, wizardMinNightsLabel } from './wizard-date-utils';
 
 function WizardContent() {
   const {
@@ -181,7 +181,7 @@ function WizardContent() {
 
   const handleDatesNext = async () => {
     if (!isValidWizardRange(state.checkIn, state.checkOut)) {
-      toast.error('Informe check-in e check-out válidos');
+      toast.error(wizardMinNightsLabel());
       return;
     }
     if (state.adults < 1) {

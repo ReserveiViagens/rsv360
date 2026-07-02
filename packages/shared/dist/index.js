@@ -37,4 +37,5 @@ __exportStar(require("./cotacao/kit-capacidade.js"), exports);
 __exportStar(require("./cotacao/buscar-por-relevancia.js"), exports);
 __exportStar(require("./cotacao/intencao-acomodacao.js"), exports);
 __exportStar(require("./cotacao/acomodacao-config-label.js"), exports);
+__exportStar(require("./cotacao/wizard-estadia.js"), exports);
 __exportStar(require("./cotacao/entrada-contextual.js"), exports);
