@@ -9,6 +9,7 @@ import { trackCarteiraOpen, useRoteiroAnalytics } from '@/hooks/useRoteiroAnalyt
 import { useRoteiroValidade } from '@/hooks/useRoteiroValidade';
 import { cn } from '@/lib/utils';
 import { RoteiroOfflineMeta, RoteiroPwaProvider, useRoteiroPwa } from './RoteiroPwaShell';
+import { ActionFooter } from './ActionFooter';
 import { CinematicHero } from './CinematicHero';
 import { CountdownTimer } from './CountdownTimer';
 import { DigitalWallet } from './DigitalWallet';
@@ -16,6 +17,7 @@ import { ExpiradaBanner } from './ExpiradaBanner';
 import { StickyNav } from './StickyNav';
 import { QrAutenticidade } from './QrAutenticidade';
 import { LazerShowcase } from './LazerShowcase';
+import { RoteiroMapa } from './RoteiroMapa';
 import { StorytellingTimeline } from './StorytellingTimeline';
 
 interface CinematicItineraryProps {
@@ -80,6 +82,7 @@ function RoteiroContent({ view }: CinematicItineraryProps) {
       <div className={cn(bloqueado && 'pointer-events-none select-none opacity-60')}>
         <StorytellingTimeline days={view.schedule} destination={view.destination} />
         <LazerShowcase lazer={view.lazer} unlocked={!bloqueado} />
+        <RoteiroMapa token={view.token} unlocked={!bloqueado} />
         <DigitalWallet
           token={view.token}
           status={view.status}
