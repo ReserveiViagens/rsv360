@@ -32,3 +32,4 @@ export * from './disponibilidade-acomodacao';
 export * from './wizard-addons';
 export * from './proposta-vouchers';
 export * from './roteiro-analytics';
+export * from './roteiro-pontos';

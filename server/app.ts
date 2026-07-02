@@ -13,6 +13,7 @@ import { registerCotacaoPublicaModule } from './modules/cotacao-publica';
 import { registerConfiguracoesModule } from './modules/configuracoes';
 import { registerVouchersModule } from './modules/vouchers';
 import { registerRoteiroAnalyticsModule } from './modules/roteiro-analytics';
+import { registerRoteiroModule } from './modules/roteiro';
 
 /**
  * Registra os 7 módulos backend da Fase 1 (migração Sistema A → B).
@@ -32,8 +33,9 @@ export function registerMigracaoFase1Modules(app: Express, io?: Server) {
   registerConfiguracoesModule(app);
   registerVouchersModule(app);
   registerRoteiroAnalyticsModule(app);
+  registerRoteiroModule(app);
   console.log(
-    '[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações + Cotação Pública + Configurações + Analytics Roteiro registrados ✓',
+    '[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações + Cotação Pública + Configurações + Analytics Roteiro + Mapa Roteiro registrados ✓',
   );
 }
 

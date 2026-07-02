@@ -169,6 +169,13 @@
       "when": 1782221000000,
       "tag": "0027_roteiro_analytics",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1782222000000,
+      "tag": "0028_roteiro_pontos",
+      "breakpoints": true
     }
   ]
 }
