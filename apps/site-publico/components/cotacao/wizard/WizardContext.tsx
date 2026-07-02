@@ -18,10 +18,12 @@ import type { EntradaBootstrap } from '@/hooks/useEntradaContextual';
 import {
   dateRangeToWizardState,
   formatWizardDateString,
-  isValidDateRange,
   isValidWizardRange,
+  isWizardDateOrderRange,
+  isWizardDateOrderValid,
   normalizeDateRange,
   sanitizeWizardDates,
+  wizardMinNightsLabel,
 } from './wizard-date-utils';
 import { updateProfileFromGuests } from './wizard-behavior';
 import { calculateWizardTotal } from './wizard-pricing';
@@ -120,7 +122,10 @@ function validateStep(step: number, state: WizardState): string | null {
   switch (step) {
     case 0:
       if (!state.checkIn || !state.checkOut) return 'Informe check-in e check-out';
-      if (!isValidWizardRange(state.checkIn, state.checkOut)) return 'Check-out deve ser após check-in';
+      if (!isWizardDateOrderValid(state.checkIn, state.checkOut)) {
+        return 'Check-out deve ser após check-in';
+      }
+      if (!isValidWizardRange(state.checkIn, state.checkOut)) return wizardMinNightsLabel();
       if (state.adults < 1) return 'Informe ao menos 1 adulto';
       return null;
     case 1:
@@ -357,13 +362,23 @@ export function WizardProvider({ children, bootstrap }: WizardProviderProps) {
         return;
       }
 
-      if (!isValidDateRange(normalized)) {
+      if (!isWizardDateOrderRange(normalized)) {
         toast.error('Selecione um período válido (check-out após check-in, sem datas passadas).');
         return;
       }
 
       const nextDates = dateRangeToWizardState(normalized);
       if (!nextDates) return;
+
+      if (!isValidWizardRange(nextDates.checkIn, nextDates.checkOut)) {
+        setState((prev) => ({
+          ...prev,
+          checkIn: nextDates.checkIn,
+          checkOut: nextDates.checkOut,
+        }));
+        toast.error(wizardMinNightsLabel());
+        return;
+      }
 
       setState((prev) => {
         const changed =

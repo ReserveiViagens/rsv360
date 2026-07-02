@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { cotacaoPublicaService } from '../services/cotacao-publica.service';
 import { registrarLeadAbandono } from '../services/lead-abandono.service';
 import { isPropostaExpiradaError } from '../../propostas/proposta-validade';
@@ -11,6 +12,7 @@ function statusForGerarPropostaError(message: string): number {
   if (message.includes('Muitas solicitações')) return 429;
   if (message.includes('Aguarde alguns segundos')) return 429;
   if (message === 'Dados incompletos') return 400;
+  if (message.includes('Estadia mínima de')) return 400;
   return 500;
 }
 
@@ -23,6 +25,12 @@ router.post('/buscar-ofertas', async (req, res) => {
     const { checkin, checkout, hospedes } = req.body ?? {};
     if (!checkin || !checkout || !hospedes) {
       return res.status(400).json({ success: false, error: 'checkin, checkout e hospedes são obrigatórios' });
+    }
+    if (!meetsWizardMinNights(String(checkin), String(checkout))) {
+      return res.status(400).json({
+        success: false,
+        error: `Estadia mínima de ${WIZARD_MIN_NIGHTS} noites para reservar.`,
+      });
     }
     const { fornecedoresCotacaoHub } = require('../../fornecedores-hub/cotacao-orchestrator');
     const data = await fornecedoresCotacaoHub.processarCotacao({

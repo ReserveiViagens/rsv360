@@ -1,3 +1,4 @@
+import { countWizardNights, meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { eq } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { propostas } from '../../../../backend/src/db/schema/propostas';
@@ -48,17 +49,15 @@ export class CotacaoPublicaService {
       throw new Error('Dados incompletos');
     }
 
+    if (!meetsWizardMinNights(payload.checkIn, payload.checkOut)) {
+      throw new Error(`Estadia mínima de ${WIZARD_MIN_NIGHTS} noites para reservar.`);
+    }
+
     if (!checkSuccessCooldown(clientIp)) {
       throw new Error('Muitas solicitações. Aguarde 1 minuto.');
     }
 
-    const nights = Math.max(
-      1,
-      Math.ceil(
-        (new Date(payload.checkOut).getTime() - new Date(payload.checkIn).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ),
-    );
+    const nights = countWizardNights(payload.checkIn, payload.checkOut);
 
     const hotel = payload.catalog?.hotels?.find(
       (h) => h.id === payload.hotelId || String(h.id) === String(payload.hotelId),
