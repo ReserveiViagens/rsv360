@@ -1,45 +1,39 @@
 # ============================================
-# RSV360 Backend - Multi-stage Dockerfile
+# RSV360 Backend — imagem de produção (monorepo)
+# Resolve @rsv360/shared via workspaces + build do dist em runtime.
+# Contexto de build: raiz do repositório (docker-compose / Fase 5 / CD).
 # ============================================
 
-# --- Stage 1: Builder ---
-FROM node:24-alpine AS builder
-WORKDIR /app
+FROM node:24-alpine AS deps
+WORKDIR /workspace
 
-# Copiar package files
-COPY backend/package.json backend/package-lock.json ./backend/
 COPY package.json package-lock.json ./
+COPY backend/package.json backend/package.json
+COPY packages/shared/package.json packages/shared/package.json
+COPY .github/scripts .github/scripts
+RUN npm ci --workspace=backend --workspace=@rsv360/shared --include-workspace-root=false --no-audit --no-fund --ignore-scripts
 
-# Instalar dependências (incluindo dev para build)
-RUN cd backend && npm ci --no-audit --no-fund
-
-# --- Stage 2: Production ---
 FROM node:24-alpine AS production
-WORKDIR /app
+WORKDIR /workspace
 
-# Segurança: usuário não-root
+RUN apk add --no-cache wget
 RUN addgroup -S rsv360 && adduser -S rsv360 -G rsv360
 
-# Copiar package files e código fonte
-COPY backend/package.json backend/package-lock.json ./backend/
-COPY backend/ ./backend/
-COPY server/ ./server/
+ENV NODE_ENV=production
+ENV PORT=3002
 
-# Instalar apenas dependências de produção
-RUN cd backend && npm install --omit=dev --no-audit --no-fund
+COPY --from=deps /workspace/node_modules ./node_modules
+COPY backend ./backend
+COPY server ./server
+COPY packages/shared ./packages/shared
+RUN cd packages/shared && npx tsc
 
-# Instalar tsx para executar TypeScript
-RUN npm install -g tsx
+WORKDIR /workspace/backend
 
-# Instalar wget para health check
-RUN apk add --no-cache wget
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3002/api/v1/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
 
 USER rsv360
 EXPOSE 3002
 
-ENV NODE_ENV=production
-CMD ["npx", "tsx", "backend/server.ts"]
+CMD ["node", "server.js"]
