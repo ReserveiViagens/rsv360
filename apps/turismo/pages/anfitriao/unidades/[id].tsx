@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
-import ProtectedRoute from '../../../../components/ProtectedRoute';
+import ProtectedRoute from '../../../components/ProtectedRoute';
 import {
   useAnfitriaoUnidade,
   useAtualizarAnfitriaoUnidade,
