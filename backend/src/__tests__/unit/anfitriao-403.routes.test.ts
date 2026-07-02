@@ -43,6 +43,7 @@ jest.mock('../../../../server/middleware/auth.middleware', () => ({
 
 import express from 'express';
 import request from 'supertest';
+import acomodacoesRouter from '../../../../server/modules/acomodacoes/routes/index';
 import anfitriaoRouter from '../../../../server/modules/acomodacoes/routes/anfitriao.routes';
 
 const U_A = { id: 101, titulo: 'U_A', proprietarioId: 1, statusPublicacao: 'completo', dadosCompletos: true };
@@ -51,6 +52,7 @@ const U_B = { id: 202, titulo: 'U_B', proprietarioId: 2, statusPublicacao: 'rasc
 function buildApp() {
   const app = express();
   app.use(express.json());
+  app.use('/api/v1/acomodacoes', acomodacoesRouter);
   app.use('/api/v1/acomodacoes/anfitriao', anfitriaoRouter);
   return app;
 }
@@ -210,6 +212,25 @@ describe('PR 24A — escopo cross-owner (403)', () => {
         .set(authHeaders('corretor', 3));
       expect(res.status).toBe(403);
       expect(mockObterUnidade).toHaveBeenCalledWith({ userId: 3, role: 'corretor' }, 101);
+    });
+  });
+
+  describe('7. §11.2 — rota legado PATCH /anfitriao/:id removida', () => {
+    it('PATCH legado retorna 404 (usar /anfitriao/unidades/:id)', async () => {
+      const res = await request(buildApp())
+        .patch('/api/v1/acomodacoes/anfitriao/101')
+        .set(authHeaders('admin', 10))
+        .send({ midia: [] });
+      expect(res.status).toBe(404);
+    });
+
+    it('PATCH inexistente em /unidades/:id → 404', async () => {
+      mockAtualizarUnidade.mockResolvedValue({ error: 'not_found' });
+      const res = await request(buildApp())
+        .patch('/api/v1/acomodacoes/anfitriao/unidades/99999')
+        .set(authHeaders('anfitriao', 1))
+        .send({ midia: [] });
+      expect(res.status).toBe(404);
     });
   });
 });
