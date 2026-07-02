@@ -3,7 +3,7 @@
 // Status: ✅ 100% FUNCIONAL
 
 import React, { useState, useEffect } from 'react';
-import { Settings, Save, RefreshCw, Globe, Mail, Database, Bell, Palette, FileText } from 'lucide-react';
+import { Settings, Save, RefreshCw, Globe, Mail, Database, Bell, Palette, FileText, Shield, Users } from 'lucide-react';
 import { ModuloPropostasPanel } from '@/components/propostas/ModuloPropostasPanel';
 
 interface Configuracao {
