@@ -162,6 +162,13 @@
       "when": 1782220000000,
       "tag": "0026_vouchers_validacao",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1782221000000,
+      "tag": "0027_roteiro_analytics",
+      "breakpoints": true
     }
   ]
 }

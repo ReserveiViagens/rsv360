@@ -5,6 +5,7 @@ import type { RoteiroPremiumView } from '@/lib/roteiro-premium';
 import { buildRecotacaoUrlFromProposta } from '@/lib/proposta-recotacao-url';
 import { usePropostaExpiradaSocket } from '@/hooks/usePropostaExpiradaSocket';
 import { useRoteiroEngagement } from '@/hooks/useRoteiroEngagement';
+import { trackCarteiraOpen, useRoteiroAnalytics } from '@/hooks/useRoteiroAnalytics';
 import { useRoteiroValidade } from '@/hooks/useRoteiroValidade';
 import { cn } from '@/lib/utils';
 import { RoteiroOfflineMeta, RoteiroPwaProvider, useRoteiroPwa } from './RoteiroPwaShell';
@@ -28,6 +29,7 @@ function RoteiroContent({ view }: CinematicItineraryProps) {
   const { restanteMs, expirada, loading, markExpirada } = useRoteiroValidade(view.token);
 
   useRoteiroEngagement(view.token);
+  useRoteiroAnalytics(view.token);
 
   const handleExpiradaSocket = useCallback(() => {
     markExpirada();
@@ -78,7 +80,12 @@ function RoteiroContent({ view }: CinematicItineraryProps) {
       <div className={cn(bloqueado && 'pointer-events-none select-none opacity-60')}>
         <StorytellingTimeline days={view.schedule} destination={view.destination} />
         <LazerShowcase lazer={view.lazer} unlocked={!bloqueado} />
-        <DigitalWallet token={view.token} status={view.status} checkOut={view.checkOut} />
+        <DigitalWallet
+          token={view.token}
+          status={view.status}
+          checkOut={view.checkOut}
+          onCarteiraOpen={trackCarteiraOpen}
+        />
       </div>
 
       <RoteiroOfflineMeta className="px-4 pb-4" />
