@@ -88,8 +88,24 @@ jobs:
           PORTAL_SMOKE_BOOKING_CODE: SEED-ACC-001
         run: npx tsx ../server/modules/guest-portal/portal-booking-write.smoke.ts
 
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: false
+
       - name: Build & start Docker stack
-        run: docker compose up -d --build --wait --wait-timeout 600
+        run: |
+          set -e
+          for svc in backend site-publico admin turismo guest; do
+            docker compose build "$svc"
+            docker system prune -f
+          done
+          docker compose up -d --wait --wait-timeout 600 backend site-publico admin turismo guest
 
       - name: Wait for services (URL readiness)
         run: |
