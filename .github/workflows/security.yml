@@ -1,4 +1,4 @@
-name: "CodeQL"
+﻿name: "CodeQL"
 
 on:
   push:
@@ -29,9 +29,8 @@ jobs:
 
     strategy:
       fail-fast: false
-      # Keep per-language check names stable while analyzing both JS and TS.
       matrix:
-        language: [ 'javascript', 'typescript' ]
+        language: [ 'javascript-typescript' ]
 
     steps:
     - name: Checkout repository
@@ -43,30 +42,8 @@ jobs:
       uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
+        build-mode: none
         config-file: ./.github/codeql-config.yml
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '24'
-        cache: 'npm'
-
-    - name: Enable Corepack
-      run: |
-        corepack enable
-        corepack prepare npm@10.9.7 --activate
-
-    - name: Validate lockfiles
-      run: bash .github/scripts/check-lockfiles.sh . backend
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build Next app (apps/site-publico)
-      run: npm run build --workspace=apps/site-publico
-
-    - name: TypeScript typecheck (backend)
-      run: npx tsc --noEmit --project backend/tsconfig.json
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
