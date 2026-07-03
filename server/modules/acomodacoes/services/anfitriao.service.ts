@@ -87,6 +87,7 @@ export const anfitriaoService = {
     auth: AuthContext,
     id: number,
     patch: Partial<{
+      titulo: string;
       hotelId: string;
       proprietarioId: number;
       tipoId: number;

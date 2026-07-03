@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../src/context/AuthContext';
+import { getPostLoginPath } from '../src/lib/anfitriao-auth';
 import Head from 'next/head';
 
 export default function Login() {
@@ -19,7 +20,8 @@ export default function Login() {
         try {
             const success = await login(email, password);
             if (success) {
-                router.push('/dashboard');
+                const stored = typeof window !== 'undefined' ? localStorage.getItem('post_login_role') : null;
+                router.push(getPostLoginPath(stored ?? undefined));
             } else {
                 setError('Credenciais inválidas. Tente novamente.');
             }

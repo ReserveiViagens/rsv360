@@ -348,6 +348,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => clearInterval(tokenRefreshInterval);
   }, [accessToken, refreshToken, logout, refreshAccessToken]);
 
+  const persistPostLoginRole = (role?: string) => {
+    if (typeof window !== 'undefined' && role) {
+      localStorage.setItem('post_login_role', role);
+    }
+  };
+
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       // Verificar se é login demo
@@ -367,6 +373,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setRefreshToken('demo-refresh');
         localStorage.setItem('access_token', 'demo-token');
         localStorage.setItem('refresh_token', 'demo-refresh');
+        persistPostLoginRole('admin');
         return true;
       }
 
@@ -390,6 +397,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setRefreshToken('admin-refresh');
         localStorage.setItem('access_token', 'admin-token');
         localStorage.setItem('refresh_token', 'admin-refresh');
+        persistPostLoginRole('admin');
         return true;
       }
 
@@ -423,6 +431,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             ...mapped,
             id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
           } as User);
+          persistPostLoginRole(mapped.role);
         } else {
           await fetchUserData(loginPayload.access_token);
         }

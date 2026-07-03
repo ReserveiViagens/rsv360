@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useState } from 'react';
-import ProtectedRoute from '../../../components/ProtectedRoute';
+import AnfitriaoRoleGuard from '../../../components/AnfitriaoRoleGuard';
 import {
   useAnfitriaoUnidade,
   useAtualizarAnfitriaoUnidade,
@@ -13,21 +13,48 @@ type UnidadeEdit = {
   titulo?: string;
   precoDiaria?: string | number | null;
   statusPublicacao?: string;
+  amenidades?: unknown;
+  utensilios?: unknown;
+  midia?: unknown;
+  eletrodomesticos?: unknown;
 };
+
+function jsonPretty(v: unknown) {
+  if (v == null) return '[]';
+  try {
+    return JSON.stringify(v, null, 2);
+  } catch {
+    return '[]';
+  }
+}
+
+function parseJsonField(raw: string, label: string) {
+  try {
+    return JSON.parse(raw || '[]');
+  } catch {
+    throw new Error(`${label}: JSON inválido`);
+  }
+}
 
 function UnidadeEditForm({
   unidade,
   atualizar,
   enviar,
+  unitId,
 }: {
   unidade: UnidadeEdit;
   atualizar: ReturnType<typeof useAtualizarAnfitriaoUnidade>;
   enviar: ReturnType<typeof useEnviarAprovacaoUnidade>;
+  unitId: number;
 }) {
   const [titulo, setTitulo] = useState(() => unidade.titulo ?? '');
   const [preco, setPreco] = useState(() =>
     unidade.precoDiaria != null ? String(unidade.precoDiaria) : '',
   );
+  const [amenidades, setAmenidades] = useState(() => jsonPretty(unidade.amenidades));
+  const [utensilios, setUtensilios] = useState(() => jsonPretty(unidade.utensilios));
+  const [midia, setMidia] = useState(() => jsonPretty(unidade.midia));
+  const [eletro, setEletro] = useState(() => jsonPretty(unidade.eletrodomesticos));
   const [mensagem, setMensagem] = useState<string | null>(null);
 
   async function salvar() {
@@ -36,6 +63,10 @@ function UnidadeEditForm({
       await atualizar.mutateAsync({
         titulo,
         precoDiaria: preco,
+        amenidades: parseJsonField(amenidades, 'Amenidades'),
+        utensilios: parseJsonField(utensilios, 'Utensílios'),
+        midia: parseJsonField(midia, 'Mídia'),
+        eletrodomesticos: parseJsonField(eletro, 'Eletrodomésticos'),
         statusPublicacao: 'completo',
       });
       setMensagem('Salvo. Status: completo.');
@@ -59,6 +90,12 @@ function UnidadeEditForm({
       <p className="text-sm text-slate-500">
         Status atual: <strong>{unidade.statusPublicacao}</strong>
       </p>
+      <Link
+        href={`/anfitriao/unidades/${unitId}/disponibilidade`}
+        className="text-sm text-blue-600 hover:underline"
+      >
+        Calendário de disponibilidade →
+      </Link>
       <label className="block text-sm">
         <span className="font-medium text-slate-700">Título</span>
         <input
@@ -77,6 +114,22 @@ function UnidadeEditForm({
           onChange={(e) => setPreco(e.target.value)}
         />
       </label>
+      {[
+        ['Amenidades (JSON)', amenidades, setAmenidades],
+        ['Utensílios (JSON)', utensilios, setUtensilios],
+        ['Mídia / fotos (JSON)', midia, setMidia],
+        ['Eletrodomésticos (JSON)', eletro, setEletro],
+      ].map(([label, val, setVal]) => (
+        <label key={String(label)} className="block text-sm">
+          <span className="font-medium text-slate-700">{label}</span>
+          <textarea
+            rows={4}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-xs"
+            value={val as string}
+            onChange={(e) => (setVal as (s: string) => void)(e.target.value)}
+          />
+        </label>
+      ))}
       <div className="flex flex-wrap gap-3 pt-2">
         <button
           type="button"
@@ -110,7 +163,7 @@ export default function AnfitriaoUnidadeEditPage() {
   const unidade = data?.data as UnidadeEdit | undefined;
 
   return (
-    <ProtectedRoute>
+    <AnfitriaoRoleGuard>
       <Head>
         <title>Editar unidade | Anfitrião</title>
       </Head>
@@ -126,6 +179,7 @@ export default function AnfitriaoUnidadeEditPage() {
           {unidade && (
             <UnidadeEditForm
               key={id}
+              unitId={id}
               unidade={unidade}
               atualizar={atualizar}
               enviar={enviar}
@@ -133,6 +187,6 @@ export default function AnfitriaoUnidadeEditPage() {
           )}
         </div>
       </div>
-    </ProtectedRoute>
+    </AnfitriaoRoleGuard>
   );
 }

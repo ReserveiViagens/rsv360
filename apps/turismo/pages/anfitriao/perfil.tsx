@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import AnfitriaoRoleGuard from '../../components/AnfitriaoRoleGuard';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AnfitriaoPerfilPage() {
   const { user } = useAuth();
 
   return (
-    <ProtectedRoute>
+    <AnfitriaoRoleGuard>
       <Head>
         <title>Perfil | Anfitrião</title>
       </Head>
@@ -30,6 +30,6 @@ export default function AnfitriaoPerfilPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </AnfitriaoRoleGuard>
   );
 }
