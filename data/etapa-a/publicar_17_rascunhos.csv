@@ -1,0 +1,18 @@
+id,codigo_externo,titulo,preco_diaria,nota
+8,AGF-STD,Suite Standard,150,SIMBOLICO media temporada — ajustar tarifario (baixa/media/alta + categorias)
+9,AGF-FAM,Suite Familia,220,SIMBOLICO media temporada — ajustar tarifario
+10,ATR-DUP,Quarto Duplo Standard,150,SIMBOLICO media temporada — ajustar tarifario
+11,ATR-FAM,Quarto Familia,200,SIMBOLICO media temporada — ajustar tarifario
+12,ATR-SUV,Suite com Varanda,180,SIMBOLICO media temporada — ajustar tarifario
+13,ALD-DUP,Chale Duplo,180,SIMBOLICO media temporada — ajustar tarifario
+14,ALD-FAM,Chale Familia,250,SIMBOLICO media temporada — ajustar tarifario
+15,ALV-LUX,Apartamento Luxo com Cozinha,280,SIMBOLICO media temporada — ajustar tarifario
+16,ALV-PRE,Apartamento Premium com Varanda,320,SIMBOLICO media temporada — ajustar tarifario
+17,AQR-CZ,Suite com Cozinha Compacta,160,SIMBOLICO media temporada — ajustar tarifario
+18,AQR-FAM,Suite Familia com Varanda,220,SIMBOLICO media temporada — ajustar tarifario
+19,PRT1-2Q,Apto 2 Quartos (1 suite),200,SIMBOLICO media temporada — ajustar tarifario
+20,DRF-1Q,Apto 1 Quarto,190,SIMBOLICO media temporada — ajustar tarifario
+21,SDC-2Q,Apto 2 Quartos,180,SIMBOLICO media temporada — ajustar tarifario
+22,DAP-2Q,Apto 2 Quartos com Churrasqueira,150,SIMBOLICO media temporada — ajustar tarifario
+27,KN39H,Lacqua diRoma IV Apto 196,120,SIMBOLICO bootstrap KN23H/KN39H — preco real por operador/data
+419,VC-APTO-409-GOLDEN-DOLPHIN-SUPREME,Apto 409 Golden Dolphin Supreme,350,SIMBOLICO media temporada — ajustar tarifario
