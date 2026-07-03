@@ -1,0 +1,18 @@
+id,codigo_externo,titulo,preco_diaria,nota
+8,AGF-STD,Suite Standard,350,confirmado
+9,AGF-FAM,Suite Familia,420,confirmado
+10,ATR-DUP,Quarto Duplo Standard,349,confirmado
+11,ATR-FAM,Quarto Familia,400,confirmado
+12,ATR-SUV,Suite com Varanda,380,confirmado
+13,ALD-DUP,Chale Duplo,380,confirmado
+14,ALD-FAM,Chale Familia,600,confirmado
+15,ALV-LUX,Apartamento Luxo com Cozinha,480,confirmado
+16,ALV-PRE,Apartamento Premium com Varanda,550,confirmado
+17,AQR-CZ,Suite com Cozinha Compacta,320,confirmado
+18,AQR-FAM,Suite Familia com Varanda,449,confirmado
+19,PRT1-2Q,Apto 2 Quartos (1 suite),400,confirmado
+20,DRF-1Q,Apto 1 Quarto,394,confirmado
+21,SDC-2Q,Apto 2 Quartos,360,confirmado
+22,DAP-2Q,Apto 2 Quartos com Churrasqueira,280,confirmado
+27,KN39H,Lacqua diRoma IV Apto 196,120,confirmado
+419,VC-APTO-409-GOLDEN-DOLPHIN-SUPREME,Apto 409 Golden Dolphin Supreme,405,confirmado
