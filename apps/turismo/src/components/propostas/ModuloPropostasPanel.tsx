@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertCircle, Clock, Loader2, Save, Shield } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { fase1Api } from '@/lib/fase1-api';
@@ -35,31 +35,35 @@ export function ModuloPropostasPanel() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  const load = useCallback(async () => {
-    if (!isAdmin) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fase1Api.getModuloPropostas();
-      setForm({
-        validadeCotacaoHoras: res.data.validadeCotacaoHoras ?? 48,
-        urgenciaEstilo: res.data.urgenciaEstilo ?? 'countdown',
-        avisoExpiracaoHoras: res.data.avisoExpiracaoHoras ?? 2,
-      });
-    } catch (err) {
-      setError((err as Error).message || 'Falha ao carregar configurações');
-    } finally {
-      setLoading(false);
-    }
-  }, [isAdmin]);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    let ativo = true;
+
+    (async () => {
+      if (!isAdmin) {
+        if (ativo) setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fase1Api.getModuloPropostas();
+        if (!ativo) return;
+        setForm({
+          validadeCotacaoHoras: res.data.validadeCotacaoHoras ?? 48,
+          urgenciaEstilo: res.data.urgenciaEstilo ?? 'countdown',
+          avisoExpiracaoHoras: res.data.avisoExpiracaoHoras ?? 2,
+        });
+      } catch (err) {
+        if (!ativo) return;
+        setError((err as Error).message || 'Falha ao carregar configurações');
+      } finally {
+        if (ativo) setLoading(false);
+      }
+    })();
+
+    return () => {
+      ativo = false;
+    };
+  }, [isAdmin]);
 
   const handleSave = async () => {
     setSaving(true);
