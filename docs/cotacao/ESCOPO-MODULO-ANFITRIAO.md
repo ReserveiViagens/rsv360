@@ -224,3 +224,79 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 | Schema empreendimentos | `backend/src/db/schema/empreendimentos.ts` |
 | Migration 22A | `backend/drizzle/0022_empreendimentos_parceiros.sql` |
 | Turismo (UI futura) | `apps/turismo` |
+
+---
+
+## 9. Pendências e etapas operacionais (§11)
+
+### 11.1 Dados — 17 publicados + 3 prédios
+
+- **17 rascunhos** publicados em 2 jul 2026 (`044de955`); preços REF aguardam tarifário real.
+- **3 prédios** agrupados (`231cdaee`, `agrupar-3-predios.mjs`).
+
+### 11.2 PATCH legado
+
+- **Shipado (2 jul 2026):** `PATCH /anfitriao/:id` removido; canônica `/anfitriao/unidades/:id`.
+
+### 11.3 Fase 2 (backlog)
+
+- Comissões marketplace — tabelas existem; integração pendente.
+- `disponibilidade_acomodacao` no fluxo de reserva — hook `disponibilidade-reserva.hook.ts` preparado.
+- `codigo_pms` — migration `0029_codigo_pms.sql`; backfill Stays pendente aprovação.
+
+---
+
+## 10. Plano de execução Cursor (§12)
+
+### Etapa A — preços reais (flat)
+
+- Bootstrap: `2d4bf107` (CSV simbólico `publicar_17_rascunhos.csv` — **não usar em prod**).
+- UPDATE prod: `atualizar-precos-publicados.mjs` (`0c600cf4`) com guard `SIMBOLICO`.
+- **Confirmado (3 jul 2026):** `data/etapa-a/precos_reais_17.csv` — 17 preços flat (`nota=confirmado`); ver tabela em `data/etapa-a/README.md`.
+- Runbook + export: `export-precos-reais-17-xlsx.mjs`.
+
+### Etapa A′ — tarifário dinâmico
+
+- Migration: `0030_tarifario_dinamico.sql`
+- Motor: `server/modules/acomodacoes/services/tarifa.service.ts` (`resolverTarifa`)
+- API: `/api/v1/tarifas/*` (CRUD staff + simular com escopo 403)
+- Seed: `backend/scripts/seed-tarifario.mjs` (sem regras de preço)
+- Toggle global: `configuracoes_sistema.chave=tarifario` → `tarifario_dinamico_ativo` (default **false**)
+- UI: `apps/turismo/pages/anfitriao/tarifas/`
+
+### Etapas B/C/D
+
+- **B** — 3 prédios: shipado.
+- **C** — PATCH legado: shipado.
+- **D** — PR 25 mapa: shipado (`0028`, `RoteiroMapa`).
+
+### UI 24B/24C (complemento)
+
+- `AnfitriaoRoleGuard` + redirect pós-login (`anfitriao-auth.ts`)
+- `/anfitriao/importar` — preview/commit ≤50
+- `/anfitriao/unidades/[id]/disponibilidade` — calendário
+- Edição completa: amenidades, utensílios, mídia (JSON) em `unidades/[id].tsx`
+
+---
+
+## 11. CI / Segurança (§13)
+
+Validado pós-billing (3 jul 2026): CI 303, Security Scan, CodeQL, route-smoke, Fase 4/5.
+
+- CodeQL `build-mode: none` (`9d049bfc`)
+- Typecheck estrito: issue #43 (backlog)
+
+---
+
+## 12. Referências adicionais
+
+| Área | Caminho |
+|------|---------|
+| Tarifário service | `server/modules/acomodacoes/services/tarifa.service.ts` |
+| Tarifas API | `server/modules/acomodacoes/routes/tarifas.routes.ts` |
+| Migration tarifário | `backend/drizzle/0030_tarifario_dinamico.sql` |
+| Migration codigo_pms | `backend/drizzle/0029_codigo_pms.sql` |
+| Seed tarifário | `backend/scripts/seed-tarifario.mjs` |
+| Guard UI | `apps/turismo/components/AnfitriaoRoleGuard.tsx` |
+| Hook reserva (Fase 2) | `server/modules/acomodacoes/services/disponibilidade-reserva.hook.ts` |
+
