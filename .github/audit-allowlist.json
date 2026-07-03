@@ -15,6 +15,11 @@
       "severity": "high",
       "reason": "Dependência transitiva do Socket.IO — aguardar patch upstream",
       "expires": "2026-09-30"
+    },
+    "xlsx": {
+      "severity": "high",
+      "reason": "SheetJS sem patch no npm (CDN próprio); importer inventário + export xlsx — migrar p/ exceljs ou SheetJS-CDN (issue #42)",
+      "expires": "2026-09-30"
     }
   }
 }
