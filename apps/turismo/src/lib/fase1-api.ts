@@ -175,6 +175,20 @@ export const fase1Api = {
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Commit falhou');
     return res.json();
   },
+
+  tarifasConfig: () => fetchJson<{ success: boolean; data: { tarifarioDinamicoAtivo: boolean } }>('/api/v1/tarifas/config'),
+  tarifasSetConfig: (tarifarioDinamicoAtivo: boolean) =>
+    fetchJson('/api/v1/tarifas/config', {
+      method: 'PATCH',
+      body: JSON.stringify({ tarifarioDinamicoAtivo }),
+    }),
+  tarifasCategorias: () => fetchJson<{ success: boolean; data: unknown[] }>('/api/v1/tarifas/categorias'),
+  tarifasTemporadas: () => fetchJson<{ success: boolean; data: unknown[] }>('/api/v1/tarifas/temporadas'),
+  tarifasRegras: () => fetchJson<{ success: boolean; data: unknown[] }>('/api/v1/tarifas/regras'),
+  tarifasSimular: (acomodacaoId: number, data: string, categoria = 'padrao') =>
+    fetchJson<{ success: boolean; data: unknown }>(
+      `/api/v1/tarifas/simular?acomodacaoId=${acomodacaoId}&data=${data}&categoria=${categoria}`,
+    ),
 };
 
 export function getWsBaseUrl(): string {
