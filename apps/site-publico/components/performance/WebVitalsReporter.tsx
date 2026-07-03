@@ -9,6 +9,10 @@ const LCP_LIMIT_MS = 2500; // 2.5 segundos
 const INP_LIMIT_MS = 200; // Interaction to Next Paint (substitui FID)
 const CLS_LIMIT = 0.1; // CLS é adimensional
 
+interface LCPEntry extends PerformanceEntry {
+  element?: Element | null;
+}
+
 function routeLabel(): string {
   if (typeof window === 'undefined') return '';
   const path = window.location.pathname;
@@ -46,7 +50,7 @@ function handleMetric(metric: Metric) {
   sendToAnalytics(metric);
   if (process.env.NODE_ENV === 'development') {
     if (metric.name === 'LCP') {
-      const entry = metric.entries?.[metric.entries.length - 1];
+      const entry = metric.entries?.[metric.entries.length - 1] as LCPEntry | undefined;
       const lcpElement = entry?.element ?? null;
       const tag = lcpElement?.tagName?.toLowerCase() ?? 'unknown';
       if (isLcpVideoElement(lcpElement)) {
