@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ProtectedRoute from '../../../components/ProtectedRoute';
 import {
   useAnfitriaoUnidade,
@@ -9,29 +9,26 @@ import {
   useEnviarAprovacaoUnidade,
 } from '@/hooks/useAnfitriao';
 
-export default function AnfitriaoUnidadeEditPage() {
-  const router = useRouter();
-  const id = Number(router.query.id);
-  const { data, isLoading } = useAnfitriaoUnidade(id);
-  const atualizar = useAtualizarAnfitriaoUnidade(id);
-  const enviar = useEnviarAprovacaoUnidade(id);
+type UnidadeEdit = {
+  titulo?: string;
+  precoDiaria?: string | number | null;
+  statusPublicacao?: string;
+};
 
-  const unidade = data?.data as {
-    titulo?: string;
-    precoDiaria?: string | number | null;
-    statusPublicacao?: string;
-  } | undefined;
-
-  const [titulo, setTitulo] = useState('');
-  const [preco, setPreco] = useState('');
+function UnidadeEditForm({
+  unidade,
+  atualizar,
+  enviar,
+}: {
+  unidade: UnidadeEdit;
+  atualizar: ReturnType<typeof useAtualizarAnfitriaoUnidade>;
+  enviar: ReturnType<typeof useEnviarAprovacaoUnidade>;
+}) {
+  const [titulo, setTitulo] = useState(() => unidade.titulo ?? '');
+  const [preco, setPreco] = useState(() =>
+    unidade.precoDiaria != null ? String(unidade.precoDiaria) : '',
+  );
   const [mensagem, setMensagem] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (unidade) {
-      setTitulo(unidade.titulo ?? '');
-      setPreco(unidade.precoDiaria != null ? String(unidade.precoDiaria) : '');
-    }
-  }, [unidade]);
 
   async function salvar() {
     setMensagem(null);
@@ -58,6 +55,61 @@ export default function AnfitriaoUnidadeEditPage() {
   }
 
   return (
+    <div className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6">
+      <p className="text-sm text-slate-500">
+        Status atual: <strong>{unidade.statusPublicacao}</strong>
+      </p>
+      <label className="block text-sm">
+        <span className="font-medium text-slate-700">Título</span>
+        <input
+          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+        />
+      </label>
+      <label className="block text-sm">
+        <span className="font-medium text-slate-700">Preço diária (R$)</span>
+        <input
+          type="number"
+          min={0}
+          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+          value={preco}
+          onChange={(e) => setPreco(e.target.value)}
+        />
+      </label>
+      <div className="flex flex-wrap gap-3 pt-2">
+        <button
+          type="button"
+          onClick={salvar}
+          disabled={atualizar.isPending}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+        >
+          Salvar (completo)
+        </button>
+        <button
+          type="button"
+          onClick={enviarAprovacao}
+          disabled={enviar.isPending}
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+        >
+          Enviar para aprovação
+        </button>
+      </div>
+      {mensagem && <p className="text-sm text-slate-700">{mensagem}</p>}
+    </div>
+  );
+}
+
+export default function AnfitriaoUnidadeEditPage() {
+  const router = useRouter();
+  const id = Number(router.query.id);
+  const { data, isLoading } = useAnfitriaoUnidade(id);
+  const atualizar = useAtualizarAnfitriaoUnidade(id);
+  const enviar = useEnviarAprovacaoUnidade(id);
+
+  const unidade = data?.data as UnidadeEdit | undefined;
+
+  return (
     <ProtectedRoute>
       <Head>
         <title>Editar unidade | Anfitrião</title>
@@ -72,48 +124,12 @@ export default function AnfitriaoUnidadeEditPage() {
           {isLoading && <p className="mt-4 text-slate-600">Carregando...</p>}
 
           {unidade && (
-            <div className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6">
-              <p className="text-sm text-slate-500">
-                Status atual: <strong>{unidade.statusPublicacao}</strong>
-              </p>
-              <label className="block text-sm">
-                <span className="font-medium text-slate-700">Título</span>
-                <input
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
-                  value={titulo}
-                  onChange={(e) => setTitulo(e.target.value)}
-                />
-              </label>
-              <label className="block text-sm">
-                <span className="font-medium text-slate-700">Preço diária (R$)</span>
-                <input
-                  type="number"
-                  min={0}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
-                  value={preco}
-                  onChange={(e) => setPreco(e.target.value)}
-                />
-              </label>
-              <div className="flex flex-wrap gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={salvar}
-                  disabled={atualizar.isPending}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-                >
-                  Salvar (completo)
-                </button>
-                <button
-                  type="button"
-                  onClick={enviarAprovacao}
-                  disabled={enviar.isPending}
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white disabled:opacity-50"
-                >
-                  Enviar para aprovação
-                </button>
-              </div>
-              {mensagem && <p className="text-sm text-slate-700">{mensagem}</p>}
-            </div>
+            <UnidadeEditForm
+              key={id}
+              unidade={unidade}
+              atualizar={atualizar}
+              enviar={enviar}
+            />
           )}
         </div>
       </div>
