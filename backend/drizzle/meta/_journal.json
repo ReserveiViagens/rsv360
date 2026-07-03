@@ -204,6 +204,13 @@
       "when": 1782222000000,
       "tag": "0028_roteiro_pontos",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1782223000000,
+      "tag": "0029_tarifario_dinamico",
+      "breakpoints": true
     }
   ]
 }

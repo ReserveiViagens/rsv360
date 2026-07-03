@@ -4,12 +4,16 @@ import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { wizardAddons } from '../../../../backend/src/db/schema/wizard-addons';
 import { tiposAcomodacao } from '../../../../backend/src/db/schema/tipos-acomodacao';
 import type { AcomodacaoDisponivel } from '@rsv360/shared';
+import { tarifaService } from './tarifa.service';
 
 export interface ListarAcomodacoesInput {
   hotelId: string;
   hospedes: number;
   page?: number;
   pageSize?: number;
+  /** Data para resolução tarifária (YYYY-MM-DD); default hoje UTC */
+  dataReferencia?: string;
+  categoriaSlug?: string;
 }
 
 function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDisponivel {
@@ -53,7 +57,27 @@ export const acomodacoesService = {
     ]);
 
     const total = countRow[0]?.count ?? 0;
-    const items = rows.map(rowToDisponivel);
+    const dataRef =
+      input.dataReferencia ?? new Date().toISOString().slice(0, 10);
+    const categoria = input.categoriaSlug ?? 'padrao';
+
+    const items: AcomodacaoDisponivel[] = [];
+    for (const row of rows) {
+      const base = rowToDisponivel(row);
+      try {
+        const tarifa = await tarifaService.resolverTarifa({
+          acomodacaoId: row.id,
+          data: dataRef,
+          categoriaSlug: categoria,
+        });
+        if (tarifa.motorAtivo && tarifa.precoFinal !== tarifa.precoBase) {
+          base.precoDiaria = tarifa.precoFinal;
+        }
+      } catch {
+        // mantém preco_diaria base
+      }
+      items.push(base);
+    }
 
     return { items, total, page, pageSize };
   },

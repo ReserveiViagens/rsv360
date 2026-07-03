@@ -1,0 +1,176 @@
+import { Router } from 'express';
+import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
+import { tarifaService } from '../services/tarifa.service';
+import { anfitriaoService } from '../services/anfitriao.service';
+
+const router = Router();
+const staffAuth = [authenticateJwt, requireRole('admin', 'manager')];
+const parceiroAuth = [authenticateJwt, requireRole('anfitriao', 'corretor', 'admin', 'manager')];
+
+function authFromReq(req: { user?: { id: number; role?: string } }) {
+  return { userId: req.user!.id, role: req.user!.role ?? 'user' };
+}
+
+router.get('/config', ...staffAuth, async (_req, res) => {
+  try {
+    const data = await tarifaService.getConfig();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.patch('/config', ...staffAuth, async (req, res) => {
+  try {
+    const ativo = req.body?.tarifarioDinamicoAtivo === true;
+    const data = await tarifaService.setConfig(ativo);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/categorias', ...staffAuth, async (_req, res) => {
+  try {
+    const data = await tarifaService.listCategorias();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/categorias', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.criarCategoria({
+      ...req.body,
+      criadoPor: req.user?.id,
+    });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.patch('/categorias/:id', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.atualizarCategoria(Number(req.params.id), req.body ?? {});
+    if (!data) return res.status(404).json({ success: false, error: 'Não encontrado' });
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/temporadas', ...staffAuth, async (_req, res) => {
+  try {
+    const data = await tarifaService.listTemporadas();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/temporadas', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.criarTemporada(req.body ?? {});
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/temporadas/:id/periodos', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.listPeriodos(Number(req.params.id));
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/temporadas/:id/periodos', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.criarPeriodo({
+      temporadaId: Number(req.params.id),
+      dataInicio: req.body.dataInicio,
+      dataFim: req.body.dataFim,
+    });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/regras', ...staffAuth, async (_req, res) => {
+  try {
+    const data = await tarifaService.listRegras();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/regras', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.criarRegra({
+      ...req.body,
+      criadoPor: req.user?.id,
+    });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.patch('/regras/:id', ...staffAuth, async (req, res) => {
+  try {
+    const data = await tarifaService.atualizarRegra(Number(req.params.id), req.body ?? {});
+    if (!data) return res.status(404).json({ success: false, error: 'Não encontrado' });
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.delete('/regras/:id', ...staffAuth, async (req, res) => {
+  try {
+    await tarifaService.deletarRegra(Number(req.params.id));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/simular', ...parceiroAuth, async (req, res) => {
+  try {
+    const acomodacaoId = Number(req.query.acomodacaoId);
+    const data = String(req.query.data ?? '');
+    const categoria = String(req.query.categoria ?? 'padrao');
+    if (!acomodacaoId || !data) {
+      return res.status(400).json({ success: false, error: 'acomodacaoId e data obrigatórios' });
+    }
+
+    const role = req.user?.role ?? '';
+    if (!['admin', 'manager'].includes(role)) {
+      const scoped = await anfitriaoService.obterUnidade(authFromReq(req), acomodacaoId);
+      if ('error' in scoped) {
+        if (scoped.error === 'forbidden') {
+          return res.status(403).json({ success: false, error: 'Acesso negado' });
+        }
+        return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+      }
+    }
+
+    const resultado = await tarifaService.resolverTarifa({
+      acomodacaoId,
+      data,
+      categoriaSlug: categoria,
+    });
+    res.json({ success: true, data: resultado });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+export default router;
+module.exports = router;
