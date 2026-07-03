@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import AnfitriaoRoleGuard from '../../components/AnfitriaoRoleGuard';
+import AnfitriaoRoleGuard from '../../../../components/AnfitriaoRoleGuard';
 import { fase1Api } from '@/lib/fase1-api';
 
 export default function AnfitriaoDisponibilidadePage() {

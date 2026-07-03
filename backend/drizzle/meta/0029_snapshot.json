@@ -1,0 +1,14 @@
+{
+  "id": "b0029-0029-4029-8029-000000000029",
+  "prevId": "b0028-0028-4028-8028-000000000028",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {},
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "customTypes": {}
+}
