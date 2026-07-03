@@ -135,6 +135,46 @@ export const fase1Api = {
       method: 'POST',
       body: '{}',
     }),
+
+  anfitriaoDisponibilidade: (id: number, de: string, ate: string) =>
+    fetchJson<{ success: boolean; data: unknown[] }>(
+      `/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade?de=${de}&ate=${ate}`,
+    ),
+
+  salvarAnfitriaoDisponibilidade: (
+    id: number,
+    dias: Array<{ data: string; disponivel: boolean; precoOverride?: string; observacao?: string }>,
+  ) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade`, {
+      method: 'PUT',
+      body: JSON.stringify({ dias }),
+    }),
+
+  importPreview: async (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/v1/acomodacoes/import/preview`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Preview falhou');
+    return res.json();
+  },
+
+  importCommit: async (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/v1/acomodacoes/import/commit`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Commit falhou');
+    return res.json();
+  },
 };
 
 export function getWsBaseUrl(): string {

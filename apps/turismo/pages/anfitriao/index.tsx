@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import AnfitriaoRoleGuard from '../../components/AnfitriaoRoleGuard';
 import { useAnfitriaoDashboard } from '@/hooks/useAnfitriao';
 
 export default function AnfitriaoDashboardPage() {
@@ -8,7 +8,7 @@ export default function AnfitriaoDashboardPage() {
   const kpis = data?.data;
 
   return (
-    <ProtectedRoute>
+    <AnfitriaoRoleGuard>
       <Head>
         <title>Anfitrião | Turismo RSV360</title>
       </Head>
@@ -22,6 +22,9 @@ export default function AnfitriaoDashboardPage() {
             <div className="flex gap-2">
               <Link href="/anfitriao/unidades" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">
                 Minhas unidades
+              </Link>
+              <Link href="/anfitriao/importar" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
+                Importar
               </Link>
               <Link href="/anfitriao/perfil" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Perfil
@@ -48,6 +51,6 @@ export default function AnfitriaoDashboardPage() {
           )}
         </div>
       </div>
-    </ProtectedRoute>
+    </AnfitriaoRoleGuard>
   );
 }

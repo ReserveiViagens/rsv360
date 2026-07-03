@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
-import ProtectedRoute from '../../../components/ProtectedRoute';
+import AnfitriaoRoleGuard from '../../../components/AnfitriaoRoleGuard';
 import { useAnfitriaoMinhas } from '@/hooks/useAnfitriao';
 
 type Unidade = {
@@ -16,7 +16,7 @@ export default function AnfitriaoUnidadesPage() {
   const items = (data?.data?.items ?? []) as Unidade[];
 
   return (
-    <ProtectedRoute>
+    <AnfitriaoRoleGuard>
       <Head>
         <title>Minhas unidades | Anfitrião</title>
       </Head>
@@ -71,6 +71,6 @@ export default function AnfitriaoUnidadesPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </AnfitriaoRoleGuard>
   );
 }
