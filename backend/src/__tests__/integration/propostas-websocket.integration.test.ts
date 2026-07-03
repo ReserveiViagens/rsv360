@@ -26,6 +26,7 @@ function waitForEvent<T>(socket: ClientSocket, event: string, timeoutMs = 8000):
 describeDb('Propostas — WebSocket Chat HITL', () => {
   let app: any;
   let server: http.Server | undefined;
+  let io: Server | undefined;
   let baseUrl: string;
   let propostaId: number;
 
@@ -47,11 +48,11 @@ describeDb('Propostas — WebSocket Chat HITL', () => {
     propostaId = created.body.data.id;
 
     server = http.createServer(app);
-    const io = new Server(server, { cors: { origin: '*' }, path: '/socket.io' });
+    io = new Server(server, { cors: { origin: '*' }, path: '/socket.io' });
     registerPropostaChatSocket(io);
 
     await new Promise<void>((resolve) => {
-      server.listen(0, '127.0.0.1', () => resolve());
+      server!.listen(0, '127.0.0.1', () => resolve());
     });
     const addr = server.address();
     const port = typeof addr === 'object' && addr ? addr.port : 0;
@@ -59,6 +60,9 @@ describeDb('Propostas — WebSocket Chat HITL', () => {
   });
 
   afterAll(async () => {
+    if (io) {
+      await new Promise<void>((resolve) => io!.close(() => resolve()));
+    }
     if (server) {
       await new Promise<void>((resolve) => server!.close(() => resolve()));
     }
