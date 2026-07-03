@@ -33,3 +33,6 @@ export * from './wizard-addons';
 export * from './proposta-vouchers';
 export * from './roteiro-analytics';
 export * from './roteiro-pontos';
+export * from './tarifa-categoria';
+export * from './tarifa-temporada';
+export * from './tarifa-regra';

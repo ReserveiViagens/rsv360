@@ -14,6 +14,7 @@ export const empreendimentos = pgTable('empreendimentos', {
   websiteContentId: text('website_content_id'),
   metadata: jsonb('metadata'),
   ativo: boolean('ativo').notNull().default(true),
+  tarifarioDinamicoAtivo: boolean('tarifario_dinamico_ativo'),
   criadoEm: timestamp('criado_em', { withTimezone: true }).defaultNow(),
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).defaultNow(),
 });
