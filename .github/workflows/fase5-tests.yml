@@ -132,6 +132,8 @@ jobs:
     needs: [backend-fase5]
     timeout-minutes: 35
     env:
+      # docker-compose.yml mapeia postgres 5433:5432; migrate/seed rodam no host (não no container).
+      DATABASE_URL: postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5433/rsv_360_ecosystem
       SEED_TEST_USER_EMAIL: ${{ vars.SEED_TEST_USER_EMAIL }}
       SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
     steps:
