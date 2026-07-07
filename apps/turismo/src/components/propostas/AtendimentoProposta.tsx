@@ -50,12 +50,14 @@ export function AtendimentoProposta({ propostaId }: { propostaId: number }) {
 
   const sendAgentMessage = () => {
     if (!text.trim()) return;
+    const trimmed = text.trim();
+    setText('');
     socketRef.current?.emit('chat:message', {
       propostaId,
-      message: text.trim(),
+      message: trimmed,
       senderType: 'agent',
+      token,
     });
-    setText('');
   };
 
   return (

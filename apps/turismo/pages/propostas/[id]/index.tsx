@@ -5,9 +5,23 @@ import { PropostaEditor } from '@/components/propostas/PropostaEditor';
 
 export default function PropostaEditorPage() {
   const router = useRouter();
-  const id = Number(router.query.id);
 
-  if (!id) return null;
+  if (!router.isReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6">
+        <div className="mx-auto max-w-6xl text-slate-600">Carregando editor...</div>
+      </div>
+    );
+  }
+
+  const id = Number(router.query.id);
+  if (!Number.isFinite(id) || id <= 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6">
+        <div className="mx-auto max-w-6xl text-red-600">Proposta inválida</div>
+      </div>
+    );
+  }
 
   return (
     <>
