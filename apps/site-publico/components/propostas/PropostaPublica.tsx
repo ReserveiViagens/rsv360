@@ -205,18 +205,27 @@ export function PropostaPublica({
     if (!message.trim()) return;
     const text = message.trim();
     setMessage('');
-    socketRef.current?.emit('chat:message', {
-      propostaId,
-      message: text,
-      senderName: guestName || 'Visitante',
-      senderType: 'client',
-    });
-    await enviarChat.mutateAsync({
-      id: propostaId,
-      message: text,
-      senderName: guestName || 'Visitante',
-      turnstileToken: turnstileToken || undefined,
-    });
+
+    try {
+      const saved = await enviarChat.mutateAsync({
+        id: propostaId,
+        message: text,
+        senderName: guestName || 'Visitante',
+        turnstileToken: turnstileToken || undefined,
+      });
+      if (saved?.data) {
+        setLiveMessages((prev) =>
+          prev.some((m) => m.id === saved.data.id) ? prev : [...prev, saved.data],
+        );
+      }
+    } catch {
+      socketRef.current?.emit('chat:message', {
+        propostaId,
+        message: text,
+        senderName: guestName || 'Visitante',
+        senderType: 'client',
+      });
+    }
   };
 
   if (isLoading) {

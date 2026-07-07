@@ -119,11 +119,19 @@ function PropostaEditorForm({ proposta, propostaId }: { proposta: Proposta; prop
 }
 
 export function PropostaEditor({ propostaId }: { propostaId: number }) {
-  const { data, isLoading } = useProposta(propostaId);
+  const { data, isLoading, isError } = useProposta(propostaId);
   const proposta = data?.data;
 
-  if (isLoading || !proposta) {
+  if (isLoading) {
     return <div className="p-6 text-slate-600">Carregando editor...</div>;
+  }
+
+  if (isError || !proposta) {
+    return (
+      <div className="p-6 text-red-600">
+        Não foi possível carregar a proposta #{propostaId}. Verifique sua sessão e tente novamente.
+      </div>
+    );
   }
 
   return <PropostaEditorForm key={proposta.id} proposta={proposta} propostaId={propostaId} />;
