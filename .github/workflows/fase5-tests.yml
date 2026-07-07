@@ -179,9 +179,19 @@ jobs:
           SEED_TEST_USER_PASSWORD: ${{ secrets.SEED_TEST_USER_PASSWORD }}
       - name: Migrate + seed
         working-directory: backend
+        run: npm run migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
+          SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
+      - name: Ensure auth v1 tables (rate limit + refresh tokens)
         run: |
-          npm run migrate
-          npm run seed
+          cat database/g4-auth-smoke-tables.sql | docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem
+          cat apps/site-publico/scripts/create-refresh-tokens-tables.sql | docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem
+      - name: Seed deterministic test user
+        working-directory: backend
+        run: npm run seed
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           JWT_SECRET: ${{ env.JWT_SECRET }}
