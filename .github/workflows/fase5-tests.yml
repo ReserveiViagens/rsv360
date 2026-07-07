@@ -188,15 +188,51 @@ jobs:
           SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
           SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
       - run: docker compose up -d --build backend site-publico turismo
+        env:
+          NODE_ENV: test
       - name: Wait for stack
         run: |
-          for url in http://localhost:3002/health http://localhost:3000/ http://localhost:3005/; do
-            for i in $(seq 1 30); do
-              curl -sf "$url" && break
+          urls=(
+            "http://localhost:3002/health"
+            "http://localhost:3000/"
+            "http://localhost:3005/api/health"
+          )
+          deadline=$((SECONDS + 300))
+          for url in "${urls[@]}"; do
+            echo "Waiting for $url ..."
+            while ! curl -fsS --max-time 5 "$url" > /dev/null; do
+              if [ $SECONDS -gt $deadline ]; then
+                echo "Timeout waiting for $url" >&2
+                docker compose ps
+                exit 1
+              fi
               sleep 5
             done
+            echo "OK: $url"
           done
       - name: Reset auth rate limits before Playwright
+        run: |
+          docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem -c "DELETE FROM auth_rate_limits;" || true
+      - name: Wait for backend auth API (not 503)
+        run: |
+          deadline=$((SECONDS + 120))
+          while true; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:3002/api/v1/auth/login \
+              -H 'Content-Type: application/json' \
+              -d '{"email":"test@local.dev","password":"probe-wrong-password"}' || echo "000")
+            if [ "$code" = "401" ] || [ "$code" = "200" ] || [ "$code" = "429" ]; then
+              echo "Backend auth ready (HTTP $code)"
+              break
+            fi
+            if [ $SECONDS -gt $deadline ]; then
+              echo "Timeout waiting for auth API (last HTTP $code)" >&2
+              docker compose logs backend --tail 40
+              exit 1
+            fi
+            echo "Auth not ready (HTTP $code), retrying..."
+            sleep 5
+          done
+      - name: Clear rate limits after auth probe
         run: |
           docker compose exec -T postgres psql -U rsv360 -d rsv_360_ecosystem -c "DELETE FROM auth_rate_limits;" || true
       - name: Playwright Fase 5
