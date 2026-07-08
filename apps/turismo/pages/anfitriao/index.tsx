@@ -29,6 +29,9 @@ export default function AnfitriaoDashboardPage() {
               <Link href="/anfitriao/tarifas" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Tarifário
               </Link>
+              <Link href="/anfitriao/comissoes" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
+                Comissões
+              </Link>
               <Link href="/anfitriao/perfil" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Perfil
               </Link>
