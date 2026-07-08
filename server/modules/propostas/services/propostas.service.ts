@@ -10,6 +10,7 @@ import { orcamentos, orcamentoItens } from '../../../../backend/src/db/schema/or
 import { montarComparativoProposta } from './montar-proposta';
 import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
+import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
 
 type HitlMode = 'ai' | 'waiting' | 'human';
 
@@ -197,7 +198,6 @@ export class PropostasService {
   }
 
   async revelarComparativoManual(propostaId: number) {
-    const { revelarComparativo } = await import('../objecao');
     const result = await revelarComparativo(propostaId, 'manual');
     if (!result) throw new Error('Comparativo já revelado ou indisponível');
     return result;
@@ -231,7 +231,6 @@ export class PropostasService {
     });
 
     if (input.senderType === 'client') {
-      const { detectarObjecaoPreco, revelarComparativo } = await import('../objecao');
       if (detectarObjecaoPreco(input.message)) {
         await revelarComparativo(propostaId, 'ia');
       }
