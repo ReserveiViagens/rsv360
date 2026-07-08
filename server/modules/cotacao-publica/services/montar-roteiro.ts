@@ -52,6 +52,7 @@ export interface GerarPropostaPayload {
   suiteUpgrade?: boolean;
   travelInsurance?: boolean;
   hotelOnlyFlow?: boolean;
+  selectedAcomodacaoId?: number | null;
   catalog?: {
     hotels?: CatalogItemPayload[];
     tickets?: CatalogItemPayload[];

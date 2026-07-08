@@ -14,6 +14,17 @@ import { fireHotLeadNotify } from './hot-lead-notify.service';
 import { buildValidadePayload, PropostaExpiradaError } from '../../propostas/proposta-validade';
 import { aplicarValidadeProposta } from '../../propostas/aplicar-validade-proposta';
 import { recordPropostaGerada, recordRoteiroView } from '../../propostas/metrics';
+import {
+  assertDisponibilidadeReserva,
+  DisponibilidadeReservaConflictError,
+} from '../../acomodacoes/services/disponibilidade-reserva.hook';
+
+function resolveAcomodacaoId(payload: GerarPropostaPayload): number | null {
+  const raw = payload.selectedAcomodacaoId;
+  if (raw == null) return null;
+  const id = Number(raw);
+  return Number.isFinite(id) && id > 0 ? id : null;
+}
 
 const attemptDebounceMap = new Map<string, number>();
 const successCooldownMap = new Map<string, number>();
@@ -55,6 +66,11 @@ export class CotacaoPublicaService {
 
     if (!checkSuccessCooldown(clientIp)) {
       throw new Error('Muitas solicitações. Aguarde 1 minuto.');
+    }
+
+    const acomodacaoId = resolveAcomodacaoId(payload);
+    if (acomodacaoId) {
+      await assertDisponibilidadeReserva(acomodacaoId, payload.checkIn, payload.checkOut);
     }
 
     const nights = countWizardNights(payload.checkIn, payload.checkOut);
@@ -155,6 +171,7 @@ export class CotacaoPublicaService {
           adults: payload.adults,
           children: payload.children,
           hotelId: payload.hotelId != null ? String(payload.hotelId) : undefined,
+          acomodacaoId: acomodacaoId ?? undefined,
         },
         updatedAt: new Date(),
       })
@@ -330,4 +347,9 @@ export class CotacaoPublicaService {
 }
 
 export const cotacaoPublicaService = new CotacaoPublicaService();
-module.exports = { CotacaoPublicaService, cotacaoPublicaService, PropostaExpiradaError };
+module.exports = {
+  CotacaoPublicaService,
+  cotacaoPublicaService,
+  PropostaExpiradaError,
+  DisponibilidadeReservaConflictError,
+};
