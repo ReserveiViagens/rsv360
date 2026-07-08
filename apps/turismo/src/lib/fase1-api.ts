@@ -123,6 +123,28 @@ export const fase1Api = {
     fetchJson<{ success: boolean; data: { items: unknown[]; total: number; page: number; pageSize: number } }>(
       `/api/v1/acomodacoes/anfitriao/minhas?page=${page}`,
     ),
+  anfitriaoMinhasComissoes: (page = 1) =>
+    fetchJson<{
+      success: boolean;
+      data: {
+        items: Array<{
+          id: number;
+          propostaId: number;
+          acomodacaoId: number | null;
+          papel: string;
+          baseValor: string;
+          percentual: string;
+          valorComissao: string;
+          status: string;
+          propostaCodigo: string | null;
+          propostaTitulo: string;
+          criadoEm: string | null;
+        }>;
+        page: number;
+        pageSize: number;
+        moduloAtivo: boolean;
+      };
+    }>(`/api/v1/comissoes/minhas-comissoes?page=${page}`),
   anfitriaoUnidade: (id: number) =>
     fetchJson<{ success: boolean; data: unknown }>(`/api/v1/acomodacoes/anfitriao/unidades/${id}`),
   atualizarAnfitriaoUnidade: (id: number, body: Record<string, unknown>) =>

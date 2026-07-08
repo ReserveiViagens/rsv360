@@ -218,6 +218,13 @@
       "when": 1782224000000,
       "tag": "0030_codigo_pms",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1782225000000,
+      "tag": "0031_comissoes_lancamento",
+      "breakpoints": true
     }
   ]
 }

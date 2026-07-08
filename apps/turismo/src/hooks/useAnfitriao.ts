@@ -15,6 +15,13 @@ export function useAnfitriaoMinhas(page = 1) {
   });
 }
 
+export function useAnfitriaoMinhasComissoes(page = 1) {
+  return useQuery({
+    queryKey: ['anfitriao', 'comissoes', page],
+    queryFn: () => fase1Api.anfitriaoMinhasComissoes(page),
+  });
+}
+
 export function useAnfitriaoUnidade(id: number) {
   return useQuery({
     queryKey: ['anfitriao', 'unidade', id],
