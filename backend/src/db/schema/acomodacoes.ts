@@ -33,6 +33,7 @@ export const acomodacoes = pgTable('acomodacoes', {
   metadata: jsonb('metadata'),
   ativo: boolean('ativo').notNull().default(true),
   codigoExterno: varchar('codigo_externo', { length: 128 }),
+  codigoPms: varchar('codigo_pms', { length: 64 }),
   criadoEm: timestamp('criado_em', { withTimezone: true }).defaultNow(),
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).defaultNow(),
 });
