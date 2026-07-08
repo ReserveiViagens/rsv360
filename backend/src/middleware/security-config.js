@@ -49,7 +49,7 @@ class SecurityConfig {
   static getCorsOptions() {
     const raw =
       process.env.CORS_ORIGIN ||
-      'http://localhost:3000,http://localhost:3001,http://localhost:3002';
+      'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3005';
     const origin = raw
       .split(',')
       .map((value) => value.trim())
