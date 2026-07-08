@@ -231,18 +231,20 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 
 ### 11.1 Dados — 17 publicados + 3 prédios
 
-- **17 rascunhos** publicados em 2 jul 2026 (`044de955`); preços REF aguardam tarifário real.
-- **3 prédios** agrupados (`231cdaee`, `agrupar-3-predios.mjs`).
+- **Fechada**: **17 rascunhos** publicados em 2 jul 2026 (`044de955`); preços REF aguardam tarifário real.
+- **Fechada**: **3 prédios** agrupados (`231cdaee`, `agrupar-3-predios.mjs`).
 
 ### 11.2 PATCH legado
 
-- **Shipado (2 jul 2026):** `PATCH /anfitriao/:id` removido; canônica `/anfitriao/unidades/:id`.
+- **Fechada** (2 jul 2026): `PATCH /anfitriao/:id` removido; canônica `/anfitriao/unidades/:id`.
 
 ### 11.3 Fase 2 (backlog)
 
-- Comissões marketplace — tabelas existem; integração pendente.
-- `disponibilidade_acomodacao` no fluxo de reserva — hook `disponibilidade-reserva.hook.ts` preparado.
-- `codigo_pms` — migration `0029_codigo_pms.sql`; backfill Stays pendente aprovação.
+- **`codigo_pms` COMMITADO**: `c80d180e` (migration `0030_codigo_pms.sql` + schema + journal + snapshot + hook inicial).
+- **Pendentes**:
+  - Comissões marketplace — tabelas existem; integração pendente.
+  - Integrar `isDataBloqueada` no fluxo de reserva (anti-overbooking por data).
+  - Backfill Stays (preencher `codigo_pms`) — execução controlada após validação/approvação.
 
 ---
 
@@ -281,10 +283,37 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 
 ## 11. CI / Segurança (§13)
 
-Validado pós-billing (3 jul 2026): CI 303, Security Scan, CodeQL, route-smoke, Fase 4/5.
+§13 completa — status consolidado pós-fechamentos de Fase 5 e Fase 2.
 
-- CodeQL `build-mode: none` (`9d049bfc`)
-- Typecheck estrito: issue #43 (backlog)
+### Segurança / SAST
+
+- **CodeQL**: `build-mode: none` (`9d049bfc`)
+- **Typecheck estrito**: issue **#43** (backlog)
+
+### Fila (cadeia) — Fase 5 (Playwright gate)
+
+**Fase 5 FECHADA**: run `28910403265` (5/5 verdes) — fix final `a2536a42`.
+
+**Cadeia completa (registro):**
+
+- Billing (regularizado)
+- Jest deadlock: `f0a2a49b`
+- Migrate/seed `DATABASE_URL` (5433): `e605efd0`
+- Login 503→429 (refresh_tokens + rate limit): `4937d13e` + `4f1e9fb9`
+- SSR Turismo 500 (Turbopack symlinks no Docker): `88a6738b`
+- App-layer (CORS `:3005` + import estático `objecao`): `a2536a42` → run `28910403265` (5/5)
+
+### Fase 2 — `codigo_pms`
+
+**COMMIT**: `c80d180e` — passou sem regressão no gate Fase 5.
+
+- Fase 5 — run `28913338858`: 5/5 verdes
+- CI — run `28913338782`: 4/4 verdes
+
+### Higiene pré-deploy (não bloqueante, mas obrigatória antes de prod)
+
+- **Secrets em logs de CI**: limpar/mascarar (LGPD/segurança).
+- **CORS default**: `localhost:3005` no default serve para dev/CI; **em produção** a allowlist deve vir de `CORS_ORIGIN` (env).
 
 ---
 
@@ -295,7 +324,7 @@ Validado pós-billing (3 jul 2026): CI 303, Security Scan, CodeQL, route-smoke, 
 | Tarifário service | `server/modules/acomodacoes/services/tarifa.service.ts` |
 | Tarifas API | `server/modules/acomodacoes/routes/tarifas.routes.ts` |
 | Migration tarifário | `backend/drizzle/0030_tarifario_dinamico.sql` |
-| Migration codigo_pms | `backend/drizzle/0029_codigo_pms.sql` |
+| Migration codigo_pms | `backend/drizzle/0030_codigo_pms.sql` |
 | Seed tarifário | `backend/scripts/seed-tarifario.mjs` |
 | Guard UI | `apps/turismo/components/AnfitriaoRoleGuard.tsx` |
 | Hook reserva (Fase 2) | `server/modules/acomodacoes/services/disponibilidade-reserva.hook.ts` |
