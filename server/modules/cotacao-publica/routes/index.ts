@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { cotacaoPublicaService } from '../services/cotacao-publica.service';
+import { DisponibilidadeReservaConflictError } from '../../acomodacoes/services/disponibilidade-reserva.hook';
 import { registrarLeadAbandono } from '../services/lead-abandono.service';
 import { isPropostaExpiradaError } from '../../propostas/proposta-validade';
 import { publicLimiter } from '../../../middleware/public-limiter';
@@ -83,6 +84,14 @@ router.post('/gerar-proposta', publicLimiter, requireTurnstile, async (req, res)
   } catch (error) {
     const err = error as Error;
     console.error('[cotacao-publica] gerar-proposta', err);
+    if (error instanceof DisponibilidadeReservaConflictError) {
+      return res.status(409).json({
+        success: false,
+        error: err.message,
+        acomodacaoId: error.acomodacaoId,
+        datasIndisponiveis: error.datasIndisponiveis,
+      });
+    }
     const status = statusForGerarPropostaError(err.message);
     res.status(status).json({ success: false, error: err.message });
   }
@@ -138,6 +147,14 @@ router.post('/proposta/:token/aceitar', publicLimiter, requireTurnstile, async (
   } catch (error) {
     if (isPropostaExpiradaError(error)) {
       return res.status(403).json({ success: false, error: error.message });
+    }
+    if (error instanceof DisponibilidadeReservaConflictError) {
+      return res.status(409).json({
+        success: false,
+        error: error.message,
+        acomodacaoId: error.acomodacaoId,
+        datasIndisponiveis: error.datasIndisponiveis,
+      });
     }
     res.status(400).json({ success: false, error: (error as Error).message });
   }

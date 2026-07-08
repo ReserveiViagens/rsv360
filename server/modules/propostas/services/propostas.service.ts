@@ -11,6 +11,10 @@ import { montarComparativoProposta } from './montar-proposta';
 import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
+import {
+  assertDisponibilidadeReserva,
+  marcarDiariasReservadas,
+} from '../../acomodacoes/services/disponibilidade-reserva.hook';
 
 type HitlMode = 'ai' | 'waiting' | 'human';
 
@@ -371,6 +375,17 @@ export class PropostasService {
 
     if (action === 'accept') {
       await assertPropostaNaoExpirada(row);
+      const meta = parseMetadata(row.metadata);
+      const acomodacaoId =
+        meta.acomodacaoId != null && Number.isFinite(Number(meta.acomodacaoId))
+          ? Number(meta.acomodacaoId)
+          : null;
+      const checkIn = typeof meta.checkIn === 'string' ? meta.checkIn : null;
+      const checkOut = typeof meta.checkOut === 'string' ? meta.checkOut : null;
+      if (acomodacaoId && checkIn && checkOut) {
+        await assertDisponibilidadeReserva(acomodacaoId, checkIn, checkOut);
+        await marcarDiariasReservadas(acomodacaoId, checkIn, checkOut);
+      }
     }
 
     const status = action === 'accept' ? 'accepted' : 'rejected';
