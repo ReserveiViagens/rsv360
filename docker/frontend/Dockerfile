@@ -61,13 +61,20 @@ ENV RSV360_APP_MODE=${RSV360_APP_MODE}
 ENV MARKETING_LAB_REQUIRE_AUTH=${MARKETING_LAB_REQUIRE_AUTH}
 ENV PATH="/workspace/node_modules/.bin:${PATH}"
 RUN npm run build --workspace="${APP_DIR}"
-RUN mkdir -p /workspace/.deploy \
-  && cp -R "${APP_DIR}/.next" /workspace/.deploy/.next \
-  && cp "${APP_DIR}/package.json" /workspace/.deploy/package.json \
-  && cp -R /workspace/node_modules /workspace/.deploy/node_modules \
-  && if [ -d "${APP_DIR}/node_modules" ]; then cp -R "${APP_DIR}/node_modules/." /workspace/.deploy/node_modules/; fi \
-  && mkdir -p /workspace/.deploy/public \
-  && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." /workspace/.deploy/public/; fi
+# Preservar ${APP_DIR} no runtime: symlinks do Turbopack (.next/node_modules/*-hash)
+# apontam N níveis acima até /workspace/node_modules — flatten quebra todos (SSR 500).
+RUN mkdir -p "/workspace/.deploy/${APP_DIR}" "/workspace/.deploy/packages/shared" \
+  && cp -R "${APP_DIR}/.next" "/workspace/.deploy/${APP_DIR}/.next" \
+  && cp "${APP_DIR}/package.json" "/workspace/.deploy/${APP_DIR}/package.json" \
+  && cp -R /workspace/node_modules "/workspace/.deploy/node_modules" \
+  && if [ -d "${APP_DIR}/node_modules" ]; then \
+       mkdir -p "/workspace/.deploy/${APP_DIR}/node_modules" \
+       && cp -R "${APP_DIR}/node_modules/." "/workspace/.deploy/${APP_DIR}/node_modules/"; \
+     fi \
+  && if [ -d "packages/shared/dist" ]; then cp -R packages/shared/dist "/workspace/.deploy/packages/shared/dist"; fi \
+  && if [ -f "packages/shared/package.json" ]; then cp packages/shared/package.json "/workspace/.deploy/packages/shared/package.json"; fi \
+  && mkdir -p "/workspace/.deploy/${APP_DIR}/public" \
+  && if [ -d "${APP_DIR}/public" ]; then cp -R "${APP_DIR}/public/." "/workspace/.deploy/${APP_DIR}/public/"; fi
 
 FROM node:24-alpine AS runtime
 ARG APP_DIR
@@ -80,10 +87,9 @@ WORKDIR /workspace
 RUN apk add --no-cache wget
 RUN addgroup -S rsv360 && adduser -S rsv360 -G rsv360
 
-COPY --from=builder /workspace/.deploy/.next ./.next
-COPY --from=builder /workspace/.deploy/public ./public
-COPY --from=builder /workspace/.deploy/package.json ./package.json
 COPY --from=builder /workspace/.deploy/node_modules ./node_modules
+COPY --from=builder /workspace/.deploy/packages ./packages
+COPY --from=builder /workspace/.deploy/${APP_DIR} ./${APP_DIR}
 
 ENV NODE_ENV=production
 ENV PORT=${APP_PORT}
@@ -100,6 +106,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD /healthcheck.sh
 
 USER rsv360
+WORKDIR /workspace/${APP_DIR}
 EXPOSE ${APP_PORT}
 
 CMD ["npm", "run", "start"]
