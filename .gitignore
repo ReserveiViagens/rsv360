@@ -143,3 +143,7 @@ data/**/*.xlsx
 
 backups/
 backend/data/
+
+# CMS vitrine uploads (disco local; nao versionar binarios)
+backend/public/uploads/hoteis/*
+!backend/public/uploads/hoteis/.gitkeep

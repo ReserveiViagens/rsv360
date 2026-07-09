@@ -15,6 +15,7 @@ import { registerVouchersModule } from './modules/vouchers';
 import { registerRoteiroAnalyticsModule } from './modules/roteiro-analytics';
 import { registerRoteiroModule } from './modules/roteiro';
 import { registerComissoesModule } from './modules/comissoes';
+import { registerCmsModule } from './modules/cms';
 
 /**
  * Registra os 7 módulos backend da Fase 1 (migração Sistema A → B).
@@ -36,8 +37,9 @@ export function registerMigracaoFase1Modules(app: Express, io?: Server) {
   registerRoteiroAnalyticsModule(app);
   registerRoteiroModule(app);
   registerComissoesModule(app);
+  registerCmsModule(app);
   console.log(
-    '[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações + Cotação Pública + Configurações + Analytics Roteiro + Mapa Roteiro + Comissões registrados ✓',
+    '[BOOT] Módulos Fase 1 (7/7) + Fornecedores Hub + Acomodações + Cotação Pública + Configurações + Analytics Roteiro + Mapa Roteiro + Comissões + CMS Vitrine registrados ✓',
   );
 }
 
