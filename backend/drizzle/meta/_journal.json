@@ -232,6 +232,13 @@
       "when": 1783619000000,
       "tag": "0032_desativar_addon_suite_master",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1783620000000,
+      "tag": "0033_vitrine_etapa_a_11_hoteis",
+      "breakpoints": true
     }
   ]
 }
