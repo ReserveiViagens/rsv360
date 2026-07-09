@@ -7,7 +7,17 @@
 - `/admin/cms` no site-publico está “Em construção”
 - `HotelManagement.tsx` existe, mas falta `POST /api/admin/website/content`
 
-Cadastro atual: **seed SQL**.
+### Staging / produção (obrigatório)
+
+A vitrine entra no pipeline via migration Drizzle **`0033_vitrine_etapa_a_11_hoteis`** (mesmo padrão do 0032):
+
+```bash
+npm run migrate
+```
+
+Isso desativa `hotel-demo-1/2` e upserta os 11 hotéis em qualquer ambiente. **Não depende** de rodar o seed manual no Postgres local.
+
+### Ops / local (opcional)
 
 ```powershell
 cd "C:\Users\RSV 360\Documents\rsv360"
@@ -15,7 +25,7 @@ $env:DATABASE_URL="postgresql://rsv360:REDACTED_PG_DEV_PASSWORD@localhost:5433/r
 node backend/scripts/seed-vitrine-etapa-a.mjs
 ```
 
-Arquivo: [`vitrine-etapa-a-11-hoteis.sql`](./vitrine-etapa-a-11-hoteis.sql)
+Arquivo espelho: [`vitrine-etapa-a-11-hoteis.sql`](./vitrine-etapa-a-11-hoteis.sql)
 
 ## Conteúdo
 
