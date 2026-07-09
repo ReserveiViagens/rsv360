@@ -225,6 +225,13 @@
       "when": 1782225000000,
       "tag": "0031_comissoes_lancamento",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1783619000000,
+      "tag": "0032_desativar_addon_suite_master",
+      "breakpoints": true
     }
   ]
 }
