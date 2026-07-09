@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          lfs: true
+          lfs: false
 
       - uses: actions/setup-node@v6
         with:
