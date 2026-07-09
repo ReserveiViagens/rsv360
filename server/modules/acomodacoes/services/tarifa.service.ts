@@ -13,6 +13,8 @@ export interface ResolverTarifaInput {
   acomodacaoId: number;
   data: string;
   categoriaSlug?: string;
+  /** Staff-only: resolve regras sem exigir motor ligado (não altera config). */
+  preview?: boolean;
 }
 
 export interface TrilhaTarifa {
@@ -181,7 +183,8 @@ export const tarifaService = {
     trilha.push({ passo: 'base', detalhe: `preco_diaria=${precoBase}` });
 
     const motorAtivo = await this.isMotorAtivoParaUnidade(unit.id, unit.hotelId);
-    if (!motorAtivo) {
+    const preview = input.preview === true;
+    if (!motorAtivo && !preview) {
       trilha.push({ passo: 'motor_off', detalhe: 'toggle desligado' });
       return {
         precoBase,
@@ -194,7 +197,11 @@ export const tarifaService = {
       };
     }
 
-    trilha.push({ passo: 'motor_on' });
+    if (preview && !motorAtivo) {
+      trilha.push({ passo: 'preview', detalhe: 'motor off — resolução dry-run' });
+    } else {
+      trilha.push({ passo: 'motor_on' });
+    }
 
     const [categoria] = await db
       .select()
@@ -268,7 +275,8 @@ export const tarifaService = {
           }
         : null,
       trilha,
-      motorAtivo: true,
+      // Preview staff não liga o motor; flag reflete o toggle real.
+      motorAtivo,
     };
   },
 
