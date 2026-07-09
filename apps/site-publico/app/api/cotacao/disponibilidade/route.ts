@@ -177,6 +177,8 @@ export async function GET(request: NextRequest) {
           status: (h.status as 'active') ?? 'active',
           images: normalizeImageList(h.images ?? metadata.images),
           metadata,
+          video_url: (h.video_url as string | null | undefined) ?? null,
+          amenidades: h.amenidades,
         },
         true,
       );

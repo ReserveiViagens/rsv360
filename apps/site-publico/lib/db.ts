@@ -1,16 +1,16 @@
-// Database connection utility for Next.js API routes
+﻿// Database connection utility for Next.js API routes
 import { Pool, PoolConfig, QueryResult } from 'pg';
 
 // Create a connection pool
 let pool: Pool | null = null;
 
-// Função para injetar pool mockado (apenas para testes)
+// FunÃ§Ã£o para injetar pool mockado (apenas para testes)
 let mockPoolInstance: Pool | null = null;
 
 /**
- * Função para injetar pool mockado (apenas para testes)
- * Esta função permite que os testes injetem um pool mockado
- * antes que o código de produção tente criar uma conexão real.
+ * FunÃ§Ã£o para injetar pool mockado (apenas para testes)
+ * Esta funÃ§Ã£o permite que os testes injetem um pool mockado
+ * antes que o cÃ³digo de produÃ§Ã£o tente criar uma conexÃ£o real.
  * 
  * @param mockPool - Pool mockado para usar nos testes
  */
@@ -39,7 +39,7 @@ export function getDbPool(): Pool {
       connectionTimeoutMillis: 2000,
     };
     
-    console.log('🔌 Conectando ao banco:', {
+    console.log('ðŸ”Œ Conectando ao banco:', {
       host: dbConfig.host,
       port: dbConfig.port,
       database: dbConfig.database,
@@ -50,14 +50,14 @@ export function getDbPool(): Pool {
     
     // Handle connection errors
     pool.on('error', (err: Error) => {
-      console.error('❌ Erro no pool de conexões:', err);
+      console.error('âŒ Erro no pool de conexÃµes:', err);
     });
   }
   return pool;
 }
 
 /**
- * Função para limpar conexões (útil para testes)
+ * FunÃ§Ã£o para limpar conexÃµes (Ãºtil para testes)
  * Fecha o pool real e limpa o mock
  */
 export async function closeDbPool() {
@@ -84,7 +84,7 @@ export async function queryDatabase<T = any>(
 }
 
 // Alias para compatibilidade com guia Novas Att RSV 360
-// Retorna QueryResult completo (não apenas rows)
+// Retorna QueryResult completo (nÃ£o apenas rows)
 export async function queryDb(
   text: string,
   params?: any[]
@@ -114,6 +114,8 @@ export async function getWebsiteContent(pageType: string) {
       seo_data,
       status,
       order_index,
+      video_url,
+      amenidades,
       created_at,
       updated_at
     FROM website_content 
@@ -124,7 +126,7 @@ export async function getWebsiteContent(pageType: string) {
   } catch (error: unknown) {
     const pgCode = (error as { code?: string })?.code;
     if (pgCode === '42P01') {
-      console.warn(`website_content ausente — retornando lista vazia para ${pageType}`);
+      console.warn(`website_content ausente â€” retornando lista vazia para ${pageType}`);
       return [];
     }
     throw error;
@@ -140,6 +142,8 @@ export async function getWebsiteContent(pageType: string) {
     seo_data: typeof row.seo_data === 'string' ? JSON.parse(row.seo_data || '{}') : (row.seo_data || {}),
     status: row.status || 'active',
     order_index: row.order_index || 0,
+    video_url: row.video_url || null,
+    amenidades: typeof row.amenidades === 'string' ? JSON.parse(row.amenidades || '[]') : (row.amenidades || []),
     created_at: row.created_at,
     updated_at: row.updated_at,
   }));
