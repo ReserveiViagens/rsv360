@@ -1,4 +1,4 @@
-import { normalizeImageList } from '@/lib/cotacao-image-utils';
+﻿import { normalizeImageList } from '@/lib/cotacao-image-utils';
 import { countWizardNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 
 export { WIZARD_MIN_NIGHTS, countWizardNights as countNights };
@@ -54,7 +54,7 @@ export interface WizardState {
   wizardAddonIds: number[];
   /** Upgrade varanda por unidade (ATR-SUV / AQR-FAM). */
   upgradeVaranda: boolean;
-  /** Valor R$/noite do upgrade (calibrável via metadata). */
+  /** Valor R$/noite do upgrade (calibrÃ¡vel via metadata). */
   upgradeVarandaValor: number;
 }
 

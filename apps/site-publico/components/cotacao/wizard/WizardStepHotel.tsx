@@ -1,19 +1,44 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building2, ChevronDown, Sparkles } from 'lucide-react';
+import { Building2, ChevronDown, Map, Sparkles } from 'lucide-react';
 import type { CardArquetipoPasso2 } from '@rsv360/shared';
 import { formatAcomodacaoConfigLabel } from '@rsv360/shared';
 import { trackCotacaoEvent } from '@/lib/cotacao-analytics';
+import {
+  AMENIDADE_ICONS,
+  AMENIDADE_LABELS,
+  resolveHotelAmenidades,
+  type AmenidadeCode,
+} from '@/lib/cotacao-amenidades';
 import { getBehaviorBadge, sortCatalogItems } from './wizard-behavior';
 import { ItineraryCard } from './ItineraryCard';
 import { formatBRL, sumUpgradeVaranda, sumWizardAddons, type WizardAddonPricing } from './wizard-pricing';
 import { useWizard } from './WizardContext';
-import { countNights, formatDateBR } from './wizard-types';
+import { countNights, formatDateBR, type AvailabilityItem } from './wizard-types';
 import { cn } from '@/lib/utils';
+
+const WizardHotelMap = dynamic(
+  () => import('./WizardHotelMap').then((m) => m.WizardHotelMap),
+  { ssr: false, loading: () => <p className="text-sm text-muted-foreground">Carregando mapa…</p> },
+);
+
+const FILTER_CHIPS: AmenidadeCode[] = [
+  'piscina_termal',
+  'parque_aquatico',
+  'sauna',
+  'academia',
+  'pet_friendly',
+  'wifi',
+  'restaurante',
+  'area_kids',
+  'upgrade_varanda',
+  'premium',
+];
 
 const FALLBACK =
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop';
@@ -40,6 +65,8 @@ export function WizardStepHotel() {
   const [fallbackHotelUnico, setFallbackHotelUnico] = useState(true);
   const [addons, setAddons] = useState<WizardAddonPricing[]>([]);
   const [loadingAcomod, setLoadingAcomod] = useState(false);
+  const [amenidadeFilters, setAmenidadeFilters] = useState<AmenidadeCode[]>([]);
+  const [showMap, setShowMap] = useState(false);
 
   const hotelRef = state.hotelId != null ? String(state.hotelId) : null;
   const hotelTitulo = selectedHotel?.title ?? null;
@@ -102,8 +129,29 @@ export function WizardStepHotel() {
       .catch(() => setAddons([]));
   }, []);
 
-  const hotelsParaExibir =
+  const hotelsBase =
     hotelTravado && selectedHotel ? [selectedHotel] : hotels;
+
+  const hotelsParaExibir = useMemo(() => {
+    if (!amenidadeFilters.length) return hotelsBase;
+    return hotelsBase.filter((h) => {
+      const codes = resolveHotelAmenidades(h.metadata);
+      return amenidadeFilters.every((f) => codes.includes(f));
+    });
+  }, [hotelsBase, amenidadeFilters]);
+
+  const toggleAmenidadeFilter = (code: AmenidadeCode) => {
+    setAmenidadeFilters((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
+    );
+  };
+
+  const selectHotelFromMap = (hotel: AvailabilityItem) => {
+    if (hotelTravado || !hotel.available) return;
+    toggleHotel(hotel.id, hotel.price);
+    const el = document.getElementById(`wizard-hotel-${hotel.id}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   const toggleHotel = (id: number | string, price: number) => {
     if (hotelTravado) return;
@@ -187,39 +235,115 @@ export function WizardStepHotel() {
       </Card>
 
       {(!showArquetipos || !state.hotelId) && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {hotelsParaExibir.map((hotel) => {
-            const meta = hotel.metadata ?? {};
-            const images = hotel.images.length ? hotel.images : [FALLBACK];
-            const scarcity = meta.scarcity as { unitsLeft?: number } | undefined;
-            const social = meta.socialProof as { bookings24h?: number } | undefined;
-            const isSelected =
-              state.hotelId === hotel.id || state.hotelId === hotel.contentId;
-            return (
-              <ItineraryCard
-                key={String(hotel.id)}
-                title={hotel.title}
-                subtitle={`${nights} noite${nights !== 1 ? 's' : ''} (${formatDateBR(state.checkIn)} a ${formatDateBR(state.checkOut)})`}
-                image={images[0]}
-                images={images}
-                price={hotel.price * Math.max(nights, 1)}
-                location={hotel.location}
-                isSelected={isSelected}
-                onSelect={() => (!hotel.available || hotelTravado ? undefined : toggleHotel(hotel.id, hotel.price))}
-                behaviorTag={getBehaviorBadge(hotel, state.profile)}
-                tagColor={state.profile === 'casal' ? 'purple' : 'green'}
-                hasVideo={Boolean(meta.videoUrl)}
-                videoUrl={meta.videoUrl as string | undefined}
-                showPremium={Boolean(meta.premiumLabel)}
-                premiumLabel={meta.premiumLabel as string | undefined}
-                availableUnits={scarcity?.unitsLeft}
-                recentBookings={social?.bookings24h}
-                unavailable={!hotel.available}
-                unavailableReason={hotel.unavailableReason}
-              />
-            );
-          })}
-        </div>
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-muted-foreground">
+              {hotelsParaExibir.length} hotel{hotelsParaExibir.length !== 1 ? 'is' : ''} encontrado
+              {hotelsParaExibir.length !== 1 ? 's' : ''}
+            </p>
+            <Button
+              type="button"
+              variant={showMap ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setShowMap((v) => !v)}
+              className="gap-1"
+            >
+              <Map className="h-4 w-4" />
+              {showMap ? 'Ver lista' : 'Ver no mapa'}
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {FILTER_CHIPS.map((code) => {
+              const on = amenidadeFilters.includes(code);
+              return (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => toggleAmenidadeFilter(code)}
+                  className={cn(
+                    'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                    on
+                      ? 'bg-cyan-600 text-white'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:border-cyan-400',
+                  )}
+                >
+                  {AMENIDADE_ICONS[code]} {AMENIDADE_LABELS[code]}
+                </button>
+              );
+            })}
+            {amenidadeFilters.length > 0 && (
+              <button
+                type="button"
+                className="text-xs text-muted-foreground underline"
+                onClick={() => setAmenidadeFilters([])}
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+
+          {showMap ? (
+            <WizardHotelMap
+              hotels={hotelsParaExibir.filter((h) => h.available)}
+              onSelect={selectHotelFromMap}
+              highlightId={state.hotelId}
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {hotelsParaExibir.map((hotel) => {
+                const meta = hotel.metadata ?? {};
+                const images = hotel.images.length ? hotel.images : [FALLBACK];
+                const scarcity = meta.scarcity as { unitsLeft?: number } | undefined;
+                const social = meta.socialProof as { bookings24h?: number } | undefined;
+                const isSelected =
+                  state.hotelId === hotel.id || state.hotelId === hotel.contentId;
+                const amenCodes = resolveHotelAmenidades(meta);
+                return (
+                  <div key={String(hotel.id)} id={`wizard-hotel-${hotel.id}`} className="space-y-1">
+                    <ItineraryCard
+                      title={hotel.title}
+                      subtitle={`${nights} noite${nights !== 1 ? 's' : ''} (${formatDateBR(state.checkIn)} a ${formatDateBR(state.checkOut)})`}
+                      image={images[0]}
+                      images={images}
+                      price={hotel.price * Math.max(nights, 1)}
+                      location={hotel.location}
+                      isSelected={isSelected}
+                      onSelect={() => (!hotel.available || hotelTravado ? undefined : toggleHotel(hotel.id, hotel.price))}
+                      behaviorTag={getBehaviorBadge(hotel, state.profile)}
+                      tagColor={state.profile === 'casal' ? 'purple' : 'green'}
+                      hasVideo={Boolean(meta.videoUrl)}
+                      videoUrl={meta.videoUrl as string | undefined}
+                      showPremium={Boolean(meta.premiumLabel)}
+                      premiumLabel={meta.premiumLabel as string | undefined}
+                      availableUnits={scarcity?.unitsLeft}
+                      recentBookings={social?.bookings24h}
+                      unavailable={!hotel.available}
+                      unavailableReason={hotel.unavailableReason}
+                    />
+                    {amenCodes.length > 0 && (
+                      <div className="flex flex-wrap gap-1 px-1">
+                        {amenCodes.slice(0, 6).map((c) => (
+                          <span
+                            key={c}
+                            title={AMENIDADE_LABELS[c]}
+                            className="text-sm"
+                            aria-label={AMENIDADE_LABELS[c]}
+                          >
+                            {AMENIDADE_ICONS[c]}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <p className="px-1 text-xs text-muted-foreground">
+                      A partir de {formatBRL(hotel.price)}/noite
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
 
       {loadingAcomod && state.hotelId && (

@@ -1,8 +1,8 @@
-import { SignJWT, jwtVerify } from 'jose'
+﻿import { SignJWT, jwtVerify } from 'jose'
 
 export interface AdminTokenPayload {
   sub: string
-  role: 'admin'
+  role: 'admin' | 'manager'
   email?: string
 }
 
@@ -39,8 +39,13 @@ export async function verifyAdminToken(token: string | undefined | null) {
 
   try {
     const { payload } = await jwtVerify(token, secretKey)
-    if (payload.role !== 'admin') return null
-    return payload
+    const role = payload.role
+    if (role !== 'admin' && role !== 'manager') return null
+    return {
+      sub: String(payload.sub ?? ''),
+      role: role as 'admin' | 'manager',
+      email: typeof payload.email === 'string' ? payload.email : undefined,
+    }
   } catch {
     return null
   }
