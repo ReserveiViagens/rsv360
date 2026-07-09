@@ -268,6 +268,8 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 - Validação: `backend/scripts/validar-tarifa-carga-17.mjs` (12 simulações preview)
 - Toggle global: `configuracoes_sistema.chave=tarifario` → `tarifario_dinamico_ativo` (default **false**)
 - Política FDS/estadia/taxa parque: `configuracoes_sistema.chave=tarifario_politica_etapa_a` (documental até motor aplicar FDS)
+- **Pré-requisito ligar motor:** implementar FDS por dia da semana (+ estadia mín. + taxa parque à parte) em `resolverTarifa` — ver `WIZARD-PREMIUM-HIBRIDO.md`
+- Simulador `?preview=1`: JWT obrigatório + role `admin`/`manager` (401 anônimo; 403 demais roles)
 - UI: `apps/turismo/pages/anfitriao/tarifas/`
 
 ### Etapas B/C/D

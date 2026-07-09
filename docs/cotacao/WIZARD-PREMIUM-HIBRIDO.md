@@ -46,6 +46,19 @@
 
 **Não ligar** `tarifario_dinamico_ativo` até smoke manual. **IA sugere delta; humano aprova** (camada 3).
 
+## Pré-requisito obrigatório antes de ligar o motor
+
+Carga A′ (PR #46) populou diárias base seg–qui e documentou FDS / estadia mín. / taxa parque em `configuracoes_sistema.tarifario_politica_etapa_a`. O `resolverTarifa` **ainda não aplica adicional por dia da semana**.
+
+| Antes de `tarifario_dinamico_ativo = true` | Status |
+|--------------------------------------------|--------|
+| Implementar FDS (+35–40% sex–dom conforme tipo) em `resolverTarifa` | ⛔ bloqueante |
+| Aplicar / validar estadia mínima (2; feriado 3+) no fluxo de reserva | ⛔ bloqueante |
+| Taxa parque R$10/pessoa/dia **à parte** (não embutir na diária) | ⛔ bloqueante |
+| Smoke UI wizard flat + simulador staff `?preview=1` | ✅ |
+
+Sem FDS no motor, sexta/sábado cobrariam só a diária base (perda de +35–40%).
+
 ## KN39H — preço flat
 
 - **Notion / tarifário alvo:** baixa R$ 200  

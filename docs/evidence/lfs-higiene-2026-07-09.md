@@ -31,21 +31,28 @@ Varredura `.github/workflows/`: **nenhum** `lfs: true` restante — todos `lfs: 
 1. `.gitattributes`: `*.log` e `*.pdf` passam a texto Git normal (não LFS) para **commits novos**.
 2. Documenta inventário e plano de migrate.
 
-## O que NÃO foi feito (aguarda confirmação do owner)
+## Decisão owner (9 jul 2026) — **NÃO** rodar migrate agora
 
-`git lfs migrate export --include="*.log,*.pdf" --everything` (ou BFG) **reescreve histórico** e exige **force-push** coordenado em `main` + branches abertas.
+Reescrever histórico **não libera storage LFS** no GitHub (objetos remotos continuam contando até delete/recriar repo ou suporte). O que quebrava o CI era **fetch/banda**; com `lfs: false` nos workflows a pressão prática caiu.
 
-Comando proposto (só após OK explícito):
+| Opção | Libera cota? |
+|-------|--------------|
+| Migrate + force-push | Storage: **não**. Só limpa histórico |
+| PR #47 (`.gitattributes` + workflows) | Estanca **banda** em novos checkouts CI |
+| Data pack (~US$5/mês) | Sim, imediato |
+| Recriar repo (planejado) | Sim, storage de fato |
+
+## Como distinguir banda vs storage
+
+1. Abrir (owner/billing admin): [Billing summary](https://github.com/settings/billing/summary) ou org [ReserveiViagens → Billing](https://github.com/organizations/ReserveiViagens/settings/billing)
+2. Seção **Git LFS Data** → comparar **Bandwidth** (reset mensal) vs **Storage** (acumula).
+3. API REST de billing LFS retornou **404** para o token atual (sem permissão org billing) — conferência visual obrigatória.
+
+Mensagem histórica do CI (`exceeded its LFS budget` / checkout LFS) aponta forte para **banda no fetch**; storage só confirma na UI.
+
+## Migrate (só se entrar no plano de recriar repo)
 
 ```bash
 git lfs migrate export --include="*.log,*.pdf" --everything
-# depois: force-push coordenado + notificar clones
+# + force-push coordenado — NÃO executar sem OK explícito do owner
 ```
-
-Alternativa: remover do tracking remoto via suporte GitHub LFS / apagar objetos órfãos após migrate.
-
-## Depois do migrate (esperado)
-
-- Cota LFS libera os ~160 ponteiros log/pdf.
-- Clones precisam `git fetch` + reset/rebase nas branches reescritas.
-- Manter `lfs: false` nos workflows até cota saudável.
