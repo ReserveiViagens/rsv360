@@ -52,6 +52,10 @@ export interface WizardState {
   canal?: string | null;
   selectedAcomodacaoId: number | null;
   wizardAddonIds: number[];
+  /** Upgrade varanda por unidade (ATR-SUV / AQR-FAM). */
+  upgradeVaranda: boolean;
+  /** Valor R$/noite do upgrade (calibrável via metadata). */
+  upgradeVarandaValor: number;
 }
 
 export interface WizardCatalog {
@@ -91,6 +95,8 @@ export const initialWizardState: WizardState = {
   profile: 'casal',
   selectedAcomodacaoId: null,
   wizardAddonIds: [],
+  upgradeVaranda: false,
+  upgradeVarandaValor: 0,
 };
 
 export interface StoredWizardDraft {

@@ -4,6 +4,7 @@ import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { wizardAddons } from '../../../../backend/src/db/schema/wizard-addons';
 import { tiposAcomodacao } from '../../../../backend/src/db/schema/tipos-acomodacao';
 import type { AcomodacaoDisponivel } from '@rsv360/shared';
+import { isPremiumAncora, parseUpgradeVarandaMeta } from '@rsv360/shared';
 import { tarifaService } from './tarifa.service';
 
 export interface ListarAcomodacoesInput {
@@ -17,6 +18,7 @@ export interface ListarAcomodacoesInput {
 }
 
 function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDisponivel {
+  const upgrade = parseUpgradeVarandaMeta(row.metadata);
   return {
     id: row.id,
     titulo: row.titulo,
@@ -27,6 +29,9 @@ function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDispon
     precoDiaria: Number(row.precoDiaria ?? 0),
     hotelId: row.hotelId,
     disponivel: row.capacidadeMax >= 0,
+    upgradeVarandaDisponivel: upgrade.disponivel,
+    upgradeVarandaValor: upgrade.valor,
+    premiumAncora: isPremiumAncora(row.metadata),
   };
 }
 

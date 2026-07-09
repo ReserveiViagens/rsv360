@@ -119,9 +119,15 @@ function buildCatalogRows(
   if (hotel) {
     let hotelTotal = hotel.price * nights;
     if (state.suiteUpgrade) hotelTotal += 80 * nights;
+    if (state.upgradeVaranda && state.upgradeVarandaValor > 0) {
+      hotelTotal += state.upgradeVarandaValor * nights;
+    }
+    const titleParts = [hotel.title];
+    if (state.suiteUpgrade) titleParts.push('Suíte Master');
+    if (state.upgradeVaranda) titleParts.push('Varanda/vista');
     rows.push({
       image: itemImage(hotel),
-      title: state.suiteUpgrade ? `${hotel.title} + Suíte Master` : hotel.title,
+      title: titleParts.join(' + '),
       persuasiveLine: getItemPersuasiveLine('hotel', profile),
       priceLabel: `${formatBRL(hotelTotal)} · ${nights} noite${nights !== 1 ? 's' : ''}`,
       badge: getBehaviorBadge(hotel, profile),

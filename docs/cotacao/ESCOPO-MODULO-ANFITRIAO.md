@@ -259,6 +259,8 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 
 ### Etapa A′ — tarifário dinâmico
 
+- **Modelo híbrido Premium (9 jul 2026):** base 1q/2q + upgrade varanda opcional no Wizard (+R$ 80/noite); Premium âncora (ex. ALD-FAM) como produto topo — ver [`WIZARD-PREMIUM-HIBRIDO.md`](./WIZARD-PREMIUM-HIBRIDO.md)
+- Inventário referência: `data/etapa-a/mapeamento-tipo-17-unidades.csv` (Notion *Inventário & Tarifário Reservei*)
 - Migration: `0030_tarifario_dinamico.sql`
 - Motor: `server/modules/acomodacoes/services/tarifa.service.ts` (`resolverTarifa`)
 - API: `/api/v1/tarifas/*` (CRUD staff + simular com escopo 403)
