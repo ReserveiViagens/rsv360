@@ -29,7 +29,9 @@ export const CALDAS_EMPREENDIMENTOS_CATALOGO: EmpreendimentoCatalogoItem[] = [
   { nomeOficial: 'HotSprings B3 Hotéis', slug: 'hotsprings-b3', hotelId: 'hotsprings-b3' },
   { nomeOficial: 'Ilhas do Lago', slug: 'ilhas-do-lago', hotelId: 'ilhas-do-lago' },
   { nomeOficial: 'Império Romano', slug: 'imperio-romano', hotelId: 'imperio-romano' },
-  { nomeOficial: 'Lacqua DiRoma', slug: 'lacqua-di-roma', hotelId: 'lacqua-di-roma' },
+  // hotel_id canônico no Postgres = lacqua-diroma (sem hífen em "diroma").
+  // Alias lacqua-di-roma permanece resolvido em resolve-hotel-id.
+  { nomeOficial: 'Lacqua DiRoma', slug: 'lacqua-diroma', hotelId: 'lacqua-diroma' },
   { nomeOficial: 'Lagoa Eco Towers', slug: 'lagoa-eco-towers', hotelId: 'lagoa-eco-towers' },
   { nomeOficial: 'Lagoa Quente Hotel', slug: 'lagoa-quente', hotelId: 'lagoa-quente' },
   { nomeOficial: 'Le Jardin Suítes', slug: 'le-jardin', hotelId: 'le-jardin' },

@@ -21,6 +21,7 @@ jest.mock('drizzle-orm', () => ({
 
 import { db } from '../../../../server/lib/db';
 import {
+  canonicalizeHotelId,
   matchCaldasHotelIdByTitle,
   resolverHotelIdParaAcomodacoes,
 } from '../../../../server/modules/acomodacoes/services/resolve-hotel-id';
@@ -43,6 +44,17 @@ describe('resolve-hotel-id', () => {
     expect(matchCaldasHotelIdByTitle('Spazzio DiRoma')).toBe('spazzio-diroma');
   });
 
+  it('canonicalizeHotelId normaliza alias lacqua-di-roma → lacqua-diroma', () => {
+    expect(canonicalizeHotelId('lacqua-di-roma')).toBe('lacqua-diroma');
+    expect(canonicalizeHotelId('lacqua-diroma')).toBe('lacqua-diroma');
+    expect(canonicalizeHotelId('Lacqua-Di-Roma')).toBe('lacqua-diroma');
+  });
+
+  it('matchCaldasHotelIdByTitle resolve Lacqua para hotel_id do DB', () => {
+    expect(matchCaldasHotelIdByTitle('Lacqua diRoma')).toBe('lacqua-diroma');
+    expect(matchCaldasHotelIdByTitle('Lacqua DiRoma')).toBe('lacqua-diroma');
+  });
+
   it('resolverHotelIdParaAcomodacoes mapeia hub-hotel-piazza via título', async () => {
     const id = await resolverHotelIdParaAcomodacoes('hub-hotel-piazza', 'Piazza');
     expect(id).toBe('piazza-diroma');
@@ -58,5 +70,14 @@ describe('resolve-hotel-id', () => {
     });
     const id = await resolverHotelIdParaAcomodacoes('piazza-diroma');
     expect(id).toBe('piazza-diroma');
+  });
+
+  it.each([
+    ['lacqua-diroma', 'lacqua-diroma'],
+    ['lacqua-di-roma', 'lacqua-diroma'],
+    ['hub-hotel-lacqua-diroma', 'lacqua-diroma'],
+  ])('Lacqua regressão: %s → %s', async (input, expected) => {
+    const id = await resolverHotelIdParaAcomodacoes(input, 'Lacqua diRoma');
+    expect(id).toBe(expected);
   });
 });

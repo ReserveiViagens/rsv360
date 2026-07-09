@@ -370,33 +370,7 @@ export function WizardStepHotel() {
         </div>
       )}
 
-      {selectedHotel && addons.length === 0 && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="pt-4">
-            <button
-              type="button"
-              className="flex w-full items-center justify-between text-left"
-              onClick={() => updateState({ suiteUpgrade: !state.suiteUpgrade })}
-            >
-              <div className="flex items-start gap-3">
-                <Sparkles className="mt-0.5 h-5 w-5 text-primary" />
-                <div>
-                  <p className="font-semibold text-gray-900">Upgrade Suíte Master</p>
-                  <p className="text-sm text-muted-foreground">Mais conforto e vista premium</p>
-                </div>
-              </div>
-              <div
-                className={cn(
-                  'flex h-6 w-6 items-center justify-center rounded-full border-2',
-                  state.suiteUpgrade ? 'border-primary bg-primary text-white' : 'border-gray-300',
-                )}
-              >
-                {state.suiteUpgrade && <ChevronDown className="h-4 w-4 rotate-180" />}
-              </div>
-            </button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Fallback hardcoded "Upgrade Suíte Master" removido — modelo por unidade (upgradeVaranda). */}
 
       {hotels.length === 0 && (
         <p className="text-center text-sm text-muted-foreground">

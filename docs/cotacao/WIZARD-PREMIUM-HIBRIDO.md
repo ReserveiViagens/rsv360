@@ -25,9 +25,9 @@
 
 ## O que o código já tem (S2)
 
-- Tabela `wizard_addons` — seed **"Upgrade Suíte Master"** `por_noite` **R$ 80** (`0021_acomodacoes_tipologia.sql`)
-- Wizard: `WizardStepHotel.tsx` lista add-ons via `/api/cotacao/addons` → `/api/v1/acomodacoes/addons`
-- Pricing: `sumWizardAddons()` em `wizard-pricing.ts` (`por_noite`, `por_pessoa`, etc.)
+- Tabela `wizard_addons` — seed histórico **"Upgrade Suíte Master"** (`0021`) — **desativado** (`ativo=false`) após modelo por unidade (evita cobrança dupla / oferta sem lastro). Script: `backend/scripts/desativar-addon-suite-master.mjs`
+- Wizard: toggle varanda **por unidade** (`upgrade_varanda_*` no metadata) — não o add-on global
+- Pricing: `sumUpgradeVaranda()` + `sumWizardAddons()` (só add-ons ainda ativos)
 
 ## Lacuna para implementar (PR futuro)
 
