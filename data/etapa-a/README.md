@@ -2,6 +2,17 @@
 
 **Status (3 jul 2026):** preços REF §11.6 **confirmados** como tarifário flat vigente em [`precos_reais_17.csv`](precos_reais_17.csv) (`nota=confirmado`).
 
+**Status (9 jul 2026):** inventário/tarifário por temporada em **referência** (Notion *Inventário & Tarifário Reservei*):
+
+| Arquivo | Uso |
+|---------|-----|
+| [`modelo-tarifario-reservei.csv`](modelo-tarifario-reservei.csv) | 3 tipos × 4 temporadas (pesquisa mercado jul/2026) — **não carregado no motor** |
+| [`mapeamento-tipo-17-unidades.csv`](mapeamento-tipo-17-unidades.csv) | Classificação automática das 17 unidades publicadas → tipo sugerido + flag `revisar` |
+
+Fonte da verdade operacional continua `acomodacoes.preco_diaria` (flat) até carga explícita no tarifário A′.
+
+**Modelo híbrido Wizard (9 jul 2026):** varanda = add-on (+R$ 80/noite) em ATR-SUV e AQR-FAM; ALD-FAM = Premium âncora; KN39H alvo R$ 200 (flat DB ainda R$ 120). Spec: [`docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md`](../../docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md).
+
 | Arquivo | Uso |
 |---------|-----|
 | [`precos_reais_17.csv`](precos_reais_17.csv) | Fonte versionada — preços confirmados |

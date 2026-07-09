@@ -1,0 +1,57 @@
+# Wizard — modelo híbrido Premium / varanda (decisão 9 jul 2026)
+
+> **Notion:** *Inventário & Tarifário Reservei* (17 unidades Etapa A, Fornecedor = Altravia).  
+> **Repo:** `data/etapa-a/mapeamento-tipo-17-unidades.csv` espelha classificação + flags de upgrade.
+
+## Decisão de produto
+
+| Papel | O que é | Exemplo |
+|-------|---------|---------|
+| **Base** | Capacidade que o cliente escolhe (1q / 2q) | ATR-SUV como 1 quarto |
+| **Upgrade varanda** | Add-on opcional no Wizard (+R$/noite) | ATR-SUV, AQR-FAM (+R$ 80) |
+| **Premium âncora** | Produto diferente no topo (não é toggle) | ALD-FAM chalé família cap. 8 |
+
+**Por quê:** varanda/vista é atributo de upgrade, não categoria de busca. Premium âncora posiciona o resto como acessível.
+
+## Unidades Etapa A — resumo
+
+| Código | Tipo tarifário | Upgrade varanda |
+|--------|----------------|-----------------|
+| ATR-SUV | 1 quarto | sim (+R$ 80/noite) |
+| AQR-FAM | 2 quartos | sim (+R$ 80/noite) |
+| ALD-FAM | Premium âncora | não (produto próprio) |
+| KN39H | 1 quarto entrada | não (alvo baixa R$ 200) |
+| Demais 13 | conforme mapeamento CSV | não |
+
+## O que o código já tem (S2)
+
+- Tabela `wizard_addons` — seed **"Upgrade Suíte Master"** `por_noite` **R$ 80** (`0021_acomodacoes_tipologia.sql`)
+- Wizard: `WizardStepHotel.tsx` lista add-ons via `/api/cotacao/addons` → `/api/v1/acomodacoes/addons`
+- Pricing: `sumWizardAddons()` em `wizard-pricing.ts` (`por_noite`, `por_pessoa`, etc.)
+
+## Lacuna para implementar (PR futuro)
+
+~~Hoje add-ons são **globais** (`escopo = 'hotel'`), não por unidade.~~
+
+| # | Entrega mínima | Status |
+|---|----------------|--------|
+| 1 | Campos em `acomodacoes.metadata`: `upgrade_varanda_disponivel`, `upgrade_varanda_valor` | ✅ PR `feat/wizard-upgrade-varanda-kn39h` |
+| 2 | API disponibilidade/wizard: expor flag só para unidades elegíveis | ✅ `listarDisponiveis` → `upgradeVaranda*` |
+| 3 | UI: toggle "Adicionar varanda/vista (+R$ X/noite)" **após** seleção da unidade base | ✅ `WizardStepHotel` |
+| 4 | Total: base × noites + upgrade × noites | ✅ `sumUpgradeVaranda` + `calculateWizardTotal` |
+| 5 | Premium âncora: badge + sort no topo (ALD-FAM) | ✅ `premium_ancora` + sort |
+| 6 | Persistir escolha no payload da proposta (auditoria) | ⏳ backlog (state já tem `upgradeVaranda`) |
+
+**Seed local:** `backend/scripts/seed-upgrade-varanda-metadata.mjs` (ATR-SUV/AQR-FAM + ALD-FAM âncora + KN39H→200).
+
+**Não ligar** `tarifario_dinamico_ativo` até smoke manual. **IA sugere delta; humano aprova** (camada 3).
+
+## KN39H — preço flat
+
+- **Notion / tarifário alvo:** baixa R$ 200  
+- **`acomodacoes.preco_diaria` (DB):** atualizado via seed script (id 27 → R$ 200)
+
+## Referências
+
+- `data/etapa-a/modelo-tarifario-reservei.csv` — preços por tipo × temporada (referência)
+- `docs/cotacao/ESCOPO-MODULO-ANFITRIAO.md` §10 Etapa A′

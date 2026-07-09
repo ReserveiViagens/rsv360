@@ -1,0 +1,18 @@
+rsv360_id,codigo_externo,titulo,hotel_id,quartos,capacidade_max,preco_diaria_flat,tipo_tarifario,upgrade_varanda,upgrade_varanda_rs,revisar,status_notion,observacoes
+8,AGF-STD,Suite Standard,a-guas-da-fonte,1,2,350,1 quarto / até 4,não,,não,Precificado,
+9,AGF-FAM,Suite Familia,a-guas-da-fonte,1,4,420,1 quarto / até 4,não,,não,Precificado,
+10,ATR-DUP,Quarto Duplo Standard,atrium-thermas,1,2,349,1 quarto / até 4,não,,não,Precificado,
+11,ATR-FAM,Quarto Familia,atrium-thermas,1,4,400,1 quarto / até 4,não,,não,Precificado,
+12,ATR-SUV,Suite com Varanda,atrium-thermas,1,3,380,1 quarto / até 4,sim,80,não,Precificado,Base 1q + toggle varanda no Wizard
+13,ALD-DUP,Chale Duplo,aldeia-do-lago,1,2,380,1 quarto / até 4,não,,não,Precificado,
+14,ALD-FAM,Chale Familia,aldeia-do-lago,1,8,600,Premium âncora,não,,não,Precificado,Produto diferenciado; capacidade 8; gancho topo
+15,ALV-LUX,Apartamento Luxo com Cozinha,alta-vista-thermas,1,4,480,Premium / varanda,não,,não,Precificado,
+16,ALV-PRE,Apartamento Premium com Varanda,alta-vista-thermas,2,5,550,Premium / varanda,não,,não,Precificado,
+17,AQR-CZ,Suite com Cozinha Compacta,aquarius-residence,1,3,320,1 quarto / até 4,não,,não,Precificado,
+18,AQR-FAM,Suite Familia com Varanda,aquarius-residence,2,5,449,2 quartos / até 6,sim,80,não,Precificado,Base 2q + toggle varanda no Wizard
+19,PRT1-2Q,Apto 2 Quartos (1 suite),priva-das-thermas-i,2,6,400,2 quartos / até 6,não,,não,Precificado,
+20,DRF-1Q,Apto 1 Quarto,diroma-fiori,1,5,394,1 quarto / até 4,não,,não,Precificado,
+21,SDC-2Q,Apto 2 Quartos,sol-das-caldas,2,7,360,2 quartos / até 6,não,,não,Precificado,
+22,DAP-2Q,Apto 2 Quartos com Churrasqueira,diroma-acqua-park,2,6,280,2 quartos / até 6,não,,não,Precificado,
+27,KN39H,Lacqua diRoma IV Apto 196,lacqua-diroma,1,5,120,1 quarto / até 4,não,,não,Precificado,Alvo tarifário baixa R$200; flat DB ainda R$120 até UPDATE
+419,VC-APTO-409-GOLDEN-DOLPHIN-SUPREME,Apto 409 Golden Dolphin Supreme,golden-dolphin-supreme,1,4,405,Premium / varanda,não,,não,Precificado,

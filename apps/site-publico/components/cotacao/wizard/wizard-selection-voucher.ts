@@ -122,7 +122,10 @@ export function buildHotelVoucher(
   nights: number,
   guests: number,
 ): SelectionVoucherDetails {
-  const title = state.suiteUpgrade ? `${hotel.title} + Suíte Master` : hotel.title;
+  const titleParts = [hotel.title];
+  if (state.suiteUpgrade) titleParts.push('Suíte Master');
+  if (state.upgradeVaranda) titleParts.push('Varanda/vista');
+  const title = titleParts.join(' + ');
   const breakfast = getBreakfastById(state.breakfastId);
   const hotelImgs = imagesFromCatalogItem(hotel);
 
@@ -133,7 +136,9 @@ export function buildHotelVoucher(
     'Roupa de cama completa fornecida pelo hotel',
     state.suiteUpgrade
       ? 'Upgrade Suíte Master: quarto ampliado, amenidades premium e vista privilegiada (sujeito a disponibilidade)'
-      : 'Apartamento padrão conforme capacidade contratada',
+      : state.upgradeVaranda
+        ? 'Upgrade varanda/vista selecionado (sujeito a disponibilidade da unidade)'
+        : 'Apartamento padrão conforme capacidade contratada',
   ];
 
   return {

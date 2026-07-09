@@ -5,6 +5,7 @@ import {
 } from '@/lib/cotacao-catalog';
 import type { AvailabilityItem, WizardCatalog, WizardState } from './wizard-types';
 import { countNights } from './wizard-types';
+import { sumUpgradeVaranda } from '@rsv360/shared';
 
 function findItem(catalog: WizardCatalog, type: string, id: number | string | null): AvailabilityItem | undefined {
   if (id == null) return undefined;
@@ -24,6 +25,8 @@ export interface WizardAddonPricing {
   precoTipo: string;
   valor: number;
 }
+
+export { sumUpgradeVaranda };
 
 export function sumWizardAddons(
   addons: WizardAddonPricing[],
@@ -73,6 +76,11 @@ export function calculateWizardTotal(
     } else if (state.suiteUpgrade) {
       hotelTotal += SUITE_UPGRADE_PRICE_PER_NIGHT * Math.max(nights, 1);
     }
+    hotelTotal += sumUpgradeVaranda(
+      state.upgradeVaranda,
+      state.upgradeVarandaValor,
+      Math.max(nights, 1),
+    );
     total += hotelTotal;
   }
 

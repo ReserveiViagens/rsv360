@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          lfs: true
+          lfs: false
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
@@ -102,7 +102,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          lfs: true
+          lfs: false
       - uses: docker/setup-buildx-action@v4
       - name: Build backend production image
         uses: docker/build-push-action@v7
@@ -139,7 +139,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          lfs: true
+          lfs: false
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
