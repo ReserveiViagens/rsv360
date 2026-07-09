@@ -17,6 +17,8 @@ npm run migrate
 
 Isso desativa `hotel-demo-1/2` e upserta os 11 hotéis em qualquer ambiente. **Não depende** de rodar o seed manual no Postgres local.
 
+`website_content` é tabela **legada** (fora do histórico Drizzle). A 0033 faz `CREATE TABLE IF NOT EXISTS` para o migrate do CI (DB efêmero) não falhar com `relation "website_content" does not exist`. Em staging/prod a tabela já existe — o `IF NOT EXISTS` é no-op.
+
 ### Ops / local (opcional)
 
 ```powershell
