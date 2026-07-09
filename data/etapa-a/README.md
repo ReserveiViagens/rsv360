@@ -6,12 +6,27 @@
 
 | Arquivo | Uso |
 |---------|-----|
-| [`modelo-tarifario-reservei.csv`](modelo-tarifario-reservei.csv) | 3 tipos × 4 temporadas (pesquisa mercado jul/2026) — **não carregado no motor** |
-| [`mapeamento-tipo-17-unidades.csv`](mapeamento-tipo-17-unidades.csv) | Classificação automática das 17 unidades publicadas → tipo sugerido + flag `revisar` |
+| [`modelo-tarifario-reservei.csv`](modelo-tarifario-reservei.csv) | 3 tipos × 4 temporadas (pesquisa mercado jul/2026) |
+| [`mapeamento-tipo-17-unidades.csv`](mapeamento-tipo-17-unidades.csv) | Classificação das 17 unidades → tipo + flag upgrade |
 
-Fonte da verdade operacional continua `acomodacoes.preco_diaria` (flat) até carga explícita no tarifário A′.
+**Carga A′ (tabelas `tarifa_*`, motor OFF):**
 
-**Modelo híbrido Wizard (9 jul 2026):** varanda = add-on (+R$ 80/noite) em ATR-SUV e AQR-FAM; ALD-FAM = Premium âncora; KN39H alvo R$ 200 (flat DB ainda R$ 120). Spec: [`docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md`](../../docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md).
+```powershell
+cd backend
+$env:DATABASE_URL="postgresql://rsv360:rsv360_dev_2024@localhost:5433/rsv_360_ecosystem"
+node scripts/seed-tarifa-carga-17-etapa-a.mjs --dry-run
+node scripts/seed-tarifa-carga-17-etapa-a.mjs
+node scripts/validar-tarifa-carga-17.mjs
+```
+
+- Popula `tarifa_categoria` (1q/2q/premium), `tarifa_temporada` (+feriado), períodos e **68 regras** (17×4).
+- Política FDS / estadia mín. / taxa parque → `configuracoes_sistema.tarifario_politica_etapa_a`.
+- **Não** altera `preco_diaria`. **Não** liga `tarifario_dinamico_ativo`.
+- Simulador staff: `GET /api/v1/tarifas/simular?preview=1&...` resolve regras sem ligar o motor.
+
+Fonte da verdade **visível no wizard** continua `acomodacoes.preco_diaria` (flat) enquanto o motor estiver OFF.
+
+**Modelo híbrido Wizard (9 jul 2026):** varanda = add-on (+R$ 80/noite) em ATR-SUV e AQR-FAM; ALD-FAM = Premium âncora; KN39H flat R$ 200 (PR #45). Spec: [`docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md`](../../docs/cotacao/WIZARD-PREMIUM-HIBRIDO.md).
 
 | Arquivo | Uso |
 |---------|-----|
@@ -39,7 +54,7 @@ O CSV simbólico [`publicar_17_rascunhos.csv`](publicar_17_rascunhos.csv) perman
 | 20 | DRF-1Q | 394 |
 | 21 | SDC-2Q | 360 |
 | 22 | DAP-2Q | 280 |
-| 27 | KN39H | 120 |
+| 27 | KN39H | 200 |
 | 419 | VC-APTO-409-… | 405 |
 
 ## Reaplicar UPDATE (local ou prod)

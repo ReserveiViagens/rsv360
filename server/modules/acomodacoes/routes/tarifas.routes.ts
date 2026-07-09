@@ -146,12 +146,21 @@ router.get('/simular', ...parceiroAuth, async (req, res) => {
     const acomodacaoId = Number(req.query.acomodacaoId);
     const data = String(req.query.data ?? '');
     const categoria = String(req.query.categoria ?? 'padrao');
+    const previewRequested =
+      req.query.preview === '1' || req.query.preview === 'true';
     if (!acomodacaoId || !data) {
       return res.status(400).json({ success: false, error: 'acomodacaoId e data obrigatórios' });
     }
 
     const role = req.user?.role ?? '';
-    if (!['admin', 'manager'].includes(role)) {
+    const isStaff = ['admin', 'manager'].includes(role);
+    if (previewRequested && !isStaff) {
+      return res.status(403).json({
+        success: false,
+        error: 'preview=1 restrito a admin/manager',
+      });
+    }
+    if (!isStaff) {
       const scoped = await anfitriaoService.obterUnidade(authFromReq(req), acomodacaoId);
       if ('error' in scoped) {
         if (scoped.error === 'forbidden') {
@@ -165,6 +174,7 @@ router.get('/simular', ...parceiroAuth, async (req, res) => {
       acomodacaoId,
       data,
       categoriaSlug: categoria,
+      preview: previewRequested && isStaff,
     });
     res.json({ success: true, data: resultado });
   } catch (error) {

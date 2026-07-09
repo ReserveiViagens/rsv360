@@ -264,8 +264,10 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
 - Migration: `0030_tarifario_dinamico.sql`
 - Motor: `server/modules/acomodacoes/services/tarifa.service.ts` (`resolverTarifa`)
 - API: `/api/v1/tarifas/*` (CRUD staff + simular com escopo 403)
-- Seed: `backend/scripts/seed-tarifario.mjs` (sem regras de preço)
+- Seed: `backend/scripts/seed-tarifario.mjs` (estrutura) + `seed-tarifa-carga-17-etapa-a.mjs` (17×4 regras, motor OFF)
+- Validação: `backend/scripts/validar-tarifa-carga-17.mjs` (12 simulações preview)
 - Toggle global: `configuracoes_sistema.chave=tarifario` → `tarifario_dinamico_ativo` (default **false**)
+- Política FDS/estadia/taxa parque: `configuracoes_sistema.chave=tarifario_politica_etapa_a` (documental até motor aplicar FDS)
 - UI: `apps/turismo/pages/anfitriao/tarifas/`
 
 ### Etapas B/C/D
