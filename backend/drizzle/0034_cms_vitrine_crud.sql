@@ -1,4 +1,4 @@
-﻿-- CMS Vitrine: colunas para video + amenidades estruturadas.
+-- CMS Vitrine: colunas para video + amenidades estruturadas.
 -- order_index ja existe (0033). updated_by integer ja existe.
 -- Nao recria website_content (0033 cobre CI limpo).
 
