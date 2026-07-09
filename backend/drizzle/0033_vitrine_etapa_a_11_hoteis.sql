@@ -1,20 +1,50 @@
 -- Vitrine CMS Etapa A: 11 hoteis reais + demos inactive.
 -- Idempotente. Equivalente a database/seeds/vitrine-etapa-a-11-hoteis.sql.
 -- Roda via migrate em qualquer ambiente.
+--
+-- website_content e tabela legada (fora do historico Drizzle). Em CI o DB sobe
+-- limpo via migrate e a relacao nao existe — por isso CREATE IF NOT EXISTS.
+-- Em staging/prod a tabela ja existe; IF NOT EXISTS e no-op.
 
--- Vitrine CMS Etapa A — 11 empreendimentos reais (content_id = hotel_id das acomodações).
--- Desativa hotel-demo-1/2 na vitrine pública.
--- Fotos/descrições: placeholders — Douglas substitui por conteúdo final (Notion/CMS).
--- Idempotente: ON CONFLICT atualiza; demos → status=inactive.
+-- 0) Garantir relacao + unique (ON CONFLICT) em DB efemero de CI
+CREATE SEQUENCE IF NOT EXISTS website_content_id_seq;
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS website_content (
+  id integer PRIMARY KEY DEFAULT nextval('website_content_id_seq'),
+  page_type character varying(50) NOT NULL,
+  content_id character varying(100) NOT NULL,
+  title character varying(255) NOT NULL,
+  description text,
+  images jsonb,
+  metadata jsonb,
+  seo_data jsonb,
+  status character varying(20) DEFAULT 'active',
+  order_index integer DEFAULT 0,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  created_by integer,
+  updated_by integer,
+  CONSTRAINT unq_website_content_page_content UNIQUE (page_type, content_id)
+);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS idx_website_content_page_type ON website_content (page_type);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS idx_website_content_status ON website_content (status);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS idx_website_content_page_status ON website_content (page_type, status);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS idx_website_content_order ON website_content (order_index);
+--> statement-breakpoint
 
--- 1) Demos fora da vitrine pública
+-- 1) Demos fora da vitrine publica
 UPDATE website_content
 SET status = 'inactive',
     metadata = COALESCE(metadata, '{}'::jsonb) || '{"vitrine":"demo_desativado_etapa_a"}'::jsonb
 WHERE page_type = 'hotels'
   AND content_id IN ('hotel-demo-1', 'hotel-demo-2');
+--> statement-breakpoint
 
--- 2) 11 hotéis Etapa A
+-- 2) 11 hoteis Etapa A
 INSERT INTO website_content (page_type, content_id, title, description, images, metadata, status, order_index)
 VALUES
 (
@@ -205,15 +235,24 @@ ON CONFLICT (page_type, content_id) DO UPDATE SET
   metadata = EXCLUDED.metadata,
   status = 'active',
   order_index = EXCLUDED.order_index;
+--> statement-breakpoint
 
--- 3) Ligar empreendimentos.website_content_id (quando a linha existir)
-UPDATE empreendimentos e
-SET website_content_id = wc.content_id
-FROM website_content wc
-WHERE wc.page_type = 'hotels'
-  AND wc.content_id = e.hotel_id
-  AND wc.content_id IN (
-    'atrium-thermas', 'lacqua-diroma', 'a-guas-da-fonte', 'aldeia-do-lago',
-    'alta-vista-thermas', 'aquarius-residence', 'priva-das-thermas-i',
-    'diroma-fiori', 'sol-das-caldas', 'diroma-acqua-park', 'golden-dolphin-supreme'
-  );
+-- 3) Ligar empreendimentos.website_content_id (quando a tabela existir)
+DO $$
+BEGIN
+  IF to_regclass('public.empreendimentos') IS NULL THEN
+    RAISE NOTICE '0033: empreendimentos ausente — skip link website_content_id';
+    RETURN;
+  END IF;
+
+  UPDATE empreendimentos e
+  SET website_content_id = wc.content_id
+  FROM website_content wc
+  WHERE wc.page_type = 'hotels'
+    AND wc.content_id = e.hotel_id
+    AND wc.content_id IN (
+      'atrium-thermas', 'lacqua-diroma', 'a-guas-da-fonte', 'aldeia-do-lago',
+      'alta-vista-thermas', 'aquarius-residence', 'priva-das-thermas-i',
+      'diroma-fiori', 'sol-das-caldas', 'diroma-acqua-park', 'golden-dolphin-supreme'
+    );
+END $$;
