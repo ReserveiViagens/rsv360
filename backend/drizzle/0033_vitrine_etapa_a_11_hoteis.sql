@@ -6,11 +6,12 @@
 -- limpo via migrate e a relacao nao existe — por isso CREATE IF NOT EXISTS.
 -- Em staging/prod a tabela ja existe; IF NOT EXISTS e no-op.
 
--- 0) Garantir relacao + unique (ON CONFLICT) em DB efemero de CI
+-- 0) Garantir relacao + unique (ON CONFLICT) em DB efemero de CI.
+-- Schema espelhado de \d website_content (local/prod legado), coluna a coluna.
 CREATE SEQUENCE IF NOT EXISTS website_content_id_seq;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS website_content (
-  id integer PRIMARY KEY DEFAULT nextval('website_content_id_seq'),
+  id integer PRIMARY KEY DEFAULT nextval('website_content_id_seq'::regclass),
   page_type character varying(50) NOT NULL,
   content_id character varying(100) NOT NULL,
   title character varying(255) NOT NULL,
@@ -18,7 +19,7 @@ CREATE TABLE IF NOT EXISTS website_content (
   images jsonb,
   metadata jsonb,
   seo_data jsonb,
-  status character varying(20) DEFAULT 'active',
+  status character varying(20) DEFAULT 'active'::character varying,
   order_index integer DEFAULT 0,
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
@@ -27,6 +28,8 @@ CREATE TABLE IF NOT EXISTS website_content (
   CONSTRAINT unq_website_content_page_content UNIQUE (page_type, content_id)
 );
 --> statement-breakpoint
+ALTER SEQUENCE website_content_id_seq OWNED BY website_content.id;
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS idx_website_content_page_type ON website_content (page_type);
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS idx_website_content_status ON website_content (status);
@@ -34,6 +37,29 @@ CREATE INDEX IF NOT EXISTS idx_website_content_status ON website_content (status
 CREATE INDEX IF NOT EXISTS idx_website_content_page_status ON website_content (page_type, status);
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS idx_website_content_order ON website_content (order_index);
+--> statement-breakpoint
+-- FKs do schema legado (so se users existir — CI/prod)
+DO $$
+BEGIN
+  IF to_regclass('public.users') IS NULL THEN
+    RAISE NOTICE '0033: users ausente — skip FKs website_content';
+    RETURN;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'website_content_created_by_fkey'
+  ) THEN
+    ALTER TABLE website_content
+      ADD CONSTRAINT website_content_created_by_fkey
+      FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'website_content_updated_by_fkey'
+  ) THEN
+    ALTER TABLE website_content
+      ADD CONSTRAINT website_content_updated_by_fkey
+      FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
+END $$;
 --> statement-breakpoint
 
 -- 1) Demos fora da vitrine publica
