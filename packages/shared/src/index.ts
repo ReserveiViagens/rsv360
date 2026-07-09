@@ -30,3 +30,4 @@ export * from './cotacao/intencao-acomodacao.js';
 export * from './cotacao/acomodacao-config-label.js';
 export * from './cotacao/wizard-estadia.js';
 export * from './cotacao/entrada-contextual.js';
+export * from './cotacao/upgrade-varanda.js';

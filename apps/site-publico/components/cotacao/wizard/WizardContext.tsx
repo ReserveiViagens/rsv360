@@ -80,6 +80,8 @@ function sanitizeWizardState(partial: Partial<WizardState>): WizardState {
   }
   merged.adults = Math.max(1, Number(merged.adults) || 1);
   merged.children = Math.max(0, Number(merged.children) || 0);
+  merged.upgradeVaranda = Boolean(merged.upgradeVaranda);
+  merged.upgradeVarandaValor = Math.max(0, Number(merged.upgradeVarandaValor) || 0);
   const dates = sanitizeWizardDates(merged.checkIn, merged.checkOut);
   merged.checkIn = dates.checkIn;
   merged.checkOut = dates.checkOut;

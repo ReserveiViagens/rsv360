@@ -10,7 +10,7 @@ import { formatAcomodacaoConfigLabel } from '@rsv360/shared';
 import { trackCotacaoEvent } from '@/lib/cotacao-analytics';
 import { getBehaviorBadge, sortCatalogItems } from './wizard-behavior';
 import { ItineraryCard } from './ItineraryCard';
-import { formatBRL, sumWizardAddons, type WizardAddonPricing } from './wizard-pricing';
+import { formatBRL, sumUpgradeVaranda, sumWizardAddons, type WizardAddonPricing } from './wizard-pricing';
 import { useWizard } from './WizardContext';
 import { countNights, formatDateBR } from './wizard-types';
 import { cn } from '@/lib/utils';
@@ -112,6 +112,8 @@ export function WizardStepHotel() {
       hotelId: selected,
       selectedAcomodacaoId: null,
       suiteUpgrade: selected ? state.suiteUpgrade : false,
+      upgradeVaranda: false,
+      upgradeVarandaValor: 0,
     });
     if (selected) {
       trackCotacaoEvent('cotacao_item_selected', { itemType: 'hotel', itemId: id, price });
@@ -119,7 +121,13 @@ export function WizardStepHotel() {
   };
 
   const selectArquetipo = (card: CardArquetipoPasso2) => {
-    updateState({ selectedAcomodacaoId: Number(card.acomodacao.id) });
+    const acc = card.acomodacao;
+    const canUpgrade = acc.upgradeVarandaDisponivel === true;
+    updateState({
+      selectedAcomodacaoId: Number(acc.id),
+      upgradeVaranda: canUpgrade ? state.upgradeVaranda : false,
+      upgradeVarandaValor: canUpgrade ? Number(acc.upgradeVarandaValor ?? 80) : 0,
+    });
     trackCotacaoEvent('cotacao_item_selected', {
       itemType: 'acomodacao_arquetipo',
       itemId: card.acomodacao.id,
@@ -240,9 +248,14 @@ export function WizardStepHotel() {
                         <p className="font-semibold">{acc.titulo}</p>
                         <p className="text-xs text-muted-foreground">{card.arquetipo.label}</p>
                       </div>
-                      <Badge variant={card.badge === 'Recomendado' ? 'default' : 'secondary'}>
-                        {card.badge}
-                      </Badge>
+                      <div className="flex flex-col items-end gap-1">
+                        {acc.premiumAncora && (
+                          <Badge className="bg-amber-600 hover:bg-amber-600">Premium</Badge>
+                        )}
+                        <Badge variant={card.badge === 'Recomendado' ? 'default' : 'secondary'}>
+                          {card.badge}
+                        </Badge>
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600">
                       {formatAcomodacaoConfigLabel(acc.configSala, acc.configBanheiro, acc.quartos, acc.capacidadeMax)}
@@ -251,6 +264,11 @@ export function WizardStepHotel() {
                       {formatBRL(acc.precoDiaria * Math.max(nights, 1))}
                       <span className="text-xs font-normal text-muted-foreground"> / estadia</span>
                     </p>
+                    {acc.upgradeVarandaDisponivel && (
+                      <p className="text-xs text-emerald-700">
+                        Opção: varanda/vista +{formatBRL(Number(acc.upgradeVarandaValor ?? 80))}/noite
+                      </p>
+                    )}
                     {card.acomodacao.difere.length > 0 && (
                       <p className="text-xs text-amber-800">{card.acomodacao.difere[0]}</p>
                     )}
@@ -261,6 +279,55 @@ export function WizardStepHotel() {
           </div>
         </div>
       )}
+
+      {(() => {
+        const selectedCard = arquetipoCards.find(
+          (c) => Number(c.acomodacao.id) === state.selectedAcomodacaoId,
+        );
+        const acc = selectedCard?.acomodacao;
+        if (!acc?.upgradeVarandaDisponivel) return null;
+        const valor = Number(acc.upgradeVarandaValor ?? state.upgradeVarandaValor ?? 80);
+        const addonTotal = sumUpgradeVaranda(true, valor, Math.max(nights, 1));
+        return (
+          <Card className="border-emerald-200 bg-emerald-50/60">
+            <CardContent className="pt-4">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between text-left"
+                onClick={() =>
+                  updateState({
+                    upgradeVaranda: !state.upgradeVaranda,
+                    upgradeVarandaValor: valor,
+                  })
+                }
+              >
+                <div className="flex items-start gap-3">
+                  <Sparkles className="mt-0.5 h-5 w-5 text-emerald-700" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Adicionar varanda/vista</p>
+                    <p className="text-xs text-muted-foreground">
+                      Upgrade opcional nesta unidade — você decide
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      +{formatBRL(addonTotal)} ({formatBRL(valor)} / noite)
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={cn(
+                    'flex h-6 w-6 items-center justify-center rounded-full border-2',
+                    state.upgradeVaranda
+                      ? 'border-emerald-600 bg-emerald-600 text-white'
+                      : 'border-gray-300',
+                  )}
+                >
+                  {state.upgradeVaranda && <ChevronDown className="h-4 w-4 rotate-180" />}
+                </div>
+              </button>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {selectedHotel && addons.length > 0 && (
         <div className="space-y-2">

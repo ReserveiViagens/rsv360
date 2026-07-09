@@ -1,0 +1,4 @@
+tipo_slug,tipo_nome,capacidade_base,fornecedor,baixa_rs,media_rs,alta_rs,feriado_rs,fim_de_semana_pct,estadia_min_noites,observacoes,fonte,status
+1q,1 quarto / até 4,4,Altravia,200,320,450,620,40,2,"Pesquisa mercado jul/2026. Feriado mín. 3 noites. Taxa parque R$10/pessoa à parte.",Notion Inventário & Tarifário Reservei,referencia
+2q,2 quartos / até 6,6,Altravia,290,450,600,820,35,2,"Pesquisa mercado jul/2026. Feriado mín. 3 noites. Taxa parque R$10/pessoa à parte.",Notion Inventário & Tarifário Reservei,referencia
+premium,Premium / varanda,6,Altravia,350,540,720,980,35,2,"Pesquisa mercado jul/2026. Feriado mín. 3 noites. Taxa parque R$10/pessoa à parte.",Notion Inventário & Tarifário Reservei,referencia

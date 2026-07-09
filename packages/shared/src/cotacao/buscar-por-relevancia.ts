@@ -19,6 +19,11 @@ export interface AcomodacaoDisponivel {
   hotelId?: string;
   /** Eliminatória de disponibilidade (datas/propriedade). */
   disponivel?: boolean;
+  /** Upgrade varanda opcional (metadata por unidade). */
+  upgradeVarandaDisponivel?: boolean;
+  upgradeVarandaValor?: number;
+  /** Premium âncora — produto diferenciado (sem toggle). */
+  premiumAncora?: boolean;
 }
 
 export interface AcomodacaoRanqueada extends AcomodacaoDisponivel {
