@@ -39,3 +39,4 @@ __exportStar(require("./cotacao/intencao-acomodacao.js"), exports);
 __exportStar(require("./cotacao/acomodacao-config-label.js"), exports);
 __exportStar(require("./cotacao/wizard-estadia.js"), exports);
 __exportStar(require("./cotacao/entrada-contextual.js"), exports);
+__exportStar(require("./cotacao/upgrade-varanda.js"), exports);

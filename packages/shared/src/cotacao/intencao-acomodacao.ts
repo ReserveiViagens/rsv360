@@ -119,5 +119,11 @@ export function montarCardsPasso2(
     });
   }
 
-  return cards.sort((a, b) => a.acomodacao.precoDiaria - b.acomodacao.precoDiaria);
+  // Premium âncora no topo (decoy); demais por preço crescente
+  return cards.sort((a, b) => {
+    const pa = a.acomodacao.premiumAncora ? 1 : 0;
+    const pb = b.acomodacao.premiumAncora ? 1 : 0;
+    if (pb !== pa) return pb - pa;
+    return a.acomodacao.precoDiaria - b.acomodacao.precoDiaria;
+  });
 }
