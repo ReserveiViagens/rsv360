@@ -49,6 +49,7 @@ const COORDS_BY_ID: Record<string, HotelCoords> = {
   'imperio-romano': { lat: -17.768591, lng: -48.650523, name: 'Império Romano' },
   'lacqua-di-roma': { lat: -17.72876, lng: -48.62984, name: 'Lacqua DiRoma' },
   'lacqua-diroma': { lat: -17.72876, lng: -48.62984, name: 'Lacqua DiRoma' },
+  'lacqua-diroma': { lat: -17.72876, lng: -48.62984, name: 'Lacqua DiRoma' },
   'lagoa-eco-towers': { lat: -17.7444, lng: -48.6278, name: 'Lagoa Eco Towers' },
   'lagoa-quente': { lat: -17.721206, lng: -48.644051, name: 'Lagoa Quente Hotel' },
   'lagoa-quente-hotel': { lat: -17.721206, lng: -48.644051, name: 'Lagoa Quente Hotel' },
