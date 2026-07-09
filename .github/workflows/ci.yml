@@ -60,6 +60,9 @@ jobs:
       - name: Validate Drizzle journal consistency
         run: cd backend && npm run db:validate-journal
 
+      - name: Reject UTF-8 BOM in Drizzle SQL
+        run: bash .github/scripts/check-sql-bom.sh backend/drizzle
+
       - name: Run database migrations
         working-directory: backend
         env:

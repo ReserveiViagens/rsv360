@@ -239,6 +239,13 @@
       "when": 1783620000000,
       "tag": "0033_vitrine_etapa_a_11_hoteis",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1783621000000,
+      "tag": "0034_cms_vitrine_crud",
+      "breakpoints": true
     }
   ]
 }

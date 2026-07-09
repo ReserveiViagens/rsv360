@@ -57,6 +57,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Reject UTF-8 BOM in Drizzle SQL
+        run: bash .github/scripts/check-sql-bom.sh backend/drizzle
+
       - name: Run database migrations
         working-directory: backend
         env:
