@@ -1,7 +1,12 @@
 # Git LFS Configuration
 # Track large files and binary files with Git LFS
-# Log files
-*.log filter=lfs diff=lfs merge=lfs -text
+#
+# Higiene 2026-07-09: NÃO trackear *.log / *.pdf no LFS (cota estourada).
+# Histórico ainda pode ter ponteiros LFS até `git lfs migrate export` (force-push
+# coordenado — ver docs/evidence/lfs-higiene-2026-07-09.md). Novos commits usam
+# Git normal para esses tipos.
+*.log -filter -diff -merge text
+*.pdf -filter -diff -merge text
 # Database dumps and backups
 *.dump filter=lfs diff=lfs merge=lfs -text
 # SQL scripts/migrations - plain text for reviewable diffs (T-WT-SQL decisao B)
@@ -43,24 +48,9 @@ backend/drizzle/**/*.bak !filter !diff !merge text
 *.vmdk filter=lfs diff=lfs merge=lfs -text
 # Node.js packages (in case any are committed)
 *.pkg filter=lfs diff=lfs merge=lfs -text
-# PDFs (optimize for LFS if very large)
-*.pdf filter=lfs diff=lfs merge=lfs -text
 # Any file larger than 100 MB (use pattern matching)
 # Note: Git LFS also automatically tracks any file > 100 MB on push
-apps/site-publico/logs/dev.log filter=lfs diff=lfs merge=lfs -text
-apps/turismo/logs/dev.log filter=lfs diff=lfs merge=lfs -text
-
-# Root dev logs - plain text, avoid LFS pointer mismatch on Windows
-logs/*.log -filter -diff
-
-# G4 kickoff smoke logs - small text evidence, not LFS
-docs/evidence/g4-kickoff/logs/*.log -filter -diff
-
-# Soak 72h evidence logs - small text, avoid LFS push friction
-docs/evidence/soak-72h/logs/*.log -filter -diff
-
-# G1 dual-system smoke logs
-docs/evidence/g1-dual-system/logs/*.log -filter -diff
+# (dev.log / evidence logs: cobertos pelo *.log text acima)
 
 # G4 auth smoke DDL - small SQL, must stay plain text for initdb
 database/g4-auth-smoke-tables.sql -filter -diff
