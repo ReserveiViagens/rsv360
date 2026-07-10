@@ -89,6 +89,15 @@ describe('proposta-validade — abertura de proposta já vencida', () => {
     ).toBe(true);
   });
 
+  it('accepted com valido_ate vencido não é expirada comercialmente', () => {
+    expect(
+      isPropostaExpirada({
+        status: 'accepted',
+        validoAte: new Date('2020-01-01T00:00:00.000Z'),
+      }),
+    ).toBe(false);
+  });
+
   it('buildValidadePayload devolve expirada e restanteMs zero', async () => {
     const payload = await buildValidadePayload({
       status: 'sent',
