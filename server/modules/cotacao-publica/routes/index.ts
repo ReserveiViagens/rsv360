@@ -162,12 +162,18 @@ router.post('/proposta/:token/aceitar', publicLimiter, requireTurnstile, async (
 
 router.get('/roteiro-atracoes', publicLimiter, async (req, res) => {
   try {
+    const { isRoteiroInteligenteEnabled } = await import('../services/montar-roteiro');
+    const enabled = isRoteiroInteligenteEnabled();
+    if (!enabled) {
+      res.set('Cache-Control', 'private, no-store');
+      return res.json({ success: true, enabled: false, data: [] });
+    }
     const { listRoteiroAtracoes } = await import('../services/roteiro-atracoes.service');
     const turno = req.query.turno ? String(req.query.turno) : undefined;
     const publico = req.query.publico ? String(req.query.publico) : undefined;
     const data = await listRoteiroAtracoes({ turno, publico });
-    res.set('Cache-Control', 'public, max-age=300');
-    res.json({ success: true, data });
+    res.set('Cache-Control', 'private, no-store');
+    res.json({ success: true, enabled: true, data });
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
   }
