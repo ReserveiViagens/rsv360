@@ -30,3 +30,14 @@ export function serializarSlotsRoteiro(roteiro: RoteiroCompleto): string {
 export function slotsRoteiroIguais(a: RoteiroCompleto, b: RoteiroCompleto): boolean {
   return serializarSlotsRoteiro(a) === serializarSlotsRoteiro(b);
 }
+
+/**
+ * Preview usa motor inteligente somente quando o server confirma `enabled` e há catálogo.
+ * Guarda contra divergência preview × proposta (ex.: kill-switch server OFF).
+ */
+export function roteiroInteligentePreviewAtivo(
+  serverEnabled: boolean | undefined,
+  atracoes: readonly unknown[] | null | undefined,
+): boolean {
+  return serverEnabled === true && Array.isArray(atracoes) && atracoes.length > 0;
+}

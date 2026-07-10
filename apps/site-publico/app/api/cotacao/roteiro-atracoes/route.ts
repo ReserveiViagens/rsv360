@@ -21,14 +21,14 @@ export async function GET(request: NextRequest) {
     const suffix = qs.toString() ? `?${qs.toString()}` : '';
     const upstream = await fetch(
       `${backendBase()}/api/v1/cotacao-publica/roteiro-atracoes${suffix}`,
-      { next: { revalidate: 300 } },
+      { cache: 'no-store' },
     );
 
     const json = await upstream.json();
     return NextResponse.json(json, {
       status: upstream.status,
       headers: {
-        'Cache-Control': 'public, max-age=300',
+        'Cache-Control': 'private, no-store',
       },
     });
   } catch (error) {

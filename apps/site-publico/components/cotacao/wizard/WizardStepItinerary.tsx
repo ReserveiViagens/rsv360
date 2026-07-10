@@ -5,29 +5,41 @@ import { Button } from '@/components/ui/button';
 import { trackCotacaoEvent } from '@/lib/cotacao-analytics';
 import { montarRoteiroPreview } from '@/lib/montar-roteiro-preview';
 import { montarRoteiroPreviewInteligente } from '@/lib/montar-roteiro-preview-inteligente';
-import { isRoteiroInteligenteClientEnabled } from '@/lib/roteiro-inteligente-enabled';
 import { RoteiroImersivo } from '@/components/cotacao/roteiro/RoteiroImersivo';
-import type { RoteiroAtracao } from '@rsv360/shared';
+import { roteiroInteligentePreviewAtivo, type RoteiroAtracao } from '@rsv360/shared';
 import { useWizard } from './WizardContext';
+
+type RoteiroAtracoesBffResponse = {
+  success?: boolean;
+  enabled?: boolean;
+  data?: RoteiroAtracao[];
+};
 
 export function WizardStepItinerary() {
   const { state, catalog, runningTotal, nextStep, prevStep } = useWizard();
-  const intelligent = isRoteiroInteligenteClientEnabled();
+  const [serverEnabled, setServerEnabled] = useState<boolean | null>(null);
   const [atracoes, setAtracoes] = useState<RoteiroAtracao[] | null>(null);
-  const [loadingAtracoes, setLoadingAtracoes] = useState(intelligent);
+  const [loadingAtracoes, setLoadingAtracoes] = useState(true);
 
   useEffect(() => {
-    if (!intelligent) return;
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/cotacao/roteiro-atracoes');
-        const json = await res.json();
-        if (!cancelled && json.success && Array.isArray(json.data)) {
-          setAtracoes(json.data as RoteiroAtracao[]);
+        const res = await fetch('/api/cotacao/roteiro-atracoes', { cache: 'no-store' });
+        const json = (await res.json()) as RoteiroAtracoesBffResponse;
+        if (cancelled) return;
+        const enabled = json.enabled === true;
+        setServerEnabled(enabled);
+        if (enabled && json.success && Array.isArray(json.data)) {
+          setAtracoes(json.data);
+        } else {
+          setAtracoes([]);
         }
       } catch {
-        if (!cancelled) setAtracoes([]);
+        if (!cancelled) {
+          setServerEnabled(false);
+          setAtracoes([]);
+        }
       } finally {
         if (!cancelled) setLoadingAtracoes(false);
       }
@@ -35,10 +47,12 @@ export function WizardStepItinerary() {
     return () => {
       cancelled = true;
     };
-  }, [intelligent]);
+  }, []);
+
+  const intelligent = roteiroInteligentePreviewAtivo(serverEnabled ?? false, atracoes);
 
   const preview = useMemo(() => {
-    if (intelligent && atracoes && atracoes.length > 0) {
+    if (intelligent && atracoes) {
       return montarRoteiroPreviewInteligente(state, catalog, atracoes);
     }
     return montarRoteiroPreview(state, catalog);
