@@ -233,6 +233,7 @@ INSERT INTO roteiro_atracoes (
   NULL,
   NULL,
   NULL,
+  NULL,
   120,
   true
 ),
@@ -246,6 +247,7 @@ INSERT INTO roteiro_atracoes (
   'incluso',
   'Tarde no espaco kids do hotel.',
   'Requer amenidade area_kids no hotel selecionado.',
+  NULL,
   NULL,
   NULL,
   NULL,
