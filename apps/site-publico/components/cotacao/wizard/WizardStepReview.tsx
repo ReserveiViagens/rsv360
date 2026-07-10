@@ -39,6 +39,13 @@ function validateBeforeSubmit(state: WizardState): { ok: true } | { ok: false; m
   if (!state.phone.trim()) {
     return { ok: false, message: 'Por favor, preencha seu WhatsApp.' };
   }
+  const email = state.email.trim();
+  if (!email) {
+    return { ok: false, message: 'Por favor, preencha seu e-mail.' };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, message: 'Informe um e-mail válido.' };
+  }
   if (state.paymentMethod !== 'pix' && state.paymentMethod !== 'credit') {
     return { ok: false, message: 'Selecione uma forma de pagamento para continuar.' };
   }
@@ -187,7 +194,7 @@ export function WizardStepReview() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">E-mail (opcional)</Label>
+            <Label htmlFor="email">E-mail</Label>
             <Input
               id="email"
               type="email"

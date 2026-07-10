@@ -14,6 +14,9 @@ export async function verificarTurnstile(
     if (process.env.NODE_ENV === 'production') {
       return { ok: false, error: 'Turnstile não configurado no servidor' };
     }
+    if (process.env.TURNSTILE_DEV_BYPASS_WARN !== 'false') {
+      console.warn('[turnstile] TURNSTILE_SECRET_KEY ausente — bypass em desenvolvimento');
+    }
     return { ok: true };
   }
 

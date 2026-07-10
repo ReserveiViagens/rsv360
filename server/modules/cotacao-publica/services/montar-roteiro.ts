@@ -1,4 +1,7 @@
-import { countWizardNights, montarRoteiroCompleto, type RoteiroAtracao } from '@rsv360/shared';
+import {
+  mapRoteiroParaDailySchedule,
+  montarRoteiroInteligente,
+} from '@rsv360/shared';
 import { listRoteiroAtracoes } from './roteiro-atracoes.service';
 
 export function isRoteiroInteligenteEnabled(): boolean {
@@ -229,22 +232,6 @@ export function montarDailyScheduleLegado(payload: GerarPropostaPayload): DailyS
   return schedule;
 }
 
-function moodForAtracaoTipo(tipo: string): RoteiroMood {
-  if (tipo === 'parque' || tipo === 'ticket') return 'diversao';
-  if (tipo === 'passeio' || tipo === 'monumento') return 'natureza';
-  if (tipo === 'restaurante' || tipo === 'feira') return 'gastronomia';
-  if (tipo === 'relax_hotel' || tipo === 'shopping') return 'relaxamento';
-  return 'relaxamento';
-}
-
-function actionLabelForTipo(tipo: string): string {
-  if (tipo === 'parque') return 'Explorar parque';
-  if (tipo === 'restaurante' || tipo === 'feira') return 'Ver gastronomia';
-  if (tipo === 'shopping') return 'Ver shopping';
-  if (tipo === 'relax_hotel') return 'Relaxar no hotel';
-  return 'Ver detalhes';
-}
-
 function resolveAmenidadesHotel(payload: GerarPropostaPayload): string[] {
   const hotel = payload.catalog?.hotels?.find(
     (h) => h.id === payload.hotelId || String(h.id) === String(payload.hotelId),
@@ -254,54 +241,39 @@ function resolveAmenidadesHotel(payload: GerarPropostaPayload): string[] {
   return [];
 }
 
-function slotToDailyItem(
-  day: number,
-  slot: { titulo: string; descricao?: string; tipo?: string; atracaoSlug: string | null },
-  atracao?: RoteiroAtracao,
-): DailyScheduleItem {
-  const tipo = slot.tipo ?? 'free';
-  const mood = moodForAtracaoTipo(tipo);
-  return {
-    id: `${day}-inteligente-${slot.atracaoSlug ?? 'fallback'}`,
-    day,
-    title: slot.titulo,
-    description: slot.descricao ?? 'Sugestao do roteiro inteligente',
-    image: atracao?.imagem_url ?? undefined,
-    actionLabel: actionLabelForTipo(tipo),
-    type: tipo,
-    mood,
-    behaviorTag: moodLabel(mood),
-  };
+function ticketIncluiParque(payload: GerarPropostaPayload): boolean {
+  const tickets = payload.catalog?.tickets ?? [];
+  const ids = payload.ticketIds ?? [];
+  return tickets
+    .filter((t) => ids.some((id) => id === t.id || String(id) === String(t.id)))
+    .some((t) => /parque|aqu[aá]tico|hot park|acqua/i.test(t.title));
 }
 
 export async function montarDailyScheduleInteligente(
   payload: GerarPropostaPayload,
 ): Promise<DailyScheduleItem[]> {
   const atracoes = await listRoteiroAtracoes();
-  const roteiro = montarRoteiroCompleto({
+  const perfil = (payload.profile as 'casal' | 'familia') ?? 'casal';
+  const roteiro = montarRoteiroInteligente({
     checkIn: payload.checkIn,
     checkOut: payload.checkOut,
-    perfil: (payload.profile as 'casal' | 'familia') ?? 'casal',
+    perfil,
     amenidadesHotel: resolveAmenidadesHotel(payload),
     catalogoAtracoes: atracoes,
+    incluirParqueAquatico: perfil === 'familia' && ticketIncluiParque(payload),
   });
 
-  const bySlug = new Map(atracoes.map((a) => [a.slug, a]));
-  const schedule: DailyScheduleItem[] = [];
-
-  for (const dia of roteiro.dias) {
-    const primary =
-      dia.slots.find((s) => s.turno === 'dia_inteiro' && s.atracaoSlug) ??
-      dia.slots.find((s) => s.turno === 'manha' && s.atracaoSlug) ??
-      dia.slots.find((s) => s.atracaoSlug) ??
-      dia.slots[0];
-
-    if (!primary) continue;
-    const atracao = primary.atracaoSlug ? bySlug.get(primary.atracaoSlug) : undefined;
-    schedule.push(slotToDailyItem(dia.dia, primary, atracao));
-  }
-
-  return schedule;
+  return mapRoteiroParaDailySchedule(roteiro, atracoes, perfil).map((item) => ({
+    id: item.id,
+    day: item.day,
+    title: item.title,
+    description: item.description,
+    image: item.image,
+    actionLabel: item.actionLabel,
+    type: item.type,
+    mood: item.mood,
+    behaviorTag: item.behaviorTag,
+  }));
 }
 
 export function montarDailySchedule(payload: GerarPropostaPayload): DailyScheduleItem[] {
