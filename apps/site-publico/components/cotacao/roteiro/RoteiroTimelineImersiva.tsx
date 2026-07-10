@@ -14,7 +14,14 @@ const MOOD_STYLES: Record<RoteiroMood, string> = {
   gastronomia: 'bg-amber-100 text-amber-800',
 };
 
-const FALLBACK =
+const MOOD_GRADIENT: Record<RoteiroMood, string> = {
+  relaxamento: 'bg-gradient-to-br from-blue-100 via-blue-50 to-slate-100',
+  diversao: 'bg-gradient-to-br from-orange-100 via-amber-50 to-yellow-100',
+  natureza: 'bg-gradient-to-br from-green-100 via-emerald-50 to-teal-100',
+  gastronomia: 'bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100',
+};
+
+const FALLBACK_LEGACY =
   'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop';
 
 interface RoteiroTimelineImersivaProps {
@@ -72,14 +79,32 @@ export function RoteiroTimelineImersiva({
               {activity.day}
             </div>
             <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md">
-              <div className="group relative h-40 overflow-hidden bg-gray-200 md:h-48">
-                <ImageWithFallback
-                  src={activity.image || FALLBACK}
-                  alt={activity.title}
-                  className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-                  fallbackSrc={FALLBACK}
-                  objectFit="cover"
-                />
+              <div
+                className={cn(
+                  'group relative h-40 overflow-hidden md:h-48',
+                  !activity.image && activity.mood
+                    ? MOOD_GRADIENT[activity.mood]
+                    : 'bg-gray-200',
+                )}
+              >
+                {activity.image ? (
+                  <ImageWithFallback
+                    src={activity.image}
+                    alt={activity.title}
+                    className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+                    fallbackSrc={FALLBACK_LEGACY}
+                    objectFit="cover"
+                  />
+                ) : (
+                  <div
+                    className="flex h-full w-full items-end p-4"
+                    aria-hidden
+                  >
+                    <span className="text-sm font-semibold text-gray-700/80">
+                      {activity.title}
+                    </span>
+                  </div>
+                )}
                 <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                   {activity.mood && (
                     <span

@@ -3,14 +3,16 @@
 Motor de montagem de roteiro dia-a-dia com regras de turno, weekday e perfil.
 Neste PR o comportamento visivel permanece **100% legado** ate o PR B.
 
-## Feature flag
+## Feature flag (único — server)
 
 | Variavel | Valor | Comportamento |
 |----------|-------|---------------|
-| `ROTEIRO_INTELIGENTE_ENABLED` | ausente / `false` | Heuristica legada (`montarDailyScheduleLegado`) |
+| `ROTEIRO_INTELIGENTE_ENABLED` | ausente / `false` | Heuristica legada (`montarDailyScheduleLegado`) + preview legado |
 | `ROTEIRO_INTELIGENTE_ENABLED` | `true` (estrito) | Motor shared + catalogo `roteiro_atracoes` |
 
 Check estrito: apenas `=== 'true'` liga o motor. Qualquer outro valor = legado.
+
+**Não existe `NEXT_PUBLIC_ROTEIRO_INTELIGENTE_ENABLED`.** O client descobre o estado em runtime via BFF `GET /api/cotacao/roteiro-atracoes` → `{ enabled, data }`. Kill-switch instantâneo: alterar env no server + reiniciar backend (sem rebuild do frontend).
 
 **CI / route-smoke / prod:** nao definir a variavel (padrao legado).
 
@@ -30,8 +32,8 @@ Teste de regressao: `weekdayCodeFromDate('2026-08-01') === 'sab'`.
 
 - Migration: `backend/drizzle/0035_roteiro_atracoes.sql`
 - Seed idempotente: `ON CONFLICT (slug) DO NOTHING`
-- Endpoint: `GET /api/v1/cotacao-publica/roteiro-atracoes`
-- BFF: `GET /api/cotacao/roteiro-atracoes` (cache 300s)
+- Endpoint: `GET /api/v1/cotacao-publica/roteiro-atracoes` → `{ success, enabled, data }`
+- BFF: `GET /api/cotacao/roteiro-atracoes` (no-store — carrega kill-switch em runtime)
 
 ## Imagens (politica anti-OTA)
 
@@ -51,8 +53,14 @@ Teste de regressao: `weekdayCodeFromDate('2026-08-01') === 'sab'`.
 
 Confirmar horarios no local em feriados e alta temporada.
 
-## PR B (proximo)
+## PR B (experiencia)
 
-- Ligar flag em dev/docker
-- Migrar `montar-roteiro-preview.ts` para motor shared
-- UI `<RoteiroImersivo>` + fallback sem imagem
+- Flag dev: **apenas** `ROTEIRO_INTELIGENTE_ENABLED=true` (server)
+- Client lê `enabled` do BFF — sem `NEXT_PUBLIC_*` (kill-switch sem rebuild)
+- Preview e proposta usam o mesmo motor (`montarRoteiroInteligente`)
+- Guarda: `roteiroInteligentePreviewAtivo(enabled, data)` — server OFF → preview legado
+- Teste consistencia: `roteiro-preview-proposta-consistencia.test.ts`
+- Teste divergencia: `roteiro-atracoes-enabled.test.ts`
+- Turnstile dev: chaves teste Cloudflare; secret ausente = bypass com aviso
+- Rate limit dev: `PROPOSTA_SUCCESS_COOLDOWN_MS=0`
+- Cliques obrigatorios: `docs/cotacao/WIZARD-CLICKS-BASELINE.md` (baseline **15**, igual ou menor pos-PR)
