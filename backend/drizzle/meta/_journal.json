@@ -246,6 +246,13 @@
       "when": 1783621000000,
       "tag": "0034_cms_vitrine_crud",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1783622000000,
+      "tag": "0035_roteiro_atracoes",
+      "breakpoints": true
     }
   ]
 }
