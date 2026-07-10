@@ -160,6 +160,19 @@ router.post('/proposta/:token/aceitar', publicLimiter, requireTurnstile, async (
   }
 });
 
+router.get('/roteiro-atracoes', publicLimiter, async (req, res) => {
+  try {
+    const { listRoteiroAtracoes } = await import('../services/roteiro-atracoes.service');
+    const turno = req.query.turno ? String(req.query.turno) : undefined;
+    const publico = req.query.publico ? String(req.query.publico) : undefined;
+    const data = await listRoteiroAtracoes({ turno, publico });
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.get('/roteiro/:token/verificar', publicLimiter, async (req, res) => {
   try {
     const data = await cotacaoPublicaService.verificarRoteiroByToken(req.params.token);
