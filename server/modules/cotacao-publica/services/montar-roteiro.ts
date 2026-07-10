@@ -1,3 +1,10 @@
+import { countWizardNights, montarRoteiroCompleto, type RoteiroAtracao } from '@rsv360/shared';
+import { listRoteiroAtracoes } from './roteiro-atracoes.service';
+
+export function isRoteiroInteligenteEnabled(): boolean {
+  return process.env.ROTEIRO_INTELIGENTE_ENABLED === 'true';
+}
+
 export type RoteiroMood = 'relaxamento' | 'diversao' | 'natureza' | 'gastronomia';
 
 export interface DailyScheduleItem {
@@ -140,7 +147,7 @@ function buildItem(
   };
 }
 
-export function montarDailySchedule(payload: GerarPropostaPayload): DailyScheduleItem[] {
+export function montarDailyScheduleLegado(payload: GerarPropostaPayload): DailyScheduleItem[] {
   const nights = countNights(payload.checkIn, payload.checkOut);
   const schedule: DailyScheduleItem[] = [];
   const catalog = payload.catalog ?? {};
@@ -220,6 +227,99 @@ export function montarDailySchedule(payload: GerarPropostaPayload): DailySchedul
   }
 
   return schedule;
+}
+
+function moodForAtracaoTipo(tipo: string): RoteiroMood {
+  if (tipo === 'parque' || tipo === 'ticket') return 'diversao';
+  if (tipo === 'passeio' || tipo === 'monumento') return 'natureza';
+  if (tipo === 'restaurante' || tipo === 'feira') return 'gastronomia';
+  if (tipo === 'relax_hotel' || tipo === 'shopping') return 'relaxamento';
+  return 'relaxamento';
+}
+
+function actionLabelForTipo(tipo: string): string {
+  if (tipo === 'parque') return 'Explorar parque';
+  if (tipo === 'restaurante' || tipo === 'feira') return 'Ver gastronomia';
+  if (tipo === 'shopping') return 'Ver shopping';
+  if (tipo === 'relax_hotel') return 'Relaxar no hotel';
+  return 'Ver detalhes';
+}
+
+function resolveAmenidadesHotel(payload: GerarPropostaPayload): string[] {
+  const hotel = payload.catalog?.hotels?.find(
+    (h) => h.id === payload.hotelId || String(h.id) === String(payload.hotelId),
+  );
+  const raw = hotel?.metadata?.amenidades ?? hotel?.metadata?.amenities;
+  if (Array.isArray(raw)) return raw.map(String);
+  return [];
+}
+
+function slotToDailyItem(
+  day: number,
+  slot: { titulo: string; descricao?: string; tipo?: string; atracaoSlug: string | null },
+  atracao?: RoteiroAtracao,
+): DailyScheduleItem {
+  const tipo = slot.tipo ?? 'free';
+  const mood = moodForAtracaoTipo(tipo);
+  return {
+    id: `${day}-inteligente-${slot.atracaoSlug ?? 'fallback'}`,
+    day,
+    title: slot.titulo,
+    description: slot.descricao ?? 'Sugestao do roteiro inteligente',
+    image: atracao?.imagem_url ?? undefined,
+    actionLabel: actionLabelForTipo(tipo),
+    type: tipo,
+    mood,
+    behaviorTag: moodLabel(mood),
+  };
+}
+
+export async function montarDailyScheduleInteligente(
+  payload: GerarPropostaPayload,
+): Promise<DailyScheduleItem[]> {
+  const atracoes = await listRoteiroAtracoes();
+  const roteiro = montarRoteiroCompleto({
+    checkIn: payload.checkIn,
+    checkOut: payload.checkOut,
+    perfil: (payload.profile as 'casal' | 'familia') ?? 'casal',
+    amenidadesHotel: resolveAmenidadesHotel(payload),
+    catalogoAtracoes: atracoes,
+  });
+
+  const bySlug = new Map(atracoes.map((a) => [a.slug, a]));
+  const schedule: DailyScheduleItem[] = [];
+
+  for (const dia of roteiro.dias) {
+    const primary =
+      dia.slots.find((s) => s.turno === 'dia_inteiro' && s.atracaoSlug) ??
+      dia.slots.find((s) => s.turno === 'manha' && s.atracaoSlug) ??
+      dia.slots.find((s) => s.atracaoSlug) ??
+      dia.slots[0];
+
+    if (!primary) continue;
+    const atracao = primary.atracaoSlug ? bySlug.get(primary.atracaoSlug) : undefined;
+    schedule.push(slotToDailyItem(dia.dia, primary, atracao));
+  }
+
+  return schedule;
+}
+
+export function montarDailySchedule(payload: GerarPropostaPayload): DailyScheduleItem[] {
+  if (!isRoteiroInteligenteEnabled()) {
+    return montarDailyScheduleLegado(payload);
+  }
+  throw new Error(
+    'montarDailySchedule com ROTEIRO_INTELIGENTE_ENABLED=true requer montarDailyScheduleAsync',
+  );
+}
+
+export async function montarDailyScheduleAsync(
+  payload: GerarPropostaPayload,
+): Promise<DailyScheduleItem[]> {
+  if (isRoteiroInteligenteEnabled()) {
+    return montarDailyScheduleInteligente(payload);
+  }
+  return montarDailyScheduleLegado(payload);
 }
 
 export function buildOrcamentoItens(payload: GerarPropostaPayload): Array<{
