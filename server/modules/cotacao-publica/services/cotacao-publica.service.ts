@@ -7,7 +7,7 @@ import { orcamentosService } from '../../orcamentos/services/orcamentos.service'
 import { propostasService } from '../../propostas/services/propostas.service';
 import {
   buildOrcamentoItens,
-  montarDailySchedule,
+  montarDailyScheduleAsync,
   type GerarPropostaPayload,
 } from './montar-roteiro';
 import { fireHotLeadNotify } from './hot-lead-notify.service';
@@ -79,7 +79,7 @@ export class CotacaoPublicaService {
       (h) => h.id === payload.hotelId || String(h.id) === String(payload.hotelId),
     );
     const titulo = `Cotação Caldas Novas — ${payload.name}`;
-    const dailySchedule = montarDailySchedule(payload);
+    const dailySchedule = await montarDailyScheduleAsync(payload);
     const itensData = buildOrcamentoItens(payload);
 
     const subtotal = itensData.reduce((sum, i) => sum + parseFloat(i.precoTotal), 0);
