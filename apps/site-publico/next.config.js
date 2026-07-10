@@ -3,6 +3,7 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['@rsv360/shared'],
   serverExternalPackages: ['pg', 'ioredis', 'sharp', 'nodemailer'],
   typescript: {
     ignoreBuildErrors: true,
