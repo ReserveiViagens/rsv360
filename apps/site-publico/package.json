@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "test": "jest",
+    "test:cotacao-image": "jest __tests__/lib/cotacao-image-utils.test.ts --ci --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ticket": "jest __tests__/lib/ticket-service.test.ts",
