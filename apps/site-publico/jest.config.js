@@ -57,16 +57,8 @@ const customJestConfig = {
   
   // Extensões de arquivo
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-  
-  // Transformações
-  transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react',
-      },
-    }],
-  },
-  
+
+  // Transform via next/jest (createJestConfig) — não usar ts-jest aqui
   // Test match patterns
   testMatch: [
     '**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)',
