@@ -49,6 +49,21 @@ const nextConfig = {
       },
     ];
   },
+  // Proxy /uploads to backend at Next server runtime (INTERNAL_API_URL).
+  // Browser uses relative /uploads/... — avoids NEXT_PUBLIC build-time coupling.
+  async rewrites() {
+    const backend =
+      process.env.INTERNAL_API_URL ||
+      process.env.BACKEND_INTERNAL_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      'http://localhost:3002';
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: `${backend.replace(/\/$/, '')}/uploads/:path*`,
+      },
+    ];
+  },
   turbopack: {
     resolveAlias: {
       '@': path.resolve(__dirname, '.'),

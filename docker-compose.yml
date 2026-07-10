@@ -103,6 +103,8 @@ services:
       interval: 20s
       timeout: 8s
       retries: 5
+    volumes:
+      - uploads_hoteis:/workspace/backend/public/uploads
 
   admin:
     build:
@@ -296,4 +298,6 @@ volumes:
   alertmanager_data:
     driver: local
   grafana_data:
+    driver: local
+  uploads_hoteis:
     driver: local
