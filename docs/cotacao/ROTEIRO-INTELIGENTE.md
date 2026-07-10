@@ -51,8 +51,11 @@ Teste de regressao: `weekdayCodeFromDate('2026-08-01') === 'sab'`.
 
 Confirmar horarios no local em feriados e alta temporada.
 
-## PR B (proximo)
+## PR B (experiencia)
 
-- Ligar flag em dev/docker
-- Migrar `montar-roteiro-preview.ts` para motor shared
-- UI `<RoteiroImersivo>` + fallback sem imagem
+- Flag dev: `ROTEIRO_INTELIGENTE_ENABLED=true` + `NEXT_PUBLIC_ROTEIRO_INTELIGENTE_ENABLED=true`
+- Preview e proposta usam o mesmo motor (`montarRoteiroInteligente`)
+- Teste consistencia: `roteiro-preview-proposta-consistencia.test.ts`
+- Turnstile dev: chaves teste Cloudflare; secret ausente = bypass com aviso
+- Rate limit dev: `PROPOSTA_SUCCESS_COOLDOWN_MS=0`
+- Cliques obrigatorios: `docs/cotacao/WIZARD-CLICKS-BASELINE.md` (baseline **15**, igual ou menor pos-PR)

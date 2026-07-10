@@ -28,25 +28,41 @@ function resolveAcomodacaoId(payload: GerarPropostaPayload): number | null {
 
 const attemptDebounceMap = new Map<string, number>();
 const successCooldownMap = new Map<string, number>();
-const ATTEMPT_DEBOUNCE_MS = 3_000;
-const SUCCESS_COOLDOWN_MS = 45_000;
+
+function propostaAttemptDebounceMs(): number {
+  const raw = process.env.PROPOSTA_ATTEMPT_DEBOUNCE_MS;
+  if (raw !== undefined && raw !== '') return Math.max(0, Number(raw) || 0);
+  return process.env.NODE_ENV === 'production' ? 3_000 : 0;
+}
+
+function propostaSuccessCooldownMs(): number {
+  const raw = process.env.PROPOSTA_SUCCESS_COOLDOWN_MS;
+  if (raw !== undefined && raw !== '') return Math.max(0, Number(raw) || 0);
+  return process.env.NODE_ENV === 'production' ? 45_000 : 0;
+}
 
 function checkAttemptDebounce(ip: string): boolean {
+  const debounceMs = propostaAttemptDebounceMs();
+  if (debounceMs <= 0) return true;
   const now = Date.now();
   const last = attemptDebounceMap.get(ip) ?? 0;
-  if (now - last < ATTEMPT_DEBOUNCE_MS) return false;
+  if (now - last < debounceMs) return false;
   attemptDebounceMap.set(ip, now);
   return true;
 }
 
 function checkSuccessCooldown(ip: string): boolean {
+  const cooldownMs = propostaSuccessCooldownMs();
+  if (cooldownMs <= 0) return true;
   const now = Date.now();
   const last = successCooldownMap.get(ip) ?? 0;
-  if (now - last < SUCCESS_COOLDOWN_MS) return false;
+  if (now - last < cooldownMs) return false;
   return true;
 }
 
 function markSuccessCooldown(ip: string): void {
+  const cooldownMs = propostaSuccessCooldownMs();
+  if (cooldownMs <= 0) return;
   successCooldownMap.set(ip, Date.now());
 }
 
@@ -58,6 +74,11 @@ export class CotacaoPublicaService {
 
     if (!payload.checkIn || !payload.checkOut || !payload.name || !payload.phone) {
       throw new Error('Dados incompletos');
+    }
+
+    const email = String(payload.email ?? '').trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error('E-mail válido é obrigatório');
     }
 
     if (!meetsWizardMinNights(payload.checkIn, payload.checkOut)) {
