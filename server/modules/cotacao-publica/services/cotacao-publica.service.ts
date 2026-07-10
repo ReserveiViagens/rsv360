@@ -11,6 +11,7 @@ import {
   type GerarPropostaPayload,
 } from './montar-roteiro';
 import { fireHotLeadNotify } from './hot-lead-notify.service';
+import { buildPropostaPublicaResponse } from '../../propostas/proposta-publica-payload';
 import { buildValidadePayload, PropostaExpiradaError } from '../../propostas/proposta-validade';
 import { aplicarValidadeProposta } from '../../propostas/aplicar-validade-proposta';
 import { recordPropostaGerada, recordRoteiroView } from '../../propostas/metrics';
@@ -231,20 +232,7 @@ export class CotacaoPublicaService {
 
     await propostasService.registrarVisualizacao(row.id);
 
-    return {
-      id: row.id,
-      titulo: row.titulo,
-      clienteNome: row.clienteNome,
-      valorTotal: row.valorTotal,
-      moeda: row.moeda,
-      status: row.status,
-      validoAte: row.validoAte,
-      conteudo: row.conteudo,
-      metadata: row.metadata,
-      tokenPublico: row.tokenPublico,
-      comparativoCache: row.comparativoCache ?? undefined,
-      exibirComparativo: row.exibirComparativo ?? false,
-    };
+    return buildPropostaPublicaResponse(row);
   }
 
   async getValidadeByToken(token: string) {

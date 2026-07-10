@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export { formatRestanteMs, propostaAceiteBloqueado } from '@/lib/proposta-validade-ui';
+import { isPropostaPosAceite } from '@/lib/proposta-validade-ui';
 
 export interface ValidadeApiData {
   validoAte: string | null;
@@ -33,7 +34,8 @@ export function useRoteiroValidade(
     const ms = data.restanteMs ?? 0;
     anchorRef.current = { syncedAt: Date.now(), restanteMs: ms };
     setRestanteMs(ms);
-    setExpirada(Boolean(data.expirada) || ms <= 0);
+    const posAceite = isPropostaPosAceite(data.status);
+    setExpirada(!posAceite && (Boolean(data.expirada) || ms <= 0));
     setStatus(data.status);
     setValidoAte(data.validoAte ?? null);
     setUrgenciaEstilo(data.urgenciaEstilo);
@@ -75,7 +77,7 @@ export function useRoteiroValidade(
       const remaining = Math.max(0, anchor.restanteMs - (Date.now() - anchor.syncedAt));
       setRestanteMs(remaining);
 
-      if (remaining <= 0) {
+      if (remaining <= 0 && !isPropostaPosAceite(status)) {
         setExpirada(true);
         if (!finalSyncRef.current) {
           finalSyncRef.current = true;
@@ -87,7 +89,7 @@ export function useRoteiroValidade(
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [fetchValidade, token]);
+  }, [fetchValidade, status, token]);
 
   useEffect(() => {
     const intervalMs = options?.fallbackPollIntervalMs ?? 0;

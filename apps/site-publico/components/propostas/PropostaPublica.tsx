@@ -69,6 +69,9 @@ export function PropostaPublica({
   const solicitarHitl = useSolicitarHitl();
 
   const proposta = propostaRes?.data;
+  const payloadReduzido = Boolean(
+    (proposta as { payloadReduzido?: boolean } | undefined)?.payloadReduzido,
+  );
   const hitl = hitlRes?.data;
   const roteiroToken = publicToken ?? proposta?.tokenPublico ?? null;
 
@@ -86,20 +89,24 @@ export function PropostaPublica({
   const markExpiradaRef = useRef(markExpirada);
   markExpiradaRef.current = markExpirada;
 
-  const expirada = validadeExpirada || proposta?.status === 'expired';
+  const expirada =
+    payloadReduzido || validadeExpirada || proposta?.status === 'expired';
   const aceiteBloqueado = propostaAceiteBloqueado(proposta?.status, expirada);
   const canRespond = Boolean(proposta) && !aceiteBloqueado;
   const roteiroHref = roteiroToken ? `/roteiro/${roteiroToken}` : null;
   const isRoteiroReady = proposta && ['accepted', 'paid'].includes(proposta.status);
   const consultorWhatsAppUrl =
-    proposta && roteiroToken
+    (proposta as { whatsappUrl?: string } | undefined)?.whatsappUrl ??
+    (proposta && roteiroToken
       ? buildConsultorWhatsAppUrl(proposta.titulo, roteiroToken)
-      : 'https://wa.me/5564999999999';
-  const recotacaoUrl = buildRecotacaoUrlFromProposta({
-    tokenPublico: roteiroToken,
-    metadata: (proposta as { metadata?: Record<string, unknown> } | undefined)?.metadata,
-    conteudo: proposta?.conteudo as Record<string, unknown> | null | undefined,
-  });
+      : 'https://wa.me/5564999999999');
+  const recotacaoUrl =
+    (proposta as { recotacaoUrl?: string } | undefined)?.recotacaoUrl ??
+    buildRecotacaoUrlFromProposta({
+      tokenPublico: roteiroToken,
+      metadata: (proposta as { metadata?: Record<string, unknown> } | undefined)?.metadata,
+      conteudo: proposta?.conteudo as Record<string, unknown> | null | undefined,
+    });
 
   useEffect(() => {
     if (!isRoteiroReady || !roteiroHref) return;
@@ -242,20 +249,28 @@ export function PropostaPublica({
   }
 
   const conteudo = (proposta.conteudo ?? {}) as Record<string, unknown>;
-  const itens = (conteudo.itens as Array<Record<string, unknown>>) ?? [];
+  const itens = payloadReduzido
+    ? []
+    : ((conteudo.itens as Array<Record<string, unknown>>) ?? []);
+  const tituloExibicao =
+    (proposta as { tituloResumo?: string }).tituloResumo ?? proposta.titulo;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="text-sm font-medium text-blue-600">Proposta comercial</p>
-        <h1 className="mt-1 text-2xl font-bold text-slate-900">{proposta.titulo}</h1>
+        <h1 className="mt-1 text-2xl font-bold text-slate-900">{tituloExibicao}</h1>
         <p className="mt-2 text-slate-600">
           Olá, <strong>{proposta.clienteNome}</strong>
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
           <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">{statusLabel(proposta.status)}</span>
-          <span className="font-semibold text-emerald-700">{formatCurrency(proposta.valorTotal, proposta.moeda)}</span>
-          {roteiroToken ? (
+          {!payloadReduzido && proposta.valorTotal != null ? (
+            <span className="font-semibold text-emerald-700">
+              {formatCurrency(proposta.valorTotal, proposta.moeda)}
+            </span>
+          ) : null}
+          {roteiroToken && !payloadReduzido ? (
             <UrgenciaValidade
               urgenciaEstilo={urgenciaEstilo}
               restanteMs={restanteMs}

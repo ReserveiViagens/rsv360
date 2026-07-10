@@ -64,3 +64,7 @@ Confirmar horarios no local em feriados e alta temporada.
 - Turnstile dev: chaves teste Cloudflare; secret ausente = bypass com aviso
 - Rate limit dev: `PROPOSTA_SUCCESS_COOLDOWN_MS=0`
 - Cliques obrigatorios: `docs/cotacao/WIZARD-CLICKS-BASELINE.md` (baseline **15**, igual ou menor pos-PR)
+
+## Validade comercial
+
+Ver `docs/cotacao/PROPOSTA-VALIDADE.md` — `valido_ate` até o aceite; pós-aceite o roteiro não expira comercialmente.

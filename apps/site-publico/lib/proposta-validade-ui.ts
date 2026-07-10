@@ -1,5 +1,14 @@
 const STATUS_BLOQUEIA_ACEITE = new Set(['accepted', 'rejected', 'cancelled', 'expired', 'paid']);
 
+export const PROPOSTA_STATUS_POS_ACEITE_UI = ['accepted', 'paid', 'converted'] as const;
+
+export function isPropostaPosAceite(status: string | undefined | null): boolean {
+  return (
+    status != null &&
+    (PROPOSTA_STATUS_POS_ACEITE_UI as readonly string[]).includes(status)
+  );
+}
+
 export type UrgenciaEstilo = 'countdown' | 'badge' | 'nenhum';
 
 export function normalizeUrgenciaEstilo(raw?: string | null): UrgenciaEstilo {

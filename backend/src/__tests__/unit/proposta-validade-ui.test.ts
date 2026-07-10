@@ -1,5 +1,6 @@
 import {
   formatRestanteMs,
+  isPropostaPosAceite,
   normalizeUrgenciaEstilo,
   propostaAceiteBloqueado,
   shouldShowUrgenciaIndicador,
@@ -49,6 +50,12 @@ describe('proposta-validade-ui', () => {
   describe('propostaAceiteBloqueado', () => {
     it('bloqueia quando expirada pelo socket/polling', () => {
       expect(propostaAceiteBloqueado('sent', true)).toBe(true);
+    });
+
+    it('não bloqueia roteiro pós-aceite por validade comercial', () => {
+      expect(propostaAceiteBloqueado('accepted', false)).toBe(true);
+      expect(isPropostaPosAceite('accepted')).toBe(true);
+      expect(isPropostaPosAceite('paid')).toBe(true);
     });
 
     it('bloqueia status expired ao abrir a página', () => {
