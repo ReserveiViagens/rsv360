@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { getWebsiteContent } from '@/lib/db';
-import { normalizeImageList } from '@/lib/cotacao-image-utils';
+import { normalizeImageList, resolvePublicMediaList } from '@/lib/cotacao-image-utils';
 import {
   catalogItemFromAttraction,
   catalogItemFromHotel,
@@ -29,8 +29,9 @@ interface HubOferta {
 }
 
 function enrichImages(item: AvailabilityItem, fallback: string): AvailabilityItem {
-  if (item.images.length) return item;
-  const metaImages = normalizeImageList(item.metadata?.images);
+  const resolved = resolvePublicMediaList(item.images);
+  if (resolved.length) return { ...item, images: resolved };
+  const metaImages = resolvePublicMediaList(normalizeImageList(item.metadata?.images));
   if (metaImages.length) return { ...item, images: metaImages };
   return { ...item, images: [fallback] };
 }
