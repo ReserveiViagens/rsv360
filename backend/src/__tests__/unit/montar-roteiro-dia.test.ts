@@ -11,7 +11,10 @@ import { CATALOGO_TESTE } from '../fixtures/roteiro-atracoes.fixture';
 describe('montar-roteiro-dia (motor inteligente)', () => {
   it('7 — weekdayCodeFromDate anti-shift UTC: 2026-08-01 e sabado', () => {
     expect(weekdayCodeFromDate('2026-08-01')).toBe('sab');
-    expect(new Date('2026-08-01').getDay()).not.toBe(6);
+    // Parse ISO sem timezone: em America/Sao_Paulo new Date('2026-08-01').getDay() vira sex (shift UTC).
+    // O motor usa parse civil (y,m,d) — independente do TZ do runner.
+    const [y, m, d] = '2026-08-01'.split('-').map(Number);
+    expect(new Date(y, m - 1, d).getDay()).toBe(6);
   });
 
   it('1 — Feira do Luar: estadia sex→dom inclui feira no sabado', () => {
