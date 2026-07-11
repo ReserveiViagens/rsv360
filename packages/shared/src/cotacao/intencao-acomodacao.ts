@@ -6,6 +6,12 @@ import {
   type ConfigBanheiro,
   type ConfigSala,
 } from './buscar-por-relevancia.js';
+import {
+  getEtapaAUnidade,
+  getPinnedCodigosExternos,
+  isEtapaAHotel,
+  papelLabelFromUnidade,
+} from './etapa-a-mapeamento.js';
 
 export type WizardProfile = 'familia' | 'casal' | 'aventura';
 
@@ -94,7 +100,62 @@ function criteriosFromArquetipo(
   };
 }
 
-export function montarCardsPasso2(
+function sortCards(cards: CardArquetipoPasso2[]): CardArquetipoPasso2[] {
+  return cards.sort((a, b) => {
+    const pa = a.acomodacao.premiumAncora ? 1 : 0;
+    const pb = b.acomodacao.premiumAncora ? 1 : 0;
+    if (pb !== pa) return pb - pa;
+    return a.acomodacao.precoDiaria - b.acomodacao.precoDiaria;
+  });
+}
+
+function toRanqueada(item: AcomodacaoDisponivel, hospedes: number): AcomodacaoRanqueada {
+  const ranked = buscarPorRelevancia({ hospedes }, [item]);
+  return ranked[0] ?? { ...item, matchPct: 0, atende: [], difere: [], temExato: false };
+}
+
+function enrichArquetipoFromEtapaA(
+  arquetipo: ArquetipoAcomodacao,
+  acomodacao: AcomodacaoDisponivel,
+): ArquetipoAcomodacao {
+  if (!acomodacao.codigoExterno) return arquetipo;
+  const unit = getEtapaAUnidade(acomodacao.codigoExterno);
+  if (!unit) return arquetipo;
+  return {
+    ...arquetipo,
+    id: unit.codigoExterno.toLowerCase(),
+    label: papelLabelFromUnidade(unit),
+    quartosDesejados: unit.quartos,
+  };
+}
+
+function arquetipoFromPin(codigoExterno: string): ArquetipoAcomodacao {
+  const unit = getEtapaAUnidade(codigoExterno);
+  if (!unit) {
+    return {
+      id: codigoExterno.toLowerCase(),
+      label: codigoExterno,
+      eixo: 'preco',
+      quartosDesejados: 1,
+    };
+  }
+  return {
+    id: unit.codigoExterno.toLowerCase(),
+    label: papelLabelFromUnidade(unit),
+    eixo: unit.premiumAncora ? 'experiencia' : 'preco',
+    quartosDesejados: unit.quartos,
+  };
+}
+
+function findByCodigo(
+  disponiveis: AcomodacaoDisponivel[],
+  codigoExterno: string,
+): AcomodacaoDisponivel | undefined {
+  return disponiveis.find((d) => d.codigoExterno === codigoExterno);
+}
+
+/** Montagem por relevância (legado + fallback Etapa A). */
+export function montarCardsPorRelevancia(
   perfil: WizardProfile,
   adultos: number,
   criancas: number,
@@ -113,17 +174,67 @@ export function montarCardsPasso2(
     if (!pick || seen.has(pick.id)) continue;
     seen.add(pick.id);
     cards.push({
-      arquetipo,
+      arquetipo: enrichArquetipoFromEtapaA(arquetipo, pick),
       acomodacao: pick,
       badge: pick.temExato ? 'Recomendado' : 'Mais próximo disponível',
     });
   }
 
-  // Premium âncora no topo (decoy); demais por preço crescente
-  return cards.sort((a, b) => {
-    const pa = a.acomodacao.premiumAncora ? 1 : 0;
-    const pb = b.acomodacao.premiumAncora ? 1 : 0;
-    if (pb !== pa) return pb - pa;
-    return a.acomodacao.precoDiaria - b.acomodacao.precoDiaria;
-  });
+  return sortCards(cards);
+}
+
+/**
+ * Pins determinísticos nos 4 âncora Etapa A.
+ * Se pin ausente em `disponiveis` → fallback relevância (nunca vazio/throw).
+ */
+export function resolverCardsEtapaA(
+  hotelId: string,
+  perfil: WizardProfile,
+  adultos: number,
+  criancas: number,
+  disponiveis: AcomodacaoDisponivel[],
+): CardArquetipoPasso2[] {
+  if (disponiveis.length === 0) return [];
+
+  const pins = getPinnedCodigosExternos(hotelId, perfil, adultos, criancas);
+  if (pins === undefined) {
+    return montarCardsPorRelevancia(perfil, adultos, criancas, disponiveis);
+  }
+
+  const hospedes = adultos + criancas;
+  const cards: CardArquetipoPasso2[] = [];
+
+  for (const codigo of pins) {
+    const item = findByCodigo(disponiveis, codigo);
+    if (!item) continue;
+    const ranked = toRanqueada(item, hospedes);
+    cards.push({
+      arquetipo: arquetipoFromPin(codigo),
+      acomodacao: ranked,
+      badge: ranked.temExato ? 'Recomendado' : 'Mais próximo disponível',
+    });
+  }
+
+  if (cards.length === 0) {
+    return montarCardsPorRelevancia(perfil, adultos, criancas, disponiveis);
+  }
+
+  return sortCards(cards);
+}
+
+export function montarCardsPasso2(
+  perfil: WizardProfile,
+  adultos: number,
+  criancas: number,
+  disponiveis: AcomodacaoDisponivel[],
+  hotelId?: string,
+): CardArquetipoPasso2[] {
+  if (disponiveis.length === 0) return [];
+
+  const resolvedHotelId = hotelId ?? disponiveis[0]?.hotelId;
+  if (resolvedHotelId && isEtapaAHotel(resolvedHotelId)) {
+    return resolverCardsEtapaA(resolvedHotelId, perfil, adultos, criancas, disponiveis);
+  }
+
+  return montarCardsPorRelevancia(perfil, adultos, criancas, disponiveis);
 }

@@ -38,7 +38,7 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
 
     const cards =
       listed.items.length > 0
-        ? montarCardsPasso2(perfil, adults, children, listed.items)
+        ? montarCardsPasso2(perfil, adults, children, listed.items, hotelId)
         : [];
 
     res.json({
