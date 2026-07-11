@@ -51,7 +51,7 @@ describe('arquetiposPara', () => {
     expect(arq[1].id).toBe('experiencia');
   });
 
-  it('montarCardsPasso2 de-dup e ordena por preço', () => {
+  it('montarCardsPasso2 de-dup e ordena por preço (hotel fora Etapa A)', () => {
     const disponiveis = [
       {
         id: 10,
@@ -72,7 +72,7 @@ describe('arquetiposPara', () => {
         precoDiaria: 320,
       },
     ];
-    const cards = montarCardsPasso2('familia', 2, 2, disponiveis);
+    const cards = montarCardsPasso2('familia', 2, 2, disponiveis, 'hotel-legacy-demo');
     expect(cards.length).toBeGreaterThan(0);
     expect(cards[0].acomodacao.precoDiaria).toBeLessThanOrEqual(cards[cards.length - 1].acomodacao.precoDiaria);
   });
