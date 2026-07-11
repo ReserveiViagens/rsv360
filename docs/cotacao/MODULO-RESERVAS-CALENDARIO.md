@@ -7,8 +7,8 @@ Fonte da verdade técnica do módulo próprio de gestão de reservas e calendár
 **Espelho operacional:** Notion — *Módulo de Reservas e Calendário RSV360 — Arquitetura*  
 **Relacionado:** [`ESCOPO-MODULO-ANFITRIAO.md`](./ESCOPO-MODULO-ANFITRIAO.md) (módulo `/anfitriao`, duas camadas de disponibilidade)
 
-**Última atualização:** 2026-07-11  
-**Main de referência:** `b151c697` (PR #60 comissões Camada 3)
+**Última atualização:** 2026-07-11 (decisões D1–D6 travadas)  
+**Main de referência:** `0d949cd8` (doc arquitetura) · `b151c697` (PR #60)
 
 ---
 
@@ -291,20 +291,18 @@ erDiagram
 
 ---
 
-## 10. Decisões pendentes do owner
+## 10. Decisões de produto (travadas — 2026-07-11)
 
-> **Bloqueio PR-A:** confirmar antes de implementar.
+> **Owner:** opção A — aceitar todas as recomendações. **PR-A desbloqueado.**
 
-| # | Pergunta | Recomendação Cursor | Decisão owner |
-|---|----------|---------------------|---------------|
-| **D1** | Reserva confirma no **aceite** ou no **pagamento**? (Hoje: aceite) | Manter no **aceite**; pagamento offline/WhatsApp; `paid` = staff/MVP-B | _Pendente_ |
-| **D2** | **Proposta = reserva canônica** ou criar `reservas_unidade`? | Usar **`propostas`** na Fase 1; tabela nova só se reserva direta anfitrião for requisito | _Pendente_ |
-| **D3** | Anfitrião pode **desbloquear** dia já `reservado`? | **Não** — só staff/admin | _Pendente_ |
-| **D4** | **Reserva direta** pelo anfitrião (fora do wizard)? | Se sim: Fase 2+ com proposta interna `origem=anfitriao` ou entidade nova | _Pendente_ |
-| **D5** | **Timezone** oficial do calendário? | `America/Sao_Paulo` (Caldas Novas) | _Pendente_ |
-| **D6** | `reservas_cotacao` (lock parceiro): **deprecar** ou **manter**? | **Manter** para hub; unificar visualmente no calendário agregado (Fase 2) | _Pendente_ |
-
-Após confirmação, atualizar coluna "Decisão owner" nesta seção e registrar no board §11.7.
+| # | Decisão | Resolução |
+|---|---------|-----------|
+| **D1** | Reserva confirma no aceite ou no pagamento? | **Aceite** — mantém comportamento atual; `paid` = staff/MVP-B futuro |
+| **D2** | Proposta = reserva canônica ou `reservas_unidade`? | **`propostas`** na Fase 1 — sem tabela nova |
+| **D3** | Anfitrião pode desbloquear dia `reservado`? | **Não** — só staff/admin |
+| **D4** | Reserva direta pelo anfitrião (fora do wizard)? | **Fase 2+** — proposta interna ou entidade nova |
+| **D5** | Timezone oficial do calendário? | **`America/Sao_Paulo`** |
+| **D6** | `reservas_cotacao` (lock parceiro): deprecar ou manter? | **Manter** — unificar visualmente no calendário agregado (Fase 2) |
 
 ---
 
