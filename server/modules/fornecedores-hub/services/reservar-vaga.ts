@@ -3,6 +3,7 @@ import {
   adquirirLock,
   chaveVagaFromOferta,
   ConflictError,
+  liberarLock,
   LOCK_TTL_SECONDS,
 } from '../lock';
 import { agendarExpiracaoLock } from '../reservas.queue';
@@ -41,7 +42,6 @@ export async function reservarVaga(input: ReservarVagaInput) {
 
     return reserva;
   } catch (error) {
-    const { liberarLock } = await import('../lock');
     await liberarLock(chaveVaga, reservaId).catch(() => undefined);
     throw error;
   }

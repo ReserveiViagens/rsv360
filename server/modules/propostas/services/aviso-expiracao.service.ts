@@ -8,6 +8,8 @@ import {
   logPropostaAlert,
   recordAvisoRecuperacao,
 } from '../metrics';
+import { EvolutionAPIWhatsAppProvider } from '../../communication/providers/whatsapp/evolution-api.provider';
+import { CommunicationProviderFactory } from '../../communication/providers/factory';
 
 const AVISO_SKIP_STATUS = [...PROPOSTA_STATUS_FECHADO, 'expired', 'rejected'] as const;
 
@@ -49,9 +51,6 @@ async function enviarWhatsApp(telefone: string, message: string): Promise<{ ok: 
     return { ok: false, error: 'evolution_api_ausente' };
   }
   try {
-    const { EvolutionAPIWhatsAppProvider } = await import(
-      '../../communication/providers/whatsapp/evolution-api.provider'
-    );
     const provider = new EvolutionAPIWhatsAppProvider();
     const result = await provider.sendMessage(telefone, message);
     return { ok: result.success, error: result.error };
@@ -67,7 +66,6 @@ async function enviarEmail(email: string, subject: string, message: string): Pro
     return { ok: false, error: 'email_provider_ausente' };
   }
   try {
-    const { CommunicationProviderFactory } = await import('../../communication/providers/factory');
     const provider = CommunicationProviderFactory.getProvider('default', 'email');
     if (!provider?.email) return { ok: false, error: 'email_provider_ausente' };
     const result = await provider.email.sendEmail(email, subject, message);

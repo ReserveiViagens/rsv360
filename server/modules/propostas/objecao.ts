@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../../lib/db';
-import { propostas } from '../../../backend/src/db/schema/propostas';
+import { propostas, propostaEventos } from '../../../backend/src/db/schema/propostas';
 import { propostaRoomBroadcast } from './websocket/proposta-broadcast';
 
 export type OrigemObjecao = 'auto' | 'ia' | 'manual';
@@ -50,8 +50,6 @@ export async function revelarComparativo(
 }
 
 export async function contarVisualizacoesSemAceite(propostaId: number): Promise<number> {
-  const { propostaEventos } = await import('../../../backend/src/db/schema/propostas');
-  const { ne } = await import('drizzle-orm');
   const rows = await db
     .select()
     .from(propostaEventos)

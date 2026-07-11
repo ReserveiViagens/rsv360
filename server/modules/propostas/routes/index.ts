@@ -14,6 +14,16 @@ import {
   isPropostaRecotacaoError,
 } from '../services/proposta-recotacao.service';
 import { gerarQrVoucherPng, isQrVoucherError } from '../services/qr-voucher.service';
+import { buildPropostaOgByToken } from '../services/proposta-og.service';
+import { cotacaoPublicaService } from '../../cotacao-publica/services/cotacao-publica.service';
+import {
+  resolvePropostaPublicaByToken,
+  registrarEventosCinematicos,
+} from '../services/proposta-cinematic-events.service';
+import { solicitarAlteracao, aprovar, negar } from '../aprovacao';
+import { hasMinRole } from '../rbac';
+import { registrarIndicacao } from '../mgm';
+import { sugerirPacoteFromProposta, criarTemplateFromProposta } from '../ia-copiloto';
 
 const router = Router();
 const agentAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
@@ -101,7 +111,6 @@ router.get('/:token/og', publicLimiter, async (req, res, next) => {
   try {
     const { token } = req.params;
     if (!token.startsWith('rt-')) return next();
-    const { buildPropostaOgByToken } = await import('../services/proposta-og.service');
     const data = await buildPropostaOgByToken(token);
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     res.json({ success: true, data });
@@ -150,7 +159,6 @@ router.get('/:token/vouchers/:voucherId/qr.png', publicLimiter, async (req, res)
 
 router.get('/:token/validade', publicLimiter, optionalJwt, async (req, res) => {
   try {
-    const { cotacaoPublicaService } = await import('../../cotacao-publica/services/cotacao-publica.service');
     const data = await cotacaoPublicaService.getValidadeByToken(req.params.token);
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     res.json({ success: true, data });
@@ -165,11 +173,6 @@ router.post('/:token/eventos', publicLimiter, async (req, res) => {
     if (!token || /^\d+$/.test(token)) {
       return res.status(400).json({ success: false, error: 'Token público inválido' });
     }
-
-    const {
-      resolvePropostaPublicaByToken,
-      registrarEventosCinematicos,
-    } = await import('../services/proposta-cinematic-events.service');
 
     const resolved = await resolvePropostaPublicaByToken(token);
     if (resolved.kind === 'not_found') {
@@ -212,7 +215,6 @@ router.post('/:id/revelar-comparativo', ...staffAuth, async (req, res) => {
 
 router.post('/:id/aprovacao/solicitar', ...staffAuth, async (req, res) => {
   try {
-    const { solicitarAlteracao } = await import('../aprovacao');
     const data = await solicitarAlteracao(Number(req.params.id), {
       id: req.user!.id,
       role: req.user!.role ?? 'user',
@@ -226,8 +228,6 @@ router.post('/:id/aprovacao/solicitar', ...staffAuth, async (req, res) => {
 
 router.post('/:id/aprovacao/aprovar', ...staffAuth, async (req, res) => {
   try {
-    const { aprovar } = await import('../aprovacao');
-    const { hasMinRole } = await import('../rbac');
     if (!hasMinRole(req.user?.role, 'supervisor')) {
       return res.status(403).json({ success: false, error: 'Acesso negado' });
     }
@@ -244,8 +244,6 @@ router.post('/:id/aprovacao/aprovar', ...staffAuth, async (req, res) => {
 
 router.post('/:id/aprovacao/negar', ...staffAuth, async (req, res) => {
   try {
-    const { negar } = await import('../aprovacao');
-    const { hasMinRole } = await import('../rbac');
     if (!hasMinRole(req.user?.role, 'supervisor')) {
       return res.status(403).json({ success: false, error: 'Acesso negado' });
     }
@@ -262,7 +260,6 @@ router.post('/:id/aprovacao/negar', ...staffAuth, async (req, res) => {
 
 router.post('/:id/indicacao', optionalJwt, async (req, res) => {
   try {
-    const { registrarIndicacao } = await import('../mgm');
     const item = await propostasService.getById(Number(req.params.id));
     if (!item?.tokenPublico) {
       return res.status(400).json({ success: false, error: 'Proposta sem token público' });
@@ -282,7 +279,6 @@ router.post('/:id/indicacao', optionalJwt, async (req, res) => {
 
 router.post('/:id/ia-sugerir', ...staffAuth, async (req, res) => {
   try {
-    const { sugerirPacoteFromProposta } = await import('../ia-copiloto');
     const data = await sugerirPacoteFromProposta(Number(req.params.id));
     res.json({ success: true, data });
   } catch (error) {
@@ -292,7 +288,6 @@ router.post('/:id/ia-sugerir', ...staffAuth, async (req, res) => {
 
 router.post('/:id/pacotes-template/from-proposta', ...staffAuth, async (req, res) => {
   try {
-    const { criarTemplateFromProposta } = await import('../ia-copiloto');
     const data = await criarTemplateFromProposta(
       Number(req.params.id),
       req.body.enterpriseId ? Number(req.body.enterpriseId) : undefined,

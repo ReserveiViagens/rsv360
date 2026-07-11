@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { cotacaoLeads } from '../../../../backend/src/db/schema/cotacao-leads';
+import { EvolutionAPIWhatsAppProvider } from '../../communication/providers/whatsapp/evolution-api.provider';
 
 export interface LeadAbandonoInput {
   passo: number;
@@ -51,9 +52,6 @@ async function enviarWhatsAppAbandono(input: LeadAbandonoInput): Promise<{ sent:
   }
 
   try {
-    const { EvolutionAPIWhatsAppProvider } = await import(
-      '../../communication/providers/whatsapp/evolution-api.provider'
-    );
     const provider = new EvolutionAPIWhatsAppProvider();
     const result = await provider.sendMessage(destinoComercial, message);
     if (result.success) return { sent: true };
