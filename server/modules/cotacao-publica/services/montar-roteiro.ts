@@ -1,6 +1,7 @@
 import {
   mapRoteiroParaDailySchedule,
   montarRoteiroInteligente,
+  sumUpgradeVaranda,
 } from '@rsv360/shared';
 import { listRoteiroAtracoes } from './roteiro-atracoes.service';
 
@@ -40,6 +41,14 @@ export interface WizardPayloadItem {
   quantity?: number;
 }
 
+/** Snapshot imutável gravado na proposta (auditoria PR+1). */
+export interface PropostaAcomodacaoSnapshot {
+  arquetipoId?: string;
+  codigoExterno?: string;
+  upgradeVaranda: boolean;
+  upgradeVarandaValorResolvido: number;
+}
+
 export interface GerarPropostaPayload {
   checkIn: string;
   checkOut: string;
@@ -59,15 +68,22 @@ export interface GerarPropostaPayload {
   paymentMethod?: string;
   profile?: string;
   total?: number;
+  /** Legado — mapeado para upgradeVaranda no server (não somar). */
   suiteUpgrade?: boolean;
   travelInsurance?: boolean;
   hotelOnlyFlow?: boolean;
   selectedAcomodacaoId?: number | null;
+  /** Intenção client: upgrade varanda (sem valor monetário). */
+  upgradeVaranda?: boolean;
+  arquetipoId?: string;
+  codigoExterno?: string;
   catalog?: {
     hotels?: CatalogItemPayload[];
     tickets?: CatalogItemPayload[];
     attractions?: CatalogItemPayload[];
   };
+  /** Preenchido server-side antes de buildOrcamentoItens (snapshot auditoria). */
+  acomodacaoSnapshot?: PropostaAcomodacaoSnapshot;
 }
 
 const FALLBACK_IMAGES = {
@@ -415,13 +431,19 @@ export function buildOrcamentoItens(payload: GerarPropostaPayload): Array<{
     }
   }
 
-  if (payload.suiteUpgrade) {
+  const snapshot = payload.acomodacaoSnapshot;
+  if (snapshot?.upgradeVaranda && snapshot.upgradeVarandaValorResolvido > 0) {
+    const upgradeTotal = sumUpgradeVaranda(
+      true,
+      snapshot.upgradeVarandaValorResolvido,
+      nights,
+    );
     items.push({
-      nome: 'Upgrade Suíte Master',
+      nome: 'Upgrade varanda/vista',
       categoria: 'hotel',
       quantidade: nights,
-      precoUnitario: '80',
-      precoTotal: String(80 * nights),
+      precoUnitario: String(snapshot.upgradeVarandaValorResolvido),
+      precoTotal: String(upgradeTotal),
       ordem: ordem++,
     });
   }

@@ -10,6 +10,7 @@ import {
   montarDailyScheduleAsync,
   type GerarPropostaPayload,
 } from './montar-roteiro';
+import { resolveUpgradeVarandaProposta } from './validar-upgrade-varanda-proposta';
 import { fireHotLeadNotify } from './hot-lead-notify.service';
 import { buildPropostaPublicaResponse } from '../../propostas/proposta-publica-payload';
 import { buildValidadePayload, PropostaExpiradaError } from '../../propostas/proposta-validade';
@@ -95,14 +96,17 @@ export class CotacaoPublicaService {
       await assertDisponibilidadeReserva(acomodacaoId, payload.checkIn, payload.checkOut);
     }
 
+    const acomodacaoSnapshot = await resolveUpgradeVarandaProposta(payload);
+    const payloadResolvido: GerarPropostaPayload = { ...payload, acomodacaoSnapshot };
+
     const nights = countWizardNights(payload.checkIn, payload.checkOut);
 
     const hotel = payload.catalog?.hotels?.find(
       (h) => h.id === payload.hotelId || String(h.id) === String(payload.hotelId),
     );
     const titulo = `Cotação Caldas Novas — ${payload.name}`;
-    const dailySchedule = await montarDailyScheduleAsync(payload);
-    const itensData = buildOrcamentoItens(payload);
+    const dailySchedule = await montarDailyScheduleAsync(payloadResolvido);
+    const itensData = buildOrcamentoItens(payloadResolvido);
 
     const subtotal = itensData.reduce((sum, i) => sum + parseFloat(i.precoTotal), 0);
     const total = payload.total ?? subtotal;
@@ -125,6 +129,7 @@ export class CotacaoPublicaService {
         children: payload.children,
         paymentMethod: payload.paymentMethod,
         origem: 'cotacao-wizard-v2',
+        ...acomodacaoSnapshot,
       },
     });
 
@@ -176,6 +181,7 @@ export class CotacaoPublicaService {
           dailySchedule[0]?.image,
       },
       origem: 'cotacao-wizard-v2',
+      acomodacaoEscolha: acomodacaoSnapshot,
     };
 
     await db
@@ -194,6 +200,7 @@ export class CotacaoPublicaService {
           children: payload.children,
           hotelId: payload.hotelId != null ? String(payload.hotelId) : undefined,
           acomodacaoId: acomodacaoId ?? undefined,
+          ...acomodacaoSnapshot,
         },
         updatedAt: new Date(),
       })
