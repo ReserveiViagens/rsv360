@@ -56,8 +56,6 @@ function buildGerarPropostaBody(
     selectedAcomodacaoId: state.selectedAcomodacaoId,
     wizardAddonIds: state.wizardAddonIds,
     upgradeVaranda: state.upgradeVaranda,
-    arquetipoId: state.selectedArquetipoId ?? undefined,
-    codigoExterno: state.selectedCodigoExterno ?? undefined,
     total,
     turnstileToken: turnstileToken || undefined,
     catalog: {
