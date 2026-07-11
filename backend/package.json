@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "tsx server.js",
     "migrate": "node scripts/migrate.mjs",
-    "db:validate-journal": "node scripts/validate-drizzle-journal.mjs",
+    "db:validate-journal": "node scripts/validate-drizzle-journal.mjs && node scripts/validate-no-dynamic-relative-import.mjs",
+    "validate:no-dynamic-relative-import": "node scripts/validate-no-dynamic-relative-import.mjs",
     "seed": "tsx src/db/seed.ts",
     "sync:empreendimentos": "tsx scripts/sync-empreendimentos-caldas.mjs",
     "seed:conta-inventario": "node scripts/seed-conta-inventario.mjs",
