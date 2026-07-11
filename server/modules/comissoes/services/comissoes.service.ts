@@ -5,9 +5,12 @@ import { comissoesLancamento } from '../../../../backend/src/db/schema/comissoes
 import { configuracoesSistema } from '../../../../backend/src/db/schema/configuracoes-sistema';
 import { propostas } from '../../../../backend/src/db/schema/propostas';
 import {
+  COMISSOES_CONFIANCA_MINIMA,
   COMISSOES_OFICIAL_RESERVEI,
   comissoesConfigSchema,
+  comissoesSolicitarAprovacaoSchema,
   type ComissoesConfigInput,
+  type ComissoesSolicitarAprovacaoInput,
 } from '../schema';
 
 const CHAVE_CONFIG = 'comissoes';
@@ -25,12 +28,33 @@ export interface RegraComissaoAplicada {
   };
 }
 
+export interface ComissoesSugestaoPendente {
+  taxaPlataformaPct: number;
+  taxaCorretorPct: number;
+  margemProprietarioPct: number;
+  fonte: 'oficial_reservei' | 'heuristica' | 'openai';
+  confianca: number;
+  motivo: string;
+  objetivo?: string;
+  contexto?: string;
+  solicitadoPorUserId: number;
+  solicitadoEm: string;
+  status: 'pendente_aprovacao';
+}
+
+export interface ComissoesGovernanca {
+  confiancaMinima: number;
+  aprovacaoDuasEtapas: boolean;
+}
+
 export interface ComissoesConfig {
   comissoesModuloAtivo: boolean;
   taxaPlataformaPct: number;
   taxaCorretorPct: number;
   margemProprietarioPct: number;
   regraAplicada?: RegraComissaoAplicada;
+  sugestaoPendente?: ComissoesSugestaoPendente;
+  governanca: ComissoesGovernanca;
 }
 
 export interface ComissaoListItem {
@@ -77,6 +101,58 @@ function parseRegraAplicada(raw: unknown): RegraComissaoAplicada | undefined {
   };
 }
 
+function parseSugestaoPendente(raw: unknown): ComissoesSugestaoPendente | undefined {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const s = raw as Record<string, unknown>;
+  const plataforma = Number(s.taxa_plataforma_pct ?? s.taxaPlataformaPct);
+  const corretor = Number(s.taxa_corretor_pct ?? s.taxaCorretorPct);
+  const solicitadoPor = Number(s.solicitado_por_user_id ?? s.solicitadoPorUserId);
+  if (![plataforma, corretor, solicitadoPor].every((n) => Number.isFinite(n))) return undefined;
+  const margem = Number(s.margem_proprietario_pct ?? s.margemProprietarioPct);
+  const confianca = Number(s.confianca);
+  const fonte = s.fonte;
+  if (fonte !== 'oficial_reservei' && fonte !== 'heuristica' && fonte !== 'openai') return undefined;
+  if (!Number.isFinite(confianca)) return undefined;
+  return {
+    taxaPlataformaPct: plataforma,
+    taxaCorretorPct: corretor,
+    margemProprietarioPct: Number.isFinite(margem)
+      ? margem
+      : Math.max(0, 100 - plataforma - corretor),
+    fonte,
+    confianca,
+    motivo: String(s.motivo ?? ''),
+    objetivo: s.objetivo != null ? String(s.objetivo) : undefined,
+    contexto: s.contexto != null ? String(s.contexto) : undefined,
+    solicitadoPorUserId: solicitadoPor,
+    solicitadoEm: String(s.solicitado_em ?? s.solicitadoEm ?? new Date().toISOString()),
+    status: 'pendente_aprovacao',
+  };
+}
+
+function sugestaoPendenteToDb(sugestao: ComissoesSugestaoPendente) {
+  return {
+    taxa_plataforma_pct: sugestao.taxaPlataformaPct,
+    taxa_corretor_pct: sugestao.taxaCorretorPct,
+    margem_proprietario_pct: sugestao.margemProprietarioPct,
+    fonte: sugestao.fonte,
+    confianca: sugestao.confianca,
+    motivo: sugestao.motivo,
+    objetivo: sugestao.objetivo,
+    contexto: sugestao.contexto,
+    solicitado_por_user_id: sugestao.solicitadoPorUserId,
+    solicitado_em: sugestao.solicitadoEm,
+    status: sugestao.status,
+  };
+}
+
+function governancaPadrao(): ComissoesGovernanca {
+  return {
+    confiancaMinima: COMISSOES_CONFIANCA_MINIMA,
+    aprovacaoDuasEtapas: true,
+  };
+}
+
 function configFromRow(valores: Record<string, unknown>): ComissoesConfig {
   const taxaPlataformaPct = parsePct(valores.taxa_plataforma_pct, COMISSOES_OFICIAL_RESERVEI.taxaPlataformaPct);
   const taxaCorretorPct = parsePct(valores.taxa_corretor_pct, COMISSOES_OFICIAL_RESERVEI.taxaCorretorPct);
@@ -86,6 +162,8 @@ function configFromRow(valores: Record<string, unknown>): ComissoesConfig {
     taxaCorretorPct,
     margemProprietarioPct: Math.max(0, 100 - taxaPlataformaPct - taxaCorretorPct),
     regraAplicada: parseRegraAplicada(valores.regra_aplicada),
+    sugestaoPendente: parseSugestaoPendente(valores.sugestao_pendente),
+    governanca: governancaPadrao(),
   };
 }
 
@@ -134,6 +212,26 @@ export function calcularSplitComissoes(
   };
 }
 
+async function persistValoresDb(valoresDb: Record<string, unknown>) {
+  const [existing] = await db
+    .select()
+    .from(configuracoesSistema)
+    .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
+    .limit(1);
+
+  if (existing) {
+    await db
+      .update(configuracoesSistema)
+      .set({ valores: valoresDb, updatedAt: new Date() })
+      .where(eq(configuracoesSistema.chave, CHAVE_CONFIG));
+  } else {
+    await db.insert(configuracoesSistema).values({
+      chave: CHAVE_CONFIG,
+      valores: valoresDb,
+    });
+  }
+}
+
 export const comissoesService = {
   async getConfig(): Promise<ComissoesConfig> {
     const [row] = await db
@@ -157,7 +255,15 @@ export const comissoesService = {
     });
 
     const regra = buildRegraAplicada(merged, opts.fonte === 'ia' ? 'ia' : 'manual', opts.motivoIa);
-    const valoresDb = {
+    const [existing] = await db
+      .select()
+      .from(configuracoesSistema)
+      .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
+      .limit(1);
+    const valoresAtuais = (existing?.valores ?? {}) as Record<string, unknown>;
+
+    const valoresDb: Record<string, unknown> = {
+      ...valoresAtuais,
       comissoes_modulo_ativo: merged.comissoesModuloAtivo,
       taxa_plataforma_pct: merged.taxaPlataformaPct,
       taxa_corretor_pct: merged.taxaCorretorPct,
@@ -169,26 +275,95 @@ export const comissoesService = {
         split: regra.split,
       },
     };
+    delete valoresDb.sugestao_pendente;
+
+    await persistValoresDb(valoresDb);
+    return configFromRow(valoresDb);
+  },
+
+  async solicitarAprovacao(
+    input: ComissoesSolicitarAprovacaoInput,
+    solicitanteUserId: number,
+  ): Promise<ComissoesConfig> {
+    const parsed = comissoesSolicitarAprovacaoSchema.parse(input);
+    const margem =
+      parsed.margemProprietarioPct ?? Math.max(0, 100 - parsed.taxaPlataformaPct - parsed.taxaCorretorPct);
+
+    const sugestaoPendente: ComissoesSugestaoPendente = {
+      taxaPlataformaPct: parsed.taxaPlataformaPct,
+      taxaCorretorPct: parsed.taxaCorretorPct,
+      margemProprietarioPct: margem,
+      fonte: parsed.fonte,
+      confianca: parsed.confianca,
+      motivo: parsed.motivo,
+      objetivo: parsed.objetivo,
+      contexto: parsed.contexto,
+      solicitadoPorUserId: solicitanteUserId,
+      solicitadoEm: new Date().toISOString(),
+      status: 'pendente_aprovacao',
+    };
 
     const [existing] = await db
       .select()
       .from(configuracoesSistema)
       .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
       .limit(1);
+    const valoresAtuais = (existing?.valores ?? {}) as Record<string, unknown>;
+    const valoresDb = {
+      ...valoresAtuais,
+      sugestao_pendente: sugestaoPendenteToDb(sugestaoPendente),
+    };
 
-    if (existing) {
-      await db
-        .update(configuracoesSistema)
-        .set({ valores: valoresDb, updatedAt: new Date() })
-        .where(eq(configuracoesSistema.chave, CHAVE_CONFIG));
-    } else {
-      await db.insert(configuracoesSistema).values({
-        chave: CHAVE_CONFIG,
-        valores: valoresDb,
-      });
+    await persistValoresDb(valoresDb);
+    return configFromRow(valoresDb);
+  },
+
+  async aprovarSugestao(
+    aprovadorUserId: number,
+    opts: { confirmouDiff: boolean; overrideBaixaConfianca?: boolean },
+  ): Promise<ComissoesConfig> {
+    if (!opts.confirmouDiff) {
+      throw new Error('Confirmação do diff atual vs sugestão é obrigatória');
     }
 
-    return configFromRow(valoresDb);
+    const atual = await this.getConfig();
+    const pendente = atual.sugestaoPendente;
+    if (!pendente) {
+      throw new Error('Não há sugestão pendente de aprovação');
+    }
+    if (pendente.solicitadoPorUserId === aprovadorUserId) {
+      throw new Error('Aprovação requer outro administrador (duas etapas)');
+    }
+    if (pendente.confianca < COMISSOES_CONFIANCA_MINIMA && !opts.overrideBaixaConfianca) {
+      throw new Error(
+        `Confiança ${Math.round(pendente.confianca * 100)}% abaixo do mínimo ${Math.round(COMISSOES_CONFIANCA_MINIMA * 100)}%. Override explícito necessário.`,
+      );
+    }
+
+    return this.salvarConfig(
+      {
+        comissoesModuloAtivo: atual.comissoesModuloAtivo,
+        taxaPlataformaPct: pendente.taxaPlataformaPct,
+        taxaCorretorPct: pendente.taxaCorretorPct,
+      },
+      { fonte: 'ia', motivoIa: pendente.motivo },
+    );
+  },
+
+  async rejeitarSugestao(_userId: number, _motivo?: string): Promise<ComissoesConfig> {
+    const [existing] = await db
+      .select()
+      .from(configuracoesSistema)
+      .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
+      .limit(1);
+    if (!existing) {
+      return configFromRow({});
+    }
+
+    const valoresAtuais = { ...(existing.valores as Record<string, unknown>) };
+    delete valoresAtuais.sugestao_pendente;
+    await persistValoresDb(valoresAtuais);
+    return configFromRow(valoresAtuais);
   },
 
   async listarMinhas(userId: number, page = 1, pageSize = 20) {

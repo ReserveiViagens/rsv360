@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { AlertCircle, Loader2, Save, Shield, Sparkles, Percent } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { AlertCircle, CheckCircle2, Loader2, Save, Shield, Sparkles, Percent, XCircle } from 'lucide-react';
 import { useSession } from '@/lib/auth/SessionProvider';
 import {
+  useAprovarSugestaoComissoes,
   useComissoesConfig,
+  useRejeitarSugestaoComissoes,
+  useSolicitarAprovacaoComissoes,
   useSugerirComissoesIa,
   useUpdateComissoesConfig,
 } from '@/src/modules/configuracoes/hooks/useComissoesConfig';
@@ -13,6 +16,7 @@ import type {
   ComissoesObjetivoIa,
   ComissoesSugestaoIa,
 } from '@/src/modules/configuracoes/api/comissoes.api';
+import { ComissoesDiffTable } from '@/components/configuracoes/ComissoesDiffTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -22,6 +26,8 @@ const OFICIAL_RESERVEI = {
   margemProprietarioPct: 75,
   marca: 'Reservei Viagens / RSV360',
 };
+
+const CONFIANCA_MINIMA_PADRAO = 0.75;
 
 const OBJETIVOS_IA: { value: ComissoesObjetivoIa; label: string }[] = [
   { value: 'padrao', label: 'Oficial Reservei (20/5/75)' },
@@ -37,26 +43,66 @@ const DEFAULT_FORM: ComissoesConfig = {
   margemProprietarioPct: OFICIAL_RESERVEI.margemProprietarioPct,
 };
 
+function splitFromForm(form: Pick<ComissoesConfig, 'taxaPlataformaPct' | 'taxaCorretorPct' | 'margemProprietarioPct'>) {
+  return {
+    plataforma: form.taxaPlataformaPct,
+    corretor: form.taxaCorretorPct,
+    proprietario: form.margemProprietarioPct,
+  };
+}
+
 export function ModuloComissoesPanel({ compact = false }: { compact?: boolean }) {
   const { user } = useSession();
   const isAdmin = user?.roles?.includes('admin') ?? false;
+  const userId = Number(user?.id) || 0;
 
   const { data, isLoading, error: loadError } = useComissoesConfig();
   const update = useUpdateComissoesConfig();
   const sugerir = useSugerirComissoesIa();
+  const solicitar = useSolicitarAprovacaoComissoes();
+  const aprovar = useAprovarSugestaoComissoes();
+  const rejeitar = useRejeitarSugestaoComissoes();
 
   const [form, setForm] = useState<ComissoesConfig>(DEFAULT_FORM);
   const [objetivoIa, setObjetivoIa] = useState<ComissoesObjetivoIa>('padrao');
   const [contextoIa, setContextoIa] = useState('');
   const [sugestao, setSugestao] = useState<ComissoesSugestaoIa | null>(null);
   const [saved, setSaved] = useState(false);
+  const [confirmouDiffPreview, setConfirmouDiffPreview] = useState(false);
+  const [confirmouDiffPendente, setConfirmouDiffPendente] = useState(false);
+  const [overrideBaixaConfianca, setOverrideBaixaConfianca] = useState(false);
+
+  const confiancaMinima = data?.governanca?.confiancaMinima ?? CONFIANCA_MINIMA_PADRAO;
+  const pendente = data?.sugestaoPendente;
 
   useEffect(() => {
     if (data) setForm({ ...DEFAULT_FORM, ...data });
   }, [data]);
 
+  useEffect(() => {
+    setConfirmouDiffPreview(false);
+  }, [sugestao]);
+
+  useEffect(() => {
+    setConfirmouDiffPendente(false);
+    setOverrideBaixaConfianca(false);
+  }, [pendente?.solicitadoEm]);
+
   const margemPreview = Math.max(0, 100 - form.taxaPlataformaPct - form.taxaCorretorPct);
   const somaInvalida = form.taxaPlataformaPct + form.taxaCorretorPct > 100;
+
+  const splitAtual = useMemo(
+    () => ({
+      plataforma: form.taxaPlataformaPct,
+      corretor: form.taxaCorretorPct,
+      proprietario: margemPreview,
+    }),
+    [form.taxaPlataformaPct, form.taxaCorretorPct, margemPreview],
+  );
+
+  const baixaConfiancaPreview = sugestao != null && sugestao.confianca < confiancaMinima;
+  const baixaConfiancaPendente = pendente != null && pendente.confianca < confiancaMinima;
+  const podeAprovarPendente = pendente != null && pendente.solicitadoPorUserId !== userId;
 
   const handleSaveManual = async () => {
     setSaved(false);
@@ -68,6 +114,7 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
     });
     setSaved(true);
     setSugestao(null);
+    setConfirmouDiffPreview(false);
   };
 
   const handleSugerirIa = async () => {
@@ -78,23 +125,35 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
     setSugestao(result);
   };
 
-  const handleAplicarSugestao = async () => {
-    if (!sugestao) return;
+  const handleSolicitarAprovacao = async () => {
+    if (!sugestao || !confirmouDiffPreview) return;
     setSaved(false);
-    setForm((f) => ({
-      ...f,
-      taxaPlataformaPct: sugestao.taxaPlataformaPct,
-      taxaCorretorPct: sugestao.taxaCorretorPct,
-      margemProprietarioPct: sugestao.margemProprietarioPct,
-    }));
-    await update.mutateAsync({
-      comissoesModuloAtivo: form.comissoesModuloAtivo,
-      taxaPlataformaPct: sugestao.taxaPlataformaPct,
-      taxaCorretorPct: sugestao.taxaCorretorPct,
-      fonte: 'ia',
-      motivoIa: sugestao.motivo,
+    await solicitar.mutateAsync({
+      ...sugestao,
+      objetivo: objetivoIa,
+      contexto: contextoIa.trim() || undefined,
+    });
+    setSugestao(null);
+    setConfirmouDiffPreview(false);
+  };
+
+  const handleAprovarPendente = async () => {
+    if (!pendente || !confirmouDiffPendente) return;
+    if (baixaConfiancaPendente && !overrideBaixaConfianca) return;
+    setSaved(false);
+    await aprovar.mutateAsync({
+      confirmouDiff: true,
+      overrideBaixaConfianca: baixaConfiancaPendente ? overrideBaixaConfianca : undefined,
     });
     setSaved(true);
+    setConfirmouDiffPendente(false);
+    setOverrideBaixaConfianca(false);
+  };
+
+  const handleRejeitarPendente = async () => {
+    await rejeitar.mutateAsync();
+    setConfirmouDiffPendente(false);
+    setOverrideBaixaConfianca(false);
   };
 
   if (!isAdmin) {
@@ -122,6 +181,9 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
     );
   }
 
+  const mutationError =
+    update.error ?? sugerir.error ?? solicitar.error ?? aprovar.error ?? rejeitar.error;
+
   return (
     <div className="space-y-6">
       {!compact ? (
@@ -129,9 +191,9 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
           Split oficial <strong>{OFICIAL_RESERVEI.marca}</strong>: plataforma RSV360{' '}
           <strong>{OFICIAL_RESERVEI.taxaPlataformaPct}%</strong> · corretor Reservei{' '}
           <strong>{OFICIAL_RESERVEI.taxaCorretorPct}%</strong> · anfitrião residual{' '}
-          <strong>{OFICIAL_RESERVEI.margemProprietarioPct}%</strong>. Persistido em{' '}
-          <code className="rounded bg-slate-100 px-1">configuracoes_sistema.comissoes</code> com snapshot{' '}
-          <code className="rounded bg-slate-100 px-1">regra_aplicada</code>.
+          <strong>{OFICIAL_RESERVEI.margemProprietarioPct}%</strong>. Alterações via IA exigem{' '}
+          <strong>aprovação em duas etapas</strong> por outro administrador (confiança mínima{' '}
+          {Math.round(confiancaMinima * 100)}%).
         </p>
       ) : null}
 
@@ -142,16 +204,103 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
         </div>
       ) : null}
 
-      {(update.error || sugerir.error) && (
+      {mutationError ? (
         <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          {((update.error ?? sugerir.error) as Error).message}
+          {(mutationError as Error).message}
         </div>
-      )}
+      ) : null}
 
       {saved ? (
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">
           Percentuais salvos. Novos lançamentos (quando o módulo estiver ativo) usarão estes valores.
+        </div>
+      ) : null}
+
+      {pendente ? (
+        <div className="space-y-4 rounded-xl border border-amber-300 bg-amber-50/80 p-4">
+          <p className="flex items-center gap-2 text-sm font-semibold text-amber-900">
+            <AlertCircle className="h-4 w-4" />
+            Sugestão pendente de aprovação
+          </p>
+          <p className="text-xs text-amber-800">
+            Solicitada em {new Date(pendente.solicitadoEm).toLocaleString('pt-BR')} · usuário #{pendente.solicitadoPorUserId} ·
+            confiança {Math.round(pendente.confianca * 100)}%
+          </p>
+          <ComissoesDiffTable
+            atual={splitAtual}
+            sugestao={{
+              plataforma: pendente.taxaPlataformaPct,
+              corretor: pendente.taxaCorretorPct,
+              proprietario: pendente.margemProprietarioPct,
+            }}
+          />
+          <p className="text-sm text-slate-700">{pendente.motivo}</p>
+
+          {!podeAprovarPendente ? (
+            <p className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900">
+              Você solicitou esta alteração. Aguarde outro administrador aprovar (governança em duas etapas).
+            </p>
+          ) : (
+            <>
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={confirmouDiffPendente}
+                  onChange={(e) => setConfirmouDiffPendente(e.target.checked)}
+                />
+                <span>
+                  Li o diff acima e confirmo que os percentuais sugeridos estão corretos para aplicar em produção.
+                </span>
+              </label>
+              {baixaConfiancaPendente ? (
+                <label className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+                  <input
+                    type="checkbox"
+                    className="mt-1"
+                    checked={overrideBaixaConfianca}
+                    onChange={(e) => setOverrideBaixaConfianca(e.target.checked)}
+                  />
+                  <span>
+                    <strong>Override:</strong> confiança {Math.round(pendente.confianca * 100)}% está abaixo do mínimo{' '}
+                    {Math.round(confiancaMinima * 100)}%. Aceito o risco e autorizo a aplicação manualmente.
+                  </span>
+                </label>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  onClick={() => void handleAprovarPendente()}
+                  disabled={
+                    aprovar.isPending ||
+                    !confirmouDiffPendente ||
+                    (baixaConfiancaPendente && !overrideBaixaConfianca)
+                  }
+                >
+                  {aprovar.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                  )}
+                  Aprovar e aplicar
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => void handleRejeitarPendente()}
+                  disabled={rejeitar.isPending}
+                >
+                  {rejeitar.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <XCircle className="mr-2 h-4 w-4" />
+                  )}
+                  Rejeitar
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       ) : null}
 
@@ -229,7 +378,7 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
       <div className="space-y-3 rounded-xl border border-violet-200 bg-violet-50/50 p-4">
         <p className="flex items-center gap-2 text-sm font-medium text-violet-900">
           <Sparkles className="h-4 w-4" />
-          Sugestão por IA
+          Sugestão por IA (etapa 1 — solicitar aprovação)
         </p>
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block space-y-1 text-sm">
@@ -262,19 +411,51 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
             {sugerir.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
             Gerar sugestão
           </Button>
-          {sugestao ? (
-            <Button type="button" onClick={() => void handleAplicarSugestao()} disabled={update.isPending}>
-              Aplicar sugestão ({sugestao.taxaPlataformaPct}/{sugestao.taxaCorretorPct}/{sugestao.margemProprietarioPct})
-            </Button>
-          ) : null}
         </div>
         {sugestao ? (
-          <div className="rounded-lg border border-violet-200 bg-white p-3 text-sm text-slate-700">
+          <div className="space-y-3 rounded-lg border border-violet-200 bg-white p-3 text-sm text-slate-700">
             <p>
               <strong>Fonte:</strong> {sugestao.fonte} · <strong>Confiança:</strong>{' '}
               {Math.round(sugestao.confianca * 100)}%
+              {baixaConfiancaPreview ? (
+                <span className="ml-2 font-medium text-amber-700">
+                  (abaixo do mínimo — aprovador precisará de override)
+                </span>
+              ) : null}
             </p>
-            <p className="mt-2">{sugestao.motivo}</p>
+            <p>{sugestao.motivo}</p>
+            <ComissoesDiffTable
+              atual={splitAtual}
+              sugestao={splitFromForm({
+                taxaPlataformaPct: sugestao.taxaPlataformaPct,
+                taxaCorretorPct: sugestao.taxaCorretorPct,
+                margemProprietarioPct: sugestao.margemProprietarioPct,
+              })}
+            />
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={confirmouDiffPreview}
+                onChange={(e) => setConfirmouDiffPreview(e.target.checked)}
+              />
+              <span>
+                Revisei o diff atual vs sugestão e desejo enviar para aprovação de outro administrador.
+              </span>
+            </label>
+            <Button
+              type="button"
+              onClick={() => void handleSolicitarAprovacao()}
+              disabled={solicitar.isPending || !confirmouDiffPreview || !!pendente}
+            >
+              {solicitar.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Enviar para aprovação
+            </Button>
+            {pendente ? (
+              <p className="text-xs text-amber-700">
+                Já existe uma sugestão pendente. Aprove ou rejeite antes de enviar outra.
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>
