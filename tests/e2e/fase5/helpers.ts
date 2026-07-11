@@ -29,7 +29,6 @@ export async function createPublicProposta(request: APIRequestContext, token: st
       valorTotal: '2500.00',
       status: 'sent',
       isPublica: true,
-      validoAte: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
       conteudo: {
         itens: [{ descricao: 'Pacote Caldas Novas 4 dias', valor: 2500 }],
       },
