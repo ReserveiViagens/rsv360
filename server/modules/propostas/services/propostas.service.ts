@@ -9,6 +9,9 @@ import {
 import { orcamentos, orcamentoItens } from '../../../../backend/src/db/schema/orcamentos';
 import { montarComparativoProposta } from './montar-proposta';
 import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
+import { aplicarValidadeProposta } from '../aplicar-validade-proposta';
+import { agendarAvaliarObjecao, agendarEntregaRoteiro } from '../propostas.queue';
+import { ConfigService } from '../../configuracoes/config.service';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
 import {
@@ -63,6 +66,20 @@ export class PropostasService {
 
     await this.logEvent(created.id, 'created', 'Proposta criada', { actorId }, actorId);
     recordPropostaGerada('staff');
+
+    if (
+      created.isPublica &&
+      ['sent', 'pending'].includes(created.status) &&
+      !created.validoAte
+    ) {
+      try {
+        const validoAte = await aplicarValidadeProposta(created.id);
+        return { ...created, validoAte };
+      } catch (queueErr) {
+        console.warn('[propostas] aplicarValidadeProposta no create staff:', (queueErr as Error).message);
+      }
+    }
+
     return created;
   }
 
@@ -84,8 +101,6 @@ export class PropostasService {
     if (updated && (status === 'accepted' || status === 'paid')) {
       recordPropostaAceita(actorId ? 'staff' : 'public');
       try {
-        const { agendarEntregaRoteiro } = await import('../propostas.queue');
-        const { ConfigService } = await import('../../configuracoes/config.service');
         const config = await ConfigService.obterRegrasCotacao();
         const delayMs = (config.delayDisparoMinutos ?? 0) * 60_000;
         await agendarEntregaRoteiro(id, delayMs);
@@ -157,7 +172,6 @@ export class PropostasService {
     await this.logEvent(created.id, 'from_orcamento', `Gerada a partir do orçamento #${orcamentoId}`, { orcamentoId }, actorId);
 
     try {
-      const { agendarAvaliarObjecao } = await import('../propostas.queue');
       await agendarAvaliarObjecao(created.id, 24 * 60 * 60 * 1000);
     } catch {
       /* Redis/BullMQ opcional em dev */
@@ -165,7 +179,6 @@ export class PropostasService {
 
     if (!options?.skipValidade) {
       try {
-        const { aplicarValidadeProposta } = await import('../aplicar-validade-proposta');
         const validoAte = await aplicarValidadeProposta(created.id);
         return { ...created, validoAte };
       } catch (validadeErr) {

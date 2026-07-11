@@ -14,6 +14,7 @@ import {
   type PropostasJobData,
 } from './propostas.queue';
 import { enviarAvisoExpiracaoSeNecessario } from './services/aviso-expiracao.service';
+import { entregarLinkRoteiroPosCompra } from './services/roteiro-entrega.service';
 import { propostasService } from './services/propostas.service';
 import { propostaRoomBroadcast } from './websocket/proposta-broadcast';
 import {
@@ -79,7 +80,6 @@ export async function processAvisoExpiracao(job: { data: { propostaId: number } 
 
 export async function processEntregarRoteiro(job: { data: { propostaId: number } }) {
   const { propostaId } = job.data;
-  const { entregarLinkRoteiroPosCompra } = await import('./services/roteiro-entrega.service');
   return entregarLinkRoteiroPosCompra(propostaId);
 }
 

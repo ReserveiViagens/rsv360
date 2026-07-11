@@ -1,5 +1,7 @@
 import {
   formatRestanteMs,
+  inferirExpiradaComercial,
+  isPropostaPosAceite,
   normalizeUrgenciaEstilo,
   propostaAceiteBloqueado,
   shouldShowUrgenciaIndicador,
@@ -46,9 +48,31 @@ describe('proposta-validade-ui', () => {
     });
   });
 
+  describe('inferirExpiradaComercial', () => {
+    it('sent sem valido_ate não expira (restanteMs null)', () => {
+      expect(inferirExpiradaComercial('sent', false, null, null)).toBe(false);
+    });
+
+    it('sent com prazo vencido expira', () => {
+      expect(inferirExpiradaComercial('sent', false, 0, '2020-01-01T00:00:00.000Z')).toBe(true);
+    });
+
+    it('accepted ignora prazo vencido', () => {
+      expect(inferirExpiradaComercial('accepted', false, 0, '2020-01-01T00:00:00.000Z')).toBe(
+        false,
+      );
+    });
+  });
+
   describe('propostaAceiteBloqueado', () => {
     it('bloqueia quando expirada pelo socket/polling', () => {
       expect(propostaAceiteBloqueado('sent', true)).toBe(true);
+    });
+
+    it('não bloqueia roteiro pós-aceite por validade comercial', () => {
+      expect(propostaAceiteBloqueado('accepted', false)).toBe(true);
+      expect(isPropostaPosAceite('accepted')).toBe(true);
+      expect(isPropostaPosAceite('paid')).toBe(true);
     });
 
     it('bloqueia status expired ao abrir a página', () => {

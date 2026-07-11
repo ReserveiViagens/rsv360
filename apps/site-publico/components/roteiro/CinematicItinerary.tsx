@@ -43,7 +43,7 @@ function RoteiroContent({ view }: CinematicItineraryProps) {
     onExpirada: handleExpiradaSocket,
   });
 
-  const bloqueado = expirada;
+  const bloqueado = expirada && !['accepted', 'paid', 'converted'].includes(view.status);
   const recotacaoUrl = buildRecotacaoUrlFromProposta({
     tokenPublico: view.token,
     metadata: {

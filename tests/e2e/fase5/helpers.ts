@@ -20,6 +20,7 @@ export async function loginStaffToken(request: APIRequestContext): Promise<strin
 }
 
 export async function createPublicProposta(request: APIRequestContext, token: string) {
+  const tokenPublico = `e2e-${Date.now()}`;
   const res = await request.post(`${backendBase}/api/v1/propostas`, {
     headers: { Authorization: `Bearer ${token}` },
     data: {
@@ -29,6 +30,7 @@ export async function createPublicProposta(request: APIRequestContext, token: st
       valorTotal: '2500.00',
       status: 'sent',
       isPublica: true,
+      tokenPublico,
       conteudo: {
         itens: [{ descricao: 'Pacote Caldas Novas 4 dias', valor: 2500 }],
       },
@@ -40,7 +42,7 @@ export async function createPublicProposta(request: APIRequestContext, token: st
   }
 
   const body = await res.json();
-  return body.data as { id: number; titulo: string };
+  return body.data as { id: number; titulo: string; tokenPublico: string };
 }
 
 export { backendBase };

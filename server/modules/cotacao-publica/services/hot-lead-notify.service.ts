@@ -1,4 +1,5 @@
 import { propostasService } from '../../propostas/services/propostas.service';
+import { EvolutionAPIWhatsAppProvider } from '../../communication/providers/whatsapp/evolution-api.provider';
 
 export interface HotLeadInput {
   propostaId: number;
@@ -31,9 +32,6 @@ export async function notifyHotLead(input: HotLeadInput): Promise<{ sent: boolea
   }
 
   try {
-    const { EvolutionAPIWhatsAppProvider } = await import(
-      '../../communication/providers/whatsapp/evolution-api.provider'
-    );
     const provider = new EvolutionAPIWhatsAppProvider();
     const result = await provider.sendMessage(dest, message);
     if (result.success) {
