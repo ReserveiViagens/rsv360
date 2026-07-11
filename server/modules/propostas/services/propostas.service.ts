@@ -9,6 +9,7 @@ import {
 import { orcamentos, orcamentoItens } from '../../../../backend/src/db/schema/orcamentos';
 import { montarComparativoProposta } from './montar-proposta';
 import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
+import { aplicarValidadeProposta } from '../aplicar-validade-proposta';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
 import {
@@ -70,7 +71,6 @@ export class PropostasService {
       !created.validoAte
     ) {
       try {
-        const { aplicarValidadeProposta } = await import('../aplicar-validade-proposta');
         const validoAte = await aplicarValidadeProposta(created.id);
         return { ...created, validoAte };
       } catch (queueErr) {
@@ -180,7 +180,6 @@ export class PropostasService {
 
     if (!options?.skipValidade) {
       try {
-        const { aplicarValidadeProposta } = await import('../aplicar-validade-proposta');
         const validoAte = await aplicarValidadeProposta(created.id);
         return { ...created, validoAte };
       } catch (validadeErr) {
