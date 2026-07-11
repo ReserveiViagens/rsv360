@@ -136,6 +136,23 @@ describe('resolveUpgradeVarandaProposta — server-side (ponto 2)', () => {
     expect(snapshot.upgradeVarandaValorResolvido).toBe(80);
   });
 
+  it('selectedAcomodacaoId prevalece sobre codigoExterno adulterado no body', async () => {
+    mockAcomodacaoRow('ATR-SUV', {
+      upgrade_varanda_disponivel: true,
+      upgrade_varanda_valor: 80,
+    });
+    const snapshot = await resolveUpgradeVarandaProposta({
+      ...basePayload(),
+      selectedAcomodacaoId: 12,
+      codigoExterno: 'KN39H',
+      arquetipoId: 'kn39h',
+      upgradeVaranda: true,
+    });
+    expect(snapshot.codigoExterno).toBe('ATR-SUV');
+    expect(snapshot.arquetipoId).toBe('atr-suv');
+    expect(snapshot.upgradeVaranda).toBe(true);
+  });
+
   it('suiteUpgrade legado mapeia para mesma validacao (politica a)', async () => {
     mockAcomodacaoRow('ATR-SUV', {
       upgrade_varanda_disponivel: true,
@@ -194,8 +211,6 @@ describe('snapshot imutavel (ponto 4)', () => {
     const snapshot = await resolveUpgradeVarandaProposta({
       ...basePayload(),
       selectedAcomodacaoId: 18,
-      arquetipoId: 'aqr-fam',
-      codigoExterno: 'AQR-FAM',
       upgradeVaranda: true,
     });
     expect(snapshot).toMatchObject({

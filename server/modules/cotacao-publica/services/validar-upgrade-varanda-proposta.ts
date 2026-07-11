@@ -34,7 +34,6 @@ function unidadePermiteUpgrade(codigoExterno: string, metadata: unknown): boolea
 export async function resolveUpgradeVarandaProposta(
   payload: GerarPropostaPayload,
 ): Promise<PropostaAcomodacaoSnapshot> {
-  const arquetipoId = payload.arquetipoId?.trim() || undefined;
   const wantsUpgrade = mergeUpgradeIntent(payload);
 
   let codigoExterno = payload.codigoExterno?.trim() || undefined;
@@ -58,12 +57,16 @@ export async function resolveUpgradeVarandaProposta(
       .limit(1);
 
     if (row) {
-      if (!codigoExterno && row.codigoExterno) {
+      metadata = row.metadata;
+      if (row.codigoExterno) {
         codigoExterno = row.codigoExterno;
       }
-      metadata = row.metadata;
     }
   }
+
+  const arquetipoId = codigoExterno
+    ? codigoExterno.toLowerCase()
+    : payload.arquetipoId?.trim() || undefined;
 
   const base: PropostaAcomodacaoSnapshot = {
     arquetipoId,
