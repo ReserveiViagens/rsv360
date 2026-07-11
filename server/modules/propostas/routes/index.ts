@@ -307,16 +307,20 @@ router.get('/:id', optionalJwt, async (req, res) => {
       return res.status(401).json({ success: false, error: 'Autenticação necessária' });
     }
     if (item.isPublica && !req.user) {
-      const { buildPropostaPublicaResponse } = await import('../proposta-publica-payload');
-      const publica = buildPropostaPublicaResponse(item);
-      return res.json({
-        success: true,
-        data: {
-          ...publica,
-          eventos: publica.payloadReduzido ? [] : item.eventos,
-          chat: publica.payloadReduzido ? [] : item.chat,
-        },
-      });
+      const { buildPropostaPublicaResponse, deveRedactarPropostaPublica } = await import(
+        '../proposta-publica-payload'
+      );
+      if (deveRedactarPropostaPublica(item)) {
+        const publica = buildPropostaPublicaResponse(item);
+        return res.json({
+          success: true,
+          data: {
+            ...publica,
+            eventos: [],
+            chat: [],
+          },
+        });
+      }
     }
     res.json({ success: true, data: item });
   } catch (error) {
