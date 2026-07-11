@@ -63,6 +63,21 @@ export class PropostasService {
 
     await this.logEvent(created.id, 'created', 'Proposta criada', { actorId }, actorId);
     recordPropostaGerada('staff');
+
+    if (
+      created.isPublica &&
+      ['sent', 'pending'].includes(created.status) &&
+      !created.validoAte
+    ) {
+      try {
+        const { aplicarValidadeProposta } = await import('../aplicar-validade-proposta');
+        const validoAte = await aplicarValidadeProposta(created.id);
+        return { ...created, validoAte };
+      } catch (queueErr) {
+        console.warn('[propostas] aplicarValidadeProposta no create staff:', (queueErr as Error).message);
+      }
+    }
+
     return created;
   }
 
