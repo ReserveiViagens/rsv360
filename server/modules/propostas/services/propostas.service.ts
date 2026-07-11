@@ -10,6 +10,8 @@ import { orcamentos, orcamentoItens } from '../../../../backend/src/db/schema/or
 import { montarComparativoProposta } from './montar-proposta';
 import { assertPropostaNaoExpirada, PropostaExpiradaError } from '../proposta-validade';
 import { aplicarValidadeProposta } from '../aplicar-validade-proposta';
+import { agendarAvaliarObjecao, agendarEntregaRoteiro } from '../propostas.queue';
+import { ConfigService } from '../../configuracoes/config.service';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
 import {
@@ -99,8 +101,6 @@ export class PropostasService {
     if (updated && (status === 'accepted' || status === 'paid')) {
       recordPropostaAceita(actorId ? 'staff' : 'public');
       try {
-        const { agendarEntregaRoteiro } = await import('../propostas.queue');
-        const { ConfigService } = await import('../../configuracoes/config.service');
         const config = await ConfigService.obterRegrasCotacao();
         const delayMs = (config.delayDisparoMinutos ?? 0) * 60_000;
         await agendarEntregaRoteiro(id, delayMs);
@@ -172,7 +172,6 @@ export class PropostasService {
     await this.logEvent(created.id, 'from_orcamento', `Gerada a partir do orçamento #${orcamentoId}`, { orcamentoId }, actorId);
 
     try {
-      const { agendarAvaliarObjecao } = await import('../propostas.queue');
       await agendarAvaliarObjecao(created.id, 24 * 60 * 60 * 1000);
     } catch {
       /* Redis/BullMQ opcional em dev */

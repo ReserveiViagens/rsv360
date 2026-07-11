@@ -2,6 +2,8 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { propostas } from '../../../../backend/src/db/schema/propostas';
 import { propostasService } from './propostas.service';
+import { EvolutionAPIWhatsAppProvider } from '../../communication/providers/whatsapp/evolution-api.provider';
+import { CommunicationProviderFactory } from '../../communication/providers/factory';
 
 function buildRoteiroUrl(token: string): string {
   const base =
@@ -43,9 +45,6 @@ async function enviarWhatsApp(telefone: string, message: string): Promise<{ ok: 
     return { ok: false, error: 'evolution_api_ausente' };
   }
   try {
-    const { EvolutionAPIWhatsAppProvider } = await import(
-      '../../communication/providers/whatsapp/evolution-api.provider'
-    );
     const provider = new EvolutionAPIWhatsAppProvider();
     const result = await provider.sendMessage(telefone, message);
     return { ok: result.success, error: result.error };
@@ -61,7 +60,6 @@ async function enviarEmail(email: string, subject: string, message: string): Pro
     return { ok: false, error: 'email_provider_ausente' };
   }
   try {
-    const { CommunicationProviderFactory } = await import('../../communication/providers/factory');
     const provider = CommunicationProviderFactory.getProvider('default', 'email');
     if (!provider?.email) return { ok: false, error: 'email_provider_ausente' };
     const result = await provider.email.sendEmail(email, subject, message);
