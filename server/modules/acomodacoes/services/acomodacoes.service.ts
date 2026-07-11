@@ -21,6 +21,7 @@ function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDispon
   const upgrade = parseUpgradeVarandaMeta(row.metadata);
   return {
     id: row.id,
+    codigoExterno: row.codigoExterno ?? undefined,
     titulo: row.titulo,
     quartos: row.quartos,
     configSala: row.configSala as AcomodacaoDisponivel['configSala'],

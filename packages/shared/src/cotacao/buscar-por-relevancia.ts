@@ -10,6 +10,8 @@ export interface AcomodacaoCriterios {
 
 export interface AcomodacaoDisponivel {
   id: number | string;
+  /** Código externo Etapa A (ex.: ATR-SUV, KN39H). */
+  codigoExterno?: string;
   titulo: string;
   quartos: number;
   configSala: ConfigSala;
