@@ -11,6 +11,7 @@ import {
   Sparkles,
   ShieldCheck,
   LayoutDashboard,
+  Percent,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -34,9 +35,11 @@ const groups: Array<{ label: string; items: NavItem[] }> = [
     items: [
       { href: '/revenue', label: 'Revenue', icon: TrendingUp },
       { href: '/crm', label: 'CRM & Fidelidade', icon: Users },
+      { href: '/crm/comissoes', label: 'Comissões (%)', icon: Percent },
       { href: '/orcamentos', label: 'Orçamentos', icon: FileText },
       { href: '/propostas', label: 'Propostas', icon: MessageSquare },
       { href: '/configuracoes/modulo-propostas', label: 'Config. Propostas', icon: Settings },
+      { href: '/configuracoes/comissoes', label: 'Config. Comissões', icon: Percent },
       { href: '/acomodacoes/import', label: 'Importar inventário', icon: FileText },
       { href: '/campanhas', label: 'Campanhas', icon: Sparkles },
     ],

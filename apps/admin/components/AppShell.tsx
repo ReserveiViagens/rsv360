@@ -24,6 +24,14 @@ const titles: Record<string, { title: string; description: string }> = {
     title: 'Módulo Propostas',
     description: 'Validade, urgência e regras de expiração (configuracoes_sistema).',
   },
+  '/configuracoes/comissoes': {
+    title: 'Comissões marketplace',
+    description: 'Percentuais Reservei / RSV360 — manual ou IA.',
+  },
+  '/crm/comissoes': {
+    title: 'Comissões (CRM)',
+    description: 'Split plataforma, corretor e anfitrião.',
+  },
   '/passageiros': { title: 'Passageiros', description: 'Cadastro e documentos de passageiros.' },
   '/financeiro': { title: 'Financeiro', description: 'Transações, contas e fluxo de caixa.' },
   '/campanhas': { title: 'Campanhas', description: 'Campanhas de marketing e cupons.' },
