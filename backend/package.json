@@ -17,6 +17,7 @@
     "seed:conta-inventario": "node scripts/seed-conta-inventario.mjs",
     "import:inventario-caldas": "tsx scripts/import-inventario-caldas.mjs",
     "smoke:portal-booking": "tsx ../server/modules/guest-portal/portal-booking.smoke.ts",
+    "smoke:wizard-passo2": "tsx scripts/smoke-wizard-passo2.mjs",
     "test": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",
     "test:ci": "jest --coverage --ci --runInBand --forceExit"
