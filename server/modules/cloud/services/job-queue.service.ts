@@ -3,6 +3,7 @@ import { Redis } from 'ioredis';
 import { eq, and, lt } from 'drizzle-orm';
 import { db } from '../../../../backend/src/db/drizzle';
 import { cloudJobs } from '../db/schema';
+import { generateThumbnails, optimizeImage } from './image-optimization.service';
 
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
@@ -203,9 +204,6 @@ export async function processJob(job: Job) {
 
 // Job processors
 async function processImageOptimization(data: any) {
-  // Import here to avoid circular dependency
-  const { optimizeImage, generateThumbnails } = await import('./image-optimization.service');
-
   if (data.action === 'optimize') {
     return await optimizeImage(data.fileId, data.options);
   } else if (data.action === 'thumbnails') {

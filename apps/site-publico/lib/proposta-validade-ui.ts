@@ -1,5 +1,14 @@
 const STATUS_BLOQUEIA_ACEITE = new Set(['accepted', 'rejected', 'cancelled', 'expired', 'paid']);
 
+export const PROPOSTA_STATUS_POS_ACEITE_UI = ['accepted', 'paid', 'converted'] as const;
+
+export function isPropostaPosAceite(status: string | undefined | null): boolean {
+  return (
+    status != null &&
+    (PROPOSTA_STATUS_POS_ACEITE_UI as readonly string[]).includes(status)
+  );
+}
+
 export type UrgenciaEstilo = 'countdown' | 'badge' | 'nenhum';
 
 export function normalizeUrgenciaEstilo(raw?: string | null): UrgenciaEstilo {
@@ -34,6 +43,22 @@ export function formatRestanteMs(ms: number | null): string {
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
   return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':');
+}
+
+/**
+ * Inferência client-side de expiração comercial.
+ * Sem valido_ate/restanteMs não assume prazo zerado (evita falso positivo).
+ */
+export function inferirExpiradaComercial(
+  status: string | null | undefined,
+  expiradaServidor: boolean,
+  restanteMs: number | null | undefined,
+  validoAte: string | null | undefined,
+): boolean {
+  if (isPropostaPosAceite(status)) return false;
+  if (expiradaServidor) return true;
+  if (validoAte == null || restanteMs == null) return false;
+  return restanteMs <= 0;
 }
 
 /** Bloqueia aceite/recusa quando expirada (socket, polling ou status no servidor). */

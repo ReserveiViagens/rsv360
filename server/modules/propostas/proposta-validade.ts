@@ -31,11 +31,30 @@ export function isValidoAteVencido(
   return agora.getTime() > new Date(validoAte).getTime();
 }
 
+/** Status pós-aceite — validade comercial não se aplica ao roteiro/documento da viagem. */
+export const PROPOSTA_STATUS_POS_ACEITE = ['accepted', 'paid', 'converted'] as const;
+
+export function isPropostaPosAceite(status: string | null | undefined): boolean {
+  return (
+    status != null &&
+    (PROPOSTA_STATUS_POS_ACEITE as readonly string[]).includes(status)
+  );
+}
+
+export type PropostaExpiradaRow = { status: string; validoAte?: Date | null };
+
+/** Validade comercial (valido_ate) só até o aceite. */
+export function isValidadeComercialAplicavel(status: string): boolean {
+  if (status === 'expired') return true;
+  return !isPropostaPosAceite(status);
+}
+
 export function isPropostaExpirada(
-  row: { status: string; validoAte?: Date | null },
+  row: PropostaExpiradaRow,
   agora: Date = servidorAgora(),
 ): boolean {
   if (row.status === 'expired') return true;
+  if (!isValidadeComercialAplicavel(row.status)) return false;
   return isValidoAteVencido(row.validoAte, agora);
 }
 
@@ -85,17 +104,19 @@ export async function assertPropostaNaoExpirada(row: {
   status: string;
   validoAte?: Date | null;
 }): Promise<void> {
-  if (row.status === 'expired') {
-    throw new PropostaExpiradaError();
-  }
+  if (!isPropostaExpirada(row)) return;
 
-  if (isValidoAteVencido(row.validoAte)) {
+  if (
+    row.status !== 'expired' &&
+    isValidoAteVencido(row.validoAte) &&
+    isValidadeComercialAplicavel(row.status)
+  ) {
     const updated = await marcarExpirada(row.id);
     if (updated) {
       recordPropostaExpirada('sync');
     }
-    throw new PropostaExpiradaError();
   }
+  throw new PropostaExpiradaError();
 }
 
 export function isPropostaExpiradaError(error: unknown): boolean {
@@ -110,10 +131,13 @@ export function isPropostaExpiradaError(error: unknown): boolean {
 module.exports = {
   PROPOSTA_EXPIRADA_MSG,
   PROPOSTA_STATUS_FECHADO,
+  PROPOSTA_STATUS_POS_ACEITE,
   PropostaExpiradaError,
   isPropostaExpiradaError,
   servidorAgora,
   isValidoAteVencido,
+  isPropostaPosAceite,
+  isValidadeComercialAplicavel,
   isPropostaExpirada,
   buildValidadePayload,
   marcarExpirada,

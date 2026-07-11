@@ -112,7 +112,7 @@ describe('proposta-recotacao.service (PR 20)', () => {
     expect(mockInsert).not.toHaveBeenCalled();
   });
 
-  it('permite recotar proposta aceita com valido_ate vencido', async () => {
+  it('rejeita proposta aceita mesmo com valido_ate vencido (validade comercial encerrada no aceite)', async () => {
     mockWhere.mockResolvedValueOnce([
       {
         ...propostaExpirada,
@@ -120,7 +120,9 @@ describe('proposta-recotacao.service (PR 20)', () => {
       },
     ]);
 
-    const result = await recotarPropostaPorToken('rt-aceita-expirada');
-    expect(result.novoToken).toBe('rt-novo-token-test');
+    await expect(recotarPropostaPorToken('rt-aceita-expirada')).rejects.toMatchObject({
+      statusCode: 403,
+    });
+    expect(mockInsert).not.toHaveBeenCalled();
   });
 });

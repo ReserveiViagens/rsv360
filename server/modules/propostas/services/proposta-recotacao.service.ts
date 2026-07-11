@@ -38,9 +38,11 @@ export async function recotarPropostaPorToken(token: string): Promise<{ novoToke
     throw new PropostaRecotacaoError('Proposta não encontrada', 404);
   }
 
-  if (['paid', 'converted', 'cancelled'].includes(origem.status)) {
+  if (['accepted', 'paid', 'converted', 'cancelled'].includes(origem.status)) {
     throw new PropostaRecotacaoError(
-      'Proposta paga ou encerrada não pode ser recotada',
+      origem.status === 'accepted'
+        ? 'Proposta aceita não pode ser recotada'
+        : 'Proposta paga ou encerrada não pode ser recotada',
       403,
     );
   }

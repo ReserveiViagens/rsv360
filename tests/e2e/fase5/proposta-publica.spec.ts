@@ -6,7 +6,7 @@ test.describe('Proposta pública (site-publico)', () => {
     const token = await loginStaffToken(request);
     const proposta = await createPublicProposta(request, token);
 
-    await page.goto(`/proposta/${proposta.id}`);
+    await page.goto(`/proposta/${proposta.tokenPublico ?? proposta.id}`);
 
     await expect(page.getByText('Proposta comercial')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole('heading', { name: proposta.titulo })).toBeVisible();
