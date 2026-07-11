@@ -40,7 +40,7 @@
 | 3 | UI: toggle "Adicionar varanda/vista (+R$ X/noite)" **após** seleção da unidade base | ✅ `WizardStepHotel` |
 | 4 | Total: base × noites + upgrade × noites | ✅ `sumUpgradeVaranda` + `calculateWizardTotal` |
 | 5 | Premium âncora: badge + sort no topo (ALD-FAM) | ✅ `premium_ancora` + sort |
-| 6 | Persistir escolha no payload da proposta (auditoria) | ⏳ PR+1 `feat/proposta-payload-upgrade-varanda` |
+| 6 | Persistir escolha no payload da proposta (auditoria) | ✅ `feat/proposta-payload-upgrade-varanda` |
 | — | Arquétipos genéricos → unidades reais Etapa A (ATR-SUV / AQR-FAM / ALD-FAM / KN39H) | ✅ `feat/wizard-etapa-a-arquetipos-atr-suv` |
 
 **Seed local:** `backend/scripts/seed-upgrade-varanda-metadata.mjs` (ATR-SUV/AQR-FAM + ALD-FAM âncora + KN39H→200).

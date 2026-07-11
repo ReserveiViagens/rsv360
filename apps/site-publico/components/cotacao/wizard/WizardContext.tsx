@@ -82,6 +82,10 @@ function sanitizeWizardState(partial: Partial<WizardState>): WizardState {
   merged.children = Math.max(0, Number(merged.children) || 0);
   merged.upgradeVaranda = Boolean(merged.upgradeVaranda);
   merged.upgradeVarandaValor = Math.max(0, Number(merged.upgradeVarandaValor) || 0);
+  merged.selectedArquetipoId =
+    merged.selectedArquetipoId != null ? String(merged.selectedArquetipoId) : null;
+  merged.selectedCodigoExterno =
+    merged.selectedCodigoExterno != null ? String(merged.selectedCodigoExterno) : null;
   const dates = sanitizeWizardDates(merged.checkIn, merged.checkOut);
   merged.checkIn = dates.checkIn;
   merged.checkOut = dates.checkOut;
