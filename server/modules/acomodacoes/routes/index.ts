@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { montarCardsPasso2 } from '@rsv360/shared';
+import { getPinnedCodigosExternos, isEtapaAHotel, montarCardsPasso2 } from '@rsv360/shared';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { publicLimiter } from '../../../middleware/public-limiter';
-import { acomodacoesService } from '../services/acomodacoes.service';
+import {
+  acomodacoesService,
+  mergeDisponiveisParaCards,
+} from '../services/acomodacoes.service';
 import { resolverHotelIdParaAcomodacoes } from '../services/resolve-hotel-id';
 
 const router = Router();
@@ -18,8 +21,8 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
   try {
     const hotelIdRaw = String(req.query.hotelId ?? '');
     const titulo = req.query.titulo != null ? String(req.query.titulo) : undefined;
-    const hospedes = Number(req.query.hospedes ?? 2);
-    const adults = Number(req.query.adults ?? hospedes);
+    const hospedesQuery = Number(req.query.hospedes ?? 2);
+    const adults = Number(req.query.adults ?? hospedesQuery);
     const children = Number(req.query.children ?? 0);
     const perfil = String(req.query.perfil ?? 'casal') as 'familia' | 'casal' | 'aventura';
     const page = Number(req.query.page ?? 1);
@@ -30,15 +33,29 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
 
     const hotelId = await resolverHotelIdParaAcomodacoes(hotelIdRaw, titulo);
 
+    const hospedes = adults + children;
     const listed = await acomodacoesService.listarDisponiveis({
       hotelId,
-      hospedes: adults + children,
+      hospedes,
       page,
     });
 
+    let cardInput = listed.items;
+    if (isEtapaAHotel(hotelId)) {
+      const pinCodigos = getPinnedCodigosExternos(hotelId, perfil, adults, children);
+      if (pinCodigos?.length) {
+        const pinItems = await acomodacoesService.listarPinsPublicadosPorCodigo({
+          hotelId,
+          codigosExternos: pinCodigos,
+          hospedes,
+        });
+        cardInput = mergeDisponiveisParaCards(listed.items, pinItems);
+      }
+    }
+
     const cards =
-      listed.items.length > 0
-        ? montarCardsPasso2(perfil, adults, children, listed.items, hotelId)
+      cardInput.length > 0
+        ? montarCardsPasso2(perfil, adults, children, cardInput, hotelId)
         : [];
 
     res.json({

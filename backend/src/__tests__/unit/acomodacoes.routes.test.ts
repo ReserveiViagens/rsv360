@@ -1,11 +1,16 @@
 const mockListar = jest.fn();
+const mockListarPins = jest.fn();
 const mockAddons = jest.fn();
 
 jest.mock('../../../../server/modules/acomodacoes/services/acomodacoes.service', () => ({
   acomodacoesService: {
     listarDisponiveis: (...args: unknown[]) => mockListar(...args),
+    listarPinsPublicadosPorCodigo: (...args: unknown[]) => mockListarPins(...args),
     listarAddons: (...args: unknown[]) => mockAddons(...args),
   },
+  mergeDisponiveisParaCards: jest.requireActual(
+    '../../../../server/modules/acomodacoes/services/acomodacoes.service',
+  ).mergeDisponiveisParaCards,
 }));
 
 jest.mock('../../../../server/middleware/public-limiter', () => ({
@@ -19,6 +24,7 @@ import { registerAcomodacoesModule } from '../../../../server/modules/acomodacoe
 describe('GET /api/v1/acomodacoes/disponiveis', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockListarPins.mockResolvedValue([]);
     mockListar.mockResolvedValue({
       items: [
         {
