@@ -1,5 +1,6 @@
 import {
   formatRestanteMs,
+  inferirExpiradaComercial,
   isPropostaPosAceite,
   normalizeUrgenciaEstilo,
   propostaAceiteBloqueado,
@@ -44,6 +45,22 @@ describe('proposta-validade-ui', () => {
     it('retorna 00:00:00 quando expirado', () => {
       expect(formatRestanteMs(0)).toBe('00:00:00');
       expect(formatRestanteMs(null)).toBe('00:00:00');
+    });
+  });
+
+  describe('inferirExpiradaComercial', () => {
+    it('sent sem valido_ate não expira (restanteMs null)', () => {
+      expect(inferirExpiradaComercial('sent', false, null, null)).toBe(false);
+    });
+
+    it('sent com prazo vencido expira', () => {
+      expect(inferirExpiradaComercial('sent', false, 0, '2020-01-01T00:00:00.000Z')).toBe(true);
+    });
+
+    it('accepted ignora prazo vencido', () => {
+      expect(inferirExpiradaComercial('accepted', false, 0, '2020-01-01T00:00:00.000Z')).toBe(
+        false,
+      );
     });
   });
 

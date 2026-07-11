@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export { formatRestanteMs, propostaAceiteBloqueado } from '@/lib/proposta-validade-ui';
-import { isPropostaPosAceite } from '@/lib/proposta-validade-ui';
+import { inferirExpiradaComercial } from '@/lib/proposta-validade-ui';
 
 export interface ValidadeApiData {
   validoAte: string | null;
@@ -31,11 +31,20 @@ export function useRoteiroValidade(
   const finalSyncRef = useRef(false);
 
   const applyValidade = useCallback((data: ValidadeApiData) => {
-    const ms = data.restanteMs ?? 0;
-    anchorRef.current = { syncedAt: Date.now(), restanteMs: ms };
-    setRestanteMs(ms);
-    const posAceite = isPropostaPosAceite(data.status);
-    setExpirada(!posAceite && (Boolean(data.expirada) || ms <= 0));
+    const ms = data.restanteMs;
+    const hasPrazo = data.validoAte != null && ms != null;
+
+    if (hasPrazo) {
+      anchorRef.current = { syncedAt: Date.now(), restanteMs: ms };
+      setRestanteMs(ms);
+    } else {
+      anchorRef.current = null;
+      setRestanteMs(null);
+    }
+
+    setExpirada(
+      inferirExpiradaComercial(data.status, Boolean(data.expirada), ms, data.validoAte),
+    );
     setStatus(data.status);
     setValidoAte(data.validoAte ?? null);
     setUrgenciaEstilo(data.urgenciaEstilo);
@@ -77,7 +86,10 @@ export function useRoteiroValidade(
       const remaining = Math.max(0, anchor.restanteMs - (Date.now() - anchor.syncedAt));
       setRestanteMs(remaining);
 
-      if (remaining <= 0 && !isPropostaPosAceite(status)) {
+      if (
+        remaining <= 0 &&
+        inferirExpiradaComercial(status, false, remaining, validoAte)
+      ) {
         setExpirada(true);
         if (!finalSyncRef.current) {
           finalSyncRef.current = true;
@@ -89,7 +101,7 @@ export function useRoteiroValidade(
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [fetchValidade, status, token]);
+  }, [fetchValidade, status, token, validoAte]);
 
   useEffect(() => {
     const intervalMs = options?.fallbackPollIntervalMs ?? 0;

@@ -45,6 +45,22 @@ export function formatRestanteMs(ms: number | null): string {
   return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':');
 }
 
+/**
+ * Inferência client-side de expiração comercial.
+ * Sem valido_ate/restanteMs não assume prazo zerado (evita falso positivo).
+ */
+export function inferirExpiradaComercial(
+  status: string | null | undefined,
+  expiradaServidor: boolean,
+  restanteMs: number | null | undefined,
+  validoAte: string | null | undefined,
+): boolean {
+  if (isPropostaPosAceite(status)) return false;
+  if (expiradaServidor) return true;
+  if (validoAte == null || restanteMs == null) return false;
+  return restanteMs <= 0;
+}
+
 /** Bloqueia aceite/recusa quando expirada (socket, polling ou status no servidor). */
 export function propostaAceiteBloqueado(status: string | undefined, expirada: boolean): boolean {
   if (!status) return expirada;
