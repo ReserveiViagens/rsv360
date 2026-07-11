@@ -6,6 +6,10 @@ import { propostasService } from '../services/propostas.service';
 import { recordPropostaGerada } from '../metrics';
 import { PropostaExpiradaError, isPropostaExpiradaError } from '../proposta-validade';
 import {
+  buildPropostaPublicaResponse,
+  deveRedactarPropostaPublica,
+} from '../proposta-publica-payload';
+import {
   recotarPropostaPorToken,
   isPropostaRecotacaoError,
 } from '../services/proposta-recotacao.service';
@@ -307,9 +311,6 @@ router.get('/:id', optionalJwt, async (req, res) => {
       return res.status(401).json({ success: false, error: 'Autenticação necessária' });
     }
     if (item.isPublica && !req.user) {
-      const { buildPropostaPublicaResponse, deveRedactarPropostaPublica } = await import(
-        '../proposta-publica-payload'
-      );
       if (deveRedactarPropostaPublica(item)) {
         const publica = buildPropostaPublicaResponse(item);
         return res.json({
