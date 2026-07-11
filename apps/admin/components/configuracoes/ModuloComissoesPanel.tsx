@@ -151,7 +151,7 @@ export function ModuloComissoesPanel({ compact = false }: { compact?: boolean })
   };
 
   const handleRejeitarPendente = async () => {
-    await rejeitar.mutateAsync();
+    await rejeitar.mutateAsync({});
     setConfirmouDiffPendente(false);
     setOverrideBaixaConfianca(false);
   };
