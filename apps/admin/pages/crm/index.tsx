@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PageHeader } from '@/components/PageHeader';
 import { StatCard } from '@/components/StatCard';
 import { Card, CardContent } from '@/components/ui/card';
@@ -46,6 +47,19 @@ export default function CRMDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {guests.slice(0, 6).map((guest) => <GuestProfileCard key={guest.id} guest={guest} />)}
       </div>
+      <Card>
+        <CardContent className="space-y-3 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-semibold text-slate-900">Comissões marketplace</p>
+            <Link href="/crm/comissoes" className="text-sm font-medium text-slate-700 underline">
+              Editar percentuais
+            </Link>
+          </div>
+          <p className="text-sm text-slate-600">
+            Split oficial Reservei / RSV360: plataforma 20% · corretor 5% · anfitrião 75%. Ajuste manual ou por IA.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

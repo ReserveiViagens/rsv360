@@ -4,14 +4,33 @@ import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { comissoesLancamento } from '../../../../backend/src/db/schema/comissoes-lancamento';
 import { configuracoesSistema } from '../../../../backend/src/db/schema/configuracoes-sistema';
 import { propostas } from '../../../../backend/src/db/schema/propostas';
+import {
+  COMISSOES_OFICIAL_RESERVEI,
+  comissoesConfigSchema,
+  type ComissoesConfigInput,
+} from '../schema';
 
 const CHAVE_CONFIG = 'comissoes';
 const EVENTO_GERADOR = 'pagamento_confirmado';
+
+export interface RegraComissaoAplicada {
+  fonte: 'manual' | 'ia' | 'oficial_reservei_2026';
+  atualizadoEm: string;
+  motivoIa?: string;
+  marca: string;
+  split: {
+    plataforma: number;
+    corretor: number;
+    proprietario: number;
+  };
+}
 
 export interface ComissoesConfig {
   comissoesModuloAtivo: boolean;
   taxaPlataformaPct: number;
   taxaCorretorPct: number;
+  margemProprietarioPct: number;
+  regraAplicada?: RegraComissaoAplicada;
 }
 
 export interface ComissaoListItem {
@@ -38,6 +57,56 @@ function parsePct(val: unknown, fallback: number) {
   return Number.isFinite(n) && n >= 0 ? n : fallback;
 }
 
+function parseRegraAplicada(raw: unknown): RegraComissaoAplicada | undefined {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const r = raw as Record<string, unknown>;
+  const split = r.split as Record<string, unknown> | undefined;
+  if (!split) return undefined;
+  const plataforma = Number(split.plataforma);
+  const corretor = Number(split.corretor);
+  const proprietario = Number(split.proprietario);
+  if (![plataforma, corretor, proprietario].every((n) => Number.isFinite(n))) return undefined;
+  const fonte = r.fonte;
+  if (fonte !== 'manual' && fonte !== 'ia' && fonte !== 'oficial_reservei_2026') return undefined;
+  return {
+    fonte,
+    atualizadoEm: String(r.atualizado_em ?? r.atualizadoEm ?? new Date().toISOString()),
+    motivoIa: r.motivo_ia != null ? String(r.motivo_ia) : undefined,
+    marca: String(r.marca ?? COMISSOES_OFICIAL_RESERVEI.marca),
+    split: { plataforma, corretor, proprietario },
+  };
+}
+
+function configFromRow(valores: Record<string, unknown>): ComissoesConfig {
+  const taxaPlataformaPct = parsePct(valores.taxa_plataforma_pct, COMISSOES_OFICIAL_RESERVEI.taxaPlataformaPct);
+  const taxaCorretorPct = parsePct(valores.taxa_corretor_pct, COMISSOES_OFICIAL_RESERVEI.taxaCorretorPct);
+  return {
+    comissoesModuloAtivo: valores.comissoes_modulo_ativo === true,
+    taxaPlataformaPct,
+    taxaCorretorPct,
+    margemProprietarioPct: Math.max(0, 100 - taxaPlataformaPct - taxaCorretorPct),
+    regraAplicada: parseRegraAplicada(valores.regra_aplicada),
+  };
+}
+
+function buildRegraAplicada(
+  config: Pick<ComissoesConfigInput, 'taxaPlataformaPct' | 'taxaCorretorPct'>,
+  fonte: RegraComissaoAplicada['fonte'],
+  motivoIa?: string,
+): RegraComissaoAplicada {
+  const proprietario = Math.max(0, 100 - config.taxaPlataformaPct - config.taxaCorretorPct);
+  return {
+    fonte,
+    atualizadoEm: new Date().toISOString(),
+    motivoIa,
+    marca: COMISSOES_OFICIAL_RESERVEI.marca,
+    split: {
+      plataforma: config.taxaPlataformaPct,
+      corretor: config.taxaCorretorPct,
+      proprietario,
+    },
+  };
+}
 function parseMetadata(raw: unknown): Record<string, unknown> {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     return raw as Record<string, unknown>;
@@ -73,11 +142,53 @@ export const comissoesService = {
       .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
       .limit(1);
     const valores = (row?.valores ?? {}) as Record<string, unknown>;
-    return {
-      comissoesModuloAtivo: valores.comissoes_modulo_ativo === true,
-      taxaPlataformaPct: parsePct(valores.taxa_plataforma_pct, 20),
-      taxaCorretorPct: parsePct(valores.taxa_corretor_pct, 5),
+    return configFromRow(valores);
+  },
+
+  async salvarConfig(
+    partial: Partial<ComissoesConfigInput>,
+    opts: { fonte: 'manual' | 'ia'; motivoIa?: string } = { fonte: 'manual' },
+  ): Promise<ComissoesConfig> {
+    const atual = await this.getConfig();
+    const merged = comissoesConfigSchema.parse({
+      comissoesModuloAtivo: partial.comissoesModuloAtivo ?? atual.comissoesModuloAtivo,
+      taxaPlataformaPct: partial.taxaPlataformaPct ?? atual.taxaPlataformaPct,
+      taxaCorretorPct: partial.taxaCorretorPct ?? atual.taxaCorretorPct,
+    });
+
+    const regra = buildRegraAplicada(merged, opts.fonte === 'ia' ? 'ia' : 'manual', opts.motivoIa);
+    const valoresDb = {
+      comissoes_modulo_ativo: merged.comissoesModuloAtivo,
+      taxa_plataforma_pct: merged.taxaPlataformaPct,
+      taxa_corretor_pct: merged.taxaCorretorPct,
+      regra_aplicada: {
+        fonte: regra.fonte,
+        atualizado_em: regra.atualizadoEm,
+        motivo_ia: regra.motivoIa,
+        marca: regra.marca,
+        split: regra.split,
+      },
     };
+
+    const [existing] = await db
+      .select()
+      .from(configuracoesSistema)
+      .where(eq(configuracoesSistema.chave, CHAVE_CONFIG))
+      .limit(1);
+
+    if (existing) {
+      await db
+        .update(configuracoesSistema)
+        .set({ valores: valoresDb, updatedAt: new Date() })
+        .where(eq(configuracoesSistema.chave, CHAVE_CONFIG));
+    } else {
+      await db.insert(configuracoesSistema).values({
+        chave: CHAVE_CONFIG,
+        valores: valoresDb,
+      });
+    }
+
+    return configFromRow(valoresDb);
   },
 
   async listarMinhas(userId: number, page = 1, pageSize = 20) {
