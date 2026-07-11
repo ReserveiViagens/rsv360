@@ -218,7 +218,7 @@ export const ETAPA_A_MAPEAMENTO: readonly EtapaAUnidadeMapeamento[] = [
     hotelId: 'lacqua-diroma',
     quartos: 1,
     capacidadeMax: 5,
-    precoDiariaFlat: 120,
+    precoDiariaFlat: 200,
     tipoTarifario: '1 quarto / até 4',
     upgradeVaranda: false,
     upgradeVarandaRs: null,
