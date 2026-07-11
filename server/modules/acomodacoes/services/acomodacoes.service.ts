@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { wizardAddons } from '../../../../backend/src/db/schema/wizard-addons';
@@ -36,6 +36,51 @@ function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDispon
   };
 }
 
+async function applyTarifaToDisponivel(
+  base: AcomodacaoDisponivel,
+  rowId: number,
+  dataRef: string,
+  categoria: string,
+): Promise<AcomodacaoDisponivel> {
+  try {
+    const tarifa = await tarifaService.resolverTarifa({
+      acomodacaoId: rowId,
+      data: dataRef,
+      categoriaSlug: categoria,
+    });
+    if (tarifa.motorAtivo && tarifa.precoFinal !== tarifa.precoBase) {
+      return { ...base, precoDiaria: tarifa.precoFinal };
+    }
+  } catch {
+    // mantém preco_diaria base
+  }
+  return base;
+}
+
+async function rowsToDisponiveis(
+  rows: (typeof acomodacoes.$inferSelect)[],
+  dataRef: string,
+  categoria: string,
+): Promise<AcomodacaoDisponivel[]> {
+  const items: AcomodacaoDisponivel[] = [];
+  for (const row of rows) {
+    const base = rowToDisponivel(row);
+    items.push(await applyTarifaToDisponivel(base, row.id, dataRef, categoria));
+  }
+  return items;
+}
+
+/** Pins Etapa A fora da página corrente — merge sem duplicar id na montagem de cards. */
+export function mergeDisponiveisParaCards(
+  pagina: AcomodacaoDisponivel[],
+  pins: AcomodacaoDisponivel[],
+): AcomodacaoDisponivel[] {
+  const byId = new Map<number, AcomodacaoDisponivel>();
+  for (const item of pins) byId.set(item.id, item);
+  for (const item of pagina) byId.set(item.id, item);
+  return [...byId.values()];
+}
+
 export const acomodacoesService = {
   async listarDisponiveis(input: ListarAcomodacoesInput) {
     const page = Math.max(1, input.page ?? 1);
@@ -66,26 +111,43 @@ export const acomodacoesService = {
     const dataRef =
       input.dataReferencia ?? new Date().toISOString().slice(0, 10);
     const categoria = input.categoriaSlug ?? 'padrao';
-
-    const items: AcomodacaoDisponivel[] = [];
-    for (const row of rows) {
-      const base = rowToDisponivel(row);
-      try {
-        const tarifa = await tarifaService.resolverTarifa({
-          acomodacaoId: row.id,
-          data: dataRef,
-          categoriaSlug: categoria,
-        });
-        if (tarifa.motorAtivo && tarifa.precoFinal !== tarifa.precoBase) {
-          base.precoDiaria = tarifa.precoFinal;
-        }
-      } catch {
-        // mantém preco_diaria base
-      }
-      items.push(base);
-    }
+    const items = await rowsToDisponiveis(rows, dataRef, categoria);
 
     return { items, total, page, pageSize };
+  },
+
+  /**
+   * Unidades pinadas Etapa A (query separada, sem paginação) para montagem de cards.
+   * Respeita publicado/ativo, hotel e capacidade mínima para hóspedes.
+   */
+  async listarPinsPublicadosPorCodigo(input: {
+    hotelId: string;
+    codigosExternos: readonly string[];
+    hospedes: number;
+    dataReferencia?: string;
+    categoriaSlug?: string;
+  }): Promise<AcomodacaoDisponivel[]> {
+    const codigos = [...new Set(input.codigosExternos.filter(Boolean))];
+    if (codigos.length === 0) return [];
+
+    const hospedes = Math.max(1, Number(input.hospedes) || 1);
+    const dataRef = input.dataReferencia ?? new Date().toISOString().slice(0, 10);
+    const categoria = input.categoriaSlug ?? 'padrao';
+
+    const rows = await db
+      .select()
+      .from(acomodacoes)
+      .where(
+        and(
+          eq(acomodacoes.hotelId, input.hotelId),
+          eq(acomodacoes.ativo, true),
+          eq(acomodacoes.statusPublicacao, 'publicado'),
+          inArray(acomodacoes.codigoExterno, codigos),
+          gte(acomodacoes.capacidadeMax, hospedes),
+        ),
+      );
+
+    return rowsToDisponiveis(rows, dataRef, categoria);
   },
 
   async findById(id: number) {
