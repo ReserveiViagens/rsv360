@@ -1,4 +1,13 @@
 #!/usr/bin/env node
+/**
+ * Smoke Passo 2 — listagem publicada + leak de rascunho (hotéis legado).
+ *
+ * Requer DATABASE_URL (ex.: Postgres local :5433).
+ *
+ * Execução local (imports .ts — usar tsx, não node puro):
+ *   cd backend && npm run smoke:wizard-passo2
+ *   # ou: npx tsx scripts/smoke-wizard-passo2.mjs
+ */
 import 'dotenv/config';
 import { acomodacoesService } from '../../server/modules/acomodacoes/services/acomodacoes.service.ts';
 import { and, eq, inArray, sql } from 'drizzle-orm';
