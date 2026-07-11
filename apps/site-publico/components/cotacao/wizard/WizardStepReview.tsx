@@ -26,6 +26,58 @@ function toCatalogPayload(items: AvailabilityItem[]) {
   }));
 }
 
+/** Payload explícito — sem spread do state (evita vazar upgradeVarandaValor / suiteUpgrade). */
+function buildGerarPropostaBody(
+  state: WizardState,
+  catalog: { hotels: AvailabilityItem[]; tickets: AvailabilityItem[]; attractions: AvailabilityItem[] },
+  total: number,
+  turnstileToken?: string,
+) {
+  return {
+    checkIn: state.checkIn,
+    checkOut: state.checkOut,
+    adults: state.adults,
+    children: state.children,
+    hotelId: state.hotelId,
+    ticketIds: state.ticketIds,
+    attractionIds: state.attractionIds,
+    breakfastId: state.breakfastId,
+    accommodationMode: state.accommodationMode,
+    accommodationKitId: state.accommodationKitId,
+    accommodationItemIds: state.accommodationItemIds,
+    name: state.name,
+    email: state.email,
+    phone: state.phone,
+    notes: state.notes,
+    paymentMethod: state.paymentMethod,
+    profile: state.profile,
+    travelInsurance: state.travelInsurance,
+    hotelOnlyFlow: state.hotelOnlyFlow,
+    selectedAcomodacaoId: state.selectedAcomodacaoId,
+    wizardAddonIds: state.wizardAddonIds,
+    upgradeVaranda: state.upgradeVaranda,
+    total,
+    turnstileToken: turnstileToken || undefined,
+    catalog: {
+      hotels: toCatalogPayload(
+        catalog.hotels.filter(
+          (h) => h.id === state.hotelId || h.contentId === state.hotelId,
+        ),
+      ),
+      tickets: toCatalogPayload(
+        catalog.tickets.filter((t) =>
+          state.ticketIds.some((id) => id === t.id || id === t.contentId),
+        ),
+      ),
+      attractions: toCatalogPayload(
+        catalog.attractions.filter((a) =>
+          state.attractionIds.some((id) => id === a.id || id === a.contentId),
+        ),
+      ),
+    },
+  };
+}
+
 function validateBeforeSubmit(state: WizardState): { ok: true } | { ok: false; message: string } {
   if (!state.checkIn || !state.checkOut) {
     return { ok: false, message: 'Informe check-in e check-out antes de confirmar.' };
@@ -106,28 +158,7 @@ export function WizardStepReview() {
       const res = await fetch('/api/cotacao/gerar-proposta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...state,
-          total: runningTotal,
-          turnstileToken: turnstileToken || undefined,
-          catalog: {
-            hotels: toCatalogPayload(
-              catalog.hotels.filter(
-                (h) => h.id === state.hotelId || h.contentId === state.hotelId,
-              ),
-            ),
-            tickets: toCatalogPayload(
-              catalog.tickets.filter((t) =>
-                state.ticketIds.some((id) => id === t.id || id === t.contentId),
-              ),
-            ),
-            attractions: toCatalogPayload(
-              catalog.attractions.filter((a) =>
-                state.attractionIds.some((id) => id === a.id || id === a.contentId),
-              ),
-            ),
-          },
-        }),
+        body: JSON.stringify(buildGerarPropostaBody(state, catalog, runningTotal, turnstileToken)),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {

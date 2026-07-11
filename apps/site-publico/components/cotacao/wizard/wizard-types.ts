@@ -51,6 +51,8 @@ export interface WizardState {
   ref?: string | null;
   canal?: string | null;
   selectedAcomodacaoId: number | null;
+  selectedArquetipoId: string | null;
+  selectedCodigoExterno: string | null;
   wizardAddonIds: number[];
   /** Upgrade varanda por unidade (ATR-SUV / AQR-FAM). */
   upgradeVaranda: boolean;
@@ -94,6 +96,8 @@ export const initialWizardState: WizardState = {
   paymentMethod: 'pix',
   profile: 'casal',
   selectedAcomodacaoId: null,
+  selectedArquetipoId: null,
+  selectedCodigoExterno: null,
   wizardAddonIds: [],
   upgradeVaranda: false,
   upgradeVarandaValor: 0,

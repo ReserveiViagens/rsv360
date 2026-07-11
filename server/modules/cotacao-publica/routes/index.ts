@@ -7,6 +7,7 @@ import { isPropostaExpiradaError } from '../../propostas/proposta-validade';
 import { publicLimiter } from '../../../middleware/public-limiter';
 import { isRoteiroInteligenteEnabled } from '../services/montar-roteiro';
 import { listRoteiroAtracoes } from '../services/roteiro-atracoes.service';
+import { parseGerarPropostaBody } from '../schemas/gerar-proposta.schema';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
 
 const router = Router();
@@ -78,10 +79,10 @@ router.post('/lead-abandono', publicLimiter, async (req, res) => {
 });
 
 router.post('/gerar-proposta', publicLimiter, requireTurnstile, async (req, res) => {
-  console.log('[cotacao-publica] Payload recebido:', req.body);
   try {
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown';
-    const data = await cotacaoPublicaService.gerarProposta(req.body, ip);
+    const payload = parseGerarPropostaBody(req.body);
+    const data = await cotacaoPublicaService.gerarProposta(payload, ip);
     res.status(201).json({ success: true, data });
   } catch (error) {
     const err = error as Error;

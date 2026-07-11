@@ -159,6 +159,8 @@ export function WizardStepHotel() {
     updateState({
       hotelId: selected,
       selectedAcomodacaoId: null,
+      selectedArquetipoId: null,
+      selectedCodigoExterno: null,
       suiteUpgrade: selected ? state.suiteUpgrade : false,
       upgradeVaranda: false,
       upgradeVarandaValor: 0,
@@ -173,6 +175,8 @@ export function WizardStepHotel() {
     const canUpgrade = acc.upgradeVarandaDisponivel === true;
     updateState({
       selectedAcomodacaoId: Number(acc.id),
+      selectedArquetipoId: null,
+      selectedCodigoExterno: null,
       upgradeVaranda: canUpgrade ? state.upgradeVaranda : false,
       upgradeVarandaValor: canUpgrade ? Number(acc.upgradeVarandaValor ?? 80) : 0,
     });
