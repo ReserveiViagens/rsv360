@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building2, ChevronDown, Map, Sparkles } from 'lucide-react';
 import type { CardArquetipoPasso2 } from '@rsv360/shared';
-import { formatAcomodacaoConfigLabel } from '@rsv360/shared';
+import { formatAcomodacaoConfigLabel, getEtapaAUnidade } from '@rsv360/shared';
 import { trackCotacaoEvent } from '@/lib/cotacao-analytics';
 import {
   AMENIDADE_ICONS,
@@ -172,19 +172,23 @@ export function WizardStepHotel() {
 
   const selectArquetipo = (card: CardArquetipoPasso2) => {
     const acc = card.acomodacao;
-    const canUpgrade = acc.upgradeVarandaDisponivel === true;
+    const rawCodigo = acc.codigoExterno;
+    const unit = rawCodigo ? getEtapaAUnidade(rawCodigo) : undefined;
+    if (!unit) return;
+
+    const canUpgrade = unit.upgradeVaranda === true;
     updateState({
       selectedAcomodacaoId: Number(acc.id),
-      selectedArquetipoId: card.arquetipo.id,
-      selectedCodigoExterno: acc.codigoExterno ?? null,
+      selectedArquetipoId: unit.codigoExterno.toLowerCase(),
+      selectedCodigoExterno: unit.codigoExterno,
       upgradeVaranda: canUpgrade ? state.upgradeVaranda : false,
-      upgradeVarandaValor: canUpgrade ? Number(acc.upgradeVarandaValor ?? 80) : 0,
+      upgradeVarandaValor: canUpgrade ? Number(unit.upgradeVarandaRs ?? 80) : 0,
     });
     trackCotacaoEvent('cotacao_item_selected', {
       itemType: 'acomodacao_arquetipo',
       itemId: card.acomodacao.id,
       price: card.acomodacao.precoDiaria,
-      lastAction: card.arquetipo.id,
+      lastAction: unit.codigoExterno.toLowerCase(),
     });
   };
 
