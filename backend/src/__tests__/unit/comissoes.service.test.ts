@@ -5,14 +5,28 @@ const mockSelectWhere = jest.fn(() => ({ limit: mockSelectLimit }));
 const mockSelectFrom = jest.fn(() => ({ where: mockSelectWhere }));
 const mockSelect = jest.fn(() => ({ from: mockSelectFrom }));
 
-const mockInsertReturning = jest.fn().mockResolvedValue([{ id: 99 }]);
-const mockInsertValues = jest.fn(() => ({ returning: mockInsertReturning }));
+const mockUpdateWhere = jest.fn().mockResolvedValue(undefined);
+const mockUpdateSet = jest.fn(() => ({ where: mockUpdateWhere }));
+const mockUpdate = jest.fn(() => ({ set: mockUpdateSet }));
+
+const mockInsertValues = jest.fn().mockResolvedValue(undefined);
 const mockInsert = jest.fn(() => ({ values: mockInsertValues }));
+
+const mockInsertReturning = jest.fn().mockResolvedValue([{ id: 99 }]);
+const mockInsertLancValues = jest.fn(() => ({ returning: mockInsertReturning }));
+const mockInsertLanc = jest.fn(() => ({ values: mockInsertLancValues }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect(...args),
-    insert: (...args: unknown[]) => mockInsert(...args),
+    insert: (...args: unknown[]) => {
+      const stack = new Error().stack ?? '';
+      if (stack.includes('gerarLancamentos') || stack.includes('comissoesLancamento')) {
+        return mockInsertLanc(...args);
+      }
+      return mockInsert(...args);
+    },
+    update: (...args: unknown[]) => mockUpdate(...args),
   },
 }));
 
@@ -46,6 +60,7 @@ describe('comissoes.service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSelectLimit.mockResolvedValue([]);
+    mockUpdateWhere.mockResolvedValue(undefined);
   });
 
   describe('calcularSplitComissoes', () => {
@@ -76,6 +91,81 @@ describe('comissoes.service', () => {
         .mockResolvedValueOnce([{ id: 1, status: 'accepted', valorTotal: '1000.00', metadata: { acomodacaoId: 10 } }]);
       const result = await comissoesService.gerarLancamentos(1);
       expect(result).toEqual({ generated: false, reason: 'proposta_not_paid' });
+    });
+  });
+
+  describe('governança IA', () => {
+    it('aprovarSugestao bloqueia mesmo usuário (duas etapas)', async () => {
+      mockSelectLimit.mockResolvedValueOnce([
+        {
+          valores: {
+            taxa_plataforma_pct: 20,
+            taxa_corretor_pct: 5,
+            sugestao_pendente: {
+              taxa_plataforma_pct: 18,
+              taxa_corretor_pct: 7,
+              margem_proprietario_pct: 75,
+              fonte: 'heuristica',
+              confianca: 0.82,
+              motivo: 'teste',
+              solicitado_por_user_id: 1,
+              solicitado_em: new Date().toISOString(),
+              status: 'pendente_aprovacao',
+            },
+          },
+        },
+      ]);
+
+      await expect(
+        comissoesService.aprovarSugestao(1, { confirmouDiff: true }),
+      ).rejects.toThrow('outro administrador');
+    });
+
+    it('aprovarSugestao bloqueia baixa confiança sem override', async () => {
+      mockSelectLimit.mockResolvedValueOnce([
+        {
+          valores: {
+            taxa_plataforma_pct: 20,
+            taxa_corretor_pct: 5,
+            sugestao_pendente: {
+              taxa_plataforma_pct: 22,
+              taxa_corretor_pct: 5,
+              margem_proprietario_pct: 73,
+              fonte: 'heuristica',
+              confianca: 0.6,
+              motivo: 'baixa',
+              solicitado_por_user_id: 1,
+              solicitado_em: new Date().toISOString(),
+              status: 'pendente_aprovacao',
+            },
+          },
+        },
+      ]);
+
+      await expect(
+        comissoesService.aprovarSugestao(2, { confirmouDiff: true }),
+      ).rejects.toThrow('Override explícito');
+    });
+
+    it('solicitarAprovacao persiste sugestao_pendente', async () => {
+      mockSelectLimit
+        .mockResolvedValueOnce([{ valores: { taxa_plataforma_pct: 20, taxa_corretor_pct: 5 } }])
+        .mockResolvedValueOnce([{ valores: { taxa_plataforma_pct: 20, taxa_corretor_pct: 5 } }]);
+
+      const result = await comissoesService.solicitarAprovacao(
+        {
+          taxaPlataformaPct: 18,
+          taxaCorretorPct: 7,
+          fonte: 'heuristica',
+          confianca: 0.82,
+          motivo: 'Captar corretores',
+        },
+        5,
+      );
+
+      expect(result.sugestaoPendente?.taxaPlataformaPct).toBe(18);
+      expect(result.sugestaoPendente?.solicitadoPorUserId).toBe(5);
+      expect(mockUpdate).toHaveBeenCalled();
     });
   });
 });

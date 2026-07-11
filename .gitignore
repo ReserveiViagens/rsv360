@@ -147,3 +147,12 @@ backend/data/
 # CMS vitrine uploads (disco local; nao versionar binarios)
 backend/public/uploads/hoteis/*
 !backend/public/uploads/hoteis/.gitkeep
+
+# Assets e scripts ad hoc de fotos (nao fazem parte do produto)
+fotos/
+scripts/download-vitrine-photos.mjs
+scripts/list-image-urls.mjs
+scripts/process-vitrine-photos.mjs
+
+# Artefatos E2E gerados localmente
+tests/e2e/tests/
