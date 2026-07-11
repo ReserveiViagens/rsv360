@@ -14,5 +14,5 @@ rsv360_id,codigo_externo,titulo,hotel_id,quartos,capacidade_max,preco_diaria_fla
 20,DRF-1Q,Apto 1 Quarto,diroma-fiori,1,5,394,1 quarto / até 4,não,,não,Precificado,
 21,SDC-2Q,Apto 2 Quartos,sol-das-caldas,2,7,360,2 quartos / até 6,não,,não,Precificado,
 22,DAP-2Q,Apto 2 Quartos com Churrasqueira,diroma-acqua-park,2,6,280,2 quartos / até 6,não,,não,Precificado,
-27,KN39H,Lacqua diRoma IV Apto 196,lacqua-diroma,1,5,120,1 quarto / até 4,não,,não,Precificado,Alvo tarifário baixa R$200; flat DB ainda R$120 até UPDATE
+27,KN39H,Lacqua diRoma IV Apto 196,lacqua-diroma,1,5,200,1 quarto / até 4,não,,não,Precificado,decisao owner 9 jul — preco R$200 confirmado
 419,VC-APTO-409-GOLDEN-DOLPHIN-SUPREME,Apto 409 Golden Dolphin Supreme,golden-dolphin-supreme,1,4,405,Premium / varanda,não,,não,Precificado,
