@@ -40,6 +40,22 @@ export function useAtualizarAnfitriaoUnidade(id: number) {
   });
 }
 
+export function useAnfitriaoReservas(de: string, ate: string, acomodacaoId?: number) {
+  return useQuery({
+    queryKey: ['anfitriao', 'reservas', de, ate, acomodacaoId],
+    queryFn: () => fase1Api.anfitriaoReservas(de, ate, acomodacaoId),
+    enabled: Boolean(de && ate),
+  });
+}
+
+export function useAnfitriaoCalendario(id: number, de: string, ate: string) {
+  return useQuery({
+    queryKey: ['anfitriao', 'calendario', id, de, ate],
+    queryFn: () => fase1Api.anfitriaoCalendario(id, de, ate),
+    enabled: Number.isFinite(id) && id > 0 && Boolean(de && ate),
+  });
+}
+
 export function useEnviarAprovacaoUnidade(id: number) {
   const qc = useQueryClient();
   return useMutation({
