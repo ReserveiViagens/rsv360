@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
-import AnfitriaoRoleGuard from '../../../components/AnfitriaoRoleGuard';
-import { AnfitriaoMonthCalendar, type CalendarioDiaView } from '../../../components/anfitriao/AnfitriaoMonthCalendar';
+import AnfitriaoRoleGuard from '../../../../components/AnfitriaoRoleGuard';
+import { AnfitriaoMonthCalendar, type CalendarioDiaView } from '../../../../components/anfitriao/AnfitriaoMonthCalendar';
+import { useAnfitriaoCalendario } from '@/hooks/useAnfitriao';
 import { fase1Api } from '@/lib/fase1-api';
 
 export default function AnfitriaoDisponibilidadePage() {
@@ -14,35 +15,31 @@ export default function AnfitriaoDisponibilidadePage() {
   const id = Number(router.query.id);
   const [de, setDe] = useState(() => format(startOfMonth(new Date()), 'yyyy-MM-dd'));
   const [ate, setAte] = useState(() => format(endOfMonth(new Date()), 'yyyy-MM-dd'));
-  const [dias, setDias] = useState<CalendarioDiaView[]>([]);
+  const periodKey = `${id}|${de}|${ate}`;
+  const [activePeriod, setActivePeriod] = useState(periodKey);
+  const [overrides, setOverrides] = useState<Record<string, CalendarioDiaView>>({});
   const [msg, setMsg] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  if (activePeriod !== periodKey) {
+    setActivePeriod(periodKey);
+    setOverrides({});
+  }
+
+  const { data, isLoading, isError, error, refetch, isFetching } = useAnfitriaoCalendario(id, de, ate);
+  const serverDias = useMemo(
+    () => (data?.data ?? []) as CalendarioDiaView[],
+    [data?.data],
+  );
+  const loading = isLoading || isFetching;
+
+  const dias = useMemo(() => {
+    return serverDias.map((d) => overrides[d.data] ?? d);
+  }, [serverDias, overrides]);
 
   const pendentesSalvar = useMemo(() => {
     return dias.filter((d) => d.estado !== 'reservado');
   }, [dias]);
-
-  async function carregar() {
-    if (!id) return;
-    setLoading(true);
-    setErro(null);
-    try {
-      const res = await fase1Api.anfitriaoCalendario(id, de, ate);
-      const data = (res.data ?? []) as CalendarioDiaView[];
-      setDias(data);
-      setMsg(`${data.length} dia(s) no período.`);
-    } catch (e) {
-      setErro((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (id) void carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, de, ate]);
 
   async function salvar() {
     if (!id) return;
@@ -55,7 +52,8 @@ export default function AnfitriaoDisponibilidadePage() {
     try {
       await fase1Api.salvarAnfitriaoDisponibilidade(id, payload);
       setMsg('Calendário salvo.');
-      await carregar();
+      setOverrides({});
+      await refetch();
     } catch (e) {
       setErro((e as Error).message);
     }
@@ -63,23 +61,21 @@ export default function AnfitriaoDisponibilidadePage() {
 
   function toggleDia(data: string, estadoAtual: CalendarioDiaView['estado']) {
     if (estadoAtual === 'reservado') return;
-    setDias((prev) => {
-      const i = prev.findIndex((d) => d.data === data);
-      const nextEstado = estadoAtual === 'livre' ? 'bloqueado' : 'livre';
-      const next: CalendarioDiaView = {
+    const nextEstado = estadoAtual === 'livre' ? 'bloqueado' : 'livre';
+    setOverrides((prev) => ({
+      ...prev,
+      [data]: {
         data,
         estado: nextEstado,
         disponivel: nextEstado === 'livre',
         readOnly: false,
-      };
-      if (i >= 0) {
-        const copy = [...prev];
-        copy[i] = next;
-        return copy;
-      }
-      return [...prev, next];
-    });
+      },
+    }));
   }
+
+  const statusMsg =
+    msg ??
+    (serverDias.length > 0 && !loading ? `${serverDias.length} dia(s) no período.` : null);
 
   return (
     <AnfitriaoRoleGuard>
@@ -117,7 +113,7 @@ export default function AnfitriaoDisponibilidadePage() {
             </label>
             <button
               type="button"
-              onClick={() => void carregar()}
+              onClick={() => void refetch()}
               disabled={loading}
               className="rounded bg-slate-800 px-3 py-1 text-sm text-white disabled:opacity-50"
             >
@@ -139,7 +135,10 @@ export default function AnfitriaoDisponibilidadePage() {
             <AnfitriaoMonthCalendar dias={dias} onToggleDia={toggleDia} />
           </div>
 
-          {msg && <p className="mt-4 text-sm text-slate-600">{msg}</p>}
+          {isError && (
+            <p className="mt-4 text-sm text-red-600">{(error as Error)?.message || 'Erro ao carregar calendário'}</p>
+          )}
+          {statusMsg && <p className="mt-4 text-sm text-slate-600">{statusMsg}</p>}
           {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
         </div>
       </div>

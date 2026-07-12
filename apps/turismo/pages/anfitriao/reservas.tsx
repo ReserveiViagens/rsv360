@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import AnfitriaoRoleGuard from '../../components/AnfitriaoRoleGuard';
-import { fase1Api } from '@/lib/fase1-api';
+import { useAnfitriaoReservas } from '@/hooks/useAnfitriao';
 
 interface ReservaItem {
   propostaId: number;
@@ -32,27 +32,9 @@ export default function AnfitriaoReservasPage() {
     d.setMonth(d.getMonth() + 2);
     return d.toISOString().slice(0, 10);
   });
-  const [items, setItems] = useState<ReservaItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
-
-  async function carregar() {
-    setLoading(true);
-    setErro(null);
-    try {
-      const res = await fase1Api.anfitriaoReservas(de, ate);
-      setItems((res.data ?? []) as ReservaItem[]);
-    } catch (e) {
-      setErro((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [de, ate]);
+  const { data, isLoading, isError, error, refetch, isFetching } = useAnfitriaoReservas(de, ate);
+  const items = (data?.data ?? []) as ReservaItem[];
+  const loading = isLoading || isFetching;
 
   return (
     <AnfitriaoRoleGuard>
@@ -80,7 +62,7 @@ export default function AnfitriaoReservasPage() {
             </label>
             <button
               type="button"
-              onClick={() => void carregar()}
+              onClick={() => void refetch()}
               disabled={loading}
               className="rounded bg-slate-800 px-3 py-1 text-sm text-white"
             >
@@ -88,7 +70,7 @@ export default function AnfitriaoReservasPage() {
             </button>
           </div>
 
-          {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+          {isError && <p className="mt-4 text-sm text-red-600">{(error as Error)?.message || 'Erro ao carregar reservas'}</p>}
 
           <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
             <table className="min-w-full text-sm">
