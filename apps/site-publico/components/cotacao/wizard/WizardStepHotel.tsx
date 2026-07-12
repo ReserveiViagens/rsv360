@@ -87,6 +87,10 @@ export function WizardStepHotel() {
         perfil: state.profile,
       });
       if (hotelTitulo) params.set('titulo', hotelTitulo);
+      if (state.checkIn && state.checkOut) {
+        params.set('checkIn', state.checkIn);
+        params.set('checkOut', state.checkOut);
+      }
       const res = await fetch(`/api/cotacao/acomodacoes/disponiveis?${params}`);
       const json = await res.json();
       if (res.ok && json.success) {
@@ -102,7 +106,7 @@ export function WizardStepHotel() {
     } finally {
       setLoadingAcomod(false);
     }
-  }, [hotelRef, hotelTitulo, state.adults, state.children, state.profile]);
+  }, [hotelRef, hotelTitulo, state.adults, state.children, state.profile, state.checkIn, state.checkOut]);
 
   useEffect(() => {
     void loadAcomodacoes();
@@ -213,6 +217,9 @@ export function WizardStepHotel() {
 
   const guests = state.adults + state.children;
   const showArquetipos = !fallbackHotelUnico && arquetipoCards.length > 0 && state.hotelId;
+  const datasPreenchidas = Boolean(state.checkIn && state.checkOut);
+  const semUnidadesNoPeriodo =
+    datasPreenchidas && state.hotelId && !loadingAcomod && arquetipoCards.length === 0;
 
   return (
     <div className="space-y-4">
@@ -352,6 +359,16 @@ export function WizardStepHotel() {
 
       {loadingAcomod && state.hotelId && (
         <p className="text-center text-sm text-muted-foreground">Carregando opções de acomodação…</p>
+      )}
+
+      {semUnidadesNoPeriodo && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Nenhuma unidade disponível para o período{' '}
+          <strong>
+            {formatDateBR(state.checkIn)} a {formatDateBR(state.checkOut)}
+          </strong>
+          . Tente outras datas ou outro hotel.
+        </div>
       )}
 
       {showArquetipos && (

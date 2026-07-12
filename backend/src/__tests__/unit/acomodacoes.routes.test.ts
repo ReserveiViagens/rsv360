@@ -71,4 +71,35 @@ describe('GET /api/v1/acomodacoes/disponiveis', () => {
     expect(res.body.data.fallbackHotelUnico).toBe(false);
     expect(res.body.data.cards.length).toBeGreaterThan(0);
   });
+
+  it('repassa checkIn/checkOut ao service quando informados', async () => {
+    const app = express();
+    registerAcomodacoesModule(app);
+
+    const res = await request(app).get(
+      '/api/v1/acomodacoes/disponiveis?hotelId=h1&adults=2&children=0&perfil=casal&checkIn=2026-08-01&checkOut=2026-08-05',
+    );
+
+    expect(res.status).toBe(200);
+    expect(mockListar).toHaveBeenCalledWith(
+      expect.objectContaining({
+        hotelId: 'h1',
+        checkIn: '2026-08-01',
+        checkOut: '2026-08-05',
+      }),
+    );
+    expect(res.body.success).toBe(true);
+  });
+
+  it('retorna 400 quando apenas checkIn informado', async () => {
+    const app = express();
+    registerAcomodacoesModule(app);
+
+    const res = await request(app).get(
+      '/api/v1/acomodacoes/disponiveis?hotelId=h1&adults=2&children=0&perfil=casal&checkIn=2026-08-01',
+    );
+
+    expect(res.status).toBe(400);
+    expect(mockListar).not.toHaveBeenCalled();
+  });
 });
