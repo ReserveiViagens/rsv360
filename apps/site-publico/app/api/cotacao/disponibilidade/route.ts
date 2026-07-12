@@ -96,6 +96,17 @@ function mapHubTicket(o: HubOferta, nights: number, guests: number): Availabilit
   return enrichImages(checkAvailability(item, guests, nights), FALLBACK_IMAGES.ticket);
 }
 
+function parseTaxaHospedePublicaConfig(raw: unknown): TaxaHospedePublicaConfig | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const o = raw as Record<string, unknown>;
+  if (o.ativa !== true) return null;
+  const pct = Number(o.pct);
+  const nome = typeof o.nome === 'string' ? o.nome.trim().slice(0, 120) : '';
+  const descricao = typeof o.descricao === 'string' ? o.descricao.trim().slice(0, 500) : '';
+  if (!Number.isFinite(pct) || pct < 0 || pct > 10 || !nome) return null;
+  return { ativa: true, pct, nome, descricao };
+}
+
 async function fetchTaxaHospedePublica(): Promise<TaxaHospedePublicaConfig | null> {
   const backendUrl =
     process.env.BACKEND_INTERNAL_URL ||
@@ -107,8 +118,8 @@ async function fetchTaxaHospedePublica(): Promise<TaxaHospedePublicaConfig | nul
       { cache: 'no-store' },
     );
     if (!res.ok) return null;
-    const json = await res.json();
-    return json.data ?? null;
+    const json = (await res.json()) as { data?: unknown };
+    return parseTaxaHospedePublicaConfig(json.data);
   } catch {
     return null;
   }
