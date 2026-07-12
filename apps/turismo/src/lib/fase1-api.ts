@@ -193,6 +193,43 @@ export const fase1Api = {
       body: JSON.stringify({ dias }),
     }),
 
+  anfitriaoBulkBloquear: (id: number, datas: string[], observacao?: string) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade/bloquear`, {
+      method: 'POST',
+      body: JSON.stringify({ datas, observacao }),
+    }),
+
+  anfitriaoBulkDesbloquear: (id: number, datas: string[]) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade/desbloquear`, {
+      method: 'POST',
+      body: JSON.stringify({ datas }),
+    }),
+
+  anfitriaoAjustarPreco: (id: number, datas: string[], preco: number | null) =>
+    fetchJson(`/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade/preco`, {
+      method: 'POST',
+      body: JSON.stringify({ datas, preco }),
+    }),
+
+  anfitriaoCalendarioAgregado: (de: string, ate: string) =>
+    fetchJson<{
+      success: boolean;
+      data: {
+        data: Array<{
+          acomodacaoId: number;
+          titulo: string;
+          hotelId: string;
+          dias: Array<{
+            data: string;
+            estado: 'livre' | 'bloqueado' | 'reservado';
+            precoOverride: string | null;
+          }>;
+        }>;
+        de: string;
+        ate: string;
+      };
+    }>(`/api/v1/acomodacoes/anfitriao/calendario?de=${de}&ate=${ate}`),
+
   importPreview: async (file: File) => {
     const form = new FormData();
     form.append('file', file);
