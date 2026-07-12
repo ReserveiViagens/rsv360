@@ -60,16 +60,25 @@ function WizardContent() {
           adults: String(state.adults),
           children: String(state.children),
         });
-        const res = await fetch(`/api/cotacao/disponibilidade?${params}`);
+        const [res, taxaRes] = await Promise.all([
+          fetch(`/api/cotacao/disponibilidade?${params}`),
+          fetch('/api/cotacao/taxa-hospede-publica'),
+        ]);
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Erro ao verificar disponibilidade');
+
+        let taxaHospedePublica = null;
+        if (taxaRes.ok) {
+          const taxaJson = await taxaRes.json();
+          taxaHospedePublica = taxaJson.data ?? null;
+        }
 
         const nextCatalog: WizardCatalog = {
           hotels: json.data?.hotels ?? [],
           tickets: json.data?.tickets ?? [],
           attractions: json.data?.attractions ?? [],
           configuracoesPainel: json.data?.configuracoesPainel,
-          taxaHospedePublica: json.data?.taxaHospedePublica ?? null,
+          taxaHospedePublica,
         };
         setCatalog(nextCatalog);
 
