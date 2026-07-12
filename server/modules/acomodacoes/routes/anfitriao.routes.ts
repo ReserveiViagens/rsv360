@@ -113,6 +113,56 @@ router.post('/admin/unidades/:id/rejeitar', ...staffAprovacao, async (req, res) 
   }
 });
 
+router.get('/reservas', ...parceiroAuth, async (req, res) => {
+  try {
+    const de = String(req.query.de ?? '');
+    const ate = String(req.query.ate ?? '');
+    if (!de || !ate) {
+      return res.status(400).json({ success: false, error: 'de e ate são obrigatórios' });
+    }
+    const acomodacaoId = req.query.acomodacaoId != null ? Number(req.query.acomodacaoId) : undefined;
+    const result = await anfitriaoService.listarReservas(authFromReq(req), {
+      de,
+      ate,
+      acomodacaoId: Number.isFinite(acomodacaoId) ? acomodacaoId : undefined,
+    });
+    if ('error' in result) {
+      if (result.error === 'forbidden') {
+        return res.status(403).json({ success: false, error: 'Acesso negado' });
+      }
+      return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+    }
+    res.json({ success: true, data: result.data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/unidades/:id/calendario', ...parceiroAuth, async (req, res) => {
+  try {
+    const de = String(req.query.de ?? '');
+    const ate = String(req.query.ate ?? '');
+    if (!de || !ate) {
+      return res.status(400).json({ success: false, error: 'de e ate são obrigatórios' });
+    }
+    const result = await anfitriaoService.obterCalendarioUnidade(
+      authFromReq(req),
+      Number(req.params.id),
+      de,
+      ate,
+    );
+    if ('error' in result) {
+      if (result.error === 'forbidden') {
+        return res.status(403).json({ success: false, error: 'Acesso negado' });
+      }
+      return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+    }
+    res.json({ success: true, data: result.data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.get('/unidades/:id/disponibilidade', ...parceiroAuth, async (req, res) => {
   try {
     const de = String(req.query.de ?? '');
@@ -154,6 +204,12 @@ router.put('/unidades/:id/disponibilidade', ...parceiroAuth, async (req, res) =>
     }
     if (result.error === 'limit_exceeded') {
       return res.status(400).json({ success: false, error: 'Máximo 50 dias por requisição' });
+    }
+    if (result.error === 'day_reserved') {
+      return res.status(403).json({
+        success: false,
+        error: 'Dia reservado não pode ser alterado pelo anfitrião',
+      });
     }
     res.json({ success: true, data: result });
   } catch (error) {

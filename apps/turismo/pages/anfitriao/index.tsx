@@ -23,6 +23,9 @@ export default function AnfitriaoDashboardPage() {
               <Link href="/anfitriao/unidades" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">
                 Minhas unidades
               </Link>
+              <Link href="/anfitriao/reservas" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
+                Reservas
+              </Link>
               <Link href="/anfitriao/importar" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Importar
               </Link>
