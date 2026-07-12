@@ -56,6 +56,14 @@ export function useAnfitriaoCalendario(id: number, de: string, ate: string) {
   });
 }
 
+export function useAnfitriaoCalendarioAgregado(de: string, ate: string) {
+  return useQuery({
+    queryKey: ['anfitriao', 'calendario-agregado', de, ate],
+    queryFn: () => fase1Api.anfitriaoCalendarioAgregado(de, ate),
+    enabled: Boolean(de && ate),
+  });
+}
+
 export function useEnviarAprovacaoUnidade(id: number) {
   const qc = useQueryClient();
   return useMutation({

@@ -1,5 +1,6 @@
 import { Router, type Request } from 'express';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
+import { normalizarListaDatas } from '../services/anfitriao-bulk.util';
 import { anfitriaoService } from '../services/anfitriao.service';
 
 const router = Router();
@@ -113,6 +114,20 @@ router.post('/admin/unidades/:id/rejeitar', ...staffAprovacao, async (req, res) 
   }
 });
 
+router.get('/calendario', ...parceiroAuth, async (req, res) => {
+  try {
+    const de = String(req.query.de ?? '');
+    const ate = String(req.query.ate ?? '');
+    if (!de || !ate) {
+      return res.status(400).json({ success: false, error: 'de e ate são obrigatórios' });
+    }
+    const data = await anfitriaoService.obterCalendarioAgregado(authFromReq(req), de, ate);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
+});
+
 router.get('/reservas', ...parceiroAuth, async (req, res) => {
   try {
     const de = String(req.query.de ?? '');
@@ -209,6 +224,115 @@ router.put('/unidades/:id/disponibilidade', ...parceiroAuth, async (req, res) =>
       return res.status(403).json({
         success: false,
         error: 'Dia reservado não pode ser alterado pelo anfitrião',
+      });
+    }
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/unidades/:id/disponibilidade/bloquear', ...parceiroAuth, async (req, res) => {
+  try {
+    const parsed = normalizarListaDatas(req.body?.datas);
+    if ('error' in parsed) {
+      return res.status(400).json({ success: false, error: parsed.error });
+    }
+    const result = await anfitriaoService.bulkBloquearDatas(
+      authFromReq(req),
+      Number(req.params.id),
+      parsed.datas,
+      req.body?.observacao != null ? String(req.body.observacao) : undefined,
+    );
+    if (result.error === 'forbidden') {
+      return res.status(403).json({ success: false, error: 'Acesso negado' });
+    }
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+    }
+    if (result.error === 'limit_exceeded') {
+      return res.status(400).json({ success: false, error: 'Máximo 50 datas por requisição' });
+    }
+    if (result.error === 'day_reserved_conflict') {
+      return res.status(409).json({
+        success: false,
+        error: 'Não é possível bloquear dia já reservado',
+      });
+    }
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/unidades/:id/disponibilidade/desbloquear', ...parceiroAuth, async (req, res) => {
+  try {
+    const parsed = normalizarListaDatas(req.body?.datas);
+    if ('error' in parsed) {
+      return res.status(400).json({ success: false, error: parsed.error });
+    }
+    const result = await anfitriaoService.bulkDesbloquearDatas(
+      authFromReq(req),
+      Number(req.params.id),
+      parsed.datas,
+    );
+    if (result.error === 'forbidden') {
+      return res.status(403).json({ success: false, error: 'Acesso negado' });
+    }
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+    }
+    if (result.error === 'limit_exceeded') {
+      return res.status(400).json({ success: false, error: 'Máximo 50 datas por requisição' });
+    }
+    if (result.error === 'day_reserved') {
+      return res.status(403).json({
+        success: false,
+        error: 'Dia reservado não pode ser desbloqueado pelo anfitrião',
+      });
+    }
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.post('/unidades/:id/disponibilidade/preco', ...parceiroAuth, async (req, res) => {
+  try {
+    const parsed = normalizarListaDatas(req.body?.datas);
+    if ('error' in parsed) {
+      return res.status(400).json({ success: false, error: parsed.error });
+    }
+    const precoRaw = req.body?.preco;
+    const preco =
+      precoRaw === null || precoRaw === undefined || precoRaw === ''
+        ? null
+        : Number(precoRaw);
+    if (preco != null && !Number.isFinite(preco)) {
+      return res.status(400).json({ success: false, error: 'preco inválido' });
+    }
+    const result = await anfitriaoService.ajustarPrecoDatas(
+      authFromReq(req),
+      Number(req.params.id),
+      parsed.datas,
+      preco,
+    );
+    if (result.error === 'forbidden') {
+      return res.status(403).json({ success: false, error: 'Acesso negado' });
+    }
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
+    }
+    if (result.error === 'limit_exceeded') {
+      return res.status(400).json({ success: false, error: 'Máximo 50 datas por requisição' });
+    }
+    if (result.error === 'invalid_price') {
+      return res.status(400).json({ success: false, error: 'preco inválido' });
+    }
+    if (result.error === 'day_reserved') {
+      return res.status(403).json({
+        success: false,
+        error: 'Dia reservado não pode receber preço especial',
       });
     }
     res.json({ success: true, data: result });
