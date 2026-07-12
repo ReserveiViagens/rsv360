@@ -1,4 +1,4 @@
-import { calcularSplitComissoes } from '../../../../server/modules/comissoes/services/comissoes.service';
+import { calcularSplitComissoes, comissoesService, simularComissoes } from '../../../../server/modules/comissoes/services/comissoes.service';
 
 const mockSelectLimit = jest.fn();
 const mockSelectWhere = jest.fn(() => ({ limit: mockSelectLimit }));
@@ -54,8 +54,6 @@ jest.mock('drizzle-orm', () => ({
   desc: (x: unknown) => x,
 }));
 
-import { comissoesService } from '../../../../server/modules/comissoes/services/comissoes.service';
-
 describe('comissoes.service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -75,6 +73,43 @@ describe('comissoes.service', () => {
       const split = calcularSplitComissoes(1000, { taxaPlataformaPct: 20, taxaCorretorPct: 5 }, { temCorretor: false });
       expect(split.corretor.valor).toBe(0);
       expect(split.proprietario).toEqual({ percentual: 80, valor: 800 });
+    });
+
+    it('split 18/5/77 referência com residual', () => {
+      const split = calcularSplitComissoes(1000, { taxaPlataformaPct: 18, taxaCorretorPct: 5 }, { temCorretor: true });
+      expect(split.proprietario.valor).toBe(770);
+    });
+  });
+
+  describe('getConfig taxa hóspede', () => {
+    it('flag ON com pct ausente no jsonb usa default 2%', async () => {
+      mockSelectLimit.mockResolvedValueOnce([{ valores: { taxa_hospede_ativa: true } }]);
+      const config = await comissoesService.getConfig();
+      expect(config.taxaHospedeAtiva).toBe(true);
+      expect(config.taxaHospedePct).toBe(2);
+    });
+  });
+
+  describe('simularComissoes', () => {
+    it('referência 1000 com taxa 2% e split 18/5', () => {
+      const config = {
+        comissoesModuloAtivo: false,
+        taxaPlataformaPct: 18,
+        taxaCorretorPct: 5,
+        margemProprietarioPct: 77,
+        taxaHospedePct: 2,
+        taxaHospedeAtiva: true,
+        taxaHospedeNome: 'Taxa de Segurança e Tecnologia',
+        taxaHospedeDescricao: 'teste',
+        governanca: { confiancaMinima: 0.75, aprovacaoDuasEtapas: true },
+      };
+      const result = simularComissoes(
+        { valor: 1000, temCorretor: true, preview: false },
+        config,
+      );
+      expect(result.totalHospede).toBe(1020);
+      expect(result.plataformaTotal).toEqual({ split: 180, taxa: 20, total: 200 });
+      expect(result.splitSobreBase.proprietario.valor).toBe(770);
     });
   });
 

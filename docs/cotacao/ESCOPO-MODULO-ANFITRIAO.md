@@ -246,6 +246,19 @@ Login redirect: `anfitriao`/`corretor` → `/anfitriao`; staff → `/dashboard`.
   - Integrar `isDataBloqueada` no fluxo de reserva (anti-overbooking por data).
   - Backfill Stays (preencher `codigo_pms`) — execução controlada após validação/approvação.
 
+### 11.8 Taxa hóspede + split 18/5/77 (jul 2026)
+
+- **Taxa de Segurança e Tecnologia**: 2% sobre base elegível (diárias hotel + upgrade varanda + wizard add-ons); **exclui** ingressos, kit `accommodation`, seguro, taxa parque (repasse).
+- **Flags independentes** (jsonb `configuracoes_sistema.chave=comissoes`):
+  - `taxa_hospede_ativa` — liga/desliga linha no wizard/proposta (nasce `false`).
+  - `taxa_plataforma_pct` / `taxa_corretor_pct` — split via governança PR #60 (`competir_otas` → 18/5/77).
+  - `comissoes_modulo_ativo` — MVP-B (Mercado Pago), permanece `false`.
+- **Ativação explícita** (staging/prod): UPDATE com `taxa_hospede_ativa: true` **e** `taxa_hospede_pct: 2` (snake_case).
+- **Snapshot** imutável em `propostas.metadata`: `taxaHospedePct`, `taxaHospedeValor`, `taxaHospedeBase`, `taxaHospedeNome`, `taxaHospedeDescricao`.
+- **Split** roda sobre base **sem** a taxa; taxa 100% plataforma. MVP-B: papel `plataforma_taxa` em `comissoes_lancamento`.
+- **Estorno** da taxa em cancelamento: **PENDENTE** (decisão MVP-B).
+- **Simulador**: `GET /api/v1/comissoes/simular?valor=&temCorretor=` (overrides preview: admin/manager).
+
 ---
 
 ## 10. Plano de execução Cursor (§12)

@@ -299,8 +299,20 @@ export function PropostaPublica({
           <ul className="space-y-2">
             {itens.map((item, i) => (
               <li key={i} className="flex justify-between border-b border-slate-100 py-2 text-sm">
-                <span>{String(item.descricao ?? item.nome ?? `Item ${i + 1}`)}</span>
-                {item.valor != null && <span>{formatCurrency(String(item.valor), proposta.moeda)}</span>}
+                <span>
+                  {String(item.descricao ?? item.nome ?? `Item ${i + 1}`)}
+                  {item.categoria === 'taxa_hospede' && proposta.metadata && typeof proposta.metadata === 'object' ? (
+                    <span
+                      className="ml-1 text-slate-400"
+                      title={String((proposta.metadata as Record<string, unknown>).taxaHospedeDescricao ?? '')}
+                    >
+                      ⓘ
+                    </span>
+                  ) : null}
+                </span>
+                {(item.valor != null || item.precoTotal != null) && (
+                  <span>{formatCurrency(String(item.valor ?? item.precoTotal), proposta.moeda)}</span>
+                )}
               </li>
             ))}
           </ul>

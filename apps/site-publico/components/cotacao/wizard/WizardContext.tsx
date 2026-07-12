@@ -26,7 +26,7 @@ import {
   wizardMinNightsLabel,
 } from './wizard-date-utils';
 import { updateProfileFromGuests } from './wizard-behavior';
-import { calculateWizardTotal } from './wizard-pricing';
+import { calculateWizardPricingBreakdown } from './wizard-pricing';
 import {
   initialWizardState,
   TOTAL_STEPS,
@@ -55,6 +55,7 @@ interface WizardContextValue {
   goToStep: (step: number) => void;
   resetWizard: (options?: { silent?: boolean }) => void;
   runningTotal: number;
+  pricingBreakdown: ReturnType<typeof calculateWizardPricingBreakdown>;
   availabilityLoading: boolean;
   setAvailabilityLoading: (v: boolean) => void;
   availabilityError: string | null;
@@ -289,7 +290,11 @@ export function WizardProvider({ children, bootstrap }: WizardProviderProps) {
     });
   }, []);
 
-  const runningTotal = useMemo(() => calculateWizardTotal(state, catalog), [state, catalog]);
+  const pricingBreakdown = useMemo(
+    () => calculateWizardPricingBreakdown(state, catalog, [], catalog.taxaHospedePublica),
+    [state, catalog],
+  );
+  const runningTotal = pricingBreakdown.totalFinal;
 
   const nextStep = useCallback((): boolean => {
     const err = validateStep(currentStep, state);
@@ -432,6 +437,7 @@ export function WizardProvider({ children, bootstrap }: WizardProviderProps) {
       goToStep,
       resetWizard,
       runningTotal,
+      pricingBreakdown,
       availabilityLoading,
       setAvailabilityLoading,
       availabilityError,
@@ -458,6 +464,7 @@ export function WizardProvider({ children, bootstrap }: WizardProviderProps) {
       goToStep,
       resetWizard,
       runningTotal,
+      pricingBreakdown,
       availabilityLoading,
       availabilityError,
       submitting,

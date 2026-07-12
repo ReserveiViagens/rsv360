@@ -9,6 +9,7 @@ import { isRoteiroInteligenteEnabled } from '../services/montar-roteiro';
 import { listRoteiroAtracoes } from '../services/roteiro-atracoes.service';
 import { parseGerarPropostaBody } from '../schemas/gerar-proposta.schema';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
+import { obterTaxaHospedePublica } from '../services/resolve-taxa-hospede-proposta';
 
 const router = Router();
 
@@ -22,6 +23,15 @@ function statusForGerarPropostaError(message: string): number {
 
 router.get('/health', (_req, res) => {
   res.json({ module: 'cotacao-publica', status: 'ok' });
+});
+
+router.get('/taxa-hospede-publica', publicLimiter, async (_req, res) => {
+  try {
+    const taxaHospedePublica = await obterTaxaHospedePublica();
+    res.json({ success: true, data: taxaHospedePublica });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
 });
 
 router.post('/buscar-ofertas', async (req, res) => {
