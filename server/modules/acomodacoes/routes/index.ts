@@ -6,6 +6,7 @@ import {
   acomodacoesService,
   mergeDisponiveisParaCards,
 } from '../services/acomodacoes.service';
+import { parsePeriodoEstadiaOpcional } from '../services/listar-disponiveis-calendario.util';
 import { resolverHotelIdParaAcomodacoes } from '../services/resolve-hotel-id';
 
 const router = Router();
@@ -33,11 +34,21 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
 
     const hotelId = await resolverHotelIdParaAcomodacoes(hotelIdRaw, titulo);
 
+    const periodo = parsePeriodoEstadiaOpcional(
+      req.query.checkIn != null ? String(req.query.checkIn) : undefined,
+      req.query.checkOut != null ? String(req.query.checkOut) : undefined,
+    );
+    if (periodo && 'error' in periodo) {
+      return res.status(400).json({ success: false, error: periodo.error });
+    }
+
     const hospedes = adults + children;
     const listed = await acomodacoesService.listarDisponiveis({
       hotelId,
       hospedes,
       page,
+      checkIn: periodo?.checkIn,
+      checkOut: periodo?.checkOut,
     });
 
     let cardInput = listed.items;
@@ -48,6 +59,8 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
           hotelId,
           codigosExternos: pinCodigos,
           hospedes,
+          checkIn: periodo?.checkIn,
+          checkOut: periodo?.checkOut,
         });
         cardInput = mergeDisponiveisParaCards(listed.items, pinItems);
       }
