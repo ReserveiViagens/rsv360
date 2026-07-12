@@ -163,6 +163,27 @@ export const fase1Api = {
       `/api/v1/acomodacoes/anfitriao/unidades/${id}/disponibilidade?de=${de}&ate=${ate}`,
     ),
 
+  anfitriaoCalendario: (id: number, de: string, ate: string) =>
+    fetchJson<{
+      success: boolean;
+      data: Array<{
+        data: string;
+        estado: 'livre' | 'bloqueado' | 'reservado';
+        disponivel: boolean;
+        precoOverride: string | null;
+        observacao: string | null;
+        readOnly: boolean;
+      }>;
+    }>(`/api/v1/acomodacoes/anfitriao/unidades/${id}/calendario?de=${de}&ate=${ate}`),
+
+  anfitriaoReservas: (de: string, ate: string, acomodacaoId?: number) => {
+    const qs = new URLSearchParams({ de, ate });
+    if (acomodacaoId != null) qs.set('acomodacaoId', String(acomodacaoId));
+    return fetchJson<{ success: boolean; data: unknown[] }>(
+      `/api/v1/acomodacoes/anfitriao/reservas?${qs.toString()}`,
+    );
+  },
+
   salvarAnfitriaoDisponibilidade: (
     id: number,
     dias: Array<{ data: string; disponivel: boolean; precoOverride?: string; observacao?: string }>,
