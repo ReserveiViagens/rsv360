@@ -77,6 +77,7 @@ export interface GerarPropostaPayload {
   upgradeVaranda?: boolean;
   arquetipoId?: string;
   codigoExterno?: string;
+  wizardAddonIds?: number[];
   catalog?: {
     hotels?: CatalogItemPayload[];
     tickets?: CatalogItemPayload[];

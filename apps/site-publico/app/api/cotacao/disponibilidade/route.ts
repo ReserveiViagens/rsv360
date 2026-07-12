@@ -9,6 +9,7 @@ import {
   countNights,
   type AvailabilityItem,
   type CotacaoPanelConfig,
+  type TaxaHospedePublicaConfig,
 } from '@/components/cotacao/wizard/wizard-types';
 
 const FALLBACK_IMAGES = {
@@ -95,6 +96,24 @@ function mapHubTicket(o: HubOferta, nights: number, guests: number): Availabilit
   return enrichImages(checkAvailability(item, guests, nights), FALLBACK_IMAGES.ticket);
 }
 
+async function fetchTaxaHospedePublica(): Promise<TaxaHospedePublicaConfig | null> {
+  const backendUrl =
+    process.env.BACKEND_INTERNAL_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    'http://localhost:3002';
+  try {
+    const res = await fetch(
+      `${backendUrl.replace(/\/$/, '')}/api/v1/cotacao-publica/taxa-hospede-publica`,
+      { cache: 'no-store' },
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchFromHub(
   checkIn: string,
   checkOut: string,
@@ -158,6 +177,7 @@ export async function GET(request: NextRequest) {
     }
 
     const hubData = await fetchFromHub(checkIn, checkOut, guests);
+    const taxaHospedePublica = await fetchTaxaHospedePublica();
 
     const [hotelsRaw, ticketsRaw, attractionsRaw] = await Promise.all([
       getWebsiteContent('hotels').catch(() => []),
@@ -255,6 +275,7 @@ export async function GET(request: NextRequest) {
           disparoAutomatizadoCaldasAi: true,
           delayDisparoMinutos: 120,
         },
+        taxaHospedePublica,
       },
       meta: { checkIn, checkOut, guests, nights },
     });

@@ -10,6 +10,7 @@ import {
   montarDailyScheduleAsync,
   type GerarPropostaPayload,
 } from './montar-roteiro';
+import { resolveTaxaHospedeProposta } from './resolve-taxa-hospede-proposta';
 import { resolveUpgradeVarandaProposta } from './validar-upgrade-varanda-proposta';
 import { fireHotLeadNotify } from './hot-lead-notify.service';
 import { buildPropostaPublicaResponse } from '../../propostas/proposta-publica-payload';
@@ -108,8 +109,17 @@ export class CotacaoPublicaService {
     const dailySchedule = await montarDailyScheduleAsync(payloadResolvido);
     const itensData = buildOrcamentoItens(payloadResolvido);
 
+    const taxaHospedeResolvida = await resolveTaxaHospedeProposta(
+      payloadResolvido,
+      itensData,
+      itensData.length,
+    );
+    if (taxaHospedeResolvida) {
+      itensData.push(taxaHospedeResolvida.linhaOrcamento);
+    }
+
     const subtotal = itensData.reduce((sum, i) => sum + parseFloat(i.precoTotal), 0);
-    const total = payload.total ?? subtotal;
+    const total = taxaHospedeResolvida ? subtotal : (payload.total ?? subtotal);
 
     const orcamento = await orcamentosService.create({
       titulo,
@@ -130,6 +140,7 @@ export class CotacaoPublicaService {
         paymentMethod: payload.paymentMethod,
         origem: 'cotacao-wizard-v2',
         ...acomodacaoSnapshot,
+        ...(taxaHospedeResolvida?.snapshot ?? {}),
       },
     });
 
@@ -201,6 +212,7 @@ export class CotacaoPublicaService {
           hotelId: payload.hotelId != null ? String(payload.hotelId) : undefined,
           acomodacaoId: acomodacaoId ?? undefined,
           ...acomodacaoSnapshot,
+          ...(taxaHospedeResolvida?.snapshot ?? {}),
         },
         updatedAt: new Date(),
       })

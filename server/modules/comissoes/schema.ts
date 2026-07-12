@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TAXA_HOSPEDE_DEFAULT_RESERVEI } from '@rsv360/shared';
 
 /** Split oficial Reservei Viagens / RSV360 (modelo NTX marketplace Caldas). */
 export const COMISSOES_OFICIAL_RESERVEI = {
@@ -6,14 +7,20 @@ export const COMISSOES_OFICIAL_RESERVEI = {
   taxaCorretorPct: 5,
   marca: 'Reservei Viagens / RSV360',
   notas:
-    'Plataforma RSV360 20% · Corretor Reservei 5% · Anfitrião residual 75% (80% sem corretor).',
+    'Plataforma RSV360 20% (split 18% + taxa hóspede 2% quando ativa) · Corretor Reservei 5% · Anfitrião residual 75% (80% sem corretor). Governança #60 para 18/5/77.',
 } as const;
+
+export { TAXA_HOSPEDE_DEFAULT_RESERVEI };
 
 export const comissoesConfigSchema = z
   .object({
     comissoesModuloAtivo: z.boolean(),
     taxaPlataformaPct: z.number().min(0).max(100),
     taxaCorretorPct: z.number().min(0).max(100),
+    taxaHospedePct: z.number().min(0).max(10).optional().default(TAXA_HOSPEDE_DEFAULT_RESERVEI.taxaHospedePct),
+    taxaHospedeAtiva: z.boolean().optional().default(false),
+    taxaHospedeNome: z.string().max(120).optional(),
+    taxaHospedeDescricao: z.string().max(500).optional(),
   })
   .refine((d) => d.taxaPlataformaPct + d.taxaCorretorPct <= 100, {
     message: 'A soma plataforma + corretor não pode exceder 100%',
@@ -65,3 +72,24 @@ export const comissoesRejeitarSugestaoSchema = z.object({
 });
 
 export type ComissoesRejeitarSugestaoInput = z.infer<typeof comissoesRejeitarSugestaoSchema>;
+
+export const comissoesSimularQuerySchema = z.object({
+  valor: z.coerce.number().positive(),
+  temCorretor: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => v !== 'false'),
+  taxaPlataformaPct: z.coerce.number().min(0).max(100).optional(),
+  taxaCorretorPct: z.coerce.number().min(0).max(100).optional(),
+  taxaHospedePct: z.coerce.number().min(0).max(10).optional(),
+  taxaHospedeAtiva: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => v === 'true'),
+  preview: z
+    .enum(['true', 'false', '1', '0'])
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+});
+
+export type ComissoesSimularQueryInput = z.infer<typeof comissoesSimularQuerySchema>;

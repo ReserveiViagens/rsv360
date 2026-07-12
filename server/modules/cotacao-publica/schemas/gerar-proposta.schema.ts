@@ -18,6 +18,12 @@ export const gerarPropostaBodySchema = z.preprocess(
     if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
     const raw = { ...(body as Record<string, unknown>) };
     delete raw.upgradeVarandaValor;
+    delete raw.taxaHospedeValor;
+    delete raw.taxaHospedePct;
+    delete raw.taxa_hospede_valor;
+    delete raw.taxa_hospede_pct;
+    delete raw.taxaHospedeAtiva;
+    delete raw.taxa_hospede_ativa;
     return raw;
   },
   z

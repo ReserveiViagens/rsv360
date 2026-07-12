@@ -5,7 +5,11 @@ import {
 } from '@/lib/cotacao-catalog';
 import type { AvailabilityItem, WizardCatalog, WizardState } from './wizard-types';
 import { countNights } from './wizard-types';
-import { sumUpgradeVaranda } from '@rsv360/shared';
+import {
+  calcularBaseElegivelTaxa,
+  calcularTaxaHospede,
+  sumUpgradeVaranda,
+} from '@rsv360/shared';
 
 function findItem(catalog: WizardCatalog, type: string, id: number | string | null): AvailabilityItem | undefined {
   if (id == null) return undefined;
@@ -57,6 +61,82 @@ export function sumWizardAddons(
     }
   }
   return total;
+}
+
+export interface TaxaHospedePublica {
+  ativa: boolean;
+  pct: number;
+  nome: string;
+  descricao: string;
+}
+
+export interface WizardPricingBreakdown {
+  subtotal: number;
+  baseElegivel: number;
+  taxaHospede: number;
+  taxaHospedePct: number;
+  taxaHospedeNome: string;
+  taxaHospedeDescricao: string;
+  taxaAtiva: boolean;
+  totalFinal: number;
+}
+
+export function buildWizardBaseElegivelItens(
+  state: WizardState,
+  catalog: WizardCatalog,
+  addons: WizardAddonPricing[] = [],
+): { itens: { categoria: string; precoTotal: number }[]; addonTotal: number } {
+  const nights = Math.max(countNights(state.checkIn, state.checkOut), 1);
+  const guests = state.adults + state.children;
+  const itens: { categoria: string; precoTotal: number }[] = [];
+  const hotel = findItem(catalog, 'hotel', state.hotelId);
+  if (hotel) {
+    itens.push({ categoria: 'hotel', precoTotal: hotel.price * nights });
+    const upgradeTotal = sumUpgradeVaranda(state.upgradeVaranda, state.upgradeVarandaValor, nights);
+    if (upgradeTotal > 0) {
+      itens.push({ categoria: 'hotel', precoTotal: upgradeTotal });
+    }
+  }
+  const addonTotal =
+    state.wizardAddonIds.length > 0 && addons.length > 0
+      ? sumWizardAddons(addons, state.wizardAddonIds, nights, guests)
+      : 0;
+  return { itens, addonTotal };
+}
+
+export function calculateWizardPricingBreakdown(
+  state: WizardState,
+  catalog: WizardCatalog,
+  addons: WizardAddonPricing[] = [],
+  taxaPublica?: TaxaHospedePublica | null,
+): WizardPricingBreakdown {
+  const subtotal = calculateWizardTotal(state, catalog, addons);
+  const taxaAtiva = taxaPublica?.ativa === true;
+  if (!taxaAtiva) {
+    return {
+      subtotal,
+      baseElegivel: 0,
+      taxaHospede: 0,
+      taxaHospedePct: 0,
+      taxaHospedeNome: '',
+      taxaHospedeDescricao: '',
+      taxaAtiva: false,
+      totalFinal: subtotal,
+    };
+  }
+  const { itens, addonTotal } = buildWizardBaseElegivelItens(state, catalog, addons);
+  const baseElegivel = calcularBaseElegivelTaxa(itens, addonTotal);
+  const taxa = calcularTaxaHospede(baseElegivel, taxaPublica.pct, true);
+  return {
+    subtotal,
+    baseElegivel,
+    taxaHospede: taxa.valor,
+    taxaHospedePct: taxa.pct,
+    taxaHospedeNome: taxaPublica.nome,
+    taxaHospedeDescricao: taxaPublica.descricao,
+    taxaAtiva: true,
+    totalFinal: subtotal + taxa.valor,
+  };
 }
 
 export function calculateWizardTotal(
