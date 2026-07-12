@@ -63,6 +63,10 @@ const nextConfig = {
         source: '/uploads/:path*',
         destination: `${backend.replace(/\/$/, '')}/uploads/:path*`,
       },
+      {
+        source: '/api/cotacao/taxa-hospede-publica',
+        destination: `${backend.replace(/\/$/, '')}/api/v1/cotacao-publica/taxa-hospede-publica`,
+      },
     ];
   },
   turbopack: {
