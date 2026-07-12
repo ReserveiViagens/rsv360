@@ -24,6 +24,30 @@ import { WizardStepItinerary } from './WizardStepItinerary';
 import { WizardStepReview } from './WizardStepReview';
 import type { WizardCatalog } from './wizard-types';
 import { isValidWizardRange, wizardMinNightsLabel } from './wizard-date-utils';
+import {
+  parseTaxaHospedePublicaFields,
+  taxaHospedePublicaLiteral,
+} from '@/lib/taxa-hospede-publica-parse';
+import type { TaxaHospedePublicaConfig } from './wizard-types';
+
+function safeApiError(raw: unknown, fallback: string): string {
+  if (typeof raw !== 'string') return fallback;
+  const trimmed = raw.trim();
+  if (!trimmed) return fallback;
+  return trimmed.slice(0, 200);
+}
+
+async function fetchTaxaHospedePublicaSafe(): Promise<TaxaHospedePublicaConfig | null> {
+  try {
+    const taxaRes = await fetch('/api/cotacao/taxa-hospede-publica');
+    if (!taxaRes.ok) return null;
+    const taxaJson = (await taxaRes.json()) as { data?: unknown };
+    const parsed = parseTaxaHospedePublicaFields(taxaJson.data);
+    return parsed ? taxaHospedePublicaLiteral(parsed) : null;
+  } catch {
+    return null;
+  }
+}
 
 function WizardContent() {
   const {
@@ -60,17 +84,18 @@ function WizardContent() {
           adults: String(state.adults),
           children: String(state.children),
         });
-        const [res, taxaRes] = await Promise.all([
-          fetch(`/api/cotacao/disponibilidade?${params}`),
-          fetch('/api/cotacao/taxa-hospede-publica'),
+        const [dispResult, taxaHospedePublica] = await Promise.all([
+          fetch(`/api/cotacao/disponibilidade?${params}`).then(async (res) => {
+            const json = await res.json();
+            return { res, json };
+          }),
+          fetchTaxaHospedePublicaSafe(),
         ]);
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || 'Erro ao verificar disponibilidade');
-
-        let taxaHospedePublica = null;
-        if (taxaRes.ok) {
-          const taxaJson = await taxaRes.json();
-          taxaHospedePublica = taxaJson.data ?? null;
+        const { res, json } = dispResult;
+        if (!res.ok) {
+          throw new Error(
+            safeApiError(json.error, 'Erro ao verificar disponibilidade'),
+          );
         }
 
         const nextCatalog: WizardCatalog = {
@@ -100,7 +125,7 @@ function WizardContent() {
           });
         }
       } catch (err) {
-        const msg = (err as Error).message || 'Falha na disponibilidade';
+        const msg = safeApiError((err as Error).message, 'Falha na disponibilidade');
         setAvailabilityError(msg);
         toast.error(msg, { description: 'Usando catálogo estático como fallback.' });
         try {

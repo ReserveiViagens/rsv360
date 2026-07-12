@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import type { TaxaHospedePublicaConfig } from '@/components/cotacao/wizard/wizard-types';
-
-const taxaHospedePublicaSchema = z.object({
-  ativa: z.literal(true),
-  pct: z.number().finite().min(0).max(10),
-  nome: z.string().trim().min(1).max(120),
-  descricao: z.string().trim().max(500),
-});
+import {
+  parseTaxaHospedePublicaFields,
+  taxaHospedePublicaLiteral,
+} from '@/lib/taxa-hospede-publica-parse';
 
 function backendBase(): string {
   return (
@@ -15,12 +10,6 @@ function backendBase(): string {
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     'http://localhost:3002'
   ).replace(/\/$/, '');
-}
-
-function parseTaxaHospedePublica(raw: unknown): TaxaHospedePublicaConfig | null {
-  const parsed = taxaHospedePublicaSchema.safeParse(raw);
-  if (!parsed.success) return null;
-  return parsed.data;
 }
 
 export async function GET() {
@@ -32,8 +21,20 @@ export async function GET() {
       return NextResponse.json({ success: true, data: null });
     }
     const json = (await res.json()) as { data?: unknown };
-    const data = parseTaxaHospedePublica(json.data);
-    return NextResponse.json({ success: true, data });
+    const parsed = parseTaxaHospedePublicaFields(json.data);
+    if (!parsed) {
+      return NextResponse.json({ success: true, data: null });
+    }
+    const literal = taxaHospedePublicaLiteral(parsed);
+    return NextResponse.json({
+      success: true,
+      data: {
+        ativa: literal.ativa,
+        pct: literal.pct,
+        nome: literal.nome,
+        descricao: literal.descricao,
+      },
+    });
   } catch (error) {
     console.error('[taxa-hospede-publica]', error);
     return NextResponse.json({ success: true, data: null });
