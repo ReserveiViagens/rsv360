@@ -9,7 +9,6 @@ import {
   countNights,
   type AvailabilityItem,
   type CotacaoPanelConfig,
-  type TaxaHospedePublicaConfig,
 } from '@/components/cotacao/wizard/wizard-types';
 
 const FALLBACK_IMAGES = {
@@ -96,35 +95,6 @@ function mapHubTicket(o: HubOferta, nights: number, guests: number): Availabilit
   return enrichImages(checkAvailability(item, guests, nights), FALLBACK_IMAGES.ticket);
 }
 
-function parseTaxaHospedePublicaConfig(raw: unknown): TaxaHospedePublicaConfig | null {
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-  const o = raw as Record<string, unknown>;
-  if (o.ativa !== true) return null;
-  const pct = Number(o.pct);
-  const nome = typeof o.nome === 'string' ? o.nome.trim().slice(0, 120) : '';
-  const descricao = typeof o.descricao === 'string' ? o.descricao.trim().slice(0, 500) : '';
-  if (!Number.isFinite(pct) || pct < 0 || pct > 10 || !nome) return null;
-  return { ativa: true, pct, nome, descricao };
-}
-
-async function fetchTaxaHospedePublica(): Promise<TaxaHospedePublicaConfig | null> {
-  const backendUrl =
-    process.env.BACKEND_INTERNAL_URL ||
-    process.env.NEXT_PUBLIC_BACKEND_URL ||
-    'http://localhost:3002';
-  try {
-    const res = await fetch(
-      `${backendUrl.replace(/\/$/, '')}/api/v1/cotacao-publica/taxa-hospede-publica`,
-      { cache: 'no-store' },
-    );
-    if (!res.ok) return null;
-    const json = (await res.json()) as { data?: unknown };
-    return parseTaxaHospedePublicaConfig(json.data);
-  } catch {
-    return null;
-  }
-}
-
 async function fetchFromHub(
   checkIn: string,
   checkOut: string,
@@ -188,7 +158,6 @@ export async function GET(request: NextRequest) {
     }
 
     const hubData = await fetchFromHub(checkIn, checkOut, guests);
-    const taxaHospedePublica = await fetchTaxaHospedePublica();
 
     const [hotelsRaw, ticketsRaw, attractionsRaw] = await Promise.all([
       getWebsiteContent('hotels').catch(() => []),
@@ -286,7 +255,6 @@ export async function GET(request: NextRequest) {
           disparoAutomatizadoCaldasAi: true,
           delayDisparoMinutos: 120,
         },
-        taxaHospedePublica,
       },
       meta: { checkIn, checkOut, guests, nights },
     });
