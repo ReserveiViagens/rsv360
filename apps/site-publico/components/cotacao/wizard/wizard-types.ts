@@ -27,6 +27,13 @@ export interface CotacaoPanelConfig {
   delayDisparoMinutos: number;
 }
 
+export interface TaxaHospedePublicaConfig {
+  ativa: boolean;
+  pct: number;
+  nome: string;
+  descricao: string;
+}
+
 export interface WizardState {
   checkIn: string;
   checkOut: string;
@@ -65,6 +72,7 @@ export interface WizardCatalog {
   tickets: AvailabilityItem[];
   attractions: AvailabilityItem[];
   configuracoesPainel?: CotacaoPanelConfig;
+  taxaHospedePublica?: TaxaHospedePublicaConfig | null;
 }
 
 export const WIZARD_STORAGE_KEY = 'rsv360-cotacao-wizard-v2';

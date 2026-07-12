@@ -1,4 +1,11 @@
 import { and, desc, eq } from 'drizzle-orm';
+import {
+  calcularPlataformaTotal,
+  calcularSplitComissoesCentavos,
+  calcularTaxaHospede,
+  resolveTaxaHospedePct,
+  TAXA_HOSPEDE_DEFAULT_RESERVEI,
+} from '@rsv360/shared';
 import { db } from '../../../lib/db';
 import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { comissoesLancamento } from '../../../../backend/src/db/schema/comissoes-lancamento';
@@ -10,6 +17,7 @@ import {
   comissoesConfigSchema,
   comissoesSolicitarAprovacaoSchema,
   type ComissoesConfigInput,
+  type ComissoesSimularQueryInput,
   type ComissoesSolicitarAprovacaoInput,
 } from '../schema';
 
@@ -52,6 +60,10 @@ export interface ComissoesConfig {
   taxaPlataformaPct: number;
   taxaCorretorPct: number;
   margemProprietarioPct: number;
+  taxaHospedePct: number;
+  taxaHospedeAtiva: boolean;
+  taxaHospedeNome: string;
+  taxaHospedeDescricao: string;
   regraAplicada?: RegraComissaoAplicada;
   sugestaoPendente?: ComissoesSugestaoPendente;
   governanca: ComissoesGovernanca;
@@ -153,14 +165,41 @@ function governancaPadrao(): ComissoesGovernanca {
   };
 }
 
+function parseTaxaHospedeAtiva(valores: Record<string, unknown>): boolean {
+  return valores.taxa_hospede_ativa === true || valores.taxaHospedeAtiva === true;
+}
+
+function parseTaxaHospedePct(valores: Record<string, unknown>, ativa: boolean): number {
+  const raw = valores.taxa_hospede_pct ?? valores.taxaHospedePct;
+  return resolveTaxaHospedePct(raw, ativa);
+}
+
+function parseTaxaHospedeNome(valores: Record<string, unknown>): string {
+  const raw = valores.taxa_hospede_nome ?? valores.taxaHospedeNome;
+  if (typeof raw === 'string' && raw.trim()) return raw.trim();
+  return TAXA_HOSPEDE_DEFAULT_RESERVEI.taxaHospedeNome;
+}
+
+function parseTaxaHospedeDescricao(valores: Record<string, unknown>): string {
+  const raw = valores.taxa_hospede_descricao ?? valores.taxaHospedeDescricao;
+  if (typeof raw === 'string' && raw.trim()) return raw.trim();
+  return TAXA_HOSPEDE_DEFAULT_RESERVEI.taxaHospedeDescricao;
+}
+
 function configFromRow(valores: Record<string, unknown>): ComissoesConfig {
   const taxaPlataformaPct = parsePct(valores.taxa_plataforma_pct, COMISSOES_OFICIAL_RESERVEI.taxaPlataformaPct);
   const taxaCorretorPct = parsePct(valores.taxa_corretor_pct, COMISSOES_OFICIAL_RESERVEI.taxaCorretorPct);
+  const taxaHospedeAtiva = parseTaxaHospedeAtiva(valores);
+  const taxaHospedePct = parseTaxaHospedePct(valores, taxaHospedeAtiva);
   return {
     comissoesModuloAtivo: valores.comissoes_modulo_ativo === true,
     taxaPlataformaPct,
     taxaCorretorPct,
     margemProprietarioPct: Math.max(0, 100 - taxaPlataformaPct - taxaCorretorPct),
+    taxaHospedePct,
+    taxaHospedeAtiva,
+    taxaHospedeNome: parseTaxaHospedeNome(valores),
+    taxaHospedeDescricao: parseTaxaHospedeDescricao(valores),
     regraAplicada: parseRegraAplicada(valores.regra_aplicada),
     sugestaoPendente: parseSugestaoPendente(valores.sugestao_pendente),
     governanca: governancaPadrao(),
@@ -192,23 +231,52 @@ function parseMetadata(raw: unknown): Record<string, unknown> {
   return {};
 }
 
+function resolveBaseComissaoProposta(valorTotal: number, metadata: Record<string, unknown>): number {
+  const baseSnapshot = Number(metadata.taxaHospedeBase ?? metadata.baseElegivel);
+  if (Number.isFinite(baseSnapshot) && baseSnapshot > 0) return baseSnapshot;
+  const taxaHospede = Number(metadata.taxaHospedeValor ?? 0);
+  if (Number.isFinite(taxaHospede) && taxaHospede > 0) {
+    return roundMoney(valorTotal - taxaHospede);
+  }
+  return valorTotal;
+}
+
 export function calcularSplitComissoes(
   baseValor: number,
   config: Pick<ComissoesConfig, 'taxaPlataformaPct' | 'taxaCorretorPct'>,
   opts: { temCorretor: boolean },
 ) {
-  const taxaPlataforma = config.taxaPlataformaPct;
-  const taxaCorretor = opts.temCorretor ? config.taxaCorretorPct : 0;
-  const taxaProprietario = Math.max(0, 100 - taxaPlataforma - taxaCorretor);
+  return calcularSplitComissoesCentavos(baseValor, config, opts);
+}
 
-  const valorPlataforma = roundMoney((baseValor * taxaPlataforma) / 100);
-  const valorCorretor = roundMoney((baseValor * taxaCorretor) / 100);
-  const valorProprietario = roundMoney((baseValor * taxaProprietario) / 100);
+export function simularComissoes(
+  query: ComissoesSimularQueryInput,
+  configVigente: ComissoesConfig,
+) {
+  const configAplicada = {
+    taxaPlataformaPct: query.taxaPlataformaPct ?? configVigente.taxaPlataformaPct,
+    taxaCorretorPct: query.taxaCorretorPct ?? configVigente.taxaCorretorPct,
+  };
+  const taxaHospedeAtiva = query.taxaHospedeAtiva ?? configVigente.taxaHospedeAtiva;
+  const taxaHospedePct = query.taxaHospedePct ?? configVigente.taxaHospedePct;
+  const baseValor = query.valor;
+  const temCorretor = query.temCorretor ?? true;
+
+  const splitSobreBase = calcularSplitComissoesCentavos(baseValor, configAplicada, { temCorretor });
+  const taxaHospede = calcularTaxaHospede(baseValor, taxaHospedePct, taxaHospedeAtiva);
+  const plataformaTotal = calcularPlataformaTotal(splitSobreBase, taxaHospede);
 
   return {
-    plataforma: { percentual: taxaPlataforma, valor: valorPlataforma },
-    corretor: { percentual: taxaCorretor, valor: valorCorretor },
-    proprietario: { percentual: taxaProprietario, valor: valorProprietario },
+    baseValor,
+    configAplicada: {
+      ...configAplicada,
+      taxaHospedePct: taxaHospede.pct,
+      taxaHospedeAtiva,
+    },
+    taxaHospede,
+    totalHospede: baseValor + (taxaHospede.ativa ? taxaHospede.valor : 0),
+    splitSobreBase,
+    plataformaTotal,
   };
 }
 
@@ -252,6 +320,10 @@ export const comissoesService = {
       comissoesModuloAtivo: partial.comissoesModuloAtivo ?? atual.comissoesModuloAtivo,
       taxaPlataformaPct: partial.taxaPlataformaPct ?? atual.taxaPlataformaPct,
       taxaCorretorPct: partial.taxaCorretorPct ?? atual.taxaCorretorPct,
+      taxaHospedePct: partial.taxaHospedePct ?? atual.taxaHospedePct,
+      taxaHospedeAtiva: partial.taxaHospedeAtiva ?? atual.taxaHospedeAtiva,
+      taxaHospedeNome: partial.taxaHospedeNome ?? atual.taxaHospedeNome,
+      taxaHospedeDescricao: partial.taxaHospedeDescricao ?? atual.taxaHospedeDescricao,
     });
 
     const regra = buildRegraAplicada(merged, opts.fonte === 'ia' ? 'ia' : 'manual', opts.motivoIa);
@@ -267,6 +339,11 @@ export const comissoesService = {
       comissoes_modulo_ativo: merged.comissoesModuloAtivo,
       taxa_plataforma_pct: merged.taxaPlataformaPct,
       taxa_corretor_pct: merged.taxaCorretorPct,
+      taxa_hospede_pct: merged.taxaHospedePct,
+      taxa_hospede_ativa: merged.taxaHospedeAtiva,
+      taxa_hospede_nome: merged.taxaHospedeNome ?? TAXA_HOSPEDE_DEFAULT_RESERVEI.taxaHospedeNome,
+      taxa_hospede_descricao:
+        merged.taxaHospedeDescricao ?? TAXA_HOSPEDE_DEFAULT_RESERVEI.taxaHospedeDescricao,
       regra_aplicada: {
         fonte: regra.fonte,
         atualizado_em: regra.atualizadoEm,
@@ -435,11 +512,13 @@ export const comissoesService = {
       return { generated: false, reason: 'proprietario_missing' as const };
     }
 
-    const baseValor = Number(proposta.valorTotal);
-    if (!Number.isFinite(baseValor) || baseValor <= 0) {
+    const valorTotal = Number(proposta.valorTotal);
+    if (!Number.isFinite(valorTotal) || valorTotal <= 0) {
       return { generated: false, reason: 'invalid_base_valor' as const };
     }
 
+    /** Split sobre base sem taxa hóspede; MVP-B: papel `plataforma_taxa` para taxaHospedeValor. */
+    const baseValor = resolveBaseComissaoProposta(valorTotal, metadata);
     const split = calcularSplitComissoes(baseValor, config, { temCorretor: corretorId != null && corretorId > 0 });
 
     const lancamentos: Array<typeof comissoesLancamento.$inferInsert> = [
@@ -493,4 +572,4 @@ export const comissoesService = {
   },
 };
 
-module.exports = { comissoesService, calcularSplitComissoes };
+module.exports = { comissoesService, calcularSplitComissoes, simularComissoes };

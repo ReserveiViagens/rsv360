@@ -23,6 +23,12 @@ export default defineConfig({
       use: { baseURL: turismoBase },
       testMatch: /proposta-(editor|hitl)\.spec\.ts/,
     },
+    {
+      name: 'taxa-hospede',
+      use: { baseURL: siteBase },
+      testMatch: /taxa-hospede-wizard\.spec\.ts/,
+      dependencies: ['site-publico', 'turismo'],
+    },
   ],
   reporter: [['list'], ['html', { outputFolder: 'tests/e2e/artifacts/fase5-report', open: 'never' }]],
 });
