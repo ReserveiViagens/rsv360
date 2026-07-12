@@ -1,11 +1,16 @@
-import { and, asc, desc, eq, gte, inArray, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, or, sql } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
+import { disponibilidadeAcomodacao } from '../../../../backend/src/db/schema/disponibilidade-acomodacao';
 import { wizardAddons } from '../../../../backend/src/db/schema/wizard-addons';
 import { tiposAcomodacao } from '../../../../backend/src/db/schema/tipos-acomodacao';
 import type { AcomodacaoDisponivel } from '@rsv360/shared';
 import { isPremiumAncora, parseUpgradeVarandaMeta } from '@rsv360/shared';
 import { tarifaService } from './tarifa.service';
+import {
+  filtrarIdsAcomodacaoCalendarioLivre,
+  listarDiariasPeriodoWizard,
+} from './listar-disponiveis-calendario.util';
 
 export interface ListarAcomodacoesInput {
   hotelId: string;
@@ -15,6 +20,8 @@ export interface ListarAcomodacoesInput {
   /** Data para resolução tarifária (YYYY-MM-DD); default hoje UTC */
   dataReferencia?: string;
   categoriaSlug?: string;
+  checkIn?: string;
+  checkOut?: string;
 }
 
 function rowToDisponivel(row: typeof acomodacoes.$inferSelect): AcomodacaoDisponivel {
@@ -81,16 +88,74 @@ export function mergeDisponiveisParaCards(
   return [...byId.values()];
 }
 
+async function resolverIdsComFiltroCalendario(
+  hotelId: string,
+  checkIn?: string,
+  checkOut?: string,
+): Promise<number[] | null> {
+  if (!checkIn || !checkOut) return null;
+
+  const diarias = listarDiariasPeriodoWizard(checkIn, checkOut);
+  if (diarias.length === 0) return [];
+
+  const baseConditions = and(
+    eq(acomodacoes.hotelId, hotelId),
+    eq(acomodacoes.ativo, true),
+    eq(acomodacoes.statusPublicacao, 'publicado'),
+  );
+
+  const candidates = await db
+    .select({ id: acomodacoes.id })
+    .from(acomodacoes)
+    .where(baseConditions);
+
+  const candidateIds = candidates.map((c) => c.id);
+  if (candidateIds.length === 0) return [];
+
+  const rows = await db
+    .select({
+      acomodacaoId: disponibilidadeAcomodacao.acomodacaoId,
+      data: disponibilidadeAcomodacao.data,
+      disponivel: disponibilidadeAcomodacao.disponivel,
+      observacao: disponibilidadeAcomodacao.observacao,
+    })
+    .from(disponibilidadeAcomodacao)
+    .where(
+      and(
+        inArray(disponibilidadeAcomodacao.acomodacaoId, candidateIds),
+        inArray(disponibilidadeAcomodacao.data, diarias),
+        or(
+          eq(disponibilidadeAcomodacao.disponivel, false),
+          eq(disponibilidadeAcomodacao.observacao, 'reservado'),
+          eq(disponibilidadeAcomodacao.observacao, 'bloqueado'),
+        ),
+      ),
+    );
+
+  return filtrarIdsAcomodacaoCalendarioLivre(candidateIds, diarias, rows);
+}
+
 export const acomodacoesService = {
   async listarDisponiveis(input: ListarAcomodacoesInput) {
     const page = Math.max(1, input.page ?? 1);
     const pageSize = Math.min(50, Math.max(1, input.pageSize ?? 20));
     const offset = (page - 1) * pageSize;
 
+    const eligibleIds = await resolverIdsComFiltroCalendario(
+      input.hotelId,
+      input.checkIn,
+      input.checkOut,
+    );
+
+    if (eligibleIds !== null && eligibleIds.length === 0) {
+      return { items: [], total: 0, page, pageSize };
+    }
+
     const conditions = and(
       eq(acomodacoes.hotelId, input.hotelId),
       eq(acomodacoes.ativo, true),
       eq(acomodacoes.statusPublicacao, 'publicado'),
+      eligibleIds !== null ? inArray(acomodacoes.id, eligibleIds) : undefined,
     );
 
     const [rows, countRow] = await Promise.all([
@@ -126,6 +191,8 @@ export const acomodacoesService = {
     hospedes: number;
     dataReferencia?: string;
     categoriaSlug?: string;
+    checkIn?: string;
+    checkOut?: string;
   }): Promise<AcomodacaoDisponivel[]> {
     const codigos = [...new Set(input.codigosExternos.filter(Boolean))];
     if (codigos.length === 0) return [];
@@ -133,6 +200,14 @@ export const acomodacoesService = {
     const hospedes = Math.max(1, Number(input.hospedes) || 1);
     const dataRef = input.dataReferencia ?? new Date().toISOString().slice(0, 10);
     const categoria = input.categoriaSlug ?? 'padrao';
+
+    const eligibleIds = await resolverIdsComFiltroCalendario(
+      input.hotelId,
+      input.checkIn,
+      input.checkOut,
+    );
+
+    if (eligibleIds !== null && eligibleIds.length === 0) return [];
 
     const rows = await db
       .select()
@@ -144,6 +219,7 @@ export const acomodacoesService = {
           eq(acomodacoes.statusPublicacao, 'publicado'),
           inArray(acomodacoes.codigoExterno, codigos),
           gte(acomodacoes.capacidadeMax, hospedes),
+          eligibleIds !== null ? inArray(acomodacoes.id, eligibleIds) : undefined,
         ),
       );
 
