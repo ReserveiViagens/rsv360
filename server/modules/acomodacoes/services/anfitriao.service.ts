@@ -376,6 +376,175 @@ export const anfitriaoService = {
     return { ok: true as const, count: dias.length };
   },
 
+  async bulkBloquearDatas(
+    auth: AuthContext,
+    acomodacaoId: number,
+    datas: string[],
+    observacao?: string,
+  ) {
+    const scoped = await this.obterUnidade(auth, acomodacaoId);
+    if ('error' in scoped) return { error: scoped.error };
+    if (datas.length > 50) return { error: 'limit_exceeded' as const };
+
+    const obs = observacao?.trim() || OBSERVACAO_BLOQUEADO;
+    if (obs === OBSERVACAO_RESERVADO) {
+      return { error: 'invalid_observacao' as const };
+    }
+
+    for (const data of datas) {
+      const [existente] = await db
+        .select()
+        .from(disponibilidadeAcomodacao)
+        .where(
+          and(
+            eq(disponibilidadeAcomodacao.acomodacaoId, acomodacaoId),
+            eq(disponibilidadeAcomodacao.data, data),
+          ),
+        )
+        .limit(1);
+
+      if (existente?.observacao === OBSERVACAO_RESERVADO) {
+        return { error: 'day_reserved_conflict' as const, data };
+      }
+
+      if (existente) {
+        await db
+          .update(disponibilidadeAcomodacao)
+          .set({
+            disponivel: false,
+            observacao: obs,
+            atualizadoEm: new Date(),
+          })
+          .where(eq(disponibilidadeAcomodacao.id, existente.id));
+      } else {
+        await db.insert(disponibilidadeAcomodacao).values({
+          acomodacaoId,
+          data,
+          disponivel: false,
+          observacao: obs,
+        });
+      }
+    }
+
+    return { ok: true as const, count: datas.length };
+  },
+
+  async bulkDesbloquearDatas(auth: AuthContext, acomodacaoId: number, datas: string[]) {
+    const scoped = await this.obterUnidade(auth, acomodacaoId);
+    if ('error' in scoped) return { error: scoped.error };
+    if (datas.length > 50) return { error: 'limit_exceeded' as const };
+
+    let count = 0;
+    for (const data of datas) {
+      const [existente] = await db
+        .select()
+        .from(disponibilidadeAcomodacao)
+        .where(
+          and(
+            eq(disponibilidadeAcomodacao.acomodacaoId, acomodacaoId),
+            eq(disponibilidadeAcomodacao.data, data),
+          ),
+        )
+        .limit(1);
+
+      if (!existente) continue;
+
+      if (existente.observacao === OBSERVACAO_RESERVADO) {
+        return { error: 'day_reserved' as const, data };
+      }
+
+      if (existente.disponivel === false || existente.observacao === OBSERVACAO_BLOQUEADO) {
+        await db
+          .update(disponibilidadeAcomodacao)
+          .set({
+            disponivel: true,
+            observacao: null,
+            atualizadoEm: new Date(),
+          })
+          .where(eq(disponibilidadeAcomodacao.id, existente.id));
+        count += 1;
+      }
+    }
+
+    return { ok: true as const, count };
+  },
+
+  async ajustarPrecoDatas(
+    auth: AuthContext,
+    acomodacaoId: number,
+    datas: string[],
+    preco: number | null,
+  ) {
+    const scoped = await this.obterUnidade(auth, acomodacaoId);
+    if ('error' in scoped) return { error: scoped.error };
+    if (datas.length > 50) return { error: 'limit_exceeded' as const };
+
+    if (preco != null && (!Number.isFinite(preco) || preco < 0)) {
+      return { error: 'invalid_price' as const };
+    }
+
+    const precoStr = preco != null ? preco.toFixed(2) : null;
+
+    for (const data of datas) {
+      const [existente] = await db
+        .select()
+        .from(disponibilidadeAcomodacao)
+        .where(
+          and(
+            eq(disponibilidadeAcomodacao.acomodacaoId, acomodacaoId),
+            eq(disponibilidadeAcomodacao.data, data),
+          ),
+        )
+        .limit(1);
+
+      if (existente?.observacao === OBSERVACAO_RESERVADO) {
+        return { error: 'day_reserved' as const, data };
+      }
+
+      if (existente) {
+        await db
+          .update(disponibilidadeAcomodacao)
+          .set({
+            precoOverride: precoStr,
+            atualizadoEm: new Date(),
+          })
+          .where(eq(disponibilidadeAcomodacao.id, existente.id));
+      } else {
+        await db.insert(disponibilidadeAcomodacao).values({
+          acomodacaoId,
+          data,
+          disponivel: true,
+          precoOverride: precoStr,
+        });
+      }
+    }
+
+    return { ok: true as const, count: datas.length, preco: precoStr };
+  },
+
+  async obterCalendarioAgregado(auth: AuthContext, de: string, ate: string) {
+    const { items } = await this.listarMinhas(auth, 1, 5000);
+    const unidades: Array<{
+      acomodacaoId: number;
+      titulo: string;
+      hotelId: string;
+      dias: CalendarioDiaItem[];
+    }> = [];
+
+    for (const unit of items) {
+      const cal = await this.obterCalendarioUnidade(auth, unit.id, de, ate);
+      if ('error' in cal) continue;
+      unidades.push({
+        acomodacaoId: unit.id,
+        titulo: unit.titulo,
+        hotelId: unit.hotelId,
+        dias: cal.data,
+      });
+    }
+
+    return { data: unidades, de, ate };
+  },
+
   async atribuirCarteira(staffRole: string, corretorId: number, proprietarioId: number) {
     if (!STAFF_ROLES.has(staffRole)) return { error: 'forbidden' as const };
 

@@ -26,6 +26,9 @@ export default function AnfitriaoDashboardPage() {
               <Link href="/anfitriao/reservas" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Reservas
               </Link>
+              <Link href="/anfitriao/calendario" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
+                Calendário
+              </Link>
               <Link href="/anfitriao/importar" className="rounded-lg border border-slate-300 px-4 py-2 text-sm">
                 Importar
               </Link>

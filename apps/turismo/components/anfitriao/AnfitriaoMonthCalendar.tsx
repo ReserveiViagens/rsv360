@@ -12,6 +12,7 @@ import {
   subMonths,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 export type CalendarioDiaEstado = 'livre' | 'bloqueado' | 'reservado';
 
@@ -20,6 +21,7 @@ export interface CalendarioDiaView {
   estado: CalendarioDiaEstado;
   disponivel: boolean;
   readOnly: boolean;
+  precoOverride?: string | null;
 }
 
 const ESTADO_STYLES: Record<CalendarioDiaEstado, string> = {
@@ -31,10 +33,20 @@ const ESTADO_STYLES: Record<CalendarioDiaEstado, string> = {
 interface Props {
   dias: CalendarioDiaView[];
   onToggleDia?: (data: string, estadoAtual: CalendarioDiaEstado) => void;
+  selectedDates?: string[];
+  onSelectDia?: (data: string, estadoAtual: CalendarioDiaEstado) => void;
+  readOnly?: boolean;
 }
 
-export function AnfitriaoMonthCalendar({ dias, onToggleDia }: Props) {
+export function AnfitriaoMonthCalendar({
+  dias,
+  onToggleDia,
+  selectedDates = [],
+  onSelectDia,
+  readOnly = false,
+}: Props) {
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
+  const selectedSet = useMemo(() => new Set(selectedDates), [selectedDates]);
 
   const diaMap = useMemo(() => new Map(dias.map((d) => [d.data, d])), [dias]);
 
@@ -45,6 +57,7 @@ export function AnfitriaoMonthCalendar({ dias, onToggleDia }: Props) {
   }, [month]);
 
   const leadingBlanks = startOfMonth(month).getDay();
+  const selectionMode = Boolean(onSelectDia);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -82,22 +95,34 @@ export function AnfitriaoMonthCalendar({ dias, onToggleDia }: Props) {
           const key = format(day, 'yyyy-MM-dd');
           const info = diaMap.get(key);
           const estado: CalendarioDiaEstado = info?.estado ?? 'livre';
-          const readOnly = info?.readOnly ?? estado === 'reservado';
+          const dayReadOnly = readOnly || info?.readOnly || estado === 'reservado';
           const inMonth = isSameMonth(day, month);
+          const selected = selectedSet.has(key);
+          const preco = info?.precoOverride;
 
           return (
             <button
               key={key}
               type="button"
-              disabled={!inMonth || readOnly || !onToggleDia}
-              onClick={() => onToggleDia?.(key, estado)}
-              className={`min-h-[52px] rounded border p-1 text-left text-xs ${ESTADO_STYLES[estado]} ${
-                isToday(day) ? 'ring-2 ring-blue-400' : ''
-              }`}
+              disabled={!inMonth || dayReadOnly || (!selectionMode && !onToggleDia)}
+              onClick={() => {
+                if (selectionMode) onSelectDia?.(key, estado);
+                else onToggleDia?.(key, estado);
+              }}
+              className={cn(
+                `min-h-[56px] rounded border p-1 text-left text-xs ${ESTADO_STYLES[estado]}`,
+                isToday(day) && 'ring-2 ring-blue-400',
+                selected && 'ring-2 ring-indigo-600 ring-offset-1',
+              )}
               title={estado}
             >
               <span className="font-semibold">{format(day, 'd')}</span>
-              <span className="mt-1 block capitalize">{estado}</span>
+              <span className="mt-0.5 block capitalize">{estado}</span>
+              {preco && (
+                <span className="mt-0.5 block text-[10px] font-medium text-indigo-700">
+                  R$ {preco}
+                </span>
+              )}
             </button>
           );
         })}
@@ -112,6 +137,9 @@ export function AnfitriaoMonthCalendar({ dias, onToggleDia }: Props) {
         </span>
         <span className="flex items-center gap-1">
           <span className="h-3 w-3 rounded bg-amber-200" /> Reservado
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-3 w-3 rounded bg-indigo-200" /> Preço especial
         </span>
       </div>
     </div>
