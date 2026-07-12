@@ -34,6 +34,7 @@ function WizardContent() {
     nextStep,
     resetWizard,
     runningTotal,
+    pricingBreakdown,
     setAvailabilityLoading,
     availabilityLoading,
     availabilityError,
@@ -68,6 +69,7 @@ function WizardContent() {
           tickets: json.data?.tickets ?? [],
           attractions: json.data?.attractions ?? [],
           configuracoesPainel: json.data?.configuracoesPainel,
+          taxaHospedePublica: json.data?.taxaHospedePublica ?? null,
         };
         setCatalog(nextCatalog);
 
@@ -238,7 +240,11 @@ function WizardContent() {
         {currentStep === 7 && <WizardStepReview />}
       </div>
 
-      <WizardStickyTotal total={runningTotal} visible={showStickyTotal} />
+      <WizardStickyTotal
+        total={runningTotal}
+        breakdown={pricingBreakdown}
+        visible={showStickyTotal}
+      />
     </div>
   );
 }

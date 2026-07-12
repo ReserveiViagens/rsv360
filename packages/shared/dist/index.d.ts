@@ -17,6 +17,7 @@ export * from './cotacao/acomodacao-config-label.js';
 export * from './cotacao/wizard-estadia.js';
 export * from './cotacao/entrada-contextual.js';
 export * from './cotacao/upgrade-varanda.js';
+export * from './cotacao/taxa-hospede.js';
 export * from './cotacao/roteiro-atracao.types.js';
 export * from './cotacao/montar-roteiro-dia.js';
 export * from './cotacao/roteiro-slots.js';

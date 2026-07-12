@@ -4,16 +4,28 @@ import {
   comissoesAprovarSugestaoSchema,
   comissoesConfigSchema,
   comissoesRejeitarSugestaoSchema,
+  comissoesSimularQuerySchema,
   comissoesSolicitarAprovacaoSchema,
   comissoesSugestaoIaSchema,
 } from '../schema';
-import { comissoesService } from '../services/comissoes.service';
+import { comissoesService, simularComissoes } from '../services/comissoes.service';
 import { sugerirPercentuaisComissoes } from '../services/comissoes-ia-suggest';
 
 const router = Router();
 
 const parceiroAuth = [authenticateJwt, requireRole('anfitriao', 'corretor', 'admin', 'manager')];
 const adminAuth = [authenticateJwt, requireRole('admin')];
+
+const PREVIEW_OVERRIDE_KEYS = [
+  'taxaPlataformaPct',
+  'taxaCorretorPct',
+  'taxaHospedePct',
+  'taxaHospedeAtiva',
+] as const;
+
+function queryHasPreviewOverrides(query: Record<string, unknown>): boolean {
+  return PREVIEW_OVERRIDE_KEYS.some((k) => query[k] !== undefined);
+}
 
 router.get('/health', (_req, res) => {
   res.json({ module: 'comissoes', status: 'ok' });
@@ -54,6 +66,10 @@ router.put('/config', ...adminAuth, async (req, res) => {
       comissoesModuloAtivo: body.comissoesModuloAtivo ?? atual.comissoesModuloAtivo,
       taxaPlataformaPct: body.taxaPlataformaPct ?? atual.taxaPlataformaPct,
       taxaCorretorPct: body.taxaCorretorPct ?? atual.taxaCorretorPct,
+      taxaHospedePct: body.taxaHospedePct ?? atual.taxaHospedePct,
+      taxaHospedeAtiva: body.taxaHospedeAtiva ?? atual.taxaHospedeAtiva,
+      taxaHospedeNome: body.taxaHospedeNome ?? atual.taxaHospedeNome,
+      taxaHospedeDescricao: body.taxaHospedeDescricao ?? atual.taxaHospedeDescricao,
     });
     if (!parsed.success) {
       return res.status(400).json({ success: false, error: parsed.error.flatten() });
@@ -123,6 +139,32 @@ router.post('/rejeitar-sugestao', ...adminAuth, async (req, res) => {
     res.json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/simular', ...parceiroAuth, async (req, res) => {
+  try {
+    const parsed = comissoesSimularQuerySchema.safeParse(req.query ?? {});
+    if (!parsed.success) {
+      return res.status(400).json({ success: false, error: parsed.error.flatten() });
+    }
+
+    const hasOverrides = queryHasPreviewOverrides(req.query as Record<string, unknown>);
+    if (hasOverrides || parsed.data.preview) {
+      const role = req.user?.role;
+      if (role !== 'admin' && role !== 'manager') {
+        return res.status(403).json({
+          success: false,
+          error: 'Preview com overrides de percentuais requer role admin ou manager',
+        });
+      }
+    }
+
+    const config = await comissoesService.getConfig();
+    const data = simularComissoes(parsed.data, config);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: (error as Error).message });
   }
 });
 
