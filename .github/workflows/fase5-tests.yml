@@ -254,7 +254,7 @@ jobs:
           JWT_SECRET: ${{ env.JWT_SECRET }}
           SEED_TEST_USER_EMAIL: ${{ env.SEED_TEST_USER_EMAIL }}
           SEED_TEST_USER_PASSWORD: ${{ env.SEED_TEST_USER_PASSWORD }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: fase5-playwright-report
