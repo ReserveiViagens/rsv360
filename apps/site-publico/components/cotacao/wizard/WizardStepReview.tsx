@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { TurnstileWidget } from '@/components/security/TurnstileWidget';
+import { safeTrack } from '@/lib/cotacao-analytics';
 import { PaymentMethodSelector } from './PaymentMethodSelector';
 import { useWizard } from './WizardContext';
 import { WizardClosingSummary } from './WizardClosingSummary';
@@ -165,7 +166,7 @@ export function WizardStepReview() {
         throw new Error(json.error || 'Falha ao gerar proposta');
       }
 
-      trackCotacaoEvent('cotacao_proposta_generated', {
+      safeTrack('cotacao_proposta_generated', {
         propostaId: json.propostaId,
         total: runningTotal,
         profile: state.profile,

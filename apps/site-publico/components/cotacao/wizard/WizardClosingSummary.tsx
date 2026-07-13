@@ -326,7 +326,9 @@ export function WizardClosingSummary({ state, catalog, runningTotal, loading }: 
         <div className="flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-muted-foreground">Investimento total estimado</p>
-            <p className="text-2xl font-bold text-gray-900">{formatBRL(runningTotal)}</p>
+            <p className="text-2xl font-bold text-gray-900" suppressHydrationWarning>
+              {formatBRL(runningTotal)}
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">{headline.ctaHint}</p>
           </div>
           <span className="shrink-0 rounded-full bg-accent-lime px-3 py-1 text-xs font-bold text-gray-900">

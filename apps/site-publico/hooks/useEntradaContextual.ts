@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   calcularPassosColapsados,
   hidratarWizardState,
@@ -65,10 +65,15 @@ function loadDraftForEntrada(): { state: WizardState; step: number; hadInvalidDa
 
 export function useEntradaContextual(searchParams: URLSearchParams): EntradaBootstrap {
   const serialized = searchParams.toString();
+  const [clientReady, setClientReady] = useState(false);
+
+  useEffect(() => {
+    setClientReady(true);
+  }, []);
 
   return useMemo(() => {
     const params = lerEntradaContextual(searchParams);
-    const draft = loadDraftForEntrada();
+    const draft = clientReady ? loadDraftForEntrada() : null;
     const origem = resolverOrigemEntrada(params, Boolean(draft));
     const ctx = montarEntradaContextual(params, origem);
     const { state, hotelTravado } = hidratarWizardState(initialWizardState, ctx, draft?.state);
@@ -86,5 +91,5 @@ export function useEntradaContextual(searchParams: URLSearchParams): EntradaBoot
       hadInvalidDates: draft?.hadInvalidDates ?? false,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- searchParams identity changes; string is stable
-  }, [serialized]);
+  }, [serialized, clientReady]);
 }

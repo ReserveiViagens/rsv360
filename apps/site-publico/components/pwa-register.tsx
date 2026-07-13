@@ -3,7 +3,59 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, XCircle, RefreshCw, Download } from 'lucide-react';
+import { CheckCircle, RefreshCw } from 'lucide-react';
+
+const COTACAO_PREFIX = '/cotacao';
+const LEGACY_SW_URL = '/sw.js';
+
+function isCotacaoFunnelPath(): boolean {
+  if (typeof window === 'undefined') return false;
+  const path = window.location.pathname;
+  return path === COTACAO_PREFIX || path.startsWith(`${COTACAO_PREFIX}/`);
+}
+
+async function unregisterLegacyServiceWorkers(): Promise<void> {
+  if (!('serviceWorker' in navigator)) return;
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  await Promise.all(
+    registrations.map(async (registration) => {
+      const scriptUrl = registration.active?.scriptURL ?? registration.installing?.scriptURL ?? '';
+      if (scriptUrl.includes(LEGACY_SW_URL) || isCotacaoFunnelPath()) {
+        await registration.unregister();
+      }
+    }),
+  );
+}
+
+async function registerServiceWorker(
+  setRegistration: (reg: ServiceWorkerRegistration) => void,
+  setUpdateAvailable: (v: boolean) => void,
+): Promise<void> {
+  try {
+    await unregisterLegacyServiceWorkers();
+
+    const reg = await navigator.serviceWorker.register(LEGACY_SW_URL, {
+      scope: '/',
+    });
+
+    setRegistration(reg);
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          setUpdateAvailable(true);
+          newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
+    });
+
+    await reg.update();
+  } catch (error) {
+    console.error('Erro ao registrar Service Worker:', error);
+  }
+}
 
 export function PwaRegister() {
   const [isSupported, setIsSupported] = useState(false);
@@ -12,72 +64,40 @@ export function PwaRegister() {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
-    // Verificar se Service Workers são suportados
-    if ('serviceWorker' in navigator) {
-      setIsSupported(true);
-      registerServiceWorker();
+    if (!('serviceWorker' in navigator)) return;
+
+    setIsSupported(true);
+
+    if (isCotacaoFunnelPath()) {
+      void unregisterLegacyServiceWorkers();
+      return;
     }
 
-    // Verificar se o app está instalado
+    void registerServiceWorker(setRegistration, setUpdateAvailable);
+
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
     }
 
-    // Listener para quando o app é instalado
-    window.addEventListener('beforeinstallprompt', (e) => {
+    const onBeforeInstall = (e: Event) => {
       e.preventDefault();
-      // PWA pode ser instalado
-    });
+    };
+    window.addEventListener('beforeinstallprompt', onBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', onBeforeInstall);
   }, []);
 
-  const registerServiceWorker = async () => {
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/',
-      });
-
-      setRegistration(registration);
-
-      // Verificar atualizações
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // Nova versão disponível
-              setUpdateAvailable(true);
-            }
-          });
-        }
-      });
-
-      // Verificar se há atualização disponível
-      await registration.update();
-    } catch (error) {
-      console.error('Erro ao registrar Service Worker:', error);
-    }
-  };
-
   const updateServiceWorker = async () => {
-    if (registration) {
-      try {
-        await registration.update();
-        // Recarregar a página após atualização
-        window.location.reload();
-      } catch (error) {
-        console.error('Erro ao atualizar Service Worker:', error);
-      }
+    if (!registration) return;
+    try {
+      await registration.update();
+      window.location.reload();
+    } catch (error) {
+      console.error('Erro ao atualizar Service Worker:', error);
     }
   };
 
-  const installPWA = async () => {
-    // Este evento será disparado quando o usuário quiser instalar
-    // A implementação real depende do evento beforeinstallprompt
-    alert('Para instalar o app, use o menu do navegador ou a opção "Adicionar à tela inicial"');
-  };
-
-  if (!isSupported) {
-    return null; // Não mostrar nada se não for suportado
+  if (!isSupported || isCotacaoFunnelPath()) {
+    return null;
   }
 
   return (
@@ -105,7 +125,6 @@ export function PwaRegister() {
         </Alert>
       )}
 
-      {/* Indicador de instalação (opcional, pode ser removido) */}
       {isInstalled && (
         <div className="fixed bottom-4 left-4 text-xs text-muted-foreground flex items-center gap-2">
           <CheckCircle className="w-4 h-4 text-green-600" />
@@ -115,4 +134,3 @@ export function PwaRegister() {
     </>
   );
 }
-
