@@ -175,12 +175,17 @@ export function WizardProvider({ children, bootstrap }: WizardProviderProps) {
 
   const [currentStep, setCurrentStep] = useState(bootstrap.initialStep);
   const [state, setState] = useState<WizardState>(() => sanitizeWizardState(bootstrap.initialState));
-  const [catalog, setCatalogState] = useState<WizardCatalog>(() => loadCatalogFromSession() ?? emptyCatalog);
+  const [catalog, setCatalogState] = useState<WizardCatalog>(emptyCatalog);
   const [passosColapsados, setPassosColapsados] = useState<number[]>(bootstrap.passosColapsados);
   const [hotelTravado, setHotelTravado] = useState(bootstrap.hotelTravado);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fromSession = loadCatalogFromSession();
+    if (fromSession) setCatalogState(fromSession);
+  }, []);
 
   useEffect(() => {
     if (entradaTracked.current) return;

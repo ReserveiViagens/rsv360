@@ -8,6 +8,8 @@ x-app-env: &app-env
   NEXT_PUBLIC_API_URL: http://localhost:3002
   NEXT_PUBLIC_BACKEND_URL: http://localhost:3002
   INTERNAL_API_URL: http://backend:3002
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
+  TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
 
 # Rede unificada (#250) — todos os servicos na mesma rede (sem network connect manual)
 networks:
@@ -98,6 +100,7 @@ services:
       SSO_BFF_SECRET: ${SSO_BFF_SECRET:-${OAUTH_BFF_SECRET:-rsv360-docker-dev-oauth-bff}}
       MARKETING_LAB_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
       QR_SECRET: ${QR_SECRET:-rsv360-dev-qr-secret-local-only}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
     healthcheck:
       test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1']
       interval: 20s
@@ -205,6 +208,7 @@ services:
       NEXT_PUBLIC_APP_MODE: ${NEXT_PUBLIC_APP_MODE:-marketing-lab}
       NEXT_PUBLIC_PRIMARY_SITE_URL: ${NEXT_PUBLIC_PRIMARY_SITE_URL:-http://localhost:5000}
       NEXT_PUBLIC_LAB_TITLE: ${NEXT_PUBLIC_LAB_TITLE:-RSV360 Marketing Lab}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
 
   turismo:
     build:
