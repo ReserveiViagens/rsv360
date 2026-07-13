@@ -36,7 +36,7 @@ declare global {
   }
 }
 
-export function trackCotacaoEvent(
+function trackCotacaoEventInternal(
   event: CotacaoAnalyticsEvent,
   payload: CotacaoAnalyticsPayload = {},
 ): void {
@@ -66,6 +66,25 @@ export function trackCotacaoEvent(
   } catch {
     /* ignore */
   }
+}
+
+/** Analytics nunca deve quebrar o funil — try/catch externo para chamadas pós-submit. */
+export function safeTrack(
+  event: CotacaoAnalyticsEvent,
+  payload: CotacaoAnalyticsPayload = {},
+): void {
+  try {
+    trackCotacaoEventInternal(event, payload);
+  } catch {
+    /* no-op */
+  }
+}
+
+export function trackCotacaoEvent(
+  event: CotacaoAnalyticsEvent,
+  payload: CotacaoAnalyticsPayload = {},
+): void {
+  safeTrack(event, payload);
 }
 
 export const WIZARD_STEP_NAMES = [

@@ -52,6 +52,20 @@ const nextConfig = {
   },
   // Proxy /uploads to backend at Next server runtime (INTERNAL_API_URL).
   // Browser uses relative /uploads/... — avoids NEXT_PUBLIC build-time coupling.
+  async redirects() {
+    return [
+      {
+        source: '/cotacao/wizard',
+        destination: '/cotacao',
+        permanent: true,
+      },
+      {
+        source: '/cotacao/wizard/:path*',
+        destination: '/cotacao',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const backend =
       process.env.INTERNAL_API_URL ||
