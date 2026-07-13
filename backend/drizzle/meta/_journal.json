@@ -260,6 +260,13 @@
       "when": 1783623000000,
       "tag": "0036_proposta_expired_pos_aceite_backfill",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1783624000000,
+      "tag": "0037_agentes_fundacao",
+      "breakpoints": true
     }
   ]
 }
