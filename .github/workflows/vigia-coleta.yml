@@ -32,5 +32,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+          # Page ID não é secret sem o token — vars para aparecer em claro no log (diagnóstico).
+          NOTION_PAGE_ID: ${{ vars.NOTION_PAGE_ID }}
         run: node scripts/vigia/coletar-status.mjs
