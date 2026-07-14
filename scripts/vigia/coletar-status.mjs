@@ -16,7 +16,6 @@ const notionToken = process.env.NOTION_TOKEN;
 
 /**
  * Aceita UUID com/sem hífens, URL Notion, ou ID colado com aspas/espacos.
- * Não loga o valor — só formato/comprimento.
  */
 function normalizeNotionId(raw) {
   let id = String(raw ?? '')
@@ -37,7 +36,12 @@ function normalizeNotionId(raw) {
   return id;
 }
 
-const notionPageId = normalizeNotionId(process.env.NOTION_PAGE_ID);
+const notionPageIdRaw = process.env.NOTION_PAGE_ID;
+const notionPageId = normalizeNotionId(notionPageIdRaw);
+
+// Diagnóstico: page ID em claro (não é secret sem NOTION_TOKEN).
+console.log(`diag NOTION_PAGE_ID raw=${JSON.stringify(String(notionPageIdRaw ?? ''))}`);
+console.log(`diag NOTION_PAGE_ID normalized=${notionPageId}`);
 
 if (!githubToken || !notionToken || !notionPageId) {
   console.error('Missing required env: GITHUB_TOKEN, NOTION_TOKEN, NOTION_PAGE_ID');
