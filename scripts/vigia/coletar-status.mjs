@@ -13,10 +13,41 @@ const NOTION_VERSION = '2022-06-28';
 
 const githubToken = process.env.GITHUB_TOKEN;
 const notionToken = process.env.NOTION_TOKEN;
-const notionPageId = process.env.NOTION_PAGE_ID;
+
+/**
+ * Aceita UUID com/sem hífens, URL Notion, ou ID colado com aspas/espacos.
+ * Não loga o valor — só formato/comprimento.
+ */
+function normalizeNotionId(raw) {
+  let id = String(raw ?? '')
+    .trim()
+    .replace(/^["']+|["']+$/g, '');
+
+  const uuidHyphen = id.match(
+    /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+  );
+  if (uuidHyphen) return uuidHyphen[0].toLowerCase();
+
+  const uuidCompact = id.match(/[0-9a-f]{32}/i);
+  if (uuidCompact) {
+    const h = uuidCompact[0].toLowerCase();
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+  }
+
+  return id;
+}
+
+const notionPageId = normalizeNotionId(process.env.NOTION_PAGE_ID);
 
 if (!githubToken || !notionToken || !notionPageId) {
   console.error('Missing required env: GITHUB_TOKEN, NOTION_TOKEN, NOTION_PAGE_ID');
+  process.exit(1);
+}
+
+if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(notionPageId)) {
+  console.error(
+    `NOTION_PAGE_ID inválido após normalização (len=${notionPageId.length}). Use o UUID da página (32 hex ou UUID com hífens), não o título.`,
+  );
   process.exit(1);
 }
 
@@ -92,6 +123,8 @@ async function ghPaginate(path, { maxPages = 5, perPage = 100 } = {}) {
     }
     if (Array.isArray(body)) items.push(...body);
     else if (Array.isArray(body?.items)) items.push(...body.items);
+    else if (Array.isArray(body?.workflows)) items.push(...body.workflows);
+    else if (Array.isArray(body?.workflow_runs)) items.push(...body.workflow_runs);
     else break;
 
     const link = res.headers.get('link') || '';
