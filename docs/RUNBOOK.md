@@ -5,6 +5,13 @@
 - **Infrastructure**: infra@rsv360.com
 - **On-call Engineer**: +55 11 99999-9999
 
+## Postgres / pgvector (I1 — 2026-07-13)
+
+- **Imagem canônica:** `pgvector/pgvector:pg16` (substituí `postgres:16-alpine` no `docker-compose.yml`).
+- **Motivo:** habilitar `CREATE EXTENSION vector` para o cache semântico do módulo `agentes` (F2b+).
+- **Host local:** porta **5433** → container 5432 (evitar o Postgres Windows em `:5432`). `DATABASE_URL` local deve usar `:5433`.
+- **Rollback:** voltar `image: postgres:16-alpine` e `docker compose up -d postgres` — **não** recriar o volume; dados intactos. A extension só existe se já tiver sido criada no volume.
+
 ## Incident Response
 
 ### Severity Levels

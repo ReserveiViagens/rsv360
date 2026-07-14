@@ -312,6 +312,8 @@ docker run -p 3000:3000 -p 5000:5000 \
 
 # Docker Compose
 docker-compose up -d
+# Postgres: imagem pgvector/pgvector:pg16 (I1 2026-07-13). Porta host 5433.
+# Rollback: voltar postgres:16-alpine no compose; volume de dados permanece intacto.
 ```
 
 ### Azure App Service
