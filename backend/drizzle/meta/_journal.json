@@ -267,6 +267,13 @@
       "when": 1783624000000,
       "tag": "0037_agentes_fundacao",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1783625000000,
+      "tag": "0038_agente_cache_semantico",
+      "breakpoints": true
     }
   ]
 }

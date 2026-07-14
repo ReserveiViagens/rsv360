@@ -38,3 +38,4 @@ export * from './tarifa-temporada';
 export * from './tarifa-regra';
 export * from './comissoes-lancamento';
 export * from './agentes';
+export * from './agentes-cache-semantico';
