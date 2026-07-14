@@ -1,0 +1,36 @@
+name: Vigia — coleta Notion
+
+on:
+  schedule:
+    - cron: "30 10 * * *" # 07h30 America/Sao_Paulo
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: read
+  pull-requests: read
+  security-events: read
+
+jobs:
+  coletar:
+    name: Coletar status → Notion
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          lfs: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Coletar e gravar snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+        run: node scripts/vigia/coletar-status.mjs
