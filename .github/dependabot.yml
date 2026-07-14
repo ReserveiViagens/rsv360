@@ -1,22 +1,20 @@
+# Dependabot — RSV360
+# Higiene 2026-07-14: schedule monthly + 1 grupo por diretório (menos ruído de PRs).
 version: 2
 
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:root"]
     groups:
-      dev-deps-safe:
-        dependency-type: "development"
-        update-types: ["patch", "minor"]
-      prod-minor-patch:
-        dependency-type: "production"
-        update-types: ["minor", "patch"]
+      all-npm-root:
+        patterns: ["*"]
     ignore:
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
@@ -42,19 +40,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/backend"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:backend"]
     groups:
-      dev-deps-safe:
-        dependency-type: "development"
-        update-types: ["patch", "minor"]
-      prod-minor-patch:
-        dependency-type: "production"
-        update-types: ["minor", "patch"]
+      all-npm-backend:
+        patterns: ["*"]
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
@@ -64,19 +58,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/apps/site-publico"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:site-publico"]
     groups:
-      dev-deps-safe:
-        dependency-type: "development"
-        update-types: ["patch", "minor"]
-      prod-minor-patch:
-        dependency-type: "production"
-        update-types: ["minor", "patch"]
+      all-npm-site-publico:
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -98,19 +88,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/apps/turismo"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:turismo"]
     groups:
-      dev-deps-safe:
-        dependency-type: "development"
-        update-types: ["patch", "minor"]
-      prod-minor-patch:
-        dependency-type: "production"
-        update-types: ["minor", "patch"]
+      all-npm-turismo:
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -130,12 +116,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/apps/admin"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:admin"]
+    groups:
+      all-npm-admin:
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -153,12 +142,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/apps/guest"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:guest"]
+    groups:
+      all-npm-guest:
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -176,12 +168,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/packages/shared"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "npm", "scope:shared"]
+    groups:
+      all-npm-shared:
+        patterns: ["*"]
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
@@ -191,32 +186,38 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels: ["dependencies", "github-actions"]
     groups:
-      actions:
+      all-actions:
         patterns: ["*"]
 
   - package-ecosystem: "docker"
     directory: "/backend"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "docker", "scope:backend"]
+    groups:
+      all-docker-backend:
+        patterns: ["*"]
 
   - package-ecosystem: "docker"
     directory: "/docker/frontend"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "06:00"
       timezone: "America/Sao_Paulo"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels: ["dependencies", "docker", "scope:frontend"]
+    groups:
+      all-docker-frontend:
+        patterns: ["*"]
