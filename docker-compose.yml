@@ -101,6 +101,8 @@ services:
       MARKETING_LAB_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
       QR_SECRET: ${QR_SECRET:-rsv360-dev-qr-secret-local-only}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
+      # Agentes / Instrutor (F2c-3) — opcional; T1 fail-safe se ausente. Nunca commitar o valor.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     healthcheck:
       test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1']
       interval: 20s

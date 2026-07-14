@@ -41,3 +41,13 @@ Requer `OPENAI_API_KEY` e `DATABASE_URL` (Postgres com pgvector). Idempotente vi
 - Rate limit 10/min/usuário
 - Body: `{ pergunta: string(1..500), papel?: "staff"|"anfitriao"|"ambos" }`
 - Dupla flag OFF → 404 `"Módulo agentes desligado"`
+
+## UI Turismo (:3005) — F2c-3
+
+Widget flutuante **Ajuda** em `apps/turismo/components/agentes/InstrutorHelpWidget.tsx` (montado em `pages/_app.tsx`).
+
+`docker-compose.yml` (serviço `backend`) repassa `OPENAI_API_KEY` do host — **sem** valor no git. Após mudar o compose:
+
+```bash
+docker compose up -d --build backend
+```
