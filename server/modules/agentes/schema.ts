@@ -4,6 +4,10 @@ export type AgentesConfig = {
   limiarSemanticoVerificar: number;
   ttlCacheInstitucionalDias: number;
   ttlCacheCatalogoHoras: number;
+  agenteInstrutorAtivo: boolean;
+  modeloT1: string;
+  modeloEmbedding: string;
+  ragTopK: number;
 };
 
 /** Defaults — módulo OFF (fail-safe). */
@@ -13,12 +17,20 @@ export const AGENTES_CONFIG_PADRAO: AgentesConfig = {
   limiarSemanticoVerificar: 0.85,
   ttlCacheInstitucionalDias: 7,
   ttlCacheCatalogoHoras: 24,
+  agenteInstrutorAtivo: false,
+  modeloT1: 'gpt-4o-mini',
+  modeloEmbedding: 'text-embedding-3-small',
+  ragTopK: 4,
 };
 
 export const CHAVE_AGENTES = 'agentes';
 
 export function parseAgentesModuloAtivo(valores: Record<string, unknown>): boolean {
   return valores.agentes_modulo_ativo === true || valores.agentesModuloAtivo === true;
+}
+
+export function parseAgenteInstrutorAtivo(valores: Record<string, unknown>): boolean {
+  return valores.agente_instrutor_ativo === true || valores.agenteInstrutorAtivo === true;
 }
 
 export function configFromValores(valores: Record<string, unknown>): AgentesConfig {
@@ -29,6 +41,12 @@ export function configFromValores(valores: Record<string, unknown>): AgentesConf
       const n = Number(raw);
       if (Number.isFinite(n)) return n;
     }
+    return fallback;
+  };
+
+  const str = (a: unknown, b: unknown, fallback: string) => {
+    const raw = a ?? b;
+    if (typeof raw === 'string' && raw.trim() !== '') return raw.trim();
     return fallback;
   };
 
@@ -50,5 +68,13 @@ export function configFromValores(valores: Record<string, unknown>): AgentesConf
       valores.ttlCacheCatalogoHoras,
       24,
     ),
+    agenteInstrutorAtivo: parseAgenteInstrutorAtivo(valores),
+    modeloT1: str(valores.modelo_t1, valores.modeloT1, AGENTES_CONFIG_PADRAO.modeloT1),
+    modeloEmbedding: str(
+      valores.modelo_embedding,
+      valores.modeloEmbedding,
+      AGENTES_CONFIG_PADRAO.modeloEmbedding,
+    ),
+    ragTopK: Math.max(1, Math.min(20, Math.floor(num(valores.rag_top_k, valores.ragTopK, 4)))),
   };
 }

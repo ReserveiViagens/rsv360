@@ -68,17 +68,24 @@ describe('Agentes — fail-safe flag (agentes_modulo_ativo === true)', () => {
     expect(cfg.agentesModuloAtivo).toBe(false);
   });
 
-  it('configFromValores lê limiares e TTLs do seed', () => {
+  it('configFromValores lê limiares, TTLs e flags do instrutor', () => {
     const cfg = configFromValores({
       agentes_modulo_ativo: false,
+      agente_instrutor_ativo: false,
       limiar_semantico_hit: 0.92,
       limiar_semantico_verificar: 0.85,
       ttl_cache_institucional_dias: 7,
       ttl_cache_catalogo_horas: 24,
+      modelo_t1: 'gpt-4o-mini',
+      modelo_embedding: 'text-embedding-3-small',
+      rag_top_k: 4,
     });
     expect(cfg.limiarSemanticoHit).toBe(0.92);
     expect(cfg.limiarSemanticoVerificar).toBe(0.85);
     expect(cfg.ttlCacheInstitucionalDias).toBe(7);
     expect(cfg.ttlCacheCatalogoHoras).toBe(24);
+    expect(cfg.agenteInstrutorAtivo).toBe(false);
+    expect(cfg.modeloT1).toBe('gpt-4o-mini');
+    expect(cfg.ragTopK).toBe(4);
   });
 });

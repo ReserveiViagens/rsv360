@@ -35,10 +35,14 @@ describe('Agentes routes — flag gate', () => {
     mockIsAtivo.mockResolvedValue(true);
     mockObterConfig.mockResolvedValue({
       agentesModuloAtivo: true,
+      agenteInstrutorAtivo: false,
       limiarSemanticoHit: 0.92,
       limiarSemanticoVerificar: 0.85,
       ttlCacheInstitucionalDias: 7,
       ttlCacheCatalogoHoras: 24,
+      modeloT1: 'gpt-4o-mini',
+      modeloEmbedding: 'text-embedding-3-small',
+      ragTopK: 4,
     });
 
     const health = await request(app).get('/api/v1/agentes/health');
