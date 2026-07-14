@@ -5,6 +5,7 @@ import {
   AGENTES_CONFIG_PADRAO,
   CHAVE_AGENTES,
   configFromValores,
+  parseAgenteInstrutorAtivo,
   parseAgentesModuloAtivo,
   type AgentesConfig,
 } from './schema';
@@ -39,6 +40,23 @@ export class AgentesConfigService {
 
       if (!row?.valores || typeof row.valores !== 'object') return false;
       return parseAgentesModuloAtivo(row.valores as Record<string, unknown>);
+    } catch {
+      return false;
+    }
+  }
+
+  /** Dupla flag: módulo E instrutor precisam ser true literal. */
+  static async isInstrutorAtivo(): Promise<boolean> {
+    try {
+      const [row] = await db
+        .select()
+        .from(configuracoesSistema)
+        .where(eq(configuracoesSistema.chave, CHAVE_AGENTES))
+        .limit(1);
+
+      if (!row?.valores || typeof row.valores !== 'object') return false;
+      const v = row.valores as Record<string, unknown>;
+      return parseAgentesModuloAtivo(v) && parseAgenteInstrutorAtivo(v);
     } catch {
       return false;
     }
