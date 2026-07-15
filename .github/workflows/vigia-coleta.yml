@@ -12,6 +12,12 @@ permissions:
   pull-requests: read
   security-events: read
 
+# Serializa escrita na página Notion; cancela runs enfileirados/obsoletos
+# (ex.: fila liberada após billing) para não sobrescrever snapshot mais novo.
+concurrency:
+  group: vigia-coleta-notion
+  cancel-in-progress: true
+
 jobs:
   coletar:
     name: Coletar status → Notion

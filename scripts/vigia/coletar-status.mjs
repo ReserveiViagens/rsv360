@@ -207,14 +207,36 @@ async function listChildBlocks(blockId) {
   return all;
 }
 
+function richTextPlain(block) {
+  const type = block?.type;
+  const payload = type ? block[type] : null;
+  const rich = payload?.rich_text;
+  if (!Array.isArray(rich)) return '';
+  return rich.map((t) => t?.plain_text || '').join('');
+}
+
+/** Evita sobrescrever página com run mais novo quando um job antigo (fila billing) termina depois. */
+function findWrittenRunId(blocks) {
+  for (const block of blocks) {
+    const text = richTextPlain(block);
+    const m = text.match(/meta:run_id=(\d+)/);
+    if (m) return Number(m[1]);
+  }
+  return null;
+}
+
 async function archiveBlocks(blocks) {
   for (const block of blocks) {
+    if (block.archived) continue;
     const { res, json } = await notionFetch(`/blocks/${block.id}`, {
       method: 'PATCH',
       body: { archived: true },
     });
     if (!res.ok) {
-      throw new Error(`Notion archive failed (${res.status}): ${json?.message || block.id}`);
+      const msg = json?.message || String(block.id);
+      // Bloco já arquivado entre list e PATCH (corrida / retry) — ignorar.
+      if (res.status === 400 && /archived/i.test(msg)) continue;
+      throw new Error(`Notion archive failed (${res.status}): ${msg}`);
     }
   }
 }
@@ -401,6 +423,7 @@ async function collectDependabot() {
   push('## f) Alertas Dependabot (abertos)');
   // GITHUB_TOKEN da Actions não lê Dependabot alerts — PAT dedicado (fallback = indisponível).
   const dependabotToken = (process.env.GH_DEPENDABOT_TOKEN || '').trim();
+  console.log(`diag GH_DEPENDABOT_TOKEN presente=${Boolean(dependabotToken)}`);
   if (!dependabotToken) {
     push('• indisponível');
     return;
@@ -410,6 +433,7 @@ async function collectDependabot() {
     token: dependabotToken,
   });
   if (!listed.ok) {
+    console.log(`diag Dependabot HTTP ${listed.status}`);
     push('• indisponível');
     return;
   }
@@ -444,8 +468,11 @@ function buildNotionBlocks(stamp) {
 
 async function main() {
   const stamp = saoPauloStamp();
+  const runId = String(process.env.GITHUB_RUN_ID || '').trim();
+  const sha = String(process.env.GITHUB_SHA || '').slice(0, 12);
   push(`# Snapshot Vigia — ${stamp} (America/São_Paulo)`);
   push(`Repo: ${OWNER}/${REPO}`);
+  if (runId) push(`meta:run_id=${runId} sha=${sha || '?'}`);
   push('');
 
   await collectWorkflows();
@@ -460,8 +487,30 @@ async function main() {
   console.log(snapshotText);
   console.log('--- END SNAPSHOT ---');
 
+  const headF = lines.findIndex((x) => x.startsWith('## f)'));
+  const sectionF =
+    headF >= 0
+      ? lines.slice(headF + 1).filter((l) => l.startsWith('• ') || l.startsWith('⚠️'))
+      : [];
+  console.log(`diag seção f a gravar: ${JSON.stringify(sectionF)}`);
+
   try {
     const children = await listChildBlocks(notionPageId);
+    if (runId) {
+      const previousRunId = findWrittenRunId(children);
+      const currentRunId = Number(runId);
+      if (
+        previousRunId != null &&
+        Number.isFinite(previousRunId) &&
+        Number.isFinite(currentRunId) &&
+        previousRunId > currentRunId
+      ) {
+        console.log(
+          `Notion SKIP stale overwrite: página já tem meta:run_id=${previousRunId}, este run=${currentRunId}`,
+        );
+        return;
+      }
+    }
     await archiveBlocks(children);
     const blocks = buildNotionBlocks(stamp);
     await appendBlocks(notionPageId, blocks);
