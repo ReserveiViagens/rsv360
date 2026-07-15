@@ -19,13 +19,13 @@ export function makeGenericHotelAdapter(cfg: {
 
       const raw = (await resp.json()) as Array<Record<string, unknown>>;
 
-      return raw.flatMap((r) => {
-        const candidata = {
+      return raw.flatMap((r): OfertaNormalizada[] => {
+        const candidata: OfertaNormalizada = {
           fornecedor: cfg.nome,
-          tipo: 'hospedagem' as const,
+          tipo: 'hospedagem',
           titulo: String(r.name ?? r.hotel_name ?? ''),
           preco: Number(r.price ?? r.total),
-          moeda: 'BRL' as const,
+          moeda: 'BRL',
           imagens: Array.isArray(r.images) ? r.images.map(String) : [],
           descricao: String(r.description ?? ''),
           fonte: String(r.url ?? cfg.endpoint),
@@ -40,7 +40,7 @@ export function makeGenericHotelAdapter(cfg: {
           });
           return [];
         }
-        return [parsed.data];
+        return [candidata];
       });
     },
   };
