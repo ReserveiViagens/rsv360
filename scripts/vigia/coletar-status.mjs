@@ -89,12 +89,13 @@ function daysSince(iso) {
   return Math.max(0, Math.floor(ms / (24 * 60 * 60 * 1000)));
 }
 
-async function gh(path, { accept } = {}) {
+async function gh(path, { accept, token } = {}) {
   const url = path.startsWith('http') ? path : `${GH_API}${path}`;
+  const bearer = token || githubToken;
   return fetch(url, {
     headers: {
       Accept: accept || 'application/vnd.github+json',
-      Authorization: `Bearer ${githubToken}`,
+      Authorization: `Bearer ${bearer}`,
       'X-GitHub-Api-Version': '2022-11-28',
       'User-Agent': 'rsv360-vigia-coleta',
     },
@@ -113,7 +114,7 @@ async function ghJson(path, opts) {
   return { res, body };
 }
 
-async function ghPaginate(path, { maxPages = 5, perPage = 100 } = {}) {
+async function ghPaginate(path, { maxPages = 5, perPage = 100, token } = {}) {
   const items = [];
   let url = path.includes('?')
     ? `${path}&per_page=${perPage}`
@@ -121,7 +122,7 @@ async function ghPaginate(path, { maxPages = 5, perPage = 100 } = {}) {
   if (!url.startsWith('http')) url = `${GH_API}${url}`;
 
   for (let page = 0; page < maxPages; page++) {
-    const { res, body } = await ghJson(url);
+    const { res, body } = await ghJson(url, { token });
     if (!res.ok) {
       return { ok: false, status: res.status, items, error: body?.message || res.statusText };
     }
@@ -375,19 +376,44 @@ async function collectCodeScanning() {
   push(`• ${formatSeverityCounts(countBySeverity(listed.items || []))}`);
 }
 
+function formatDependabotSeverity(counts) {
+  const medium = (counts.medium || 0) + (counts.moderate || 0);
+  const critical = counts.critical || 0;
+  const high = counts.high || 0;
+  const low = counts.low || 0;
+  const known = critical + high + medium + low;
+  const other = Object.entries(counts)
+    .filter(([k]) => !['critical', 'high', 'medium', 'moderate', 'low'].includes(k))
+    .reduce((n, [, v]) => n + v, 0);
+  if (known === 0 && other === 0) return 'nenhum alerta aberto';
+  const parts = [
+    `critical: ${critical}`,
+    `high: ${high}`,
+    `medium: ${medium}`,
+    `low: ${low}`,
+  ];
+  if (other > 0) parts.push(`other: ${other}`);
+  return parts.join(', ');
+}
+
 async function collectDependabot() {
   push('');
   push('## f) Alertas Dependabot (abertos)');
-  const listed = await ghPaginate('/dependabot/alerts?state=open', { maxPages: 10 });
-  if (!listed.ok) {
-    if (listed.status === 403 || listed.status === 404) {
-      push('• indisponível');
-      return;
-    }
-    warn(`não consegui ler dependabot alerts (HTTP ${listed.status})`);
+  // GITHUB_TOKEN da Actions não lê Dependabot alerts — PAT dedicado (fallback = indisponível).
+  const dependabotToken = (process.env.GH_DEPENDABOT_TOKEN || '').trim();
+  if (!dependabotToken) {
+    push('• indisponível');
     return;
   }
-  push(`• ${formatSeverityCounts(countBySeverity(listed.items || []))}`);
+  const listed = await ghPaginate('/dependabot/alerts?state=open', {
+    maxPages: 10,
+    token: dependabotToken,
+  });
+  if (!listed.ok) {
+    push('• indisponível');
+    return;
+  }
+  push(`• ${formatDependabotSeverity(countBySeverity(listed.items || []))}`);
 }
 
 function buildNotionBlocks(stamp) {
