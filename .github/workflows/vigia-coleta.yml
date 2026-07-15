@@ -31,6 +31,7 @@ jobs:
       - name: Coletar e gravar snapshot
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_DEPENDABOT_TOKEN: ${{ secrets.GH_DEPENDABOT_TOKEN }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           # Page ID não é secret sem o token — vars para aparecer em claro no log (diagnóstico).
           NOTION_PAGE_ID: ${{ vars.NOTION_PAGE_ID }}
