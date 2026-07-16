@@ -4,6 +4,7 @@ import { invalidarCache, resolverOfertas } from '../resolver';
 import { ConflictError } from '../lock';
 import { reservarVaga } from '../services/reservar-vaga';
 import { fornecedoresApiService } from '../services/fornecedores-api.service';
+import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 const adminAuth = [authenticateJwt, requireRole('admin')];
@@ -46,7 +47,7 @@ router.post('/', ...adminAuth, async (req, res) => {
 
 router.patch('/:id', ...adminAuth, async (req, res) => {
   try {
-    const updated = await fornecedoresApiService.update(req.params.id, req.body);
+    const updated = await fornecedoresApiService.update(asRequiredString(req.params.id), req.body);
     if (!updated) return res.status(404).json({ success: false, error: 'Fornecedor API não encontrado' });
     res.json({ success: true, data: updated });
   } catch (error) {

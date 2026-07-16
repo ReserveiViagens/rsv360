@@ -24,6 +24,7 @@ import { solicitarAlteracao, aprovar, negar } from '../aprovacao';
 import { hasMinRole } from '../rbac';
 import { registrarIndicacao } from '../mgm';
 import { sugerirPacoteFromProposta, criarTemplateFromProposta } from '../ia-copiloto';
+import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 const agentAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
@@ -109,7 +110,7 @@ router.post('/from-orcamento/:orcamentoId', ...staffAuth, async (req, res) => {
 
 router.get('/:token/og', publicLimiter, async (req, res, next) => {
   try {
-    const { token } = req.params;
+    const token = asRequiredString(req.params.token);
     if (!token.startsWith('rt-')) return next();
     const data = await buildPropostaOgByToken(token);
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
@@ -121,7 +122,7 @@ router.get('/:token/og', publicLimiter, async (req, res, next) => {
 
 router.post('/:token/recotar', publicLimiter, async (req, res) => {
   try {
-    const { token } = req.params;
+    const token = asRequiredString(req.params.token);
     if (!token || /^\d+$/.test(token)) {
       return res.status(400).json({ success: false, error: 'Token público inválido' });
     }
@@ -139,7 +140,8 @@ router.post('/:token/recotar', publicLimiter, async (req, res) => {
 
 router.get('/:token/vouchers/:voucherId/qr.png', publicLimiter, async (req, res) => {
   try {
-    const { token, voucherId } = req.params;
+    const token = asRequiredString(req.params.token);
+    const voucherId = asRequiredString(req.params.voucherId);
     if (!token || /^\d+$/.test(token)) {
       return res.status(400).json({ success: false, error: 'Token público inválido' });
     }
@@ -159,7 +161,7 @@ router.get('/:token/vouchers/:voucherId/qr.png', publicLimiter, async (req, res)
 
 router.get('/:token/validade', publicLimiter, optionalJwt, async (req, res) => {
   try {
-    const data = await cotacaoPublicaService.getValidadeByToken(req.params.token);
+    const data = await cotacaoPublicaService.getValidadeByToken(asRequiredString(req.params.token));
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     res.json({ success: true, data });
   } catch (error) {
@@ -169,7 +171,7 @@ router.get('/:token/validade', publicLimiter, optionalJwt, async (req, res) => {
 
 router.post('/:token/eventos', publicLimiter, async (req, res) => {
   try {
-    const { token } = req.params;
+    const token = asRequiredString(req.params.token);
     if (!token || /^\d+$/.test(token)) {
       return res.status(400).json({ success: false, error: 'Token público inválido' });
     }

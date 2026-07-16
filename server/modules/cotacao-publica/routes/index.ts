@@ -10,6 +10,7 @@ import { listRoteiroAtracoes } from '../services/roteiro-atracoes.service';
 import { parseGerarPropostaBody } from '../schemas/gerar-proposta.schema';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
 import { obterTaxaHospedePublica } from '../services/resolve-taxa-hospede-proposta';
+import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 
@@ -125,7 +126,7 @@ async function respondPropostaByToken(
 /** Alias curto `/p/:token` (mesmo payload de `/proposta/:token`). */
 router.get('/p/:token', publicLimiter, async (req, res) => {
   try {
-    await respondPropostaByToken(res, req.params.token);
+    await respondPropostaByToken(res, asRequiredString(req.params.token));
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
   }
@@ -133,7 +134,7 @@ router.get('/p/:token', publicLimiter, async (req, res) => {
 
 router.get('/proposta/:token', publicLimiter, async (req, res) => {
   try {
-    await respondPropostaByToken(res, req.params.token);
+    await respondPropostaByToken(res, asRequiredString(req.params.token));
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
   }
@@ -141,7 +142,7 @@ router.get('/proposta/:token', publicLimiter, async (req, res) => {
 
 router.get('/proposta/:token/validade', publicLimiter, async (req, res) => {
   try {
-    const data = await cotacaoPublicaService.getValidadeByToken(req.params.token);
+    const data = await cotacaoPublicaService.getValidadeByToken(asRequiredString(req.params.token));
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     res.json({ success: true, data });
   } catch (error) {
@@ -152,7 +153,7 @@ router.get('/proposta/:token/validade', publicLimiter, async (req, res) => {
 router.post('/proposta/:token/aceitar', publicLimiter, requireTurnstile, async (req, res) => {
   try {
     const data = await cotacaoPublicaService.aceitarPropostaByToken(
-      req.params.token,
+      asRequiredString(req.params.token),
       req.body?.clientName,
     );
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
@@ -192,7 +193,7 @@ router.get('/roteiro-atracoes', publicLimiter, async (req, res) => {
 
 router.get('/roteiro/:token/verificar', publicLimiter, async (req, res) => {
   try {
-    const data = await cotacaoPublicaService.verificarRoteiroByToken(req.params.token);
+    const data = await cotacaoPublicaService.verificarRoteiroByToken(asRequiredString(req.params.token));
     if (!data) return res.status(404).json({ success: false, error: 'Token não encontrado' });
     res.json({ success: true, data });
   } catch (error) {
@@ -202,7 +203,7 @@ router.get('/roteiro/:token/verificar', publicLimiter, async (req, res) => {
 
 router.get('/roteiro/:token', publicLimiter, async (req, res) => {
   try {
-    const data = await cotacaoPublicaService.getRoteiroByToken(req.params.token);
+    const data = await cotacaoPublicaService.getRoteiroByToken(asRequiredString(req.params.token));
     if (!data) return res.status(404).json({ success: false, error: 'Roteiro não encontrado' });
     res.json({ success: true, data });
   } catch (error) {
@@ -222,7 +223,7 @@ router.get('/roteiro/:token', publicLimiter, async (req, res) => {
 router.post('/roteiro/:token/evento', publicLimiter, async (req, res) => {
   try {
     const { tempoMs, scrollDepthPct } = req.body ?? {};
-    const data = await cotacaoPublicaService.registrarEngagementRoteiro(req.params.token, {
+    const data = await cotacaoPublicaService.registrarEngagementRoteiro(asRequiredString(req.params.token), {
       tempoMs,
       scrollDepthPct,
     });
