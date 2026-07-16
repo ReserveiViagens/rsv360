@@ -23,7 +23,18 @@ function Run-HubTests {
 
 function Run-SmokeLab {
   Write-Host "`n=== Smoke Marketing Lab ===" -ForegroundColor Cyan
-  docker compose up -d site-publico redis backend 2>&1 | Out-Null
+  # Docker prints progress on stderr; with $ErrorActionPreference=Stop that becomes a
+  # terminating NativeCommandError (false positive). Temporarily Continue + check exit.
+  $prevEap = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    docker compose up -d site-publico redis backend 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "docker compose up failed (exit $LASTEXITCODE)"
+    }
+  } finally {
+    $ErrorActionPreference = $prevEap
+  }
   Start-Sleep -Seconds 8
   & (Join-Path $Root "scripts\smoke-marketing-lab.ps1")
 }
