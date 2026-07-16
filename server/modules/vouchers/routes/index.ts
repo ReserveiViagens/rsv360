@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { publicLimiter } from '../../../middleware/public-limiter';
 import { verificarVoucherPorQrToken, isQrVoucherError } from '../../propostas/services/qr-voucher.service';
+import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.get('/health', (_req, res) => {
 
 router.get('/verificar/:qrToken', publicLimiter, async (req, res) => {
   try {
-    const data = await verificarVoucherPorQrToken(req.params.qrToken);
+    const data = await verificarVoucherPorQrToken(asRequiredString(req.params.qrToken));
     res.json({ success: true, data });
   } catch (error) {
     if (isQrVoucherError(error)) {

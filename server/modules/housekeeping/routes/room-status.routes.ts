@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireRole } from '../middleware/hk-auth.middleware';
 import { roomStatusService } from '../services/room-status.service';
+import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 const auth = requireRole('admin', 'manager', 'staff', 'housekeeper');
@@ -15,7 +16,7 @@ router.get('/', auth, async (req, res) => {
 
 router.get('/:id', auth, async (req, res) => {
   try {
-    res.json(await roomStatusService.getRoomById(req.params.id));
+    res.json(await roomStatusService.getRoomById(asRequiredString(req.params.id)));
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -23,7 +24,7 @@ router.get('/:id', auth, async (req, res) => {
 
 router.put('/:id/status', auth, async (req, res) => {
   try {
-    const result = await roomStatusService.updateStatus(req.params.id, req.body.status, req.body.notes);
+    const result = await roomStatusService.updateStatus(asRequiredString(req.params.id), req.body.status, req.body.notes);
     res.json(result);
   } catch (error) {
     res.status(400).json({ error: (error as Error).message });

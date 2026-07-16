@@ -2,10 +2,11 @@ import type { Express, Request, Response } from 'express';
 import cotacaoPublicaRouter from './routes/index';
 import { cotacaoPublicaService } from './services/cotacao-publica.service';
 import { publicLimiter } from '../../middleware/public-limiter';
+import { asRequiredString } from '../../lib/parse';
 
 async function handlePublicPropostaByToken(req: Request, res: Response) {
   try {
-    const data = await cotacaoPublicaService.getPropostaByToken(req.params.token);
+    const data = await cotacaoPublicaService.getPropostaByToken(asRequiredString(req.params.token));
     if (!data) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     return res.json({ success: true, data });
   } catch (error) {
