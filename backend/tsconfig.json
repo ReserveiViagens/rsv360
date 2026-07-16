@@ -11,5 +11,12 @@
     "isolatedModules": true,
     "types": ["node", "jest"]
   },
-  "include": ["server/**/*.ts", "src/**/*.ts", "src/**/*.js", "app.js", "server.js"]
+  "include": [
+    "server/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "app.js",
+    "server.js",
+    "../server/types/**/*.d.ts"
+  ]
 }
