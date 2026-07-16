@@ -55,6 +55,7 @@ test.describe('D2.1 — turismo health (CI)', () => {
     const response = await request.get(`${turismoBase}/api/health`);
     expect(response.status()).toBe(200);
     const body = await response.json();
-    expect(body.ok).toBe(true);
+    // Contrato canônico (health.ts): ok + status. Aceita legado status-only.
+    expect(body.ok === true || body.status === 'ok').toBe(true);
   });
 });
