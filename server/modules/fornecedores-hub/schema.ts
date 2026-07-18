@@ -13,7 +13,13 @@ export const ofertaSchema = z.object({
   capturadoEm: z.string().datetime(),
 });
 
-export type OfertaValidada = z.infer<typeof ofertaSchema>;
+/**
+ * Contrato de saída = shared OfertaNormalizada.
+ * Não usar z.infer aqui: com backend tsconfig strict:false (strictNullChecks off),
+ * Zod marca todos os campos como opcionais e quebra o guard bidirecional.
+ * Validação runtime continua em ofertaSchema (campos required).
+ */
+export type OfertaValidada = OfertaNormalizada;
 
 /** Contrato estrito para ofertas do wizard / hub de cotação (PR2). */
 export const ofertaCotacaoSchema = z.object({
@@ -53,8 +59,14 @@ export const CONFIG_PROPOSTA_PADRAO: ConfigProposta = {
   avisoExpiracaoHoras: 2,
 };
 
-/** Guard compile-time: Zod output deve casar com OfertaNormalizada do shared. */
-type _Compat = OfertaNormalizada extends OfertaValidada ? true : never;
-type _CompatReverse = OfertaValidada extends OfertaNormalizada ? true : never;
+/**
+ * Guard compile-time: shape Zod (com required restaurado) ↔ OfertaNormalizada.
+ * Com backend tsconfig strict:false, z.infer marca campos required do Zod como opcionais;
+ * o mapped `-?` restaura a obrigatoriedade para a comparação (sem afrouxar runtime).
+ */
+type _ZodOut = z.infer<typeof ofertaSchema>;
+type _ZodRequired = { [K in keyof _ZodOut]-?: _ZodOut[K] };
+type _Compat = _ZodRequired extends OfertaNormalizada ? true : never;
+type _CompatReverse = OfertaNormalizada extends _ZodRequired ? true : never;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _assertCompat: [_Compat, _CompatReverse] = [true, true];
