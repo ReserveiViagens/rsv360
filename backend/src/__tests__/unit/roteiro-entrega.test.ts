@@ -1,9 +1,9 @@
 const mockWhere = jest.fn();
 const mockFrom = jest.fn(() => ({ where: mockWhere }));
-const mockSelect = jest.fn(() => ({ from: mockFrom }));
+const mockSelect = jest.fn((..._args: unknown[]) => ({ from: mockFrom }));
 const mockUpdateWhere = jest.fn().mockResolvedValue(undefined);
 const mockUpdateSet = jest.fn(() => ({ where: mockUpdateWhere }));
-const mockUpdate = jest.fn(() => ({ set: mockUpdateSet }));
+const mockUpdate = jest.fn((..._args: unknown[]) => ({ set: mockUpdateSet }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {
