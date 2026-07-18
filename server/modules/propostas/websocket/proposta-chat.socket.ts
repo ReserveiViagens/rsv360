@@ -23,8 +23,8 @@ function verifySocketToken(token?: string) {
   };
 }
 
-function roomName(propostaId: number) {
-  return `proposta:${propostaId}`;
+function roomName(id: string | number) {
+  return `proposta:${id}`;
 }
 
 async function handleChatMessage(

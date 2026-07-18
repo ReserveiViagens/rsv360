@@ -18,6 +18,8 @@ const LEGACY_SNAPSHOT_PAYLOAD: GerarPropostaPayload = {
   hotelId: 'hotel-1',
   ticketIds: ['ticket-1', 'ticket-2'],
   attractionIds: ['attr-1'],
+  name: 'Test Guest',
+  phone: '64999999999',
   profile: 'casal',
   catalog: {
     hotels: [
