@@ -33,6 +33,8 @@ export async function enfileirarImportacao(
     { ...data, jobId },
     {
       jobId,
+      // Explicit single attempt — D3: E2E "2x job falhou" was not BullMQ retry.
+      attempts: 1,
       removeOnComplete: 50,
       removeOnFail: 20,
     },
