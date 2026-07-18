@@ -1,8 +1,8 @@
-import { Router, type Request } from 'express';
+import { Router, type Request, type Response } from 'express';
 import multer from 'multer';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { gerarModeloXlsxBuffer } from '../import/modelo';
-import { pipelineImportacao } from '../import/pipeline';
+import { ImportVazioError, pipelineImportacao } from '../import/pipeline';
 import { enfileirarImportacao } from '../../../queues/importacoes.queue';
 
 const router = Router();
@@ -42,6 +42,17 @@ function buildImportOptions(req: Request, dryRun: boolean) {
   };
 }
 
+function sendImportError(res: Response, error: unknown) {
+  if (error instanceof ImportVazioError) {
+    return res.status(422).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+    });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
+
 router.get('/modelo.xlsx', ...importAuth, (_req, res) => {
   const buffer = gerarModeloXlsxBuffer();
   res.setHeader(
@@ -66,7 +77,7 @@ router.post('/preview', ...importAuth, upload.single('file'), async (req, res) =
 
     res.json({ success: true, data: relatorio });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return sendImportError(res, error);
   }
 });
 
@@ -96,7 +107,7 @@ router.post('/commit', ...importAuth, upload.single('file'), async (req, res) =>
 
     res.json({ success: true, data: relatorio });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return sendImportError(res, error);
   }
 });
 
