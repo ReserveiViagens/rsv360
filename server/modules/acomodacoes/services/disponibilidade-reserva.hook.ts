@@ -71,7 +71,7 @@ export async function assertDisponibilidadeReserva(
   checkOut: string,
 ): Promise<void> {
   const result = await verificarDisponibilidadeReserva(acomodacaoId, checkIn, checkOut);
-  if (!result.ok) {
+  if (result.ok === false) {
     throw new DisponibilidadeReservaConflictError(acomodacaoId, result.datasIndisponiveis);
   }
 }

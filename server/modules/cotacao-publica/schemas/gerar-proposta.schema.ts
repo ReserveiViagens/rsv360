@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { GerarPropostaPayload } from '../services/montar-roteiro';
 
 const catalogItemSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -68,8 +69,8 @@ export const gerarPropostaBodySchema = z.preprocess(
     .passthrough(),
 );
 
-export type GerarPropostaBodyParsed = z.infer<typeof gerarPropostaBodySchema>;
+export type GerarPropostaBodyParsed = GerarPropostaPayload;
 
-export function parseGerarPropostaBody(body: unknown): GerarPropostaBodyParsed {
-  return gerarPropostaBodySchema.parse(body);
+export function parseGerarPropostaBody(body: unknown): GerarPropostaPayload {
+  return gerarPropostaBodySchema.parse(body) as GerarPropostaPayload;
 }

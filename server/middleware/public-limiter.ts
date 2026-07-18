@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { RedisStore } from 'rate-limit-redis';
+import { RedisStore, type RedisReply } from 'rate-limit-redis';
 import { getClientIp } from './get-client-ip';
 import {
   getRedisConnection,
@@ -8,7 +8,7 @@ import {
 } from '../modules/fornecedores-hub/redis-connection';
 
 const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 30;
+export const MAX_PER_WINDOW = 30;
 
 let limiter: RequestHandler | null = null;
 
@@ -36,8 +36,8 @@ async function buildLimiter(): Promise<RequestHandler> {
     return rateLimit({
       ...base,
       store: new RedisStore({
-        sendCommand: (...args: string[]) =>
-          redis.call(args[0], ...args.slice(1)) as ReturnType<typeof redis.call>,
+        sendCommand: (...args: string[]): Promise<RedisReply> =>
+          redis.call(args[0], ...args.slice(1)) as Promise<RedisReply>,
       }),
     });
   } catch (error) {

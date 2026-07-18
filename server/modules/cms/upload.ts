@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
 import { randomUUID } from 'crypto';
-import type { RequestHandler } from 'express';
+import type { ErrorRequestHandler } from 'express';
 
 const ALLOWED_MIMES = new Set([
   'image/jpeg',
@@ -69,7 +69,7 @@ export const cmsUpload = multer({
 }).single('file');
 
 /** Converte erros multer em 400. */
-export const cmsUploadErrorHandler: RequestHandler = (err, _req, res, next) => {
+export const cmsUploadErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   if (!err) return next();
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {

@@ -309,7 +309,7 @@ export async function normalizarLote(
     if (!row || Object.values(row).every((v) => v === '' || v == null)) continue;
 
     const result = await normalizarLinha(row, i + 2, options);
-    if (result.ok) {
+    if ('dto' in result) {
       validos.push(result.dto);
     } else if ('skip' in result && result.skip) {
       ignorados.push({ linha: result.indice, erros: result.erros });

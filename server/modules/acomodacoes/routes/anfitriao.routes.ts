@@ -87,8 +87,8 @@ router.post('/unidades/:id/enviar-aprovacao', ...parceiroAuth, async (req, res) 
 router.post('/admin/unidades/:id/aprovar', ...staffAprovacao, async (req, res) => {
   try {
     const result = await anfitriaoService.aprovarUnidade(req.user!.role ?? '', Number(req.params.id));
-    if (result.error === 'forbidden') return res.status(403).json({ success: false, error: 'Acesso negado' });
-    if (result.error === 'not_found') {
+    if ('error' in result) {
+      if (result.error === 'forbidden') return res.status(403).json({ success: false, error: 'Acesso negado' });
       return res.status(404).json({ success: false, error: 'Unidade não encontrada ou status inválido' });
     }
     res.json({ success: true, data: result.data });
@@ -104,8 +104,8 @@ router.post('/admin/unidades/:id/rejeitar', ...staffAprovacao, async (req, res) 
       Number(req.params.id),
       req.body?.motivo,
     );
-    if (result.error === 'forbidden') return res.status(403).json({ success: false, error: 'Acesso negado' });
-    if (result.error === 'not_found') {
+    if ('error' in result) {
+      if (result.error === 'forbidden') return res.status(403).json({ success: false, error: 'Acesso negado' });
       return res.status(404).json({ success: false, error: 'Unidade não encontrada' });
     }
     res.json({ success: true, data: result.data });

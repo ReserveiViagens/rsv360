@@ -95,7 +95,7 @@ function slugify(input: string): string {
 
 function mergeMetadata(
   existing: Record<string, unknown>,
-  input: CmsContentInput,
+  input: Partial<CmsContentInput>,
   amenidades: AmenidadeCode[],
   videoUrl: string | null,
 ): Record<string, unknown> {

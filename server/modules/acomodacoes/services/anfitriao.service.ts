@@ -2,7 +2,10 @@ import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { acomodacoes } from '../../../../backend/src/db/schema/acomodacoes';
 import { carteiraCorretor } from '../../../../backend/src/db/schema/carteira-corretor';
-import { disponibilidadeAcomodacao } from '../../../../backend/src/db/schema/disponibilidade-acomodacao';
+import {
+  disponibilidadeAcomodacao,
+  type DisponibilidadeAcomodacao,
+} from '../../../../backend/src/db/schema/disponibilidade-acomodacao';
 import { propostas } from '../../../../backend/src/db/schema/propostas';
 import {
   buildReservedDateSet,
@@ -280,15 +283,15 @@ export const anfitriaoService = {
     const scoped = await this.obterUnidade(auth, acomodacaoId);
     if ('error' in scoped) return { error: scoped.error };
 
-    const disponibilidadeRows = await this.listarDisponibilidade(auth, acomodacaoId, de, ate);
-    if ('error' in disponibilidadeRows) return { error: disponibilidadeRows.error };
+    const disponibilidadeResult = await this.listarDisponibilidade(auth, acomodacaoId, de, ate);
+    if ('error' in disponibilidadeResult) return { error: disponibilidadeResult.error };
 
     const reservasResult = await this.listarReservas(auth, { de, ate, acomodacaoId });
     if ('error' in reservasResult) return { error: reservasResult.error };
 
     const reservedDates = buildReservedDateSet(reservasResult.data);
-    const rowByDate = new Map(
-      disponibilidadeRows.map((r) => [String(r.data).slice(0, 10), r]),
+    const rowByDate = new Map<string, DisponibilidadeAcomodacao>(
+      disponibilidadeResult.map((r) => [String(r.data).slice(0, 10), r]),
     );
 
     const dias: CalendarioDiaItem[] = enumerateDatesInclusive(de, ate).map((data) => {
@@ -308,9 +311,14 @@ export const anfitriaoService = {
     return { data: dias };
   },
 
-  async listarDisponibilidade(auth: AuthContext, acomodacaoId: number, de: string, ate: string) {
+  async listarDisponibilidade(
+    auth: AuthContext,
+    acomodacaoId: number,
+    de: string,
+    ate: string,
+  ): Promise<{ error: 'forbidden' | 'not_found' } | DisponibilidadeAcomodacao[]> {
     const scoped = await this.obterUnidade(auth, acomodacaoId);
-    if ('error' in scoped) return scoped;
+    if ('error' in scoped) return { error: scoped.error };
 
     return db
       .select()
