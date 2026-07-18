@@ -1,6 +1,6 @@
 const mockSelectWhere = jest.fn();
 const mockSelectFrom = jest.fn(() => ({ where: mockSelectWhere }));
-const mockSelect = jest.fn(() => ({ from: mockSelectFrom }));
+const mockSelect = jest.fn((..._args: unknown[]) => ({ from: mockSelectFrom }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {

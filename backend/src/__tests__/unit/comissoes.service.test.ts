@@ -3,18 +3,18 @@ import { calcularSplitComissoes, comissoesService, simularComissoes } from '../.
 const mockSelectLimit = jest.fn();
 const mockSelectWhere = jest.fn(() => ({ limit: mockSelectLimit }));
 const mockSelectFrom = jest.fn(() => ({ where: mockSelectWhere }));
-const mockSelect = jest.fn(() => ({ from: mockSelectFrom }));
+const mockSelect = jest.fn((..._args: unknown[]) => ({ from: mockSelectFrom }));
 
 const mockUpdateWhere = jest.fn().mockResolvedValue(undefined);
 const mockUpdateSet = jest.fn(() => ({ where: mockUpdateWhere }));
-const mockUpdate = jest.fn(() => ({ set: mockUpdateSet }));
+const mockUpdate = jest.fn((..._args: unknown[]) => ({ set: mockUpdateSet }));
 
 const mockInsertValues = jest.fn().mockResolvedValue(undefined);
-const mockInsert = jest.fn(() => ({ values: mockInsertValues }));
+const mockInsert = jest.fn((..._args: unknown[]) => ({ values: mockInsertValues }));
 
 const mockInsertReturning = jest.fn().mockResolvedValue([{ id: 99 }]);
 const mockInsertLancValues = jest.fn(() => ({ returning: mockInsertReturning }));
-const mockInsertLanc = jest.fn(() => ({ values: mockInsertLancValues }));
+const mockInsertLanc = jest.fn((..._args: unknown[]) => ({ values: mockInsertLancValues }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {
