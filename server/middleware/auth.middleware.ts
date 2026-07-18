@@ -18,8 +18,13 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
     return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
   }
 
+  const id = Number(payload.userId);
+  if (!Number.isFinite(id)) {
+    return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
+  }
+
   req.user = {
-    id: Number(payload.userId),
+    id,
     email: payload.email,
     name: payload.name,
     role: payload.role,
@@ -29,13 +34,17 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
 }
 
 /** Autenticação opcional — não falha se token ausente. */
-export function optionalJwt(req: Request, _res: Response, next: NextFunction) {
+export function optionalJwt(req: Request, res: Response, next: NextFunction) {
   const token = extractBearerToken(req);
   if (token) {
     const payload = verifyAccessToken(token, getJwtSecret());
     if (payload?.userId != null) {
+      const id = Number(payload.userId);
+      if (!Number.isFinite(id)) {
+        return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
+      }
       req.user = {
-        id: Number(payload.userId),
+        id,
         email: payload.email,
         name: payload.name,
         role: payload.role,
@@ -43,7 +52,7 @@ export function optionalJwt(req: Request, _res: Response, next: NextFunction) {
       };
     }
   }
-  next();
+  return next();
 }
 
 export function requireRole(...roles: string[]) {
