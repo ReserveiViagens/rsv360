@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-export interface AuthenticatedRequest extends Request {
+/** Cloud stub auth — string ids for uploadedBy (varchar); omit global Request.user (numeric id). */
+export interface AuthenticatedRequest extends Omit<Request, 'user'> {
   user?: {
     id: string;
     email: string;
@@ -24,10 +25,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
 
   // Mock user - in production decode from JWT
-  (req as AuthenticatedRequest).user = {
+  (req as unknown as AuthenticatedRequest).user = {
     id: 'user-123',
     email: 'user@example.com',
-    role: 'admin'
+    role: 'admin',
   };
 
   next();

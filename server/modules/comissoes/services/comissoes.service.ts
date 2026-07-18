@@ -16,6 +16,7 @@ import {
   COMISSOES_OFICIAL_RESERVEI,
   comissoesConfigSchema,
   comissoesSolicitarAprovacaoSchema,
+  type ComissoesAprovarSugestaoInput,
   type ComissoesConfigInput,
   type ComissoesSimularQueryInput,
   type ComissoesSolicitarAprovacaoInput,
@@ -397,7 +398,7 @@ export const comissoesService = {
 
   async aprovarSugestao(
     aprovadorUserId: number,
-    opts: { confirmouDiff: boolean; overrideBaixaConfianca?: boolean },
+    opts: ComissoesAprovarSugestaoInput,
   ): Promise<ComissoesConfig> {
     if (!opts.confirmouDiff) {
       throw new Error('Confirmação do diff atual vs sugestão é obrigatória');
