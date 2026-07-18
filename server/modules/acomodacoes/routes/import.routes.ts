@@ -11,7 +11,7 @@ const upload = multer({
   limits: { fileSize: 15 * 1024 * 1024 },
 });
 
-const importAuth = [authenticateJwt, requireRole('admin', 'manager', 'user', 'anfitriao', 'corretor')];
+const importAuth = [authenticateJwt, requireRole('admin', 'manager')];
 
 const PARCEIRO_ROLES = new Set(['anfitriao', 'corretor']);
 const LIMITE_IMPORT_PARCEIRO = 50;
