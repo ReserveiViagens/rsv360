@@ -4,7 +4,3 @@ process.env.DATABASE_URL ??=
 process.env.REDIS_URL ??= 'redis://127.0.0.1:6379';
 process.env.FORNECEDORES_ENCRYPTION_KEY ??=
   'integration-test-key-32-chars-min!!';
-
-// CI negative proof — intentional type error (revert after red run)
-const __backendTypecheckNegativeProof: number = 'should-fail-tsc';
-
