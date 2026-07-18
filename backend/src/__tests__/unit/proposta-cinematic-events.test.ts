@@ -1,7 +1,7 @@
 const mockSelectWhere = jest.fn();
 const mockSelectFrom = jest.fn(() => ({ where: mockSelectWhere, limit: jest.fn(() => mockSelectWhere) }));
 const mockSelectLimit = jest.fn();
-const mockSelect = jest.fn(() => ({
+const mockSelect = jest.fn((..._args: unknown[]) => ({
   from: jest.fn(() => ({
     where: jest.fn(() => ({
       limit: mockSelectLimit,
@@ -11,7 +11,7 @@ const mockSelect = jest.fn(() => ({
 
 const mockUpdateWhere = jest.fn().mockResolvedValue(undefined);
 const mockUpdateSet = jest.fn(() => ({ where: mockUpdateWhere }));
-const mockUpdate = jest.fn(() => ({ set: mockUpdateSet }));
+const mockUpdate = jest.fn((..._args: unknown[]) => ({ set: mockUpdateSet }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {

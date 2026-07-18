@@ -1,7 +1,7 @@
 const mockReturning = jest.fn();
 const mockWhere = jest.fn(() => ({ returning: mockReturning }));
 const mockSet = jest.fn(() => ({ where: mockWhere }));
-const mockUpdate = jest.fn(() => ({ set: mockSet }));
+const mockUpdate = jest.fn((..._args: unknown[]) => ({ set: mockSet }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {

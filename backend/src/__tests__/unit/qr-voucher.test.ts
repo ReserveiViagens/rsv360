@@ -1,6 +1,6 @@
 const mockWhere = jest.fn();
 const mockFrom = jest.fn(() => ({ where: mockWhere }));
-const mockSelect = jest.fn(() => ({ from: mockFrom }));
+const mockSelect = jest.fn((..._args: unknown[]) => ({ from: mockFrom }));
 
 function whereResult(rows: unknown[]) {
   return {
@@ -11,9 +11,9 @@ function whereResult(rows: unknown[]) {
 }
 const mockUpdateWhere = jest.fn().mockResolvedValue(undefined);
 const mockUpdateSet = jest.fn(() => ({ where: mockUpdateWhere }));
-const mockUpdate = jest.fn(() => ({ set: mockUpdateSet }));
+const mockUpdate = jest.fn((..._args: unknown[]) => ({ set: mockUpdateSet }));
 const mockInsertValues = jest.fn().mockResolvedValue(undefined);
-const mockInsert = jest.fn(() => ({ values: mockInsertValues }));
+const mockInsert = jest.fn((..._args: unknown[]) => ({ values: mockInsertValues }));
 
 jest.mock('../../../../server/lib/db', () => ({
   db: {
