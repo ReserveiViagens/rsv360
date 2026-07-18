@@ -50,23 +50,29 @@ export function parseExcel(buffer: Buffer, formato: 'xlsx' | 'csv' = 'xlsx'): Re
 }
 
 async function extrairPdf(buffer: Buffer): Promise<string> {
-  const pdfParse = (await import('pdf-parse')).default;
-  const parsed = await pdfParse(buffer);
-  let texto = parsed.text?.trim() ?? '';
+  // pdf-parse ^2.x exposes PDFParse class (no callable default).
+  const { PDFParse } = await import('pdf-parse');
+  const parser = new PDFParse({ data: buffer });
+  try {
+    const parsed = await parser.getText();
+    let texto = parsed.text?.trim() ?? '';
 
-  if (texto.length < 80 && process.env.IMPORT_OCR_ENABLED === 'true') {
-    try {
-      const { createWorker } = await import('tesseract.js');
-      const worker = await createWorker('por');
-      const { data } = await worker.recognize(buffer);
-      await worker.terminate();
-      if (data.text?.trim()) texto = data.text.trim();
-    } catch {
-      /* OCR opcional — ignora falha */
+    if (texto.length < 80 && process.env.IMPORT_OCR_ENABLED === 'true') {
+      try {
+        const { createWorker } = await import('tesseract.js');
+        const worker = await createWorker('por');
+        const { data } = await worker.recognize(buffer);
+        await worker.terminate();
+        if (data.text?.trim()) texto = data.text.trim();
+      } catch {
+        /* OCR opcional — ignora falha (tesseract.js not a runtime dep) */
+      }
     }
-  }
 
-  return texto;
+    return texto;
+  } finally {
+    await parser.destroy();
+  }
 }
 
 export async function extrairTexto(buffer: Buffer, formato: FormatoImportacao): Promise<string> {

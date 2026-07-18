@@ -188,7 +188,9 @@ export async function resolverHotelComMeta(
   }
 
   try {
-    const result = await db.execute<{ content_id: string }>(sql`
+    // db from CJS require is untyped — type args on execute are illegal (TS2347).
+    // Query and row access unchanged at runtime.
+    const result = await db.execute(sql`
       SELECT content_id
       FROM website_content
       WHERE page_type IN ('hotels', 'hotel')
