@@ -6,6 +6,18 @@ import type {
   RelatorioImportacao,
 } from './acomodacao-import.types';
 
+export const IMPORT_VAZIO_CODE = 'IMPORT_VAZIO' as const;
+
+export class ImportVazioError extends Error {
+  readonly code = IMPORT_VAZIO_CODE;
+  readonly statusCode = 422;
+
+  constructor(message = 'Arquivo sem linhas de acomodação para importar') {
+    super(message);
+    this.name = 'ImportVazioError';
+  }
+}
+
 export interface PipelineImportResult extends RelatorioImportacao {
   formato: string;
   errosNormalizacao: Array<{ linha: number; erros: string[] }>;
@@ -17,6 +29,10 @@ export async function pipelineImportacao(
   options: ProcessarImportOptions = {},
 ): Promise<PipelineImportResult> {
   const linhasBrutas = await parseArquivo(buffer, nomeArquivo);
+
+  if (linhasBrutas.length === 0) {
+    throw new ImportVazioError();
+  }
 
   if (options.maxLinhasParceiro != null && linhasBrutas.length > options.maxLinhasParceiro) {
     throw new Error(
@@ -53,4 +69,4 @@ export async function pipelineImportacao(
   };
 }
 
-module.exports = { pipelineImportacao };
+module.exports = { pipelineImportacao, ImportVazioError, IMPORT_VAZIO_CODE };
