@@ -13,6 +13,7 @@ import {
   maskEmail,
   maskPhone,
   OBSERVACAO_BLOQUEADO,
+  OBSERVACAO_RESERVADO,
   parseEstadiaFromMetadata,
   type CalendarioDiaItem,
   type ReservaAnfitriaoItem,
@@ -358,7 +359,8 @@ export const anfitriaoService = {
           .set({
             disponivel: dia.disponivel,
             precoOverride: dia.precoOverride ?? null,
-            observacao: existente.observacao === 'reservado' ? 'reservado' : observacao,
+            observacao:
+              existente.observacao === OBSERVACAO_RESERVADO ? OBSERVACAO_RESERVADO : observacao,
             atualizadoEm: new Date(),
           })
           .where(eq(disponibilidadeAcomodacao.id, existente.id));
