@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Request } from 'express';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { tarifaService } from '../services/tarifa.service';
 import { anfitriaoService } from '../services/anfitriao.service';
@@ -7,7 +7,7 @@ const router = Router();
 const staffAuth = [authenticateJwt, requireRole('admin', 'manager')];
 const parceiroAuth = [authenticateJwt, requireRole('anfitriao', 'corretor', 'admin', 'manager')];
 
-function authFromReq(req: { user?: { id: number; role?: string } }) {
+function authFromReq(req: Request) {
   return { userId: req.user!.id, role: req.user!.role ?? 'user' };
 }
 
