@@ -1,11 +1,11 @@
 import { Worker } from 'bullmq';
 import { createBullMQConnection } from '../fornecedores-hub/redis-connection';
-import { pipelineImportacao } from '../modules/acomodacoes/import/pipeline';
+import { pipelineImportacao } from './import/pipeline';
 import {
   IMPORTACOES_QUEUE_NAME,
   JOB_IMPORTAR_ACOMODACOES,
   type ImportarAcomodacoesJobData,
-} from '../queues/importacoes.queue';
+} from '../../queues/importacoes.queue';
 
 let worker: Worker<ImportarAcomodacoesJobData> | null = null;
 
