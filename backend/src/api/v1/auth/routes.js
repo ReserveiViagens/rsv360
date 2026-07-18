@@ -720,8 +720,13 @@ router.post('/login', async (req, res) => {
   const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
   const crypto = require('crypto');
   const header = base64UrlEncode(Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
+  // Numeric pilot id: 12 hex chars → 48-bit int (< MAX_SAFE_INTEGER), deterministic per email.
+  // Magnitude ~1e14 avoids collision with DB serial user ids. Replaces hex string that Number() → NaN.
   const payloadObj = {
-    userId: crypto.createHash('sha256').update(email.toLowerCase()).digest('hex').slice(0, 12),
+    userId: parseInt(
+      crypto.createHash('sha256').update(email.toLowerCase()).digest('hex').slice(0, 12),
+      16,
+    ),
     email: email.toLowerCase(),
     name: email.split('@')[0],
     role: 'admin',

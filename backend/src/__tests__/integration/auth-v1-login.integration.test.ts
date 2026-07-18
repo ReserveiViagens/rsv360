@@ -1,5 +1,4 @@
 import request from 'supertest';
-import crypto from 'crypto';
 import express from 'express';
 import { authRouter } from '../../api/v1/auth/routes';
 
