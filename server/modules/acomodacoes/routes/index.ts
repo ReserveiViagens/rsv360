@@ -34,13 +34,14 @@ router.get('/disponiveis', publicLimiter, async (req, res) => {
 
     const hotelId = await resolverHotelIdParaAcomodacoes(hotelIdRaw, titulo);
 
-    const periodo = parsePeriodoEstadiaOpcional(
+    const periodoRaw = parsePeriodoEstadiaOpcional(
       req.query.checkIn != null ? String(req.query.checkIn) : undefined,
       req.query.checkOut != null ? String(req.query.checkOut) : undefined,
     );
-    if (periodo && 'error' in periodo) {
-      return res.status(400).json({ success: false, error: periodo.error });
+    if (periodoRaw && 'error' in periodoRaw) {
+      return res.status(400).json({ success: false, error: periodoRaw.error });
     }
+    const periodo = periodoRaw && !('error' in periodoRaw) ? periodoRaw : null;
 
     const hospedes = adults + children;
     const listed = await acomodacoesService.listarDisponiveis({

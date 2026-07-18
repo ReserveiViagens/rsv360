@@ -62,7 +62,7 @@ describe('parseGerarPropostaBody — retrocompat (ponto 1)', () => {
       upgradeVarandaValor: 1,
     });
     expect(parsed.upgradeVaranda).toBe(true);
-    expect((parsed as Record<string, unknown>).upgradeVarandaValor).toBeUndefined();
+    expect((parsed as unknown as Record<string, unknown>).upgradeVarandaValor).toBeUndefined();
   });
 });
 
