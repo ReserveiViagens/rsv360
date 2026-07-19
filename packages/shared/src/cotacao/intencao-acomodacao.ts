@@ -165,7 +165,7 @@ export function montarCardsPorRelevancia(
 
   const hospedes = adultos + criancas;
   const arquetipos = arquetiposPara(perfil, adultos, criancas);
-  const seen = new Set<string | number>();
+  const seen = new Set<number>();
   const cards: CardArquetipoPasso2[] = [];
 
   for (const arquetipo of arquetipos) {

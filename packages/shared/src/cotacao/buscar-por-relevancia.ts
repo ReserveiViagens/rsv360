@@ -9,7 +9,8 @@ export interface AcomodacaoCriterios {
 }
 
 export interface AcomodacaoDisponivel {
-  id: number | string;
+  /** PK serial — always number at runtime (D4/E3). */
+  id: number;
   /** Código externo Etapa A (ex.: ATR-SUV, KN39H). */
   codigoExterno?: string;
   titulo: string;
