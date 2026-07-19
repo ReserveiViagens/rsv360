@@ -9,6 +9,22 @@ import {
 
 let worker: Worker<ImportarAcomodacoesJobData> | null = null;
 
+/** D3: classify failed-log noise — expose attempt X/Y (retry vs single fail). */
+export function formatImportJobFailedLog(
+  job: { id?: string; attemptsMade?: number; opts?: { attempts?: number } } | undefined,
+  err: { message?: string } | undefined,
+) {
+  const attemptsMade = job?.attemptsMade ?? 0;
+  const maxAttempts = job?.opts?.attempts && job.opts.attempts > 0 ? job.opts.attempts : 1;
+  return {
+    jobId: job?.id,
+    tentativa: `${attemptsMade}/${maxAttempts}`,
+    attemptsMade,
+    maxAttempts,
+    error: err?.message,
+  };
+}
+
 export async function processImportJob(job: { data: ImportarAcomodacoesJobData }) {
   const buffer = Buffer.from(job.data.bufferBase64, 'base64');
   const relatorio = await pipelineImportacao(buffer, job.data.nomeArquivo, {
@@ -47,10 +63,7 @@ export async function startImportacoesWorker(): Promise<void> {
   );
 
   worker.on('failed', (job, err) => {
-    console.error('[importacoes] job falhou', {
-      jobId: job?.id,
-      error: err?.message,
-    });
+    console.error('[importacoes] job falhou', formatImportJobFailedLog(job, err));
   });
 
   console.log('[importacoes] Worker BullMQ registrado ✓');
@@ -67,4 +80,5 @@ module.exports = {
   startImportacoesWorker,
   stopImportacoesWorker,
   processImportJob,
+  formatImportJobFailedLog,
 };
