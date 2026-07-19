@@ -11,6 +11,7 @@ import { parseGerarPropostaBody } from '../schemas/gerar-proposta.schema';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
 import { obterTaxaHospedePublica } from '../services/resolve-taxa-hospede-proposta';
 import { asRequiredString } from '../../../lib/parse';
+import { HotelMismatchError } from '../services/assert-hotel-match-proposta';
 
 const router = Router();
 
@@ -104,6 +105,13 @@ router.post('/gerar-proposta', publicLimiter, requireTurnstile, async (req, res)
         error: err.message,
         acomodacaoId: error.acomodacaoId,
         datasIndisponiveis: error.datasIndisponiveis,
+      });
+    }
+    if (error instanceof HotelMismatchError) {
+      return res.status(422).json({
+        success: false,
+        error: err.message,
+        code: error.code,
       });
     }
     const status = statusForGerarPropostaError(err.message);
