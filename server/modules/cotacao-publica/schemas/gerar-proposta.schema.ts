@@ -49,7 +49,15 @@ export const gerarPropostaBodySchema = z.preprocess(
       total: z.coerce.number().optional(),
       travelInsurance: z.boolean().optional().default(false),
       hotelOnlyFlow: z.boolean().optional().default(false),
-      selectedAcomodacaoId: z.union([z.number(), z.string(), z.null()]).optional(),
+      /** Wire may send string; coerce to number at the edge (E3 / D4). */
+      selectedAcomodacaoId: z
+        .union([z.number(), z.string(), z.null()])
+        .optional()
+        .transform((raw) => {
+          if (raw == null || raw === '') return null;
+          const n = Number(raw);
+          return Number.isFinite(n) && n > 0 ? n : null;
+        }),
       wizardAddonIds: z.array(z.number()).optional(),
       /** Intenção do client — valor resolvido server-side. */
       upgradeVaranda: z.boolean().optional().default(false),

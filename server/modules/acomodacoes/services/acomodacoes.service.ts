@@ -82,7 +82,7 @@ export function mergeDisponiveisParaCards(
   pagina: AcomodacaoDisponivel[],
   pins: AcomodacaoDisponivel[],
 ): AcomodacaoDisponivel[] {
-  const byId = new Map<number | string, AcomodacaoDisponivel>();
+  const byId = new Map<number, AcomodacaoDisponivel>();
   for (const item of pins) byId.set(item.id, item);
   for (const item of pagina) byId.set(item.id, item);
   return [...byId.values()];
