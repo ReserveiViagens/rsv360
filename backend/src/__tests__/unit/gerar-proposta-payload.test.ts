@@ -64,6 +64,14 @@ describe('parseGerarPropostaBody — retrocompat (ponto 1)', () => {
     expect(parsed.upgradeVaranda).toBe(true);
     expect((parsed as unknown as Record<string, unknown>).upgradeVarandaValor).toBeUndefined();
   });
+
+  it('E3: selectedAcomodacaoId string no wire → number na borda', () => {
+    const parsed = parseGerarPropostaBody({
+      ...basePayload(),
+      selectedAcomodacaoId: '42',
+    });
+    expect(parsed.selectedAcomodacaoId).toBe(42);
+  });
 });
 
 describe('buildOrcamentoItens — upgrade varanda (pontos 2–3)', () => {
