@@ -13,17 +13,14 @@ const upload = multer({
 
 const importAuth = [authenticateJwt, requireRole('admin', 'manager')];
 
-const PARCEIRO_ROLES = new Set(['anfitriao', 'corretor']);
-const LIMITE_IMPORT_PARCEIRO = 50;
-
 function parseProprietarioId(raw: unknown): number | null {
   if (raw == null || raw === '') return null;
   const n = Number(raw);
   return Number.isInteger(n) && n > 0 ? n : null;
 }
 
+/** Staff-only import options (E4=A). Partner path removed — RBAC is admin/manager. */
 function buildImportOptions(req: Request, dryRun: boolean) {
-  const role = req.user?.role ?? '';
   const bulkPublicado = String(req.body?.bulkPublicado ?? 'false') === 'true';
   const statusPublicacao = req.body?.statusPublicacao as
     | 'rascunho'
@@ -35,10 +32,9 @@ function buildImportOptions(req: Request, dryRun: boolean) {
 
   return {
     dryRun,
-    proprietarioId: parseProprietarioId(req.body?.proprietarioId) ?? (PARCEIRO_ROLES.has(role) ? req.user?.id : null),
+    proprietarioId: parseProprietarioId(req.body?.proprietarioId),
     bulkPublicado: bulkPublicado || statusPublicacao === 'publicado',
     statusPublicacao,
-    maxLinhasParceiro: PARCEIRO_ROLES.has(role) ? LIMITE_IMPORT_PARCEIRO : undefined,
   };
 }
 
