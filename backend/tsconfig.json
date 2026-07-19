@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "strict": false,
     "isolatedModules": true,
+    "noEmit": true,
     "types": ["node", "jest"]
   },
   "include": [
