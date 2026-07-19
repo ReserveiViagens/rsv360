@@ -21,6 +21,7 @@ import {
   assertDisponibilidadeReserva,
   DisponibilidadeReservaConflictError,
 } from '../../acomodacoes/services/disponibilidade-reserva.hook';
+import { assertHotelMatchProposta } from './assert-hotel-match-proposta';
 
 function resolveAcomodacaoId(payload: GerarPropostaPayload): number | null {
   const raw = payload.selectedAcomodacaoId;
@@ -94,6 +95,7 @@ export class CotacaoPublicaService {
 
     const acomodacaoId = resolveAcomodacaoId(payload);
     if (acomodacaoId) {
+      await assertHotelMatchProposta(acomodacaoId, payload.hotelId);
       await assertDisponibilidadeReserva(acomodacaoId, payload.checkIn, payload.checkOut);
     }
 
