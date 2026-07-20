@@ -188,8 +188,6 @@ export async function resolverHotelComMeta(
   }
 
   try {
-    // db from CJS require is untyped — type args on execute are illegal (TS2347).
-    // Query and row access unchanged at runtime.
     const result = await db.execute(sql`
       SELECT content_id
       FROM website_content
@@ -201,7 +199,10 @@ export async function resolverHotelComMeta(
       LIMIT 1
     `);
     const cmsRow = result.rows?.[0];
-    if (cmsRow?.content_id) return { hotelId: cmsRow.content_id, resolvido: true };
+    const contentId = cmsRow?.content_id;
+    if (typeof contentId === 'string' && contentId) {
+      return { hotelId: contentId, resolvido: true };
+    }
   } catch {
     /* tabela opcional em ambientes de teste */
   }
