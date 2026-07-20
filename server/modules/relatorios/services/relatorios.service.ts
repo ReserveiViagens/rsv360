@@ -7,6 +7,8 @@ import { transacoes } from '../../../../backend/src/db/schema/financeiro';
 import { campanhas } from '../../../../backend/src/db/schema/marketing';
 import { relatoriosSnapshots, relatoriosViews } from '../../../../backend/src/db/schema/relatorios';
 
+type Proposta = typeof propostas.$inferSelect;
+
 function escapeCsv(val: unknown): string {
   const s = String(val ?? '');
   if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`;
@@ -25,13 +27,13 @@ export class RelatoriosService {
     return {
       orcamentos: orc.length,
       propostas: prop.length,
-      propostasAceitas: prop.filter((p) => p.status === 'accepted').length,
+      propostasAceitas: prop.filter((p: Proposta) => p.status === 'accepted').length,
       passageiros: pass.length,
       transacoes: tx.length,
       campanhas: camp.length,
       receitaEstimada: prop
-        .filter((p) => p.status === 'accepted')
-        .reduce((s, p) => s + parseFloat(String(p.valorTotal) || '0'), 0),
+        .filter((p: Proposta) => p.status === 'accepted')
+        .reduce((s: number, p: Proposta) => s + parseFloat(String(p.valorTotal) || '0'), 0),
     };
   }
 
