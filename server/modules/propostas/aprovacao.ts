@@ -88,7 +88,7 @@ async function alterarStatusAprovacao(
     throw new TransicaoInvalidaError(de, para);
   }
 
-  return db.transaction(async (tx) => {
+  return db.transaction(async (tx: typeof db) => {
     const [updated] = await tx
       .update(propostas)
       .set({

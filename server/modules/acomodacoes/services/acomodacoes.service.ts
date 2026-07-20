@@ -109,7 +109,7 @@ async function resolverIdsComFiltroCalendario(
     .from(acomodacoes)
     .where(baseConditions);
 
-  const candidateIds = candidates.map((c) => c.id);
+  const candidateIds = candidates.map((c: { id: number }) => c.id);
   if (candidateIds.length === 0) return [];
 
   const rows = await db

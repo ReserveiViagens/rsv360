@@ -82,7 +82,7 @@ const voucherRow = {
   unidade: 'Piazza diRoma',
   checkIn: '2026-08-01',
   checkOut: '2026-08-05',
-  voucherValidadoEm: null,
+  voucherValidadoEm: null as Date | null,
 };
 
 describe('qr-voucher.service (PR 21)', () => {

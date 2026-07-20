@@ -42,7 +42,7 @@ export async function reservarVaga(input: ReservarVagaInput) {
 
     return reserva;
   } catch (error) {
-    await liberarLock(chaveVaga, reservaId).catch(() => undefined);
+    await liberarLock(chaveVaga, reservaId).catch((): undefined => undefined);
     throw error;
   }
 }

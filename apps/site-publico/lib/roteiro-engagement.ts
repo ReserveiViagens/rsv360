@@ -44,7 +44,7 @@ export function sendRoteiroEngagementBeacon(token: string, payload: RoteiroEngag
     headers: { 'Content-Type': 'application/json' },
     body,
     keepalive: true,
-  }).catch(() => undefined);
+  }).catch((): undefined => undefined);
 }
 
 export function shouldAutoplayCinematicVideo(

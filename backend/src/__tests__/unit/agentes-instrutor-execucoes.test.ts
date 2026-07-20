@@ -19,9 +19,9 @@ jest.mock('../../../../server/modules/agentes/instrutor/graph', () => ({
     cacheHit: 'none' as const,
     status: 200 as const,
     entradaHash: 'abc',
-    tokensIn: null,
-    tokensOut: null,
-    modelo: null,
+    tokensIn: null as number | null,
+    tokensOut: null as number | null,
+    modelo: null as string | null,
   })),
 }));
 

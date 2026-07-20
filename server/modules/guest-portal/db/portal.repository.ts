@@ -575,7 +575,7 @@ export class PortalRepository {
   async listFeedback(filters: Row = {}) {
     const table = await this.getFeedbackTable();
     if (!table) {
-      return { data: [], total: 0 };
+      return { data: [] as Row[], total: 0 };
     }
 
     const columns = await this.getColumns(table);
