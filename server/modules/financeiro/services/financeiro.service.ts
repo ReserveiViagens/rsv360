@@ -3,6 +3,10 @@ import { db } from '../../../lib/db';
 import { contasPagar } from '../../../../backend/src/db/schema/fase1-ext';
 import { contasReceber, transacoes } from '../../../../backend/src/db/schema/financeiro';
 
+type Transacao = typeof transacoes.$inferSelect;
+type ContaReceber = typeof contasReceber.$inferSelect;
+type ContaPagar = typeof contasPagar.$inferSelect;
+
 function toNum(v: unknown): number {
   if (v == null) return 0;
   return typeof v === 'string' ? parseFloat(v) || 0 : Number(v) || 0;
@@ -15,10 +19,18 @@ export class FinanceiroService {
       db.select().from(contasReceber),
       db.select().from(contasPagar),
     ]);
-    const receitas = tx.filter((t) => t.tipo === 'receita').reduce((s, t) => s + toNum(t.valor), 0);
-    const despesas = tx.filter((t) => t.tipo === 'despesa').reduce((s, t) => s + toNum(t.valor), 0);
-    const aReceber = cr.filter((c) => c.status !== 'pago').reduce((s, c) => s + toNum(c.valor), 0);
-    const aPagar = cp.filter((c) => c.status !== 'pago').reduce((s, c) => s + toNum(c.valor), 0);
+    const receitas = tx
+      .filter((t: Transacao) => t.tipo === 'receita')
+      .reduce((s: number, t: Transacao) => s + toNum(t.valor), 0);
+    const despesas = tx
+      .filter((t: Transacao) => t.tipo === 'despesa')
+      .reduce((s: number, t: Transacao) => s + toNum(t.valor), 0);
+    const aReceber = cr
+      .filter((c: ContaReceber) => c.status !== 'pago')
+      .reduce((s: number, c: ContaReceber) => s + toNum(c.valor), 0);
+    const aPagar = cp
+      .filter((c: ContaPagar) => c.status !== 'pago')
+      .reduce((s: number, c: ContaPagar) => s + toNum(c.valor), 0);
     return {
       receitas,
       despesas,
@@ -31,21 +43,25 @@ export class FinanceiroService {
 
   async getFluxoCaixa(inicio?: Date, fim?: Date) {
     const rows = await db.select().from(transacoes).orderBy(desc(transacoes.dataTransacao));
-    const filtered = rows.filter((r) => {
+    const filtered = rows.filter((r: Transacao) => {
       const d = r.dataTransacao ? new Date(r.dataTransacao) : null;
       if (!d) return true;
       if (inicio && d < inicio) return false;
       if (fim && d > fim) return false;
       return true;
     });
-    const entradas = filtered.filter((t) => t.tipo === 'receita').reduce((s, t) => s + toNum(t.valor), 0);
-    const saidas = filtered.filter((t) => t.tipo === 'despesa').reduce((s, t) => s + toNum(t.valor), 0);
+    const entradas = filtered
+      .filter((t: Transacao) => t.tipo === 'receita')
+      .reduce((s: number, t: Transacao) => s + toNum(t.valor), 0);
+    const saidas = filtered
+      .filter((t: Transacao) => t.tipo === 'despesa')
+      .reduce((s: number, t: Transacao) => s + toNum(t.valor), 0);
     return { periodo: { inicio, fim }, entradas, saidas, saldo: entradas - saidas, transacoes: filtered };
   }
 
   async listTransacoes(filters: { tipo?: string; status?: string } = {}) {
     const rows = await db.select().from(transacoes).orderBy(desc(transacoes.dataTransacao));
-    return rows.filter((row) => {
+    return rows.filter((row: Transacao) => {
       if (filters.tipo && row.tipo !== filters.tipo) return false;
       if (filters.status && row.status !== filters.status) return false;
       return true;

@@ -2,6 +2,9 @@ import { desc, eq } from 'drizzle-orm';
 import { db } from '../../../lib/db';
 import { campanhas, cupons, cuponsUso } from '../../../../backend/src/db/schema/marketing';
 
+type Campanha = typeof campanhas.$inferSelect;
+type Cupom = typeof cupons.$inferSelect;
+
 function toNum(v: unknown): number {
   if (v == null) return 0;
   return typeof v === 'string' ? parseFloat(v) || 0 : Number(v) || 0;
@@ -43,11 +46,11 @@ export class CampanhasViagemService {
     const allCampanhas = await this.listCampanhas(enterpriseId);
     const allCupons = await this.listCupons();
     const usos = await db.select().from(cuponsUso);
-    const gastoTotal = allCampanhas.reduce((s, c) => s + toNum(c.gastoAtual), 0);
-    const orcamentoTotal = allCampanhas.reduce((s, c) => s + toNum(c.orcamento), 0);
+    const gastoTotal = allCampanhas.reduce((s: number, c: Campanha) => s + toNum(c.gastoAtual), 0);
+    const orcamentoTotal = allCampanhas.reduce((s: number, c: Campanha) => s + toNum(c.orcamento), 0);
     return {
-      campanhasAtivas: allCampanhas.filter((c) => c.status === 'ativa').length,
-      cuponsAtivos: allCupons.filter((c) => c.isActive).length,
+      campanhasAtivas: allCampanhas.filter((c: Campanha) => c.status === 'ativa').length,
+      cuponsAtivos: allCupons.filter((c: Cupom) => c.isActive).length,
       usosCupons: usos.length,
       gastoTotal,
       orcamentoTotal,
