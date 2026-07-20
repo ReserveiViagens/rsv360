@@ -37,7 +37,7 @@ async function proprietariosNaCarteira(corretorId: number): Promise<number[]> {
     .where(
       and(eq(carteiraCorretor.corretorId, corretorId), eq(carteiraCorretor.status, 'ativo')),
     );
-  return rows.map((r) => r.proprietarioId);
+  return rows.map((r: { proprietarioId: number }) => r.proprietarioId);
 }
 
 export async function podeVerUnidade(auth: AuthContext, row: typeof acomodacoes.$inferSelect) {
@@ -213,16 +213,17 @@ export const anfitriaoService = {
 
   async dashboardKpis(auth: AuthContext) {
     const { items } = await this.listarMinhas(auth, 1, 5000);
+    type AcomodacaoRow = typeof acomodacoes.$inferSelect;
     const total = items.length;
-    const incompletas = items.filter((i) => i.statusPublicacao === 'rascunho').length;
-    const emAprovacao = items.filter((i) => i.statusPublicacao === 'em_aprovacao').length;
-    const publicadas = items.filter((i) => i.statusPublicacao === 'publicado').length;
+    const incompletas = items.filter((i: AcomodacaoRow) => i.statusPublicacao === 'rascunho').length;
+    const emAprovacao = items.filter((i: AcomodacaoRow) => i.statusPublicacao === 'em_aprovacao').length;
+    const publicadas = items.filter((i: AcomodacaoRow) => i.statusPublicacao === 'publicado').length;
     return { total, incompletas, emAprovacao, publicadas };
   },
 
   async listarIdsAcomodacaoEscopo(auth: AuthContext): Promise<number[]> {
     const { items } = await this.listarMinhas(auth, 1, 5000);
-    return items.map((i) => i.id);
+    return items.map((i: typeof acomodacoes.$inferSelect) => i.id);
   },
 
   async listarReservas(
@@ -291,7 +292,7 @@ export const anfitriaoService = {
 
     const reservedDates = buildReservedDateSet(reservasResult.data);
     const rowByDate = new Map<string, DisponibilidadeAcomodacao>(
-      disponibilidadeResult.map((r) => [String(r.data).slice(0, 10), r]),
+      disponibilidadeResult.map((r: DisponibilidadeAcomodacao) => [String(r.data).slice(0, 10), r]),
     );
 
     const dias: CalendarioDiaItem[] = enumerateDatesInclusive(de, ate).map((data) => {
