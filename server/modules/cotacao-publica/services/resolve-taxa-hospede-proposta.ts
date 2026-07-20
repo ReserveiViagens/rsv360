@@ -46,7 +46,7 @@ async function resolverTotalWizardAddons(
   const addons = await acomodacoesService.listarAddons('hotel');
   let total = 0;
   for (const id of ids) {
-    const addon = addons.find((a) => a.id === id);
+    const addon = addons.find((a: { id: number; valor: string; precoTipo: string }) => a.id === id);
     if (!addon) continue;
     const v = parseFloat(String(addon.valor));
     if (!Number.isFinite(v) || v <= 0) continue;

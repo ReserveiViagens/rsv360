@@ -50,7 +50,14 @@ export class RefundService {
       .offset(offset)
       .orderBy(refunds.createdAt);
 
-    return results.map(r => ({
+    return results.map((r: {
+      id: string;
+      externalId: string | null;
+      status: string;
+      amount: string;
+      processedAt: Date | null;
+      metadata: unknown;
+    }) => ({
       id: r.id,
       externalId: r.externalId!,
       status: r.status,

@@ -76,7 +76,16 @@ export async function listarPontos(hotelId: number): Promise<RoteiroPontoDto[]> 
     .where(and(eq(roteiroPontos.hotelId, hotelId), eq(roteiroPontos.ativo, true)))
     .orderBy(asc(roteiroPontos.dia), asc(roteiroPontos.ordem));
 
-  return rows.map((row) => ({
+  return rows.map((row: {
+    id: number;
+    tipo: string;
+    titulo: string;
+    descricao: string | null;
+    lat: unknown;
+    lng: unknown;
+    dia: number | null;
+    ordem: number | null;
+  }) => ({
     id: row.id,
     tipo: row.tipo,
     titulo: row.titulo,
