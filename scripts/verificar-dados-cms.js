@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script para verificar se os dados do CMS estão no banco de dados
  * Executado durante a inicialização do sistema
@@ -11,7 +12,7 @@ const DB_CONFIG = {
   port: parseInt(process.env.DB_PORT || '5433'),
   database: process.env.DB_NAME || 'rsv360',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb',
+  password: requireDbPassword(),
 };
 
 async function verificarDadosCMS() {

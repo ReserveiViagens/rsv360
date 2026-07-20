@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script de diagnóstico para identificar a causa do erro "Internal Server Error" na aba Leilões.
  * Verifica: tabelas existentes, schema da auctions, dependências.
@@ -14,7 +15,7 @@ const DB_CONFIG = {
   port: parseInt(process.env.DB_PORT || '5433'),
   database: process.env.DB_NAME || 'rsv_360_ecosystem',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb',
+  password: requireDbPassword(),
 };
 
 async function main() {
