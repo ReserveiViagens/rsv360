@@ -93,11 +93,14 @@ export const anfitriaoService = {
     return { items: rows, total: countRow[0]?.count ?? 0, page, pageSize };
   },
 
-  async obterUnidade(auth: AuthContext, id: number) {
+  async obterUnidade(
+    auth: AuthContext,
+    id: number,
+  ): Promise<{ error: 'not_found' | 'forbidden' } | { data: typeof acomodacoes.$inferSelect }> {
     const [row] = await db.select().from(acomodacoes).where(eq(acomodacoes.id, id)).limit(1);
-    if (!row) return { error: 'not_found' as const };
+    if (!row) return { error: 'not_found' };
     const ok = await podeVerUnidade(auth, row);
-    if (!ok) return { error: 'forbidden' as const };
+    if (!ok) return { error: 'forbidden' };
     return { data: row };
   },
 

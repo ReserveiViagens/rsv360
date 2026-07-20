@@ -119,7 +119,7 @@ export async function assertPropostaNaoExpirada(row: {
   throw new PropostaExpiradaError();
 }
 
-export function isPropostaExpiradaError(error: unknown): boolean {
+export function isPropostaExpiradaError(error: unknown): error is PropostaExpiradaError {
   return (
     error instanceof PropostaExpiradaError ||
     (typeof error === 'object' &&

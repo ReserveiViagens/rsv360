@@ -99,8 +99,15 @@ function pickFirst<T>(values: Array<T | null | undefined>) {
   return values.find((value) => value !== null && value !== undefined);
 }
 
-function isConnectionError(error: any) {
-  return ['ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', '57P03'].includes(error?.code);
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error !== 'object' || error === null || !('code' in error)) return undefined;
+  const code = (error as { code: unknown }).code;
+  return typeof code === 'string' ? code : undefined;
+}
+
+function isConnectionError(error: unknown) {
+  const code = getErrorCode(error);
+  return code != null && ['ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', '57P03'].includes(code);
 }
 
 function normalizeDateOnly(value: string | Date) {
@@ -295,7 +302,7 @@ export class RevenueRepository {
           return candidate;
         }
       } catch (error) {
-        if (isConnectionError(error) || error?.code === 'DB_UNAVAILABLE') {
+        if (isConnectionError(error) || getErrorCode(error) === 'DB_UNAVAILABLE') {
           databaseUnavailable = true;
           tableCache.clear();
           columnsCache.clear();
