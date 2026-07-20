@@ -104,7 +104,7 @@ describe('comissoes.service', () => {
         governanca: { confiancaMinima: 0.75, aprovacaoDuasEtapas: true },
       };
       const result = simularComissoes(
-        { valor: 1000, temCorretor: true, preview: false },
+        { valor: 1000, temCorretor: true, preview: false, taxaHospedeAtiva: true },
         config,
       );
       expect(result.totalHospede).toBe(1020);
@@ -152,7 +152,7 @@ describe('comissoes.service', () => {
       ]);
 
       await expect(
-        comissoesService.aprovarSugestao(1, { confirmouDiff: true }),
+        comissoesService.aprovarSugestao(1, { confirmouDiff: true, overrideBaixaConfianca: false }),
       ).rejects.toThrow('outro administrador');
     });
 
@@ -178,7 +178,7 @@ describe('comissoes.service', () => {
       ]);
 
       await expect(
-        comissoesService.aprovarSugestao(2, { confirmouDiff: true }),
+        comissoesService.aprovarSugestao(2, { confirmouDiff: true, overrideBaixaConfianca: false }),
       ).rejects.toThrow('Override explícito');
     });
 
