@@ -79,7 +79,14 @@ export class WebhookService {
       .offset(offset)
       .orderBy(webhookEvents.createdAt);
 
-    return results.map(e => ({
+    return results.map((e: {
+      provider: string;
+      externalEventId: string;
+      eventType: string;
+      payload: unknown;
+      processed: boolean;
+      error: string | null;
+    }) => ({
       provider: e.provider,
       externalEventId: e.externalEventId,
       eventType: e.eventType,

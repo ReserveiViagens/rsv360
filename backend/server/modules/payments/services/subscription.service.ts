@@ -56,7 +56,16 @@ export class SubscriptionService {
     const results = await db.select().from(subscriptionPlans)
       .where(eq(subscriptionPlans.enterpriseId, enterpriseId));
 
-    return results.map(p => ({
+    return results.map((p: {
+      id: string;
+      stripeProductId: string | null;
+      mpPlanId: string | null;
+      name: string;
+      amount: string;
+      currency: string;
+      interval: string;
+      metadata: unknown;
+    }) => ({
       id: p.id,
       externalId: p.stripeProductId || p.mpPlanId || p.id,
       name: p.name,
@@ -158,7 +167,16 @@ export class SubscriptionService {
     const results = await db.select().from(subscriptions)
       .where(eq(subscriptions.enterpriseId, enterpriseId));
 
-    return results.map(s => ({
+    return results.map((s: {
+      id: string;
+      externalId: string | null;
+      status: string;
+      currentPeriodStart: Date | null;
+      currentPeriodEnd: Date | null;
+      cancelAtPeriodEnd: boolean | null;
+      trialEnd: Date | null;
+      metadata: unknown;
+    }) => ({
       id: s.id,
       externalId: s.externalId!,
       status: s.status,

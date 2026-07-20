@@ -5,7 +5,10 @@ jest.mock('../../../../server/modules/acomodacoes/import/parse', () => ({
 }));
 
 jest.mock('../../../../server/modules/acomodacoes/import/normalizar', () => ({
-  normalizarLote: jest.fn(async () => ({ validos: [], erros: [] })),
+  normalizarLote: jest.fn(async () => ({
+    validos: [] as unknown[],
+    erros: [] as Array<{ linha: number; motivo: string }>,
+  })),
 }));
 
 jest.mock('../../../../server/modules/acomodacoes/import/importar', () => ({
@@ -14,7 +17,7 @@ jest.mock('../../../../server/modules/acomodacoes/import/importar', () => ({
     total: 0,
     sucesso: 0,
     erros: 0,
-    linhas: [],
+    linhas: [] as Array<{ linha: number; status: string; acao: string }>,
   })),
 }));
 

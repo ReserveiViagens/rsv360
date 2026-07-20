@@ -98,7 +98,7 @@ describe('importar-upsert', () => {
   });
 
   it('re-import por hotel_id+titulo quando sem codigo_externo', async () => {
-    const semCodigo = { ...dtoBase, codigoExterno: null };
+    const semCodigo: AcomodacaoImportResolved = { ...dtoBase, codigoExterno: null };
     mockSelect.mockReturnValue(
       chainSelect([{ id: 7, codigoExterno: null, hotelId: 'hotel-demo-1', titulo: 'Apto Teste' }]),
     );

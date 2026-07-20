@@ -35,7 +35,11 @@ export class OrcamentosService {
       .select()
       .from(orcamentoItens)
       .where(eq(orcamentoItens.orcamentoId, orcamentoId));
-    const subtotal = itens.reduce((sum, i) => sum + toNum(i.precoTotal), 0);
+    type OrcamentoItem = typeof orcamentoItens.$inferSelect;
+    const subtotal = itens.reduce(
+      (sum: number, i: OrcamentoItem) => sum + toNum(i.precoTotal),
+      0,
+    );
     const [orc] = await db.select().from(orcamentos).where(eq(orcamentos.id, orcamentoId));
     if (!orc) return null;
     const desconto = toNum(orc.desconto);

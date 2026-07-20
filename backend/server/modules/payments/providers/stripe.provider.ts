@@ -83,7 +83,13 @@ export class StripeProvider implements PaymentProviderInterface {
 
     const result = await this.client.paymentIntents.list(params);
 
-    const data = result.data.map(pi => ({
+    const data = result.data.map((pi: {
+      id: string;
+      status: string;
+      amount: number;
+      currency: string;
+      metadata: Record<string, string>;
+    }) => ({
       id: pi.id,
       externalId: pi.id,
       status: this.mapStatus(pi.status),

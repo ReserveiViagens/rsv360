@@ -8,8 +8,8 @@ import { processImportJob } from '../../../../server/modules/acomodacoes/importa
 jest.mock('../../../../server/modules/acomodacoes/import/normalizar', () => ({
   normalizarLote: jest.fn(async (linhas: unknown[]) => ({
     validos: linhas,
-    erros: [],
-    ignorados: [],
+    erros: [] as Array<{ linha: number; motivo: string }>,
+    ignorados: [] as Array<{ linha: number; motivo: string }>,
   })),
 }));
 

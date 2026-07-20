@@ -131,9 +131,13 @@ export const tarifaService = {
       )
       .orderBy(desc(tarifaTemporada.prioridade));
 
-    const match = periodos.find((p) =>
-      dataNoIntervalo(data, String(p.dataInicio), String(p.dataFim)),
-    );
+    const match = periodos.find((p: {
+      temporadaId: number;
+      slug: string;
+      nome: string;
+      dataInicio: unknown;
+      dataFim: unknown;
+    }) => dataNoIntervalo(data, String(p.dataInicio), String(p.dataFim)));
     if (!match) return null;
     return {
       id: match.temporadaId,

@@ -322,11 +322,11 @@ export class PropostasService {
     if (!row) throw new Error('Proposta não encontrada');
 
     const meta = parseMetadata(row.metadata);
-    const nextMeta = {
+    const nextMeta: Record<string, unknown> = {
       ...meta,
       hitlMode: 'ai' as HitlMode,
-      assignedAgentId: null,
-      assignedAgentName: null,
+      assignedAgentId: null as number | null,
+      assignedAgentName: null as string | null,
     };
 
     await db

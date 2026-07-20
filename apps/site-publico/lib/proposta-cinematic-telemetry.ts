@@ -33,7 +33,7 @@ export function sendEngagementBeacon(url: string, payload: PropostaCinematicPayl
     headers: { 'Content-Type': 'application/json' },
     body,
     keepalive: true,
-  }).catch(() => undefined);
+  }).catch((): undefined => undefined);
 }
 
 export function getOrCreateSessionId(token: string): string {

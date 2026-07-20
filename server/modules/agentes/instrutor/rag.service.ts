@@ -50,11 +50,19 @@ export async function buscarChunksRag(
     .orderBy(distance)
     .limit(topK);
 
-  return rows.map((r) => ({
+  return rows.map((r: {
+    docSlug: string;
+    chunkOrdem: number;
+    papel: string;
+    rotas: unknown;
+    conteudo: string;
+    versaoBase: string;
+    similaridade: unknown;
+  }) => ({
     docSlug: r.docSlug,
     chunkOrdem: r.chunkOrdem,
     papel: r.papel,
-    rotas: Array.isArray(r.rotas) ? r.rotas : [],
+    rotas: Array.isArray(r.rotas) ? (r.rotas as string[]) : [],
     conteudo: r.conteudo,
     versaoBase: r.versaoBase,
     similaridade: Number(r.similaridade) || 0,
