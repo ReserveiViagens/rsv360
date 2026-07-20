@@ -1,15 +1,19 @@
 import { Router, type Request } from 'express';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { normalizarListaDatas } from '../services/anfitriao-bulk.util';
-import { anfitriaoService } from '../services/anfitriao.service';
+import { anfitriaoService, type AuthContext } from '../services/anfitriao.service';
 
 const router = Router();
 
 const parceiroAuth = [authenticateJwt, requireRole('anfitriao', 'corretor', 'admin', 'manager')];
 const staffAprovacao = [authenticateJwt, requireRole('admin', 'manager')];
 
-function authFromReq(req: Request) {
-  return { userId: req.user!.id, role: req.user!.role ?? 'user' };
+function authFromReq(req: Request): AuthContext {
+  const userId = req.user?.id;
+  if (typeof userId !== 'number') {
+    throw new Error('Usuário não autenticado');
+  }
+  return { userId, role: req.user?.role ?? 'user' };
 }
 
 router.get('/dashboard', ...parceiroAuth, async (req, res) => {

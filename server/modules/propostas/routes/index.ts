@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Request } from 'express';
 import { authenticateJwt, optionalJwt, requireRole, staffAuth } from '../../../middleware/auth.middleware';
 import { publicLimiter } from '../../../middleware/public-limiter';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
@@ -28,6 +28,14 @@ import { asRequiredString } from '../../../lib/parse';
 
 const router = Router();
 const agentAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
+
+function requireAuthActor(req: Request): { id: number; role: string; name?: string } {
+  const id = req.user?.id;
+  if (typeof id !== 'number') {
+    throw new Error('Usuário não autenticado');
+  }
+  return { id, role: req.user?.role ?? 'user', name: req.user?.name };
+}
 
 router.get('/health', (_req, res) => {
   res.json({ module: 'propostas', status: 'ok', timestamp: new Date().toISOString() });
@@ -217,9 +225,10 @@ router.post('/:id/revelar-comparativo', ...staffAuth, async (req, res) => {
 
 router.post('/:id/aprovacao/solicitar', ...staffAuth, async (req, res) => {
   try {
+    const actor = requireAuthActor(req);
     const data = await solicitarAlteracao(Number(req.params.id), {
-      id: req.user!.id,
-      role: req.user!.role ?? 'user',
+      id: actor.id,
+      role: actor.role,
     });
     res.json({ success: true, data });
   } catch (error) {
@@ -233,9 +242,10 @@ router.post('/:id/aprovacao/aprovar', ...staffAuth, async (req, res) => {
     if (!hasMinRole(req.user?.role, 'supervisor')) {
       return res.status(403).json({ success: false, error: 'Acesso negado' });
     }
+    const actor = requireAuthActor(req);
     const data = await aprovar(Number(req.params.id), {
-      id: req.user!.id,
-      role: req.user!.role ?? 'admin',
+      id: actor.id,
+      role: req.user?.role ?? 'admin',
     });
     res.json({ success: true, data });
   } catch (error) {
@@ -249,9 +259,10 @@ router.post('/:id/aprovacao/negar', ...staffAuth, async (req, res) => {
     if (!hasMinRole(req.user?.role, 'supervisor')) {
       return res.status(403).json({ success: false, error: 'Acesso negado' });
     }
+    const actor = requireAuthActor(req);
     const data = await negar(Number(req.params.id), {
-      id: req.user!.id,
-      role: req.user!.role ?? 'admin',
+      id: actor.id,
+      role: req.user?.role ?? 'admin',
     }, String(req.body.motivo ?? ''));
     res.json({ success: true, data });
   } catch (error) {
@@ -411,9 +422,10 @@ router.post('/:id/hitl/request', optionalJwt, async (req, res) => {
 
 router.post('/:id/hitl/takeover', ...agentAuth, async (req, res) => {
   try {
+    const actor = requireAuthActor(req);
     const state = await propostasService.takeoverHitl(Number(req.params.id), {
-      id: req.user!.id,
-      name: req.user!.name,
+      id: actor.id,
+      name: actor.name,
     });
     res.json({ success: true, data: state });
   } catch (error) {

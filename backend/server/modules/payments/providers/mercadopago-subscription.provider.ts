@@ -155,7 +155,7 @@ export class MercadoPagoSubscriptionProvider implements SubscriptionProviderInte
     }
   }
 
-  private mapSubscriptionStatus(status: string): string {
+  private mapSubscriptionStatus(status: string | undefined): string {
     switch (status) {
       case 'authorized': return 'active';
       case 'paused': return 'paused';
