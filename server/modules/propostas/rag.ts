@@ -16,15 +16,23 @@ export async function buscarContextoRag(query: string, limit = 5): Promise<Chunk
   if (!term) return [];
 
   try {
-    const rows = await db.execute(sql`
+    const result = await db.execute(sql`
       SELECT id::text, conteudo, fonte
       FROM conhecimento_chunks
       WHERE conteudo ILIKE ${'%' + term + '%'}
       ORDER BY criado_em DESC
       LIMIT ${limit}
     `);
-    const list = (rows as { rows?: ChunkConhecimento[] }).rows ?? (rows as unknown as ChunkConhecimento[]);
-    return Array.isArray(list) ? list : [];
+    const list: ChunkConhecimento[] = [];
+    for (const row of result.rows) {
+      const id = row.id;
+      const conteudo = row.conteudo;
+      const fonte = row.fonte;
+      if (typeof id === 'string' && typeof conteudo === 'string' && typeof fonte === 'string') {
+        list.push({ id, conteudo, fonte });
+      }
+    }
+    return list;
   } catch {
     return [];
   }
