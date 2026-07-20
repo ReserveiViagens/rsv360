@@ -32,7 +32,7 @@ export function transicaoPermitida(de: StatusAprovacao, para: StatusAprovacao): 
 }
 
 async function registrarAuditoria(
-  tx: typeof db,
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   propostaId: number,
   de: string,
   para: string,
@@ -88,7 +88,7 @@ async function alterarStatusAprovacao(
     throw new TransicaoInvalidaError(de, para);
   }
 
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx) => {
     const [updated] = await tx
       .update(propostas)
       .set({
