@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { WebhookService } from '../services/webhook.service';
+import { WebhookService, MpWebhookAuthError } from '../services/webhook.service';
 
 /**
  * Explicit public webhooks — provider callbacks verify signature inside the service.
@@ -7,6 +7,13 @@ import { WebhookService } from '../services/webhook.service';
  */
 const router = Router();
 const webhookService = new WebhookService();
+
+function headerString(
+  value: string | string[] | undefined,
+): string | undefined {
+  if (Array.isArray(value)) return value[0];
+  return value;
+}
 
 router.post('/stripe', async (req, res) => {
   try {
@@ -22,9 +29,30 @@ router.post('/stripe', async (req, res) => {
 
 router.post('/mercadopago', async (req, res) => {
   try {
-    await webhookService.processMPWebhook(req.body);
-    res.json({ received: true });
+    const result = await webhookService.processMPWebhook({
+      body: req.body,
+      query: req.query as Record<string, string | string[] | undefined>,
+      xSignature: headerString(req.headers['x-signature']),
+      xRequestId: headerString(req.headers['x-request-id']),
+    });
+    res.status(200).json(result);
   } catch (error) {
+    if (error instanceof MpWebhookAuthError) {
+      // Structured log — never leak secret or expected HMAC.
+      console.warn(
+        JSON.stringify({
+          level: 'warn',
+          event: 'mp_webhook_auth_failed',
+          code: error.code,
+          hasSignature: Boolean(headerString(req.headers['x-signature'])),
+          hasRequestId: Boolean(headerString(req.headers['x-request-id'])),
+          hasDataIdQuery: Boolean(
+            req.query['data.id'] ?? req.query.id,
+          ),
+        }),
+      );
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
     res.status(400).json({ error: (error as Error).message });
   }
 });
