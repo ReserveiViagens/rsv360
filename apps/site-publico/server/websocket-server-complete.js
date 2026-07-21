@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } = require('@rsv360/shared');
 /**
  * ✅ SERVIDOR WEBSOCKET COMPLETO EM NODE.JS
  * 
@@ -19,7 +20,7 @@ const { queryDatabase } = require('../lib/db');
 
 // Configurações
 const PORT = process.env.WS_PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = getJwtSecret();
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Rate limiting
@@ -103,7 +104,7 @@ io.use(async (socket, next) => {
       return next(new Error('Token de autenticação necessário'));
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     
     // Verificar usuário no banco
     const users = await queryDatabase(

@@ -6,6 +6,9 @@
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
+const { assertJwtSecretsConfigured } = require('@rsv360/shared');
+
+assertJwtSecretsConfigured();
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOSTNAME || 'localhost';

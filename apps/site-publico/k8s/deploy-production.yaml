@@ -12,10 +12,11 @@ metadata:
   name: rsv360-secrets
   namespace: rsv360-production
 type: Opaque
+# JWT_SECRET must be created out-of-band (kubectl create secret / sealed-secrets).
+# Never commit a real or placeholder signing key here (PR-04a).
 stringData:
   DATABASE_URL: "postgresql://user:password@postgres:5432/rsv360"
   REDIS_URL: "redis://redis:6379"
-  JWT_SECRET: "your-jwt-secret-here"
   OPENWEATHER_API_KEY: "your-openweather-key"
   MERCADO_PAGO_ACCESS_TOKEN: "your-mercadopago-token"
   NEXT_PUBLIC_API_URL: "https://api.seudominio.com"
@@ -44,6 +45,11 @@ spec:
         - secretRef:
             name: rsv360-secrets
         env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: rsv360-secrets
+              key: JWT_SECRET
         - name: NODE_ENV
           value: "production"
         resources:

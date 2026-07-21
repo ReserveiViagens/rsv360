@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 // GET /api/users/profile - Obter perfil do usuário
 export async function GET(request: NextRequest) {
@@ -15,11 +16,11 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const JWT_SECRET = getJwtSecret();
     
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     } catch (error) {
       return NextResponse.json(
         { success: false, error: 'Token inválido' },
@@ -132,11 +133,11 @@ export async function PUT(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const JWT_SECRET = getJwtSecret();
     
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     } catch (error) {
       return NextResponse.json(
         { success: false, error: 'Token inválido' },

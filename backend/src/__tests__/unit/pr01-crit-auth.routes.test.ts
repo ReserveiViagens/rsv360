@@ -5,7 +5,7 @@ const { signJwt } = require('../../api/v1/auth/jwt-verify');
 const { authenticateJwt, requireRole } = require('../../../../server/middleware/auth.middleware');
 const { requireRole: hkRequireRole } = require('../../../../server/modules/housekeeping/middleware/hk-auth.middleware');
 
-const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const secret = (process.env.JWT_SECRET as string);
 
 function bearer(role: string, userId = 42) {
   const token = signJwt(

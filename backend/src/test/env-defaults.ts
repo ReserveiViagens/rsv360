@@ -4,3 +4,6 @@ process.env.DATABASE_URL ??=
 process.env.REDIS_URL ??= 'redis://127.0.0.1:6379';
 process.env.FORNECEDORES_ENCRYPTION_KEY ??=
   'integration-test-key-32-chars-min!!';
+/** PR-04a: unit/integration tests must set a real env secret (no code fallback). */
+process.env.JWT_SECRET ??= 'ci_jwt_secret_minimum_32_chars_pr04a';
+process.env.JWT_REFRESH_SECRET ??= process.env.JWT_SECRET;

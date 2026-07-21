@@ -1,3 +1,4 @@
+const { getJwtSecret } = require('@rsv360/shared');
 const express = require('express');
 const { extractBearerToken, verifyAccessToken } = require('../auth/jwt-verify');
 const {
@@ -16,7 +17,7 @@ const router = express.Router();
 function resolveBearerUser(req) {
   const token = extractBearerToken(req);
   if (!token) return null;
-  const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+  const secret = getJwtSecret();
   const payload = verifyAccessToken(token, secret);
   if (!payload) return null;
   const userId = payload.userId ?? payload.sub ?? payload.id;

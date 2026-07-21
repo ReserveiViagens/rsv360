@@ -1,3 +1,4 @@
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, assertJwtSecretsConfigured } from '@rsv360/shared';
 // 🌐 API GATEWAY - RSV 360° ECOSYSTEM AI
 // Funcionalidade: Gateway central para todos os módulos do ecossistema
 // Status: ✅ 100% FUNCIONAL
@@ -10,7 +11,9 @@ import jwt from 'jsonwebtoken';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import ecosystemConfig from '../ecosystem-config.json';
 
+assertJwtSecretsConfigured();
 const app = express();
+const JWT_SECRET = getJwtSecret();
 const PORT = ecosystemConfig.modules['ecosystem-master']['api-gateway'].port;
 
 // 🔒 MIDDLEWARE DE SEGURANÇA
@@ -32,7 +35,7 @@ const authenticateToken = (req: any, res: any, next: any) => {
     return res.status(401).json({ error: 'Token de acesso requerido' });
   }
 
-  jwt.verify(token, ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret, (err: any, user: any) => {
+  jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS, (err: any, user: any) => {
     if (err) {
       return res.status(403).json({ error: 'Token inválido' });
     }

@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } = require('@rsv360/shared');
 /**
  * ✅ SERVIDOR WEBSOCKET STANDALONE
  * Servidor WebSocket separado para desenvolvimento/produção
@@ -10,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
 const port = parseInt(process.env.WS_PORT || '3001', 10);
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = getJwtSecret();
 
 // Pool de conexão PostgreSQL
 const pool = new Pool({
@@ -44,7 +45,7 @@ io.use(async (socket, next) => {
       return next(new Error('Token de autenticação necessário'));
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     const result = await pool.query(
       'SELECT id, email, name, role, status FROM users WHERE id = $1',
       [decoded.userId || decoded.id]

@@ -1,10 +1,8 @@
+const { getJwtSecret } = require('@rsv360/shared');
 const crypto = require('crypto');
 
 function getEncryptionKey() {
-  const raw =
-    process.env.TWO_FA_ENCRYPTION_KEY ||
-    process.env.JWT_SECRET ||
-    'your-secret-key-change-in-production';
+  const raw = process.env.TWO_FA_ENCRYPTION_KEY || getJwtSecret();
   return crypto.createHash('sha256').update(raw).digest();
 }
 

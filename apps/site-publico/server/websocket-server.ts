@@ -10,6 +10,7 @@ import { Server as HTTPServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { queryDatabase } from '../lib/db';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 interface AuthenticatedSocket {
   userId: number;
@@ -50,7 +51,8 @@ export function initializeWebSocketServer(httpServer: HTTPServer): SocketIOServe
       // Verificar JWT
       const decoded = jwt.verify(
         token as string,
-        process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+        getJwtSecret(),
+        JWT_HS256_VERIFY_OPTIONS,
       ) as { userId: number; email: string; role?: string };
 
       // Buscar usuário no banco

@@ -7,6 +7,9 @@ x-prod-env: &prod-env
   NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
   NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
   INTERNAL_API_URL: http://backend:3002
+  # PR-04a: fail-closed — no default secret
+  JWT_SECRET: ${JWT_SECRET}
+  JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-}
 
 networks:
   rsv360_prod:

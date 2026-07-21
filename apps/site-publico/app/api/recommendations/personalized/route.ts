@@ -3,6 +3,7 @@ import { queryDatabase } from "@/lib/db"
 import * as jwt from "jsonwebtoken"
 import type { UserProfile, Product } from "@/lib/recommendation-engine"
 import { getPersonalizedProducts } from "@/lib/recommendation-engine"
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 // Fallback quando a tabela products não existe ou a query falha
 const FALLBACK_PRODUCTS: Product[] = [
@@ -25,8 +26,7 @@ export async function GET(request: NextRequest) {
     if (authHeader && authHeader.startsWith("Bearer ")) {
       try {
         const token = authHeader.substring(7)
-        const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production"
-        const decoded: any = jwt.verify(token, JWT_SECRET)
+        const decoded: any = jwt.verify(token, getJwtSecret(), JWT_HS256_VERIFY_OPTIONS)
         userId = decoded.userId || decoded.id || null
       } catch (error) {
         // Token inválido, continuar sem userId

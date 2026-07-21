@@ -10,7 +10,8 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Mock de variáveis de ambiente
-process.env.JWT_SECRET = 'test-secret-key';
+process.env.JWT_SECRET = 'test-secret-key-minimum-32-characters!!';
+process.env.JWT_REFRESH_SECRET = process.env.JWT_SECRET;
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
 process.env.REDIS_URL = 'redis://localhost:6379';
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
