@@ -71,6 +71,19 @@ if (typeof Response === 'undefined') {
   };
 }
 
+// NextResponse.json() depends on Response.json (static) — polyfill for Jest/jsdom
+if (typeof Response !== 'undefined' && typeof Response.json !== 'function') {
+  Response.json = function json(data, init) {
+    const body = JSON.stringify(data ?? null);
+    const status = (init && init.status) || 200;
+    const headers = new Headers((init && init.headers) || {});
+    if (!headers.has('content-type')) {
+      headers.set('content-type', 'application/json');
+    }
+    return new Response(body, { ...init, status, headers });
+  };
+}
+
 // ✅ Mock automático do módulo pg (usando __mocks__/pg.js)
 // Este mock previne conexões reais ao banco durante os testes
 // Para sobrescrever em um teste específico, use jest.mock('pg', ...) no teste

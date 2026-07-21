@@ -185,33 +185,15 @@ export async function processCardPayment(
 }
 
 /**
- * ✅ ITEM 7: WEBHOOK HANDLER COMPLETO
- * Processa todos os eventos do Mercado Pago e atualiza status
+ * Processa evento MP já autenticado pela rota (HMAC obrigatório em
+ * app/api/webhooks/mercadopago). Não revalida assinatura aqui.
  */
 export async function processWebhookEvent(
   eventType: string,
   eventData: any,
-  xSignature?: string,
-  xRequestId?: string
+  _xSignature?: string,
+  _xRequestId?: string
 ) {
-  try {
-    // Validar assinatura se fornecida
-    if (xSignature && xRequestId && eventData.data?.id) {
-      const isValid = mercadoPagoService.validateWebhookSignature(
-        xSignature,
-        xRequestId,
-        eventData.data.id.toString()
-      );
-
-      if (!isValid) {
-        throw new Error('Assinatura do webhook inválida');
-      }
-    }
-  } catch (error) {
-    console.error('Erro ao validar webhook:', error);
-    return { processed: false, reason: 'Validation error' };
-  }
-
   // Verificar idempotência
   const webhookId = eventData.id || eventData.data?.id;
   if (webhookId) {
