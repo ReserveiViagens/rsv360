@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Garante que as tabelas Flash Deals, OTA e Google Hotel Ads existem no banco.
  * Executa as migrations SQL necessárias se as tabelas não existirem.
@@ -16,7 +17,7 @@ const DB_CONFIG = {
   port: parseInt(process.env.DB_PORT || '5433'),
   database: process.env.DB_NAME || 'rsv_360_ecosystem',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb',
+  password: requireDbPassword(),
 };
 
 // Apenas migrations que nao dependem de 001 (enterprises/properties ja devem existir)

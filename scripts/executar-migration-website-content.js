@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script para executar migration de website_content e properties
  * Banco: rsv360
@@ -14,7 +15,7 @@ const DB_CONFIG = {
   port: parseInt(process.env.DB_PORT || '5433'),
   database: process.env.DB_NAME || 'rsv360',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb',
+  password: requireDbPassword(),
 };
 
 const migrationFile = path.join(__dirname, '..', 'database', 'migrations', 'create-website-content-and-properties.sql');

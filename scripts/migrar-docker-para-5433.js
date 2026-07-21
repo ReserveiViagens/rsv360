@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script completo para migrar todas as tabelas do Docker (porta 5432)
  * para o PostgreSQL nativo (porta 5433)
@@ -15,7 +16,7 @@ const SOURCE_CONFIG = {
   port: 5432,
   database: 'rsv_360_ecosystem',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 };
 
 const TARGET_CONFIG = {
@@ -23,7 +24,7 @@ const TARGET_CONFIG = {
   port: 5433,
   database: 'rsv360',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 };
 
 // Lista de tabelas do relatório fornecido

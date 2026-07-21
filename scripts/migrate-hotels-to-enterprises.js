@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script de Migração: website_content (hotels) → enterprises
  * 
@@ -21,7 +22,7 @@ const dbConfig = {
   port: process.env.DB_PORT || 5433,
   database: process.env.DB_NAME || 'rsv360',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb'
+  password: requireDbPassword()
 };
 
 // Configuração da API

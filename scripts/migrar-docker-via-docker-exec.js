@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script para migrar tabelas do Docker usando docker exec
  * Mais confiável quando há problemas de conexão direta
@@ -15,7 +16,7 @@ const TARGET_CONFIG = {
   port: 5433,
   database: 'rsv360',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 };
 
 // Lista de tabelas do Docker
