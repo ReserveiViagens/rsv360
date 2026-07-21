@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 const { Pool } = require('pg');
 
 const pool5433 = new Pool({
@@ -5,7 +6,7 @@ const pool5433 = new Pool({
   port: 5433,
   database: 'rsv360',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 });
 
 async function analisarTabelas() {

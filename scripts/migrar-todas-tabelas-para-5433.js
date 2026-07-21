@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script para migrar todas as tabelas e dados para a porta 5433
  * Este script:
@@ -15,7 +16,7 @@ const TARGET_CONFIG = {
   port: 5433,
   database: 'rsv360',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 };
 
 // Lista de portas para verificar (caso haja outro PostgreSQL)
@@ -37,7 +38,7 @@ async function verificarOutrasPortas() {
         port: port,
         database: 'postgres',
         user: 'postgres',
-        password: '290491Bb',
+        password: requireDbPassword(),
         connectionTimeoutMillis: 2000,
       });
       
@@ -270,7 +271,7 @@ async function main() {
         port: port,
         database: 'rsv360',
         user: 'postgres',
-        password: '290491Bb',
+        password: requireDbPassword(),
       });
       
       try {

@@ -1,3 +1,4 @@
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Script de Migração Customizado para 71 Registros
  * 
@@ -21,7 +22,7 @@ const TARGET_CONFIG = {
   port: 5433,
   database: 'rsv360',
   user: 'postgres',
-  password: '290491Bb',
+  password: requireDbPassword(),
 };
 
 // Tabela de mapeamento UUID → INTEGER para referências

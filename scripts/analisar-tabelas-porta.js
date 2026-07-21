@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { requireDbPassword } = require('./lib/require-db-password');
 /**
  * Analisa PostgreSQL em uma porta e lista as tabelas.
  * Uso: node scripts/analisar-tabelas-porta.js [porta]
@@ -16,7 +17,7 @@ const pool = new Pool({
   port: porta,
   database: process.env.DB_NAME || 'rsv360',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '290491Bb',
+  password: requireDbPassword(),
   connectionTimeoutMillis: 5000,
 });
 
