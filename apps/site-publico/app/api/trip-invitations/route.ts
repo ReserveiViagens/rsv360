@@ -12,6 +12,7 @@ import {
 } from '@/lib/trip-invitation-service';
 import { createTripInvitationSchema, getInvitationQuerySchema } from '@/lib/schemas/trip-invitation-schemas';
 import { requireAuth, optionalAuth } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/trip-invitations - Listar convites
 export async function GET(request: NextRequest) {
@@ -48,10 +49,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar convites:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar convites' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -122,10 +120,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar convite:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar convite' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

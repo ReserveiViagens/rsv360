@@ -12,6 +12,7 @@ import {
 } from '@/lib/split-payment-service';
 import { createSplitPaymentSchema, getSplitPaymentQuerySchema } from '@/lib/schemas/split-payment-schemas';
 import { requireAuth, optionalAuth } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/split-payments - Listar splits
 export async function GET(request: NextRequest) {
@@ -67,10 +68,7 @@ export async function GET(request: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao buscar split payment:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar split payment' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -122,10 +120,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar split payment:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar split payment' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

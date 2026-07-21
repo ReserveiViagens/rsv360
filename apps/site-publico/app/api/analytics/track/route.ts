@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
 import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST /api/analytics/track - Rastrear evento
 export async function POST(request: NextRequest) {
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erro ao rastrear evento:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 

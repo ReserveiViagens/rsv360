@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CheckinRequestSchema } from '@/lib/schemas/checkin-schemas';
 import { createCheckinRequest, generateQRCodeForCheckin } from '@/lib/checkin-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,13 +78,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Erro ao criar check-in:', error);
-    return NextResponse.json(
-      { 
-        error: 'Erro ao criar check-in',
-        message: error instanceof Error ? error.message : 'Erro desconhecido'
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

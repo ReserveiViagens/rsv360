@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { realtimeLocationService } from '@/lib/realtime-location-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/location/share
@@ -53,10 +54,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao compartilhar localização:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao compartilhar localização' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -88,10 +86,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter localizações:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter localizações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -118,10 +113,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao parar compartilhamento:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao parar compartilhamento' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

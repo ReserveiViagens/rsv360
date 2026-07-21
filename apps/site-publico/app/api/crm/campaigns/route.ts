@@ -10,6 +10,7 @@ import {
   listCampaigns,
 } from '@/lib/crm-service';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/crm/campaigns - Listar campanhas
 export async function GET(request: NextRequest) {
@@ -40,10 +41,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar campanhas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar campanhas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -72,10 +70,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar campanha:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar campanha' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

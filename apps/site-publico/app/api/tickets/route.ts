@@ -9,6 +9,7 @@ import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { CreateTicketSchema, TicketFilterSchema } from '@/lib/schemas/ticket-schemas';
 import { createTicket, listTickets } from '@/lib/ticket-service';
 import { z } from 'zod';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/tickets - Listar tickets com filtros
 export async function GET(request: NextRequest) {
@@ -103,10 +104,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar tickets' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -153,10 +151,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar ticket' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

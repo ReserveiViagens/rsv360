@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getWebsiteContent } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 
 // GET - Listar itens de um tipo (hotels, promotions, attractions, tickets) para importação
@@ -33,9 +34,6 @@ export async function GET(
     return NextResponse.json({ success: true, data: formatted });
   } catch (error: any) {
     console.error('Erro ao listar itens:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao carregar itens' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

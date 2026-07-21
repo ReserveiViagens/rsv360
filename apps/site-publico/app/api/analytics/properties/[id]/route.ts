@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   fetchBookingBreakdown,
   fetchPropertySummary,
 } from '@/lib/analytics-booking-breakdown';
@@ -70,8 +71,6 @@ export async function GET(
       },
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao buscar propriedade';
-    console.error('Erro ao buscar detalhes da propriedade:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   generatePaymentReport,
   exportPaymentReportToCSV,
   getPaymentAnalytics,
@@ -63,10 +64,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Erro ao gerar relatório:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao gerar relatório' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

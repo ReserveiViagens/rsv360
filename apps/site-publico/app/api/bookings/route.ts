@@ -9,6 +9,7 @@ import { sendCheckinCreatedNotification } from '@/lib/checkin-notifications';
 import { logStatusChange } from '@/lib/booking-status-service';
 import { optionalAuth } from '@/lib/api-auth';
 import { handleGetBookings } from '@/lib/bookings-get-handler';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST /api/bookings - Criar nova reserva
 export async function POST(request: NextRequest) {
@@ -155,13 +156,7 @@ export async function POST(request: NextRequest) {
           total: calculatedPricing.total,
         };
       } catch (pricingError: any) {
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: `Erro ao calcular preços: ${pricingError.message}` 
-          },
-          { status: 500 }
-        );
+        return jsonInternalError(pricingError);
       }
     }
 
@@ -622,13 +617,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response, { status: 201 });
   } catch (error: any) {
     console.error('Erro ao criar reserva:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao criar reserva',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

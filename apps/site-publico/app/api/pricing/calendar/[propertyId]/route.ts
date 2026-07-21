@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { pricingLabAuth } from '@/lib/pricing-lab-auth';
 import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 function demandToScore(level?: string | null): number {
   switch (level) {
@@ -99,8 +100,7 @@ export async function GET(
       ...(breakdown !== undefined ? { breakdown } : {}),
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao buscar calendário';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -147,7 +147,6 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao salvar preço';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }

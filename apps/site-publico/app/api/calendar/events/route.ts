@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { groupCalendarService, type CalendarEvent } from '@/lib/group-calendar-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/calendar/events
@@ -34,10 +35,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter eventos:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter eventos' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -97,10 +95,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar evento:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao criar evento' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -142,10 +137,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar evento:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao atualizar evento' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -176,10 +168,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao deletar evento:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao deletar evento' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

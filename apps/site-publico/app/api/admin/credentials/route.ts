@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { queryDatabase } from '@/lib/db';
 import * as crypto from 'crypto';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Chave para criptografar credenciais (em produção, usar variável de ambiente)
 const ENCRYPTION_KEY = process.env.CREDENTIALS_ENCRYPTION_KEY || 'default-key-change-in-production';
@@ -95,10 +96,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar credenciais:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar credenciais' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -165,10 +163,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao salvar credenciais:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao salvar credenciais' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

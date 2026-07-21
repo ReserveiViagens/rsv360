@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, withAuth } from '@/lib/api-auth';
 import { createVerificationRequest } from '@/lib/verification-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export const POST = withAuth(async (request: NextRequest, user) => {
   if (!user) {
@@ -60,10 +61,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     });
   } catch (error: any) {
     console.error('Erro ao criar solicitação de verificação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar solicitação de verificação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 });
 

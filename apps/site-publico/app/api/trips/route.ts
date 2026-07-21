@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   createTripPlan,
   getTripPlan,
   addTripTask,
@@ -27,10 +28,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao buscar plano de viagem:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao buscar plano de viagem' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -59,10 +57,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: tripPlan });
   } catch (error: any) {
     console.error('Erro ao criar plano de viagem:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao criar plano de viagem' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -136,10 +131,7 @@ export async function PUT(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao processar ação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao processar ação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -160,10 +152,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true, data: summary });
   } catch (error: any) {
     console.error('Erro ao buscar resumo financeiro:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao buscar resumo financeiro' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

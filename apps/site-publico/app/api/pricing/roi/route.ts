@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   calculateROI,
   getROISummary,
   getROIHistory,
@@ -53,13 +54,7 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao obter relatório de ROI',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -93,13 +88,7 @@ export async function POST(request: NextRequest) {
       data: roi,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao calcular ROI',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

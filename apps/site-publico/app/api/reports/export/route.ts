@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { exportBookingsReport, exportFinancialReport } from '@/lib/export-reports';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -52,9 +53,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao exportar relatório:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

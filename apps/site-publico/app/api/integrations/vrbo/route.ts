@@ -7,6 +7,7 @@ import {
 } from '@/lib/vrbo-service';
 import type { VRBOConfig } from '@/lib/vrbo-service';
 import { getCredential } from '@/lib/credentials-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Autenticar ou sincronizar
 export async function POST(req: NextRequest) {
@@ -49,10 +50,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro na integração VRBO:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro na integração VRBO' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -97,10 +95,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao buscar dados VRBO:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao buscar dados VRBO' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

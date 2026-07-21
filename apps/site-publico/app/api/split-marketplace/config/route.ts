@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   listReceivers,
   createReceiver,
   updateReceiver,
@@ -44,10 +45,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (err: unknown) {
     console.error('[split-marketplace/config] GET error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }
 
@@ -127,9 +125,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (err: unknown) {
     console.error('[split-marketplace/config] POST error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }

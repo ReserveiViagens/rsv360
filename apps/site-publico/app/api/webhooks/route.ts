@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/api-auth';
 import { z } from 'zod';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   createWebhookSubscription,
   listWebhookSubscriptions,
   updateWebhookSubscription,
@@ -44,14 +45,7 @@ export const GET = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao listar webhooks:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Erro ao listar webhooks',
-          details: error.message
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: true }
@@ -109,14 +103,7 @@ export const POST = withAuth(
       }
       
       console.error('Erro ao criar webhook:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Erro ao criar webhook',
-          details: error.message
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: true }

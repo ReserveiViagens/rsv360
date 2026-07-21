@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { encryptionService } from '@/lib/encryption-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/encryption/encrypt
@@ -43,10 +44,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criptografar:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao criptografar dados' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

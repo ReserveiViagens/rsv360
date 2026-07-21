@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { autoInsuranceSelector, type SelectionCriteria, type QuoteRequest } from '@/lib/auto-insurance-selector';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/insurance/auto-select
@@ -76,10 +77,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao selecionar seguro automaticamente:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao selecionar seguro automaticamente' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -111,10 +109,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao sugerir critérios:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao sugerir critérios' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

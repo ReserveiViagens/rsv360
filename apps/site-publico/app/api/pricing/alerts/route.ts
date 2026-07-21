@@ -11,6 +11,7 @@ import {
   sendAlertNotifications,
 } from '@/lib/pricing-alerts-service';
 import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/pricing/alerts
@@ -58,10 +59,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter alertas:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter alertas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -101,10 +99,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar alertas:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao verificar alertas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -134,10 +129,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao marcar alerta como lido:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao marcar alerta como lido' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

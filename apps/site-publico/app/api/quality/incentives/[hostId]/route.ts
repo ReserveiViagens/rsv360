@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest, props: { params: Promise<{ hostId: string }> }) {
   const params = await props.params;
@@ -59,10 +60,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ host
     });
   } catch (error: any) {
     console.error('Erro ao aplicar incentivo:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao aplicar incentivo' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

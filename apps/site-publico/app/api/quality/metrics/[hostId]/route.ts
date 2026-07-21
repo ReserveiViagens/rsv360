@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
 import { getHostDashboard, determineHostLevel } from '@/lib/top-host-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest, props: { params: Promise<{ hostId: string }> }) {
   const params = await props.params;
@@ -52,10 +53,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ hostI
     });
   } catch (error: any) {
     console.error('Erro ao buscar métricas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar métricas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

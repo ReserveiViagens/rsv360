@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
+const { getNextSecurityHeaders } = require('../../packages/shared/security-headers.cjs');
 
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   transpilePackages: ['@rsv360/shared'],
   serverExternalPackages: ['pg', 'ioredis', 'sharp', 'nodemailer'],
   typescript: {
@@ -42,6 +44,7 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
+          ...getNextSecurityHeaders(),
           {
             key: 'Permissions-Policy',
             value: 'unload=*, geolocation=(), microphone=(), camera=()',

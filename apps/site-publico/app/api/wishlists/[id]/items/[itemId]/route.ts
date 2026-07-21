@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import { listWishlistItems } from '@/lib/wishlist-service';
 import { withAuth, AuthRequest, AuthenticatedUser } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export const GET = withAuth(
   async (request: AuthRequest, _user: AuthenticatedUser | null): Promise<NextResponse> => {
@@ -59,13 +60,7 @@ export const GET = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao buscar item:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: error.message || 'Erro ao carregar item',
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: false }

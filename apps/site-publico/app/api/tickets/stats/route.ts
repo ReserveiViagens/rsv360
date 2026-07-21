@@ -9,6 +9,7 @@ import { queryDatabase } from '@/lib/db';
 import { calculateSLAMetrics } from '@/lib/sla-service';
 import { TicketStatsFilterSchema } from '@/lib/schemas/ticket-schemas';
 import { z } from 'zod';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/tickets/stats - Obter estatísticas
 export async function GET(request: NextRequest) {
@@ -179,10 +180,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter estatísticas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

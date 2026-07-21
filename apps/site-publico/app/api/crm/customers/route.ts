@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { CustomerProfileQuerySchema, CreateCustomerProfileSchema, type CreateCustomerProfile } from '@/lib/schemas/crm-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/crm/customers - Listar perfis de clientes
 export async function GET(request: NextRequest) {
@@ -194,10 +195,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar perfis de clientes' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -261,10 +259,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar perfil de cliente' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

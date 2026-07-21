@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,10 +56,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar status Google Calendar:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao verificar status' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

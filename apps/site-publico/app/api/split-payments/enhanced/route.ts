@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createEnhancedSplitPayment, processParticipantPayment, sendPaymentReminders } from '@/lib/enhanced-split-payment';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Criar split payment avançado
 export async function POST(req: NextRequest) {
@@ -33,10 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: splitPayment });
   } catch (error: any) {
     console.error('Erro ao criar split payment:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao criar split payment' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -63,10 +61,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ success, message: success ? 'Pagamento processado' : 'Erro ao processar pagamento' });
   } catch (error: any) {
     console.error('Erro ao processar pagamento:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao processar pagamento' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -77,10 +72,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true, message: 'Lembretes enviados' });
   } catch (error: any) {
     console.error('Erro ao enviar lembretes:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao enviar lembretes' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

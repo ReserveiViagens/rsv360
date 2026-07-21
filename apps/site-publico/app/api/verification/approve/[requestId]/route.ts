@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { approveVerification } from '@/lib/verification-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function PUT(request: NextRequest, props: { params: Promise<{ requestId: string }> }) {
   const params = await props.params;
@@ -48,10 +49,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ reque
     });
   } catch (error: any) {
     console.error('Erro ao aprovar verificação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao aprovar verificação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

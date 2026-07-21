@@ -10,6 +10,7 @@ import {
   updateNotificationPreferences,
 } from '@/lib/notification-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/notifications/preferences - Obter preferências
 export async function GET(request: NextRequest) {
@@ -31,10 +32,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter preferências:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter preferências' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -61,10 +59,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar preferências:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao atualizar preferências' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -13,6 +13,7 @@ import {
   deleteProperty,
 } from '@/lib/properties-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/properties - Listar propriedades
 export async function GET(request: NextRequest) {
@@ -41,10 +42,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar propriedades:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar propriedades' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -71,9 +69,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar propriedade:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar propriedade' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

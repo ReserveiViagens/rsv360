@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { getUnreadMessageCount } from '@/lib/messages-enhanced-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,10 +30,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter contagem de não lidas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter contagem de não lidas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

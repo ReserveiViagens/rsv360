@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   listDeductions,
   createDeduction,
   updateDeduction,
@@ -34,10 +35,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: deductions });
   } catch (err: unknown) {
     console.error('[tax/deductions] GET error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }
 
@@ -75,10 +73,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: deduction });
   } catch (err: unknown) {
     console.error('[tax/deductions] POST error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }
 
@@ -107,9 +102,6 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true, data: deduction });
   } catch (err: unknown) {
     console.error('[tax/deductions] PATCH error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getWebsiteContent } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET() {
   try {
@@ -27,14 +28,7 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error('Error fetching attractions:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message || 'Erro ao buscar atrações',
-        data: [] 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

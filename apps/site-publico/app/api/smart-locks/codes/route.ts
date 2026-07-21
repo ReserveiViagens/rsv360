@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getActivePins } from '@/lib/smartlock-integration';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -59,10 +60,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar códigos smart lock:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar códigos' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

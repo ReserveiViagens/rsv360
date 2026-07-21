@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { syncBookingToCalendar } from '@/lib/google-calendar-service';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,10 +37,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao sincronizar para Google Calendar:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao sincronizar para Google Calendar' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

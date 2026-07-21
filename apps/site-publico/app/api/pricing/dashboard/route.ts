@@ -12,6 +12,7 @@ import {
 import { getCompetitorPrices } from '@/lib/smart-pricing-service';
 import { getPricingRules } from '@/lib/pricing-rules-service';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,8 +69,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao carregar dashboard';
-    console.error('Erro no dashboard de pricing:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

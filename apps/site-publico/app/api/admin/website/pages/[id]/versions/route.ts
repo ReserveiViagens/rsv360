@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 
 // GET - Listar versões (retorna vazio por enquanto - histórico pode ser implementado depois)
@@ -15,9 +16,6 @@ export async function GET(
     return NextResponse.json({ success: true, data: [] });
   } catch (error: any) {
     console.error('Erro ao listar versões:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao carregar versões' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
