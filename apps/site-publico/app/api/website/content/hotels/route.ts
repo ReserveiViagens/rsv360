@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getWebsiteContent } from '@/lib/db';
 import { cache, generateCacheKey } from '@/lib/cache';
 import { logDatabaseAccess } from '@/lib/logger';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -87,14 +88,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error: any) {
     console.error('Error fetching hotels:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message || 'Erro ao buscar hotéis',
-        data: [] 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

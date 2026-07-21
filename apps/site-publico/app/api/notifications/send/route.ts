@@ -11,6 +11,7 @@ import {
   sendPushNotification,
 } from '@/lib/notification-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST /api/notifications/send - Enviar notificação
 export async function POST(request: NextRequest) {
@@ -74,10 +75,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao enviar notificação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao enviar notificação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

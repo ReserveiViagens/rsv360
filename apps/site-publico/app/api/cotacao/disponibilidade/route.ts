@@ -3,6 +3,7 @@ import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { getWebsiteContent } from '@/lib/db';
 import { normalizeImageList, resolvePublicMediaList } from '@/lib/cotacao-image-utils';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   catalogItemFromAttraction,
   catalogItemFromHotel,
   catalogItemFromTicket,
@@ -260,9 +261,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[disponibilidade]', error);
-    return NextResponse.json(
-      { success: false, error: (error as Error).message || 'Erro ao verificar disponibilidade' },
-      { status: 500 },
-    );
+    return jsonInternalError(error);
   }
 }

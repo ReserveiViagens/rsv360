@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/pricing/competitors/compare - Comparar preços
 export async function GET(request: NextRequest) {
@@ -129,10 +130,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao comparar preços:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao comparar preços' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

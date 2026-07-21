@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -50,10 +51,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar configurações de privacidade:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar configurações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -97,10 +95,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao salvar configurações de privacidade:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao salvar configurações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

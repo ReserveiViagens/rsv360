@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { getCustomerProfileById } from '@/lib/crm-customer-resolve';
 import { listInteractions } from '@/lib/crm-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(
   request: NextRequest,
@@ -53,8 +54,6 @@ export async function GET(
       count: interactions.length,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao listar interações';
-    console.error('Erro ao listar interações do cliente:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

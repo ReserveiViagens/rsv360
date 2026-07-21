@@ -7,6 +7,7 @@ import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { verifyPropertyWithAI } from '@/lib/ai-verification-service';
 import { validatePropertyAddress } from '@/lib/google-maps-verification-service';
 import { updatePropertyBadges } from '@/lib/verification-levels-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/verification/verify
@@ -52,10 +53,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar propriedade:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao verificar propriedade' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { suggestSplit, suggestSplitWithAI } from '@/lib/marketplace-split/split-suggestion-service';
 import type { ServiceType } from '@/lib/marketplace-split/types';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,9 +35,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (err: unknown) {
     console.error('[split-marketplace/suggest] POST error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }

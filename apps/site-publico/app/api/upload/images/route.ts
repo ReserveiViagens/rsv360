@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Configurações
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -78,13 +79,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro no upload:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro interno do servidor durante o upload',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -8,6 +8,7 @@ import {
 } from '@/lib/hospedin-service';
 import type { HospedinConfig } from '@/lib/hospedin-service';
 import { getCredential } from '@/lib/credentials-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Autenticar
 export async function POST(req: NextRequest) {
@@ -50,10 +51,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro na integração Hospedin:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro na integração Hospedin' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -112,10 +110,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao buscar dados Hospedin:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao buscar dados Hospedin' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

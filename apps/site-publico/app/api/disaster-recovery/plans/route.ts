@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { disasterRecoveryService, type RecoveryPlan } from '@/lib/disaster-recovery-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/disaster-recovery/plans
@@ -37,10 +38,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: [] });
   } catch (error: any) {
     console.error('Erro ao obter planos de recuperação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter planos de recuperação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -80,10 +78,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar plano de recuperação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao criar plano de recuperação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

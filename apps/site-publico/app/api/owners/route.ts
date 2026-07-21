@@ -13,6 +13,7 @@ import {
   getOwnerByUserId,
 } from '@/lib/properties-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/owners - Listar proprietários
 export async function GET(request: NextRequest) {
@@ -53,10 +54,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar proprietários:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar proprietários' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -94,10 +92,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar proprietário:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar proprietário' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

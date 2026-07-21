@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, fileExists } from '@/lib/storage-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -62,10 +63,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao baixar arquivo:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao baixar arquivo' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { calculateSmartPrice } from '@/lib/smart-pricing-service';
 import { applyPricingRules } from '@/lib/pricing-rules-service';
 import { getBasePrice } from '@/lib/pricing-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Cache simples em memória (em produção, usar Redis)
 const priceCache = new Map<string, { price: number; expiresAt: number }>();
@@ -126,10 +127,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao calcular preço dinâmico:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao calcular preço dinâmico' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

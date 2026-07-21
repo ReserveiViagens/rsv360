@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getDbPool, queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 
 // GET - Buscar página por ID
@@ -39,10 +40,7 @@ export async function GET(
     return NextResponse.json({ success: true, data: page });
   } catch (error: any) {
     console.error('Erro ao buscar página:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar página' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -107,10 +105,7 @@ export async function PUT(
     return NextResponse.json({ success: true, data: page });
   } catch (error: any) {
     console.error('Erro ao atualizar página:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao atualizar página' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -132,9 +127,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erro ao deletar página:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao deletar página' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

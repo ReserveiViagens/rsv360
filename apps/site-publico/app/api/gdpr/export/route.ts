@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { gdprService } from '@/lib/gdpr-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/gdpr/export
@@ -37,10 +38,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao solicitar exportação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao solicitar exportação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -63,10 +61,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter exportações:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter exportações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

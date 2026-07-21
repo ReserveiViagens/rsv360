@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
 import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST /api/reviews - Criar avaliação
 export async function POST(request: NextRequest) {
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: review[0] });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: reviews });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 

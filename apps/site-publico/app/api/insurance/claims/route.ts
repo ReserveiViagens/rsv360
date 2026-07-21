@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, withAuth } from '@/lib/api-auth';
 import { createInsuranceClaim, listInsuranceClaims, updateClaimStatus } from '@/lib/insurance-service';
 import { createInsuranceClaimSchema, getInsuranceClaimsQuerySchema } from '@/lib/schemas/insurance-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET: Listar sinistros do usuário
 export async function GET(request: NextRequest) {
@@ -67,10 +68,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar sinistros:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar sinistros' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -141,10 +139,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     });
   } catch (error: any) {
     console.error('Erro ao registrar sinistro:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao registrar sinistro' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 });
 

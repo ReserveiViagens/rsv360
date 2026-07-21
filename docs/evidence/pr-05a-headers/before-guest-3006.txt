@@ -1,0 +1,9 @@
+﻿URL=http://127.0.0.1:3006/
+STATUS=307
+Strict-Transport-Security=
+X-Content-Type-Options=
+X-Frame-Options=
+Referrer-Policy=
+X-Powered-By=
+Content-Security-Policy=
+Permissions-Policy=

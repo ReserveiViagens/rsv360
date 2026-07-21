@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { encryptionService } from '@/lib/encryption-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/encryption/hash
@@ -39,10 +40,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao gerar hash:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao gerar hash' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -80,10 +78,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar hash:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao verificar hash' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

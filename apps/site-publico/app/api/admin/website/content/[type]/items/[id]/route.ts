@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 
 // GET - Buscar item por ID ou content_id para importação
@@ -41,9 +42,6 @@ export async function GET(
     return NextResponse.json({ success: true, data: item });
   } catch (error: any) {
     console.error('Erro ao buscar item:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar item' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { validateCoupon } from '@/lib/coupons-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,10 +37,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao validar cupom:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao validar cupom' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

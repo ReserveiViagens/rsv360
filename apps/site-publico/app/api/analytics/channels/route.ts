@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBookingsByChannel } from '@/lib/analytics-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,10 +35,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter reservas por canal:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter dados de canais' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

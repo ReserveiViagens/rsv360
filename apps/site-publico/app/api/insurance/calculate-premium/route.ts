@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculatePremium } from '@/lib/insurance-service';
 import { calculatePremiumSchema } from '@/lib/schemas/insurance-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   // Cálculo de prêmio pode ser público (não requer autenticação)
@@ -57,10 +58,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao calcular prêmio:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao calcular prêmio' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

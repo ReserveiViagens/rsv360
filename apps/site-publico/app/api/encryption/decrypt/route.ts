@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { encryptionService } from '@/lib/encryption-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/encryption/decrypt
@@ -40,10 +41,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao descriptografar:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao descriptografar dados' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

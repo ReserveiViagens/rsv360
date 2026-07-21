@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { processRefund, getRefundHistory } from '@/lib/mercadopago-boleto-refund-reports';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,10 +46,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao processar reembolso:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao processar reembolso' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -69,10 +67,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar histórico de estornos:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar histórico' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
 import { fetchBookingBreakdown } from '@/lib/analytics-booking-breakdown';
+import { jsonInternalError } from '@/lib/api-error';
 
 const REVENUE_STATUSES = "('confirmed')";
 
@@ -101,8 +102,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao gerar previsão de receita';
-    console.error('Erro ao gerar previsão de receita:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

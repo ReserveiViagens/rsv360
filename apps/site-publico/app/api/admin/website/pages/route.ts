@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getDbPool, queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 async function ensurePagesTable() {
   const pool = getDbPool();
@@ -50,10 +51,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: pages });
   } catch (error: any) {
     console.error('Erro ao listar páginas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao carregar páginas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -113,9 +111,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar página' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

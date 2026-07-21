@@ -10,6 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getMetrics } from '@/lib/metrics';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/metrics
@@ -31,18 +32,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ Erro ao coletar métricas:', error);
     
-    return NextResponse.json(
-      { 
-        error: 'Erro ao coletar métricas',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      },
-      { 
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    return jsonInternalError(error);
   }
 }
 

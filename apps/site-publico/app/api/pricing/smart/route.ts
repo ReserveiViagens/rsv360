@@ -13,6 +13,7 @@ import {
 } from '@/lib/smart-pricing-service';
 import { calculateSmartPriceSchema, getPricingHistoryQuerySchema } from '@/lib/schemas/smart-pricing-schemas';
 import { requireAuth, optionalAuth } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST /api/pricing/smart - Calcular preço inteligente
 export async function POST(request: NextRequest) {
@@ -65,10 +66,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao calcular preço inteligente:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao calcular preço inteligente' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -136,10 +134,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter histórico:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter histórico' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

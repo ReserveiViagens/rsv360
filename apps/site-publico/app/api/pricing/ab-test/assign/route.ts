@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { assignParticipant } from '@/lib/ab-testing-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/pricing/ab-test/assign
@@ -34,13 +35,7 @@ export async function POST(request: NextRequest) {
       data: participant,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao atribuir participante',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

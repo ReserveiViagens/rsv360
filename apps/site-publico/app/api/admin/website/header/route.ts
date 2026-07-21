@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { Pool } from 'pg';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Configuração do banco de dados (mesmo do backend)
 const pool = new Pool({
@@ -50,14 +51,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar header:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro ao carregar header',
-        details: error.message 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -159,25 +153,11 @@ export async function POST(request: NextRequest) {
         });
       } catch (createError: any) {
         console.error('Erro ao criar tabela:', createError);
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Erro ao criar header',
-            details: createError.message 
-          },
-          { status: 500 }
-        );
+        return jsonInternalError(createError);
       }
     }
 
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro ao salvar header',
-        details: error.message 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -249,14 +229,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar header:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro ao atualizar header',
-        details: error.message 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -286,14 +259,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao deletar header:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro ao resetar header',
-        details: error.message 
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

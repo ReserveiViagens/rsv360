@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCompetitorBenchmark } from '@/lib/advanced-analytics-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Gerar competitor benchmark
 export async function POST(req: NextRequest) {
@@ -22,10 +23,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: benchmark });
   } catch (error: any) {
     console.error('Erro ao gerar benchmark:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao gerar benchmark' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

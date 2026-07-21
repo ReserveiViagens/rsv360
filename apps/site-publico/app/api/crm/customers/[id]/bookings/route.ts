@@ -10,6 +10,7 @@ import {
   profileDisplayName,
 } from '@/lib/crm-customer-resolve';
 import { fetchBookingBreakdown } from '@/lib/analytics-booking-breakdown';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(
   request: NextRequest,
@@ -70,8 +71,6 @@ export async function GET(
       count: data.length,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao listar reservas';
-    console.error('Erro ao listar reservas do cliente:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

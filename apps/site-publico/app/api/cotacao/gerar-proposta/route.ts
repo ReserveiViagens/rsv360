@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFase1BackendBaseUrl } from '@/lib/fase1-bff';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,9 +30,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[gerar-proposta BFF]', error);
-    return NextResponse.json(
-      { success: false, error: (error as Error).message || 'Erro interno' },
-      { status: 500 },
-    );
+    return jsonInternalError(error);
   }
 }

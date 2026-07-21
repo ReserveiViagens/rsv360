@@ -4,6 +4,7 @@ import { join } from 'path';
 import { queryDatabase } from '@/lib/db';
 import { optionalAuth } from '@/lib/api-auth';
 import { isCheckinStaff } from '@/lib/checkin-access';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Upload de documentos do check-in (PR-03b: auth + posse)
 export async function POST(req: NextRequest) {
@@ -81,6 +82,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Erro upload check-in docs:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return jsonInternalError(error);
   }
 }

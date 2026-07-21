@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { backgroundCheckService } from '@/lib/background-check-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,10 +36,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao solicitar background check:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao solicitar background check' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

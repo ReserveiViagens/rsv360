@@ -4,6 +4,7 @@ import * as jwt from "jsonwebtoken"
 import type { UserProfile, Product } from "@/lib/recommendation-engine"
 import { getPersonalizedProducts } from "@/lib/recommendation-engine"
 import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Fallback quando a tabela products não existe ou a query falha
 const FALLBACK_PRODUCTS: Product[] = [
@@ -239,9 +240,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (error: any) {
     console.error("Erro ao buscar recomendações personalizadas:", error)
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    )
+    return jsonInternalError(error)
   }
 }

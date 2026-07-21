@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, withAuth } from '@/lib/api-auth';
 import { createInsurancePolicy, listInsurancePolicies, getInsurancePolicyByBooking } from '@/lib/insurance-service';
 import { createInsurancePolicySchema, getInsurancePoliciesQuerySchema } from '@/lib/schemas/insurance-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET: Listar apólices do usuário
 export async function GET(request: NextRequest) {
@@ -67,10 +68,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar apólices:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar apólices' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -154,10 +152,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     });
   } catch (error: any) {
     console.error('Erro ao criar apólice:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar apólice' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 });
 

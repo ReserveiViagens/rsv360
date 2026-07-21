@@ -7,6 +7,7 @@ import {
 } from '@/lib/decolar-service';
 import type { DecolarConfig } from '@/lib/decolar-service';
 import { getCredential } from '@/lib/credentials-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // POST: Autenticar ou sincronizar
 export async function POST(req: NextRequest) {
@@ -49,10 +50,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro na integração Decolar:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro na integração Decolar' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -97,10 +95,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao buscar dados Decolar:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao buscar dados Decolar' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

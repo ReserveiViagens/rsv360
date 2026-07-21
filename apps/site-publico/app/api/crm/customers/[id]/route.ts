@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { getCustomerProfileById } from '@/lib/crm-customer-resolve';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(
   request: NextRequest,
@@ -44,8 +45,6 @@ export async function GET(
       data: profile,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao buscar cliente';
-    console.error('Erro ao buscar perfil de cliente:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

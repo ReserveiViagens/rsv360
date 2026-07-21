@@ -13,6 +13,7 @@ import {
 } from '@/lib/pricing-rules-service';
 import { marketingLabAuth as pricingLabAuth } from '@/lib/marketing-lab-auth';
 import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/pricing/rules - Listar regras
 export async function GET(request: NextRequest) {
@@ -39,10 +40,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar regras:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar regras' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -87,10 +85,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar regra:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar regra' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -132,10 +127,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar regra:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao atualizar regra' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -169,10 +161,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao deletar regra:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao deletar regra' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

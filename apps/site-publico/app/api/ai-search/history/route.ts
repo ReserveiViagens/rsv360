@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { aiSearchService } from '@/lib/ai-search-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,10 +18,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter histórico:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter histórico' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -34,10 +32,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao limpar histórico:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao limpar histórico' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

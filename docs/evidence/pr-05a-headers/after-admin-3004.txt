@@ -1,0 +1,9 @@
+URL=http://127.0.0.1:3004/
+STATUS=200
+Strict-Transport-Security=
+X-Content-Type-Options=nosniff
+X-Frame-Options=DENY
+Referrer-Policy=strict-origin-when-cross-origin
+X-Powered-By=
+Content-Security-Policy=
+Permissions-Policy=

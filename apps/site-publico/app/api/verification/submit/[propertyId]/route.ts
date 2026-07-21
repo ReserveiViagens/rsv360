@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { submitVerificationRequest, getVerificationByProperty } from '@/lib/verification-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest, props: { params: Promise<{ propertyId: string }> }) {
   const params = await props.params;
@@ -50,9 +51,6 @@ export async function POST(request: NextRequest, props: { params: Promise<{ prop
     });
   } catch (error: any) {
     console.error('Erro ao submeter verificação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao submeter verificação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

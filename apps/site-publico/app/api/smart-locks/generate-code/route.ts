@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePin } from '@/lib/smartlock-integration';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,10 +63,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao gerar código smart lock:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao gerar código' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

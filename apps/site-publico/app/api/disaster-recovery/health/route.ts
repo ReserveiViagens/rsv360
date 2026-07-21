@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { disasterRecoveryService } from '@/lib/disaster-recovery-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/disaster-recovery/health
@@ -30,10 +31,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar saúde do sistema:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao verificar saúde do sistema' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -1,31 +1,51 @@
+/**
+ * RSV360 — Express security middleware (PR-05a).
+ * Helmet is the single source for security headers; branding must not overwrite them.
+ * CSP left as-is on branding (PR-16). HSTS only when ENABLE_HSTS=true.
+ */
+const helmet = require('helmet');
+
 class SecurityConfig {
   static async initialize(app) {
-    // Basic security configuration for testing
     this.configure(app);
-    console.log('[SECURITY] Basic security configuration applied');
+    console.log('[SECURITY] Helmet security configuration applied');
   }
 
   static configure(app) {
-    // Add basic security headers
-    app.use((req, res, next) => {
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.setHeader('X-Frame-Options', 'DENY');
-      res.setHeader('X-XSS-Protection', '1; mode=block');
-      next();
-    });
+    const enableHsts = process.env.ENABLE_HSTS === 'true';
+
+    app.use(
+      helmet({
+        // Existing API CSP stays in brandingHeaders until PR-16 — do not introduce a new policy here.
+        contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+        frameguard: { action: 'deny' },
+        hidePoweredBy: true,
+        hsts: enableHsts
+          ? {
+              maxAge: 15_552_000, // 180 days
+              includeSubDomains: true,
+              preload: false,
+            }
+          : false,
+        noSniff: true,
+        referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+        xssFilter: true,
+      }),
+    );
   }
 
   static setupHealthCheck(app) {
-    // Basic health check endpoint
     app.get('/health', (req, res) => {
       res.json({
         status: 'OK',
         timestamp: new Date().toISOString(),
         service: 'RSV360 Backend API',
-        security: 'Basic Security Active',
+        security: 'Helmet Active',
         author: 'Douglas P. Figueiredo',
         copyright: '© 2024-2026 Reservei Viagens LTDA',
-        website: 'https://www.reserveiviagens.com.br'
+        website: 'https://www.reserveiviagens.com.br',
       });
     });
 
@@ -35,7 +55,8 @@ class SecurityConfig {
         timestamp: new Date().toISOString(),
         service: 'RSV360 Backend API',
         security: {
-          headers: 'active',
+          headers: 'helmet',
+          hsts: process.env.ENABLE_HSTS === 'true',
           cors: 'configured',
           shield: 'SecurityShield360 Phase 2',
         },
@@ -47,6 +68,7 @@ class SecurityConfig {
   }
 
   static getCorsOptions() {
+    // Unchanged in 05a — CORS → PR-05b
     const raw =
       process.env.CORS_ORIGIN ||
       'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3005';

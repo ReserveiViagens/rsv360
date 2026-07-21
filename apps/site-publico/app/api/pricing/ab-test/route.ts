@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import {
+import { jsonInternalError } from '@/lib/api-error';
   createABExperiment,
   addABVariant,
   assignParticipant,
@@ -30,13 +31,7 @@ export async function GET(request: NextRequest) {
       data: experiments,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao listar experimentos A/B',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -85,13 +80,7 @@ export async function POST(request: NextRequest) {
       data: experiment,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao criar experimento A/B',
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { getHomeSideRailsFallback, type HomeSideRailsData } from '@/lib/home-side-rails';
+import { jsonInternalError } from '@/lib/api-error';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
@@ -104,10 +105,7 @@ export async function GET(request: NextRequest) {
       }
       return NextResponse.json({ success: true, data: getHomeSideRailsFallback() });
     }
-    return NextResponse.json(
-      { success: false, error: 'Erro ao carregar laterais', details: (error as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -140,9 +138,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true, data: validation.data });
   } catch (error: unknown) {
     console.error('Erro ao salvar side rails:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erro ao salvar laterais', details: (error as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

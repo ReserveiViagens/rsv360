@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { airbnbExperiencesService } from '@/lib/airbnb-experiences-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,10 +33,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar experiências:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar experiências' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

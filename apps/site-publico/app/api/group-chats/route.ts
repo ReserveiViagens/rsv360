@@ -12,6 +12,7 @@ import {
 } from '@/lib/group-chat-service';
 import { createGroupChatSchema, getGroupChatQuerySchema } from '@/lib/schemas/group-chat-schemas';
 import { requireAuth, optionalAuth } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/group-chats - Listar grupos
 export async function GET(request: NextRequest) {
@@ -112,10 +113,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar grupos:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar grupos' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -164,10 +162,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar grupo:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar grupo' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

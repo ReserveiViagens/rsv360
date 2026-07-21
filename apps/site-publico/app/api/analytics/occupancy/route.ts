@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getOccupancyRate } from '@/lib/analytics-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,10 +45,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter taxa de ocupação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter ocupação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

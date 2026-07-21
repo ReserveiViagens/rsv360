@@ -9,6 +9,7 @@ import { getTopHosts } from '@/lib/top-host-service';
 import { getLeaderboardQuerySchema } from '@/lib/schemas/top-host-schemas';
 import { cacheService } from '@/lib/cache-service';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   // Leaderboard pode ser público ou autenticado
@@ -113,10 +114,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar ranking:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar ranking' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

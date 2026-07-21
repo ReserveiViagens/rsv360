@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { simulateTax, checkThresholds } from '@/lib/tax-optimization/tax-optimization-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,9 +45,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (err: unknown) {
     console.error('[tax/simulation] POST error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }

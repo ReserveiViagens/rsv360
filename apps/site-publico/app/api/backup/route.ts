@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { backupService, type BackupConfig } from '@/lib/backup-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/backup
@@ -37,10 +38,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: [] });
   } catch (error: any) {
     console.error('Erro ao obter configurações de backup:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter configurações de backup' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -101,10 +99,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     console.error('Erro ao processar backup:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao processar backup' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
