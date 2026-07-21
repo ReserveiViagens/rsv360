@@ -16,6 +16,9 @@ export * from './constants/index.js';
 // Utils
 export * from './utils/index.js';
 
+// Payments — Mercado Pago webhook HMAC (PR-02 / PR-02b)
+export * from './payments/mp-webhook-signature.js';
+
 // Drizzle schemas (Fase 1 migração)
 export * from './schema.js';
 

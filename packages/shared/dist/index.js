@@ -27,6 +27,8 @@ __exportStar(require("./validators/booking.validator.js"), exports);
 __exportStar(require("./constants/index.js"), exports);
 // Utils
 __exportStar(require("./utils/index.js"), exports);
+// Payments — Mercado Pago webhook HMAC (PR-02 / PR-02b)
+__exportStar(require("./payments/mp-webhook-signature.js"), exports);
 // Drizzle schemas (Fase 1 migração)
 __exportStar(require("./schema.js"), exports);
 // Fase 1 API types & paths
