@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { queryDatabase } from '@/lib/db';
-import { sendPaymentConfirmed } from '@/lib/email';
-import { processWebhookEvent } from '@/lib/mercadopago-enhanced';
+import { queryDatabase as defaultQueryDatabase } from '@/lib/db';
+import { sendPaymentConfirmed as defaultSendPaymentConfirmed } from '@/lib/email';
+import { processWebhookEvent as defaultProcessWebhookEvent } from '@/lib/mercadopago-enhanced';
 import { authorizeMercadoPagoWebhook, isAlreadyProcessedWebhook } from '@/lib/mp-webhook-auth';
 
 export type MpWebhookHandleInput = {
@@ -12,12 +12,34 @@ export type MpWebhookHandleInput = {
   nowMs?: number;
 };
 
+export type MpWebhookHandlerDeps = {
+  queryDatabase: typeof defaultQueryDatabase;
+  processWebhookEvent: typeof defaultProcessWebhookEvent;
+  sendPaymentConfirmed: typeof defaultSendPaymentConfirmed;
+};
+
+const defaultDeps: MpWebhookHandlerDeps = {
+  queryDatabase: defaultQueryDatabase,
+  processWebhookEvent: defaultProcessWebhookEvent,
+  sendPaymentConfirmed: defaultSendPaymentConfirmed,
+};
+
 /**
- * Core Next MP webhook handler — HMAC obrigatório + idempotência via webhook_logs.
+ * Core Next MP webhook handler — HMAC obrigatório + idempotência via webhook_logs
+ * (UNIQUE webhook_id). Replay assinado → 200 sem processWebhookEvent / e-mail.
+ *
+ * Não delega ao Express: notification_url do site-publico aponta só para esta rota.
+ * Tabela distinta de `webhook_events` do backend — mesma superfície Next.
  */
 export async function handleMercadoPagoWebhook(
   input: MpWebhookHandleInput,
+  deps: Partial<MpWebhookHandlerDeps> = {},
 ): Promise<NextResponse> {
+  const { queryDatabase, processWebhookEvent, sendPaymentConfirmed } = {
+    ...defaultDeps,
+    ...deps,
+  };
+
   try {
     const auth = authorizeMercadoPagoWebhook({
       xSignature: input.xSignature,
