@@ -9,9 +9,36 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import Link from "next/link"
 import { useWebsiteContent } from "@/hooks/useWebsiteData"
+import { ImageTelemetrySentinel } from "@/components/telemetry/ImageTelemetrySentinel"
+import {
+  buildLoadAttemptKey,
+  reportImageError,
+} from "@/lib/image-error-telemetry"
 
 export default function IngressosPageDynamic() {
   const { data: tickets, isLoading, error } = useWebsiteContent('ticket')
+
+  const reportTicketImageError = (ticket: {
+    id?: string
+    title?: string
+    images?: string[]
+  }) => {
+    const url = ticket.images?.[0] || "/placeholder.svg"
+    const id = String(ticket.id || ticket.title || url)
+    const attemptKey = buildLoadAttemptKey({
+      component_name: 'IngressosPageDynamic',
+      url,
+      attempt_id: `${id}:${url}`,
+    })
+    void reportImageError(attemptKey, {
+      url,
+      component_name: 'IngressosPageDynamic',
+      image_id: id,
+      parque_id: id,
+      ingresso_id: id,
+      page_route: '/ingressos',
+    })
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -120,6 +147,7 @@ export default function IngressosPageDynamic() {
 
   return (
     <div className="max-w-md mx-auto bg-gray-50 min-h-screen relative">
+      <ImageTelemetrySentinel />
       <div className="animate-in fade-in duration-500">
         {/* Header */}
         <header className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6 rounded-b-3xl shadow-lg">
@@ -194,6 +222,7 @@ export default function IngressosPageDynamic() {
                       src={ticket.images[0] || "/placeholder.svg"}
                       alt={ticket.title}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      onError={() => reportTicketImageError(ticket)}
                     />
                     <Badge className="absolute top-3 left-3 bg-purple-500 text-white font-bold">
                       {ticket.metadata?.category || "Parque"}

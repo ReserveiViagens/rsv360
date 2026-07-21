@@ -11,6 +11,11 @@ import { getCrossSellItems, getCrossSellItemByIndex, COTACAO_ITEM } from "@/lib/
 import { getContextualSubtitle } from "@/lib/cross-sell-context-messages"
 import { MobileCrossSellCard } from "@/components/home/mobile-cross-sell-card"
 import { getHomeSideRailsFallback } from "@/lib/home-side-rails"
+import { ImageTelemetrySentinel } from "@/components/telemetry/ImageTelemetrySentinel"
+import {
+  buildLoadAttemptKey,
+  reportImageError,
+} from "@/lib/image-error-telemetry"
 
 interface Ticket {
   id: string
@@ -37,6 +42,22 @@ export default function IngressosPage() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  const reportTicketImageError = (ticket: Ticket) => {
+    const attemptKey = buildLoadAttemptKey({
+      component_name: 'IngressosPage',
+      url: ticket.image,
+      attempt_id: `${ticket.id}:${ticket.image}`,
+    })
+    void reportImageError(attemptKey, {
+      url: ticket.image,
+      component_name: 'IngressosPage',
+      image_id: ticket.id,
+      parque_id: ticket.id,
+      ingresso_id: ticket.id,
+      page_route: '/ingressos',
+    })
+  }
 
   const tickets: Ticket[] = [
     {
@@ -144,6 +165,7 @@ export default function IngressosPage() {
 
   return (
     <div className="max-w-md mx-auto bg-gray-50 min-h-screen relative">
+      <ImageTelemetrySentinel />
       <div className="animate-in fade-in duration-500">
         {/* Header */}
         <header className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-6 rounded-b-3xl shadow-lg">
@@ -212,6 +234,7 @@ export default function IngressosPage() {
                     src={ticket.image || "/placeholder.svg"}
                     alt={ticket.name}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    onError={() => reportTicketImageError(ticket)}
                   />
                 </div>
 
