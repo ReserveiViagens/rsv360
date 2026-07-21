@@ -41,6 +41,42 @@ function buildHkApp() {
 }
 
 describe('PR-01 — crit routes auth (fail-closed + negative asserts)', () => {
+  describe('payments webhooks — public receivers vs staff ops', () => {
+    const app = express();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const paymentsRouter = require('../../../server/modules/payments/routes');
+    app.use(express.json());
+    app.use('/api/v1/payments', paymentsRouter.default || paymentsRouter);
+
+    it('POST /webhooks/stripe without token is NOT 401 (public receiver)', async () => {
+      const res = await request(app)
+        .post('/api/v1/payments/webhooks/stripe')
+        .set('Content-Type', 'application/json')
+        .send({ id: 'evt_test' });
+      // Signature may fail → 400; auth must not gate (401/403).
+      expect(res.status).not.toBe(401);
+      expect(res.status).not.toBe(403);
+    });
+
+    it('POST /webhooks/mercadopago without token is NOT 401 (public receiver)', async () => {
+      const res = await request(app)
+        .post('/api/v1/payments/webhooks/mercadopago')
+        .send({ type: 'payment' });
+      expect(res.status).not.toBe(401);
+      expect(res.status).not.toBe(403);
+    });
+
+    it('GET /webhooks/events without token → 401 (staff ops)', async () => {
+      const res = await request(app).get('/api/v1/payments/webhooks/events');
+      expect(res.status).toBe(401);
+    });
+
+    it('POST /webhooks/retry without token → 401 (staff ops)', async () => {
+      const res = await request(app).post('/api/v1/payments/webhooks/retry');
+      expect(res.status).toBe(401);
+    });
+  });
+
   describe('staff modules (payments/crm/revenue/multi-property/admin-portal pattern)', () => {
     const app = buildStaffApp();
 
