@@ -3,6 +3,7 @@ import { queryDatabase as defaultQueryDatabase } from '@/lib/db';
 import { sendPaymentConfirmed as defaultSendPaymentConfirmed } from '@/lib/email';
 import { processWebhookEvent as defaultProcessWebhookEvent } from '@/lib/mercadopago-enhanced';
 import { authorizeMercadoPagoWebhook, isAlreadyProcessedWebhook } from '@/lib/mp-webhook-auth';
+import { isMpApiUnavailableError } from '@/lib/mp-payment-lookup';
 
 export type MpWebhookHandleInput = {
   xSignature: string | undefined;
@@ -28,8 +29,8 @@ const defaultDeps: MpWebhookHandlerDeps = {
  * Core Next MP webhook handler — HMAC obrigatório + idempotência via webhook_logs
  * (UNIQUE webhook_id). Replay assinado → 200 sem processWebhookEvent / e-mail.
  *
+ * PR-02c: lookup API fail-closed → 503 (reentrega nativa do MP); não marca processed.
  * Não delega ao Express: notification_url do site-publico aponta só para esta rota.
- * Tabela distinta de `webhook_events` do backend — mesma superfície Next.
  */
 export async function handleMercadoPagoWebhook(
   input: MpWebhookHandleInput,
@@ -138,6 +139,20 @@ export async function handleMercadoPagoWebhook(
 
     return NextResponse.json({ received: true, processed: true, duplicate: false });
   } catch (error: unknown) {
+    if (isMpApiUnavailableError(error)) {
+      console.error(
+        JSON.stringify({
+          level: 'error',
+          event: 'mp_webhook_fail_closed',
+          surface: 'site-publico',
+          message: error.message,
+        }),
+      );
+      return NextResponse.json(
+        { received: false, error: 'upstream_unavailable' },
+        { status: 503 },
+      );
+    }
     const message = error instanceof Error ? error.message : 'webhook_error';
     console.error('Erro ao processar webhook:', message);
     return NextResponse.json({ received: true, error: 'processing_error' });
