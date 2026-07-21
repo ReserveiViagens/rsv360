@@ -21,6 +21,19 @@ export function isMpApiUnavailableError(error: unknown): error is MpApiUnavailab
   );
 }
 
+/** Known MP payment.status values (allowlist for audit labels). */
+export const MP_KNOWN_PAYMENT_STATUSES = [
+  'approved',
+  'rejected',
+  'cancelled',
+  'refunded',
+  'partially_refunded',
+  'pending',
+  'in_process',
+  'in_mediation',
+  'charged_back',
+] as const;
+
 /** Map Mercado Pago payment.status → internal payment_status. */
 export function mapMpPaymentStatus(
   mpStatus: string,
@@ -37,6 +50,13 @@ export function mapMpPaymentStatus(
     charged_back: 'failed',
   };
   return statusMap[mpStatus] ?? 'pending';
+}
+
+/** Allowlist status string for audit/log reasons (CodeQL taint sink). */
+export function sanitizeMpApiStatusLabel(mpStatus: string): string {
+  return (MP_KNOWN_PAYMENT_STATUSES as readonly string[]).includes(mpStatus)
+    ? mpStatus
+    : 'unrecognized';
 }
 
 export function logMpStatusDivergence(input: {

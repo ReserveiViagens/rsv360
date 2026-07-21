@@ -12,6 +12,7 @@ import {
   MpApiUnavailableError,
   logMpStatusDivergence,
   mapMpPaymentStatus,
+  sanitizeMpApiStatusLabel,
 } from '@/lib/mp-payment-lookup';
 import { processPaymentWebhook } from '@/lib/mercadopago-enhanced';
 
@@ -29,6 +30,11 @@ describe('PR-02c — mp-payment-lookup helpers', () => {
     expect(mapMpPaymentStatus('approved')).toBe('paid');
     expect(mapMpPaymentStatus('rejected')).toBe('failed');
     expect(mapMpPaymentStatus('cancelled')).toBe('cancelled');
+  });
+
+  it('sanitizeMpApiStatusLabel allowlist', () => {
+    expect(sanitizeMpApiStatusLabel('approved')).toBe('approved');
+    expect(sanitizeMpApiStatusLabel('totally-fake<script>')).toBe('unrecognized');
   });
 
   it('logMpStatusDivergence só quando diverge', () => {

@@ -10,6 +10,7 @@ import {
   MpApiUnavailableError,
   logMpStatusDivergence,
   mapMpPaymentStatus,
+  sanitizeMpApiStatusLabel,
 } from './mp-payment-lookup';
 
 export type GetPaymentStatusFn = (paymentId: string) => Promise<{ status?: string; [k: string]: unknown }>;
@@ -364,7 +365,7 @@ export async function processPaymentWebhook(
       newPaymentStatus as any,
       undefined,
       'mercadopago',
-      `Webhook+API: ${paymentStatus}`
+      `Webhook+API: ${sanitizeMpApiStatusLabel(paymentStatus)}`
     );
   }
 
