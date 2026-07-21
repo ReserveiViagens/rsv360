@@ -6,6 +6,28 @@
 import { mercadoPagoService } from './mercadopago';
 import { queryDatabase } from './db';
 import { updateBookingStatus, logStatusChange } from './booking-status-service';
+import {
+  MpApiUnavailableError,
+  logMpStatusDivergence,
+  mapMpPaymentStatus,
+  sanitizeMpApiStatusLabel,
+} from './mp-payment-lookup';
+
+export type GetPaymentStatusFn = (paymentId: string) => Promise<{ status?: string; [k: string]: unknown }>;
+
+export type ProcessWebhookEventDeps = {
+  queryDatabase: typeof queryDatabase;
+  getPaymentStatus: GetPaymentStatusFn;
+  updateBookingStatus: typeof updateBookingStatus;
+  logStatusChange: typeof logStatusChange;
+};
+
+const defaultProcessDeps: ProcessWebhookEventDeps = {
+  queryDatabase,
+  getPaymentStatus: (id) => mercadoPagoService.getPaymentStatus(id),
+  updateBookingStatus,
+  logStatusChange,
+};
 
 /**
  * ✅ ITEM 6: PROCESSAMENTO PIX COMPLETO
@@ -187,18 +209,22 @@ export async function processCardPayment(
 /**
  * Processa evento MP já autenticado pela rota (HMAC obrigatório em
  * app/api/webhooks/mercadopago). Não revalida assinatura aqui.
+ * PR-02c: baixa/cancel só após GET /v1/payments/{id} (API = fonte de verdade).
  */
 export async function processWebhookEvent(
   eventType: string,
   eventData: any,
   _xSignature?: string,
-  _xRequestId?: string
+  _xRequestId?: string,
+  deps: Partial<ProcessWebhookEventDeps> = {},
 ) {
+  const resolved = { ...defaultProcessDeps, ...deps };
+
   // Verificar idempotência
   const webhookId = eventData.id || eventData.data?.id;
   if (webhookId) {
     try {
-      const existing = await queryDatabase(
+      const existing = await resolved.queryDatabase(
         `SELECT id FROM webhook_logs WHERE webhook_id = $1 AND processed = TRUE`,
         [webhookId.toString()]
       );
@@ -211,9 +237,9 @@ export async function processWebhookEvent(
     }
   }
 
-  // Log do webhook
+  // Log do webhook (processed=FALSE até lookup + side-effects ok)
   try {
-    await queryDatabase(
+    await resolved.queryDatabase(
       `CREATE TABLE IF NOT EXISTS webhook_logs (
         id SERIAL PRIMARY KEY,
         webhook_id VARCHAR(255) UNIQUE,
@@ -227,7 +253,7 @@ export async function processWebhookEvent(
       )`
     );
 
-    await queryDatabase(
+    await resolved.queryDatabase(
       `INSERT INTO webhook_logs (webhook_id, type, action, data)
        VALUES ($1, $2, $3, $4)
        ON CONFLICT (webhook_id) DO NOTHING`,
@@ -242,9 +268,8 @@ export async function processWebhookEvent(
     console.error('Erro ao logar webhook:', error);
   }
 
-  // Processar diferentes tipos de eventos
   if (eventType === 'payment') {
-    return await processPaymentWebhook(eventData);
+    return await processPaymentWebhook(eventData, resolved);
   } else if (eventType === 'merchant_order') {
     return await processMerchantOrderWebhook(eventData);
   } else if (eventType === 'subscription') {
@@ -253,36 +278,55 @@ export async function processWebhookEvent(
     console.log(`Tipo de evento não tratado: ${eventType}`);
     return { processed: false, reason: 'Event type not handled' };
   }
-
-  return { processed: false, reason: 'Unknown error' };
 }
 
 /**
- * Processa webhook de pagamento
+ * Processa webhook de pagamento — lookup API sempre (PR-02c).
+ * Fail-closed: MpApiUnavailableError → handler responde 503 (reentrega nativa MP).
  */
-export async function processPaymentWebhook(eventData: any) {
+export async function processPaymentWebhook(
+  eventData: any,
+  deps: ProcessWebhookEventDeps = defaultProcessDeps,
+) {
   const webhookId = eventData?.id ?? eventData?.data?.id;
   const paymentId = eventData.data?.id;
   if (!paymentId) {
     return { processed: false, reason: 'Payment ID not found' };
   }
 
-  // Buscar informações atualizadas do Mercado Pago
-  let paymentStatus = eventData.data?.status;
-  let paymentDetails = eventData.data;
+  const eventStatus =
+    typeof eventData.data?.status === 'string' ? eventData.data.status : undefined;
 
-  if (!paymentStatus || !paymentDetails) {
-    try {
-      const apiPayment = await mercadoPagoService.getPaymentStatus(paymentId.toString());
-      paymentStatus = apiPayment.status;
-      paymentDetails = apiPayment;
-    } catch (error) {
-      console.error('Erro ao buscar detalhes do pagamento:', error);
-    }
+  let paymentDetails: { status?: string; [k: string]: unknown };
+  try {
+    paymentDetails = await deps.getPaymentStatus(paymentId.toString());
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'mp_api_error';
+    console.error(
+      JSON.stringify({
+        level: 'error',
+        event: 'mp_payment_lookup_failed',
+        surface: 'site-publico',
+        paymentId: String(paymentId),
+        message,
+      }),
+    );
+    throw new MpApiUnavailableError(message);
   }
 
+  const paymentStatus = paymentDetails?.status;
+  if (!paymentStatus || typeof paymentStatus !== 'string') {
+    throw new MpApiUnavailableError('MP API returned no payment status');
+  }
+
+  logMpStatusDivergence({
+    paymentId: String(paymentId),
+    eventStatus,
+    apiStatus: paymentStatus,
+  });
+
   // Buscar pagamento no banco
-  const payments = await queryDatabase(
+  const payments = await deps.queryDatabase(
     'SELECT * FROM payments WHERE gateway_transaction_id = $1',
     [paymentId.toString()]
   );
@@ -293,25 +337,11 @@ export async function processPaymentWebhook(eventData: any) {
   }
 
   const payment = payments[0];
-
-  // Mapear status do Mercado Pago para nosso sistema
-  const statusMap: Record<string, string> = {
-    approved: 'paid',
-    rejected: 'failed',
-    cancelled: 'cancelled',
-    refunded: 'refunded',
-    partially_refunded: 'refunded',
-    pending: 'pending',
-    in_process: 'pending',
-    in_mediation: 'pending',
-    charged_back: 'failed',
-  };
-
-  const newPaymentStatus = statusMap[paymentStatus] || payment.payment_status;
+  const newPaymentStatus = mapMpPaymentStatus(paymentStatus);
 
   // Atualizar status do pagamento se mudou
   if (newPaymentStatus !== payment.payment_status) {
-    await queryDatabase(
+    await deps.queryDatabase(
       `UPDATE payments 
        SET 
          payment_status = $1,
@@ -329,19 +359,18 @@ export async function processPaymentWebhook(eventData: any) {
 
     console.log(`✅ Pagamento ${paymentId} atualizado: ${payment.payment_status} → ${newPaymentStatus}`);
 
-    // Registrar no histórico
-    await logStatusChange(
+    await deps.logStatusChange(
       payment.booking_id,
       payment.payment_status as any,
       newPaymentStatus as any,
       undefined,
       'mercadopago',
-      `Webhook: ${paymentStatus}`
+      `Webhook+API: ${sanitizeMpApiStatusLabel(paymentStatus)}`
     );
   }
 
-  // Atualizar reserva baseado no status do pagamento
-  const booking = await queryDatabase(
+  // Atualizar reserva baseado no status da API (nunca no status do evento)
+  const booking = await deps.queryDatabase(
     'SELECT * FROM bookings WHERE id = $1',
     [payment.booking_id]
   );
@@ -350,16 +379,15 @@ export async function processPaymentWebhook(eventData: any) {
     const bookingData = booking[0];
 
     if (newPaymentStatus === 'paid') {
-      // Pagamento aprovado - confirmar reserva
-      await updateBookingStatus(
+      await deps.updateBookingStatus(
         payment.booking_id,
         'confirmed',
         undefined,
         bookingData.customer_email,
-        'Pagamento confirmado via webhook'
+        'Pagamento confirmado via webhook (API MP approved)'
       );
 
-      await queryDatabase(
+      await deps.queryDatabase(
         `UPDATE bookings 
          SET 
            payment_status = 'paid',
@@ -372,16 +400,15 @@ export async function processPaymentWebhook(eventData: any) {
 
       console.log(`✅ Reserva ${payment.booking_id} confirmada após pagamento`);
     } else if (newPaymentStatus === 'cancelled' || newPaymentStatus === 'failed') {
-      // Pagamento cancelado/falhou - cancelar reserva
-      await updateBookingStatus(
+      await deps.updateBookingStatus(
         payment.booking_id,
         'cancelled',
         undefined,
         bookingData.customer_email,
-        `Pagamento ${newPaymentStatus} via webhook`
+        `Pagamento ${newPaymentStatus} via webhook (API MP)`
       );
 
-      await queryDatabase(
+      await deps.queryDatabase(
         `UPDATE bookings 
          SET 
            payment_status = 'cancelled',
@@ -392,16 +419,15 @@ export async function processPaymentWebhook(eventData: any) {
         [payment.booking_id]
       );
     } else if (newPaymentStatus === 'refunded') {
-      // Pagamento reembolsado
-      await updateBookingStatus(
+      await deps.updateBookingStatus(
         payment.booking_id,
         'cancelled',
         undefined,
         bookingData.customer_email,
-        'Pagamento reembolsado via webhook'
+        'Pagamento reembolsado via webhook (API MP)'
       );
 
-      await queryDatabase(
+      await deps.queryDatabase(
         `UPDATE bookings 
          SET 
            payment_status = 'refunded',
@@ -414,9 +440,9 @@ export async function processPaymentWebhook(eventData: any) {
     }
   }
 
-  // Marcar webhook como processado
+  // Marcar webhook como processado só após lookup + side-effects
   if (webhookId) {
-    await queryDatabase(
+    await deps.queryDatabase(
       `UPDATE webhook_logs 
        SET processed = TRUE, processed_at = CURRENT_TIMESTAMP 
        WHERE webhook_id = $1`,
@@ -424,7 +450,7 @@ export async function processPaymentWebhook(eventData: any) {
     );
   }
 
-  return { processed: true, payment_status: newPaymentStatus };
+  return { processed: true, payment_status: newPaymentStatus, api_status: paymentStatus };
 }
 
 /**
