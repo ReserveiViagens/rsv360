@@ -7,6 +7,8 @@ import { triggerWebhook, WEBHOOK_EVENTS } from '@/lib/webhook-service';
 import { createCheckinRequest } from '@/lib/checkin-service';
 import { sendCheckinCreatedNotification } from '@/lib/checkin-notifications';
 import { logStatusChange } from '@/lib/booking-status-service';
+import { optionalAuth } from '@/lib/api-auth';
+import { handleGetBookings } from '@/lib/bookings-get-handler';
 
 // POST /api/bookings - Criar nova reserva
 export async function POST(request: NextRequest) {
@@ -630,127 +632,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/bookings - Listar reservas (por e-mail ou código)
+// GET /api/bookings — lookup por id|booking_id|email|code com posse (PR-03 BOLA/IDOR)
 export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const email = searchParams.get('email');
-    const code = searchParams.get('code');
-    const booking_id = searchParams.get('booking_id');
-    const id = searchParams.get('id');
-
-    if (!email && !code && !booking_id && !id) {
-      return NextResponse.json(
-        { success: false, error: 'É necessário fornecer email, código, booking_id ou id da reserva' },
-        { status: 400 }
-      );
-    }
-
-    let bookings;
-    if (id || booking_id) {
-      // Buscar por ID
-      const bookingId = id || booking_id;
-      bookings = await queryDatabase(
-        `SELECT 
-          b.*,
-          p.id as payment_id,
-          p.gateway_transaction_id,
-          p.pix_qr_code,
-          p.pix_expires_at
-        FROM bookings b
-        LEFT JOIN payments p ON p.booking_id = b.id
-        WHERE b.id = $1
-        ORDER BY b.created_at DESC`,
-        [parseInt(bookingId as string)]
-      );
-    } else if (code) {
-      // Buscar por código
-      bookings = await queryDatabase(
-        `SELECT 
-          b.*,
-          p.id as payment_id,
-          p.gateway_transaction_id,
-          p.pix_qr_code,
-          p.pix_expires_at
-        FROM bookings b
-        LEFT JOIN payments p ON p.booking_id = b.id
-        WHERE b.booking_code = $1
-        ORDER BY b.created_at DESC`,
-        [code]
-      );
-    } else {
-      // Buscar por e-mail
-      bookings = await queryDatabase(
-        `SELECT 
-          b.*,
-          p.id as payment_id,
-          p.gateway_transaction_id,
-          p.pix_qr_code,
-          p.pix_expires_at
-        FROM bookings b
-        LEFT JOIN payments p ON p.booking_id = b.id
-        WHERE b.customer_email = $1
-        ORDER BY b.created_at DESC
-        LIMIT 50`,
-        [email]
-      );
-    }
-
-    if (bookings.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Nenhuma reserva encontrada' },
-        { status: 404 }
-      );
-    }
-
-    // Formatar resposta
-    const formattedBookings = bookings.map((booking: any) => ({
-      id: booking.id,
-      booking_code: booking.booking_code,
-      booking_type: booking.booking_type,
-      item_id: booking.item_id,
-      item_name: booking.item_name,
-      check_in: booking.check_in,
-      check_out: booking.check_out,
-      adults: booking.adults,
-      children: booking.children,
-      infants: booking.infants,
-      total_guests: booking.total_guests,
-      customer_name: booking.customer_name,
-      customer_email: booking.customer_email,
-      customer_phone: booking.customer_phone,
-      subtotal: parseFloat(booking.subtotal),
-      discount: parseFloat(booking.discount),
-      taxes: parseFloat(booking.taxes),
-      service_fee: parseFloat(booking.service_fee),
-      total: parseFloat(booking.total),
-      payment_method: booking.payment_method,
-      payment_status: booking.payment_status,
-      status: booking.status,
-      special_requests: booking.special_requests,
-      created_at: booking.created_at,
-      confirmed_at: booking.confirmed_at,
-      payment_info: booking.pix_qr_code ? {
-        qr_code: booking.pix_qr_code,
-        expires_at: booking.pix_expires_at
-      } : null
-    }));
-
-    return NextResponse.json({
-      success: true,
-      bookings: formattedBookings,
-      data: (id || booking_id || code) && formattedBookings.length > 0 ? formattedBookings[0] : formattedBookings,
-      count: formattedBookings.length
-    });
-  } catch (error: any) {
-    console.error('Erro ao buscar reservas:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Erro ao buscar reservas',
-      },
-      { status: 500 }
-    );
-  }
+  return handleGetBookings(request, {
+    queryDatabase,
+    getAuthUser: optionalAuth,
+  });
 }
 
