@@ -115,7 +115,10 @@ export async function enviarAvisoExpiracaoSeNecessario(propostaId: number) {
 
   const destino = extractDestino(row.conteudo);
   const horas = horasRestantes(validoAte);
-  const token = row.tokenPublico ?? String(propostaId);
+  const token = row.tokenPublico;
+  if (!token) {
+    return { skipped: true, reason: 'no_token_publico' as const };
+  }
   const link = buildPropostaUrl(token);
   const message = `Faltam ${horas} horas para garantirmos suas tarifas para ${destino}. Finalize agora: ${link}`;
 

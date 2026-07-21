@@ -6,6 +6,7 @@ import { io, type Socket } from 'socket.io-client';
 import {
   useAceitarPropostaPublica,
   useEnviarChatProposta,
+  usePropostaByToken,
   usePropostaChat,
   usePropostaHitl,
   usePropostaPublica,
@@ -60,9 +61,13 @@ export function PropostaPublica({
   const [exibirComparativo, setExibirComparativo] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
-  const { data: propostaRes, isLoading, error } = usePropostaPublica(propostaId);
-  const { data: chatRes } = usePropostaChat(propostaId);
-  const { data: hitlRes } = usePropostaHitl(propostaId);
+  const tokenQuery = usePropostaByToken(publicToken);
+  const idQuery = usePropostaPublica(publicToken ? undefined : propostaId);
+  const { data: propostaRes, isLoading, error } = publicToken
+    ? tokenQuery
+    : idQuery;
+  const { data: chatRes } = usePropostaChat(propostaId, publicToken);
+  const { data: hitlRes } = usePropostaHitl(propostaId, publicToken);
   const responder = useResponderProposta();
   const aceitarPublico = useAceitarPropostaPublica();
   const enviarChat = useEnviarChatProposta();
@@ -73,7 +78,7 @@ export function PropostaPublica({
     (proposta as { payloadReduzido?: boolean } | undefined)?.payloadReduzido,
   );
   const hitl = hitlRes?.data;
-  const roteiroToken = publicToken ?? proposta?.tokenPublico ?? null;
+  const roteiroToken = publicToken ?? null;
 
   useCinematicTelemetry(roteiroToken);
 
@@ -116,34 +121,27 @@ export function PropostaPublica({
   const handleAccept = async () => {
     if (aceiteBloqueado) return;
     const clientName = guestName || proposta?.clienteNome;
-    if (roteiroToken) {
-      const result = await aceitarPublico.mutateAsync({
-        token: roteiroToken,
-        clientName,
-        turnstileToken: turnstileToken || undefined,
-      });
-      const destino = result.data?.proximoDestino ?? `/roteiro/${roteiroToken}`;
-      router.push(destino);
+    if (!roteiroToken) {
+      // Aceite público só via capability token (PR-03b)
       return;
     }
-    await responder.mutateAsync({
-      id: propostaId,
-      action: 'accept',
+    const result = await aceitarPublico.mutateAsync({
+      token: roteiroToken,
       clientName,
       turnstileToken: turnstileToken || undefined,
     });
-    if (proposta?.tokenPublico) {
-      router.push(`/roteiro/${proposta.tokenPublico}`);
-    }
+    const destino = result.data?.proximoDestino ?? `/roteiro/${roteiroToken}`;
+    router.push(destino);
   };
 
   const handleReject = () => {
-    if (aceiteBloqueado) return;
+    if (aceiteBloqueado || !roteiroToken) return;
     return responder.mutateAsync({
       id: propostaId,
       action: 'reject',
       clientName: guestName || proposta?.clienteNome,
       turnstileToken: turnstileToken || undefined,
+      tokenPublico: roteiroToken,
     });
   };
 
@@ -219,6 +217,7 @@ export function PropostaPublica({
         message: text,
         senderName: guestName || 'Visitante',
         turnstileToken: turnstileToken || undefined,
+        tokenPublico: roteiroToken || undefined,
       });
       if (saved?.data) {
         setLiveMessages((prev) =>
@@ -391,7 +390,13 @@ export function PropostaPublica({
           {hitl?.hitlMode === 'ai' && (
             <button
               type="button"
-              onClick={() => solicitarHitl.mutate({ id: propostaId, clientName: guestName || proposta.clienteNome })}
+              onClick={() =>
+                solicitarHitl.mutate({
+                  id: propostaId,
+                  clientName: guestName || proposta.clienteNome,
+                  tokenPublico: roteiroToken || undefined,
+                })
+              }
               className="text-sm text-blue-600 hover:underline"
             >
               Falar com humano

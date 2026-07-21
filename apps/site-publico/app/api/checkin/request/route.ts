@@ -35,9 +35,28 @@ export async function POST(request: NextRequest) {
 
     const data = validationResult.data;
 
-    // Verificar se o usuário tem permissão para criar check-in para esta reserva
-    // (opcional: verificar se a reserva pertence ao usuário)
-    
+    // PR-03b: posse da reserva (não basta JWT)
+    if (authResult.user.role !== 'admin' && authResult.user.role !== 'manager') {
+      const { queryDatabase } = await import('@/lib/db');
+      const bookings = await queryDatabase(
+        `SELECT id, customer_email, user_id FROM bookings WHERE id = $1 LIMIT 1`,
+        [data.booking_id],
+      );
+      const b = bookings[0] as
+        | { customer_email?: string; user_id?: number }
+        | undefined;
+      if (!b) {
+        return NextResponse.json({ error: 'Não autorizado' }, { status: 404 });
+      }
+      const owns =
+        Number(b.user_id) === authResult.user.id ||
+        String(b.customer_email || '').toLowerCase() ===
+          String(authResult.user.email || '').toLowerCase();
+      if (!owns) {
+        return NextResponse.json({ error: 'Não autorizado' }, { status: 404 });
+      }
+    }
+
     // Criar check-in
     const checkin = await createCheckinRequest({
       ...data,

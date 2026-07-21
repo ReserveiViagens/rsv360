@@ -100,16 +100,16 @@ function PropostaEditorForm({ proposta, propostaId }: { proposta: Proposta; prop
         <p className="mt-1 text-slate-600">{preview.clienteNome}</p>
         <p className="mt-4 text-2xl font-bold text-emerald-700">{formatCurrency(preview.valorTotal ?? 0, preview.moeda)}</p>
         <p className="mt-2 text-sm text-slate-500">Status: {preview.status}</p>
-        {preview.isPublica && (
+        {preview.isPublica && preview.tokenPublico && (
           <p className="mt-4 text-sm text-blue-700">
             Link público:{' '}
             <a
-              href={`${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/proposta/${propostaId}`}
+              href={`${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/proposta/${preview.tokenPublico}`}
               target="_blank"
               rel="noreferrer"
               className="underline"
             >
-              /proposta/{propostaId}
+              /proposta/{preview.tokenPublico}
             </a>
           </p>
         )}
