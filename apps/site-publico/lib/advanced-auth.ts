@@ -8,6 +8,7 @@ import { queryDatabase } from './db';
 import { ensureAuthTables } from './ensure-auth-tables';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 export interface AuthUser {
   id: number;
@@ -216,12 +217,12 @@ export async function advancedAuthMiddleware(
     }
 
     const token = authHeader.substring(7);
-    const JWT_SECRET = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    const JWT_SECRET = getJwtSecret();
 
     // Verificar token
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     } catch (error: any) {
       if (error.name === 'TokenExpiredError') {
         return { user: null, error: 'Token expirado' };

@@ -13,7 +13,7 @@ function buildApp(middleware: typeof authenticateJwt) {
 }
 
 function bearer(userId: string | number) {
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = (process.env.JWT_SECRET as string);
   const token = signJwt(
     { userId, email: 't@test.com', name: 'T', role: 'admin', enterpriseId: 'ent_1' },
     secret,

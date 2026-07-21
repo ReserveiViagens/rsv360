@@ -32,7 +32,7 @@ describe('auth v1 logout', () => {
 
   it('returns success for valid access token without DB', async () => {
     delete process.env.DATABASE_URL;
-    const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    const secret = (process.env.JWT_SECRET as string);
     const accessToken = signJwt(
       { userId: 'usr_9', email: 'logout@test.com', role: 'admin', enterpriseId: 'ent_1' },
       secret,
@@ -53,7 +53,7 @@ describe('auth v1 logout', () => {
     const logout = require('../../api/v1/auth/logout.service');
     jest.spyOn(logout, 'logoutUser').mockResolvedValue({ success: true, userId: '1' });
 
-    const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    const secret = (process.env.JWT_SECRET as string);
     const accessToken = signJwt(
       { userId: 1, email: 'admin@test.com', role: 'admin', enterpriseId: 'ent_1' },
       secret,

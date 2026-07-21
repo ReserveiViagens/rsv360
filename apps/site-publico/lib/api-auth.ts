@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as jwt from 'jsonwebtoken';
 import { queryDatabase } from './db';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 export interface AuthenticatedUser {
   id: number;
@@ -36,10 +37,10 @@ export function extractToken(request: NextRequest): string | null {
  * Verificar e decodificar JWT token
  */
 export async function verifyToken(token: string): Promise<AuthenticatedUser> {
-  const JWT_SECRET = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const JWT_SECRET = getJwtSecret();
   
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS) as any;
     
     // Buscar usuário no banco para garantir que ainda está ativo
     const users = await queryDatabase(

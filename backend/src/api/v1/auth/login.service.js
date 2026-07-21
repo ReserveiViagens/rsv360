@@ -1,3 +1,4 @@
+const { getJwtSecret } = require('@rsv360/shared');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { signJwt } = require('./jwt-verify');
@@ -106,7 +107,7 @@ async function loginWithDatabase(email, password, meta = {}) {
 async function issueLoginTokens(user, meta = {}) {
   await touchLastLogin(user.id);
 
-  const accessSecret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const accessSecret = getJwtSecret();
   const accessToken = signJwt(
     {
       userId: user.id,

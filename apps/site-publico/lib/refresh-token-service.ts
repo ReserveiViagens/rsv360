@@ -7,6 +7,7 @@ import { queryDatabase } from './db';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
 import { hashToken } from './advanced-auth';
+import { getJwtSecret, getJwtRefreshSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 export interface RefreshToken {
   id: number;
@@ -46,7 +47,7 @@ export async function createRefreshToken(
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30); // 30 dias
 
-  const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
+  const JWT_REFRESH_SECRET = getJwtRefreshSecret();
 
   // Criar JWT refresh token
   const jwtRefreshToken = jwt.sign(
@@ -90,12 +91,12 @@ export async function verifyAndRotateRefreshToken(
   ipAddress?: string,
   userAgent?: string
 ): Promise<{ newAccessToken: string; newRefreshToken: string; user: any } | null> {
-  const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
-  const JWT_SECRET = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const JWT_REFRESH_SECRET = getJwtRefreshSecret();
+  const JWT_SECRET = getJwtSecret();
 
   try {
     // Verificar JWT
-    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as any;
+    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET, JWT_HS256_VERIFY_OPTIONS) as any;
 
     if (decoded.type !== 'refresh') {
       return null;

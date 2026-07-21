@@ -1,7 +1,8 @@
 const { signJwt } = require('../api/v1/auth/jwt-verify');
+const { getJwtSecret } = require('@rsv360/shared');
 
 export function getTestJwtSecret(): string {
-  return process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  return getJwtSecret();
 }
 
 export function signStaffToken(overrides?: {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { getJwtSecret } from '@rsv360/shared';
 
 // Schema de validação para configurações de produção
 export const ProductionConfigSchema = z.object({
@@ -283,7 +284,7 @@ export const defaultProductionConfig: ProductionConfig = {
 
   security: {
     jwt: {
-      secret: process.env.JWT_SECRET || 'REDACTED_JWT_SECRET',
+      secret: getJwtSecret(),
       expiresIn: '15m',
       refreshExpiresIn: '7d',
     },

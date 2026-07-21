@@ -31,7 +31,7 @@ describe('auth v1 refresh', () => {
   it('returns new access token for valid refresh JWT', async () => {
     delete process.env.DATABASE_URL;
     const refreshSecret =
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
+      (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET) as string;
     const refreshToken = signJwt(
       { userId: 'usr_2', type: 'refresh', tokenFamily: 'fam_1', enterpriseId: 'ent_1' },
       refreshSecret,

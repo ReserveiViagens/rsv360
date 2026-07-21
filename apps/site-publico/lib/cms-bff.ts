@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SignJWT } from 'jose';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
+import { getJwtSecret } from '@rsv360/shared';
 
 function backendBase(): string {
   return (
@@ -11,7 +12,7 @@ function backendBase(): string {
 }
 
 function jwtSecretKey(): Uint8Array {
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = getJwtSecret();
   return new TextEncoder().encode(secret);
 }
 

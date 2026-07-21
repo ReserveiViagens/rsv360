@@ -1,3 +1,4 @@
+const { getJwtSecret } = require('@rsv360/shared');
 const { verifyAccessToken } = require('./jwt-verify');
 const {
   isDbRefreshEnabled,
@@ -6,7 +7,7 @@ const {
 } = require('./refresh-token.service');
 
 async function logoutUser(accessToken, refreshToken) {
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = getJwtSecret();
   const payload = verifyAccessToken(accessToken, secret);
   if (!payload) {
     return { error: 'invalid_token', status: 401 };

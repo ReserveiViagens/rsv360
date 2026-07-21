@@ -1,3 +1,4 @@
+const { getJwtSecret, getJwtRefreshSecret } = require('@rsv360/shared');
 const crypto = require('crypto');
 const { Pool } = require('pg');
 const { signJwt } = require('./jwt-verify');
@@ -29,7 +30,7 @@ async function queryDatabase(sql, params = []) {
 
 async function createRefreshToken(userId, deviceInfo, ipAddress, userAgent) {
   const refreshSecret =
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
+    getJwtRefreshSecret();
   const tokenFamily = generateTokenFamily();
   const tokenHash = hashToken(crypto.randomBytes(32).toString('hex'));
   const expiresAt = new Date();
@@ -92,8 +93,8 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
   if (!db) return null;
 
   const refreshSecret =
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
-  const accessSecret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    getJwtRefreshSecret();
+  const accessSecret = getJwtSecret();
 
   const { verifyRefreshToken } = require('./jwt-verify');
   let decoded;
@@ -170,7 +171,7 @@ async function revokeRefreshTokenByJwt(refreshToken, reason) {
   if (!refreshToken) return false;
 
   const refreshSecret =
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
+    getJwtRefreshSecret();
   const { verifyRefreshToken } = require('./jwt-verify');
   let decoded;
   try {

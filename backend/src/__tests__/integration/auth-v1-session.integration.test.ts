@@ -37,7 +37,7 @@ describe('auth v1 session', () => {
   });
 
   it('returns session for valid JWT', async () => {
-    const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    const secret = (process.env.JWT_SECRET as string);
     const token = signTestToken(
       {
         userId: 'usr_1',

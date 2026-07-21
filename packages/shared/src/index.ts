@@ -4,6 +4,7 @@
 export * from './types/index.js';
 export * from './types/tenant.js';
 export * from './auth/session.js';
+export * from './auth/jwt-secrets.js';
 export * from './tenant/routing.js';
 
 // Validators

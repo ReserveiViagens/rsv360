@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, assertJwtSecretsConfigured } = require('@rsv360/shared');
 // 🎯 ECOSYSTEM MASTER - Servidor Principal
 // RSV 360° Ecosystem - API Gateway e Servidor Central
 
@@ -57,6 +58,7 @@ register.registerMetric(httpRequestDuration);
 register.registerMetric(httpRequestsTotal);
 
 // Configurar aplicação Express
+assertJwtSecretsConfigured();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -117,7 +119,7 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret(), JWT_HS256_VERIFY_OPTIONS);
     req.user = decoded;
     next();
   } catch (error) {
@@ -218,7 +220,7 @@ app.post('/api/v1/auth/login', async (req, res) => {
     // Gerar token JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '24h' }
     );
 

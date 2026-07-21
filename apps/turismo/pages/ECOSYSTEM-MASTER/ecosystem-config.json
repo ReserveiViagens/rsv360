@@ -32,7 +32,7 @@
       },
       "auth-service": {
         "jwt": {
-          "secret": "rsv-360-ecosystem-secret",
+          "secret": "",
           "expiresIn": "24h"
         },
         "oauth2": {

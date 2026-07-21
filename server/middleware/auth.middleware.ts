@@ -1,10 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 const { extractBearerToken, verifyAccessToken } = require('../../backend/src/api/v1/auth/jwt-verify');
-
-function getJwtSecret(): string {
-  return process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
-}
+const { getJwtSecret } = require('@rsv360/shared');
 
 /** Valida Bearer JWT (API v1) e popula req.user. */
 export function authenticateJwt(req: Request, res: Response, next: NextFunction) {

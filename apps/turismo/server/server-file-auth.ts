@@ -6,11 +6,14 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import ecosystemConfig from '../ecosystem-config.json';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, assertJwtSecretsConfigured } from '@rsv360/shared';
+
+assertJwtSecretsConfigured();
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret;
+const PORT = Number(process.env.PORT) || 3010;
+const JWT_SECRET = getJwtSecret();
 
 app.use(express.json());
 
@@ -52,7 +55,7 @@ export const authenticateToken = (req: any, res: any, next: any) => {
     return res.status(401).json({ error: 'Token de acesso requerido' });
   }
 
-  jwt.verify(token, ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret, (err: any, user: any) => {
+  jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS, (err: any, user: any) => {
     if (err) {
       return res.status(403).json({ error: 'Token inválido' });
     }
@@ -93,7 +96,7 @@ const generateToken = (user: User, rememberMe: boolean = false) => {
       role: user.role,
       permissions: user.permissions
     },
-    ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret,
+    JWT_SECRET,
     { expiresIn }
   );
 };
@@ -102,7 +105,7 @@ const generateToken = (user: User, rememberMe: boolean = false) => {
 const generateRefreshToken = (user: User) => {
   return jwt.sign(
     { id: user.id, type: 'refresh' },
-    ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret,
+    JWT_SECRET,
     { expiresIn: '7d' }
   );
 };
@@ -241,7 +244,7 @@ app.post('/api/auth/refresh', async (req, res) => {
     }
 
     // Verificar refresh token
-    const decoded = jwt.verify(refreshToken, ecosystemConfig.modules['ecosystem-master']['auth-service'].jwt.secret) as any;
+    const decoded = jwt.verify(refreshToken, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS) as any;
 
     if (decoded.type !== 'refresh') {
       return res.status(401).json({ error: 'Token inválido' });

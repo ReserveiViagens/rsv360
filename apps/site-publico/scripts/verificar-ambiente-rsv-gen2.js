@@ -78,7 +78,7 @@ function checkEnv() {
     'DB_HOST': 'localhost',
     'DB_NAME': 'onboarding_rsv_db',
     'DB_USER': 'onboarding_rsv',
-    'JWT_SECRET': 'REDACTED_JWT_SECRET',
+    'JWT_SECRET': 'CHANGE_ME_JWT_SECRET_MIN_32_CHARS',
   };
 
   const required = [

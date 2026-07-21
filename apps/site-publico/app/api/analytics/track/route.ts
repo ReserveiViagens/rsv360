@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 // POST /api/analytics/track - Rastrear evento
 export async function POST(request: NextRequest) {
@@ -11,8 +12,8 @@ export async function POST(request: NextRequest) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
         const token = authHeader.substring(7);
-        const JWT_SECRET = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
-        const decoded: any = jwt.verify(token, JWT_SECRET);
+        const JWT_SECRET = getJwtSecret();
+        const decoded: any = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
         userId = decoded.userId || decoded.id;
       } catch (error) {
         // Token inválido, continuar sem userId

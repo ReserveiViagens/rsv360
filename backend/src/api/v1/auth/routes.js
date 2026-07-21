@@ -1,3 +1,4 @@
+const { getJwtSecret, getJwtRefreshSecret } = require('@rsv360/shared');
 const express = require('express');
 const crypto = require('crypto');
 const { verifyAccessToken, verifyRefreshToken, signJwt, extractBearerToken } = require('./jwt-verify');
@@ -37,7 +38,7 @@ router.get('/session', (req, res) => {
     return res.status(401).json({ authenticated: false, error: 'Token ausente' });
   }
 
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = getJwtSecret();
   const payload = verifyAccessToken(token, secret);
   if (!payload) {
     return res.status(401).json({ authenticated: false, error: 'Token inválido ou expirado' });
@@ -131,8 +132,8 @@ router.post('/refresh', async (req, res) => {
   }
 
   const refreshSecret =
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
-  const accessSecret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+    getJwtRefreshSecret();
+  const accessSecret = getJwtSecret();
 
   const payload = verifyRefreshToken(refreshToken, refreshSecret);
   if (!payload) {
@@ -504,7 +505,7 @@ router.post('/reset-password', async (req, res) => {
 function resolveBearerUser(req) {
   const token = extractBearerToken(req);
   if (!token) return null;
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = getJwtSecret();
   const payload = verifyAccessToken(token, secret);
   if (!payload) return null;
   const userId = payload.userId ?? payload.sub ?? payload.id;
@@ -717,7 +718,7 @@ router.post('/login', async (req, res) => {
     });
   }
 
-  const secret = process.env.JWT_SECRET || 'REDACTED_JWT_SECRET';
+  const secret = getJwtSecret();
   const crypto = require('crypto');
   const header = base64UrlEncode(Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
   // Numeric pilot id: 12 hex chars → 48-bit int (< MAX_SAFE_INTEGER), deterministic per email.
@@ -740,7 +741,7 @@ router.post('/login', async (req, res) => {
   const accessToken = `${header}.${payload}.${signature}`;
 
   const refreshSecret =
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'REDACTED_REFRESH_SECRET';
+    getJwtRefreshSecret();
   const refreshToken = signJwt(
     {
       userId: payloadObj.userId,
