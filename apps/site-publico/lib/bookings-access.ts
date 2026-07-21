@@ -1,8 +1,8 @@
 /**
  * PR-03 — Booking lookup authorization (BOLA/IDOR).
- * Classificação de booking_code: formato RSV-YYYYMMDD-######-#### e códigos curtos
- * são adivinháveis → NÃO são token público. Token público = alta entropia (≥24 chars,
- * sem prefixo de data previsível) ou UUID.
+ * Classificação de booking_code (Fase 0): formato RSV-YYYYMMDD-######-#### e códigos
+ * curtos são adivinháveis / enumeráveis → NÃO são capability token. Portanto o modo
+ * `code` exige sessão + posse (ou staff) — nunca lookup anônimo, independente da forma.
  */
 
 export type BookingLookupMode = 'id' | 'email' | 'code';
@@ -25,15 +25,15 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /**
- * True when code is suitable as an unauthenticated capability token.
- * Current RSV-* generator codes return false (guessable).
+ * Classificador Fase 0 (documentação / defesa em profundidade).
+ * RSV-* gerados hoje retornam false. Mesmo se um dia o gerador mudar para
+ * alta entropia, authorizeBookingLookup NÃO abre anônimo — posse/staff only.
  */
 export function isHighEntropyBookingCode(code: string): boolean {
   const trimmed = code.trim();
   if (!trimmed || trimmed.length < 24) return false;
   if (WEAK_RSV_CODE.test(trimmed)) return false;
   if (UUID_RE.test(trimmed)) return true;
-  // Long opaque token (no predictable RSV-date shape)
   if (/^RSV-/i.test(trimmed) && trimmed.length < 40) return false;
   return /^[A-Za-z0-9_-]{24,}$/.test(trimmed);
 }
@@ -118,8 +118,8 @@ export function parseBookingLookupParams(
 }
 
 /**
- * Gate before DB: anonymous cannot use id/email; weak code requires auth;
- * high-entropy code may proceed unauthenticated.
+ * Gate before DB: anonymous never uses id / email / code.
+ * Code is not a public token (Fase 0) — session + ownership after fetch.
  */
 export function authorizeBookingLookup(opts: {
   user: BookingLookupUser | null;
@@ -138,17 +138,7 @@ export function authorizeBookingLookup(opts: {
     return { ok: true };
   }
 
-  if (lookup.mode === 'id') {
-    // Sequential ID — never anonymous; ownership checked after fetch
-    if (!user) return { ok: false, status: 404 };
-    return { ok: true };
-  }
-
-  // code
-  if (isHighEntropyBookingCode(lookup.value)) {
-    return { ok: true };
-  }
-  // Guessable RSV-* (and short codes): require session; ownership after fetch
+  // id and code: never anonymous; ownership checked after fetch
   if (!user) return { ok: false, status: 404 };
   return { ok: true };
 }
@@ -157,10 +147,7 @@ export function authorizeBookingLookup(opts: {
 export function filterBookingsForCaller<
   T extends { customer_email?: string | null },
 >(bookings: T[], user: BookingLookupUser | null): T[] {
-  if (!user) {
-    // Only high-entropy public code path reaches here without user
-    return bookings;
-  }
+  if (!user) return [];
   if (STAFF_ROLES.has(user.role)) return bookings;
   const email = user.email.toLowerCase();
   return bookings.filter(

@@ -72,11 +72,18 @@ describe('bookings-access — classificação de code', () => {
     expect(isHighEntropyBookingCode('RSV-1720000000000')).toBe(false);
   });
 
-  it('UUID e token ≥24 chars opacos passam (path público legítimo)', () => {
+  it('UUID/token longo seriam "alta entropia" no classificador — mas NÃO abrem anônimo', () => {
     expect(
       isHighEntropyBookingCode('550e8400-e29b-41d4-a716-446655440000'),
     ).toBe(true);
     expect(isHighEntropyBookingCode(HIGH_ENTROPY_CODE)).toBe(true);
+    // authorize still denies anonymous regardless of entropy
+    expect(
+      authorizeBookingLookup({
+        user: null,
+        lookup: { mode: 'code', value: HIGH_ENTROPY_CODE },
+      }),
+    ).toEqual({ ok: false, status: 404 });
   });
 });
 
@@ -111,7 +118,7 @@ describe('bookings-access — parse + pollution', () => {
 });
 
 describe('bookings-access — authorize pré-DB', () => {
-  it('anônimo: id/email/code fraco → 404', () => {
+  it('anônimo: id/email/code (fraco ou alta entropia) → 404', () => {
     expect(
       authorizeBookingLookup({
         user: null,
@@ -130,15 +137,12 @@ describe('bookings-access — authorize pré-DB', () => {
         lookup: { mode: 'code', value: 'RSV-20260720-123456-7890' },
       }),
     ).toEqual({ ok: false, status: 404 });
-  });
-
-  it('anônimo: code alta entropia → ok (token público)', () => {
     expect(
       authorizeBookingLookup({
         user: null,
         lookup: { mode: 'code', value: HIGH_ENTROPY_CODE },
       }),
-    ).toEqual({ ok: true });
+    ).toEqual({ ok: false, status: 404 });
   });
 
   it('customer A não consulta email de B', () => {
@@ -206,7 +210,7 @@ describe('handleGetBookings — asserts A→B + anônimo + positivo', () => {
     expect(queryDatabase).not.toHaveBeenCalled();
   });
 
-  it('anônimo ?code= RSV fraco → 404 sem hit no DB', async () => {
+  it('anônimo ?code= RSV fraco → 404 sem hit no DB (sem PII/PIX)', async () => {
     const queryDatabase = jest.fn(async () => [bookingA]);
     const res = await handleGetBookings(
       req(
@@ -219,6 +223,9 @@ describe('handleGetBookings — asserts A→B + anônimo + positivo', () => {
     );
     expect(res.status).toBe(404);
     expect(queryDatabase).not.toHaveBeenCalled();
+    const body = await res.json();
+    expect(JSON.stringify(body)).not.toContain('PIX-SECRET-A');
+    expect(JSON.stringify(body)).not.toContain('alice@example.com');
   });
 
   it('anônimo ?booking_id= → 404', async () => {
@@ -265,7 +272,7 @@ describe('handleGetBookings — asserts A→B + anônimo + positivo', () => {
     expect(body.data.id).toBe(101);
   });
 
-  it('positivo: token code alta entropia anônimo → 200', async () => {
+  it('negativo: anônimo ?code= alta entropia → 404 (modo code nunca público)', async () => {
     const queryDatabase = jest.fn(async () => [
       { ...bookingA, booking_code: HIGH_ENTROPY_CODE },
     ]);
@@ -276,10 +283,10 @@ describe('handleGetBookings — asserts A→B + anônimo + positivo', () => {
         getAuthUser: async () => null,
       },
     );
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(404);
+    expect(queryDatabase).not.toHaveBeenCalled();
     const body = await res.json();
-    expect(body.success).toBe(true);
-    expect(body.data.booking_code).toBe(HIGH_ENTROPY_CODE);
+    expect(JSON.stringify(body)).not.toContain('PIX-SECRET-A');
   });
 
   it('positivo: staff ?email= alheio → 200', async () => {
