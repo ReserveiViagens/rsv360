@@ -54,17 +54,53 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, data: group });
     }
 
-    // Buscar por booking
+    // Buscar por booking — exige auth + posse da reserva ou membership (PR-03b)
     if (booking_id) {
+      if (!authResult) {
+        return NextResponse.json(
+          { success: false, error: 'Grupo não encontrado para esta reserva' },
+          { status: 404 },
+        );
+      }
+      const role = authResult.role;
+      const isStaff = role === 'admin' || role === 'manager';
       const { getGroupChatByBooking } = await import('@/lib/group-chat-service');
       const group = await getGroupChatByBooking(booking_id);
       if (!group) {
         return NextResponse.json(
           { success: false, error: 'Grupo não encontrado para esta reserva' },
-          { status: 404 }
+          { status: 404 },
         );
       }
-      return NextResponse.json({ success: true, data: group });
+      if (!isStaff) {
+        const bookings = await (await import('@/lib/db')).queryDatabase(
+          `SELECT customer_email, user_id FROM bookings WHERE id = $1 LIMIT 1`,
+          [booking_id],
+        );
+        const b = bookings[0] as
+          | { customer_email?: string; user_id?: number }
+          | undefined;
+        const ownsBooking =
+          Boolean(b) &&
+          (Number(b!.user_id) === userId ||
+            String(b!.customer_email || '').toLowerCase() ===
+              String(email || '').toLowerCase());
+        if (!ownsBooking) {
+          const permitted = await getGroupChat(group.id, userId, email);
+          if (!permitted) {
+            return NextResponse.json(
+              { success: false, error: 'Grupo não encontrado para esta reserva' },
+              { status: 404 },
+            );
+          }
+          return NextResponse.json({ success: true, data: permitted });
+        }
+      }
+      const permitted = await getGroupChat(group.id, userId, email);
+      return NextResponse.json({
+        success: true,
+        data: permitted ?? group,
+      });
     }
 
     // Listar grupos do usuário
