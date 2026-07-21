@@ -1,71 +1,86 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { Pool } from 'pg';
+import { queryDatabase } from '@/lib/db';
+import { optionalAuth } from '@/lib/api-auth';
+import { isCheckinStaff } from '@/lib/checkin-access';
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'onboarding_rsv_db',
-  user: process.env.DB_USER || 'onboarding_rsv',
-  password: process.env.DB_PASSWORD || 'senha_segura_123',
-});
-
-// POST: Upload de documentos do check-in
+// POST: Upload de documentos do check-in (PR-03b: auth + posse)
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const checkinId = formData.get('checkin_id') as string;
-    const bookingId = formData.get('booking_id') as string;
-    const documentType = formData.get('document_type') as string;
-    const file = formData.get('file') as File;
-
-    if (!file || !checkinId || !bookingId) {
-      return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
+    const user = await optionalAuth(req);
+    if (!user) {
+      return NextResponse.json({ error: 'Nenhum check-in encontrado' }, { status: 404 });
     }
 
-    // Criar diretório se não existir
+    const formData = await req.formData();
+    const file = formData.get('file') as File | null;
+    const checkinId = formData.get('checkin_id') as string;
+    const bookingId = formData.get('booking_id') as string;
+    const documentType = (formData.get('document_type') as string) || 'other';
+
+    if (!file || !checkinId || !bookingId) {
+      return NextResponse.json(
+        { error: 'file, checkin_id e booking_id são obrigatórios' },
+        { status: 400 },
+      );
+    }
+
+    if (!/^\d+$/.test(checkinId) || !/^\d+$/.test(bookingId)) {
+      return NextResponse.json({ error: 'ids inválidos' }, { status: 400 });
+    }
+
+    if (!isCheckinStaff(user)) {
+      const rows = await queryDatabase(
+        `SELECT c.id, b.customer_email, b.user_id
+         FROM checkins c
+         JOIN bookings b ON b.id = c.booking_id
+         WHERE c.id = $1 AND c.booking_id = $2
+         LIMIT 1`,
+        [parseInt(checkinId, 10), parseInt(bookingId, 10)],
+      );
+      const row = rows[0] as
+        | { customer_email?: string; user_id?: number }
+        | undefined;
+      if (!row) {
+        return NextResponse.json({ error: 'Nenhum check-in encontrado' }, { status: 404 });
+      }
+      const owns =
+        Number(row.user_id) === user.id ||
+        String(row.customer_email || '').toLowerCase() === user.email.toLowerCase();
+      if (!owns) {
+        return NextResponse.json({ error: 'Nenhum check-in encontrado' }, { status: 404 });
+      }
+    }
+
     const uploadDir = join(process.cwd(), 'public', 'uploads', 'checkin-documents');
     await mkdir(uploadDir, { recursive: true });
 
-    // Gerar nome único
-    const timestamp = Date.now();
-    const extension = file.name.split('.').pop();
-    const fileName = `${checkinId}-${documentType}-${timestamp}.${extension}`;
-    const filePath = join(uploadDir, fileName);
-
-    // Salvar arquivo
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    const extension = (file.name.split('.').pop() || 'bin').replace(/[^a-zA-Z0-9]/g, '');
+    const timestamp = Date.now();
+    const fileName = `${checkinId}-${documentType}-${timestamp}.${extension}`;
+    await writeFile(join(uploadDir, fileName), buffer);
 
-    // Salvar no banco
-    const insertQuery = `
-      INSERT INTO checkin_documents (
-        checkin_id, booking_id, document_type,
-        file_name, file_path, file_size, mime_type
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id
-    `;
-
-    const result = await pool.query(insertQuery, [
-      parseInt(checkinId),
-      parseInt(bookingId),
-      documentType,
-      file.name,
-      `/uploads/checkin-documents/${fileName}`,
-      file.size,
-      file.type,
-    ]);
+    await queryDatabase(
+      `INSERT INTO checkin_documents (
+        checkin_id, booking_id, document_type, file_path, created_at
+      ) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
+      [
+        parseInt(checkinId, 10),
+        parseInt(bookingId, 10),
+        documentType,
+        `/uploads/checkin-documents/${fileName}`,
+      ],
+    );
 
     return NextResponse.json({
-      document_id: result.rows[0].id,
+      success: true,
       file_path: `/uploads/checkin-documents/${fileName}`,
     });
   } catch (error) {
-    console.error('Erro ao fazer upload de documento:', error);
+    console.error('Erro upload check-in docs:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-

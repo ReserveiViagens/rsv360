@@ -6,9 +6,13 @@ import { propostasService } from '../services/propostas.service';
 import { recordPropostaGerada } from '../metrics';
 import { PropostaExpiradaError, isPropostaExpiradaError } from '../proposta-validade';
 import {
-  buildPropostaPublicaResponse,
-  deveRedactarPropostaPublica,
-} from '../proposta-publica-payload';
+  authorizePropostaIdRead,
+  authorizePropostaIdSensitive,
+  authorizePropostaVisualizacao,
+  buildAnonymousIdLookupPayload,
+  isPropostaStaff,
+  ownsProposta,
+} from '../proposta-access';
 import {
   recotarPropostaPorToken,
   isPropostaRecotacaoError,
@@ -207,8 +211,21 @@ router.post('/:token/eventos', publicLimiter, async (req, res) => {
 
 router.post('/:id/visualizacao', optionalJwt, async (req, res) => {
   try {
-    const data = await propostasService.registrarVisualizacao(Number(req.params.id), req.user?.id);
-    res.json({ success: true, data });
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const authz = authorizePropostaVisualizacao({ user: req.user, row: item });
+    if (!authz.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    await propostasService.registrarVisualizacao(id, req.user?.id);
+    // Write-only: no echo of proposta / PII
+    return res.status(204).send();
   } catch (error) {
     res.status(400).json({ success: false, error: (error as Error).message });
   }
@@ -273,9 +290,16 @@ router.post('/:id/aprovacao/negar', ...staffAuth, async (req, res) => {
 
 router.post('/:id/indicacao', optionalJwt, async (req, res) => {
   try {
-    const item = await propostasService.getById(Number(req.params.id));
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
     if (!item?.tokenPublico) {
-      return res.status(400).json({ success: false, error: 'Proposta sem token público' });
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    if (!isPropostaStaff(req.user) && !ownsProposta(req.user, item)) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
     }
     const data = await registrarIndicacao({
       indicadorId: Number(req.body.indicadorId),
@@ -313,23 +337,27 @@ router.post('/:id/pacotes-template/from-proposta', ...staffAuth, async (req, res
 
 router.get('/:id', optionalJwt, async (req, res) => {
   try {
-    const item = await propostasService.getById(Number(req.params.id));
-    if (!item) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
-    if (!item.isPublica && !req.user) {
-      return res.status(401).json({ success: false, error: 'Autenticação necessária' });
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
     }
-    if (item.isPublica && !req.user) {
-      if (deveRedactarPropostaPublica(item)) {
-        const publica = buildPropostaPublicaResponse(item);
-        return res.json({
-          success: true,
-          data: {
-            ...publica,
-            eventos: [],
-            chat: [],
-          },
-        });
-      }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const decision = authorizePropostaIdRead({ user: req.user, row: item });
+    if (!decision.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    if (decision.mode === 'redacted') {
+      return res.json({
+        success: true,
+        data: {
+          ...buildAnonymousIdLookupPayload(item),
+          eventos: [],
+          chat: [],
+        },
+      });
     }
     res.json({ success: true, data: item });
   } catch (error) {
@@ -382,7 +410,28 @@ router.delete('/:id', ...agentAuth, async (req, res) => {
 
 router.get('/:id/chat', publicLimiter, optionalJwt, async (req, res) => {
   try {
-    const messages = await propostasService.listChat(Number(req.params.id));
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const capabilityToken =
+      (typeof req.query.token === 'string' && req.query.token) ||
+      (typeof req.headers['x-proposta-token'] === 'string'
+        ? req.headers['x-proposta-token']
+        : null);
+    const authz = authorizePropostaIdSensitive({
+      user: req.user,
+      row: item,
+      capabilityToken,
+    });
+    if (!authz.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const messages = await propostasService.listChat(id);
     res.json({ success: true, data: messages });
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
@@ -391,7 +440,28 @@ router.get('/:id/chat', publicLimiter, optionalJwt, async (req, res) => {
 
 router.post('/:id/chat', publicLimiter, requireTurnstile, optionalJwt, async (req, res) => {
   try {
-    const saved = await propostasService.addChatMessage(Number(req.params.id), req.body);
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const capabilityToken =
+      (typeof req.body?.tokenPublico === 'string' && req.body.tokenPublico) ||
+      (typeof req.headers['x-proposta-token'] === 'string'
+        ? req.headers['x-proposta-token']
+        : null);
+    const authz = authorizePropostaIdSensitive({
+      user: req.user,
+      row: item,
+      capabilityToken,
+    });
+    if (!authz.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const saved = await propostasService.addChatMessage(id, req.body);
     res.status(201).json({ success: true, data: saved });
   } catch (error) {
     res.status(400).json({ success: false, error: (error as Error).message });
@@ -400,8 +470,29 @@ router.post('/:id/chat', publicLimiter, requireTurnstile, optionalJwt, async (re
 
 router.get('/:id/hitl', optionalJwt, async (req, res) => {
   try {
-    const state = await propostasService.getHitlState(Number(req.params.id));
-    if (!state) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const capabilityToken =
+      (typeof req.query.token === 'string' && req.query.token) ||
+      (typeof req.headers['x-proposta-token'] === 'string'
+        ? req.headers['x-proposta-token']
+        : null);
+    const authz = authorizePropostaIdSensitive({
+      user: req.user,
+      row: item,
+      capabilityToken,
+    });
+    if (!authz.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const state = await propostasService.getHitlState(id);
+    if (!state) return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
     res.json({ success: true, data: state });
   } catch (error) {
     res.status(500).json({ success: false, error: (error as Error).message });
@@ -410,8 +501,29 @@ router.get('/:id/hitl', optionalJwt, async (req, res) => {
 
 router.post('/:id/hitl/request', optionalJwt, async (req, res) => {
   try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    const capabilityToken =
+      (typeof req.body?.tokenPublico === 'string' && req.body.tokenPublico) ||
+      (typeof req.headers['x-proposta-token'] === 'string'
+        ? req.headers['x-proposta-token']
+        : null);
+    const authz = authorizePropostaIdSensitive({
+      user: req.user,
+      row: item,
+      capabilityToken,
+    });
+    if (!authz.ok) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
     const state = await propostasService.requestHitl(
-      Number(req.params.id),
+      id,
       req.body.clientName ?? req.user?.name,
     );
     res.json({ success: true, data: state });
@@ -448,8 +560,37 @@ router.post('/:id/responder', publicLimiter, requireTurnstile, optionalJwt, asyn
     if (!action || !['accept', 'reject'].includes(action)) {
       return res.status(400).json({ success: false, error: 'action deve ser accept ou reject' });
     }
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ success: false, error: 'id inválido' });
+    }
+    const item = await propostasService.getById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+    }
+    // Accept on :id closed for guests — use /cotacao-publica/.../aceitar (token).
+    // Reject may use capability token; staff/owner always ok.
+    if (action === 'accept') {
+      if (!isPropostaStaff(req.user) && !ownsProposta(req.user, item)) {
+        return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+      }
+    } else {
+      const capabilityToken =
+        (typeof req.body?.tokenPublico === 'string' && req.body.tokenPublico) ||
+        (typeof req.headers['x-proposta-token'] === 'string'
+          ? req.headers['x-proposta-token']
+          : null);
+      const authz = authorizePropostaIdSensitive({
+        user: req.user,
+        row: item,
+        capabilityToken,
+      });
+      if (!authz.ok) {
+        return res.status(404).json({ success: false, error: 'Nenhuma proposta encontrada' });
+      }
+    }
     const updated = await propostasService.respondPublic(
-      Number(req.params.id),
+      id,
       action,
       req.body.clientName ?? req.user?.name,
     );
