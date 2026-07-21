@@ -29,6 +29,7 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 const API_TOKEN = __ENV.API_TOKEN || '';
+const METRICS_TOKEN = __ENV.METRICS_TOKEN || '';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -52,18 +53,21 @@ export function setup() {
 export default function (data) {
   const token = data.token || API_TOKEN;
   const authHeaders = { ...headers, ...(token && { 'Authorization': `Bearer ${token}` }) };
+  const metricsHeaders = METRICS_TOKEN
+    ? { Authorization: `Bearer ${METRICS_TOKEN}` }
+    : {};
 
   // Teste de carga: múltiplas requisições simultâneas
   const endpoints = [
-    '/api/properties',
-    '/api/bookings',
-    '/api/metrics',
-    '/api/crm/dashboard',
-    '/api/analytics/insights',
+    { path: '/api/properties', headers: authHeaders },
+    { path: '/api/bookings', headers: authHeaders },
+    { path: '/api/metrics', headers: metricsHeaders },
+    { path: '/api/crm/dashboard', headers: authHeaders },
+    { path: '/api/analytics/insights', headers: authHeaders },
   ];
 
   for (const endpoint of endpoints) {
-    const res = http.get(`${BASE_URL}${endpoint}`, { headers: authHeaders });
+    const res = http.get(`${BASE_URL}${endpoint.path}`, { headers: endpoint.headers });
     const checkResult = check(res, {
       'status is 200': (r) => r.status === 200,
     });

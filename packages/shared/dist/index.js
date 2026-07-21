@@ -20,6 +20,8 @@ __exportStar(require("./types/index.js"), exports);
 __exportStar(require("./types/tenant.js"), exports);
 __exportStar(require("./auth/session.js"), exports);
 __exportStar(require("./auth/jwt-secrets.js"), exports);
+__exportStar(require("./http/cors-origins.js"), exports);
+__exportStar(require("./http/metrics-auth.js"), exports);
 __exportStar(require("./tenant/routing.js"), exports);
 // Validators
 __exportStar(require("./validators/checkout.validator.js"), exports);

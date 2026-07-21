@@ -1,4 +1,8 @@
-const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } = require('@rsv360/shared');
+const {
+  getJwtSecret,
+  JWT_HS256_VERIFY_OPTIONS,
+  getCorsOriginAllowlist,
+} = require('@rsv360/shared');
 /**
  * ✅ SERVIDOR WEBSOCKET COMPLETO EM NODE.JS
  * 
@@ -52,9 +56,8 @@ const server = http.createServer((req, res) => {
 // Configurar Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: NODE_ENV === 'production'
-      ? process.env.FRONTEND_URL?.split(',') || ['http://localhost:3000']
-      : ['http://localhost:3000', 'http://localhost:3001'],
+    // PR-05b: same allowlist as Express HTTP (never '*')
+    origin: getCorsOriginAllowlist(),
     credentials: true,
     methods: ['GET', 'POST'],
   },

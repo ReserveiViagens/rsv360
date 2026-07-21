@@ -59,7 +59,10 @@ export default function (data) {
   const vu = (__VU + __ITER) % 4;
 
   if (vu === 0) {
-    const res = http.get(`${base}/metrics`);
+    const metricsToken = __ENV.METRICS_TOKEN || '';
+    const res = http.get(`${base}/metrics`, {
+      headers: metricsToken ? { Authorization: `Bearer ${metricsToken}` } : {},
+    });
     metricsDuration.add(res.timings.duration);
     const ok = check(res, { 'metrics 200': (r) => r.status === 200 });
     errorRate.add(!ok);

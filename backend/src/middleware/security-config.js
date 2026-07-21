@@ -1,9 +1,11 @@
 /**
- * RSV360 — Express security middleware (PR-05a).
+ * RSV360 — Express security middleware (PR-05a headers + PR-05b CORS).
  * Helmet is the single source for security headers; branding must not overwrite them.
  * CSP left as-is on branding (PR-16). HSTS only when ENABLE_HSTS=true.
+ * CORS allowlist via @rsv360/shared getCorsOriginAllowlist (never '*').
  */
 const helmet = require('helmet');
+const { getCorsOriginAllowlist } = require('@rsv360/shared');
 
 class SecurityConfig {
   static async initialize(app) {
@@ -68,15 +70,7 @@ class SecurityConfig {
   }
 
   static getCorsOptions() {
-    // Unchanged in 05a — CORS → PR-05b
-    const raw =
-      process.env.CORS_ORIGIN ||
-      'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3005';
-    const origin = raw
-      .split(',')
-      .map((value) => value.trim())
-      .filter(Boolean);
-
+    const origin = getCorsOriginAllowlist();
     return {
       origin,
       credentials: true,

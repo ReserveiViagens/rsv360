@@ -1,12 +1,20 @@
 const express = require('express');
 const { SecurityConfig } = require('../../middleware/security-config');
+const { DEV_CORS_ORIGIN_ALLOWLIST } = require('@rsv360/shared');
 
 describe('SecurityConfig', () => {
-  it('retorna configuração padrão de CORS com múltiplas origens', () => {
+  it('retorna CORS allowlist com admin :3004 e guest :3006 (localhost + 127.0.0.1)', () => {
+    const prev = process.env.CORS_ORIGIN;
+    delete process.env.CORS_ORIGIN;
     const corsOptions = SecurityConfig.getCorsOptions();
     expect(corsOptions.credentials).toBe(true);
-    expect(Array.isArray(corsOptions.origin)).toBe(true);
-    expect(corsOptions.origin.length).toBeGreaterThan(0);
+    expect(corsOptions.origin).toEqual([...DEV_CORS_ORIGIN_ALLOWLIST]);
+    expect(corsOptions.origin).toContain('http://localhost:3004');
+    expect(corsOptions.origin).toContain('http://localhost:3006');
+    expect(corsOptions.origin).toContain('http://127.0.0.1:3000');
+    expect(corsOptions.origin).not.toContain('*');
+    if (prev === undefined) delete process.env.CORS_ORIGIN;
+    else process.env.CORS_ORIGIN = prev;
   });
 
   it('adiciona endpoint de health check', async () => {
