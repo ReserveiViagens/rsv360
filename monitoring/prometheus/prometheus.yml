@@ -1,6 +1,8 @@
 # RSV360 PMS/CRM — Reservei Viagens
 # Copyright (c) 2024-2026 Reservei Viagens LTDA. Todos os direitos reservados.
 # Desenvolvido por Douglas P. Figueiredo <douglas@reserveiviagens.com.br>
+#
+# PR-05b: scrape /metrics with Bearer METRICS_TOKEN (credentials_file written at container start).
 
 global:
   scrape_interval: 15s
@@ -12,6 +14,9 @@ rule_files:
 scrape_configs:
   - job_name: rsv360-backend
     metrics_path: /metrics
+    authorization:
+      type: Bearer
+      credentials_file: /tmp/metrics_bearer_token
     static_configs:
       - targets:
           - backend:3002

@@ -121,7 +121,7 @@ scenarios:
       - get:
           url: "/api/metrics"
           headers:
-            Authorization: "Bearer {{ apiToken }}"
+            Authorization: "Bearer {{ $processEnvironment.METRICS_TOKEN }}"
           expect:
             - statusCode: 200
 

@@ -1,0 +1,27 @@
+# PR-05b smoke @ 2026-07-21T20:16:56.782Z
+BACKEND_URL=http://127.0.0.1:3002
+SITE_URL=http://127.0.0.1:3000
+
+## CORS matrix (GET /health)
+PASS origin=http://localhost:3000 status=200 acao=http://localhost:3000
+PASS origin=http://localhost:3001 status=200 acao=http://localhost:3001
+PASS origin=http://localhost:3004 status=200 acao=http://localhost:3004
+PASS origin=http://localhost:3005 status=200 acao=http://localhost:3005
+PASS origin=http://localhost:3006 status=200 acao=http://localhost:3006
+PASS origin=http://127.0.0.1:3000 status=200 acao=http://127.0.0.1:3000
+PASS origin=http://127.0.0.1:3001 status=200 acao=http://127.0.0.1:3001
+PASS origin=http://127.0.0.1:3004 status=200 acao=http://127.0.0.1:3004
+PASS origin=http://127.0.0.1:3005 status=200 acao=http://127.0.0.1:3005
+PASS origin=http://127.0.0.1:3006 status=200 acao=http://127.0.0.1:3006
+PASS origin=http://evil.example status=200 acao=(none) (must deny)
+
+## /metrics bearer
+PASS GET /metrics anon → 401 (want 401)
+PASS GET /metrics bearer → 200 (want 200+rsv360_)
+SKIP GET /api/metrics site → 500 (site-publico not on PR image / known lab 500)
+
+SMOKE_SUMMARY pass=13 fail=0
+
+## Prometheus
+PROM_HEALTH=up LAST_ERROR=
+

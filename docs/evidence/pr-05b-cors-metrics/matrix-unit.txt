@@ -1,0 +1,27 @@
+# PR-05b — CORS ACAO matrix (unit, cors-pr05b.test.ts)
+# Generated 2026-07-21 — SecurityConfig.getCorsOptions() + cors middleware (same as app.js)
+# CORS_ORIGIN unset → DEV_CORS_ORIGIN_ALLOWLIST
+
+PASS origin=http://localhost:3000 → ACAO reflected
+PASS origin=http://localhost:3001 → ACAO reflected
+PASS origin=http://localhost:3004 → ACAO reflected (admin)
+PASS origin=http://localhost:3005 → ACAO reflected
+PASS origin=http://localhost:3006 → ACAO reflected (guest)
+PASS origin=http://127.0.0.1:3000 → ACAO reflected
+PASS origin=http://127.0.0.1:3001 → ACAO reflected
+PASS origin=http://127.0.0.1:3004 → ACAO reflected
+PASS origin=http://127.0.0.1:3005 → ACAO reflected
+PASS origin=http://127.0.0.1:3006 → ACAO reflected
+PASS origin=http://evil.example → ACAO absent (denied)
+PASS preflight OPTIONS Origin=http://localhost:3004 → 204 + ACAO
+
+# /metrics (metrics-route.test.ts + metrics-auth.test.ts)
+PASS GET /metrics anon → 401
+PASS GET /metrics Bearer wrong → 401
+PASS GET /metrics Bearer METRICS_TOKEN → 200 + rsv360_*
+PASS METRICS_TOKEN unset → deny (fail-closed)
+
+# Baselines (2026-07-21)
+# backend tsc --noEmit → 0
+# jest --testPathIgnorePatterns=integration → 553 PASS (531 + 22)
+# site-publico runners (não somar): bookings-pr03 21 · checkin-pr03b 7 · webhooks-pr02b 8 · webhooks-pr02c 9

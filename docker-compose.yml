@@ -13,6 +13,10 @@ x-app-env: &app-env
   # PR-04a: fail-closed — no default. JWT_REFRESH_SECRET optional (inherits JWT_SECRET in code).
   JWT_SECRET: ${JWT_SECRET}
   JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-}
+  # PR-05b: explicit CORS (localhost + 127.0.0.1 × 3000/3001/3004/3005/3006) — never rely on code default alone in compose.
+  CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3001,http://localhost:3004,http://localhost:3005,http://localhost:3006,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3004,http://127.0.0.1:3005,http://127.0.0.1:3006}
+  # PR-05b: Prometheus scrape bearer (required for /metrics and /api/metrics).
+  METRICS_TOKEN: ${METRICS_TOKEN}
 
 # Rede unificada (#250) — todos os servicos na mesma rede (sem network connect manual)
 networks:
@@ -106,6 +110,9 @@ services:
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
       # Agentes / Instrutor (F2c-3) — opcional; T1 fail-safe se ausente. Nunca commitar o valor.
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # PR-05b
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3001,http://localhost:3004,http://localhost:3005,http://localhost:3006,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3004,http://127.0.0.1:3005,http://127.0.0.1:3006}
+      METRICS_TOKEN: ${METRICS_TOKEN}
     healthcheck:
       test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1']
       interval: 20s
@@ -251,10 +258,21 @@ services:
     networks:
       - rsv360_net
     restart: unless-stopped
+    environment:
+      METRICS_TOKEN: ${METRICS_TOKEN}
+    entrypoint: ["/bin/sh", "-c"]
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
+      - |
+        set -e
+        if [ -z "$$METRICS_TOKEN" ]; then
+          echo "[prometheus] METRICS_TOKEN is required for scrape (PR-05b)" >&2
+          exit 1
+        fi
+        printf '%s' "$$METRICS_TOKEN" > /tmp/metrics_bearer_token
+        exec /bin/prometheus \
+          --config.file=/etc/prometheus/prometheus.yml \
+          --storage.tsdb.path=/prometheus \
+          --web.enable-lifecycle
     ports:
       - '9090:9090'
     volumes:
