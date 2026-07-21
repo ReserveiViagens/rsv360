@@ -1,17 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 
+/**
+ * Role gate for housekeeping — identity ONLY from JWT (req.user).
+ * Never trust x-user-role or other client headers.
+ */
 export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const headerRole = typeof req.header('x-user-role') === 'string' ? req.header('x-user-role') : undefined;
-    const role = req.user?.role || headerRole;
+    const role = req.user?.role;
 
     if (!role || !roles.includes(role)) {
       return res.status(403).json({ error: 'Acesso negado' });
     }
 
-    next();
+    return next();
   };
 }
 
 module.exports = { requireRole };
-

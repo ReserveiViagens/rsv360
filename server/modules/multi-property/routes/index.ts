@@ -1,7 +1,25 @@
 import { Router } from 'express';
+import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import propertiesRoutes from './properties.routes';
 
 const router = Router();
+
+/** Explicit public: module health probe. */
+router.get('/health', (_req, res) => {
+  res.json({
+    module: 'multi-property',
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    routes: {
+      properties: '/api/properties',
+      consolidated: '/api/properties/consolidated',
+    },
+  });
+});
+
+/** Fail-closed: staff JWT required for property / user admin. */
+router.use(authenticateJwt);
+router.use(requireRole('admin', 'manager'));
 
 router.use((req, _res, next) => {
   const propertyId = (req as any).propertyId;
@@ -15,18 +33,6 @@ router.use((req, _res, next) => {
 });
 
 router.use('/', propertiesRoutes);
-
-router.get('/health', (_req, res) => {
-  res.json({
-    module: 'multi-property',
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    routes: {
-      properties: '/api/properties',
-      consolidated: '/api/properties/consolidated',
-    },
-  });
-});
 
 export function registerPropertyRoutes(app: any) {
   app.use('/api/properties', router);
