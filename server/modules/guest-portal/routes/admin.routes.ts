@@ -1,12 +1,14 @@
 import { Router } from 'express';
-import { authenticate } from '../../cloud/middleware/auth.middleware';
+import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { tokenService } from '../services/token.service';
 import { requestsService } from '../services/requests.service';
 import { feedbackService } from '../services/feedback.service';
 
 const router = Router();
 
-router.use(authenticate);
+/** Fail-closed: real JWT + staff role (replaces cloud stub Bearer-any → admin). */
+router.use(authenticateJwt);
+router.use(requireRole('admin', 'manager'));
 
 router.post('/tokens', async (req, res) => {
   try {

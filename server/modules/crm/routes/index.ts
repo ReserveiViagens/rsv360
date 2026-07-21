@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import guestsRoutes from './guest-profiles.routes';
 import loyaltyRoutes from './loyalty.routes';
 import campaignsRoutes from './campaigns.routes';
@@ -6,6 +7,26 @@ import segmentsRoutes from './segments.routes';
 import kpisRoutes from './kpis.routes';
 
 const router = Router();
+
+/** Explicit public: module health probe. */
+router.get('/health', (_req, res) => {
+  res.json({
+    module: 'crm',
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    routes: {
+      guests: '/api/crm/guests',
+      loyalty: '/api/crm/loyalty',
+      campaigns: '/api/crm/campaigns',
+      segments: '/api/crm/segments',
+      kpis: '/api/crm/kpis',
+    },
+  });
+});
+
+/** Fail-closed: staff JWT required for all CRM data routes. */
+router.use(authenticateJwt);
+router.use(requireRole('admin', 'manager'));
 
 router.use((req, _res, next) => {
   const propertyId = (req as any).propertyId;
@@ -23,21 +44,6 @@ router.use('/loyalty', loyaltyRoutes);
 router.use('/campaigns', campaignsRoutes);
 router.use('/segments', segmentsRoutes);
 router.use('/kpis', kpisRoutes);
-
-router.get('/health', (_req, res) => {
-  res.json({
-    module: 'crm',
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    routes: {
-      guests: '/api/crm/guests',
-      loyalty: '/api/crm/loyalty',
-      campaigns: '/api/crm/campaigns',
-      segments: '/api/crm/segments',
-      kpis: '/api/crm/kpis',
-    },
-  });
-});
 
 export function registerCrmRoutes(app: any) {
   app.use('/api/crm', router);

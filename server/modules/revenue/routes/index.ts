@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import pricingRulesRoutes from './pricing-rules.routes';
 import rateCalendarRoutes from './rate-calendar.routes';
 import forecastRoutes from './forecast.routes';
@@ -7,6 +8,27 @@ import kpisRoutes from './kpis.routes';
 import engineRoutes from './engine.routes';
 
 const router = Router();
+
+/** Explicit public: module health probe. */
+router.get('/health', (_req, res) => {
+  res.json({
+    module: 'revenue',
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    routes: {
+      rules: '/api/revenue/rules',
+      calendar: '/api/revenue/calendar',
+      forecast: '/api/revenue/forecast',
+      competitors: '/api/revenue/competitors',
+      kpis: '/api/revenue/kpis',
+      engine: '/api/revenue/engine',
+    },
+  });
+});
+
+/** Fail-closed: staff JWT required for pricing / calendar mutations. */
+router.use(authenticateJwt);
+router.use(requireRole('admin', 'manager'));
 
 router.use((req, _res, next) => {
   const propertyId = (req as any).propertyId;
@@ -25,22 +47,6 @@ router.use('/forecast', forecastRoutes);
 router.use('/competitors', competitorRoutes);
 router.use('/kpis', kpisRoutes);
 router.use('/engine', engineRoutes);
-
-router.get('/health', (_req, res) => {
-  res.json({
-    module: 'revenue',
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    routes: {
-      rules: '/api/revenue/rules',
-      calendar: '/api/revenue/calendar',
-      forecast: '/api/revenue/forecast',
-      competitors: '/api/revenue/competitors',
-      kpis: '/api/revenue/kpis',
-      engine: '/api/revenue/engine',
-    },
-  });
-});
 
 export default router;
 

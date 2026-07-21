@@ -1,10 +1,32 @@
 import { Router } from 'express';
+import { authenticateJwt } from '../../../middleware/auth.middleware';
 import roomsRoutes from './room-status.routes';
 import tasksRoutes from './tasks.routes';
 import maintenanceRoutes from './maintenance.routes';
 import checklistsRoutes from './checklists.routes';
 
 const router = Router();
+
+/** Explicit public: module health probe. */
+router.get('/health', (_req, res) => {
+  res.json({
+    module: 'housekeeping',
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    routes: {
+      rooms: '/api/housekeeping/rooms',
+      tasks: '/api/housekeeping/tasks',
+      maintenance: '/api/housekeeping/maintenance',
+      checklists: '/api/housekeeping/checklists',
+    },
+  });
+});
+
+/**
+ * Fail-closed: JWT required. Role checks stay on route handlers via hk requireRole
+ * (JWT claim only — x-user-role spoof ignored).
+ */
+router.use(authenticateJwt);
 
 router.use((req, _res, next) => {
   const propertyId = (req as any).propertyId;
@@ -21,20 +43,6 @@ router.use('/rooms', roomsRoutes);
 router.use('/tasks', tasksRoutes);
 router.use('/maintenance', maintenanceRoutes);
 router.use('/checklists', checklistsRoutes);
-
-router.get('/health', (_req, res) => {
-  res.json({
-    module: 'housekeeping',
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    routes: {
-      rooms: '/api/housekeeping/rooms',
-      tasks: '/api/housekeeping/tasks',
-      maintenance: '/api/housekeeping/maintenance',
-      checklists: '/api/housekeeping/checklists',
-    },
-  });
-});
 
 export default router;
 
