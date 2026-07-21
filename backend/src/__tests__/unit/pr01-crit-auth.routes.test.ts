@@ -58,12 +58,15 @@ describe('PR-01 — crit routes auth (fail-closed + negative asserts)', () => {
       expect(res.status).not.toBe(403);
     });
 
-    it('POST /webhooks/mercadopago without token is NOT 401 (public receiver)', async () => {
+    it('POST /webhooks/mercadopago without token is not gated by JWT (HMAC owns 401)', async () => {
+      // PR-02: missing x-signature → 401 from HMAC, not from authenticateJwt.
+      // Proves the receiver remains public (no Bearer required).
       const res = await request(app)
         .post('/api/v1/payments/webhooks/mercadopago')
         .send({ type: 'payment' });
-      expect(res.status).not.toBe(401);
-      expect(res.status).not.toBe(403);
+      expect(res.status).toBe(401);
+      expect(res.body.error).toBe('Unauthorized');
+      expect(res.headers['www-authenticate']).toBeUndefined();
     });
 
     it('GET /webhooks/events without token → 401 (staff ops)', async () => {
