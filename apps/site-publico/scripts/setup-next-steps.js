@@ -64,7 +64,7 @@ STORAGE_TYPE=local
 STORAGE_LOCAL_PATH=./storage
 
 # JWT
-JWT_SECRET=your-secret-key-change-in-production-min-32-chars
+JWT_SECRET=CHANGE_ME_JWT_SECRET_MIN_32_CHARS
 
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/rsv360

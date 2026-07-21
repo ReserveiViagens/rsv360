@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, assertJwtSecretsConfigured } = require('@rsv360/shared');
 // 🏨 HOTEL MANAGEMENT - Gestão de Hotéis
 // RSV 360° Ecosystem - Sistema de Gestão de Hotéis
 
@@ -57,6 +58,7 @@ register.registerMetric(httpRequestDuration);
 register.registerMetric(hotelOperationsTotal);
 
 // Configurar aplicação Express
+assertJwtSecretsConfigured();
 const app = express();
 const PORT = process.env.PORT || 3003;
 
@@ -113,7 +115,7 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret(), JWT_HS256_VERIFY_OPTIONS);
     req.user = decoded;
     next();
   } catch (error) {

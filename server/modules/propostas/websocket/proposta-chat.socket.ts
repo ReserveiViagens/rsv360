@@ -6,10 +6,7 @@ import { propostasService } from '../services/propostas.service';
 import { parceiroRoomName } from './proposta-broadcast';
 
 const { verifyAccessToken } = require('../../../../backend/src/api/v1/auth/jwt-verify');
-
-function getJwtSecret(): string {
-  return process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-}
+const { getJwtSecret } = require('@rsv360/shared');
 
 function verifySocketToken(token?: string) {
   if (!token) return null;

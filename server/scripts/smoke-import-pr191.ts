@@ -1,3 +1,4 @@
+const { getJwtSecret } = require('@rsv360/shared');
 /**
  * Smoke-test PR 19.1 importador contra schema 0021 (sem dados reais de produção).
  * Uso: DATABASE_URL=... npx tsx server/scripts/smoke-import-pr191.ts
@@ -18,7 +19,7 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   'postgresql://rsv360:rsv360_dev_2024@127.0.0.1:5433/rsv_360_ecosystem';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = getJwtSecret();
 
 const SAMPLE_ROWS = [
   {

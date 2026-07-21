@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import * as jwt from 'jsonwebtoken';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 function getUserId(request: NextRequest): { userId: number; error?: NextResponse } {
   const authHeader = request.headers.get('authorization');
@@ -8,9 +9,9 @@ function getUserId(request: NextRequest): { userId: number; error?: NextResponse
     return { userId: 0, error: NextResponse.json({ success: false, error: 'Token não fornecido' }, { status: 401 }) };
   }
   const token = authHeader.substring(7);
-  const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+  const JWT_SECRET = getJwtSecret();
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId?: number; id?: number };
+    const decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS) as { userId?: number; id?: number };
     const userId = decoded.userId ?? decoded.id;
     if (!userId) return { userId: 0, error: NextResponse.json({ success: false, error: 'Token inválido' }, { status: 401 }) };
     return { userId };

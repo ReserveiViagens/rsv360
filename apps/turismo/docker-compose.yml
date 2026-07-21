@@ -53,7 +53,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3002
-      - JWT_SECRET=rsv-360-ecosystem-secret
+      - JWT_SECRET=${JWT_SECRET}
       - DATABASE_URL=postgresql://rsv:password@postgres:5432/rsv_ecosystem
     depends_on:
       - postgres

@@ -57,7 +57,7 @@ DATABASE_URL=postgresql://user:password@localhost:5432/rsv_gen2
 REDIS_URL=redis://localhost:6379
 
 # JWT
-JWT_SECRET=your-secret-key-change-in-production
+JWT_SECRET=CHANGE_ME_JWT_SECRET_MIN_32_CHARS
 
 # API Keys
 GOOGLE_CALENDAR_CLIENT_ID=...

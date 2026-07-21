@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, assertJwtSecretsConfigured } = require('@rsv360/shared');
 // 👥 CRM SYSTEM - Sistema de Gestão de Clientes
 // RSV 360° Ecosystem - Módulo de CRM
 
@@ -56,6 +57,7 @@ register.registerMetric(httpRequestDuration);
 register.registerMetric(crmCustomersTotal);
 
 // Configurar aplicação Express
+assertJwtSecretsConfigured();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -112,7 +114,7 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret(), JWT_HS256_VERIFY_OPTIONS);
     req.user = decoded;
     next();
   } catch (error) {

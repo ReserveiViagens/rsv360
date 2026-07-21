@@ -93,7 +93,7 @@ export async function verifyAdminToken(token: string | undefined | null) {
 ### 6) JWT secret fallback
 
 ```108:108:apps/site-publico/app/api/auth/login/route.ts
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const JWT_SECRET = getJwtSecret(); // PR-04a fail-closed (legacy public fallback removed)
 ```
 
 Compose já injeta `JWT_SECRET` em `site-publico` (`docker-compose.yml` L134).

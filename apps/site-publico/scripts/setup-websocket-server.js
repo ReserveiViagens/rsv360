@@ -1,3 +1,4 @@
+const { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } = require('@rsv360/shared');
 /**
  * ✅ SCRIPT DE CONFIGURAÇÃO DO SERVIDOR WEBSOCKET
  * 
@@ -14,7 +15,7 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 const PORT = process.env.WS_PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = getJwtSecret();
 
 const server = http.createServer();
 
@@ -45,7 +46,7 @@ io.use(async (socket, next) => {
       return next(new Error('Token de autenticação necessário'));
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     socket.userId = decoded.userId;
     socket.userEmail = decoded.email;
     socket.userName = decoded.name;

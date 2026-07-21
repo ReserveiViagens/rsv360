@@ -8,6 +8,9 @@ const { createApp } = require('./app');
 
 async function startServer() {
   try {
+    const { assertJwtSecretsConfigured } = require('@rsv360/shared');
+    assertJwtSecretsConfigured();
+
     const app = await createApp();
     const server = http.createServer(app);
 

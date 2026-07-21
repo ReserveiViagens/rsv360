@@ -4,6 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
 
 // POST /api/users/profile/upload - Upload de imagens
 export async function POST(request: NextRequest) {
@@ -18,11 +19,11 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const JWT_SECRET = getJwtSecret();
     
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET, JWT_HS256_VERIFY_OPTIONS);
     } catch (error) {
       return NextResponse.json(
         { success: false, error: 'Token inválido' },

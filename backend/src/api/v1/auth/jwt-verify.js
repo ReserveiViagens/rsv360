@@ -14,14 +14,29 @@ function base64UrlEncode(buffer) {
     .replace(/=+$/, '');
 }
 
-/** Verifica JWT HS256 (compatível com site-publico jsonwebtoken). */
+/**
+ * Verifica JWT HS256 (compatível com site-publico jsonwebtoken).
+ * PR-04a: rejeita header.alg ≠ HS256 ANTES do HMAC (alg:none / confusion).
+ */
 function verifyJwt(token, secret, options = {}) {
   if (!token || typeof token !== 'string') return null;
+  if (!secret || typeof secret !== 'string') return null;
 
   const parts = token.split('.');
   if (parts.length !== 3) return null;
 
   const [encodedHeader, encodedPayload, signature] = parts;
+
+  let header;
+  try {
+    header = JSON.parse(base64UrlDecode(encodedHeader).toString('utf8'));
+  } catch {
+    return null;
+  }
+  if (!header || header.alg !== 'HS256') {
+    return null;
+  }
+
   const expected = base64UrlEncode(
     crypto.createHmac('sha256', secret).update(`${encodedHeader}.${encodedPayload}`).digest()
   );
@@ -76,6 +91,7 @@ function extractBearerToken(req) {
 module.exports = {
   verifyAccessToken,
   verifyRefreshToken,
+  verifyJwt,
   signJwt,
   extractBearerToken,
 };
