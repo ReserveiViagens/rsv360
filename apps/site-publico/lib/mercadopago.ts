@@ -366,13 +366,10 @@ export class MercadoPagoService {
     return `00020126580014br.gov.bcb.pix0136${bookingCode}5204000053039865802BR5925RESERVEI VIAGENS LTDA6009CALDAS NOVAS62070503***6304${Math.random().toString(36).substring(7)}`;
   }
 
-  // Verificar status do pagamento
+  // Verificar status do pagamento — PR-02c: sem token → throw (nunca pending fake)
   async getPaymentStatus(paymentId: string) {
     if (!this.accessToken) {
-      return {
-        status: 'pending',
-        status_detail: 'pending_waiting_payment',
-      };
+      throw new Error('MERCADO_PAGO_ACCESS_TOKEN ausente');
     }
 
     try {
@@ -384,9 +381,11 @@ export class MercadoPagoService {
         });
 
         if (!response.ok) {
-          const error = await response.json();
-          const errorWithStatus = new Error(error.message || 'Erro ao buscar status do pagamento');
-          (errorWithStatus as any).status = response.status;
+          const error = await response.json().catch(() => ({}));
+          const errorWithStatus = new Error(
+            (error as { message?: string }).message || 'Erro ao buscar status do pagamento',
+          );
+          (errorWithStatus as Error & { status?: number }).status = response.status;
           throw errorWithStatus;
         }
 
