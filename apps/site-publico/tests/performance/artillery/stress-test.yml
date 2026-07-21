@@ -53,7 +53,7 @@ scenarios:
       - get:
           url: "/api/metrics"
           headers:
-            Authorization: "Bearer {{ apiToken }}"
+            Authorization: "Bearer {{ $processEnvironment.METRICS_TOKEN }}"
       
       - think: 0.5
 

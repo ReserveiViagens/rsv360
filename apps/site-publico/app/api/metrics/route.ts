@@ -1,27 +1,24 @@
 /**
  * 📊 ENDPOINT DE MÉTRICAS PROMETHEUS
- * 
- * Expõe métricas no formato Prometheus para coleta
- * Endpoint: GET /api/metrics
- * 
- * Nota: Em produção, considere adicionar autenticação básica
- * ou restringir acesso apenas para o Prometheus
+ * GET /api/metrics — PR-05b: Bearer METRICS_TOKEN obrigatório (fail-closed).
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isMetricsBearerAuthorized } from '@rsv360/shared';
 import { getMetrics } from '@/lib/metrics';
 import { jsonInternalError } from '@/lib/api-error';
 
-/**
- * GET /api/metrics
- * Retorna métricas no formato Prometheus
- */
 export async function GET(request: NextRequest) {
   try {
-    // Coletar todas as métricas
+    if (!isMetricsBearerAuthorized(request.headers.get('authorization'))) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 },
+      );
+    }
+
     const metrics = await getMetrics();
 
-    // Retornar no formato Prometheus
     return new NextResponse(metrics, {
       status: 200,
       headers: {
@@ -30,13 +27,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('❌ Erro ao coletar métricas:', error);
-    
-    return jsonInternalError(error);
+    return jsonInternalError(error, 'metrics_collect');
   }
 }
 
-// Configurar para não cachear
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-

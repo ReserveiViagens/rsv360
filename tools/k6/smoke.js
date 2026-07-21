@@ -2,7 +2,7 @@
  * RSV360 capacity smoke (E5) — 1 VU, sequential probes.
  *
  *   k6 run tools/k6/smoke.js
- *   k6 run -e BASE_URL=http://localhost:3002 -e TOKEN=<jwt> tools/k6/smoke.js
+ *   k6 run -e BASE_URL=http://localhost:3002 -e TOKEN=<jwt> -e METRICS_TOKEN=<token> tools/k6/smoke.js
  */
 
 import http from 'k6/http';
@@ -53,7 +53,10 @@ export default function (data) {
   });
 
   group('metrics', () => {
-    const res = http.get(`${base}/metrics`);
+    const metricsToken = __ENV.METRICS_TOKEN || '';
+    const res = http.get(`${base}/metrics`, {
+      headers: metricsToken ? { Authorization: `Bearer ${metricsToken}` } : {},
+    });
     check(res, {
       'metrics 200': (r) => r.status === 200,
       'metrics prometheus': (r) => String(r.body).includes('rsv360_'),

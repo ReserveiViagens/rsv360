@@ -14,8 +14,13 @@ async function startServer() {
     const app = await createApp();
     const server = http.createServer(app);
 
+    const { corsOriginDelegate } = require('@rsv360/shared');
     const io = new Server(server, {
-      cors: { origin: process.env.CORS_ORIGIN || '*', methods: ['GET', 'POST'] },
+      cors: {
+        origin: (origin, callback) => corsOriginDelegate(origin, callback),
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
       path: '/socket.io',
     });
 

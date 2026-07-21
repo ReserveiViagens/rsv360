@@ -10,7 +10,7 @@ import { Server as HTTPServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { queryDatabase } from '../lib/db';
-import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS, getCorsOriginAllowlist } from '@rsv360/shared';
 
 interface AuthenticatedSocket {
   userId: number;
@@ -25,9 +25,7 @@ const connectedUsers = new Map<number, Set<string>>(); // userId -> Set<socketId
 export function initializeWebSocketServer(httpServer: HTTPServer): SocketIOServer {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL?.split(',') || ['http://localhost:3000']
-        : ['http://localhost:3000', 'http://localhost:3001'],
+      origin: getCorsOriginAllowlist(),
       credentials: true,
       methods: ['GET', 'POST'],
     },

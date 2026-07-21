@@ -31,11 +31,16 @@ export const options = {
 // Base URL da API
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 const API_TOKEN = __ENV.API_TOKEN || '';
+const METRICS_TOKEN = __ENV.METRICS_TOKEN || '';
 
 // Headers padrão
 const headers = {
   'Content-Type': 'application/json',
   ...(API_TOKEN && { 'Authorization': `Bearer ${API_TOKEN}` }),
+};
+
+const metricsHeaders = {
+  ...(METRICS_TOKEN && { Authorization: `Bearer ${METRICS_TOKEN}` }),
 };
 
 /**
@@ -117,8 +122,8 @@ export default function (data) {
 
   sleep(1);
 
-  // Teste 4: API de métricas
-  const metricsRes = http.get(`${BASE_URL}/api/metrics`, { headers: authHeaders });
+  // Teste 4: API de métricas (PR-05b — Bearer METRICS_TOKEN)
+  const metricsRes = http.get(`${BASE_URL}/api/metrics`, { headers: metricsHeaders });
   check(metricsRes, {
     'status is 200': (r) => r.status === 200,
     'response time < 200ms': (r) => r.timings.duration < 200,

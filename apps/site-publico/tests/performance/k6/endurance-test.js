@@ -24,6 +24,7 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 const API_TOKEN = __ENV.API_TOKEN || '';
+const METRICS_TOKEN = __ENV.METRICS_TOKEN || '';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -61,7 +62,9 @@ export default function (data) {
 
   sleep(2);
 
-  const res3 = http.get(`${BASE_URL}/api/metrics`, { headers: authHeaders });
+  const res3 = http.get(`${BASE_URL}/api/metrics`, {
+    headers: METRICS_TOKEN ? { Authorization: `Bearer ${METRICS_TOKEN}` } : {},
+  });
   check(res3, { 'status is 200': (r) => r.status === 200 });
   errorRate.add(res3.status !== 200);
 
