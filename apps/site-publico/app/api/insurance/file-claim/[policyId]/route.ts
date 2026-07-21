@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { createInsuranceClaim } from '@/lib/insurance-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest, props: { params: Promise<{ policyId: string }> }) {
   const params = await props.params;
@@ -41,10 +42,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ poli
     });
   } catch (error: any) {
     console.error('Erro ao registrar sinistro:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao registrar sinistro' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

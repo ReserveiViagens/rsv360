@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { voteOnWishlistItem } from '@/lib/wishlist-service';
 import { withAuth, AuthRequest } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export const POST = withAuth(
   async (request: AuthRequest) => {
@@ -57,13 +58,7 @@ export const POST = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao votar:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: error.message || 'Erro ao registrar voto',
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: false }

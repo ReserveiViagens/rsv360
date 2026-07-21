@@ -10,6 +10,7 @@ import {
   saveCompetitorPrice,
 } from '@/lib/smart-pricing-service';
 import { fetchPropertyBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/pricing/competitors - Listar preços
 export async function GET(request: NextRequest) {
@@ -43,10 +44,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar preços de competidores:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar preços' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -92,10 +90,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao salvar preço de competidor:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao salvar preço' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

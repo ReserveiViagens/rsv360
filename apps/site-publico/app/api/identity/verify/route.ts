@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import axios from 'axios';
+import { jsonInternalError } from '@/lib/api-error';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Erro ao verificar identidade:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -169,7 +170,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ verifications: result.rows });
   } catch (error) {
     console.error('Erro ao buscar verificações:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 

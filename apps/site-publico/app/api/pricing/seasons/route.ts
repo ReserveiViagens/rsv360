@@ -7,6 +7,7 @@ import {
 } from '@/lib/pricing-rules-service';
 import { pricingLabAuth } from '@/lib/pricing-lab-auth';
 import { fetchSeasonBookings } from '@/lib/pricing-drilldown';
+import { jsonInternalError } from '@/lib/api-error';
 
 /** Temporadas = regras rule_type seasonal (MVP sem tabela dedicada). */
 
@@ -37,8 +38,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: seasons, breakdown });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao listar temporadas';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -78,8 +78,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: rule });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao criar temporada';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -105,8 +104,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: rule });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao atualizar temporada';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }
 
@@ -126,7 +124,6 @@ export async function DELETE(request: NextRequest) {
     await deletePricingRule(id);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro ao excluir temporada';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(error);
   }
 }

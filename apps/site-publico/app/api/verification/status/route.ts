@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { getVerificationStatus, updatePropertyBadges } from '@/lib/verification-levels-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/verification/status
@@ -32,10 +33,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter status de verificação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter status' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -69,10 +67,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar badges:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao atualizar badges' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { auditService, type AuditLogFilter } from '@/lib/audit-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/audit/export
@@ -45,10 +46,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao exportar logs de auditoria:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao exportar logs de auditoria' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { aiSearchService } from '@/lib/ai-search-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,10 +27,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao buscar propriedades:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao buscar propriedades' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

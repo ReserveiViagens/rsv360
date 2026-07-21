@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/auth/reset-rate-limit
@@ -16,9 +17,6 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json({ success: true, message: 'Rate limit resetado com sucesso' });
   } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao resetar rate limit' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

@@ -10,6 +10,7 @@ import {
   listInteractions,
 } from '@/lib/crm-service';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/crm/interactions - Listar interações
 export async function GET(request: NextRequest) {
@@ -44,10 +45,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar interações:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar interações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -76,10 +74,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar interação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar interação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

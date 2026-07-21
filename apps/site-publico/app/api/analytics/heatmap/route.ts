@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateDemandHeatmap } from '@/lib/advanced-analytics-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET: Gerar demand heatmap
 export async function GET(req: NextRequest) {
@@ -25,10 +26,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: heatmap });
   } catch (error: any) {
     console.error('Erro ao gerar heatmap:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao gerar heatmap' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

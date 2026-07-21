@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,10 +65,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao processar métricas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao processar métricas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -106,10 +104,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Erro ao obter estatísticas:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao obter estatísticas' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

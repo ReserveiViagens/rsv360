@@ -12,6 +12,7 @@ import {
 } from '@/lib/wishlist-service';
 import { createWishlistSchema, listWishlistsQuerySchema } from '@/lib/schemas/wishlist-schemas';
 import { withAuth, optionalAuth, AuthRequest } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/wishlists - Listar wishlists do usuário
 export const GET = withAuth(
@@ -71,10 +72,7 @@ export const GET = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao listar wishlists:', error);
-      return NextResponse.json(
-        { success: false, error: error.message || 'Erro ao listar wishlists' },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: false } // Autenticação opcional para permitir acesso via token
@@ -119,10 +117,7 @@ export const POST = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao criar wishlist:', error);
-      return NextResponse.json(
-        { success: false, error: error.message || 'Erro ao criar wishlist' },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: true } // Autenticação obrigatória

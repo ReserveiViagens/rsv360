@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, withAuth } from '@/lib/api-auth';
 import { approveVerification, rejectVerification } from '@/lib/verification-service';
 import { reviewVerificationSchema } from '@/lib/schemas/verification-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 export const POST = withAuth(async (request: NextRequest, user) => {
   if (!user) {
@@ -60,10 +61,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     }
   } catch (error: any) {
     console.error('Erro ao revisar verificação:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao revisar verificação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 });
 

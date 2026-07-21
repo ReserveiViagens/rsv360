@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminApiRequest } from '@/lib/admin-api-auth';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 
 const slugToPageType: Record<string, string> = {
@@ -56,9 +57,6 @@ export async function GET(
     return NextResponse.json({ success: true, data: { images, videos } });
   } catch (error: any) {
     console.error('Erro ao importar galeria:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao importar galeria' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

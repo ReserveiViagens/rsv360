@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTopHosts } from '@/lib/top-host-service';
 import { getCachedLeaderboard, type LeaderboardFilters } from '@/lib/leaderboard-cache-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/top-hosts/leaderboard
@@ -56,13 +57,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (fallbackError: any) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: fallbackError.message || 'Erro ao obter leaderboard',
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(fallbackError);
     }
   }
 }

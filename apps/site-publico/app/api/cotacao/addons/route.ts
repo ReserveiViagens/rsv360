@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { jsonInternalError } from '@/lib/api-error';
 
 function backendUrl(): string {
   return (
@@ -14,9 +15,6 @@ export async function GET() {
     const json = await upstream.json();
     return NextResponse.json(json, { status: upstream.status });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: (error as Error).message },
-      { status: 500 },
-    );
+    return jsonInternalError(error);
   }
 }

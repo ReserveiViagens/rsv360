@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { cacheService } from '@/lib/cache-service';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 // Schema de validação
 const forecastQuerySchema = z.object({
@@ -257,9 +258,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao gerar previsão:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao gerar previsão de preços' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

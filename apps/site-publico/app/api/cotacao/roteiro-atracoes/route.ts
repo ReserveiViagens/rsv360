@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { jsonInternalError } from '@/lib/api-error';
 
 function backendBase(): string {
   return (
@@ -33,9 +34,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[roteiro-atracoes]', error);
-    return NextResponse.json(
-      { success: false, error: (error as Error).message || 'Erro ao listar atracoes' },
-      { status: 500 },
-    );
+    return jsonInternalError(error);
   }
 }

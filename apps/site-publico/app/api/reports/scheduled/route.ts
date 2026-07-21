@@ -10,6 +10,7 @@ import {
   listScheduledReports,
 } from '@/lib/reports-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/reports/scheduled - Listar relatórios agendados
 export async function GET(request: NextRequest) {
@@ -40,10 +41,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar relatórios agendados:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar relatórios' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -72,10 +70,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar relatório agendado:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar relatório agendado' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

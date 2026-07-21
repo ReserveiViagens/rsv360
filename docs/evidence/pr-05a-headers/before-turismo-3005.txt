@@ -1,0 +1,9 @@
+﻿URL=http://127.0.0.1:3005/
+STATUS=200
+Strict-Transport-Security=
+X-Content-Type-Options=
+X-Frame-Options=
+Referrer-Policy=
+X-Powered-By=Next.js
+Content-Security-Policy=
+Permissions-Policy=

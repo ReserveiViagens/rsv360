@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listWishlistItems } from '@/lib/wishlist-service';
 import { withAuth, AuthRequest } from '@/lib/api-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export const GET = withAuth(
   async (request: AuthRequest) => {
@@ -53,13 +54,7 @@ export const GET = withAuth(
       });
     } catch (error: any) {
       console.error('Erro ao listar itens da wishlist:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: error.message || 'Erro ao carregar itens',
-        },
-        { status: 500 }
-      );
+      return jsonInternalError(error);
     }
   },
   { required: false }

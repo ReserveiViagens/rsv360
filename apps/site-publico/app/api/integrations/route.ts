@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/integrations - Listar integrações
 export async function GET(request: NextRequest) {
@@ -58,10 +59,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar integrações:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar integrações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -117,10 +115,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao criar integração:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao criar integração' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { checkPerseEligibility } from '@/lib/tax-optimization/perse-enrollment-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,9 +25,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: status });
   } catch (err: unknown) {
     console.error('[tax/perse] GET error:', err);
-    return NextResponse.json(
-      { success: false, error: (err as Error).message },
-      { status: 500 }
-    );
+    return jsonInternalError(err);
   }
 }

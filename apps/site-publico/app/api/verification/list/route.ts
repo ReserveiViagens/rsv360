@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
 import { listVerificationRequests } from '@/lib/verification-service';
 import { listVerificationRequestsQuerySchema } from '@/lib/schemas/verification-schemas';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   const authResult = await requireAuth(request);
@@ -68,10 +69,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar verificações:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar verificações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

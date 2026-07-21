@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { keyManagementService } from '@/lib/key-management-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/encryption/keys
@@ -45,10 +46,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar chaves:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao listar chaves' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -93,10 +91,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao rotacionar chave:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao rotacionar chave' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -127,10 +122,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao verificar rotação de chaves:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao verificar rotação de chaves' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

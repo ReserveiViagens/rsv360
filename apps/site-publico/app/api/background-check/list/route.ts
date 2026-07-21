@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { backgroundCheckService } from '@/lib/background-check-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,10 +28,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar background checks:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar checks' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

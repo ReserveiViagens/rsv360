@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { backupService } from '@/lib/backup-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/backup/restore
@@ -41,10 +42,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao restaurar backup:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao restaurar backup' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

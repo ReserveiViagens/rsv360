@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { auditService } from '@/lib/audit-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * GET /api/audit/stats
@@ -34,10 +35,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter estatísticas de auditoria:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter estatísticas de auditoria' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

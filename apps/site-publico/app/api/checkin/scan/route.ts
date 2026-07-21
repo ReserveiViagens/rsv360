@@ -9,6 +9,7 @@ import { ScanQRCodeSchema } from '@/lib/schemas/checkin-schemas';
 import { scanQRCode } from '@/lib/checkin-service';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -108,13 +109,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(
-      { 
-        error: 'Erro ao escanear QR code',
-        message: error instanceof Error ? error.message : 'Erro desconhecido'
-      },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

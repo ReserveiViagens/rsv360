@@ -7,6 +7,7 @@ import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
 import { AnalyticsInsightsQuerySchema } from '@/lib/schemas/analytics-schemas';
 import { fetchBookingBreakdown, type BookingBreakdownRow } from '@/lib/analytics-booking-breakdown';
+import { jsonInternalError } from '@/lib/api-error';
 
 const REVENUE_STATUSES = "('confirmed')";
 const BOOKING_STATUSES = "('confirmed', 'pending')";
@@ -282,8 +283,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao gerar insights';
-    console.error('Erro ao gerar insights:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
 import { queryDatabase } from '@/lib/db';
 import { fetchBookingBreakdown } from '@/lib/analytics-booking-breakdown';
+import { jsonInternalError } from '@/lib/api-error';
 
 const BOOKING_STATUSES = "('confirmed', 'pending')";
 
@@ -90,8 +91,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Erro ao gerar mapa de calor';
-    console.error('Erro ao gerar mapa de calor:', err);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

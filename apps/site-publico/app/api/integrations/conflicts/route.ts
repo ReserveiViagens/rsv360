@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { resolveSyncConflict } from '@/lib/booking-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET /api/integrations/conflicts - Listar conflitos
 export async function GET(request: NextRequest) {
@@ -46,10 +47,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar conflitos:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar conflitos' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

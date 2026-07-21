@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { cacheGetOrSet } from '@/lib/redis-cache';
+import { jsonInternalError } from '@/lib/api-error';
 
 const REVENUE_STATUSES = "('confirmed')";
 
@@ -62,12 +63,7 @@ export async function GET(request: NextRequest) {
       data,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro desconhecido';
-    console.error('Erro ao buscar analytics:', error);
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

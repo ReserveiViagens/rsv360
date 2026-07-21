@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { disasterRecoveryService } from '@/lib/disaster-recovery-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 /**
  * POST /api/disaster-recovery/execute
@@ -56,10 +57,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Erro ao executar plano de recuperação:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao executar plano de recuperação' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

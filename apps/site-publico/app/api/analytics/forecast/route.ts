@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateRevenueForecast } from '@/lib/advanced-analytics-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 // GET: Gerar revenue forecast
 export async function GET(req: NextRequest) {
@@ -31,10 +32,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: forecast });
   } catch (error: any) {
     console.error('Erro ao gerar forecast:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao gerar forecast' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

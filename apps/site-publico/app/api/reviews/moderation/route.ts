@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { listPendingModerations, moderateReview } from '@/lib/reviews-enhanced-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,10 +33,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar moderações:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao listar moderações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -73,10 +71,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao moderar review:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao moderar review' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as jwt from 'jsonwebtoken';
 import { generateMockPlan, type OnboardingPlanData, type OnboardingPlan } from '@/lib/onboarding-plan-generator';
 import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import { jsonInternalError } from '@/lib/api-error';
 
 function getUserId(request: NextRequest): { userId: number; error?: NextResponse } {
   const authHeader = request.headers.get('authorization');
@@ -63,6 +64,6 @@ Estrutura: { "title": string, "description": string, "estimatedDuration": number
     return NextResponse.json({ success: true, data: plan });
   } catch (err: any) {
     console.error('Erro ao gerar plano:', err);
-    return NextResponse.json({ success: false, error: err.message || 'Erro ao gerar plano' }, { status: 500 });
+    return jsonInternalError(err);
   }
 }

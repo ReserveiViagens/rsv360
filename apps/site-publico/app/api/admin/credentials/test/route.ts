@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { testCredential } from '@/lib/credentials-service';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,10 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Erro ao testar credencial:', error);
-    return NextResponse.json(
-      { success: false, message: error.message || 'Erro ao testar credencial' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 

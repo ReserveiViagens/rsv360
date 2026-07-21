@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFase1BackendBaseUrl } from '@/lib/fase1-bff';
+import { jsonInternalError } from '@/lib/api-error';
 
 type Params = { params: Promise<{ token: string }> };
 
@@ -25,9 +26,6 @@ export async function POST(request: NextRequest, { params }: Params) {
       { status: upstream.status },
     );
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: (error as Error).message },
-      { status: 500 },
-    );
+    return jsonInternalError(error);
   }
 }

@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { exportAccountingData } from '@/lib/accounting-integration';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
+import { jsonInternalError } from '@/lib/api-error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,9 +82,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao exportar dados contábeis:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Erro ao exportar dados contábeis' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }

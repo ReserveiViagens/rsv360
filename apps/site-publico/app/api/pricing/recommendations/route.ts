@@ -10,6 +10,7 @@ import { getProcessedCompetitorData, scrapeAndProcessCompetitors } from '@/lib/c
 import { analyzePropertySentiment, getSentimentBasedPricingAdjustment } from '@/lib/sentiment-analysis-service';
 import { competitorScraperService } from '@/lib/competitor-scraper';
 import { queryDatabase } from '@/lib/db';
+import { jsonInternalError } from '@/lib/api-error';
 
 export interface PricingRecommendation {
   propertyId: number;
@@ -141,10 +142,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao obter recomendações:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao obter recomendações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
@@ -201,10 +199,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao atualizar recomendações:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erro ao atualizar recomendações' },
-      { status: 500 }
-    );
+    return jsonInternalError(error);
   }
 }
 
