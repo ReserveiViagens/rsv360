@@ -81,7 +81,7 @@ export class MercadoPagoService {
   private accessToken: string;
   private publicKey: string;
   private webhookSecret: string;
-  private baseUrl = 'https://api.mercadopago.com';
+  private baseUrl = process.env.MERCADO_PAGO_API_BASE_URL || 'https://api.mercadopago.com';
 
   constructor() {
     this.accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MERCADOPAGO_ACCESS_TOKEN || '';
