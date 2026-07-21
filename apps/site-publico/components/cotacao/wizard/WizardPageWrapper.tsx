@@ -29,6 +29,7 @@ import {
   taxaHospedePublicaLiteral,
 } from '@/lib/taxa-hospede-publica-parse';
 import type { TaxaHospedePublicaConfig } from './wizard-types';
+import { resolveWizardExitHref } from '@/lib/cotacao-wizard-exit';
 
 function safeApiError(raw: unknown, fallback: string): string {
   if (typeof raw !== 'string') return fallback;
@@ -67,7 +68,11 @@ function WizardContent() {
     passosColapsados,
     hotelTravado,
     onHotelIndisponivel,
+    entrada,
   } = useWizard();
+
+  const exitHref = resolveWizardExitHref(entrada);
+  const exitIsExternal = /^https?:\/\//i.test(exitHref);
 
   const fetchAvailability = useCallback(
     async (datesOverride?: { checkIn: string; checkOut: string }) => {
@@ -240,12 +245,21 @@ function WizardContent() {
         }`}
       >
         <div className="mb-6 flex items-center justify-between">
-          <Link href="/">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-1 h-4 w-4" />
-              Voltar
-            </Button>
-          </Link>
+          {exitIsExternal ? (
+            <a href={exitHref}>
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                Voltar
+              </Button>
+            </a>
+          ) : (
+            <Link href={exitHref}>
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                Voltar
+              </Button>
+            </Link>
+          )}
           <Button variant="ghost" size="sm" onClick={resetWizard}>
             <RotateCcw className="mr-1 h-4 w-4" />
             Reiniciar cotação
