@@ -68,3 +68,5 @@ jobs:
           MP_ACCESS_TOKEN: test-token
           NODE_ENV: test
           REDIS_DISABLED: 'true'
+          # PR-04a fail-closed: boot exige JWT_SECRET. Placeholder de CI (>=32), nao secret real.
+          JWT_SECRET: ci_fase5_jwt_secret_minimum_32_chars
