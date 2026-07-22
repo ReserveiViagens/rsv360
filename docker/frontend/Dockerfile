@@ -23,9 +23,10 @@ COPY apps/site-publico/package.json apps/site-publico/
 COPY apps/turismo/package.json apps/turismo/
 COPY backend/package.json backend/
 
+# next pode ficar nested em apps/*/node_modules (npm workspaces) — builder já copia esses paths.
 RUN npm ci --ignore-scripts \
   && npm run build --workspace=@rsv360/shared \
-  && test -d node_modules/next \
+  && ( test -d node_modules/next || test -d apps/site-publico/node_modules/next ) \
   && test -d node_modules/react
 
 FROM node:24-alpine AS builder
