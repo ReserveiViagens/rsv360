@@ -4,14 +4,43 @@ jest.mock('../../../../server/modules/fornecedores-hub/redis-connection', () => 
 
 import express from 'express';
 import request from 'supertest';
-import { initPublicLimiter, publicLimiter, MAX_PER_WINDOW } from '../../../../server/middleware/public-limiter';
+import {
+  initPublicLimiter,
+  publicLimiter,
+  resetPublicLimiterForTests,
+  PublicLimiterInitError,
+  MAX_PER_WINDOW,
+} from '../../../../server/middleware/public-limiter';
 
-describe('publicLimiter', () => {
-  beforeAll(async () => {
-    await initPublicLimiter();
+describe('publicLimiter (PR-06a)', () => {
+  afterEach(() => {
+    resetPublicLimiterForTests();
   });
 
-  it(`retorna 429 na requisição ${MAX_PER_WINDOW + 1} no mesmo minuto`, async () => {
+  it('fail-closed: uninitialized limiter returns 503 (never next())', async () => {
+    resetPublicLimiterForTests();
+    const app = express();
+    app.get('/p/test', publicLimiter, (_req, res) => {
+      res.json({ ok: true });
+    });
+
+    const res = await request(app).get('/p/test');
+    expect(res.status).toBe(503);
+    expect(res.body).toMatchObject({ success: false, error: 'Rate limiter unavailable' });
+  });
+
+  it('initPublicLimiter succeeds (boot assert may listen)', async () => {
+    await expect(initPublicLimiter()).resolves.toBeUndefined();
+  });
+
+  it('PublicLimiterInitError carries fail-closed code', () => {
+    const err = new PublicLimiterInitError('boom');
+    expect(err.code).toBe('PUBLIC_LIMITER_INIT_FAILED');
+    expect(err).toBeInstanceOf(Error);
+  });
+
+  it(`returns 429 on request ${MAX_PER_WINDOW + 1} in the same minute`, async () => {
+    await initPublicLimiter();
     const app = express();
     app.get('/p/test', publicLimiter, (_req, res) => {
       res.json({ ok: true });
