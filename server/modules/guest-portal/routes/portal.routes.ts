@@ -7,9 +7,13 @@ import { feedbackService } from '../services/feedback.service';
 import { requestsService } from '../services/requests.service';
 import { getBookingIdentifier, portalRepository } from '../db/portal.repository';
 import { PortalBookingUpdateSchema } from '../schemas/portal-booking-write.schema';
+import { publicLimiter } from '../../../middleware/public-limiter';
 import { z } from 'zod';
 
 const router = Router();
+
+// PR-06b: guest portal enumeration / token probe surface
+router.use(publicLimiter);
 
 router.post('/audit/auth', async (req, res) => {
   try {

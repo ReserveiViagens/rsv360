@@ -36,7 +36,7 @@ router.get('/taxa-hospede-publica', publicLimiter, async (_req, res) => {
   }
 });
 
-router.post('/buscar-ofertas', async (req, res) => {
+router.post('/buscar-ofertas', publicLimiter, async (req, res) => {
   try {
     const { checkin, checkout, hospedes } = req.body ?? {};
     if (!checkin || !checkout || !hospedes) {

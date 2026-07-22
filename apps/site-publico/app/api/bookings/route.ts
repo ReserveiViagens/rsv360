@@ -10,6 +10,7 @@ import { logStatusChange } from '@/lib/booking-status-service';
 import { optionalAuth } from '@/lib/api-auth';
 import { handleGetBookings } from '@/lib/bookings-get-handler';
 import { jsonInternalError } from '@/lib/api-error';
+import { bookingsLookupIpLimit, clientIpFromHeaders } from '@/lib/pr06b-route-limits';
 
 // POST /api/bookings - Criar nova reserva
 export async function POST(request: NextRequest) {
@@ -622,7 +623,16 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/bookings — lookup por id|booking_id|email|code com posse (PR-03 BOLA/IDOR)
+// PR-06b: per-IP ceiling closes residual enumeration probe surface.
 export async function GET(request: NextRequest) {
+  const ip = clientIpFromHeaders((n) => request.headers.get(n));
+  if (!bookingsLookupIpLimit.allow(ip)) {
+    return NextResponse.json(
+      { success: false, error: 'Too many requests' },
+      { status: 429 },
+    );
+  }
+
   return handleGetBookings(request, {
     queryDatabase,
     getAuthUser: optionalAuth,

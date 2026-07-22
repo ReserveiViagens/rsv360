@@ -335,7 +335,8 @@ router.post('/:id/pacotes-template/from-proposta', ...staffAuth, async (req, res
   }
 });
 
-router.get('/:id', optionalJwt, async (req, res) => {
+// PR-06b: closes 03b accepted risk — enumeration of redacted payload via GET /:id
+router.get('/:id', publicLimiter, optionalJwt, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isFinite(id)) {

@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { WebhookService, MpWebhookAuthError } from '../services/webhook.service';
+import { mpWebhookIpLimiter } from '../../../../../server/middleware/mp-webhook-ip-limiter';
 
 /**
  * Explicit public webhooks — provider callbacks verify signature inside the service.
  * /events and /retry stay on the parent router behind JWT (fail-closed).
+ *
+ * PR-06b: anti-flood BEFORE HMAC (high ceiling) so PR-02c 503 redelivery is not broken.
  */
 const router = Router();
 const webhookService = new WebhookService();
@@ -27,7 +30,7 @@ router.post('/stripe', async (req, res) => {
   }
 });
 
-router.post('/mercadopago', async (req, res) => {
+router.post('/mercadopago', mpWebhookIpLimiter, async (req, res) => {
   try {
     const result = await webhookService.processMPWebhook({
       body: req.body,
