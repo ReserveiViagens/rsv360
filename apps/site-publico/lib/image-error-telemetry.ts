@@ -6,7 +6,7 @@
  * Sentinel: periodic heartbeat with known volume for loss-rate audit (< 1%).
  */
 
-import { logWarn } from '@/lib/logging-service';
+import { logWarn } from '@/lib/logging-service.client';
 import { trackEvent } from '@/lib/analytics';
 
 export const IMAGE_ERROR_EVENT = 'ImageError' as const;
