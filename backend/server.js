@@ -14,6 +14,7 @@ async function startServer() {
     const app = await createApp();
     const server = http.createServer(app);
 
+    // PR-05b: CORS allowlist via corsOriginDelegate — never restore wildcard '*'.
     const { corsOriginDelegate } = require('@rsv360/shared');
     const io = new Server(server, {
       cors: {
@@ -23,6 +24,12 @@ async function startServer() {
       },
       path: '/socket.io',
     });
+
+    // PR-06b: handshake rate limit (does not alter CORS).
+    const {
+      attachSocketHandshakeRateLimit,
+    } = require('../server/middleware/socket-handshake-rate-limit');
+    attachSocketHandshakeRateLimit(io);
 
     try {
       const { registerPropostaChatSocket } = require('../server/modules/propostas/websocket/proposta-chat.socket');

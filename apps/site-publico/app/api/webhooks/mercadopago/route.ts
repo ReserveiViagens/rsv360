@@ -1,14 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleMercadoPagoWebhook } from '@/lib/mp-webhook-handler';
+import { mpWebhookIpLimit, clientIpFromHeaders } from '@/lib/pr06b-route-limits';
 
 /**
  * POST /api/webhooks/mercadopago
  *
  * PR-02b: HMAC obrigatório (fail-closed). Sem headers / inválido → 401.
+ * PR-06b: anti-flood BEFORE HMAC (high ceiling) — protects without breaking
+ * PR-02c native redelivery on 503.
  * Mantida ativa porque site-publico define notification_url nesta rota
  * (lib/mercadopago.ts) — caminho dos pagamentos criados pelo app.
  */
 export async function POST(request: NextRequest) {
+  const ip = clientIpFromHeaders((n) => request.headers.get(n));
+  if (!mpWebhookIpLimit.allow(ip)) {
+    return NextResponse.json(
+      { received: false, error: 'Too many requests' },
+      { status: 429 },
+    );
+  }
+
   const xSignature = request.headers.get('x-signature') ?? undefined;
   const xRequestId = request.headers.get('x-request-id') ?? undefined;
   const dataIdFromQuery =
