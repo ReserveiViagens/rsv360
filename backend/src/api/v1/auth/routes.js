@@ -92,11 +92,13 @@ router.post('/refresh', async (req, res) => {
 
       const ipRefreshCheck = await checkRateLimit(ipAddress, 'ip', 'refresh');
       if (!ipRefreshCheck.allowed) {
-        return res.status(429).json({
-          success: false,
-          error: 'Muitas tentativas. Tente novamente mais tarde.',
-          blocked_until: ipRefreshCheck.blockedUntil?.toISOString(),
-        });
+        const {
+          rateLimitDeniedStatus,
+          rateLimitDeniedBody,
+        } = require('./rate-limit.service');
+        return res
+          .status(rateLimitDeniedStatus(ipRefreshCheck))
+          .json(rateLimitDeniedBody(ipRefreshCheck));
       }
 
       const result = await verifyAndRotateRefreshToken(
@@ -423,18 +425,21 @@ router.post('/forgot-password', async (req, res) => {
   }
 
   try {
-    const { enforceForgotPasswordRateLimit, getClientIp } = require('./rate-limit.service');
+    const {
+      enforceForgotPasswordRateLimit,
+      getClientIp,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
     const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
     const ipAddress = getClientIp(req);
 
     if (email) {
       const rateLimitCheck = await enforceForgotPasswordRateLimit(email, ipAddress);
       if (!rateLimitCheck.allowed) {
-        return res.status(429).json({
-          success: false,
-          error: 'Muitas tentativas. Tente novamente mais tarde.',
-          blocked_until: rateLimitCheck.blockedUntil?.toISOString(),
-        });
+        return res
+          .status(rateLimitDeniedStatus(rateLimitCheck))
+          .json(rateLimitDeniedBody(rateLimitCheck));
       }
     }
 
@@ -469,15 +474,18 @@ router.post('/reset-password', async (req, res) => {
   }
 
   try {
-    const { enforceResetPasswordRateLimit, getClientIp } = require('./rate-limit.service');
+    const {
+      enforceResetPasswordRateLimit,
+      getClientIp,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
     const ipAddress = getClientIp(req);
     const rateLimitCheck = await enforceResetPasswordRateLimit(ipAddress);
     if (!rateLimitCheck.allowed) {
-      return res.status(429).json({
-        success: false,
-        error: 'Muitas tentativas. Tente novamente mais tarde.',
-        blocked_until: rateLimitCheck.blockedUntil?.toISOString(),
-      });
+      return res
+        .status(rateLimitDeniedStatus(rateLimitCheck))
+        .json(rateLimitDeniedBody(rateLimitCheck));
     }
 
     const result = await resetPasswordWithToken(req.body);
@@ -569,16 +577,19 @@ router.post('/2fa/verify', async (req, res) => {
   }
 
   try {
-    const { enforceTwoFactorVerifyRateLimit, getClientIp } = require('./rate-limit.service');
+    const {
+      enforceTwoFactorVerifyRateLimit,
+      getClientIp,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
     const tempToken = typeof req.body?.temp_token === 'string' ? req.body.temp_token.trim() : '';
     const rateKey = tempToken ? hashToken(tempToken) : getClientIp(req);
     const rateLimitCheck = await enforceTwoFactorVerifyRateLimit(rateKey);
     if (!rateLimitCheck.allowed) {
-      return res.status(429).json({
-        success: false,
-        error: 'Muitas tentativas. Tente novamente mais tarde.',
-        blocked_until: rateLimitCheck.blockedUntil?.toISOString(),
-      });
+      return res
+        .status(rateLimitDeniedStatus(rateLimitCheck))
+        .json(rateLimitDeniedBody(rateLimitCheck));
     }
 
     const result = await verifyTwoFactorLogin(req.body, {
@@ -668,6 +679,8 @@ router.post('/login', async (req, res) => {
         resetLoginRateLimit,
         recordLoginAttempt,
         getClientIp,
+        rateLimitDeniedStatus,
+        rateLimitDeniedBody,
       } = require('./rate-limit.service');
       const ipAddress = getClientIp(req);
       const userAgent = req.get('user-agent');
@@ -676,11 +689,9 @@ router.post('/login', async (req, res) => {
       const rateLimitCheck = await enforceLoginRateLimit(normalizedEmail, ipAddress);
       if (!rateLimitCheck.allowed) {
         await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Rate limit excedido');
-        return res.status(429).json({
-          success: false,
-          error: 'Muitas tentativas. Tente novamente mais tarde.',
-          blocked_until: rateLimitCheck.blockedUntil?.toISOString(),
-        });
+        return res
+          .status(rateLimitDeniedStatus(rateLimitCheck))
+          .json(rateLimitDeniedBody(rateLimitCheck));
       }
 
       const result = await loginWithDatabase(email, password, {
@@ -716,6 +727,25 @@ router.post('/login', async (req, res) => {
       success: false,
       error: 'Login indisponível. Configure DATABASE_URL ou AUTH_PILOT_ENABLED.',
     });
+  }
+
+  // PR-06a: pilot inherits the same enforceLoginRateLimit (DB or memory) — never unlimited.
+  {
+    const {
+      enforceLoginRateLimit,
+      getClientIp,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
+    const rateLimitCheck = await enforceLoginRateLimit(
+      String(email).toLowerCase(),
+      getClientIp(req),
+    );
+    if (!rateLimitCheck.allowed) {
+      return res
+        .status(rateLimitDeniedStatus(rateLimitCheck))
+        .json(rateLimitDeniedBody(rateLimitCheck));
+    }
   }
 
   const secret = getJwtSecret();

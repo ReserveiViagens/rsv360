@@ -1,4 +1,8 @@
 const { queryDatabase, isDbRefreshEnabled } = require('./refresh-token.service');
+const {
+  enforceMemoryRateLimit,
+  resetMemoryRateLimit,
+} = require('./memory-rate-limit');
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -22,9 +26,18 @@ function isRateLimitEnabled() {
   return isDbRefreshEnabled();
 }
 
+function storeUnavailableResult() {
+  return {
+    allowed: false,
+    remainingAttempts: 0,
+    storeUnavailable: true,
+  };
+}
+
 async function checkRateLimit(identifier, identifierType, action) {
+  // PR-06a: never fail-open when store is off/down.
   if (!isRateLimitEnabled()) {
-    return { allowed: true, remainingAttempts: 999 };
+    return storeUnavailableResult();
   }
 
   const config = RATE_LIMIT_CONFIGS[action] || {
@@ -33,20 +46,36 @@ async function checkRateLimit(identifier, identifierType, action) {
     blockDurationMs: 5 * 60 * 1000,
   };
 
-  const rateLimits = await queryDatabase(
-    `SELECT * FROM auth_rate_limits
-     WHERE identifier = $1 AND identifier_type = $2 AND action = $3`,
-    [identifier, identifierType, action]
-  );
+  let rateLimits;
+  try {
+    rateLimits = await queryDatabase(
+      `SELECT * FROM auth_rate_limits
+       WHERE identifier = $1 AND identifier_type = $2 AND action = $3`,
+      [identifier, identifierType, action]
+    );
+  } catch (error) {
+    console.error('[AUTH] rate-limit store error:', error.message);
+    return storeUnavailableResult();
+  }
+
+  // queryDatabase returns null when pool missing — treat as store down (fail-closed).
+  if (rateLimits == null) {
+    return storeUnavailableResult();
+  }
 
   const now = new Date();
 
-  if (!rateLimits || rateLimits.length === 0) {
-    await queryDatabase(
-      `INSERT INTO auth_rate_limits (identifier, identifier_type, action, attempt_count, last_attempt_at)
-       VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)`,
-      [identifier, identifierType, action]
-    );
+  if (rateLimits.length === 0) {
+    try {
+      await queryDatabase(
+        `INSERT INTO auth_rate_limits (identifier, identifier_type, action, attempt_count, last_attempt_at)
+         VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)`,
+        [identifier, identifierType, action]
+      );
+    } catch (error) {
+      console.error('[AUTH] rate-limit insert error:', error.message);
+      return storeUnavailableResult();
+    }
     return { allowed: true, remainingAttempts: config.maxAttempts - 1 };
   }
 
@@ -54,79 +83,113 @@ async function checkRateLimit(identifier, identifierType, action) {
   const lastAttempt = new Date(rateLimit.last_attempt_at);
   const windowStart = new Date(now.getTime() - config.windowMs);
 
-  if (rateLimit.blocked_until) {
-    const blockedUntil = new Date(rateLimit.blocked_until);
-    if (blockedUntil > now) {
+  try {
+    if (rateLimit.blocked_until) {
+      const blockedUntil = new Date(rateLimit.blocked_until);
+      if (blockedUntil > now) {
+        return { allowed: false, remainingAttempts: 0, blockedUntil };
+      }
+      await queryDatabase(
+        `UPDATE auth_rate_limits
+         SET attempt_count = 1, last_attempt_at = CURRENT_TIMESTAMP, blocked_until = NULL
+         WHERE id = $1`,
+        [rateLimit.id]
+      );
+      return { allowed: true, remainingAttempts: config.maxAttempts - 1 };
+    }
+
+    if (lastAttempt < windowStart) {
+      await queryDatabase(
+        `UPDATE auth_rate_limits
+         SET attempt_count = 1, last_attempt_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [rateLimit.id]
+      );
+      return { allowed: true, remainingAttempts: config.maxAttempts - 1 };
+    }
+
+    if (rateLimit.attempt_count >= config.maxAttempts) {
+      const blockedUntil = new Date(now.getTime() + config.blockDurationMs);
+      await queryDatabase(
+        `UPDATE auth_rate_limits SET blocked_until = $1 WHERE id = $2`,
+        [blockedUntil.toISOString(), rateLimit.id]
+      );
       return { allowed: false, remainingAttempts: 0, blockedUntil };
     }
+
     await queryDatabase(
       `UPDATE auth_rate_limits
-       SET attempt_count = 1, last_attempt_at = CURRENT_TIMESTAMP, blocked_until = NULL
+       SET attempt_count = attempt_count + 1, last_attempt_at = CURRENT_TIMESTAMP
        WHERE id = $1`,
       [rateLimit.id]
     );
-    return { allowed: true, remainingAttempts: config.maxAttempts - 1 };
+
+    return {
+      allowed: true,
+      remainingAttempts: config.maxAttempts - rateLimit.attempt_count - 1,
+    };
+  } catch (error) {
+    console.error('[AUTH] rate-limit update error:', error.message);
+    return storeUnavailableResult();
   }
-
-  if (lastAttempt < windowStart) {
-    await queryDatabase(
-      `UPDATE auth_rate_limits
-       SET attempt_count = 1, last_attempt_at = CURRENT_TIMESTAMP
-       WHERE id = $1`,
-      [rateLimit.id]
-    );
-    return { allowed: true, remainingAttempts: config.maxAttempts - 1 };
-  }
-
-  if (rateLimit.attempt_count >= config.maxAttempts) {
-    const blockedUntil = new Date(now.getTime() + config.blockDurationMs);
-    await queryDatabase(
-      `UPDATE auth_rate_limits SET blocked_until = $1 WHERE id = $2`,
-      [blockedUntil.toISOString(), rateLimit.id]
-    );
-    return { allowed: false, remainingAttempts: 0, blockedUntil };
-  }
-
-  await queryDatabase(
-    `UPDATE auth_rate_limits
-     SET attempt_count = attempt_count + 1, last_attempt_at = CURRENT_TIMESTAMP
-     WHERE id = $1`,
-    [rateLimit.id]
-  );
-
-  return {
-    allowed: true,
-    remainingAttempts: config.maxAttempts - rateLimit.attempt_count - 1,
-  };
 }
 
 async function resetRateLimit(identifier, identifierType, action) {
   if (!isRateLimitEnabled()) return;
-  await queryDatabase(
-    `DELETE FROM auth_rate_limits
-     WHERE identifier = $1 AND identifier_type = $2 AND action = $3`,
-    [identifier, identifierType, action]
-  );
+  try {
+    await queryDatabase(
+      `DELETE FROM auth_rate_limits
+       WHERE identifier = $1 AND identifier_type = $2 AND action = $3`,
+      [identifier, identifierType, action]
+    );
+  } catch (error) {
+    console.error('[AUTH] rate-limit reset error:', error.message);
+  }
 }
 
 async function recordLoginAttempt(email, ipAddress, userAgent, success, failureReason) {
   if (!isRateLimitEnabled()) return;
-  await queryDatabase(
-    `INSERT INTO login_attempts (email, ip_address, user_agent, success, failure_reason)
-     VALUES ($1, $2, $3, $4, $5)`,
-    [email, ipAddress, userAgent || null, success, failureReason || null]
-  );
+  try {
+    await queryDatabase(
+      `INSERT INTO login_attempts (email, ip_address, user_agent, success, failure_reason)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [email, ipAddress, userAgent || null, success, failureReason || null]
+    );
+  } catch (error) {
+    console.error('[AUTH] login_attempts insert error:', error.message);
+  }
 }
 
+/**
+ * Login rate limit — DB store when available; memory fallback for pilot / no-DB (PR-06a).
+ * Never unlimited.
+ */
 async function enforceLoginRateLimit(email, ipAddress) {
-  const ipCheck = await checkRateLimit(ipAddress || 'unknown', 'ip', 'login');
+  const normalizedEmail = String(email || '').toLowerCase();
+  const ip = ipAddress || 'unknown';
+
+  if (isRateLimitEnabled()) {
+    const ipCheck = await checkRateLimit(ip, 'ip', 'login');
+    if (!ipCheck.allowed) return ipCheck;
+    return checkRateLimit(normalizedEmail, 'email', 'login');
+  }
+
+  const config = RATE_LIMIT_CONFIGS.login;
+  const ipCheck = enforceMemoryRateLimit(`login:ip:${ip}`, config);
   if (!ipCheck.allowed) return ipCheck;
-  return checkRateLimit(email.toLowerCase(), 'email', 'login');
+  return enforceMemoryRateLimit(`login:email:${normalizedEmail}`, config);
 }
 
 async function resetLoginRateLimit(email, ipAddress) {
-  await resetRateLimit(ipAddress || 'unknown', 'ip', 'login');
-  await resetRateLimit(email.toLowerCase(), 'email', 'login');
+  const normalizedEmail = String(email || '').toLowerCase();
+  const ip = ipAddress || 'unknown';
+  if (isRateLimitEnabled()) {
+    await resetRateLimit(ip, 'ip', 'login');
+    await resetRateLimit(normalizedEmail, 'email', 'login');
+    return;
+  }
+  resetMemoryRateLimit(`login:ip:${ip}`);
+  resetMemoryRateLimit(`login:email:${normalizedEmail}`);
 }
 
 async function enforceForgotPasswordRateLimit(email, ipAddress) {
@@ -147,6 +210,24 @@ function getClientIp(req) {
   return (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
 }
 
+function rateLimitDeniedStatus(check) {
+  return check.storeUnavailable ? 503 : 429;
+}
+
+function rateLimitDeniedBody(check) {
+  if (check.storeUnavailable) {
+    return {
+      success: false,
+      error: 'Serviço temporariamente indisponível',
+    };
+  }
+  return {
+    success: false,
+    error: 'Muitas tentativas. Tente novamente mais tarde.',
+    blocked_until: check.blockedUntil?.toISOString?.() || check.blockedUntil,
+  };
+}
+
 module.exports = {
   isRateLimitEnabled,
   checkRateLimit,
@@ -157,4 +238,7 @@ module.exports = {
   resetLoginRateLimit,
   recordLoginAttempt,
   getClientIp,
+  rateLimitDeniedStatus,
+  rateLimitDeniedBody,
+  RATE_LIMIT_CONFIGS,
 };

@@ -102,13 +102,10 @@ async function createApp() {
     console.warn('[BOOT] CRM module failed:', err.message);
   }
 
-  try {
-    const { initPublicLimiter } = require('../server/middleware/public-limiter');
-    await initPublicLimiter();
-    console.log('[BOOT] publicLimiter Redis/memória inicializado ✓');
-  } catch (err) {
-    console.warn('[BOOT] publicLimiter não inicializado:', err.message);
-  }
+  // PR-06a: publicLimiter boot is fail-closed (model getJwtSecret) — never warn+continue.
+  const { initPublicLimiter } = require('../server/middleware/public-limiter');
+  await initPublicLimiter();
+  console.log('[BOOT] publicLimiter Redis/memória inicializado ✓');
 
   try {
     const { registerMigracaoFase1Modules } = require('../server/app');

@@ -53,5 +53,27 @@ describe('E5 — GET /metrics (prom-client baseline + PR-05b bearer)', () => {
     expect(res.text).toMatch(/rsv360_process_/);
     expect(res.text).toMatch(/rsv360_http_request_duration_seconds/);
     expect(res.text).toMatch(/rsv360_http_requests_total/);
+    // PR-05b/06a: default Node process collectors include process metrics; scrape stays healthy.
+    expect(res.text.length).toBeGreaterThan(100);
+  });
+
+  it('PR-06a: per-IP metrics rate limit returns 429 after ceiling', async () => {
+    const { METRICS_MAX_PER_WINDOW } = require('../../routes/metrics.route');
+    const app = buildApp();
+    const ip = '198.51.100.77';
+
+    for (let i = 0; i < METRICS_MAX_PER_WINDOW; i += 1) {
+      const res = await request(app)
+        .get('/metrics')
+        .set('Authorization', `Bearer ${TOKEN}`)
+        .set('X-Forwarded-For', ip);
+      expect(res.status).toBe(200);
+    }
+
+    const blocked = await request(app)
+      .get('/metrics')
+      .set('Authorization', `Bearer ${TOKEN}`)
+      .set('X-Forwarded-For', ip);
+    expect(blocked.status).toBe(429);
   });
 });
