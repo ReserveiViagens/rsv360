@@ -102,7 +102,8 @@
     "@aws-sdk/middleware-sdk-s3": {
       "fast-xml-parser": "^5.7.0"
     },
-    "axios": "^1.16.0",
+    "axios": "^1.17.1",
+    "brace-expansion": "5.0.7",
     "fast-xml-builder": "1.2.0",
     "glob": "10.5.0",
     "minimatch": "9.0.7",
