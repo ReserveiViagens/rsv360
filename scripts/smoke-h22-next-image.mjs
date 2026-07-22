@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 /**
- * H2.2 smoke — prove next/image optimization works after sharp 0.35.x bump.
+ * H2.2 / H2.3 smoke — prove next/image optimization works (sharp + next patch).
  *
  * Starts site-publico production server (expects prior `npm run build`),
- * requests `/_next/image` for a local public asset, asserts image response.
+ * requests `/_next/image` for a local public asset, asserts image response,
+ * then exits with a trustworthy exit code (cleanup must not hang).
  *
  * Usage (from repo root, after build):
  *   node scripts/smoke-h22-next-image.mjs
  */
 import { spawn } from 'node:child_process';
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -23,7 +25,7 @@ const assetFs = join(appDir, 'public', 'icons', 'icon-192x192.png');
 
 function fail(msg) {
   console.error(`H22_SMOKE_FAIL ${msg}`);
-  process.exit(1);
+  process.exitCode = 1;
 }
 
 async function waitHealthy(url, ms = 60000) {
@@ -35,17 +37,69 @@ async function waitHealthy(url, ms = 60000) {
     } catch {
       // retry
     }
-    await new Promise((r) => setTimeout(r, 500));
+    await delay(500);
   }
   fail(`server not healthy within ${ms}ms: ${url}`);
+  throw new Error('unhealthy');
+}
+
+/** Kill npm/next child tree (Windows-safe) and wait until it exits. */
+async function stopChild(child, timeoutMs = 8000) {
+  if (!child || child.exitCode !== null) return;
+
+  const waitExit = new Promise((resolve) => {
+    child.once('exit', () => resolve());
+  });
+
+  try {
+    if (process.platform === 'win32' && child.pid) {
+      spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+    } else if (child.pid) {
+      try {
+        process.kill(-child.pid, 'SIGTERM');
+      } catch {
+        child.kill('SIGTERM');
+      }
+    } else {
+      child.kill('SIGTERM');
+    }
+  } catch {
+    // ignore
+  }
+
+  const raced = await Promise.race([
+    waitExit.then(() => 'exited'),
+    delay(timeoutMs).then(() => 'timeout'),
+  ]);
+
+  if (raced === 'timeout' && child.exitCode === null) {
+    try {
+      if (process.platform === 'win32' && child.pid) {
+        spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+          stdio: 'ignore',
+          windowsHide: true,
+        });
+      } else {
+        child.kill('SIGKILL');
+      }
+    } catch {
+      // ignore
+    }
+    await Promise.race([waitExit, delay(2000)]);
+  }
 }
 
 async function main() {
   if (!existsSync(join(appDir, '.next'))) {
     fail('missing apps/site-publico/.next — run npm run build --workspace apps/site-publico first');
+    process.exit(1);
   }
   if (!existsSync(assetFs)) {
     fail(`missing smoke asset ${assetFs}`);
+    process.exit(1);
   }
 
   const require = createRequire(join(appDir, 'package.json'));
@@ -55,6 +109,7 @@ async function main() {
     sharpVersion = sharp?.versions?.sharp || 'loaded';
   } catch (err) {
     fail(`cannot require sharp from site-publico: ${err?.message || err}`);
+    process.exit(1);
   }
 
   const origSize = statSync(assetFs).size;
@@ -76,6 +131,7 @@ async function main() {
       },
       stdio: ['ignore', 'pipe', 'pipe'],
       shell: true,
+      detached: process.platform !== 'win32',
     },
   );
 
@@ -84,19 +140,7 @@ async function main() {
     stderr += d.toString();
   });
 
-  const cleanup = () => {
-    try {
-      child.kill('SIGTERM');
-    } catch {
-      // ignore
-    }
-  };
-  process.on('exit', cleanup);
-  process.on('SIGINT', () => {
-    cleanup();
-    process.exit(130);
-  });
-
+  let exitCode = 0;
   try {
     await waitHealthy(`http://127.0.0.1:${port}/`);
 
@@ -112,50 +156,50 @@ async function main() {
 
     if (res.status !== 200) {
       fail(`/_next/image status=${res.status} ct=${ct} body=${buf.slice(0, 200).toString('utf8')}`);
-    }
-    if (!ct.startsWith('image/')) {
+      exitCode = 1;
+    } else if (!ct.startsWith('image/')) {
       fail(`expected image/* content-type, got ${ct}`);
-    }
-    if (buf.length < 32) {
+      exitCode = 1;
+    } else if (buf.length < 32) {
       fail(`image body too small: ${buf.length}`);
-    }
-    // Optimized w=64 should be smaller than original 192px icon in typical cases
-    if (buf.length >= origSize) {
-      console.warn(
-        `H22_SMOKE_WARN optimized size ${buf.length} >= original ${origSize} (still image/* 200)`,
+      exitCode = 1;
+    } else {
+      if (buf.length >= origSize) {
+        console.warn(
+          `H22_SMOKE_WARN optimized size ${buf.length} >= original ${origSize} (still image/* 200)`,
+        );
+      }
+      console.log(
+        JSON.stringify({
+          ok: true,
+          sharp: sharpVersion,
+          status: res.status,
+          contentType: ct,
+          bytes: buf.length,
+          originalBytes: origSize,
+          url: imgUrl,
+        }),
+      );
+      console.log(
+        `H22_SMOKE_SUMMARY pass=1/1 sharp=${sharpVersion} ct=${ct} bytes=${buf.length} orig=${origSize}`,
       );
     }
-
-    console.log(
-      JSON.stringify({
-        ok: true,
-        sharp: sharpVersion,
-        status: res.status,
-        contentType: ct,
-        bytes: buf.length,
-        originalBytes: origSize,
-        url: imgUrl,
-      }),
-    );
-    console.log(
-      `H22_SMOKE_SUMMARY pass=1/1 sharp=${sharpVersion} ct=${ct} bytes=${buf.length} orig=${origSize}`,
-    );
-    cleanup();
-    process.exit(0);
-  } finally {
-    cleanup();
-    await new Promise((r) => setTimeout(r, 300));
-    if (child.exitCode === null && !child.killed) {
-      try {
-        child.kill('SIGKILL');
-      } catch {
-        // ignore
-      }
+  } catch (err) {
+    if (process.exitCode !== 1) {
+      fail(err?.stack || String(err));
     }
+    exitCode = 1;
+  } finally {
+    await stopChild(child);
     if (stderr && /error|ERR_/i.test(stderr)) {
       console.error('H22_SMOKE_SERVER_STDERR_TAIL', stderr.slice(-800));
     }
   }
+
+  process.exit(exitCode || process.exitCode || 0);
 }
 
-main().catch((err) => fail(err?.stack || String(err)));
+main().catch(async (err) => {
+  fail(err?.stack || String(err));
+  process.exit(1);
+});
