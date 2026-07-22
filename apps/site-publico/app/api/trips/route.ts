@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
 import { jsonInternalError } from '@/lib/api-error';
+import {
   createTripPlan,
   getTripPlan,
   addTripTask,
