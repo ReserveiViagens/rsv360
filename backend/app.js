@@ -107,6 +107,11 @@ async function createApp() {
   await initPublicLimiter();
   console.log('[BOOT] publicLimiter Redis/memória inicializado ✓');
 
+  // PR-06b: MP webhook anti-flood (high ceiling) — fail-closed if init fails.
+  const { initMpWebhookIpLimiter } = require('../server/middleware/mp-webhook-ip-limiter');
+  await initMpWebhookIpLimiter();
+  console.log('[BOOT] mpWebhookIpLimiter Redis/memória inicializado ✓');
+
   try {
     const { registerMigracaoFase1Modules } = require('../server/app');
     registerMigracaoFase1Modules(app);
