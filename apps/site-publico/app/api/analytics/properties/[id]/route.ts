@@ -4,8 +4,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { marketingLabAuth } from '@/lib/marketing-lab-auth';
-import {
 import { jsonInternalError } from '@/lib/api-error';
+import {
   fetchBookingBreakdown,
   fetchPropertySummary,
 } from '@/lib/analytics-booking-breakdown';
