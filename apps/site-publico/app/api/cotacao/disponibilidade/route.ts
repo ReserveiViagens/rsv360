@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { meetsWizardMinNights, WIZARD_MIN_NIGHTS } from '@rsv360/shared';
 import { getWebsiteContent } from '@/lib/db';
 import { normalizeImageList, resolvePublicMediaList } from '@/lib/cotacao-image-utils';
-import {
 import { jsonInternalError } from '@/lib/api-error';
+import {
   catalogItemFromAttraction,
   catalogItemFromHotel,
   catalogItemFromTicket,
