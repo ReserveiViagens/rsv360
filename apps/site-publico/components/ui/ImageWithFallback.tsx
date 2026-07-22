@@ -1,9 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useId, useRef } from 'react';
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  buildLoadAttemptKey,
+  reportImageError,
+  reportImagePermanentFailure,
+  reportImageRecovered,
+} from '@/lib/image-error-telemetry';
 
 interface ImageWithFallbackProps {
   src: string;
@@ -16,6 +22,11 @@ interface ImageWithFallbackProps {
   objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   onError?: () => void;
   onLoad?: () => void;
+  /** PR-001c context */
+  componentName?: string;
+  imageId?: string;
+  parqueId?: string;
+  ingressoId?: string;
 }
 
 const DEFAULT_FALLBACK =
@@ -36,18 +47,43 @@ export function ImageWithFallback({
   objectFit = 'cover',
   onError,
   onLoad,
+  componentName = 'ImageWithFallback',
+  imageId,
+  parqueId,
+  ingressoId,
 }: ImageWithFallbackProps) {
+  const attemptNonce = useId();
+  const attemptKeyRef = useRef<string>('');
   const [imgSrc, setImgSrc] = useState(src);
   const [exhausted, setExhausted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const telemetryBase = {
+    component_name: componentName,
+    image_id: imageId,
+    parque_id: parqueId,
+    ingresso_id: ingressoId,
+  };
+
   const handleError = () => {
+    const key =
+      attemptKeyRef.current ||
+      buildLoadAttemptKey({
+        component_name: componentName,
+        url: src,
+        attempt_id: `${attemptNonce}:${src}`,
+      });
+    attemptKeyRef.current = key;
+
     if (imgSrc !== fallbackSrc) {
+      void reportImageError(key, { ...telemetryBase, url: imgSrc });
       setImgSrc(fallbackSrc);
       setIsLoading(true);
       onError?.();
       return;
     }
+
+    void reportImagePermanentFailure(key, { ...telemetryBase, url: imgSrc });
     setExhausted(true);
     setIsLoading(false);
     onError?.();
@@ -55,6 +91,12 @@ export function ImageWithFallback({
 
   const handleLoad = () => {
     setIsLoading(false);
+    if (imgSrc === fallbackSrc && attemptKeyRef.current) {
+      void reportImageRecovered(attemptKeyRef.current, {
+        ...telemetryBase,
+        url: fallbackSrc,
+      });
+    }
     onLoad?.();
   };
 
@@ -62,7 +104,12 @@ export function ImageWithFallback({
     setImgSrc(src);
     setExhausted(false);
     setIsLoading(true);
-  }, [src]);
+    attemptKeyRef.current = buildLoadAttemptKey({
+      component_name: componentName,
+      url: src,
+      attempt_id: `${attemptNonce}:${src}`,
+    });
+  }, [src, attemptNonce, componentName]);
 
   const sizedStyle =
     width != null || height != null

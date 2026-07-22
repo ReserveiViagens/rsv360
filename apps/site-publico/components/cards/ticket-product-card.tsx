@@ -1,11 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useId, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Star } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import {
+  buildLoadAttemptKey,
+  reportImageError,
+} from "@/lib/image-error-telemetry"
 
 export type TicketProductCardVariant = "grid" | "list"
 
@@ -25,6 +29,10 @@ export interface TicketProductCardProps {
   onAddToCart?: (item: { title: string; discountedPrice: number; originalPrice: number; installments?: string }) => void
   /** Chamado quando a imagem falha ao carregar (ex.: 404) — permite fallback para URL alternativa */
   onImageError?: () => void
+  /** PR-001c — ids de contexto para ImageError */
+  parqueId?: string
+  ingressoId?: string
+  imageId?: string
   /** Se informado, exibe countdown (HH:MM:SS) e badge "ENDING SOON" quando &lt; 5 min */
   countdownEnd?: Date
   /** 0–100: exibe barra de progresso e texto "X% Sold Out". Ignorado se remainingUnits for informado. */
@@ -68,6 +76,9 @@ export function TicketProductCard({
   showFlashBadge = true,
   onAddToCart,
   onImageError,
+  parqueId,
+  ingressoId,
+  imageId,
   countdownEnd,
   soldPercent,
   remainingUnits,
@@ -75,6 +86,7 @@ export function TicketProductCard({
   variant = "grid",
   className,
 }: TicketProductCardProps) {
+  const attemptNonce = useId()
   const [countdownMs, setCountdownMs] = useState<number | null>(
     countdownEnd ? Math.max(0, countdownEnd.getTime() - Date.now()) : null
   )
@@ -90,6 +102,22 @@ export function TicketProductCard({
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [countdownEnd])
+
+  const handleImageError = useCallback(() => {
+    const attemptKey = buildLoadAttemptKey({
+      component_name: 'TicketProductCard',
+      url: image,
+      attempt_id: `${attemptNonce}:${image}`,
+    })
+    void reportImageError(attemptKey, {
+      url: image,
+      component_name: 'TicketProductCard',
+      image_id: imageId,
+      parque_id: parqueId,
+      ingresso_id: ingressoId,
+    })
+    onImageError?.()
+  }, [attemptNonce, image, imageId, ingressoId, onImageError, parqueId])
 
   const handleCtaClick = (e: React.MouseEvent) => {
     if (onAddToCart) {
@@ -119,7 +147,7 @@ export function TicketProductCard({
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px"
-            onError={onImageError}
+            onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           {showFlashBadge && (
@@ -239,7 +267,7 @@ export function TicketProductCard({
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, 128px"
-            onError={onImageError}
+            onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           {showFlashBadge && (
