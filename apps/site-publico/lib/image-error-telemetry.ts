@@ -124,7 +124,55 @@ export function getReleaseVersion(): string {
 
 export function getPageRoute(): string {
   if (typeof window === 'undefined') return 'ssr';
-  return window.location.pathname || '/';
+  return sanitizeUrlForTelemetry(window.location.pathname || '/');
+}
+
+/**
+ * Strip query string and fragment before any telemetry emit.
+ * Prevents capability tokens (e.g. rt-*, portal_*) leaking to Sentry/analytics
+ * when this helper is reused on proposta/check-in surfaces (PR-03b).
+ */
+export function sanitizeUrlForTelemetry(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+
+  // data: URLs have no capability query; avoid mangling base64
+  if (trimmed.startsWith('data:')) {
+    return trimmed.length > 96
+      ? `${trimmed.slice(0, 48)}…(data-url)`
+      : trimmed;
+  }
+
+  try {
+    if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+      const u = new URL(trimmed);
+      u.search = '';
+      u.hash = '';
+      return u.toString();
+    }
+  } catch {
+    // fall through to relative strip
+  }
+
+  const q = trimmed.indexOf('?');
+  const h = trimmed.indexOf('#');
+  let end = trimmed.length;
+  if (q >= 0) end = Math.min(end, q);
+  if (h >= 0) end = Math.min(end, h);
+  return trimmed.slice(0, end);
+}
+
+function newAnonymousSessionId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    const buf = new Uint8Array(16);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  return `sid_${Date.now()}`;
 }
 
 export function getUserSessionId(): string | undefined {
@@ -133,10 +181,7 @@ export function getUserSessionId(): string | undefined {
     const key = 'rsv360_img_telemetry_sid';
     let id = sessionStorage.getItem(key);
     if (!id) {
-      id =
-        typeof crypto !== 'undefined' && 'randomUUID' in crypto
-          ? crypto.randomUUID()
-          : `sid_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      id = newAnonymousSessionId();
       sessionStorage.setItem(key, id);
     }
     return id;
@@ -147,13 +192,16 @@ export function getUserSessionId(): string | undefined {
 
 /**
  * Stable attempt key: one logical load of (component + image identity + attempt nonce).
+ * URL portion is sanitized (no query/fragment).
  */
 export function buildLoadAttemptKey(parts: {
   component_name: string;
   url: string;
   attempt_id: string;
 }): string {
-  return `${parts.component_name}::${parts.url}::${parts.attempt_id}`;
+  const safeUrl = sanitizeUrlForTelemetry(parts.url);
+  const safeAttempt = sanitizeUrlForTelemetry(parts.attempt_id);
+  return `${parts.component_name}::${safeUrl}::${safeAttempt}`;
 }
 
 async function defaultEmit(
@@ -180,7 +228,7 @@ function enrichContext(
     Pick<ImageTelemetryContext, 'url' | 'component_name'>,
 ): ImageTelemetryContext {
   return {
-    url: partial.url,
+    url: sanitizeUrlForTelemetry(partial.url),
     browser: partial.browser ?? detectBrowser(),
     viewport: partial.viewport ?? getViewportLabel(),
     environment: partial.environment ?? process.env.NODE_ENV ?? 'development',
@@ -188,7 +236,9 @@ function enrichContext(
     parque_id: partial.parque_id,
     ingresso_id: partial.ingresso_id,
     component_name: partial.component_name,
-    page_route: partial.page_route ?? getPageRoute(),
+    page_route: sanitizeUrlForTelemetry(
+      partial.page_route ?? getPageRoute(),
+    ),
     release_version: partial.release_version ?? getReleaseVersion(),
     user_session_id: partial.user_session_id ?? getUserSessionId(),
     failed_at_ms: partial.failed_at_ms,

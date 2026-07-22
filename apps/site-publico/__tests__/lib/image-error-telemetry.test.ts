@@ -140,4 +140,33 @@ describe('image-error-telemetry (PR-001c)', () => {
       expected_interval_ms: 60_000,
     });
   });
+
+  it('strips query string and fragment from url/page_route before emit', async () => {
+    const { sanitizeUrlForTelemetry } = await import('@/lib/image-error-telemetry');
+    expect(
+      sanitizeUrlForTelemetry(
+        'https://cdn.example/img.jpg?token=rt-secret&x=1#frag',
+      ),
+    ).toBe('https://cdn.example/img.jpg');
+    expect(
+      sanitizeUrlForTelemetry('/proposta/abc?token=rt-leak#top'),
+    ).toBe('/proposta/abc');
+
+    const key = buildLoadAttemptKey({
+      component_name: 'TicketProductCard',
+      url: '/images/x.jpeg?sig=rt-abc',
+      attempt_id: 'e5',
+    });
+    expect(key).not.toContain('sig=');
+    expect(key).toContain('/images/x.jpeg');
+
+    await reportImageError(key, {
+      url: 'https://example.com/park.jpg?token=rt-capability-leak',
+      component_name: 'TicketProductCard',
+      page_route: '/proposta/1?token=rt-capability-leak',
+    });
+    expect(emitted[0].payload.url).toBe('https://example.com/park.jpg');
+    expect(emitted[0].payload.page_route).toBe('/proposta/1');
+    expect(JSON.stringify(emitted[0].payload)).not.toMatch(/rt-capability|token=/);
+  });
 });
