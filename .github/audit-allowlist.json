@@ -6,11 +6,6 @@
       "reason": "Dependência transitiva do socket.io — sem patch disponível",
       "expires": "2026-09-30"
     },
-    "nodemailer": {
-      "severity": "high",
-      "reason": "Usado para envio de emails — avaliar upgrade para v7",
-      "expires": "2026-09-30"
-    },
     "ws": {
       "severity": "high",
       "reason": "Dependência transitiva do Socket.IO — aguardar patch upstream",
