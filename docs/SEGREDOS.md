@@ -22,6 +22,14 @@
 | `OAUTH_*` / SSO BFF | Next apps | compose defaults sÃ³ em lab | |
 | Stripe / outros `REDACTED_WHSEC_` | (legado docs) | â€” | strings mortas no tip â€” alvo S0c |
 | Grafana `GF_SECURITY_ADMIN_PASSWORD` | compose | host `.env` | |
+| `TWO_FA_ENCRYPTION_KEY` | backend 2FA | host `.env` | opcional; fallback `JWT_SECRET` |
+| `TURNSTILE_SECRET_KEY` | login (06c) + cotação | host `.env` | fail-closed no login quando proteção ativa |
+
+## PR-06c — MFA / lockout (sem valores)
+
+- Runbook: [`docs/evidence/pr-06c/RUNBOOK-MFA-RESET.md`](./evidence/pr-06c/RUNBOOK-MFA-RESET.md)
+- Flags (default OFF): `AUTH_LOGIN_PROTECTION_ENABLED`, `AUTH_MFA_ENFORCE`, `AUTH_MFA_ENROLLMENT_START_AT`, `AUTH_MFA_ADMIN_OPS`
+- Último recurso owner: SQL em `auth_login_protection` / `user_2fa` (ver runbook) — credenciais só no secret store
 
 ## Alvos tip + histÃ³rico (S0c)
 

@@ -281,6 +281,13 @@
       "when": 1783626000000,
       "tag": "0039_agente_conhecimento",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1783700000000,
+      "tag": "0040_pr06c_login_protection_mfa",
+      "breakpoints": true
     }
   ]
 }

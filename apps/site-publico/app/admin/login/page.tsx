@@ -51,6 +51,18 @@ export default function AdminLoginPage() {
         return
       }
 
+      if (result?.data?.requires_mfa_enrollment && result?.data?.enrollment_token) {
+        router.replace(
+          `/admin/mfa-enroll?token=${encodeURIComponent(result.data.enrollment_token)}`,
+        )
+        return
+      }
+
+      if (result?.data?.requires_2fa) {
+        setError("TOTP obrigatório — complete o desafio 2FA no fluxo staff.")
+        return
+      }
+
       router.replace(from)
     } catch {
       setError("Não foi possível autenticar agora. Tente novamente.")
