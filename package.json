@@ -130,6 +130,10 @@
     },
     "test-exclude": "7.0.1",
     "shell-quote": "1.10.0",
+    "js-yaml": "3.15.0",
+    "@eslint/eslintrc": {
+      "js-yaml": "4.3.0"
+    },
     "joi": "17.13.4",
     "postcss": "8.5.15",
     "next": {
