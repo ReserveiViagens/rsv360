@@ -18,6 +18,14 @@ describe('verificarTurnstile', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('failClosed nega em dev quando secret ausente (PR-06c login)', async () => {
+    process.env.NODE_ENV = 'development';
+    delete process.env.TURNSTILE_SECRET_KEY;
+    const { verificarTurnstile } = await import('../../../../server/lib/turnstile');
+    const result = await verificarTurnstile(undefined, undefined, { failClosed: true });
+    expect(result.ok).toBe(false);
+  });
+
   it('rejeita token ausente quando secret configurado', async () => {
     process.env.TURNSTILE_SECRET_KEY = 'test-secret';
     const { verificarTurnstile } = await import('../../../../server/lib/turnstile');

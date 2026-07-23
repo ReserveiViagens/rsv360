@@ -5,13 +5,23 @@ export interface TurnstileVerifyResult {
   error?: string;
 }
 
+export interface TurnstileVerifyOptions {
+  /** When true, missing secret always denies (PR-06c login). Cotação keeps legacy bypass unless set. */
+  failClosed?: boolean;
+}
+
 export async function verificarTurnstile(
   token: string | undefined,
   remoteIp?: string,
+  options?: TurnstileVerifyOptions,
 ): Promise<TurnstileVerifyResult> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
+  const failClosed =
+    options?.failClosed === true ||
+    String(process.env.AUTH_LOGIN_TURNSTILE_FAIL_CLOSED || '').toLowerCase() === 'true';
+
   if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
+    if (failClosed || process.env.NODE_ENV === 'production') {
       return { ok: false, error: 'Turnstile não configurado no servidor' };
     }
     if (process.env.TURNSTILE_DEV_BYPASS_WARN !== 'false') {

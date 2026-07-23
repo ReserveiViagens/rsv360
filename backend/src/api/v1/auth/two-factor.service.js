@@ -36,13 +36,34 @@ async function hashBackupCodes(codes) {
 }
 
 async function verifyTotpCode(secret, code) {
-  if (!secret || !code) return false;
+  if (!secret || !code) return { valid: false };
   const result = await verify({
     secret,
     token: String(code).trim(),
     epochTolerance: 1,
   });
-  return Boolean(result?.valid);
+  if (!result?.valid) return { valid: false };
+  // otplib: delta is steps from current (±1 window). Persist absolute step for anti-replay.
+  const step = Math.floor(Date.now() / 30000) + (Number(result.delta) || 0);
+  return { valid: true, step };
+}
+
+/**
+ * PR-06c — reject TOTP already accepted within the ±1 window (anti-replay).
+ */
+async function assertTotpNotReplayed(userId, step) {
+  const row = await getUser2faRow(userId);
+  if (!row) return true;
+  if (row.last_totp_step != null && Number(row.last_totp_step) === Number(step)) {
+    return false;
+  }
+  await queryDatabase(
+    `UPDATE user_2fa
+     SET last_totp_step = $1, last_totp_used_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+     WHERE user_id = $2`,
+    [step, userId]
+  );
+  return true;
 }
 
 async function isTwoFactorEnabled(userId) {
@@ -127,17 +148,20 @@ async function verifyBackupCode(row, backupCode) {
   return false;
 }
 
-async function setupTwoFactor(userId, email) {
+async function setupTwoFactor(userId, email, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
   const secret = generateSecret(20);
   const encrypted = encryptSecret(secret);
 
   await queryDatabase(
-    `INSERT INTO user_2fa (user_id, totp_secret_encrypted, enabled_at, backup_codes_hash)
-     VALUES ($1, $2, NULL, NULL)
+    `INSERT INTO user_2fa (user_id, totp_secret_encrypted, enabled_at, backup_codes_hash, last_totp_step, last_totp_used_at)
+     VALUES ($1, $2, NULL, NULL, NULL, NULL)
      ON CONFLICT (user_id)
      DO UPDATE SET totp_secret_encrypted = EXCLUDED.totp_secret_encrypted,
                    enabled_at = NULL,
                    backup_codes_hash = NULL,
+                   last_totp_step = NULL,
+                   last_totp_used_at = NULL,
                    updated_at = CURRENT_TIMESTAMP`,
     [userId, encrypted]
   );
@@ -149,6 +173,14 @@ async function setupTwoFactor(userId, email) {
   });
   const qrCode = await QRCode.toDataURL(otpauthUrl);
 
+  emitMfaAudit('MFAEnrollmentStarted', {
+    userId,
+    role: meta.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface,
+  });
+
   return {
     secret,
     qr_code: qrCode,
@@ -156,16 +188,38 @@ async function setupTwoFactor(userId, email) {
   };
 }
 
-async function verifyTwoFactorSetup(userId, code) {
+async function verifyTwoFactorSetup(userId, code, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
   const row = await getUser2faRow(userId);
   if (!row || row.enabled_at) {
     return { error: 'invalid_state', status: 400, message: '2FA já ativo ou setup não iniciado' };
   }
 
   const secret = await getDecryptedSecret(row);
-  const valid = await verifyTotpCode(secret, code);
-  if (!valid) {
+  const totp = await verifyTotpCode(secret, code);
+  if (!totp.valid) {
+    emitMfaAudit('MFAVerificationFailed', {
+      userId,
+      role: meta.role,
+      ip: meta.ipAddress,
+      userAgent: meta.userAgent,
+      surface: meta.surface,
+      detail: 'setup',
+    });
     return { error: 'invalid_code', status: 401, message: 'Código inválido' };
+  }
+
+  const fresh = await assertTotpNotReplayed(userId, totp.step);
+  if (!fresh) {
+    emitMfaAudit('MFAVerificationFailed', {
+      userId,
+      role: meta.role,
+      ip: meta.ipAddress,
+      userAgent: meta.userAgent,
+      surface: meta.surface,
+      detail: 'replay',
+    });
+    return { error: 'replay', status: 401, message: 'Código já utilizado' };
   }
 
   const backupCodes = generateBackupCodes();
@@ -180,10 +234,19 @@ async function verifyTwoFactorSetup(userId, code) {
     [JSON.stringify(backupHashes), userId]
   );
 
+  emitMfaAudit('MFAEnrollmentCompleted', {
+    userId,
+    role: meta.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface,
+  });
+
   return { backup_codes: backupCodes };
 }
 
 async function verifyTwoFactorLogin(payload, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
   const tempToken = typeof payload.temp_token === 'string' ? payload.temp_token.trim() : '';
   const code = typeof payload.code === 'string' ? payload.code.trim() : '';
   const backupCode =
@@ -211,23 +274,47 @@ async function verifyTwoFactorLogin(payload, meta = {}) {
     return { error: 'invalid_state', status: 401, message: '2FA não está ativo' };
   }
 
+  const user = await getUserById(challenge.user_id);
+  const auditBase = {
+    userId: challenge.user_id,
+    role: user?.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface,
+  };
+
   let verified = false;
+  let usedBackup = false;
   if (code) {
     const secret = await getDecryptedSecret(row);
-    verified = await verifyTotpCode(secret, code);
+    const totp = await verifyTotpCode(secret, code);
+    if (totp.valid) {
+      const fresh = await assertTotpNotReplayed(challenge.user_id, totp.step);
+      if (!fresh) {
+        emitMfaAudit('MFAVerificationFailed', { ...auditBase, detail: 'replay' });
+        return { error: 'replay', status: 401, message: 'Código já utilizado' };
+      }
+      verified = true;
+    }
   } else {
     verified = await verifyBackupCode(row, backupCode);
+    usedBackup = verified;
   }
 
   if (!verified) {
+    emitMfaAudit('MFAVerificationFailed', { ...auditBase, detail: code ? 'totp' : 'backup' });
     return { error: 'invalid_code', status: 401, message: 'Código inválido' };
   }
 
   await consumeChallenge(challenge.id);
-  const user = await getUserById(challenge.user_id);
   if (!user) {
     return { error: 'invalid_state', status: 401, message: 'Usuário não encontrado' };
   }
+
+  if (usedBackup) {
+    emitMfaAudit('RecoveryCodeUsed', auditBase);
+  }
+  emitMfaAudit('MFAVerificationSucceeded', auditBase);
 
   return issueLoginTokens(user, meta);
 }
@@ -238,7 +325,8 @@ async function assertUserPassword(user, password) {
   return comparePassword(password, storedHash);
 }
 
-async function disableTwoFactor(userId, password, code) {
+async function disableTwoFactor(userId, password, code, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
   const user = await getUserById(userId);
   if (!user) {
     return { error: 'not_found', status: 404, message: 'Usuário não encontrado' };
@@ -255,17 +343,32 @@ async function disableTwoFactor(userId, password, code) {
   }
 
   const secret = await getDecryptedSecret(row);
-  const codeOk = await verifyTotpCode(secret, code);
-  const backupOk = !codeOk ? await verifyBackupCode(row, code) : false;
-  if (!codeOk && !backupOk) {
+  const totp = await verifyTotpCode(secret, code);
+  const backupOk = !totp.valid ? await verifyBackupCode(row, code) : false;
+  if (!totp.valid && !backupOk) {
     return { error: 'invalid_code', status: 401, message: 'Código inválido' };
+  }
+  if (totp.valid) {
+    const fresh = await assertTotpNotReplayed(userId, totp.step);
+    if (!fresh) {
+      return { error: 'replay', status: 401, message: 'Código já utilizado' };
+    }
   }
 
   await queryDatabase('DELETE FROM user_2fa WHERE user_id = $1', [userId]);
+  emitMfaAudit('MFAResetCompleted', {
+    userId,
+    role: user.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface,
+    detail: 'self_disable',
+  });
   return { message: '2FA desativado' };
 }
 
-async function regenerateBackupCodes(userId, password, code) {
+async function regenerateBackupCodes(userId, password, code, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
   const user = await getUserById(userId);
   if (!user) {
     return { error: 'not_found', status: 404, message: 'Usuário não encontrado' };
@@ -282,9 +385,13 @@ async function regenerateBackupCodes(userId, password, code) {
   }
 
   const secret = await getDecryptedSecret(row);
-  const valid = await verifyTotpCode(secret, code);
-  if (!valid) {
+  const totp = await verifyTotpCode(secret, code);
+  if (!totp.valid) {
     return { error: 'invalid_code', status: 401, message: 'Código inválido' };
+  }
+  const fresh = await assertTotpNotReplayed(userId, totp.step);
+  if (!fresh) {
+    return { error: 'replay', status: 401, message: 'Código já utilizado' };
   }
 
   const backupCodes = generateBackupCodes();
@@ -295,7 +402,44 @@ async function regenerateBackupCodes(userId, password, code) {
     [JSON.stringify(backupHashes), userId]
   );
 
+  emitMfaAudit('RecoveryCodeRegenerated', {
+    userId,
+    role: user.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface,
+  });
+
   return { backup_codes: backupCodes };
+}
+
+/**
+ * Admin-only MFA reset (never public UI). Caller must authorize + audit request.
+ */
+async function adminResetTwoFactor(targetUserId, operatorMeta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
+  emitMfaAudit('MFAResetRequested', {
+    userId: targetUserId,
+    role: operatorMeta.targetRole,
+    ip: operatorMeta.ipAddress,
+    userAgent: operatorMeta.userAgent,
+    surface: operatorMeta.surface,
+    detail: `operator:${operatorMeta.operatorId || 'unknown'}`,
+  });
+
+  await queryDatabase('DELETE FROM user_2fa WHERE user_id = $1', [targetUserId]);
+  await queryDatabase('DELETE FROM login_2fa_challenges WHERE user_id = $1', [targetUserId]);
+
+  emitMfaAudit('MFAResetCompleted', {
+    userId: targetUserId,
+    role: operatorMeta.targetRole,
+    ip: operatorMeta.ipAddress,
+    userAgent: operatorMeta.userAgent,
+    surface: operatorMeta.surface,
+    detail: `operator:${operatorMeta.operatorId || 'unknown'}`,
+  });
+
+  return { message: 'MFA resetado' };
 }
 
 function isTwoFactorDbEnabled() {
@@ -311,5 +455,8 @@ module.exports = {
   verifyTwoFactorLogin,
   disableTwoFactor,
   regenerateBackupCodes,
+  adminResetTwoFactor,
   hashToken,
+  verifyTotpCode,
+  assertTotpNotReplayed,
 };

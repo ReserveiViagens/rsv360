@@ -44,6 +44,15 @@ router.get('/session', (req, res) => {
     return res.status(401).json({ authenticated: false, error: 'Token inválido ou expirado' });
   }
 
+  // PR-06c: enrollment-scoped token cannot access admin pages.
+  if (payload.purpose === 'mfa_enrollment') {
+    return res.status(403).json({
+      authenticated: false,
+      requires_mfa_enrollment: true,
+      error: 'Conclua o cadastro MFA antes de acessar outras páginas',
+    });
+  }
+
   const body = normalizePayload(payload);
   if (!body) {
     return res.status(401).json({ authenticated: false, error: 'Payload inválido' });
@@ -521,13 +530,30 @@ function resolveBearerUser(req) {
   return {
     userId: Number(userId),
     email: payload.email,
+    role: payload.role,
+    purpose: payload.purpose || null,
   };
 }
 
-/** POST /api/v1/auth/2fa/setup — gera secret + QR (D2.5) */
-router.post('/2fa/setup', async (req, res) => {
+/** Full session or enrollment-scoped token (PR-06c). */
+function resolveMfaActor(req) {
   const bearer = resolveBearerUser(req);
-  if (!bearer) {
+  if (!bearer) return null;
+  return bearer;
+}
+
+function enrollmentOnlyDenied(res) {
+  return res.status(403).json({
+    success: false,
+    error: 'Conclua o cadastro MFA antes de acessar outras páginas',
+    requires_mfa_enrollment: true,
+  });
+}
+
+/** POST /api/v1/auth/2fa/setup — gera secret + QR (D2.5 / PR-06c) */
+router.post('/2fa/setup', async (req, res) => {
+  const actor = resolveMfaActor(req);
+  if (!actor) {
     return res.status(401).json({ success: false, error: 'Token ausente ou inválido' });
   }
 
@@ -537,7 +563,13 @@ router.post('/2fa/setup', async (req, res) => {
   }
 
   try {
-    const data = await setupTwoFactor(bearer.userId, bearer.email || `user-${bearer.userId}`);
+    const { getClientIp } = require('./rate-limit.service');
+    const data = await setupTwoFactor(actor.userId, actor.email || `user-${actor.userId}`, {
+      role: actor.role,
+      ipAddress: getClientIp(req),
+      userAgent: req.get('user-agent'),
+      surface: 'staff-db',
+    });
     return res.json({ success: true, data });
   } catch (error) {
     console.error('[AUTH] 2fa/setup error:', error.message);
@@ -545,10 +577,10 @@ router.post('/2fa/setup', async (req, res) => {
   }
 });
 
-/** POST /api/v1/auth/2fa/verify-setup — ativa 2FA (D2.5) */
+/** POST /api/v1/auth/2fa/verify-setup — ativa 2FA (D2.5 / PR-06c) */
 router.post('/2fa/verify-setup', async (req, res) => {
-  const bearer = resolveBearerUser(req);
-  if (!bearer) {
+  const actor = resolveMfaActor(req);
+  if (!actor) {
     return res.status(401).json({ success: false, error: 'Token ausente ou inválido' });
   }
 
@@ -558,10 +590,35 @@ router.post('/2fa/verify-setup', async (req, res) => {
   }
 
   try {
-    const result = await verifyTwoFactorSetup(bearer.userId, req.body?.code);
+    const { getClientIp } = require('./rate-limit.service');
+    const { issueLoginTokens } = require('./login.service');
+    const result = await verifyTwoFactorSetup(actor.userId, req.body?.code, {
+      role: actor.role,
+      ipAddress: getClientIp(req),
+      userAgent: req.get('user-agent'),
+      surface: 'staff-db',
+    });
     if (result?.error) {
       return res.status(result.status).json({ success: false, error: result.message });
     }
+
+    // Enrollment token → promote to full session after setup completes.
+    if (actor.purpose === 'mfa_enrollment') {
+      const { queryDatabase } = require('./refresh-token.service');
+      const rows = await queryDatabase('SELECT * FROM users WHERE id = $1', [actor.userId]);
+      const user = rows?.[0];
+      if (user) {
+        const tokens = await issueLoginTokens(user, {
+          ipAddress: getClientIp(req),
+          userAgent: req.get('user-agent'),
+        });
+        return res.json({
+          success: true,
+          data: { ...result, ...tokens },
+        });
+      }
+    }
+
     return res.json({ success: true, data: result });
   } catch (error) {
     console.error('[AUTH] 2fa/verify-setup error:', error.message);
@@ -595,6 +652,7 @@ router.post('/2fa/verify', async (req, res) => {
     const result = await verifyTwoFactorLogin(req.body, {
       ipAddress: getClientIp(req),
       userAgent: req.get('user-agent'),
+      surface: 'staff-db',
     });
 
     if (result?.error === 'validation') {
@@ -602,6 +660,11 @@ router.post('/2fa/verify', async (req, res) => {
     }
     if (result?.error) {
       return res.status(result.status).json({ success: false, error: result.message });
+    }
+
+    const { resetAccountProtection } = require('./login-protection.service');
+    if (result?.user?.email) {
+      await resetAccountProtection(result.user.email);
     }
 
     return res.json({
@@ -621,6 +684,9 @@ router.post('/2fa/disable', async (req, res) => {
   if (!bearer) {
     return res.status(401).json({ success: false, error: 'Token ausente ou inválido' });
   }
+  if (bearer.purpose === 'mfa_enrollment') {
+    return enrollmentOnlyDenied(res);
+  }
 
   const { disableTwoFactor, isTwoFactorDbEnabled } = require('./two-factor.service');
   if (!isTwoFactorDbEnabled()) {
@@ -628,7 +694,12 @@ router.post('/2fa/disable', async (req, res) => {
   }
 
   try {
-    const result = await disableTwoFactor(bearer.userId, req.body?.password, req.body?.code);
+    const { getClientIp } = require('./rate-limit.service');
+    const result = await disableTwoFactor(bearer.userId, req.body?.password, req.body?.code, {
+      ipAddress: getClientIp(req),
+      userAgent: req.get('user-agent'),
+      surface: 'staff-db',
+    });
     if (result?.error) {
       return res.status(result.status).json({ success: false, error: result.message });
     }
@@ -645,6 +716,9 @@ router.post('/2fa/backup-codes', async (req, res) => {
   if (!bearer) {
     return res.status(401).json({ success: false, error: 'Token ausente ou inválido' });
   }
+  if (bearer.purpose === 'mfa_enrollment') {
+    return enrollmentOnlyDenied(res);
+  }
 
   const { regenerateBackupCodes, isTwoFactorDbEnabled } = require('./two-factor.service');
   if (!isTwoFactorDbEnabled()) {
@@ -652,7 +726,12 @@ router.post('/2fa/backup-codes', async (req, res) => {
   }
 
   try {
-    const result = await regenerateBackupCodes(bearer.userId, req.body?.password, req.body?.code);
+    const { getClientIp } = require('./rate-limit.service');
+    const result = await regenerateBackupCodes(bearer.userId, req.body?.password, req.body?.code, {
+      ipAddress: getClientIp(req),
+      userAgent: req.get('user-agent'),
+      surface: 'staff-db',
+    });
     if (result?.error) {
       return res.status(result.status).json({ success: false, error: result.message });
     }
@@ -663,14 +742,148 @@ router.post('/2fa/backup-codes', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/v1/auth/admin/unlock-account — administrative unlock (PR-06c).
+ * Never public UI; requires privileged bearer + AUTH_MFA_ADMIN_OPS=true.
+ */
+router.post('/admin/unlock-account', async (req, res) => {
+  const bearer = resolveBearerUser(req);
+  if (!bearer || bearer.purpose === 'mfa_enrollment') {
+    return res.status(401).json({ success: false, error: 'Não autorizado' });
+  }
+  if (String(process.env.AUTH_MFA_ADMIN_OPS || '').toLowerCase() !== 'true') {
+    return res.status(404).json({ success: false, error: 'Não encontrado' });
+  }
+  const { roleRequiresMfa } = require('./mfa-policy');
+  if (!roleRequiresMfa(bearer.role)) {
+    return res.status(403).json({ success: false, error: 'Permissão insuficiente' });
+  }
+  const accountKey =
+    typeof req.body?.account_key === 'string'
+      ? req.body.account_key
+      : typeof req.body?.email === 'string'
+        ? req.body.email
+        : '';
+  if (!accountKey) {
+    return res.status(400).json({ success: false, error: 'account_key é obrigatório' });
+  }
+  const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim() : '';
+  if (!reason || reason.length < 8) {
+    return res.status(400).json({ success: false, error: 'motivo obrigatório (≥8 chars)' });
+  }
+
+  const { adminUnlockAccount } = require('./login-protection.service');
+  const { getClientIp } = require('./rate-limit.service');
+  const result = await adminUnlockAccount(accountKey);
+  console.info(
+    `[AUTH][LOCKOUT-AUDIT] ${JSON.stringify({
+      event: 'AccountUnlockCompleted',
+      operatorId: bearer.userId,
+      accountKey: result.accountKey,
+      reason,
+      ip: getClientIp(req),
+      userAgent: req.get('user-agent'),
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'unknown',
+      release: process.env.RELEASE_SHA || process.env.GIT_SHA || undefined,
+    })}`
+  );
+  return res.json({ success: true, data: result });
+});
+
+/**
+ * POST /api/v1/auth/admin/reset-mfa — administrative MFA reset (PR-06c).
+ */
+router.post('/admin/reset-mfa', async (req, res) => {
+  const bearer = resolveBearerUser(req);
+  if (!bearer || bearer.purpose === 'mfa_enrollment') {
+    return res.status(401).json({ success: false, error: 'Não autorizado' });
+  }
+  if (String(process.env.AUTH_MFA_ADMIN_OPS || '').toLowerCase() !== 'true') {
+    return res.status(404).json({ success: false, error: 'Não encontrado' });
+  }
+  const { roleRequiresMfa } = require('./mfa-policy');
+  if (!roleRequiresMfa(bearer.role)) {
+    return res.status(403).json({ success: false, error: 'Permissão insuficiente' });
+  }
+  const targetUserId = Number(req.body?.user_id);
+  if (!Number.isFinite(targetUserId) || targetUserId <= 0) {
+    return res.status(400).json({ success: false, error: 'user_id inválido' });
+  }
+  const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim() : '';
+  if (!reason || reason.length < 8) {
+    return res.status(400).json({ success: false, error: 'motivo obrigatório (≥8 chars)' });
+  }
+
+  const { adminResetTwoFactor, isTwoFactorDbEnabled } = require('./two-factor.service');
+  if (!isTwoFactorDbEnabled()) {
+    return res.status(501).json({ success: false, error: '2FA indisponível' });
+  }
+  const { getClientIp } = require('./rate-limit.service');
+  await adminResetTwoFactor(targetUserId, {
+    operatorId: bearer.userId,
+    ipAddress: getClientIp(req),
+    userAgent: req.get('user-agent'),
+    surface: 'admin-ops',
+    targetRole: req.body?.target_role,
+  });
+  console.info(
+    `[AUTH][LOCKOUT-AUDIT] ${JSON.stringify({
+      event: 'MFAResetReason',
+      operatorId: bearer.userId,
+      targetUserId,
+      reason,
+      timestamp: new Date().toISOString(),
+    })}`
+  );
+  return res.json({ success: true, message: 'MFA resetado' });
+});
+
 /** POST /api/v1/auth/login — DB (produção) ou piloto dev */
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body || {};
+  const { email, password, turnstileToken, turnstile_token } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ success: false, error: 'E-mail e senha são obrigatórios' });
   }
 
   const { loginWithDatabase, isDbLoginEnabled } = require('./login.service');
+  const {
+    evaluateLoginProtection,
+    recordAccountFailure,
+    resetAccountProtection,
+    verifyLoginTurnstile,
+  } = require('./login-protection.service');
+
+  async function applyLoginProtectionGate(normalizedEmail, ipAddress) {
+    const gate = await evaluateLoginProtection(normalizedEmail);
+    if (!gate.allowed) {
+      return {
+        deny: true,
+        status: 423,
+        body: {
+          success: false,
+          error: 'Conta temporariamente bloqueada. Tente novamente mais tarde.',
+          blocked_until: gate.blockedUntil?.toISOString?.() || gate.blockedUntil,
+        },
+      };
+    }
+    if (gate.turnstileRequired) {
+      const ts = await verifyLoginTurnstile(turnstileToken || turnstile_token, ipAddress);
+      if (!ts.ok) {
+        await recordAccountFailure(normalizedEmail);
+        return {
+          deny: true,
+          status: 403,
+          body: {
+            success: false,
+            error: 'Verificação Turnstile obrigatória ou inválida',
+            turnstile_required: true,
+          },
+        };
+      }
+    }
+    return { deny: false, turnstileRequired: gate.turnstileRequired };
+  }
 
   if (isDbLoginEnabled()) {
     try {
@@ -694,21 +907,56 @@ router.post('/login', async (req, res) => {
           .json(rateLimitDeniedBody(rateLimitCheck));
       }
 
+      const protection = await applyLoginProtectionGate(normalizedEmail, ipAddress);
+      if (protection.deny) {
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Login protection');
+        return res.status(protection.status).json(protection.body);
+      }
+
       const result = await loginWithDatabase(email, password, {
         ipAddress,
         userAgent,
+        surface: 'staff-db',
       });
 
       if (result?.error === 'invalid_credentials') {
+        const failure = await recordAccountFailure(normalizedEmail);
         await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Senha inválida');
-        return res.status(401).json({ success: false, error: 'Credenciais inválidas' });
+        return res.status(401).json({
+          success: false,
+          error: 'Credenciais inválidas',
+          turnstile_required: failure.turnstileRequired || undefined,
+          blocked_until: failure.blockedUntil?.toISOString?.(),
+        });
       }
       if (result?.error === 'account_disabled') {
         await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'Conta desativada');
         return res.status(403).json({ success: false, error: 'Conta desativada' });
       }
+      if (result?.error === 'mfa_required') {
+        await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, false, 'MFA required');
+        return res.status(403).json({ success: false, error: result.message || 'MFA obrigatório' });
+      }
       if (result) {
+        // Do not reset protection until full login (incl. 2FA) succeeds — except enrollment token is a gate.
+        if (result.requires_2fa) {
+          await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, true, 'pending_2fa');
+          return res.json({
+            success: true,
+            message: 'Autenticação em dois fatores necessária',
+            data: result,
+          });
+        }
+        if (result.requires_mfa_enrollment) {
+          await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, true, 'pending_enrollment');
+          return res.json({
+            success: true,
+            message: 'Cadastro MFA obrigatório',
+            data: result,
+          });
+        }
         await resetLoginRateLimit(normalizedEmail, ipAddress);
+        await resetAccountProtection(normalizedEmail);
         await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, true);
         return res.json({
           success: true,
@@ -729,7 +977,7 @@ router.post('/login', async (req, res) => {
     });
   }
 
-  // PR-06a: pilot inherits the same enforceLoginRateLimit (DB or memory) — never unlimited.
+  // PR-06a + PR-06c: pilot inherits rate limit + account protection + MFA enforce.
   {
     const {
       enforceLoginRateLimit,
@@ -737,14 +985,44 @@ router.post('/login', async (req, res) => {
       rateLimitDeniedStatus,
       rateLimitDeniedBody,
     } = require('./rate-limit.service');
-    const rateLimitCheck = await enforceLoginRateLimit(
-      String(email).toLowerCase(),
-      getClientIp(req),
-    );
+    const { isMfaEnforceEnabled, isEnrollmentWindowOpen } = require('./mfa-policy');
+    const ipAddress = getClientIp(req);
+    const normalizedEmail = String(email).toLowerCase();
+
+    const rateLimitCheck = await enforceLoginRateLimit(normalizedEmail, ipAddress);
     if (!rateLimitCheck.allowed) {
       return res
         .status(rateLimitDeniedStatus(rateLimitCheck))
         .json(rateLimitDeniedBody(rateLimitCheck));
+    }
+
+    const protection = await applyLoginProtectionGate(normalizedEmail, ipAddress);
+    if (protection.deny) {
+      return res.status(protection.status).json(protection.body);
+    }
+
+    // Pilot always issues role=admin — MFA enforce applies identically.
+    if (isMfaEnforceEnabled()) {
+      if (!isDbLoginEnabled()) {
+        await recordAccountFailure(normalizedEmail);
+        return res.status(403).json({
+          success: false,
+          error: 'MFA obrigatório: configure DATABASE_URL para enrollment/TOTP no piloto',
+        });
+      }
+      // With DB available, pilot should not short-circuit — fall through was already skipped.
+      // Here DB is off (we're in pilot branch), so deny when enforce is on.
+      if (!isEnrollmentWindowOpen()) {
+        return res.status(403).json({
+          success: false,
+          error: 'MFA TOTP obrigatório para este perfil',
+        });
+      }
+      return res.status(403).json({
+        success: false,
+        error: 'MFA enrollment requer login staff com DATABASE_URL',
+        requires_mfa_enrollment: true,
+      });
     }
   }
 
@@ -770,8 +1048,7 @@ router.post('/login', async (req, res) => {
   );
   const accessToken = `${header}.${payload}.${signature}`;
 
-  const refreshSecret =
-    getJwtRefreshSecret();
+  const refreshSecret = getJwtRefreshSecret();
   const refreshToken = signJwt(
     {
       userId: payloadObj.userId,
@@ -785,6 +1062,14 @@ router.post('/login', async (req, res) => {
     refreshSecret,
     60 * 60 * 24 * 30
   );
+
+  {
+    const { getClientIp } = require('./rate-limit.service');
+    const { resetLoginRateLimit } = require('./rate-limit.service');
+    const normalizedEmail = String(email).toLowerCase();
+    await resetLoginRateLimit(normalizedEmail, getClientIp(req));
+    await resetAccountProtection(normalizedEmail);
+  }
 
   return res.json({
     success: true,

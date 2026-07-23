@@ -65,6 +65,12 @@ async function touchLastLogin(userId) {
 async function loginWithDatabase(email, password, meta = {}) {
   if (!isDbRefreshEnabled()) return null;
 
+  const {
+    isMfaEnforceEnabled,
+    roleRequiresMfa,
+    isEnrollmentWindowOpen,
+  } = require('./mfa-policy');
+
   const users = await queryDatabase('SELECT * FROM users WHERE email = $1', [
     email.toLowerCase(),
   ]);
@@ -92,7 +98,42 @@ async function loginWithDatabase(email, password, meta = {}) {
   }
 
   const twoFactor = require('./two-factor.service');
-  if (await twoFactor.isTwoFactorEnabled(user.id)) {
+  const mfaOn = await twoFactor.isTwoFactorEnabled(user.id);
+  const privileged = roleRequiresMfa(user.role);
+
+  if (isMfaEnforceEnabled() && privileged) {
+    if (!mfaOn) {
+      if (isEnrollmentWindowOpen()) {
+        const enrollmentToken = signJwt(
+          {
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+            purpose: 'mfa_enrollment',
+          },
+          getJwtSecret(),
+          3600
+        );
+        return {
+          requires_mfa_enrollment: true,
+          enrollment_token: enrollmentToken,
+          expires_in: 3600,
+          user: {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+          },
+        };
+      }
+      return {
+        error: 'mfa_required',
+        status: 403,
+        message: 'MFA TOTP obrigatório para este perfil',
+      };
+    }
+  }
+
+  if (mfaOn) {
     const challenge = await twoFactor.createLoginChallenge(user.id);
     return {
       requires_2fa: true,
