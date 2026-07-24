@@ -48,6 +48,13 @@ async function requestJson(path, options = {}) {
 }
 
 async function main() {
+  const metricsToken = String(process.env.METRICS_TOKEN || '').trim();
+  if (!metricsToken) {
+    throw new Error(
+      '[E2E] METRICS_TOKEN is required (fail-closed). Set env or CI secret secrets.METRICS_TOKEN; refusing to skip /metrics auth checks.',
+    );
+  }
+
   const env = {
     ...process.env,
     PORT: String(PORT),
@@ -55,6 +62,7 @@ async function main() {
     REDIS_DISABLED: 'true',
     DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/rsv360_test',
     MP_ACCESS_TOKEN: process.env.MP_ACCESS_TOKEN || 'test-token',
+    METRICS_TOKEN: metricsToken,
   };
 
   const server = spawn(process.execPath, [BACKEND_SCRIPT], {
@@ -89,7 +97,17 @@ async function main() {
     assert.ok(docs.body.paths['/health']);
     assert.ok(docs.body.paths['/api/docs']);
 
-    const metrics = await fetch(`${BASE_URL}/metrics`);
+    // PR-05b: /metrics is bearer fail-closed — anon must 401; bearer must 200.
+    const metricsAnon = await fetch(`${BASE_URL}/metrics`);
+    assert.strictEqual(
+      metricsAnon.status,
+      401,
+      'anonymous GET /metrics must return 401 (fail if 200)',
+    );
+
+    const metrics = await fetch(`${BASE_URL}/metrics`, {
+      headers: { Authorization: `Bearer ${metricsToken}` },
+    });
     assert.strictEqual(metrics.status, 200);
     const metricsText = await metrics.text();
     assert.ok(metricsText.includes('rsv360_http_requests_total'));

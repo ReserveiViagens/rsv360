@@ -70,3 +70,5 @@ jobs:
           REDIS_DISABLED: 'true'
           # PR-04a fail-closed: boot exige JWT_SECRET. Placeholder de CI (>=32), nao secret real.
           JWT_SECRET: ci_fase5_jwt_secret_minimum_32_chars
+          # PR-05b fail-closed: /metrics exige Bearer. Secret do repo (nunca logar o valor).
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
