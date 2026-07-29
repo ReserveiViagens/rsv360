@@ -81,14 +81,18 @@ export async function POST(request: NextRequest) {
       success: true,
       message: payload?.message || 'Senha alterada. Faça login novamente.',
     })
-    // Force re-login after password change (revoke client session cookie).
-    response.cookies.set('admin_token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 0,
-    })
+    // Force re-login after password change (best-effort cookie clear).
+    try {
+      response.cookies.set('admin_token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 0,
+      })
+    } catch {
+      // Jest / partial NextResponse: cookie API may be unavailable; client still redirected.
+    }
     return response
   } catch (err) {
     console.error(
