@@ -1,0 +1,20 @@
+      src/__tests__/unit/aviso-expiracao.test.ts
+
+    > 1 | import sgMail from '@sendgrid/mail';
+        | ^
+      2 | import { EmailProviderInterface } from '../interfaces';
+      3 |
+      4 | export class SendGridProvider implements EmailProviderInterface {
+
+      at Resolver._throwModNotFoundError (../node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.<anonymous> (../server/modules/communication/providers/email/sendgrid.provider.ts:1:1)
+      at Object.<anonymous> (../server/modules/communication/providers/factory.ts:4:1)
+      at Object.<anonymous> (../server/modules/propostas/services/aviso-expiracao.service.ts:12:1)
+      at Object.<anonymous> (src/__tests__/unit/aviso-expiracao.test.ts:31:1)
+
+
+Test Suites: 2 failed, 128 passed, 130 total
+Tests:       573 passed, 573 total
+Snapshots:   0 total
+Time:        33.093 s
+Ran all test suites.
