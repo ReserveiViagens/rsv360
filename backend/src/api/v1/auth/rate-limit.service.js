@@ -20,6 +20,9 @@ const RATE_LIMIT_CONFIGS = {
   '2fa-verify': isDev
     ? { maxAttempts: 50, windowMs: 15 * 60 * 1000, blockDurationMs: 60 * 1000 }
     : { maxAttempts: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 15 * 60 * 1000 },
+  'change-password': isDev
+    ? { maxAttempts: 50, windowMs: 15 * 60 * 1000, blockDurationMs: 60 * 1000 }
+    : { maxAttempts: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 15 * 60 * 1000 },
 };
 
 function isRateLimitEnabled() {
@@ -206,6 +209,12 @@ async function enforceTwoFactorVerifyRateLimit(identifier) {
   return checkRateLimit(identifier || 'unknown', 'temp_token', '2fa-verify');
 }
 
+async function enforceChangePasswordRateLimit(email, ipAddress) {
+  const ipCheck = await checkRateLimit(ipAddress || 'unknown', 'ip', 'change-password');
+  if (!ipCheck.allowed) return ipCheck;
+  return checkRateLimit(String(email || '').toLowerCase() || 'unknown', 'email', 'change-password');
+}
+
 function getClientIp(req) {
   return (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
 }
@@ -235,6 +244,7 @@ module.exports = {
   enforceForgotPasswordRateLimit,
   enforceResetPasswordRateLimit,
   enforceTwoFactorVerifyRateLimit,
+  enforceChangePasswordRateLimit,
   resetLoginRateLimit,
   recordLoginAttempt,
   getClientIp,

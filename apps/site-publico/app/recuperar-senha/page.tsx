@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Mail, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,12 @@ import { Label } from '@/components/ui/label';
 import { requestPasswordReset } from '@/lib/auth';
 
 export default function RecuperarSenhaPage() {
+  const searchParams = useSearchParams();
+  const fromParam = searchParams?.get('from') || '/login';
+  const backHref =
+    fromParam === '/admin/login' || fromParam.startsWith('/admin/')
+      ? '/admin/login'
+      : '/login';
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -31,7 +38,7 @@ export default function RecuperarSenhaPage() {
   return (
     <main className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
       <Link
-        href="/login"
+        href={backHref}
         className="mb-6 inline-flex items-center text-sm text-blue-600 hover:underline"
       >
         <ArrowLeft className="mr-1 h-4 w-4" />

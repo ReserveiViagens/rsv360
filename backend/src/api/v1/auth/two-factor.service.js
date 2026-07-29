@@ -446,6 +446,72 @@ function isTwoFactorDbEnabled() {
   return isDbRefreshEnabled();
 }
 
+/**
+ * Verify TOTP for an enrolled user (no login challenge). Used by change-password.
+ * Never logs the code.
+ */
+async function verifyEnabledTotp(userId, code, meta = {}) {
+  const { emitMfaAudit } = require('./mfa-audit');
+  const row = await getUser2faRow(userId);
+  if (!row?.enabled_at) {
+    return {
+      ok: false,
+      error: 'mfa_required',
+      status: 403,
+      message: 'Cadastre o autenticador TOTP antes de alterar a senha',
+      detail: 'not_enrolled',
+    };
+  }
+
+  const normalized = typeof code === 'string' ? code.trim() : '';
+  if (!normalized) {
+    return {
+      ok: false,
+      error: 'validation',
+      status: 400,
+      message: 'Código TOTP é obrigatório',
+      detail: 'missing',
+    };
+  }
+
+  const user = await getUserById(userId);
+  const auditBase = {
+    userId,
+    role: user?.role,
+    ip: meta.ipAddress,
+    userAgent: meta.userAgent,
+    surface: meta.surface || 'change-password',
+  };
+
+  const secret = await getDecryptedSecret(row);
+  const totp = await verifyTotpCode(secret, normalized);
+  if (!totp.valid) {
+    emitMfaAudit('MFAVerificationFailed', { ...auditBase, detail: 'totp' });
+    return {
+      ok: false,
+      error: 'invalid_code',
+      status: 401,
+      message: 'Código inválido',
+      detail: 'totp',
+    };
+  }
+
+  const fresh = await assertTotpNotReplayed(userId, totp.step);
+  if (!fresh) {
+    emitMfaAudit('MFAVerificationFailed', { ...auditBase, detail: 'replay' });
+    return {
+      ok: false,
+      error: 'replay',
+      status: 401,
+      message: 'Código já utilizado',
+      detail: 'replay',
+    };
+  }
+
+  emitMfaAudit('MFAVerificationSucceeded', { ...auditBase, detail: 'change_password' });
+  return { ok: true };
+}
+
 module.exports = {
   isTwoFactorEnabled,
   isTwoFactorDbEnabled,
@@ -456,6 +522,7 @@ module.exports = {
   disableTwoFactor,
   regenerateBackupCodes,
   adminResetTwoFactor,
+  verifyEnabledTotp,
   hashToken,
   verifyTotpCode,
   assertTotpNotReplayed,
