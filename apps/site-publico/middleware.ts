@@ -60,14 +60,19 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Protect admin area except the login page
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+  // Protect admin area except login + MFA enrollment (enrollment_token in query, not admin cookie).
+  const adminPublicExact = ['/admin/login', '/admin/mfa-enroll'];
+  const isAdminPublic = adminPublicExact.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+  if (pathname.startsWith('/admin') && !isAdminPublic) {
     const adminToken = req.cookies.get('admin_token')?.value;
     const adminPayload = await verifyAdminToken(adminToken);
     if (!adminPayload) {
       const url = req.nextUrl.clone();
       url.pathname = '/admin/login';
       url.searchParams.set('from', pathname);
+      url.searchParams.delete('token');
       return NextResponse.redirect(url);
     }
   }
