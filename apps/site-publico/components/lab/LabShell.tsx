@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { LogOut, Menu, Shield, X } from 'lucide-react';
+import Link from 'next/link';
 import { LabNav } from './LabNav';
 import { PrimarySiteBanner } from './PrimarySiteBanner';
 
 const LAB_TITLE =
   process.env.NEXT_PUBLIC_LAB_TITLE ?? 'RSV360 Marketing Lab';
 
-const AUTH_ONLY_PATHS = ['/admin/login', '/login'];
+/** Login + MFA enrollment: no admin chrome / no Sair (no full session yet). */
+const AUTH_ONLY_PATHS = ['/admin/login', '/admin/mfa-enroll', '/login'];
 
 function isAuthOnlyPath(pathname: string): boolean {
   return AUTH_ONLY_PATHS.some(
@@ -17,9 +19,22 @@ function isAuthOnlyPath(pathname: string): boolean {
   );
 }
 
+async function adminLogout() {
+  try {
+    await fetch('/api/admin/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch {
+    // Cookie clear is best-effort; always leave the session UI.
+  }
+  window.location.href = '/admin/login';
+}
+
 export function LabShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   if (isAuthOnlyPath(pathname)) {
     return (
@@ -29,6 +44,12 @@ export function LabShell({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
+
+  const handleLogout = () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    void adminLogout();
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -79,7 +100,29 @@ export function LabShell({ children }: { children: React.ReactNode }) {
             </button>
             <h1 className="text-sm font-medium text-slate-600">{LAB_TITLE}</h1>
           </div>
-          <PrimarySiteBanner compact />
+          <div className="flex items-center gap-3">
+            <PrimarySiteBanner compact />
+            <Link
+              href="/admin/security"
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              aria-label="Segurança da conta"
+              title="Segurança"
+            >
+              <Shield className="h-4 w-4" aria-hidden />
+              Segurança
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+              aria-label="Sair do painel admin"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" aria-hidden />
+              {loggingOut ? 'Saindo…' : 'Sair'}
+            </button>
+          </div>
         </header>
         <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
       </div>
