@@ -1,14 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('Gestão de Reservas - Testes E2E', () => {
   async function login(page: import('@playwright/test').Page) {
     await page.goto('http://localhost:3000/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.fill('#email, input[type="email"]', 'admin@onion360.com');
-    await page.fill('#password, input[type="password"]', 'admin123');
+    await page.fill('#email, input[type="email"]', creds.email);
+    await page.fill('#password, input[type="password"]', creds.password);
     await page.click('button[type="submit"]:has-text("Entrar"), button:has-text("Entrar")');
     await page.waitForURL('**/dashboard-rsv', { timeout: 60000 });
   }
   test.beforeEach(async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     try {
       await login(page);
       await page.goto('http://localhost:3000/reservations-rsv', {
@@ -28,6 +30,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Carregamento e Elementos Principais', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar título
     // Verificar se página carregou
     
@@ -44,6 +47,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Calendário Interativo', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se o calendário está presente
     await expect(page.locator('text=Calendário de Reservas')).toBeVisible();
     
@@ -67,6 +71,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Filtros e Busca', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar barra de busca
     const searchInput = page.locator('input[placeholder*="buscar"], input[placeholder*="pesquisar"]');
     await expect(searchInput).toBeVisible();
@@ -103,6 +108,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Modal de Nova Reserva', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Clicar no botão de nova reserva
     await page.click('button:has-text("Nova Reserva")');
     
@@ -161,6 +167,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Lista de Reservas', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se a tabela de reservas está presente
     await expect(page.locator('table')).toBeVisible();
     
@@ -194,6 +201,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Drag and Drop', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se o calendário suporta drag and drop
     const calendar = page.locator('.calendar, [class*="calendar"]');
     if (await calendar.isVisible()) {
@@ -210,6 +218,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Exportação', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Testar exportação de dados
     const exportButton = page.locator('button:has-text("Exportar")');
     if (await exportButton.isVisible()) {
@@ -239,6 +248,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Responsividade', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Testar em mobile
     await page.setViewportSize({ width: 375, height: 667 });
     await page.reload();
@@ -271,6 +281,7 @@ test.describe('Gestão de Reservas - Testes E2E', () => {
   });
 
   test('Gestão de Reservas - Acessibilidade', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se elementos têm atributos de acessibilidade
     const interactiveElements = page.locator('button, input, select, textarea');
     const elementCount = await interactiveElements.count();

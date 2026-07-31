@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('🚀 Teste Simples - Verificação de Correções', () => {
   test('deve carregar página inicial sem erros', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Navegar para a página inicial
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -30,10 +32,11 @@ test.describe('🚀 Teste Simples - Verificação de Correções', () => {
   });
 
   test('deve fazer login e carregar dashboard', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Fazer login
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'admin@onion360.com');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="email"]', creds.email);
+    await page.fill('input[type="password"]', creds.password);
     await page.click('button[type="submit"]');
     
     // Aguardar redirecionamento

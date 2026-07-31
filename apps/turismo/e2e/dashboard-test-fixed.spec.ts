@@ -1,11 +1,13 @@
 import { test, expect, Page } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('🚀 RSV 360 - Dashboard Test Fixed', () => {
   test('deve carregar dashboard com métricas principais após login', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Fazer login primeiro
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'admin@onion360.com');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="email"]', creds.email);
+    await page.fill('input[type="password"]', creds.password);
     await page.click('button[type="submit"]');
     
     // Aguardar qualquer redirecionamento para dashboard
@@ -44,10 +46,11 @@ test.describe('🚀 RSV 360 - Dashboard Test Fixed', () => {
   });
 
   test('deve permitir filtrar período no dashboard', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Fazer login primeiro
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'admin@onion360.com');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="email"]', creds.email);
+    await page.fill('input[type="password"]', creds.password);
     await page.click('button[type="submit"]');
     
     // Aguardar qualquer redirecionamento para dashboard

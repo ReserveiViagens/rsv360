@@ -1,0 +1,56 @@
+﻿[
+    {
+        "pattern":  "admin@onion360.com",
+        "files":  9,
+        "occ":  12,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\e2e\\smoke-login-and-navigate.spec.ts; apps/turismo\\e2e\\simple-test.spec.ts; apps/turismo\\e2e\\dashboard-test-fixed.spec.ts; apps/turismo\\e2e\\critical-flows-fixed.spec.ts; apps/turismo\\e2e\\booking-management.spec.ts; apps/turismo\\e2e\\analytics-dashboard.spec.ts; apps/turismo\\pages\\dashboard-reservei-viagens.tsx; apps/turismo\\pages\\login.tsx"
+    },
+    {
+        "pattern":  "admin@onionrsv.com",
+        "files":  1,
+        "occ":  2,
+        "paths":  "apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "demo@onionrsv.com",
+        "files":  4,
+        "occ":  7,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\pages\\login.tsx; apps/turismo\\src\\pages\\login.tsx; apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "admin123",
+        "files":  9,
+        "occ":  11,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\e2e\\smoke-login-and-navigate.spec.ts; apps/turismo\\e2e\\simple-test.spec.ts; apps/turismo\\e2e\\dashboard-test-fixed.spec.ts; apps/turismo\\e2e\\critical-flows-fixed.spec.ts; apps/turismo\\e2e\\booking-management.spec.ts; apps/turismo\\e2e\\analytics-dashboard.spec.ts; apps/turismo\\pages\\login.tsx; apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "demo123",
+        "files":  4,
+        "occ":  4,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\src\\pages\\login.tsx; apps/turismo\\pages\\login.tsx; apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "demo-token",
+        "files":  2,
+        "occ":  8,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "demo-refresh",
+        "files":  2,
+        "occ":  4,
+        "paths":  "apps/turismo\\context\\AuthContext.tsx; apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "admin-token",
+        "files":  1,
+        "occ":  5,
+        "paths":  "apps/turismo\\src\\context\\AuthContext.tsx"
+    },
+    {
+        "pattern":  "admin-refresh",
+        "files":  1,
+        "occ":  2,
+        "paths":  "apps/turismo\\src\\context\\AuthContext.tsx"
+    }
+]

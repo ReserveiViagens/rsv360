@@ -1,0 +1,56 @@
+﻿[
+    {
+        "pattern":  "admin@onion360.com",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "admin@onionrsv.com",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "demo@onionrsv.com",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "admin123",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "demo123",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "demo-token",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "demo-refresh",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "admin-token",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    },
+    {
+        "pattern":  "admin-refresh",
+        "files":  0,
+        "occ":  0,
+        "paths":  ""
+    }
+]

@@ -41,7 +41,6 @@
         "./src/services/*"
       ],
       "@/context/*": [
-        "./context/*",
         "./src/context/*"
       ],
       "@/styles/*": [

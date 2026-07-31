@@ -1,14 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('Analytics Dashboard - Testes E2E', () => {
   async function login(page: import('@playwright/test').Page) {
     await page.goto('http://localhost:3000/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.fill('#email, input[type="email"]', 'admin@onion360.com');
-    await page.fill('#password, input[type="password"]', 'admin123');
+    await page.fill('#email, input[type="email"]', creds.email);
+    await page.fill('#password, input[type="password"]', creds.password);
     await page.click('button[type="submit"]:has-text("Entrar"), button:has-text("Entrar")');
     await page.waitForURL('**/dashboard-rsv', { timeout: 60000 });
   }
   test.beforeEach(async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     try {
       await login(page);
       await page.goto('http://localhost:3000/analytics-dashboard', {
@@ -28,6 +30,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Carregamento e Elementos Principais', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar título sem depender do body
     const title = page.locator('h1, [data-testid="page-title"]');
     await expect(title).toContainText(/Analytics Dashboard/i);
@@ -45,6 +48,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Gráficos Interativos', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se os gráficos Recharts estão presentes
     await expect(page.locator('.recharts-wrapper')).toBeVisible();
     
@@ -62,6 +66,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Filtros e Controles', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar filtros de período
     const periodFilter = page.locator('select[name="period"], [data-testid="period-filter"]');
     if (await periodFilter.isVisible()) {
@@ -91,6 +96,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Construtor de Relatórios', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar seção de construtor de relatórios
     // Verificar se página carregou
     await expect(page.locator('body')).toBeVisible();
@@ -131,6 +137,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Exportação de Dados', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar seção de exportação
     // Verificar se página carregou
     await expect(page.locator('body')).toBeVisible();
@@ -160,6 +167,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Responsividade', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Testar em mobile
     await page.setViewportSize({ width: 375, height: 667 });
     await page.reload();
@@ -180,6 +188,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Acessibilidade', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     // Verificar se elementos têm atributos de acessibilidade
     const interactiveElements = page.locator('button, input, select, textarea');
     const elementCount = await interactiveElements.count();
@@ -213,6 +222,7 @@ test.describe('Analytics Dashboard - Testes E2E', () => {
   });
 
   test('Analytics Dashboard - Performance', async ({ page }) => {
+  const creds = requireE2EAuthCredentials(test);
     const startTime = Date.now();
     try {
       await page.goto('http://localhost:3000/analytics-dashboard', { 
