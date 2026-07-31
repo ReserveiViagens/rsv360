@@ -1,0 +1,1448 @@
+{
+  "generatedAt": "2026-07-31T23:10:29.215Z",
+  "base": "38688f98",
+  "filesScanned": 451,
+  "patterns": [
+    "sql_raw",
+    "db_execute",
+    "db_raw",
+    "knex_raw",
+    "queryDatabase",
+    "pool_query",
+    "client_query",
+    "pgPool_query"
+  ],
+  "hitCount": 177,
+  "byPattern": {
+    "sql_raw": 0,
+    "db_execute": 10,
+    "db_raw": 0,
+    "knex_raw": 0,
+    "queryDatabase": 76,
+    "pool_query": 22,
+    "client_query": 69,
+    "pgPool_query": 0
+  },
+  "sqlRawCount": 0,
+  "critPaymentUnsafeCount": 0,
+  "critPaymentUnsafe": [],
+  "note": "No sql.raw() hits expected if count=0. Drizzle sql` binds are typically safe; classified separately via review.",
+  "hits": [
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 157,
+      "pattern": "pool_query",
+      "context": "await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 146,
+      "pattern": "pool_query",
+      "context": "const pre = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 161,
+      "pattern": "client_query",
+      "context": "if (!dryRun) await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 177,
+      "pattern": "pool_query",
+      "context": "const exists = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 196,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 228,
+      "pattern": "pool_query",
+      "context": "const cur = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 265,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 280,
+      "pattern": "pool_query",
+      "context": "const normRows = await pool.query(normQuery, [PROPRIETARIO_ID, ...scope]);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 291,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 302,
+      "pattern": "client_query",
+      "context": "if (!dryRun) await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 304,
+      "pattern": "client_query",
+      "context": "if (client) await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 102,
+      "pattern": "client_query",
+      "context": "const before = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 147,
+      "pattern": "client_query",
+      "context": "const updated = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 175,
+      "pattern": "client_query",
+      "context": "await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 179,
+      "pattern": "client_query",
+      "context": "if (dryRun) await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 180,
+      "pattern": "client_query",
+      "context": "else await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 182,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/desativar-addon-suite-master.mjs",
+      "line": 25,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/desativar-addon-suite-master.mjs",
+      "line": 39,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 71,
+      "pattern": "pool_query",
+      "context": "const { rows: dbRows } = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 85,
+      "pattern": "client_query",
+      "context": "const before = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 120,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 130,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 140,
+      "pattern": "client_query",
+      "context": "const approved = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 164,
+      "pattern": "client_query",
+      "context": "await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 168,
+      "pattern": "client_query",
+      "context": "if (dryRun) await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 169,
+      "pattern": "client_query",
+      "context": "else await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 171,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/reencrypt-fornecedores-api-keys.mjs",
+      "line": 45,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query('SELECT id, api_key FROM fornecedores_api');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/reencrypt-fornecedores-api-keys.mjs",
+      "line": 50,
+      "pattern": "client_query",
+      "context": "await client.query('UPDATE fornecedores_api SET api_key = $1 WHERE id = $2', [encrypted, row.id]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-auctions.js",
+      "line": 60,
+      "pattern": "pool_query",
+      "context": "const existing = await pool.query('SELECT COUNT(*)::int AS c FROM auctions');",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-auctions.js",
+      "line": 67,
+      "pattern": "pool_query",
+      "context": "await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-conta-inventario.mjs",
+      "line": 18,
+      "pattern": "pool_query",
+      "context": "const { rows } = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 116,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 128,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 148,
+      "pattern": "client_query",
+      "context": "await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 151,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 163,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 180,
+      "pattern": "client_query",
+      "context": "const { rows: tempRows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 186,
+      "pattern": "client_query",
+      "context": "const { rows: catRows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 205,
+      "pattern": "client_query",
+      "context": "await client.query(`DELETE FROM tarifa_temporada_periodo WHERE temporada_id = $1`, [tid]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 209,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 222,
+      "pattern": "client_query",
+      "context": "const { rows: units } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 259,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 267,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 279,
+      "pattern": "client_query",
+      "context": "const { rows: afterPrices } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 293,
+      "pattern": "client_query",
+      "context": "const { rows: cfg } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 302,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 305,
+      "pattern": "client_query",
+      "context": "await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifa-carga-17-etapa-a.mjs",
+      "line": 309,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 12,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 25,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 36,
+      "pattern": "client_query",
+      "context": "await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 38,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 52,
+      "pattern": "client_query",
+      "context": "await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-tarifario.mjs",
+      "line": 55,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 25,
+      "pattern": "client_query",
+      "context": "await client.query('BEGIN');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 28,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 48,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 56,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 73,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 80,
+      "pattern": "client_query",
+      "context": "const { rows: kn } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 91,
+      "pattern": "client_query",
+      "context": "await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 101,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 104,
+      "pattern": "client_query",
+      "context": "await client.query('COMMIT');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-upgrade-varanda-metadata.mjs",
+      "line": 108,
+      "pattern": "client_query",
+      "context": "await client.query('ROLLBACK');",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-vitrine-etapa-a.mjs",
+      "line": 32,
+      "pattern": "pool_query",
+      "context": "await pool.query(sql);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/seed-vitrine-etapa-a.mjs",
+      "line": 33,
+      "pattern": "pool_query",
+      "context": "const { rows } = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/smoke-wizard-passo2.mjs",
+      "line": 44,
+      "pattern": "db_execute",
+      "context": "const counts = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 46,
+      "pattern": "client_query",
+      "context": "const counts = await client.query(`",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 55,
+      "pattern": "client_query",
+      "context": "const cfg = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 66,
+      "pattern": "client_query",
+      "context": "const pol = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 75,
+      "pattern": "client_query",
+      "context": "const { rows: urows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 94,
+      "pattern": "client_query",
+      "context": "const { rows: temps } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 106,
+      "pattern": "client_query",
+      "context": "const { rows: regras } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/validar-tarifa-carga-17.mjs",
+      "line": 152,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 23,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(`",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 45,
+      "pattern": "client_query",
+      "context": "const { rows } = await client.query(`",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 72,
+      "pattern": "client_query",
+      "context": "const first = await client.query(insertBase, ['Teste dup A', 'Cliente Teste', token]);",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 78,
+      "pattern": "client_query",
+      "context": "await client.query(insertBase, ['Teste dup B', 'Cliente Teste', token]);",
+      "classification": "pg_client_direct_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 83,
+      "pattern": "client_query",
+      "context": "await client.query('DELETE FROM propostas WHERE id = $1', [firstId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 63,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 68,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 114,
+      "pattern": "queryDatabase",
+      "context": "const countRows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 120,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 160,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 177,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 195,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 209,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 221,
+      "pattern": "queryDatabase",
+      "context": "const existing = await queryDatabase('SELECT id FROM customers WHERE user_id = $1', [userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 227,
+      "pattern": "queryDatabase",
+      "context": "const byEmail = await queryDatabase('SELECT id, user_id FROM customers WHERE email = $1', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 232,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE customers SET user_id = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 240,
+      "pattern": "queryDatabase",
+      "context": "const inserted = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 277,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 283,
+      "pattern": "queryDatabase",
+      "context": "const inserted = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 295,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 302,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auctions/service.js",
+      "line": 330,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/change-password.service.js",
+      "line": 35,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password_hash = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/change-password.service.js",
+      "line": 41,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/change-password.service.js",
+      "line": 135,
+      "pattern": "queryDatabase",
+      "context": "const users = await queryDatabase('SELECT * FROM users WHERE email = $1', [email]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login-protection.service.js",
+      "line": 62,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login-protection.service.js",
+      "line": 79,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login-protection.service.js",
+      "line": 230,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(`DELETE FROM auth_login_protection WHERE account_key = $1`, [key]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login.service.js",
+      "line": 39,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password_hash = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login.service.js",
+      "line": 45,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login.service.js",
+      "line": 57,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/login.service.js",
+      "line": 74,
+      "pattern": "queryDatabase",
+      "context": "const users = await queryDatabase('SELECT * FROM users WHERE email = $1', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/oauth.service.js",
+      "line": 38,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase('SELECT * FROM users WHERE email = $1', [email]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/oauth.service.js",
+      "line": 47,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/oauth.service.js",
+      "line": 56,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 35,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password_hash = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 41,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('UPDATE users SET password = $1 WHERE id = $2', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 68,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 81,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 92,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 122,
+      "pattern": "queryDatabase",
+      "context": "const users = await queryDatabase('SELECT id, email, name FROM users WHERE email = $1', [",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/password-reset.service.js",
+      "line": 193,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 54,
+      "pattern": "queryDatabase",
+      "context": "rateLimits = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 73,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 95,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 105,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 116,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 123,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 143,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/rate-limit.service.js",
+      "line": 156,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 24,
+      "pattern": "queryDatabase",
+      "context": "async function queryDatabase(sql, params = []) {",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 45,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 64,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 73,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 112,
+      "pattern": "queryDatabase",
+      "context": "const tokens = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 129,
+      "pattern": "queryDatabase",
+      "context": "const users = await queryDatabase(`SELECT * FROM users WHERE id = $1`, [userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/refresh-token.service.js",
+      "line": 162,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/register.service.js",
+      "line": 31,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/register.service.js",
+      "line": 40,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/register.service.js",
+      "line": 83,
+      "pattern": "queryDatabase",
+      "context": "const existing = await queryDatabase('SELECT id FROM users WHERE email = $1', [email]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 660,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase('SELECT * FROM users WHERE id = $1', [actor.userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 48,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase('SELECT * FROM users WHERE email = $1', [email]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 57,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 66,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 116,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 141,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/sso.service.js",
+      "line": 153,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 60,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 70,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 78,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(`SELECT * FROM user_2fa WHERE user_id = $1 LIMIT 1`, [userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 83,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase('SELECT * FROM users WHERE id = $1', [userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 92,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 106,
+      "pattern": "queryDatabase",
+      "context": "const rows = await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 120,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 141,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 156,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 228,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 358,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('DELETE FROM user_2fa WHERE user_id = $1', [userId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 400,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 430,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('DELETE FROM user_2fa WHERE user_id = $1', [targetUserId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "backend/src/api/v1/auth/two-factor.service.js",
+      "line": 431,
+      "pattern": "queryDatabase",
+      "context": "await queryDatabase('DELETE FROM login_2fa_challenges WHERE user_id = $1', [targetUserId]);",
+      "classification": "safe_param_likely",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/acomodacoes/import/normalizar.ts",
+      "line": 191,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 114,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 125,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 157,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 225,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 252,
+      "pattern": "db_execute",
+      "context": "await db.execute(sql`DELETE FROM website_content WHERE id = ${id}`);",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cms/service.ts",
+      "line": 256,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/cotacao-publica/services/roteiro-atracoes.service.ts",
+      "line": 51,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/crm/db/crm.repository.ts",
+      "line": 87,
+      "pattern": "pool_query",
+      "context": "return pool.query(text, values);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/guest-portal/db/portal.repository.ts",
+      "line": 50,
+      "pattern": "pool_query",
+      "context": "return pool.query(text, values);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/housekeeping/db/housekeeping.repository.ts",
+      "line": 223,
+      "pattern": "pool_query",
+      "context": "return await pool.query(text, values);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 42,
+      "pattern": "pool_query",
+      "context": "await pool.query(`",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 72,
+      "pattern": "pool_query",
+      "context": "await pool.query(`",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 113,
+      "pattern": "pool_query",
+      "context": "await pool.query(`alter table if exists properties add column if not exists ${column}`);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 126,
+      "pattern": "pool_query",
+      "context": "await pool.query(`alter table if exists property_users add column if not exists ${column}`);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 129,
+      "pattern": "pool_query",
+      "context": "const countResult = await pool.query(`select count(*)::int as count from properties`);",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 345,
+      "pattern": "pool_query",
+      "context": "const result = await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/multi-property/db/property.repository.ts",
+      "line": 351,
+      "pattern": "pool_query",
+      "context": "await pool.query(",
+      "classification": "review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/propostas/rag.ts",
+      "line": 19,
+      "pattern": "db_execute",
+      "context": "const result = await db.execute(sql`",
+      "classification": "drizzle_execute_review",
+      "paymentSurface": false
+    },
+    {
+      "file": "server/modules/revenue/db/revenue.repository.ts",
+      "line": 255,
+      "pattern": "pool_query",
+      "context": "return await pool.query(text, values);",
+      "classification": "review",
+      "paymentSurface": false
+    }
+  ]
+}
