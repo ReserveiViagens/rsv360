@@ -90,7 +90,7 @@ const RSV360Ecosystem: React.FC = () => {
           status: 'active',
           category: 'core',
           icon: Server,
-          url: 'http://localhost:5000',
+          url: 'http://localhost:3002',
           color: 'bg-blue-500'
         },
         {

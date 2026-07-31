@@ -255,7 +255,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const loadEnterprises = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/enterprises?status=active`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/v1/enterprises?status=active`);
       const data = await response.json();
       if (data.success && data.data) {
         setEnterprises(Array.isArray(data.data) ? data.data : [data.data]);
@@ -267,7 +267,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const loadProperties = async (enterpriseId: number) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/enterprises/${enterpriseId}/properties`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/v1/enterprises/${enterpriseId}/properties`);
       const data = await response.json();
       if (data.success && data.data) {
         setProperties(Array.isArray(data.data) ? data.data : [data.data]);
@@ -279,7 +279,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const loadAccommodations = async (propertyId: number) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/properties/${propertyId}/accommodations`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/v1/properties/${propertyId}/accommodations`);
       const data = await response.json();
       if (data.success && data.data) {
         setAccommodations(Array.isArray(data.data) ? data.data : [data.data]);
