@@ -281,7 +281,8 @@
       "strict": true,
       "handlerUsesParseResult": true,
       "class": "EFETIVO",
-      "mounted": true
+      "mounted": true,
+      "notes": "Only schema meeting C2 EFETIVO (.strict + persist parse) on HTTP write"
     },
     {
       "schema": "gerarPropostaBodySchema",
@@ -294,19 +295,40 @@
       "mounted": true
     },
     {
-      "schema": "roteiroAnalyticsBatchSchema",
+      "schema": "roteiroAnalyticsBatchSchema (+ event)",
       "file": "server/modules/roteiro-analytics/schemas/roteiro-analytics.schema.ts",
       "strict": false,
       "handlerUsesParseResult": true,
       "class": "PARCIAL",
-      "mounted": true
+      "mounted": true,
+      "notes": "service parse(body) then insert mapped rows — strip default, no .strict()"
     },
     {
       "schema": "comissoesConfigSchema",
       "file": "server/modules/comissoes/schema.ts",
-      "strict": "check file — object schema without .strict() in opening lines",
+      "strict": false,
+      "handlerUsesParseResult": true,
       "class": "PARCIAL",
-      "mounted": true
+      "mounted": true,
+      "notes": "Route field-picks known keys before safeParse then persiste parsed.data — allowlist-like, still no .strict()"
+    },
+    {
+      "schema": "comissoesSugestaoIaSchema | solicitarAprovacao | aprovar | rejeitar | simularQuery",
+      "file": "server/modules/comissoes/schema.ts",
+      "strict": false,
+      "handlerUsesParseResult": true,
+      "class": "PARCIAL",
+      "mounted": true,
+      "notes": "All routes use safeParse + parsed.data; Zod default strip without .strict()"
+    },
+    {
+      "schema": "ofertaSchema | ofertaCotacaoSchema | configPropostaSchema",
+      "file": "server/modules/fornecedores-hub/schema.ts",
+      "strict": false,
+      "handlerUsesParseResult": "adapters/cache (outbound oferta shape), not HTTP mass-assign of req.body",
+      "class": "PARCIAL",
+      "mounted": true,
+      "notes": "Validates provider/adapter payloads — not a BOPLA shield on Express writes"
     },
     {
       "schema": "pricing route inline z.object schemas",
@@ -317,10 +339,18 @@
       "notes": "Module not registered in backend/app.js boot"
     },
     {
-      "schema": "fornecedores-hub/agentes schema.ts",
-      "file": "server/modules/*/schema.ts",
-      "notes": "May be Drizzle table defs or Zod — payments/schema.ts is Drizzle",
-      "class": "REVIEW"
+      "schema": "agentes routes inline z",
+      "file": "server/modules/agentes/routes/index.ts",
+      "strict": false,
+      "class": "PARCIAL",
+      "mounted": true,
+      "notes": "Inline Zod in routes — confirm parse vs req.body on GO 07b/07c"
+    },
+    {
+      "schema": "backend/server/modules/payments/schema.ts",
+      "file": "backend/server/modules/payments/schema.ts",
+      "class": "N/A_DRIZZLE",
+      "notes": "Drizzle table defs, not Zod request validation"
     }
   ],
   "nosqlOperatorInjection": {

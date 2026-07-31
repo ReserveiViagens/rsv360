@@ -49,10 +49,12 @@
 ### ⑥ Zod (C2)
 | Schema | Classe |
 |--------|--------|
-| `PortalBookingUpdateSchema` | **EFETIVO** |
+| `PortalBookingUpdateSchema` | **EFETIVO** (único: `.strict()` + persist parse) |
 | `gerarPropostaBodySchema` (`.passthrough()`) | **PARCIAL** |
 | `roteiroAnalyticsBatchSchema` | **PARCIAL** |
-| `comissoesConfigSchema` (+ related) | **PARCIAL** (parse usado, sem `.strict()` na abertura) |
+| `comissoes*` (config + IA + aprovação + simular) | **PARCIAL** (parse/`safeParse` usado; field-pick em config; sem `.strict()`) |
+| `fornecedores-hub` oferta* / configProposta | **PARCIAL** (adapters, não shield HTTP body) |
+| `agentes` inline Zod | **PARCIAL** |
 | pricing inline Zod | morto para boot Express (módulo não montado) |
 
 ### ⑦ Fatiamento proposto (ordem por risco)
