@@ -3,7 +3,6 @@ import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('🚀 Teste Simples - Verificação de Correções', () => {
   test('deve carregar página inicial sem erros', async ({ page }) => {
-  const creds = requireE2EAuthCredentials(test);
     // Navegar para a página inicial
     await page.goto('/');
     await page.waitForLoadState('networkidle');

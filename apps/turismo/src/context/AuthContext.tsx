@@ -59,12 +59,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const API_BASE_URL = DEFAULT_API_URL;
 
-/** Pre-T1 fabricated session tokens — clear on sight; never mint new ones. */
-function isLegacyFabricatedToken(token: string | null | undefined): boolean {
-  if (!token) return false;
-  return /^(demo|admin)-(token|refresh)(-\d+)?$/.test(token);
-}
-
   console.log('[AuthContext] AuthProvider renderizado, isLoading:', isLoading);
 
   const clearAuth = useCallback(() => {
