@@ -1,0 +1,856 @@
+{
+  "generatedAt": "2026-07-31T23:10:29.196Z",
+  "base": "38688f98",
+  "filesScanned": 451,
+  "patterns": [
+    "csvPath",
+    "readFile",
+    "write",
+    "delete_mkdir",
+    "sendFile_download",
+    "path_build"
+  ],
+  "note": "C1: read+write+delete+sendFile/download. Scripts under backend/scripts are non-HTTP.",
+  "hitCount": 85,
+  "byPattern": {
+    "csvPath": 30,
+    "readFile": 22,
+    "write": 3,
+    "delete_mkdir": 7,
+    "sendFile_download": 0,
+    "path_build": 23
+  },
+  "confirmedHttpLfi": [
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 10,
+      "route": "POST /api/v1/acomodacoes/sync/empreendimentos-caldas",
+      "authMiddleware": "authenticateJwt + requireRole",
+      "rolesRequired": [
+        "admin",
+        "manager",
+        "user"
+      ],
+      "input": "req.body.csvPath",
+      "sink": "server/modules/acomodacoes/sync/sync-empreendimentos.ts readFileSync(csvPath)",
+      "sandbox": "NONE — path.resolve/startsWith root allowlist absent",
+      "severity": "HIGH — authenticated LFI; any of admin|manager|user (not admin-only)"
+    }
+  ],
+  "reqDerivedOrRouteHits": [
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 70,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 74,
+      "pattern": "csvPath",
+      "context": "const csvLinhas = await parseArquivo(readFileSync(csvPath), csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 138,
+      "pattern": "csvPath",
+      "context": "csvPath,",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 8,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 12,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 13,
+      "pattern": "csvPath",
+      "context": "const linhas = await parseArquivo(buffer, csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 36,
+      "pattern": "csvPath",
+      "context": "csvPath,",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 11,
+      "pattern": "csvPath",
+      "context": "const csvPath = resolve(repoRoot, 'data/etapa-a/precos_reais_17.csv');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 12,
+      "pattern": "csvPath",
+      "context": "const csv = readFileSync(csvPath, 'utf8');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 7,
+      "pattern": "csvPath",
+      "context": "const csvPath = resolve(repoRoot, 'data/etapa-a/publicar_17_rascunhos.csv');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 8,
+      "pattern": "csvPath",
+      "context": "const csv = readFileSync(csvPath, 'utf8');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 40,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 68,
+      "pattern": "csvPath",
+      "context": "const semPreco = parseSemPreco(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 17,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 21,
+      "pattern": "csvPath",
+      "context": "if (!existsSync(csvPath)) {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 22,
+      "pattern": "csvPath",
+      "context": "console.error('CSV não encontrado:', csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 32,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 33,
+      "pattern": "csvPath",
+      "context": "const nomeArquivo = basename(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 40,
+      "pattern": "csvPath",
+      "context": "console.log('[import-inventario]', { commit, csvPath, proprietarioId, ignorados: relatorio.ignorados, relatorio });",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 10,
+      "pattern": "csvPath",
+      "context": "const csvPath = req.body?.csvPath as string | undefined;",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 11,
+      "pattern": "csvPath",
+      "context": "const data = await syncEmpreendimentosCaldas({ csvPath });",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 1,
+      "pattern": "readFile",
+      "context": "import { readFileSync, existsSync } from 'fs';",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 87,
+      "pattern": "csvPath",
+      "context": "export function lerEmpreendimentosDeCsv(csvPath: string): EmpreendimentoCatalogoItem[] {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 88,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 107,
+      "pattern": "csvPath",
+      "context": "export function extrairEmpreendimentosInventario(csvPath: string): EmpreendimentoCatalogoItem[] {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 108,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 140,
+      "pattern": "csvPath",
+      "context": "csvPath?: string;",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 143,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 144,
+      "pattern": "csvPath",
+      "context": "options?.csvPath ??",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 148,
+      "pattern": "csvPath",
+      "context": "if (existsSync(csvPath)) {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 149,
+      "pattern": "csvPath",
+      "context": "const itens = lerEmpreendimentosDeCsv(csvPath);",
+      "pathFromReqSuspected": true
+    }
+  ],
+  "hits": [
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 14,
+      "pattern": "path_build",
+      "context": "const REPO_ROOT = path.resolve(__dirname, '../../..');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 18,
+      "pattern": "path_build",
+      "context": "path.join(REPO_ROOT, '.env'),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 19,
+      "pattern": "path_build",
+      "context": "path.join(REPO_ROOT, 'backend', '.env'),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 20,
+      "pattern": "path_build",
+      "context": "path.join(",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 117,
+      "pattern": "path_build",
+      "context": "const guiasDir = path.join(REPO_ROOT, 'docs', 'instrutor');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agentes/ingerir-guias.mjs",
+      "line": 143,
+      "pattern": "readFile",
+      "context": "const raw = fs.readFileSync(path.join(guiasDir, file), 'utf8');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 12,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 70,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 74,
+      "pattern": "csvPath",
+      "context": "const csvLinhas = await parseArquivo(readFileSync(csvPath), csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/agrupar-3-predios.mjs",
+      "line": 138,
+      "pattern": "csvPath",
+      "context": "csvPath,",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 17,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/atualizar-precos-publicados.mjs",
+      "line": 45,
+      "pattern": "readFile",
+      "context": "const raw = readFileSync(abs, 'utf8').replace(/^\\uFEFF/, '');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 3,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 8,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 12,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 13,
+      "pattern": "csvPath",
+      "context": "const linhas = await parseArquivo(buffer, csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/dry-run-report.mjs",
+      "line": 36,
+      "pattern": "csvPath",
+      "context": "csvPath,",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 5,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 11,
+      "pattern": "csvPath",
+      "context": "const csvPath = resolve(repoRoot, 'data/etapa-a/precos_reais_17.csv');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 12,
+      "pattern": "csvPath",
+      "context": "const csv = readFileSync(csvPath, 'utf8');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-precos-reais-17-xlsx.mjs",
+      "line": 27,
+      "pattern": "write",
+      "context": "XLSX.writeFile(wb, outPath);",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 1,
+      "pattern": "readFile",
+      "context": "import { readFileSync, writeFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 7,
+      "pattern": "csvPath",
+      "context": "const csvPath = resolve(repoRoot, 'data/etapa-a/publicar_17_rascunhos.csv');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 8,
+      "pattern": "csvPath",
+      "context": "const csv = readFileSync(csvPath, 'utf8');",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/export-publicar-17-xlsx.mjs",
+      "line": 23,
+      "pattern": "write",
+      "context": "XLSX.writeFile(wb, repoPath);",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 11,
+      "pattern": "readFile",
+      "context": "import { readFileSync, writeFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 40,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 50,
+      "pattern": "readFile",
+      "context": "const raw = readFileSync(filePath, 'utf8').replace(/^\\uFEFF/, '');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 68,
+      "pattern": "csvPath",
+      "context": "const semPreco = parseSemPreco(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/gerar-publicar-17-csv.mjs",
+      "line": 103,
+      "pattern": "write",
+      "context": "writeFileSync(outPath, `${lines.join('\\n')}\\n`, 'utf8');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 9,
+      "pattern": "readFile",
+      "context": "import { readFileSync, existsSync } from 'fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 17,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 21,
+      "pattern": "csvPath",
+      "context": "if (!existsSync(csvPath)) {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 22,
+      "pattern": "csvPath",
+      "context": "console.error('CSV não encontrado:', csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 32,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 33,
+      "pattern": "csvPath",
+      "context": "const nomeArquivo = basename(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/import-inventario-caldas.mjs",
+      "line": 40,
+      "pattern": "csvPath",
+      "context": "console.log('[import-inventario]', { commit, csvPath, proprietarioId, ignorados: relatorio.ignorados, relatorio });",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 22,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/publicar-rascunhos-precificados.mjs",
+      "line": 44,
+      "pattern": "readFile",
+      "context": "const raw = readFileSync(abs, 'utf8').replace(/^\\uFEFF/, '');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/seed-vitrine-etapa-a.mjs",
+      "line": 18,
+      "pattern": "path_build",
+      "context": "const sqlPath = path.resolve(__dirname, '../../database/seeds/vitrine-etapa-a-11-hoteis.sql');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/seed-vitrine-etapa-a.mjs",
+      "line": 22,
+      "pattern": "readFile",
+      "context": "const sql = fs.readFileSync(sqlPath, 'utf8');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-drizzle-journal.mjs",
+      "line": 7,
+      "pattern": "path_build",
+      "context": "const DRIZZLE_DIR = path.join(process.cwd(), 'drizzle')",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-drizzle-journal.mjs",
+      "line": 8,
+      "pattern": "path_build",
+      "context": "const META_DIR = path.join(DRIZZLE_DIR, 'meta')",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-drizzle-journal.mjs",
+      "line": 9,
+      "pattern": "path_build",
+      "context": "const JOURNAL_PATH = path.join(META_DIR, '_journal.json')",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-drizzle-journal.mjs",
+      "line": 16,
+      "pattern": "readFile",
+      "context": "const journal = JSON.parse(fs.readFileSync(JOURNAL_PATH, 'utf-8'))",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-no-dynamic-relative-import.mjs",
+      "line": 11,
+      "pattern": "path_build",
+      "context": "const REPO_ROOT = path.resolve(process.cwd(), '..')",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-no-dynamic-relative-import.mjs",
+      "line": 12,
+      "pattern": "path_build",
+      "context": "const SCAN_ROOTS = ['server', path.join('backend', 'src')]",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-no-dynamic-relative-import.mjs",
+      "line": 47,
+      "pattern": "path_build",
+      "context": "const full = path.join(dir, entry.name)",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-no-dynamic-relative-import.mjs",
+      "line": 61,
+      "pattern": "path_build",
+      "context": "const absRoot = path.join(REPO_ROOT, root)",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/validate-no-dynamic-relative-import.mjs",
+      "line": 66,
+      "pattern": "readFile",
+      "context": "const lines = fs.readFileSync(file, 'utf8').split(/\\r?\\n/)",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 6,
+      "pattern": "readFile",
+      "context": "import { readFileSync } from 'node:fs';",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/scripts/verify-migration-0019.mjs",
+      "line": 90,
+      "pattern": "readFile",
+      "context": "const sql = readFileSync(migrationPath, 'utf8');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/server/modules/payments/providers/openfinance-pix.provider.ts",
+      "line": 131,
+      "pattern": "readFile",
+      "context": "cert: require('fs').readFileSync(this.certPath),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/server/modules/payments/providers/openfinance-pix.provider.ts",
+      "line": 132,
+      "pattern": "readFile",
+      "context": "key: require('fs').readFileSync(this.keyPath),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "backend/src/test/fase1-db-setup.ts",
+      "line": 9,
+      "pattern": "path_build",
+      "context": "const backendRoot = path.resolve(__dirname, '../..');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/acomodacoes/import/normalizar.ts",
+      "line": 264,
+      "pattern": "path_build",
+      "context": "erros: parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 10,
+      "pattern": "csvPath",
+      "context": "const csvPath = req.body?.csvPath as string | undefined;",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 11,
+      "pattern": "csvPath",
+      "context": "const data = await syncEmpreendimentosCaldas({ csvPath });",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 1,
+      "pattern": "readFile",
+      "context": "import { readFileSync, existsSync } from 'fs';",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 87,
+      "pattern": "csvPath",
+      "context": "export function lerEmpreendimentosDeCsv(csvPath: string): EmpreendimentoCatalogoItem[] {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 88,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 107,
+      "pattern": "csvPath",
+      "context": "export function extrairEmpreendimentosInventario(csvPath: string): EmpreendimentoCatalogoItem[] {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 108,
+      "pattern": "csvPath",
+      "context": "const buffer = readFileSync(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 140,
+      "pattern": "csvPath",
+      "context": "csvPath?: string;",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 143,
+      "pattern": "csvPath",
+      "context": "const csvPath =",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 144,
+      "pattern": "csvPath",
+      "context": "options?.csvPath ??",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 148,
+      "pattern": "csvPath",
+      "context": "if (existsSync(csvPath)) {",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 149,
+      "pattern": "csvPath",
+      "context": "const itens = lerEmpreendimentosDeCsv(csvPath);",
+      "pathFromReqSuspected": true
+    },
+    {
+      "file": "server/modules/agentes/instrutor/guias-loader.ts",
+      "line": 66,
+      "pattern": "path_build",
+      "context": "path.resolve(process.cwd(), 'docs/instrutor'),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/agentes/instrutor/guias-loader.ts",
+      "line": 67,
+      "pattern": "path_build",
+      "context": "path.resolve(process.cwd(), '../docs/instrutor'),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/agentes/instrutor/guias-loader.ts",
+      "line": 68,
+      "pattern": "path_build",
+      "context": "path.resolve(__dirname, '../../../../docs/instrutor'),",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/agentes/instrutor/guias-loader.ts",
+      "line": 91,
+      "pattern": "readFile",
+      "context": "const raw = fs.readFileSync(path.join(dir, file), 'utf8');",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 35,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 58,
+      "pattern": "readFile",
+      "context": "const fileContent = await fs.readFile(filePath);",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 116,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 193,
+      "pattern": "path_build",
+      "context": "const newFullPath = path.join(path.dirname(file.path), path.basename(newPath));",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 209,
+      "pattern": "path_build",
+      "context": "const newPath = file.provider === 'local' ? path.join(path.dirname(file.path), newName) : `copies/${newName}`;",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/file-storage.service.ts",
+      "line": 220,
+      "pattern": "path_build",
+      "context": "await fs.copyFile(file.path, path.join(path.dirname(file.path), newName));",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/image-optimization.service.ts",
+      "line": 45,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/image-optimization.service.ts",
+      "line": 87,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/image-optimization.service.ts",
+      "line": 122,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/image-optimization.service.ts",
+      "line": 142,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cloud/services/image-optimization.service.ts",
+      "line": 170,
+      "pattern": "delete_mkdir",
+      "context": "await fs.unlink(file.path).catch(() => {});",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cms/upload.ts",
+      "line": 18,
+      "pattern": "path_build",
+      "context": "if (fromEnv) return path.resolve(fromEnv);",
+      "pathFromReqSuspected": false
+    },
+    {
+      "file": "server/modules/cms/upload.ts",
+      "line": 19,
+      "pattern": "path_build",
+      "context": "return path.resolve(process.cwd(), 'public', 'uploads', 'hoteis');",
+      "pathFromReqSuspected": false
+    }
+  ]
+}

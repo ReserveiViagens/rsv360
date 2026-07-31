@@ -1,0 +1,356 @@
+{
+  "generatedAt": "2026-07-31T23:15:00.000Z",
+  "base": "38688f98",
+  "branch": "security/pr-07-fase0",
+  "scope": "Express runtime = backend/app.js mounts + server/modules registered via register*Module (not disk-only trees)",
+  "queryParser": {
+    "appSetQueryParser": "ABSENT in backend/app.js",
+    "effectiveDefault": "extended (qs)",
+    "implication": "Query strings can build nested objects (?a[b]=1). Rotas that pass req.query into filters without type-check are operator-injection-adjacent."
+  },
+  "headersNote": "X-Forwarded-For / Content-Type are indirect input; role spoof closed in PR-01; rate-limit IP in PR-06. Out of PR-07 patch scope — inventory only.",
+  "existingTests": {
+    "injectionPathTraversalZodStrict": 0,
+    "note": "No dedicated unit/integration tests found under backend for csvPath traversal, SQL injection payloads, or Zod .strict() mass-assignment. Implementation GO should add negative tests."
+  },
+  "pararTriggers": {
+    "csvPathAbsent": false,
+    "zodEffectiveOnAllCritical": false,
+    "ormPreventsAllInjection": "REDUCE_SCOPE — pg $n + Drizzle sql` binds dominate; residual = LFI + mass-assignment + Zod gaps",
+    "critPaymentSqlInterpolation": false,
+    "sqlRawHits": 0
+  },
+  "layerA_mounts": [
+    {
+      "prefix": "/health",
+      "source": "backend/app.js inline",
+      "handlersApprox": 1,
+      "validationDominant": "none",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/info",
+      "source": "backend/src/routes/info.route.js",
+      "handlersApprox": 1,
+      "validationDominant": "none",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/docs",
+      "source": "backend/src/routes/docs.route.js",
+      "handlersApprox": 2,
+      "validationDominant": "none",
+      "orphan": false
+    },
+    {
+      "prefix": "/metrics",
+      "source": "backend/src/routes/metrics.route.js",
+      "handlersApprox": 1,
+      "validationDominant": "bearer METRICS_TOKEN (PR-05b)",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/clone-alert",
+      "source": "backend/src/routes/clone-alert.route.js",
+      "handlersApprox": 1,
+      "validationDominant": "none",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/tracking",
+      "source": "backend/src/routes/tracking.route.js",
+      "handlersApprox": 1,
+      "validationDominant": "none",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/v1/payments",
+      "source": "backend/server/modules/payments",
+      "handlersApprox": 48,
+      "validationDominant": "manual / none on writes; webhooks = HMAC",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/v1/auth",
+      "source": "backend/src/api/v1/auth",
+      "handlersApprox": 18,
+      "validationDominant": "manual field reads + rate limit / MFA (PR-06c)",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/v1/auctions",
+      "source": "backend/src/api/v1/auctions",
+      "handlersApprox": 7,
+      "validationDominant": "explicit field pick + $n SQL",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/v1/tenant",
+      "source": "backend/src/api/v1/tenant",
+      "handlersApprox": 1,
+      "validationDominant": "none/light",
+      "orphan": false
+    },
+    {
+      "prefix": "/api/portal + /api/admin/portal",
+      "source": "server/modules/guest-portal",
+      "handlersApprox": 18,
+      "validationDominant": "Zod PortalBookingUpdateSchema (.strict) on booking write; other routes mixed",
+      "orphan": false
+    },
+    {
+      "prefix": "multi-property module",
+      "source": "registerMultiPropertyModule",
+      "handlersApprox": 15,
+      "validationDominant": "mixed",
+      "orphan": false
+    },
+    {
+      "prefix": "housekeeping module",
+      "source": "registerHousekeepingModule",
+      "handlersApprox": 33,
+      "validationDominant": "req.body → update* (mass-assign MEDIUM)",
+      "orphan": false
+    },
+    {
+      "prefix": "revenue module",
+      "source": "registerRevenueModule",
+      "handlersApprox": 38,
+      "validationDominant": "mixed",
+      "orphan": false
+    },
+    {
+      "prefix": "crm module",
+      "source": "registerCrmModule",
+      "handlersApprox": 45,
+      "validationDominant": "mixed",
+      "orphan": false
+    },
+    {
+      "prefix": "Fase1 modules (orcamentos…agentes)",
+      "source": "registerMigracaoFase1Modules in server/app.ts",
+      "handlersApprox": "~250+",
+      "modules": [
+        "orcamentos",
+        "propostas",
+        "passageiros",
+        "financeiro",
+        "campanhas",
+        "logistica",
+        "relatorios",
+        "fornecedores-hub",
+        "acomodacoes",
+        "cotacao-publica",
+        "configuracoes",
+        "vouchers",
+        "roteiro-analytics",
+        "roteiro",
+        "comissoes",
+        "cms",
+        "agentes"
+      ],
+      "validationDominant": "sparse Zod; many req.body writes",
+      "orphan": false
+    }
+  ],
+  "diskOnlyNotMountedInAppJs": [
+    {
+      "module": "server/modules/marketing",
+      "handlersApproxOnDisk": 57,
+      "status": "NOT registered in backend/app.js / registerMigracaoFase1Modules — treat as non-runtime unless proven otherwise"
+    },
+    {
+      "module": "server/modules/communication",
+      "handlersApproxOnDisk": 55,
+      "status": "NOT registered in boot path — non-runtime for this inventory"
+    },
+    {
+      "module": "server/modules/cloud",
+      "handlersApproxOnDisk": 44,
+      "status": "NOT registered in boot path — non-runtime for this inventory"
+    },
+    {
+      "module": "server/modules/pricing",
+      "handlersApproxOnDisk": 36,
+      "hasRegisterPricingRoutes": true,
+      "status": "registerPricingRoutes exists but NOT called from backend/app.js — verify before patching; Zod schemas present but likely dead for Express boot"
+    }
+  ],
+  "orphanRoutesInAppJs": {
+    "directRegistrations": "All HTTP surfaces are app.use(...) or register*Module — no unexplained orphan handlers beyond inline /health and error/404 handlers",
+    "inlineHandlers": ["GET /health", "error middleware", "404 middleware"]
+  },
+  "handlerCountApproxMounted": "~400–450 (excluding disk-only marketing/communication/cloud/pricing ~190)",
+  "layerB_criticalDetail": [
+    {
+      "method": "POST",
+      "path": "/api/v1/acomodacoes/sync/empreendimentos-caldas",
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "input": { "body": ["csvPath"], "query": [], "params": [] },
+      "validation": "none",
+      "auth": "authenticateJwt + requireRole('admin','manager','user')",
+      "db": "CSV parse → sync writes; LFI via readFileSync(csvPath)",
+      "paramsTyping": "n/a",
+      "risks": ["LFI_HIGH"],
+      "notes": "I1: role includes 'user' — not admin-only"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/payments/.../disputes/:id",
+      "file": "backend/server/modules/payments/routes/dispute.routes.ts",
+      "input": { "body": ["*"], "params": ["id"] },
+      "validation": "none",
+      "auth": "parent payments router staff (PR-01)",
+      "db": "dispute.service updateDispute → .set(data) full body",
+      "paramsTyping": "string id passed to Drizzle eq — no Number()/UUID schema at route",
+      "risks": ["MASS_ASSIGN_HIGH", "PARAMS_UNTYPED"]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/payments/.../subscriptions/:id (plan update)",
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "input": { "body": ["*"], "params": ["id"] },
+      "validation": "none",
+      "db": ".set(data) without allowlist",
+      "paramsTyping": "string id",
+      "risks": ["MASS_ASSIGN_HIGH"]
+    },
+    {
+      "method": "PATCH/PUT",
+      "path": "/api/v1/propostas/:id (and templates)",
+      "file": "server/modules/propostas/routes/index.ts",
+      "input": { "body": ["*"], "params": ["id"], "query": ["enterprise_id"] },
+      "validation": "none on update body",
+      "db": "propostasService.update(..., req.body)",
+      "paramsTyping": "Number(req.params.id) — coerced; NaN risk if non-numeric",
+      "queryTyping": "Number(req.query.enterprise_id) when present",
+      "risks": ["MASS_ASSIGN_HIGH"]
+    },
+    {
+      "method": "PATCH/PUT",
+      "path": "housekeeping tasks/checklists/maintenance",
+      "file": "server/modules/housekeeping/routes/*.ts",
+      "input": { "body": ["*"] },
+      "validation": "none",
+      "db": "update*(id, req.body)",
+      "risks": ["MASS_ASSIGN_MEDIUM"]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/webhooks/mercadopago|stripe",
+      "file": "backend/server/modules/payments/routes/webhook-public.routes.ts",
+      "input": { "body": ["provider payload"], "headers": ["x-signature", "stripe-signature"], "query": ["MP data.id"] },
+      "validation": "HMAC (PR-02) + IP limiter (PR-06b); NO Zod schema on post-HMAC body before service processing",
+      "db": "idempotency + processEvent; Express path does not settle booking (Next does — PR-02c)",
+      "risks": ["WEBHOOK_BODY_UNSCHEMAED_LOW_AFTER_HMAC"],
+      "notes": "I4: trust after signature; still recommend schema for shape before DB writes"
+    },
+    {
+      "method": "PATCH",
+      "path": "guest-portal booking write",
+      "file": "server/modules/guest-portal/routes/portal.routes.ts",
+      "validation": "PortalBookingUpdateSchema.parse(req.body) — .strict() + persist parse result",
+      "risks": [],
+      "zodClass": "EFETIVO"
+    },
+    {
+      "method": "various",
+      "path": "/api/v1/auth/*",
+      "file": "backend/src/api/v1/auth/*",
+      "validation": "manual field extraction; MFA/rate-limit present",
+      "db": "queryDatabase with $n",
+      "risks": ["VALIDATION_MANUAL_OK_FOR_SQL", "NO_ZOD_STRICT"],
+      "paramsTyping": "mixed"
+    },
+    {
+      "method": "POST",
+      "path": "spread req.body examples",
+      "files": [
+        "server/modules/relatorios/routes/index.ts",
+        "server/modules/acomodacoes/routes/index.ts",
+        "server/modules/acomodacoes/routes/tarifas.routes.ts"
+      ],
+      "validation": "none / partial",
+      "risks": ["SPREAD_REQ_BODY", "PROTOTYPE_POLLUTION_CANDIDATE", "MASS_ASSIGN"]
+    }
+  ],
+  "zodInventory": [
+    {
+      "schema": "PortalBookingUpdateSchema",
+      "file": "server/modules/guest-portal/schemas/portal-booking-write.schema.ts",
+      "strict": true,
+      "handlerUsesParseResult": true,
+      "class": "EFETIVO",
+      "mounted": true
+    },
+    {
+      "schema": "gerarPropostaBodySchema",
+      "file": "server/modules/cotacao-publica/schemas/gerar-proposta.schema.ts",
+      "strict": false,
+      "passthrough": true,
+      "handlerUsesParseResult": true,
+      "class": "PARCIAL",
+      "notes": "Explicit .passthrough() keeps unknown keys after preprocess deletes some price fields; not BOPLA-proof",
+      "mounted": true
+    },
+    {
+      "schema": "roteiroAnalyticsBatchSchema",
+      "file": "server/modules/roteiro-analytics/schemas/roteiro-analytics.schema.ts",
+      "strict": false,
+      "handlerUsesParseResult": true,
+      "class": "PARCIAL",
+      "mounted": true
+    },
+    {
+      "schema": "comissoesConfigSchema",
+      "file": "server/modules/comissoes/schema.ts",
+      "strict": "check file — object schema without .strict() in opening lines",
+      "class": "PARCIAL",
+      "mounted": true
+    },
+    {
+      "schema": "pricing route inline z.object schemas",
+      "file": "server/modules/pricing/routes/*.ts",
+      "strict": false,
+      "class": "PARCIAL_OR_DEAD",
+      "mounted": false,
+      "notes": "Module not registered in backend/app.js boot"
+    },
+    {
+      "schema": "fornecedores-hub/agentes schema.ts",
+      "file": "server/modules/*/schema.ts",
+      "notes": "May be Drizzle table defs or Zod — payments/schema.ts is Drizzle",
+      "class": "REVIEW"
+    }
+  ],
+  "nosqlOperatorInjection": {
+    "stack": "Postgres + Drizzle/pg (not Mongo)",
+    "bodyObjectOperators": "If handler spreads req.body into .set(), nested objects become column values — type error or JSON column pollution depending on schema; not Mongo $ne semantics",
+    "queryNestedViaQs": "extended parser enables ?field[$ne]=null style nesting; risk only where req.query passed unchecked into dynamic filters",
+    "verdict": "N/A classic NoSQL; residual = untyped JSON + mass-assign + query nesting → covered by Zod strict + allowlists"
+  },
+  "sliceEstimates": {
+    "PR-07a_LFI": {
+      "primaryFiles": [
+        "server/modules/acomodacoes/routes/sync.routes.ts",
+        "server/modules/acomodacoes/sync/sync-empreendimentos.ts"
+      ],
+      "estimatedFiles": "2–4 (+ tests + evidence)",
+      "estimatedHandlers": 1,
+      "sendFileDownloadHttpHits": 0,
+      "writeDeleteHttpFromReq": "none confirmed beyond csvPath read LFI; CLI writeFile under scripts only"
+    },
+    "PR-07b_Zod_mass_critical": {
+      "surfaces": ["payments dispute/subscription", "propostas update/create/templates", "auth writes if gaps", "bookings/portal remaining", "spread routes acomodacoes/relatorios"],
+      "estimatedFiles": "12–25",
+      "estimatedHandlers": "15–40",
+      "subsliceRecommendation": "If GO finds >20 handlers: 07b1 auth+payments · 07b2 propostas+acomodacoes/relatorios spreads"
+    },
+    "PR-07c_remaining": {
+      "surfaces": ["housekeeping", "crm/revenue/financeiro/campanhas/… HIGH-MEDIUM from layer A"],
+      "estimatedFiles": "20–50",
+      "estimatedHandlers": "50–150",
+      "note": "Only mounted modules; skip disk-only marketing/communication/cloud unless later mounted"
+    }
+  }
+}

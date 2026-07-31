@@ -1,0 +1,1376 @@
+{
+  "generatedAt": "2026-07-31T23:10:29.216Z",
+  "base": "38688f98",
+  "filesScanned": 451,
+  "patterns": [
+    "spread_req_body",
+    "object_assign_req_body",
+    "update_req_body",
+    "set_data",
+    "req_body"
+  ],
+  "hitCount": 337,
+  "byPattern": {
+    "spread_req_body": 5,
+    "object_assign_req_body": 0,
+    "update_req_body": 0,
+    "set_data": 6,
+    "req_body": 326
+  },
+  "highInterestCount": 56,
+  "knownHighChains": [
+    {
+      "id": "payments-dispute-update",
+      "files": [
+        "backend/server/modules/payments/routes/dispute.routes.ts",
+        "backend/server/modules/payments/services/dispute.service.ts"
+      ],
+      "pattern": "req.body → service → .set(data) without field allowlist",
+      "risk": "HIGH"
+    },
+    {
+      "id": "payments-subscription-update",
+      "files": [
+        "backend/server/modules/payments/routes/subscription.routes.ts",
+        "backend/server/modules/payments/services/subscription.service.ts"
+      ],
+      "pattern": "req.body → .set(data) without allowlist",
+      "risk": "HIGH"
+    },
+    {
+      "id": "propostas-update",
+      "files": [
+        "server/modules/propostas/routes/index.ts",
+        "server/modules/propostas/services/propostas.service.ts"
+      ],
+      "pattern": "req.body → .set({ ...data })",
+      "risk": "HIGH"
+    },
+    {
+      "id": "housekeeping-update-body",
+      "files": [
+        "server/modules/housekeeping/routes/tasks.routes.ts",
+        "server/modules/housekeeping/routes/checklists.routes.ts",
+        "server/modules/housekeeping/routes/maintenance.routes.ts"
+      ],
+      "pattern": "update*(id, req.body)",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "spread-req-body-routes",
+      "files": [
+        "server/modules/relatorios/routes/index.ts",
+        "server/modules/acomodacoes/routes/index.ts",
+        "server/modules/acomodacoes/routes/tarifas.routes.ts"
+      ],
+      "pattern": "{ ...req.body } / create with spread",
+      "risk": "MEDIUM-HIGH — prototype pollution + BOPLA candidate"
+    }
+  ],
+  "highInterestHits": [
+    {
+      "file": "backend/server/modules/payments/routes/customer.routes.ts",
+      "line": 37,
+      "pattern": "req_body",
+      "context": "const result = await customerService.updateCustomer(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/dispute.routes.ts",
+      "line": 28,
+      "pattern": "req_body",
+      "context": "const result = await disputeService.updateDispute(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 27,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.updatePlan(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/services/dispute.service.ts",
+      "line": 27,
+      "pattern": "set_data",
+      "context": ".set(data)"
+    },
+    {
+      "file": "backend/server/modules/payments/services/subscription.service.ts",
+      "line": 39,
+      "pattern": "set_data",
+      "context": ".set(data)"
+    },
+    {
+      "file": "server/modules/acomodacoes/import/importar.ts",
+      "line": 101,
+      "pattern": "set_data",
+      "context": ".set(payload)"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/index.ts",
+      "line": 160,
+      "pattern": "spread_req_body",
+      "context": "const patch = { ...req.body };"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 49,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 120,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "server/modules/acomodacoes/services/acomodacoes.service.ts",
+      "line": 256,
+      "pattern": "set_data",
+      "context": "const [row] = await db.update(tiposAcomodacao).set(data).where(eq(tiposAcomodacao.id, id)).returning();"
+    },
+    {
+      "file": "server/modules/acomodacoes/services/acomodacoes.service.ts",
+      "line": 284,
+      "pattern": "set_data",
+      "context": "const [row] = await db.update(wizardAddons).set(data).where(eq(wizardAddons.id, id)).returning();"
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 59,
+      "pattern": "set_data",
+      "context": "await db.update(empreendimentos).set(payload).where(eq(empreendimentos.id, existente.id));"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 52,
+      "pattern": "req_body",
+      "context": "const updated = await campanhasViagemService.updateCupom(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 110,
+      "pattern": "req_body",
+      "context": "const updated = await campanhasViagemService.updateCampanha(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/templates.routes.ts",
+      "line": 109,
+      "pattern": "req_body",
+      "context": "const data = updateTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/crm/routes/campaigns.routes.ts",
+      "line": 22,
+      "pattern": "req_body",
+      "context": "const item = await campaignService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/crm/routes/guest-profiles.routes.ts",
+      "line": 41,
+      "pattern": "req_body",
+      "context": "const profile = await guestProfileService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/crm/routes/guest-profiles.routes.ts",
+      "line": 51,
+      "pattern": "req_body",
+      "context": "const profile = await guestProfileService.update(Number(req.params.id), { is_vip: Boolean(req.body.is_vip ?? true) });"
+    },
+    {
+      "file": "server/modules/crm/routes/segments.routes.ts",
+      "line": 22,
+      "pattern": "req_body",
+      "context": "const item = await segmentService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/financeiro/routes/index.ts",
+      "line": 73,
+      "pattern": "req_body",
+      "context": "const updated = await financeiroService.updateTransacao(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/financeiro/routes/index.ts",
+      "line": 111,
+      "pattern": "req_body",
+      "context": "const updated = await financeiroService.receberConta(Number(req.params.id), String(req.body.valorRecebido));"
+    },
+    {
+      "file": "server/modules/financeiro/routes/index.ts",
+      "line": 139,
+      "pattern": "req_body",
+      "context": "const updated = await financeiroService.pagarConta(Number(req.params.id), String(req.body.valorPago));"
+    },
+    {
+      "file": "server/modules/fornecedores-hub/routes/index.ts",
+      "line": 50,
+      "pattern": "req_body",
+      "context": "const updated = await fornecedoresApiService.update(asRequiredString(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/guest-portal/routes/admin.routes.ts",
+      "line": 42,
+      "pattern": "req_body",
+      "context": "const result = await requestsService.updateRequestStatus(req.params.id, req.body);"
+    },
+    {
+      "file": "server/modules/housekeeping/routes/checklists.routes.ts",
+      "line": 44,
+      "pattern": "req_body",
+      "context": "res.json(await checklistsService.updateChecklist(asRequiredString(req.params.id), req.body));"
+    },
+    {
+      "file": "server/modules/housekeeping/routes/maintenance.routes.ts",
+      "line": 43,
+      "pattern": "req_body",
+      "context": "res.json(await maintenanceService.updateMaintenanceOrder(asRequiredString(req.params.id), req.body));"
+    },
+    {
+      "file": "server/modules/housekeeping/routes/room-status.routes.ts",
+      "line": 27,
+      "pattern": "req_body",
+      "context": "const result = await roomStatusService.updateStatus(asRequiredString(req.params.id), req.body.status, req.body.notes);"
+    },
+    {
+      "file": "server/modules/housekeeping/routes/room-status.routes.ts",
+      "line": 36,
+      "pattern": "req_body",
+      "context": "const updated = await roomStatusService.bulkUpdate(req.body.ids || [], req.body.status);"
+    },
+    {
+      "file": "server/modules/housekeeping/routes/tasks.routes.ts",
+      "line": 60,
+      "pattern": "req_body",
+      "context": "res.json(await tasksService.updateTask(asRequiredString(req.params.id), req.body));"
+    },
+    {
+      "file": "server/modules/logistica/routes/index.ts",
+      "line": 40,
+      "pattern": "req_body",
+      "context": "const updated = await logisticaService.updateTransporte(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/logistica/routes/index.ts",
+      "line": 88,
+      "pattern": "req_body",
+      "context": "const updated = await logisticaService.updateFornecedor(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/logistica/routes/index.ts",
+      "line": 116,
+      "pattern": "req_body",
+      "context": "const updated = await logisticaService.updateReserva(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/logistica/routes/index.ts",
+      "line": 144,
+      "pattern": "req_body",
+      "context": "const updated = await logisticaService.updateVoucher(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/marketing/routes/abtest.routes.ts",
+      "line": 77,
+      "pattern": "req_body",
+      "context": "const test = await updateAbTest(req.params.id as string, req.body);"
+    },
+    {
+      "file": "server/modules/marketing/routes/broadcast.routes.ts",
+      "line": 77,
+      "pattern": "req_body",
+      "context": "const broadcast = await updateBroadcast(req.params.id as string, req.body);"
+    },
+    {
+      "file": "server/modules/marketing/routes/campaign.routes.ts",
+      "line": 75,
+      "pattern": "req_body",
+      "context": "const campaign = await updateCampaign(req.params.id as string, req.body);"
+    },
+    {
+      "file": "server/modules/marketing/routes/funnel.routes.ts",
+      "line": 71,
+      "pattern": "req_body",
+      "context": "const funnel = await updateFunnel(req.params.id as string, req.body);"
+    },
+    {
+      "file": "server/modules/marketing/routes/whatsapp.routes.ts",
+      "line": 62,
+      "pattern": "req_body",
+      "context": "const template = await updateTemplate(req.params.id as string, req.body);"
+    },
+    {
+      "file": "server/modules/multi-property/routes/properties.routes.ts",
+      "line": 35,
+      "pattern": "req_body",
+      "context": "const property = await propertyService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/multi-property/routes/properties.routes.ts",
+      "line": 58,
+      "pattern": "req_body",
+      "context": "const user = await propertyService.updateUserRole(Number(req.params.id), Number(req.params.uid), String(req.body.role || 'staff'));"
+    },
+    {
+      "file": "server/modules/multi-property/routes/properties.routes.ts",
+      "line": 73,
+      "pattern": "req_body",
+      "context": "const property = await propertyService.update(Number(req.params.id), { settings: req.body.settings || req.body });"
+    },
+    {
+      "file": "server/modules/orcamentos/routes/index.ts",
+      "line": 44,
+      "pattern": "req_body",
+      "context": "const updated = await orcamentosService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/passageiros/routes/index.ts",
+      "line": 43,
+      "pattern": "req_body",
+      "context": "const updated = await passageirosService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/passageiros/routes/index.ts",
+      "line": 63,
+      "pattern": "req_body",
+      "context": "const updated = await passageirosService.addDocumento(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/passageiros/routes/index.ts",
+      "line": 93,
+      "pattern": "req_body",
+      "context": "const updated = await passageirosService.updateFnrh(Number(req.params.fnrhId), req.body);"
+    },
+    {
+      "file": "server/modules/pricing/routes/alerts.routes.ts",
+      "line": 127,
+      "pattern": "req_body",
+      "context": "const updates = req.body;"
+    },
+    {
+      "file": "server/modules/pricing/routes/competitor.routes.ts",
+      "line": 132,
+      "pattern": "req_body",
+      "context": "const updates = req.body;"
+    },
+    {
+      "file": "server/modules/pricing/routes/pricing.routes.ts",
+      "line": 222,
+      "pattern": "req_body",
+      "context": "const updates = req.body;"
+    },
+    {
+      "file": "server/modules/propostas/routes/index.ts",
+      "line": 92,
+      "pattern": "req_body",
+      "context": "const updated = await propostasService.updateTemplate(Number(req.params.templateId), req.body);"
+    },
+    {
+      "file": "server/modules/propostas/routes/index.ts",
+      "line": 380,
+      "pattern": "req_body",
+      "context": "const updated = await propostasService.update(Number(req.params.id), req.body, req.user?.id);"
+    },
+    {
+      "file": "server/modules/relatorios/routes/index.ts",
+      "line": 74,
+      "pattern": "spread_req_body",
+      "context": "const created = await relatoriosService.createView({ ...req.body, userId: req.user?.id });"
+    },
+    {
+      "file": "server/modules/relatorios/routes/index.ts",
+      "line": 83,
+      "pattern": "req_body",
+      "context": "const updated = await relatoriosService.updateView(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/relatorios/routes/index.ts",
+      "line": 115,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "server/modules/revenue/routes/competitor.routes.ts",
+      "line": 42,
+      "pattern": "req_body",
+      "context": "const item = await competitorService.updateCompetitorRate(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/revenue/routes/pricing-rules.routes.ts",
+      "line": 43,
+      "pattern": "req_body",
+      "context": "const rule = await pricingRulesService.updateRule(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/revenue/routes/rate-calendar.routes.ts",
+      "line": 38,
+      "pattern": "req_body",
+      "context": "const result = await rateCalendarService.bulkOverridePrices(req.body.updates || []);"
+    }
+  ],
+  "hitsSample": [
+    {
+      "file": "backend/server/modules/payments/services/dispute.service.ts",
+      "line": 27,
+      "pattern": "set_data",
+      "context": ".set(data)"
+    },
+    {
+      "file": "backend/server/modules/payments/services/subscription.service.ts",
+      "line": 39,
+      "pattern": "set_data",
+      "context": ".set(data)"
+    },
+    {
+      "file": "server/modules/acomodacoes/import/importar.ts",
+      "line": 101,
+      "pattern": "set_data",
+      "context": ".set(payload)"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/index.ts",
+      "line": 160,
+      "pattern": "spread_req_body",
+      "context": "const patch = { ...req.body };"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 49,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 120,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "server/modules/acomodacoes/services/acomodacoes.service.ts",
+      "line": 256,
+      "pattern": "set_data",
+      "context": "const [row] = await db.update(tiposAcomodacao).set(data).where(eq(tiposAcomodacao.id, id)).returning();"
+    },
+    {
+      "file": "server/modules/acomodacoes/services/acomodacoes.service.ts",
+      "line": 284,
+      "pattern": "set_data",
+      "context": "const [row] = await db.update(wizardAddons).set(data).where(eq(wizardAddons.id, id)).returning();"
+    },
+    {
+      "file": "server/modules/acomodacoes/sync/sync-empreendimentos.ts",
+      "line": 59,
+      "pattern": "set_data",
+      "context": "await db.update(empreendimentos).set(payload).where(eq(empreendimentos.id, existente.id));"
+    },
+    {
+      "file": "server/modules/relatorios/routes/index.ts",
+      "line": 74,
+      "pattern": "spread_req_body",
+      "context": "const created = await relatoriosService.createView({ ...req.body, userId: req.user?.id });"
+    },
+    {
+      "file": "server/modules/relatorios/routes/index.ts",
+      "line": 115,
+      "pattern": "spread_req_body",
+      "context": "...req.body,"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/customer.routes.ts",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "const result = await customerService.createCustomer(req.body.enterpriseId, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/customer.routes.ts",
+      "line": 37,
+      "pattern": "req_body",
+      "context": "const result = await customerService.updateCustomer(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/dispute.routes.ts",
+      "line": 28,
+      "pattern": "req_body",
+      "context": "const result = await disputeService.updateDispute(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/dispute.routes.ts",
+      "line": 37,
+      "pattern": "req_body",
+      "context": "await disputeService.submitEvidence(req.params.id, req.body.evidence);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/payment.routes.ts",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "const result = await paymentService.createPayment(req.body.enterpriseId, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/payment.routes.ts",
+      "line": 38,
+      "pattern": "req_body",
+      "context": "const result = await paymentService.cancelPayment(req.body.enterpriseId, req.params.id);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/pix.routes.ts",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "const result = await pixService.createPIXCharge(req.body.enterpriseId, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/refund.routes.ts",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "const result = await refundService.createRefund(req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.createPlan(req.body.enterpriseId, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 27,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.updatePlan(req.params.id, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 45,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.createSubscription(req.body.enterpriseId, req.body);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 73,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.cancelSubscription(req.params.id, req.body.atPeriodEnd);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/subscription.routes.ts",
+      "line": 100,
+      "pattern": "req_body",
+      "context": "const result = await subscriptionService.changePlan(req.params.id, req.body.newPlanId);"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/webhook-public.routes.ts",
+      "line": 24,
+      "pattern": "req_body",
+      "context": "JSON.stringify(req.body),"
+    },
+    {
+      "file": "backend/server/modules/payments/routes/webhook-public.routes.ts",
+      "line": 36,
+      "pattern": "req_body",
+      "context": "body: req.body,"
+    },
+    {
+      "file": "backend/src/api/v1/auctions/routes.js",
+      "line": 109,
+      "pattern": "req_body",
+      "context": "const result = await createAuction(req.body);"
+    },
+    {
+      "file": "backend/src/api/v1/auctions/routes.js",
+      "line": 157,
+      "pattern": "req_body",
+      "context": "const result = await placeBid(auctionId, bearer, req.body?.amount);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 72,
+      "pattern": "req_body",
+      "context": "const { refresh_token: refreshToken } = req.body || {};"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 89,
+      "pattern": "req_body",
+      "context": "const { refresh_token: refreshToken } = req.body || {};"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 216,
+      "pattern": "req_body",
+      "context": "const result = await registerWithDatabase(req.body);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 255,
+      "pattern": "req_body",
+      "context": "const result = await issueSsoCode(req.body);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 291,
+      "pattern": "req_body",
+      "context": "const result = await exchangeSsoCode(req.body?.code, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 372,
+      "pattern": "req_body",
+      "context": "const result = await oauthLoginWithProfile(req.body, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 443,
+      "pattern": "req_body",
+      "context": "const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 455,
+      "pattern": "req_body",
+      "context": "const result = await requestPasswordReset(req.body?.email);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 500,
+      "pattern": "req_body",
+      "context": "const result = await resetPasswordWithToken(req.body);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 545,
+      "pattern": "req_body",
+      "context": "typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 554,
+      "pattern": "req_body",
+      "context": "const result = await changePasswordWithTotp(req.body, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 647,
+      "pattern": "req_body",
+      "context": "const result = await verifyTwoFactorSetup(actor.userId, req.body?.code, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 695,
+      "pattern": "req_body",
+      "context": "const tempToken = typeof req.body?.temp_token === 'string' ? req.body.temp_token.trim() : '';"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 704,
+      "pattern": "req_body",
+      "context": "const result = await verifyTwoFactorLogin(req.body, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 750,
+      "pattern": "req_body",
+      "context": "const result = await disableTwoFactor(bearer.userId, req.body?.password, req.body?.code, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 782,
+      "pattern": "req_body",
+      "context": "const result = await regenerateBackupCodes(bearer.userId, req.body?.password, req.body?.code, {"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 814,
+      "pattern": "req_body",
+      "context": "typeof req.body?.account_key === 'string'"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 815,
+      "pattern": "req_body",
+      "context": "? req.body.account_key"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 816,
+      "pattern": "req_body",
+      "context": ": typeof req.body?.email === 'string'"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 817,
+      "pattern": "req_body",
+      "context": "? req.body.email"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 822,
+      "pattern": "req_body",
+      "context": "const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim() : '';"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 861,
+      "pattern": "req_body",
+      "context": "const targetUserId = Number(req.body?.user_id);"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 865,
+      "pattern": "req_body",
+      "context": "const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim() : '';"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 880,
+      "pattern": "req_body",
+      "context": "targetRole: req.body?.target_role,"
+    },
+    {
+      "file": "backend/src/api/v1/auth/routes.js",
+      "line": 896,
+      "pattern": "req_body",
+      "context": "const { email, password, turnstileToken, turnstile_token } = req.body || {};"
+    },
+    {
+      "file": "backend/src/routes/clone-alert.route.js",
+      "line": 9,
+      "pattern": "req_body",
+      "context": "cloneDomain: req.body?.cloneDomain || req.get('host') || 'unknown',"
+    },
+    {
+      "file": "backend/src/routes/clone-alert.route.js",
+      "line": 10,
+      "pattern": "req_body",
+      "context": "cloneUrl: req.body?.cloneUrl || req.originalUrl,"
+    },
+    {
+      "file": "backend/src/routes/clone-alert.route.js",
+      "line": 11,
+      "pattern": "req_body",
+      "context": "referrer: req.body?.referrer || null,"
+    },
+    {
+      "file": "backend/src/routes/clone-alert.route.js",
+      "line": 12,
+      "pattern": "req_body",
+      "context": "userAgent: req.body?.userAgent || req.get('user-agent') || null,"
+    },
+    {
+      "file": "backend/src/routes/clone-alert.route.js",
+      "line": 13,
+      "pattern": "req_body",
+      "context": "timestamp: req.body?.timestamp || new Date().toISOString(),"
+    },
+    {
+      "file": "backend/src/routes/tracking.route.js",
+      "line": 10,
+      "pattern": "req_body",
+      "context": "const eventName = req.body?.eventName || 'UnknownEvent';"
+    },
+    {
+      "file": "backend/src/routes/tracking.route.js",
+      "line": 11,
+      "pattern": "req_body",
+      "context": "const eventId = req.body?.eventId || crypto.randomUUID();"
+    },
+    {
+      "file": "backend/src/routes/tracking.route.js",
+      "line": 26,
+      "pattern": "req_body",
+      "context": "data: req.body?.data || {},"
+    },
+    {
+      "file": "backend/src/routes/tracking.route.js",
+      "line": 27,
+      "pattern": "req_body",
+      "context": "pageUrl: req.body?.pageUrl || req.get('referer') || null,"
+    },
+    {
+      "file": "backend/src/routes/tracking.route.js",
+      "line": 28,
+      "pattern": "req_body",
+      "context": "userAgent: req.body?.userAgent || req.get('user-agent') || null,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 59,
+      "pattern": "req_body",
+      "context": "req.body ?? {},"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 109,
+      "pattern": "req_body",
+      "context": "req.body?.motivo,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 212,
+      "pattern": "req_body",
+      "context": "const dias = Array.isArray(req.body?.dias) ? req.body.dias : [];"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 241,
+      "pattern": "req_body",
+      "context": "const parsed = normalizarListaDatas(req.body?.datas);"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 249,
+      "pattern": "req_body",
+      "context": "req.body?.observacao != null ? String(req.body.observacao) : undefined,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 274,
+      "pattern": "req_body",
+      "context": "const parsed = normalizarListaDatas(req.body?.datas);"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 306,
+      "pattern": "req_body",
+      "context": "const parsed = normalizarListaDatas(req.body?.datas);"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 310,
+      "pattern": "req_body",
+      "context": "const precoRaw = req.body?.preco;"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/anfitriao.routes.ts",
+      "line": 350,
+      "pattern": "req_body",
+      "context": "const { corretorId, proprietarioId } = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/import.routes.ts",
+      "line": 24,
+      "pattern": "req_body",
+      "context": "const bulkPublicado = String(req.body?.bulkPublicado ?? 'false') === 'true';"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/import.routes.ts",
+      "line": 25,
+      "pattern": "req_body",
+      "context": "const statusPublicacao = req.body?.statusPublicacao as"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/import.routes.ts",
+      "line": 35,
+      "pattern": "req_body",
+      "context": "proprietarioId: parseProprietarioId(req.body?.proprietarioId),"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/import.routes.ts",
+      "line": 87,
+      "pattern": "req_body",
+      "context": "const asyncMode = String(req.body?.async ?? 'false') === 'true';"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/index.ts",
+      "line": 109,
+      "pattern": "req_body",
+      "context": "const { slug, nome, icone, ordem } = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/index.ts",
+      "line": 120,
+      "pattern": "req_body",
+      "context": "const data = await acomodacoesService.atualizarTipo(Number(req.params.id), req.body ?? {});"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/index.ts",
+      "line": 139,
+      "pattern": "req_body",
+      "context": "const { nome, descricao, precoTipo, valor, escopo, requerConfigBanheiro, ordem } = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/sync.routes.ts",
+      "line": 10,
+      "pattern": "req_body",
+      "context": "const csvPath = req.body?.csvPath as string | undefined;"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 29,
+      "pattern": "req_body",
+      "context": "const ativo = req.body?.tarifarioDinamicoAtivo === true;"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 60,
+      "pattern": "req_body",
+      "context": "const data = await tarifaService.atualizarCategoria(Number(req.params.id), req.body ?? {});"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 79,
+      "pattern": "req_body",
+      "context": "const data = await tarifaService.criarTemporada(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 99,
+      "pattern": "req_body",
+      "context": "dataInicio: req.body.dataInicio,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 100,
+      "pattern": "req_body",
+      "context": "dataFim: req.body.dataFim,"
+    },
+    {
+      "file": "server/modules/acomodacoes/routes/tarifas.routes.ts",
+      "line": 131,
+      "pattern": "req_body",
+      "context": "const data = await tarifaService.atualizarRegra(Number(req.params.id), req.body ?? {});"
+    },
+    {
+      "file": "server/modules/agentes/routes/index.ts",
+      "line": 57,
+      "pattern": "req_body",
+      "context": "const parsed = perguntarSchema.safeParse(req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 43,
+      "pattern": "req_body",
+      "context": "const created = await campanhasViagemService.createCupom(req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 52,
+      "pattern": "req_body",
+      "context": "const updated = await campanhasViagemService.updateCupom(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 62,
+      "pattern": "req_body",
+      "context": "const result = await campanhasViagemService.validarCupom(String(req.body.codigo));"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 71,
+      "pattern": "req_body",
+      "context": "const uso = await campanhasViagemService.usarCupom(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 101,
+      "pattern": "req_body",
+      "context": "const created = await campanhasViagemService.createCampanha(req.body);"
+    },
+    {
+      "file": "server/modules/campanhas/routes/index.ts",
+      "line": 110,
+      "pattern": "req_body",
+      "context": "const updated = await campanhasViagemService.updateCampanha(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 17,
+      "pattern": "req_body",
+      "context": "if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 18,
+      "pattern": "req_body",
+      "context": "(req.body as any).property_id = (req.body as any).property_id || propertyId;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 27,
+      "pattern": "req_body",
+      "context": "const { entityType, entityId, folder } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 98,
+      "pattern": "req_body",
+      "context": "const { quality, format } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 120,
+      "pattern": "req_body",
+      "context": "const { width, height, fit } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 132,
+      "pattern": "req_body",
+      "context": "const { format } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 144,
+      "pattern": "req_body",
+      "context": "const { left, top, width, height } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 156,
+      "pattern": "req_body",
+      "context": "const { position } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 182,
+      "pattern": "req_body",
+      "context": "const { fileIds } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 194,
+      "pattern": "req_body",
+      "context": "const { concurrency, removeOnComplete, removeOnFail } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 206,
+      "pattern": "req_body",
+      "context": "const { data, priority, delay, attempts, backoff } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 290,
+      "pattern": "req_body",
+      "context": "const { key, value, ttl } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 339,
+      "pattern": "req_body",
+      "context": "const config = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 360,
+      "pattern": "req_body",
+      "context": "const { amount } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 371,
+      "pattern": "req_body",
+      "context": "const { amount } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 392,
+      "pattern": "req_body",
+      "context": "const { ttl } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 424,
+      "pattern": "req_body",
+      "context": "const { field, value } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 456,
+      "pattern": "req_body",
+      "context": "const { values } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 489,
+      "pattern": "req_body",
+      "context": "const { members } = req.body;"
+    },
+    {
+      "file": "server/modules/cloud/routes/cloud.routes.ts",
+      "line": 510,
+      "pattern": "req_body",
+      "context": "const { members } = req.body;"
+    },
+    {
+      "file": "server/modules/cms/routes.ts",
+      "line": 30,
+      "pattern": "req_body",
+      "context": "const body = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/cms/routes.ts",
+      "line": 59,
+      "pattern": "req_body",
+      "context": "const body = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/comissoes/routes/index.ts",
+      "line": 72,
+      "pattern": "req_body",
+      "context": "const body = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/comissoes/routes/index.ts",
+      "line": 101,
+      "pattern": "req_body",
+      "context": "const parsed = comissoesSugestaoIaSchema.safeParse(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/comissoes/routes/index.ts",
+      "line": 114,
+      "pattern": "req_body",
+      "context": "const parsed = comissoesSolicitarAprovacaoSchema.safeParse(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/comissoes/routes/index.ts",
+      "line": 127,
+      "pattern": "req_body",
+      "context": "const parsed = comissoesAprovarSugestaoSchema.safeParse(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/comissoes/routes/index.ts",
+      "line": 142,
+      "pattern": "req_body",
+      "context": "const parsed = comissoesRejeitarSugestaoSchema.safeParse(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/communication/routes/campaigns.routes.ts",
+      "line": 78,
+      "pattern": "req_body",
+      "context": "const data = createCampaignSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/campaigns.routes.ts",
+      "line": 101,
+      "pattern": "req_body",
+      "context": "const data = createCampaignSchema.partial().parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/email.routes.ts",
+      "line": 49,
+      "pattern": "req_body",
+      "context": "const data = sendEmailSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/email.routes.ts",
+      "line": 75,
+      "pattern": "req_body",
+      "context": "const data = sendTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/email.routes.ts",
+      "line": 100,
+      "pattern": "req_body",
+      "context": "const data = sendBulkSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/email.routes.ts",
+      "line": 134,
+      "pattern": "req_body",
+      "context": "const data = sendTransactionalSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/email.routes.ts",
+      "line": 160,
+      "pattern": "req_body",
+      "context": "const data = validateEmailSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/inbox.routes.ts",
+      "line": 103,
+      "pattern": "req_body",
+      "context": "const data = replySchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/inbox.routes.ts",
+      "line": 156,
+      "pattern": "req_body",
+      "context": "const data = assignSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/index.ts",
+      "line": 19,
+      "pattern": "req_body",
+      "context": "if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {"
+    },
+    {
+      "file": "server/modules/communication/routes/index.ts",
+      "line": 20,
+      "pattern": "req_body",
+      "context": "(req.body as any).property_id = (req.body as any).property_id || propertyId;"
+    },
+    {
+      "file": "server/modules/communication/routes/push.routes.ts",
+      "line": 52,
+      "pattern": "req_body",
+      "context": "const data = sendPushSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/push.routes.ts",
+      "line": 83,
+      "pattern": "req_body",
+      "context": "const data = sendBulkSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/push.routes.ts",
+      "line": 122,
+      "pattern": "req_body",
+      "context": "const data = subscribeSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/sms.routes.ts",
+      "line": 32,
+      "pattern": "req_body",
+      "context": "const data = sendSmsSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/sms.routes.ts",
+      "line": 56,
+      "pattern": "req_body",
+      "context": "const data = sendBulkSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/sms.routes.ts",
+      "line": 88,
+      "pattern": "req_body",
+      "context": "const data = sendOtpSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/templates.routes.ts",
+      "line": 89,
+      "pattern": "req_body",
+      "context": "const data = createTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/templates.routes.ts",
+      "line": 109,
+      "pattern": "req_body",
+      "context": "const data = updateTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/templates.routes.ts",
+      "line": 133,
+      "pattern": "req_body",
+      "context": "const data = previewTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/templates.routes.ts",
+      "line": 164,
+      "pattern": "req_body",
+      "context": "const newName = req.body.newName as string;"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 23,
+      "pattern": "req_body",
+      "context": "const payload = req.body;"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 66,
+      "pattern": "req_body",
+      "context": "const payload = req.body;"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 92,
+      "pattern": "req_body",
+      "context": "const payload = req.body;"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 118,
+      "pattern": "req_body",
+      "context": "const payload = req.body;"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 142,
+      "pattern": "req_body",
+      "context": "const data = createWebhookSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/webhooks.routes.ts",
+      "line": 180,
+      "pattern": "req_body",
+      "context": "const data = createWebhookSchema.partial().parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/whatsapp.routes.ts",
+      "line": 47,
+      "pattern": "req_body",
+      "context": "const data = sendMessageSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/whatsapp.routes.ts",
+      "line": 69,
+      "pattern": "req_body",
+      "context": "const data = sendTemplateSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/whatsapp.routes.ts",
+      "line": 94,
+      "pattern": "req_body",
+      "context": "const data = sendMediaSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/whatsapp.routes.ts",
+      "line": 120,
+      "pattern": "req_body",
+      "context": "const data = sendBulkSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/communication/routes/whatsapp.routes.ts",
+      "line": 153,
+      "pattern": "req_body",
+      "context": "const data = validateNumberSchema.parse(req.body);"
+    },
+    {
+      "file": "server/modules/configuracoes/routes/index.ts",
+      "line": 24,
+      "pattern": "req_body",
+      "context": "const parsed = configPropostaSchema.partial().safeParse(req.body ?? {});"
+    },
+    {
+      "file": "server/modules/cotacao-publica/routes/index.ts",
+      "line": 41,
+      "pattern": "req_body",
+      "context": "const { checkin, checkout, hospedes } = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/cotacao-publica/routes/index.ts",
+      "line": 65,
+      "pattern": "req_body",
+      "context": "const body = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/cotacao-publica/routes/index.ts",
+      "line": 96,
+      "pattern": "req_body",
+      "context": "const payload = parseGerarPropostaBody(req.body);"
+    },
+    {
+      "file": "server/modules/cotacao-publica/routes/index.ts",
+      "line": 165,
+      "pattern": "req_body",
+      "context": "req.body?.clientName,"
+    },
+    {
+      "file": "server/modules/cotacao-publica/routes/index.ts",
+      "line": 233,
+      "pattern": "req_body",
+      "context": "const { tempoMs, scrollDepthPct } = req.body ?? {};"
+    },
+    {
+      "file": "server/modules/crm/routes/campaigns.routes.ts",
+      "line": 17,
+      "pattern": "req_body",
+      "context": "const item = await campaignService.create(Number(req.body.userId || 1), req.body);"
+    },
+    {
+      "file": "server/modules/crm/routes/campaigns.routes.ts",
+      "line": 22,
+      "pattern": "req_body",
+      "context": "const item = await campaignService.update(Number(req.params.id), req.body);"
+    },
+    {
+      "file": "server/modules/crm/routes/campaigns.routes.ts",
+      "line": 33,
+      "pattern": "req_body",
+      "context": "const filter = req.body.filter || campaign?.segment_filter || {};"
+    }
+  ]
+}
