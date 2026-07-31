@@ -88,9 +88,12 @@ function resetAdminLoginRateLimit(ip: string) {
 }
 
 function backendAuthBase(): string {
+  // Prefer in-network URL inside Docker (localhost from the container is wrong).
   return (
     process.env.AUTH_V1_BASE_URL ||
     process.env.BACKEND_URL ||
+    process.env.BACKEND_INTERNAL_URL ||
+    process.env.INTERNAL_API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     'http://127.0.0.1:3001'
   ).replace(/\/$/, '')

@@ -519,6 +519,58 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+/** POST /api/v1/auth/change-password — senha atual + TOTP (F5; sem logar segredos) */
+router.post('/change-password', async (req, res) => {
+  const {
+    changePasswordWithTotp,
+    isDbChangePasswordEnabled,
+  } = require('./change-password.service');
+
+  if (!isDbChangePasswordEnabled()) {
+    return res.status(501).json({
+      success: false,
+      error: 'Troca de senha indisponível. Configure DATABASE_URL.',
+    });
+  }
+
+  try {
+    const {
+      enforceChangePasswordRateLimit,
+      getClientIp,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
+
+    const email =
+      typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const ipAddress = getClientIp(req);
+    const rateLimitCheck = await enforceChangePasswordRateLimit(email, ipAddress);
+    if (!rateLimitCheck.allowed) {
+      return res
+        .status(rateLimitDeniedStatus(rateLimitCheck))
+        .json(rateLimitDeniedBody(rateLimitCheck));
+    }
+
+    const result = await changePasswordWithTotp(req.body, {
+      ipAddress,
+      userAgent: req.header('user-agent') || undefined,
+      surface: 'auth-v1-change-password',
+    });
+
+    if (!result) {
+      return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+    }
+    if (result.error) {
+      return res.status(result.status || 400).json({ success: false, error: result.message });
+    }
+
+    return res.json({ success: true, message: result.message });
+  } catch (error) {
+    console.error('[AUTH] change-password error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
 function resolveBearerUser(req) {
   const token = extractBearerToken(req);
   if (!token) return null;

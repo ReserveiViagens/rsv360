@@ -1,0 +1,40 @@
+Ôö£ ãÆ /pricing/calendar
+Ôö£ ãÆ /pricing/comparison
+Ôö£ ãÆ /pricing/competitors
+Ôö£ ãÆ /pricing/dashboard
+Ôö£ ãÆ /pricing/rules
+Ôö£ ãÆ /pricing/seasons
+Ôö£ ãÆ /pricing/smart
+Ôö£ ãÆ /privacidade
+Ôö£ ãÆ /promocoes
+Ôö£ ãÆ /proposta/[token]
+Ôö£ ãÆ /quality
+Ôö£ ãÆ /quality/dashboard
+Ôö£ ãÆ /quality/leaderboard
+Ôö£ ãÆ /quem-somos
+Ôö£ ãÆ /recuperar-senha
+Ôö£ ãÆ /redefinir-senha
+Ôö£ ãÆ /reserva-confirmada
+Ôö£ Ôùï /robots.txt
+Ôö£ ãÆ /roteiro/[token]
+Ôö£ Ôùï /roteiro/manifest.webmanifest
+Ôö£ Ôùï /roteiro/sw.js
+Ôö£ ãÆ /roteiro/verificar/[token]
+Ôö£ Ôùï /sitemap.xml
+Ôö£ ãÆ /termos
+Ôö£ ãÆ /termos-de-uso
+Ôö£ ãÆ /tickets
+Ôö£ ãÆ /trips
+Ôö£ ãÆ /ui-demo
+Ôö£ ãÆ /verificar/[qrToken]
+Ôö£ ãÆ /verification
+Ôö£ ãÆ /verification/property
+Ôö£ ãÆ /viagens-grupo
+Ôöö ãÆ /wishlists
+
+
+ãÆ Proxy (Middleware)
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
