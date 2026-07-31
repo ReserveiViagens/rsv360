@@ -74,20 +74,11 @@ export default function Login() {
             }
         } catch (error) {
             console.error('Erro no login:', error);
-            setError('Credenciais inválidas. Tente novamente.');
-        }
-    };
-
-    const handleDemoLogin = async () => {
-        try {
-            // Login de demonstração sem backend
-            const success = await login('demo@onionrsv.com', 'demo123');
-            if (success) {
-                router.push('/dashboard');
-            }
-        } catch (error) {
-            console.error('Erro no login demo:', error);
-            setError('Erro ao acessar demo. Tente novamente.');
+            setError(
+                error instanceof Error && error.message
+                    ? error.message
+                    : 'Credenciais inválidas. Tente novamente.'
+            );
         }
     };
 
@@ -282,14 +273,6 @@ export default function Login() {
                                     className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Entrando...' : 'Entrar'}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={handleDemoLogin}
-                                    className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                >
-                                    Acessar Demo
                                 </button>
                             </div>
                         </form>

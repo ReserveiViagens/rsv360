@@ -44,11 +44,16 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+/** Pre-T1 fabricated session tokens — clear on sight; never mint new ones. */
+function isLegacyFabricatedToken(token: string | null | undefined): boolean {
+  if (!token) return false;
+  return /^(demo|admin)-(token|refresh)(-\d+)?$/.test(token);
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  // Inicializar isLoading como false por padrão para evitar travamento
-  // Só será true durante a verificação inicial de autenticação
-  const [isLoading, setIsLoading] = useState(false);
+  // Start loading until client initAuth resolves (avoids SSR redirect races)
+  const [isLoading, setIsLoading] = useState(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
@@ -167,12 +172,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshToken ||
       (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
 
-    if (
-      token &&
-      storedRefresh &&
-      token !== 'demo-token' &&
-      token !== 'admin-token'
-    ) {
+    if (token && storedRefresh && !isLegacyFabricatedToken(token)) {
       void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
         method: 'POST',
         headers: {
@@ -237,52 +237,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setRefreshToken(storedRefreshToken);
           }
           
-          // Se for demo token, criar usuário demo
-          if (storedAccessToken === 'demo-token') {
-            console.log('[AuthContext] Token demo detectado - criando usuário demo');
-            const demoUser: User = {
-              id: 1,
-              email: 'demo@onionrsv.com',
-              full_name: 'Usuário Demo',
-              is_active: true,
-              permissions: ['admin'],
-              created_at: new Date().toISOString(),
-              last_login: new Date().toISOString()
-            };
-            if (isMounted) {
-              setUser(demoUser);
-              setIsLoading(false);
-            }
+          // Reject known legacy fabricated tokens (pre-T1 bypass)
+          if (
+            isLegacyFabricatedToken(storedAccessToken) ||
+            isLegacyFabricatedToken(storedRefreshToken)
+          ) {
+            console.log('[AuthContext] Legacy fabricated token detected — clearing auth');
+            if (isMounted) clearAuth();
             if (timeoutId) clearTimeout(timeoutId);
-            console.log('[AuthContext] Usuário demo criado, isLoading = false, isAuthenticated = true');
             return;
-          } else {
-            // Tentar verificar token real (opcional) com timeout
-            try {
-              console.log('[AuthContext] Verificando token real...');
-              // Timeout de 3 segundos para evitar travamento
-              const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), 3000)
-              );
-              
-              const isValid = await Promise.race([
-                verifyToken(storedAccessToken),
-                timeoutPromise
-              ]) as boolean;
-              
-              console.log('[AuthContext] Token válido:', isValid);
-              if (isValid && isMounted) {
-                await fetchUserData(storedAccessToken);
-                // fetchUserData já define isLoading como false
-              } else if (isMounted) {
-                console.log('[AuthContext] Token inválido - limpando autenticação');
-                clearAuth();
-              }
-            } catch (error) {
-              // Se falhar ou timeout, limpar autenticação
-              console.error('[AuthContext] Erro ao verificar token:', error);
-              if (isMounted) clearAuth();
+          }
+
+          // Verificar token real com timeout
+          try {
+            console.log('[AuthContext] Verificando token real...');
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Timeout')), 3000)
+            );
+
+            const isValid = (await Promise.race([
+              verifyToken(storedAccessToken),
+              timeoutPromise,
+            ])) as boolean;
+
+            console.log('[AuthContext] Token válido:', isValid);
+            if (isValid && isMounted) {
+              await fetchUserData(storedAccessToken);
+            } else if (isMounted) {
+              console.log('[AuthContext] Token inválido - limpando autenticação');
+              clearAuth();
             }
+          } catch (error) {
+            console.error('[AuthContext] Erro ao verificar token:', error);
+            if (isMounted) clearAuth();
           }
         } else {
           // Não há token armazenado, apenas definir loading como false IMEDIATAMENTE
@@ -332,11 +319,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Renovação automática de token
   useEffect(() => {
-    if (!accessToken || accessToken === 'demo-token') return;
+    if (!accessToken) return;
 
     const tokenRefreshInterval = setInterval(async () => {
       try {
-        if (refreshToken && refreshToken !== 'demo-refresh') {
+        if (refreshToken) {
           await refreshAccessToken(refreshToken);
         }
       } catch (error) {
@@ -355,95 +342,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      // Verificar se é login demo
-      if (email === 'demo@onionrsv.com' && password === 'demo123') {
-        const demoUser: User = {
-          id: 1,
-          email: 'demo@onionrsv.com',
-          full_name: 'Usuário Demo',
-          is_active: true,
-          permissions: ['admin'],
-          created_at: new Date().toISOString(),
-          last_login: new Date().toISOString()
-        };
-        
-        setUser(demoUser);
-        setAccessToken('demo-token');
-        setRefreshToken('demo-refresh');
-        localStorage.setItem('access_token', 'demo-token');
-        localStorage.setItem('refresh_token', 'demo-refresh');
-        persistPostLoginRole('admin');
-        return true;
-      }
+    // Fail-closed: only canonical backend auth — no client-side demo/admin bypass
+    const response = await fetch(`${API_BASE_URL}${AUTH_V1.LOGIN}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-      // Verificar se é login admin
-      if (email === 'admin@onionrsv.com' && password === 'admin123') {
-        const adminUser: User = {
-          id: 2,
-          email: 'admin@onionrsv.com',
-          full_name: 'Administrador',
-          firstName: 'Administrador',
-          lastName: 'RSV',
-          role: 'admin',
-          is_active: true,
-          permissions: ['admin'],
-          created_at: new Date().toISOString(),
-          last_login: new Date().toISOString()
-        };
-        
-        setUser(adminUser);
-        setAccessToken('admin-token');
-        setRefreshToken('admin-refresh');
-        localStorage.setItem('access_token', 'admin-token');
-        localStorage.setItem('refresh_token', 'admin-refresh');
-        persistPostLoginRole('admin');
-        return true;
-      }
-
-      // Login canônico v1 (/api/v1/auth/login)
-      const response = await fetch(`${API_BASE_URL}${AUTH_V1.LOGIN}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const loginPayload = parseAuthV1LoginResponse(await response.json());
-        if (!loginPayload) {
-          throw new Error('Resposta de login inválida');
-        }
-
-        if (!loginPayload.access_token || !loginPayload.refresh_token) {
-          throw new Error('Resposta de login sem tokens');
-        }
-
-        setAccessToken(loginPayload.access_token);
-        setRefreshToken(loginPayload.refresh_token);
-        localStorage.setItem('access_token', loginPayload.access_token);
-        localStorage.setItem('refresh_token', loginPayload.refresh_token);
-
-        if (loginPayload.user) {
-          const mapped = mapAuthV1User(loginPayload.user, loginPayload.access_token);
-          setUser({
-            ...mapped,
-            id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
-          } as User);
-          persistPostLoginRole(mapped.role);
-        } else {
-          await fetchUserData(loginPayload.access_token);
-        }
-        return true;
-      } else {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err?.error || err?.message || 'Credenciais inválidas');
-      }
-    } catch (error) {
-      console.error('Erro no login:', error);
-      throw error;
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.error || err?.message || 'Credenciais inválidas');
     }
+
+    const loginPayload = parseAuthV1LoginResponse(await response.json());
+    if (!loginPayload) {
+      throw new Error('Resposta de login inválida');
+    }
+
+    if (!loginPayload.access_token || !loginPayload.refresh_token) {
+      throw new Error('Resposta de login sem tokens');
+    }
+
+    setAccessToken(loginPayload.access_token);
+    setRefreshToken(loginPayload.refresh_token);
+    localStorage.setItem('access_token', loginPayload.access_token);
+    localStorage.setItem('refresh_token', loginPayload.refresh_token);
+
+    if (loginPayload.user) {
+      const mapped = mapAuthV1User(loginPayload.user, loginPayload.access_token);
+      setUser({
+        ...mapped,
+        id: typeof mapped.id === 'number' ? mapped.id : parseInt(String(mapped.id), 10) || 0,
+      } as User);
+      persistPostLoginRole(mapped.role);
+    } else {
+      await fetchUserData(loginPayload.access_token);
+    }
+    return true;
   };
 
   const register = async (email: string, full_name: string, password: string): Promise<boolean> => {
@@ -475,12 +412,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const updateUser = async (userData: Partial<User>): Promise<boolean> => {
     try {
-      if (!accessToken || accessToken === 'demo-token' || accessToken === 'admin-token') {
-        // Para usuários demo, apenas atualizar localmente
-        if (user) {
-          setUser({ ...user, ...userData });
-        }
-        return true;
+      if (!accessToken) {
+        throw new Error('Sessão inválida');
       }
 
       const response = await fetch(`${API_BASE_URL}/api/users/me`, {
@@ -507,9 +440,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const changePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
     try {
-      if (!accessToken || accessToken === 'demo-token' || accessToken === 'admin-token') {
-        // Para usuários demo, simular sucesso
-        return true;
+      if (!accessToken) {
+        throw new Error('Sessão inválida');
       }
 
       const response = await fetch(`${API_BASE_URL}/api/users/change-password`, {

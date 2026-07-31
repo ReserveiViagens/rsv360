@@ -1,23 +1,25 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test.describe('Analytics Dashboard - Testes E2E', () => {
-  async function login(page: import('@playwright/test').Page) {
+  async function login(page: import('@playwright/test').Page, creds: { email: string; password: string }) {
     await page.goto('http://localhost:3000/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.fill('#email, input[type="email"]', 'admin@onion360.com');
-    await page.fill('#password, input[type="password"]', 'admin123');
+    await page.fill('#email, input[type="email"]', creds.email);
+    await page.fill('#password, input[type="password"]', creds.password);
     await page.click('button[type="submit"]:has-text("Entrar"), button:has-text("Entrar")');
     await page.waitForURL('**/dashboard-rsv', { timeout: 60000 });
   }
   test.beforeEach(async ({ page }) => {
+    const creds = requireE2EAuthCredentials(test);
     try {
-      await login(page);
+      await login(page, creds);
       await page.goto('http://localhost:3000/analytics-dashboard', {
         waitUntil: 'networkidle',
         timeout: 60000,
       });
     } catch (error) {
       console.log('Erro ao carregar página, tentando novamente:', error);
-      await login(page);
+      await login(page, creds);
       await page.goto('http://localhost:3000/analytics-dashboard', {
         waitUntil: 'networkidle',
         timeout: 60000,

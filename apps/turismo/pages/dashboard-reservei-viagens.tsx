@@ -555,7 +555,7 @@ export default function DashboardReserveiViagens() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
-                <div className="text-sm text-gray-900">admin@onion360.com</div>
+                <div className="text-sm text-gray-900">—</div>
               </div>
 
               <div>

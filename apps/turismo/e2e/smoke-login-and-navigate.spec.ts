@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuthCredentials } from './auth-credentials';
 
 test('SMOKE: login e navegação básica (dashboard, analytics, reservas)', async ({ page }) => {
-  // Login (modo demo/admin)
+  const creds = requireE2EAuthCredentials(test);
+  // Login via E2E_AUTH_* (seed)
   await page.goto('http://localhost:3000/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.fill('#email, input[type="email"]', 'admin@onion360.com');
-  await page.fill('#password, input[type="password"]', 'admin123');
+  await page.fill('#email, input[type="email"]', creds.email);
+  await page.fill('#password, input[type="password"]', creds.password);
   await page.click('button[type="submit"]:has-text("Entrar"), button:has-text("Entrar")');
   await page.waitForURL('**/dashboard-rsv', { timeout: 60000 });
 

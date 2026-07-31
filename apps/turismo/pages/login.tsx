@@ -26,7 +26,11 @@ export default function Login() {
                 setError('Credenciais inválidas. Tente novamente.');
             }
         } catch (_error) {
-            setError('Erro ao fazer login. Tente novamente.');
+            const message =
+                _error instanceof Error && _error.message
+                    ? _error.message
+                    : 'Erro ao fazer login. Tente novamente.';
+            setError(message);
         } finally {
             setIsLoggingIn(false);
         }
@@ -48,25 +52,6 @@ export default function Login() {
                         <p className="text-gray-600 mb-8">
                             Sistema de Turismo Completo
                         </p>
-                        
-                        {/* Modo Demo Banner */}
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div className="ml-3">
-                                    <h3 className="text-sm font-medium text-yellow-800">
-                                        Modo Demo Ativo
-                                    </h3>
-                                    <p className="text-sm text-yellow-700 mt-1">
-                                        Sistema funcionando sem backend. Use as credenciais de demo.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -120,22 +105,12 @@ export default function Login() {
                     </form>
 
                     <div className="text-center">
-                        <p className="text-xs text-gray-500 mb-2">
-                            <strong>Credenciais de demonstração:</strong>
-                        </p>
-                        <div className="bg-gray-50 rounded-md p-3 text-xs text-gray-600">
-                            <p><strong>Admin:</strong> admin@onion360.com / admin123</p>
-                            <p><strong>Demo:</strong> demo@onionrsv.com / demo123</p>
-                        </div>
-                    </div>
-
-                    <div className="text-center">
                         <p className="text-xs text-gray-400">
-                            Sistema Onion RSV 360 v2.7.0 - Modo Demo
+                            Autenticação via API canônica (/api/v1/auth/login)
                         </p>
                     </div>
                 </div>
             </div>
         </>
     );
-} 
+}

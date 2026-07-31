@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from './Navigation';
 import NotificationBell from './NotificationBell';
 import ToastContainer, { useToast } from './ToastContainer';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../src/context/AuthContext';
 import { useRouter } from 'next/router';
 
 interface LayoutProps {
@@ -15,11 +15,17 @@ export default function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { toasts, removeToast } = useToast();
 
-  // Se não estiver autenticado e não estiver carregando, redirecionar para login
-  if (!isLoading && !isAuthenticated && router.pathname !== '/login' && router.pathname !== '/register') {
-    router.push('/login');
-    return null;
-  }
+  // Redirect only on client after auth bootstrap (never during render/prerender)
+  useEffect(() => {
+    if (!router.isReady || isLoading) return;
+    if (
+      !isAuthenticated &&
+      router.pathname !== '/login' &&
+      router.pathname !== '/register'
+    ) {
+      void router.push('/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   // Se estiver carregando, mostrar loading
   if (isLoading) {
@@ -36,6 +42,18 @@ export default function Layout({ children }: LayoutProps) {
   // Se estiver na página de login ou registro, não mostrar layout
   if (router.pathname === '/login' || router.pathname === '/register') {
     return <>{children}</>;
+  }
+
+  // Unauthenticated: wait for redirect effect (do not call router.push in render)
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Redirecionando...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -150,4 +168,4 @@ function getUserInitial(): string {
 function getUserName(): string {
   // Em produção, isso viria do contexto de autenticação
   return 'Usuário';
-} 
+}
