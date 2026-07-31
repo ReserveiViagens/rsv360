@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-07-31T21:12:00.000Z",
+  "base": "e0e1118d",
+  "pattern": "localhost:5000|127.0.0.1:5000|port:\\s*5000",
+  "excluded": ["BACKUP*", "reservei/", "RSV-360-ECOSYSTEM/", "node_modules/", ".next/"],
+  "hitCount": 4,
+  "hits": [
+    {
+      "file": "apps/turismo/components/ResponsiveSidebar.tsx",
+      "line": 105,
+      "context": "port: 5000,"
+    },
+    {
+      "file": "apps/turismo/pages/rsv-360-ecosystem.tsx",
+      "line": 89,
+      "context": "port: 5000,"
+    },
+    {
+      "file": "apps/turismo/services/api-gateway-complete.ts",
+      "line": 30,
+      "context": "port: 5000,"
+    },
+    {
+      "file": "apps/turismo/services/api-gateway-complete.ts",
+      "line": 351,
+      "context": "port: 5000,"
+    }
+  ]
+}
