@@ -1,0 +1,22 @@
+﻿============================================================
+NPM Audit Gate Report (docs/evidence-tmp-audit-after-omitdev.json)
+============================================================
+
+[ALLOWED] 3 known tech-debt entries:
+  - engine.io-client (high): Depend├¬ncia transitiva do socket.io ÔÇö sem patch dispon├¡vel
+  - ws (high): Depend├¬ncia transitiva do Socket.IO ÔÇö aguardar patch upstream
+  - xlsx (high): SheetJS sem patch no npm (CDN pr├│prio); importer invent├írio + export xlsx ÔÇö migrar p/ exceljs ou SheetJS-CDN (issue #42)
+
+[BLOCK] 10 unallowlisted critical/high:
+  - archiver (high): not in allowlist
+  - archiver-utils (high): not in allowlist
+  - brace-expansion (high): not in allowlist
+  - exceljs (high): not in allowlist
+  - gaxios (high): not in allowlist
+  - glob (high): not in allowlist
+  - minimatch (high): not in allowlist
+  - readdir-glob (high): not in allowlist
+  - rimraf (high): not in allowlist
+  - zip-stream (high): not in allowlist
+
+Fix these or add to .github/audit-allowlist.json with justification + expiry.

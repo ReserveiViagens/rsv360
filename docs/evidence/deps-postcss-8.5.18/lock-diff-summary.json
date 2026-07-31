@@ -1,0 +1,57 @@
+{
+  "rootPostcss": {
+    "from": "8.5.15",
+    "to": "8.5.18"
+  },
+  "twPostcss": {
+    "from": "4.3.1",
+    "to": "4.3.3"
+  },
+  "added": [
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/core",
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/runtime",
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/wasi-threads",
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@napi-rs/wasm-runtime",
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@tybys/wasm-util",
+    "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/tslib",
+    "node_modules/jiti",
+    "node_modules/tailwindcss"
+  ],
+  "removed": [
+    "apps/admin/node_modules/tailwindcss",
+    "apps/guest/node_modules/tailwindcss",
+    "apps/site-publico/node_modules/tailwindcss",
+    "apps/turismo/node_modules/tailwindcss",
+    "node_modules/@tailwindcss/node/node_modules/jiti",
+    "node_modules/@tailwindcss/node/node_modules/tailwindcss",
+    "node_modules/@tailwindcss/postcss/node_modules/tailwindcss"
+  ],
+  "versionChanged": [
+    {
+      "path": "node_modules/@tailwindcss/node",
+      "from": "4.3.1",
+      "to": "4.3.3"
+    },
+    {
+      "path": "node_modules/@tailwindcss/oxide",
+      "from": "4.3.1",
+      "to": "4.3.3"
+    },
+    {
+      "path": "node_modules/@tailwindcss/postcss",
+      "from": "4.3.1",
+      "to": "4.3.3"
+    },
+    {
+      "path": "node_modules/enhanced-resolve",
+      "from": "5.21.6",
+      "to": "5.24.5"
+    },
+    {
+      "path": "node_modules/postcss",
+      "from": "8.5.15",
+      "to": "8.5.18"
+    }
+  ],
+  "versionChangedOxidePlatforms": 12
+}
