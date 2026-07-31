@@ -214,7 +214,7 @@ const MOCK_API_CALLS: APICall[] = [
   }
 ];
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export default function IntegracoesAPIs() {
   const [integrations, setIntegrations] = useState<APIIntegration[]>(MOCK_INTEGRATIONS);

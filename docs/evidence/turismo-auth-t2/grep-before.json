@@ -1,0 +1,141 @@
+{
+  "generatedAt": "2026-07-31T20:31:28.147Z",
+  "base": "5cea9d80",
+  "pattern": "localhost:5000|127.0.0.1:5000|Core API (5000)|| Core API | 5000",
+  "excluded": [
+    "BACKUP*",
+    "reservei/",
+    "RSV-360-ECOSYSTEM/",
+    "node_modules/",
+    ".next/"
+  ],
+  "notedOutOfScope": [
+    {
+      "file": "docker-compose.yml",
+      "note": "NEXT_PUBLIC_PRIMARY_SITE_URL default http://localhost:5000 is site-publico primary site, NOT turismo API — do not touch (T2 vinculante ⑥)"
+    }
+  ],
+  "wiringConfirm": {
+    "compose_x_app_env_NEXT_PUBLIC_API_URL": "http://localhost:3002 (confirmed, unchanged)",
+    "turismo_package_json_dev_start": "-p 3005 UI only; no NEXT_PUBLIC_API_URL override",
+    "turismo_env_example": "ABSENT — SKIP explicit (no .env*.example under apps/turismo)"
+  },
+  "hitCount": 23,
+  "hits": [
+    {
+      "file": "apps/turismo/next.config.development.js",
+      "line": 64,
+      "context": "destination: 'http://localhost:5000/api/:path*',"
+    },
+    {
+      "file": "apps/turismo/pages/api/core/token.ts",
+      "line": 12,
+      "context": "const response = await fetch('http://localhost:5000/api/core/token', {"
+    },
+    {
+      "file": "apps/turismo/pages/api/core/users.ts",
+      "line": 12,
+      "context": "const response = await fetch('http://localhost:5000/api/users/', {"
+    },
+    {
+      "file": "apps/turismo/pages/rsv-360-ecosystem.tsx",
+      "line": 93,
+      "context": "url: 'http://localhost:5000',"
+    },
+    {
+      "file": "apps/turismo/services/api-corrigido.ts",
+      "line": 6,
+      "context": "const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';"
+    },
+    {
+      "file": "apps/turismo/services/api-corrigido.ts",
+      "line": 90,
+      "context": "export const coreApi = createApiClient('http://localhost:5000');"
+    },
+    {
+      "file": "apps/turismo/services/api-gateway-complete.ts",
+      "line": 29,
+      "context": "baseUrl: 'http://localhost:5000',"
+    },
+    {
+      "file": "apps/turismo/services/api-gateway-complete.ts",
+      "line": 350,
+      "context": "baseUrl: 'http://localhost:5000',"
+    },
+    {
+      "file": "apps/turismo/services/api.ts",
+      "line": 4,
+      "context": "const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';"
+    },
+    {
+      "file": "apps/turismo/src/components/bookings/BookingModal.tsx",
+      "line": 258,
+      "context": "const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/enterprises?status=active`);"
+    },
+    {
+      "file": "apps/turismo/src/components/bookings/BookingModal.tsx",
+      "line": 270,
+      "context": "const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/enterprises/${enterpriseId}/properties`);"
+    },
+    {
+      "file": "apps/turismo/src/components/bookings/BookingModal.tsx",
+      "line": 282,
+      "context": "const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/properties/${propertyId}/accommodations`);"
+    },
+    {
+      "file": "apps/turismo/src/pages/_document.js",
+      "line": 8,
+      "context": "<link rel=\"preconnect\" href=\"http://localhost:5000\" />"
+    },
+    {
+      "file": "apps/turismo/src/pages/_document.js",
+      "line": 9,
+      "context": "<link rel=\"preconnect\" href=\"https://localhost:5000\" />"
+    },
+    {
+      "file": "apps/turismo/src/pages/_document.tsx",
+      "line": 11,
+      "context": "<link rel=\"preconnect\" href=\"http://localhost:5000\" />"
+    },
+    {
+      "file": "apps/turismo/src/pages/_document.tsx",
+      "line": 12,
+      "context": "<link rel=\"preconnect\" href=\"https://localhost:5000\" />"
+    },
+    {
+      "file": "apps/turismo/src/pages/api/core/token.ts",
+      "line": 12,
+      "context": "const response = await fetch('http://localhost:5000/api/core/token', {"
+    },
+    {
+      "file": "apps/turismo/src/pages/api/core/users.ts",
+      "line": 12,
+      "context": "const response = await fetch('http://localhost:5000/api/users/', {"
+    },
+    {
+      "file": "apps/turismo/src/pages/integracoes-apis.tsx",
+      "line": 217,
+      "context": "const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';"
+    },
+    {
+      "file": "apps/turismo/src/services/api.ts",
+      "line": 4,
+      "context": "const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';"
+    },
+    {
+      "file": "apps/turismo/src/services/websocketClient.ts",
+      "line": 6,
+      "context": "const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000';"
+    },
+    {
+      "file": "apps/turismo/IMPLEMENTACAO-RESPONSIVE-SIDEBAR-COMPLETA.md",
+      "line": 81,
+      "context": "| Core API | 5000 | ✅ Online | API principal e autenticação |"
+    },
+    {
+      "file": "apps/turismo/RSV-360-ECOSYSTEM-README.md",
+      "line": 22,
+      "context": "- Core API (5000)"
+    }
+  ]
+}

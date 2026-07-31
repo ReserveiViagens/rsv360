@@ -3,7 +3,7 @@
 // Conecta com TODAS as portas corretas dos 30 microserviços
 // ===================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 // ===================================================================
 // CLIENTE API GENÉRICO COM ERROR HANDLING COMPLETO
@@ -87,7 +87,7 @@ const createApiClient = (baseURL: string) => {
 // ===================================================================
 // CLIENTES PARA CADA MICROSERVIÇO - PORTAS CORRETAS
 // ===================================================================
-export const coreApi = createApiClient('http://localhost:5000');
+export const coreApi = createApiClient('http://localhost:3002');
 export const travelApi = createApiClient('http://localhost:5003');
 export const financeApi = createApiClient('http://localhost:5005');
 export const ticketsApi = createApiClient('http://localhost:5006');

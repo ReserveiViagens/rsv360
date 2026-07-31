@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-07-31T20:31:28.152Z",
+  "base": "working-tree-post-t2",
+  "pattern": "localhost:5000|127.0.0.1:5000|Core API (5000)|| Core API | 5000",
+  "excluded": [
+    "BACKUP*",
+    "reservei/",
+    "RSV-360-ECOSYSTEM/",
+    "node_modules/",
+    ".next/"
+  ],
+  "notedOutOfScope": [
+    {
+      "file": "docker-compose.yml",
+      "note": "NEXT_PUBLIC_PRIMARY_SITE_URL default http://localhost:5000 is site-publico primary site, NOT turismo API — do not touch (T2 vinculante ⑥)"
+    }
+  ],
+  "wiringConfirm": {
+    "compose_x_app_env_NEXT_PUBLIC_API_URL": "http://localhost:3002 (confirmed, unchanged)",
+    "turismo_package_json_dev_start": "-p 3005 UI only; no NEXT_PUBLIC_API_URL override",
+    "turismo_env_example": "ABSENT — SKIP explicit (no .env*.example under apps/turismo)"
+  },
+  "hitCount": 0,
+  "hits": []
+}

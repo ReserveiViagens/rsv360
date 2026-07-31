@@ -19,7 +19,7 @@ O **RSV 360 Ecosystem** é um sistema modular que integra **32 microsserviços**
 ## 🎯 CATEGORIAS DE SERVIÇOS
 
 ### 1. CORE SERVICES (4 serviços)
-- Core API (5000)
+- Core API (3002)
 - Travel Management (5003)
 - Finance System (5005)
 - Ticket System (5006)

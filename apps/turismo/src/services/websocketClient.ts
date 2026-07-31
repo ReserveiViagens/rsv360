@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { tokenManager } from './apiClient';
 
 // WebSocket Configuration
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002';
 
 // Notification interface
 export interface Notification {

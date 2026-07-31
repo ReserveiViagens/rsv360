@@ -78,7 +78,7 @@ Implementação completa do sistema modular RSV 360 com sidebar responsivo moder
 ### 🏢 CATEGORIA: CORE SERVICES
 | Serviço | Porta | Status | Descrição |
 |---------|-------|--------|-----------|
-| Core API | 5000 | ✅ Online | API principal e autenticação |
+| Core API | 3002 | ✅ Online | API principal e autenticação |
 | Travel Service | 5003 | ✅ Online | Gestão de viagens e pacotes |
 | Finance Service | 5005 | ✅ Online | Controle financeiro e relatórios |
 | Tickets Service | 5006 | ✅ Online | Sistema de tickets e suporte |

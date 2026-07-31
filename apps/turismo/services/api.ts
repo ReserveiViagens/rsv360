@@ -1,7 +1,7 @@
 // Serviço de API centralizado para Onion RSV 360
 // Conecta com todos os microsserviços do backend
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 // Configuração base do cliente fetch
 const createApiClient = (baseURL: string) => {

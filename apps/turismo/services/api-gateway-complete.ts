@@ -26,7 +26,7 @@ export const COMPLETE_SERVICES_CONFIG: Record<string, ServiceConfig> = {
   // ===================================================================
   core: {
     name: 'Core API',
-    baseUrl: 'http://localhost:5000',
+    baseUrl: 'http://localhost:3002',
     port: 5000,
     type: 'python',
     status: 'active',
@@ -347,7 +347,7 @@ export const COMPLETE_SERVICES_CONFIG: Record<string, ServiceConfig> = {
   },
   website_api: {
     name: 'Website API Server',
-    baseUrl: 'http://localhost:5000',
+    baseUrl: 'http://localhost:3002',
     port: 5000,
     type: 'nodejs',
     status: 'active',
