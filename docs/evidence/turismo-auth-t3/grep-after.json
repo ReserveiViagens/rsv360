@@ -1,0 +1,8 @@
+{
+  "generatedAt": "2026-07-31T21:12:30.000Z",
+  "base": "working-tree-post-t3",
+  "pattern": "localhost:5000|127.0.0.1:5000|port:\\s*5000",
+  "excluded": ["BACKUP*", "reservei/", "RSV-360-ECOSYSTEM/", "node_modules/", ".next/"],
+  "hitCount": 0,
+  "hits": []
+}

@@ -102,7 +102,7 @@ const serviceCategories: Category[] = [
       {
         id: "core",
         name: "API Principal",
-        port: 5000,
+        port: 3002,
         status: "online",
         icon: <Server className="w-4 h-4" />,
         description: "API principal e autenticação",

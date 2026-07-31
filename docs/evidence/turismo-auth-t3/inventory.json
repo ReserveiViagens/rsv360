@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-07-31T21:10:00.000Z",
+  "base": "e0e1118d",
+  "branch": "turismo/auth-t3",
+  "items": [
+    {
+      "file": "apps/turismo/docker-compose.yml",
+      "status": "dead",
+      "references": [],
+      "notes": "No hits in scripts/, docs/, .github/, README. Fictional ECOSYSTEM-MASTER/BUSINESS-MODULES compose. Compose vivo = repo root docker-compose.yml.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/RSV-360-ECOSYSTEM-README.md",
+      "status": "dead",
+      "references": [
+        "docs/evidence/turismo-auth-t2/grep-before.json (historical evidence only — not operational runbook)"
+      ],
+      "notes": "Fictional ecosystem doc. Not referenced by CI/deploy/scripts.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/RSV-360-ECOSYSTEM-ARCHITECTURE.md",
+      "status": "dead",
+      "references": [],
+      "notes": "Zero live references.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/IMPLEMENTACAO-RESPONSIVE-SIDEBAR-COMPLETA.md",
+      "status": "dead",
+      "references": [
+        "docs/evidence/turismo-auth-t2/grep-before.json (historical evidence only)"
+      ],
+      "notes": "Legacy implementation write-up; not operational.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/pages/rsv-360-ecosystem.tsx",
+      "status": "vivo",
+      "references": [
+        "apps/turismo/pages/turismo.tsx (router.push('/rsv-360-ecosystem'))",
+        "apps/turismo/pages/dashboard.tsx (onClick → /rsv-360-ecosystem)",
+        "apps/turismo/src/pages/dashboard.tsx (onClick → /rsv-360-ecosystem)",
+        "apps/turismo/pages/dashboard-reservei-viagens.tsx (href: '/rsv-360-ecosystem')"
+      ],
+      "notes": "Vinculante ③b: live nav links → do NOT delete (would break navigation). Cosmetic port:5000 → 3002.",
+      "decision": "keep"
+    },
+    {
+      "file": "apps/turismo/components/ResponsiveSidebar.tsx",
+      "status": "vivo",
+      "references": [
+        "apps/turismo/pages/rsv-360-ecosystem.tsx (import ResponsiveSidebar)"
+      ],
+      "notes": "Only consumer is kept ecosystem page. Cosmetic port:5000 → 3002.",
+      "decision": "keep"
+    },
+    {
+      "file": "apps/turismo/services/api-gateway-complete.ts",
+      "status": "dead",
+      "references": [
+        "apps/turismo/stores/ecosystem-store.ts (only importer — itself dead/orphan)"
+      ],
+      "notes": "No live page/component imports. Deleting resolves T2 cosmetic port:5000 residual.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/stores/ecosystem-store.ts",
+      "status": "dead",
+      "references": [],
+      "notes": "Orphan store: zero external imports of useEcosystemStore. Must delete with api-gateway-complete to avoid broken import.",
+      "decision": "delete"
+    },
+    {
+      "file": "apps/turismo/services/api-corrigido.ts",
+      "status": "vivo",
+      "references": [
+        "apps/turismo/pages/hotels-funcional.tsx (import travelService)",
+        "apps/turismo/pages/dashboard-master.tsx (Link /hotels-funcional)",
+        "apps/turismo/config/complete-routes.ts (path /hotels-funcional)"
+      ],
+      "notes": "Live hotels-funcional page depends on it. Do not delete.",
+      "decision": "keep"
+    },
+    {
+      "file": "apps/turismo/context/",
+      "status": "absent",
+      "references": [],
+      "notes": "Directory already gone after T1 AuthContext deletion. src/context/ remains canonical — untouched.",
+      "decision": "keep (N/A — already absent)"
+    },
+    {
+      "file": "apps/turismo/pages/reservei/RSV-360-ECOSYSTEM/",
+      "status": "out-of-scope",
+      "references": [],
+      "notes": "Under reservei/ — excluded by T3 surface rules (same as T1/T2).",
+      "decision": "keep (out of scope)"
+    },
+    {
+      "file": "docker-compose.yml (repo root)",
+      "status": "vivo",
+      "references": ["CI, scripts, deploy"],
+      "notes": "Canonical compose — NEVER touch.",
+      "decision": "keep"
+    }
+  ],
+  "pararTriggers": [],
+  "summary": {
+    "delete": [
+      "apps/turismo/docker-compose.yml",
+      "apps/turismo/RSV-360-ECOSYSTEM-README.md",
+      "apps/turismo/RSV-360-ECOSYSTEM-ARCHITECTURE.md",
+      "apps/turismo/IMPLEMENTACAO-RESPONSIVE-SIDEBAR-COMPLETA.md",
+      "apps/turismo/services/api-gateway-complete.ts",
+      "apps/turismo/stores/ecosystem-store.ts"
+    ],
+    "keep": [
+      "apps/turismo/pages/rsv-360-ecosystem.tsx",
+      "apps/turismo/components/ResponsiveSidebar.tsx",
+      "apps/turismo/services/api-corrigido.ts"
+    ],
+    "cosmeticFixPort5000To3002": [
+      "apps/turismo/pages/rsv-360-ecosystem.tsx",
+      "apps/turismo/components/ResponsiveSidebar.tsx"
+    ]
+  }
+}

@@ -86,7 +86,7 @@ const RSV360Ecosystem: React.FC = () => {
           id: 'core',
           name: 'Core API',
           description: 'API principal, autenticação, middleware',
-          port: 5000,
+          port: 3002,
           status: 'active',
           category: 'core',
           icon: Server,
