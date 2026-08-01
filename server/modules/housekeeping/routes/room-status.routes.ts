@@ -1,10 +1,22 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { requireRole } from '../middleware/hk-auth.middleware';
 import { roomStatusService } from '../services/room-status.service';
-import { asRequiredString } from '../../../lib/parse';
+import {
+  HkRoomBulkStatusSchema,
+  HkRoomStatusUpdateSchema,
+  parsePositiveIntId,
+} from '../schemas/housekeeping-write.schema';
 
 const router = Router();
 const auth = requireRole('admin', 'manager', 'staff', 'housekeeper');
+
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ error: (error as Error).message });
+}
 
 router.get('/', auth, async (req, res) => {
   try {
@@ -14,32 +26,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.get('/:id', auth, async (req, res) => {
-  try {
-    res.json(await roomStatusService.getRoomById(asRequiredString(req.params.id)));
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
-  }
-});
-
-router.put('/:id/status', auth, async (req, res) => {
-  try {
-    const result = await roomStatusService.updateStatus(asRequiredString(req.params.id), req.body.status, req.body.notes);
-    res.json(result);
-  } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
-  }
-});
-
-router.post('/bulk-status', auth, async (req, res) => {
-  try {
-    const updated = await roomStatusService.bulkUpdate(req.body.ids || [], req.body.status);
-    res.json({ updated });
-  } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
-  }
-});
-
+// Static paths before /:id (same pattern as PR-07b route reordering)
 router.get('/floor-map', auth, async (_req, res) => {
   try {
     res.json(await roomStatusService.getFloorMap());
@@ -53,6 +40,37 @@ router.get('/dashboard', auth, async (_req, res) => {
     res.json(await roomStatusService.getDashboard());
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.post('/bulk-status', auth, async (req, res) => {
+  try {
+    const body = HkRoomBulkStatusSchema.parse(req.body);
+    const updated = await roomStatusService.bulkUpdate(body.ids, body.status);
+    res.json({ updated });
+  } catch (error) {
+    return badRequest(res, error);
+  }
+});
+
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    res.json(await roomStatusService.getRoomById(id));
+  } catch (error) {
+    if (error instanceof ZodError) return badRequest(res, error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.put('/:id/status', auth, async (req, res) => {
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const body = HkRoomStatusUpdateSchema.parse(req.body);
+    const result = await roomStatusService.updateStatus(id, body.status, body.notes);
+    res.json(result);
+  } catch (error) {
+    return badRequest(res, error);
   }
 });
 
