@@ -7,7 +7,14 @@ import { ensureHotelsUploadDir, resolveHotelsUploadDir } from './upload';
 export function registerCmsModule(app: Express) {
   ensureHotelsUploadDir();
   const uploadRoot = path.dirname(resolveHotelsUploadDir()); // .../public/uploads
-  app.use('/uploads', express.static(uploadRoot));
+  app.use(
+    '/uploads',
+    express.static(uploadRoot, {
+      setHeaders(res) {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+      },
+    }),
+  );
   app.use('/api/v1/cms', cmsRouter);
   console.log('[MODULE] CMS Vitrine registrado ✓');
 }

@@ -2,7 +2,12 @@ import { Router } from 'express';
 import { authenticateJwt, requireRole } from '../../middleware/auth.middleware';
 import { AMENIDADE_LABELS, AMENIDADE_CODES } from './amenidades';
 import { cmsService } from './service';
-import { cmsUpload, cmsUploadErrorHandler, publicUrlForUpload } from './upload';
+import {
+  assertCmsDiskFileMagic,
+  cmsUpload,
+  cmsUploadErrorHandler,
+  publicUrlForUpload,
+} from './upload';
 
 const router = Router();
 const staffAuth = [authenticateJwt, requireRole('admin', 'manager')];
@@ -118,6 +123,11 @@ router.post(
   (req, res) => {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'Nenhum arquivo enviado' });
+    }
+    try {
+      assertCmsDiskFileMagic(req.file);
+    } catch (error) {
+      return res.status(400).json({ success: false, error: (error as Error).message });
     }
     const url = publicUrlForUpload(req.file.filename);
     res.status(201).json({

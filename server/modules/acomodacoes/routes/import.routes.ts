@@ -1,14 +1,36 @@
 import { Router, type Request, type Response } from 'express';
 import multer from 'multer';
+import path from 'path';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { gerarModeloXlsxBuffer } from '../import/modelo';
 import { ImportVazioError, pipelineImportacao } from '../import/pipeline';
 import { enfileirarImportacao } from '../../../queues/importacoes.queue';
+import {
+  IMPORT_FILE_EXTS,
+  IMPORT_FILE_MIMES,
+  assertImportMemoryFile,
+  sanitizeUploadBasename,
+} from '../../../lib/secure-upload';
 
 const router = Router();
+
+const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
+  const ext = path.extname(file.originalname || '').toLowerCase();
+  if (!IMPORT_FILE_EXTS.has(ext)) {
+    cb(new Error(`Extensão de arquivo não permitida: ${ext || '(vazia)'}`));
+    return;
+  }
+  if (!IMPORT_FILE_MIMES.has(file.mimetype)) {
+    cb(new Error(`Tipo de arquivo não permitido: ${file.mimetype}`));
+    return;
+  }
+  cb(null, true);
+};
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter,
 });
 
 const importAuth = [authenticateJwt, requireRole('admin', 'manager')];
@@ -64,12 +86,11 @@ router.get('/modelo.xlsx', ...importAuth, (_req, res) => {
 
 router.post('/preview', ...importAuth, upload.single('file'), async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ success: false, error: 'Arquivo obrigatório (campo file)' });
-    }
+    assertImportMemoryFile(req.file);
+    const file = req.file!;
+    const safeName = sanitizeUploadBasename(file.originalname);
 
-    const relatorio = await pipelineImportacao(file.buffer, file.originalname, buildImportOptions(req, true));
+    const relatorio = await pipelineImportacao(file.buffer, safeName, buildImportOptions(req, true));
 
     res.json({ success: true, data: relatorio });
   } catch (error) {
@@ -79,17 +100,16 @@ router.post('/preview', ...importAuth, upload.single('file'), async (req, res) =
 
 router.post('/commit', ...importAuth, upload.single('file'), async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ success: false, error: 'Arquivo obrigatório (campo file)' });
-    }
+    assertImportMemoryFile(req.file);
+    const file = req.file!;
+    const safeName = sanitizeUploadBasename(file.originalname);
 
     const asyncMode = String(req.body?.async ?? 'false') === 'true';
     const importOpts = buildImportOptions(req, false);
 
     if (asyncMode) {
       const jobId = await enfileirarImportacao({
-        nomeArquivo: file.originalname,
+        nomeArquivo: safeName,
         bufferBase64: file.buffer.toString('base64'),
         proprietarioId: importOpts.proprietarioId,
         bulkPublicado: importOpts.bulkPublicado,
@@ -99,7 +119,7 @@ router.post('/commit', ...importAuth, upload.single('file'), async (req, res) =>
       return res.status(202).json({ success: true, data: { jobId, status: 'enqueued' } });
     }
 
-    const relatorio = await pipelineImportacao(file.buffer, file.originalname, importOpts);
+    const relatorio = await pipelineImportacao(file.buffer, safeName, importOpts);
 
     res.json({ success: true, data: relatorio });
   } catch (error) {

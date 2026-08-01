@@ -3,13 +3,11 @@ import path from 'path';
 import multer from 'multer';
 import { randomUUID } from 'crypto';
 import type { ErrorRequestHandler } from 'express';
-
-const ALLOWED_MIMES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'video/mp4',
-]);
+import {
+  CMS_MEDIA_MIMES,
+  assertCmsDiskFileMagic,
+  safeStoredFilename,
+} from '../../lib/secure-upload';
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10MB
 
@@ -34,28 +32,17 @@ const storage = multer.diskStorage({
     }
   },
   filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || mimeToExt(file.mimetype);
-    cb(null, `${randomUUID()}${ext}`);
+    try {
+      // Extension from allowlisted MIME only — never from originalname (PR-08).
+      cb(null, safeStoredFilename(randomUUID(), file.mimetype));
+    } catch (err) {
+      cb(err as Error, '');
+    }
   },
 });
 
-function mimeToExt(mime: string): string {
-  switch (mime) {
-    case 'image/jpeg':
-      return '.jpg';
-    case 'image/png':
-      return '.png';
-    case 'image/webp':
-      return '.webp';
-    case 'video/mp4':
-      return '.mp4';
-    default:
-      return '';
-  }
-}
-
 const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
-  if (ALLOWED_MIMES.has(file.mimetype)) {
+  if (CMS_MEDIA_MIMES.has(file.mimetype)) {
     cb(null, true);
     return;
   }
@@ -86,3 +73,6 @@ export const cmsUploadErrorHandler: ErrorRequestHandler = (err, _req, res, next)
 export function publicUrlForUpload(filename: string): string {
   return `/uploads/hoteis/${filename}`;
 }
+
+/** Re-export for route post-multer magic check. */
+export { assertCmsDiskFileMagic };
