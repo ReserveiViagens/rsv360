@@ -7,15 +7,13 @@ import {
   HkChecklistUpdateSchema,
   parsePositiveIntId,
 } from '../schemas/housekeeping-write.schema';
+import { badRequest as badRequestShared } from '../../../lib/bad-request';
 
 const router = Router();
 const auth = requireRole('admin', 'manager', 'staff', 'housekeeper');
 
-function badRequest(res: Response, error: unknown) {
-  if (error instanceof ZodError) {
-    return res.status(400).json({ error: 'Validation failed', details: error.flatten() });
-  }
-  return res.status(400).json({ error: (error as Error).message });
+function badRequest(res: import('express').Response, error: unknown) {
+  return badRequestShared(res, error);
 }
 
 router.get('/', auth, async (req, res) => {

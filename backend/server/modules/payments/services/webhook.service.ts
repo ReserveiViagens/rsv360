@@ -7,6 +7,10 @@ import {
   MpWebhookAuthError,
   verifyMercadoPagoWebhookSignature,
 } from '../lib/mp-webhook-signature';
+import {
+  MpWebhookBodySchema,
+  StripeWebhookEventSchema,
+} from '../schemas/webhook-payload.schema';
 
 export type ProcessMpWebhookInput = {
   body: Record<string, unknown>;
@@ -54,7 +58,7 @@ export class WebhookService {
       throw new Error('Invalid signature');
     }
 
-    const event = JSON.parse(payload);
+    const event = StripeWebhookEventSchema.parse(JSON.parse(payload));
     const inserted = await this.saveEvent('stripe', event.id, event.type, event);
     if (!inserted) return;
 
@@ -78,17 +82,18 @@ export class WebhookService {
       nowMs: input.nowMs,
     });
 
-    const externalEventId = resolveMpExternalEventId(input.body);
+    const body = MpWebhookBodySchema.parse(input.body);
+    const externalEventId = resolveMpExternalEventId(body as Record<string, unknown>);
     const eventType =
-      (typeof input.body.type === 'string' && input.body.type) ||
-      (typeof input.body.action === 'string' && input.body.action) ||
+      (typeof body.type === 'string' && body.type) ||
+      (typeof body.action === 'string' && body.action) ||
       'unknown';
 
     const inserted = await this.saveEvent(
       'mercadopago',
       externalEventId,
       eventType,
-      input.body,
+      body,
     );
 
     if (!inserted) {

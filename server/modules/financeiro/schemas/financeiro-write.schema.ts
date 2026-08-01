@@ -1,16 +1,6 @@
 import { z } from 'zod';
 
-export const PositiveIntIdParamSchema = z
-  .object({
-    id: z.coerce.number().int().positive().finite(),
-  })
-  .strict();
-
-export function parsePositiveIntId(raw: unknown): number {
-  const parsed = PositiveIntIdParamSchema.safeParse({ id: raw });
-  if (!parsed.success) throw parsed.error;
-  return parsed.data.id;
-}
+export { PositiveIntIdParamSchema, parsePositiveIntId } from '../../../lib/parse-id';
 
 /** Numeric/money fields accepted as number or digit string for Drizzle numeric columns. */
 const money = z.union([z.coerce.number(), z.string().regex(/^-?\d+(\.\d+)?$/)]);
