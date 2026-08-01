@@ -1,16 +1,36 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { forecastService } from '../services';
+import { DateRangeBodySchema } from '../schemas/revenue-write.schema';
 
 const router = Router();
 
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
+
 router.get('/', async (req, res) => {
-  const entries = await forecastService.getForecast(String(req.query.start || req.query.startDate || ''), String(req.query.end || req.query.endDate || ''));
+  const entries = await forecastService.getForecast(
+    String(req.query.start || req.query.startDate || ''),
+    String(req.query.end || req.query.endDate || ''),
+  );
   res.json({ success: true, data: entries });
 });
 
 router.post('/generate', async (req, res) => {
-  const result = await forecastService.generateForecast(req.body.startDate || req.body.start, req.body.endDate || req.body.end);
-  res.json({ success: true, data: result });
+  try {
+    const body = DateRangeBodySchema.parse(req.body);
+    const result = await forecastService.generateForecast(
+      String(body.startDate || body.start),
+      String(body.endDate || body.end),
+    );
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.get('/seasonality', async (_req, res) => {

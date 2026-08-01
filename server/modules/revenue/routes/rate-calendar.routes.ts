@@ -1,7 +1,21 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { rateCalendarService } from '../services';
+import {
+  DateRangeBodySchema,
+  RateBulkOverrideSchema,
+  RateOverrideRemoveSchema,
+  RateOverrideSchema,
+} from '../schemas/revenue-write.schema';
 
 const router = Router();
+
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
 
 router.get('/', async (req, res) => {
   const start = String(req.query.start || req.query.startDate || '');
@@ -12,31 +26,63 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/generate', async (req, res) => {
-  const result = await rateCalendarService.generateRateCalendar(req.body.startDate || req.body.start, req.body.endDate || req.body.end, req.body.roomTypeId);
-  res.json({ success: true, data: result });
+  try {
+    const body = DateRangeBodySchema.parse(req.body);
+    const result = await rateCalendarService.generateRateCalendar(
+      String(body.startDate || body.start),
+      String(body.endDate || body.end),
+      body.roomTypeId,
+    );
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.get('/summary', async (req, res) => {
   const now = new Date();
   const month = req.query.month ? Number(req.query.month) : now.getUTCMonth() + 1;
   const year = req.query.year ? Number(req.query.year) : now.getUTCFullYear();
-  const result = await rateCalendarService.getCalendarSummary(month, year, req.query.roomTypeId ? Number(req.query.roomTypeId) : undefined);
+  const result = await rateCalendarService.getCalendarSummary(
+    month,
+    year,
+    req.query.roomTypeId ? Number(req.query.roomTypeId) : undefined,
+  );
   res.json({ success: true, data: result });
 });
 
 router.put('/override', async (req, res) => {
-  const result = await rateCalendarService.overridePrice(Number(req.body.roomTypeId), String(req.body.date), Number(req.body.price));
-  res.json({ success: true, data: result });
+  try {
+    const body = RateOverrideSchema.parse(req.body);
+    const result = await rateCalendarService.overridePrice(body.roomTypeId, body.date, body.price);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.delete('/override', async (req, res) => {
-  const result = await rateCalendarService.removeOverride(Number(req.body.roomTypeId || req.query.roomTypeId), String(req.body.date || req.query.date));
-  res.json({ success: true, data: result });
+  try {
+    const merged = {
+      roomTypeId: req.body?.roomTypeId ?? req.query.roomTypeId,
+      date: req.body?.date ?? req.query.date,
+    };
+    const body = RateOverrideRemoveSchema.parse(merged);
+    const result = await rateCalendarService.removeOverride(body.roomTypeId, body.date);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.post('/bulk-override', async (req, res) => {
-  const result = await rateCalendarService.bulkOverridePrices(req.body.updates || []);
-  res.json({ success: true, data: result });
+  try {
+    const body = RateBulkOverrideSchema.parse(req.body);
+    const result = await rateCalendarService.bulkOverridePrices(body.updates);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 export default router;

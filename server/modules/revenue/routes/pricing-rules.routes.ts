@@ -1,7 +1,22 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { pricingRulesService } from '../services';
+import {
+  PricingRuleCreateSchema,
+  PricingRuleReorderSchema,
+  PricingRuleToggleSchema,
+  PricingRuleUpdateSchema,
+  parsePositiveIntId,
+} from '../schemas/revenue-write.schema';
 
 const router = Router();
+
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
 
 router.get('/', async (_req, res) => {
   const rules = await pricingRulesService.listRules({
@@ -15,53 +30,86 @@ router.get('/', async (_req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const rule = await pricingRulesService.createRule(req.body);
+    const body = PricingRuleCreateSchema.parse(req.body);
+    const rule = await pricingRulesService.createRule(body);
     res.status(201).json({ success: true, data: rule });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
+  } catch (error) {
+    return badRequest(res, error);
   }
 });
 
+/** SKIP body: seed uses query only. */
 router.post('/seed', async (_req, res) => {
   const rules = await pricingRulesService.seedDefaults(_req.query.property_id ? Number(_req.query.property_id) : undefined);
   res.json({ success: true, data: { count: rules.length } });
 });
 
 router.post('/validate', async (req, res) => {
-  const result = pricingRulesService.validateRule(req.body);
-  res.json({ success: true, data: result });
+  try {
+    const body = PricingRuleUpdateSchema.parse(req.body ?? {});
+    const result = pricingRulesService.validateRule(body);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    return badRequest(res, error);
+  }
+});
+
+// Static path before /:id (prevents id=reorder match)
+router.put('/reorder', async (req, res) => {
+  try {
+    const body = PricingRuleReorderSchema.parse(req.body);
+    const ids = body.ruleIds || body.rule_ids || [];
+    await pricingRulesService.reorderRules(ids);
+    res.json({ success: true });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.get('/:id', async (req, res) => {
-  const rule = await pricingRulesService.getRuleById(Number(req.params.id));
-  if (!rule) return res.status(404).json({ success: false, error: 'Rule not found' });
-  res.json({ success: true, data: rule });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const rule = await pricingRulesService.getRuleById(id);
+    if (!rule) return res.status(404).json({ success: false, error: 'Rule not found' });
+    res.json({ success: true, data: rule });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.put('/:id', async (req, res) => {
   try {
-    const rule = await pricingRulesService.updateRule(Number(req.params.id), req.body);
+    const id = parsePositiveIntId(req.params.id);
+    const body = PricingRuleUpdateSchema.parse(req.body);
+    const rule = await pricingRulesService.updateRule(id, body);
     if (!rule) return res.status(404).json({ success: false, error: 'Rule not found' });
     res.json({ success: true, data: rule });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
+  } catch (error) {
+    return badRequest(res, error);
   }
 });
 
+/** SKIP body: delete has no req.body mass-assignment surface. */
 router.delete('/:id', async (req, res) => {
-  await pricingRulesService.deleteRule(Number(req.params.id));
-  res.json({ success: true });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    await pricingRulesService.deleteRule(id);
+    res.json({ success: true });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.put('/:id/toggle', async (req, res) => {
-  const rule = await pricingRulesService.toggleRule(Number(req.params.id), Boolean(req.body.isActive ?? req.body.is_active));
-  if (!rule) return res.status(404).json({ success: false, error: 'Rule not found' });
-  res.json({ success: true, data: rule });
-});
-
-router.put('/reorder', async (req, res) => {
-  await pricingRulesService.reorderRules((req.body.ruleIds || req.body.rule_ids || []).map((value: any) => Number(value)));
-  res.json({ success: true });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const body = PricingRuleToggleSchema.parse(req.body ?? {});
+    const rule = await pricingRulesService.toggleRule(id, Boolean(body.isActive ?? body.is_active));
+    if (!rule) return res.status(404).json({ success: false, error: 'Rule not found' });
+    res.json({ success: true, data: rule });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 export default router;
