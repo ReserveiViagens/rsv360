@@ -43,12 +43,14 @@
 
 Suite: `backend/src/__tests__/unit/pr07c1-zod-mass-assign.test.ts`
 
-## Baselines (a reconciliar no gate)
+## Baselines (host local pós-impl)
 
-| Check | Alvo |
+| Check | Resultado |
 | --- | --- |
-| `tsc` | 0 |
-| jest backend | 660 + net-new 07c1 |
-| BLOCK | 0 (drift pré-existente fora) |
-| allowlist | 3 |
-| build app tocado | N/A (só backend `server/modules`) |
+| `tsc` | **0** |
+| `pr07c1` unit | **9 PASS** (+9 net-new) |
+| jest full | 658 PASS / 15 FAIL (integration pré-existente + flake env; HK/CRM unit verde) |
+| total tests | **673** (= 664 tip 07b + 9) |
+| BLOCK / allowlist | intocados |
+| build app tocado | N/A (só `server/modules`) |
+| PR | [#190](https://github.com/reserveiviagens-tech/rsv360/pull/190) @ `763212bb` · **PARAR na URL** |
