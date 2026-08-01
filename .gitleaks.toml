@@ -1,0 +1,27 @@
+# placeholders documentados — não são secrets vivos (PR-09a)
+# Allowlist covers APP_USR- docs/UI/validation fixtures confirmed in S0 + Fase 0.
+title = "rsv360 gitleaks"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "placeholders documentados — não são secrets vivos"
+paths = [
+  '''apps/site-publico/ATIVACAO_CREDENCIAIS_PRODUCAO\.md''',
+  '''apps/site-publico/GUIA_MERCADO_PAGO_PASSO_A_PASSO\.md''',
+  '''apps/site-publico/PROXIMOS_PASSOS_MERCADO_PAGO\.md''',
+  '''apps/site-publico/lib/credentials-service\.ts''',
+  '''apps/turismo/pages/reservei/configuracoes\.tsx''',
+  '''NTX \+ OTAS LEIL.ES\+ FLASHDEALS/.*SPLIT DE PAGAMENTOS.*\.txt''',
+  '''docs/evidence/.*''',
+]
+regexes = [
+  '''CHANGE_ME_[A-Z0-9_]*''',
+  '''REDACTED_[A-Z0-9_]*''',
+  '''demo-token''',
+  '''sk_live_\*+''',
+  '''AKIA\*+''',
+  '''APP_USR-x+''',
+  '''APP_USR_x+''',
+]
