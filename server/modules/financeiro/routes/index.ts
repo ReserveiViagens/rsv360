@@ -1,8 +1,33 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { staffAuth } from '../../../middleware/auth.middleware';
 import { financeiroService } from '../services/financeiro.service';
+import {
+  ContaPagarCreateSchema,
+  ContaPagarPagarSchema,
+  ContaReceberCreateSchema,
+  ContaReceberReceberSchema,
+  TransacaoCreateSchema,
+  TransacaoUpdateSchema,
+  parsePositiveIntId,
+} from '../schemas/financeiro-write.schema';
 
 const router = Router();
+
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
+
+function asRecord(body: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...body };
+  if (out.valor !== undefined) out.valor = String(out.valor);
+  if (out.valorRecebido !== undefined) out.valorRecebido = String(out.valorRecebido);
+  if (out.valorPago !== undefined) out.valorPago = String(out.valorPago);
+  return out;
+}
 
 router.get('/health', (_req, res) => {
   res.json({ module: 'financeiro', status: 'ok' });
@@ -51,40 +76,46 @@ router.get('/transacoes', ...staffAuth, async (req, res) => {
 
 router.get('/transacoes/:id', ...staffAuth, async (req, res) => {
   try {
-    const item = await financeiroService.getTransacao(Number(req.params.id));
+    const id = parsePositiveIntId(req.params.id);
+    const item = await financeiroService.getTransacao(id);
     if (!item) return res.status(404).json({ success: false, error: 'Transação não encontrada' });
     res.json({ success: true, data: item });
   } catch (error) {
-    res.status(500).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.post('/transacoes', ...staffAuth, async (req, res) => {
   try {
-    const created = await financeiroService.createTransacao(req.body);
+    const body = TransacaoCreateSchema.parse(req.body);
+    const created = await financeiroService.createTransacao(asRecord(body));
     res.status(201).json({ success: true, data: created });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.put('/transacoes/:id', ...staffAuth, async (req, res) => {
   try {
-    const updated = await financeiroService.updateTransacao(Number(req.params.id), req.body);
+    const id = parsePositiveIntId(req.params.id);
+    const body = TransacaoUpdateSchema.parse(req.body);
+    const updated = await financeiroService.updateTransacao(id, asRecord(body));
     if (!updated) return res.status(404).json({ success: false, error: 'Transação não encontrada' });
     res.json({ success: true, data: updated });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
+/** SKIP body: delete has no req.body mass-assignment surface. */
 router.delete('/transacoes/:id', ...staffAuth, async (req, res) => {
   try {
-    const deleted = await financeiroService.deleteTransacao(Number(req.params.id));
+    const id = parsePositiveIntId(req.params.id);
+    const deleted = await financeiroService.deleteTransacao(id);
     if (!deleted) return res.status(404).json({ success: false, error: 'Transação não encontrada' });
     res.json({ success: true, data: deleted });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
@@ -99,20 +130,23 @@ router.get('/contas-receber', ...staffAuth, async (req, res) => {
 
 router.post('/contas-receber', ...staffAuth, async (req, res) => {
   try {
-    const created = await financeiroService.createContaReceber(req.body);
+    const body = ContaReceberCreateSchema.parse(req.body);
+    const created = await financeiroService.createContaReceber(asRecord(body));
     res.status(201).json({ success: true, data: created });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.post('/contas-receber/:id/receber', ...staffAuth, async (req, res) => {
   try {
-    const updated = await financeiroService.receberConta(Number(req.params.id), String(req.body.valorRecebido));
+    const id = parsePositiveIntId(req.params.id);
+    const body = ContaReceberReceberSchema.parse(req.body);
+    const updated = await financeiroService.receberConta(id, String(body.valorRecebido));
     if (!updated) return res.status(404).json({ success: false, error: 'Conta não encontrada' });
     res.json({ success: true, data: updated });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
@@ -127,20 +161,23 @@ router.get('/contas-pagar', ...staffAuth, async (req, res) => {
 
 router.post('/contas-pagar', ...staffAuth, async (req, res) => {
   try {
-    const created = await financeiroService.createContaPagar(req.body);
+    const body = ContaPagarCreateSchema.parse(req.body);
+    const created = await financeiroService.createContaPagar(asRecord(body));
     res.status(201).json({ success: true, data: created });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.post('/contas-pagar/:id/pagar', ...staffAuth, async (req, res) => {
   try {
-    const updated = await financeiroService.pagarConta(Number(req.params.id), String(req.body.valorPago));
+    const id = parsePositiveIntId(req.params.id);
+    const body = ContaPagarPagarSchema.parse(req.body);
+    const updated = await financeiroService.pagarConta(id, String(body.valorPago));
     if (!updated) return res.status(404).json({ success: false, error: 'Conta não encontrada' });
     res.json({ success: true, data: updated });
   } catch (error) {
-    res.status(400).json({ success: false, error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
