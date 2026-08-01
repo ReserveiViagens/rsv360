@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Strip Cursor auto-appended PR body blocks that fail the human gate:
- * HTML comment summary wrappers and "Reviewed by … Bugbot" footnotes
- * (often present even when that review did not run).
+ * HTML comment summary wrappers, "Reviewed by … Bugbot" footnotes
+ * (often present even when that review did not run), and the
+ * "Made with [Cursor](…)" attribution footer.
  *
  * Usage:
  *   node scripts/gh-pr-body-sanitize.cjs 132
@@ -37,12 +38,18 @@ cleaned = cleaned.replace(
   /\r?\n?>\s*<sup>Reviewed by \[Cursor Bugbot\][\s\S]*?<\/sup>\s*\r?\n?/gi,
   '\n',
 );
+// Attribution footer (gate #190 / 07c1): "Made with [Cursor](https://cursor.com)"
+cleaned = cleaned.replace(
+  /\r?\n+Made with \[Cursor\]\([^)]*\)\s*$/gim,
+  '\n',
+);
 cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim() + '\n';
 
 const report = {
   pr: Number(pr),
   had_cursor_summary: /CURSOR_SUMMARY/i.test(bodyRaw),
   had_bugbot_footnote: /Reviewed by \[Cursor Bugbot\]/i.test(bodyRaw),
+  had_made_with_cursor: /Made with \[Cursor\]/i.test(bodyRaw),
   before_len: bodyRaw.length,
   after_len: cleaned.length,
   dry_run: dryRun,

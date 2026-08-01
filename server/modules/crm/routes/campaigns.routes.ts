@@ -1,49 +1,117 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { campaignService } from '../services';
+import {
+  CampaignAudienceSchema,
+  CampaignCreateSchema,
+  CampaignScheduleSchema,
+  CampaignUpdateSchema,
+  parsePositiveIntId,
+} from '../schemas/crm-write.schema';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  res.json({ success: true, data: await campaignService.list(req.query, req.query.page ? Number(req.query.page) : 1, req.query.limit ? Number(req.query.limit) : 20) });
-});
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ success: false, error: (error as Error).message });
+}
 
-router.get('/:id', async (req, res) => {
-  const item = await campaignService.get(Number(req.params.id));
-  if (!item) return res.status(404).json({ success: false, error: 'Campanha não encontrada' });
-  res.json({ success: true, data: item });
+router.get('/', async (req, res) => {
+  res.json({
+    success: true,
+    data: await campaignService.list(
+      req.query,
+      req.query.page ? Number(req.query.page) : 1,
+      req.query.limit ? Number(req.query.limit) : 20,
+    ),
+  });
 });
 
 router.post('/', async (req, res) => {
-  const item = await campaignService.create(Number(req.body.userId || 1), req.body);
-  res.status(201).json({ success: true, data: item });
+  try {
+    const body = CampaignCreateSchema.parse(req.body);
+    const userId = Number(body.userId || body.user_id || 1);
+    const item = await campaignService.create(userId, body);
+    res.status(201).json({ success: true, data: item });
+  } catch (error) {
+    return badRequest(res, error);
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const item = await campaignService.get(id);
+    if (!item) return res.status(404).json({ success: false, error: 'Campanha não encontrada' });
+    res.json({ success: true, data: item });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.put('/:id', async (req, res) => {
-  const item = await campaignService.update(Number(req.params.id), req.body);
-  if (!item) return res.status(404).json({ success: false, error: 'Campanha não encontrada' });
-  res.json({ success: true, data: item });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const body = CampaignUpdateSchema.parse(req.body);
+    const item = await campaignService.update(id, body);
+    if (!item) return res.status(404).json({ success: false, error: 'Campanha não encontrada' });
+    res.json({ success: true, data: item });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.delete('/:id', async (req, res) => {
-  res.json({ success: true, deleted: await campaignService.delete(Number(req.params.id)) });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    res.json({ success: true, deleted: await campaignService.delete(id) });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.post('/:id/audience', async (req, res) => {
-  const campaign = await campaignService.get(Number(req.params.id));
-  const filter = req.body.filter || campaign?.segment_filter || {};
-  res.json({ success: true, data: await campaignService.buildAudience(filter) });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const body = CampaignAudienceSchema.parse(req.body ?? {});
+    const campaign = await campaignService.get(id);
+    const filter = body.filter || campaign?.segment_filter || {};
+    res.json({ success: true, data: await campaignService.buildAudience(filter) });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.post('/:id/schedule', async (req, res) => {
-  res.json({ success: true, data: await campaignService.schedule(Number(req.params.id), String(req.body.scheduledAt || req.body.scheduled_at)) });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    const body = CampaignScheduleSchema.parse(req.body);
+    const scheduledAt = String(body.scheduledAt || body.scheduled_at);
+    res.json({ success: true, data: await campaignService.schedule(id, scheduledAt) });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
+/** SKIP body: send has no req.body mass-assignment surface. */
 router.post('/:id/send', async (req, res) => {
-  res.json({ success: true, data: await campaignService.send(Number(req.params.id)) });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    res.json({ success: true, data: await campaignService.send(id) });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 router.get('/:id/stats', async (req, res) => {
-  res.json({ success: true, data: await campaignService.getStats(Number(req.params.id)) });
+  try {
+    const id = parsePositiveIntId(req.params.id);
+    res.json({ success: true, data: await campaignService.getStats(id) });
+  } catch (error) {
+    return badRequest(res, error);
+  }
 });
 
 export default router;

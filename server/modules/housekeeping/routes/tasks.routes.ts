@@ -1,10 +1,25 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
+import { ZodError } from 'zod';
 import { requireRole } from '../middleware/hk-auth.middleware';
 import { tasksService } from '../services/tasks.service';
-import { asRequiredString } from '../../../lib/parse';
+import {
+  HkAssignSchema,
+  HkTaskCompleteSchema,
+  HkTaskCreateSchema,
+  HkTaskInspectSchema,
+  HkTaskUpdateSchema,
+  parsePositiveIntId,
+} from '../schemas/housekeeping-write.schema';
 
 const router = Router();
 const auth = requireRole('admin', 'manager', 'staff', 'housekeeper');
+
+function badRequest(res: Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ error: 'Validation failed', details: error.flatten() });
+  }
+  return res.status(400).json({ error: (error as Error).message });
+}
 
 router.get('/', auth, async (req, res) => {
   try {
@@ -40,62 +55,73 @@ router.get('/stats', auth, async (req, res) => {
 
 router.post('/', auth, async (req, res) => {
   try {
-    res.json(await tasksService.createTask(req.body));
+    const body = HkTaskCreateSchema.parse(req.body);
+    res.json(await tasksService.createTask(body));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.get('/:id', auth, async (req, res) => {
   try {
-    const task = await tasksService.getTaskById(asRequiredString(req.params.id));
+    const id = parsePositiveIntId(req.params.id);
+    const task = await tasksService.getTaskById(id);
     res.json(task);
   } catch (error) {
+    if (error instanceof ZodError) return badRequest(res, error);
     res.status(500).json({ error: (error as Error).message });
   }
 });
 
 router.put('/:id', auth, async (req, res) => {
   try {
-    res.json(await tasksService.updateTask(asRequiredString(req.params.id), req.body));
+    const id = parsePositiveIntId(req.params.id);
+    const body = HkTaskUpdateSchema.parse(req.body);
+    res.json(await tasksService.updateTask(id, body));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.put('/:id/assign', auth, async (req, res) => {
   try {
-    res.json(await tasksService.assignTask(asRequiredString(req.params.id), req.body.userId));
+    const id = parsePositiveIntId(req.params.id);
+    const { userId } = HkAssignSchema.parse(req.body);
+    res.json(await tasksService.assignTask(id, userId));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.put('/:id/start', auth, async (req, res) => {
   try {
-    res.json(await tasksService.startTask(asRequiredString(req.params.id)));
+    const id = parsePositiveIntId(req.params.id);
+    res.json(await tasksService.startTask(id));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.put('/:id/complete', auth, async (req, res) => {
   try {
-    res.json(await tasksService.completeTask(asRequiredString(req.params.id), req.body.checklistResults, req.body.notes));
+    const id = parsePositiveIntId(req.params.id);
+    const body = HkTaskCompleteSchema.parse(req.body ?? {});
+    res.json(await tasksService.completeTask(id, body.checklistResults, body.notes));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 router.put('/:id/inspect', auth, async (req, res) => {
   try {
-    res.json(await tasksService.inspectTask(asRequiredString(req.params.id), Number(req.body.rating), req.body.inspectorId, req.body.notes));
+    const id = parsePositiveIntId(req.params.id);
+    const body = HkTaskInspectSchema.parse(req.body);
+    res.json(await tasksService.inspectTask(id, body.rating, body.inspectorId, body.notes));
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    return badRequest(res, error);
   }
 });
 
 export default router;
 
 module.exports = router;
-
