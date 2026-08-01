@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const qs = require('qs');
 require('tsx/cjs');
 const { SecurityConfig } = require('./src/middleware/security-config');
 const { portalRouter, adminRouter } = require('../server/modules/guest-portal/routes');
@@ -17,6 +18,11 @@ async function createApp() {
   // PR 17 — Cloudflare/nginx: IP real para rate limit e logs (antes de qualquer middleware)
   app.set('trust proxy', 1);
 
+  // PR-07b C4 — limit nested query objects (default Express extended/qs is unbounded depth)
+  app.set('query parser', (str) =>
+    qs.parse(str, { depth: 0, parameterLimit: 100, allowPrototypes: false }),
+  );
+
   await SecurityConfig.initialize(app);
 
   app.use(cors(SecurityConfig.getCorsOptions()));
@@ -25,6 +31,7 @@ async function createApp() {
   app.use(metricsMiddleware);
   app.use('/api/v1/payments/webhooks/stripe', express.raw({ type: 'application/json' }));
   app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
   let tenantMiddleware = (req, _res, next) => {
     req.propertyId = 1;

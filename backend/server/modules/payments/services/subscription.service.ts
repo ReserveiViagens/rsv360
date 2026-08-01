@@ -27,7 +27,18 @@ export class SubscriptionService {
     return result;
   }
 
-  async updatePlan(id: string, data: any): Promise<PlanResult> {
+  async updatePlan(id: string, data: {
+    name?: string;
+    description?: string;
+    amount?: number;
+    features?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+    isActive?: boolean;
+    currency?: string;
+    interval?: string;
+    intervalCount?: number;
+    trialDays?: number;
+  }): Promise<PlanResult> {
     const plan = await db.select().from(subscriptionPlans)
       .where(eq(subscriptionPlans.id, id)).limit(1);
 
@@ -35,8 +46,20 @@ export class SubscriptionService {
 
     const result = await this.provider.updatePlan(plan[0].stripeProductId || plan[0].mpPlanId!, data);
 
+    const dbPatch: Record<string, unknown> = { updatedAt: new Date() };
+    if (data.name !== undefined) dbPatch.name = data.name;
+    if (data.description !== undefined) dbPatch.description = data.description;
+    if (data.amount !== undefined) dbPatch.amount = data.amount.toString();
+    if (data.features !== undefined) dbPatch.features = data.features;
+    if (data.metadata !== undefined) dbPatch.metadata = data.metadata;
+    if (data.isActive !== undefined) dbPatch.isActive = data.isActive;
+    if (data.currency !== undefined) dbPatch.currency = data.currency;
+    if (data.interval !== undefined) dbPatch.interval = data.interval;
+    if (data.intervalCount !== undefined) dbPatch.intervalCount = data.intervalCount;
+    if (data.trialDays !== undefined) dbPatch.trialDays = data.trialDays;
+
     await db.update(subscriptionPlans)
-      .set(data)
+      .set(dbPatch)
       .where(eq(subscriptionPlans.id, id));
 
     return result;

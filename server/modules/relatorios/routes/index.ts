@@ -1,6 +1,11 @@
 import { Router } from 'express';
+import { ZodError } from 'zod';
 import { staffAuth } from '../../../middleware/auth.middleware';
 import { relatoriosService } from '../services/relatorios.service';
+import {
+  RelatorioSnapshotCreateSchema,
+  RelatorioViewCreateSchema,
+} from '../schemas/relatorio-write.schema';
 
 const router = Router();
 
@@ -71,9 +76,13 @@ router.get('/views/:id', ...staffAuth, async (req, res) => {
 
 router.post('/views', ...staffAuth, async (req, res) => {
   try {
-    const created = await relatoriosService.createView({ ...req.body, userId: req.user?.id });
+    const body = RelatorioViewCreateSchema.parse(req.body);
+    const created = await relatoriosService.createView({ ...body, userId: req.user?.id });
     res.status(201).json({ success: true, data: created });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
@@ -111,12 +120,16 @@ router.get('/snapshots', ...staffAuth, async (req, res) => {
 
 router.post('/snapshots', ...staffAuth, async (req, res) => {
   try {
+    const body = RelatorioSnapshotCreateSchema.parse(req.body);
     const created = await relatoriosService.createSnapshot({
-      ...req.body,
+      ...body,
       geradoPor: req.user?.id,
     });
     res.status(201).json({ success: true, data: created });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
