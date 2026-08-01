@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { ZodError } from 'zod';
 import { SubscriptionService } from '../services/subscription.service';
 import { parsePaymentUuidParam } from '../schemas/params.schema';
 import {
@@ -9,15 +8,13 @@ import {
   SubscriptionPlanCreateSchema,
   SubscriptionPlanUpdateSchema,
 } from '../schemas/subscription-write.schema';
+import { badRequest as badRequestShared } from '../../../../../server/lib/bad-request';
 
 const router = Router();
 const subscriptionService = new SubscriptionService();
 
 function badRequest(res: import('express').Response, error: unknown) {
-  if (error instanceof ZodError) {
-    return res.status(400).json({ error: 'Validation failed', details: error.flatten() });
-  }
-  return res.status(500).json({ error: (error as Error).message });
+  return badRequestShared(res, error, { nonZodStatus: 500 });
 }
 
 router.post('/plans', async (req, res) => {

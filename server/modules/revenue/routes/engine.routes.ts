@@ -8,14 +8,12 @@ import {
   EngineOptimalSchema,
   EngineSimulateSchema,
 } from '../schemas/revenue-write.schema';
+import { badRequest as badRequestShared } from '../../../lib/bad-request';
 
 const router = Router();
 
-function badRequest(res: Response, error: unknown) {
-  if (error instanceof ZodError) {
-    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
-  }
-  return res.status(400).json({ success: false, error: (error as Error).message });
+function badRequest(res: import('express').Response, error: unknown) {
+  return badRequestShared(res, error, { successEnvelope: true });
 }
 
 router.post('/calculate', async (req, res) => {

@@ -1,14 +1,16 @@
 import { z } from 'zod';
 import type { GerarPropostaPayload } from '../services/montar-roteiro';
 
-const catalogItemSchema = z.object({
-  id: z.union([z.string(), z.number()]),
-  title: z.string(),
-  price: z.number(),
-  images: z.array(z.string()).optional(),
-  metadata: z.record(z.unknown()).optional(),
-  location: z.string().optional(),
-});
+const catalogItemSchema = z
+  .object({
+    id: z.union([z.string(), z.number()]),
+    title: z.string(),
+    price: z.number(),
+    images: z.array(z.string()).optional(),
+    metadata: z.record(z.unknown()).optional(),
+    location: z.string().optional(),
+  })
+  .strict();
 
 /**
  * Retrocompat: campos novos opcionais com defaults fail-safe.
@@ -71,10 +73,11 @@ export const gerarPropostaBodySchema = z.preprocess(
           tickets: z.array(catalogItemSchema).optional(),
           attractions: z.array(catalogItemSchema).optional(),
         })
+        .strict()
         .optional(),
       turnstileToken: z.string().optional(),
     })
-    .passthrough(),
+    .strict(),
 );
 
 export type GerarPropostaBodyParsed = GerarPropostaPayload;

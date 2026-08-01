@@ -1,17 +1,6 @@
 import { z } from 'zod';
 
-/** Numeric path id (I2) — same contract as housekeeping. */
-export const PositiveIntIdParamSchema = z
-  .object({
-    id: z.coerce.number().int().positive().finite(),
-  })
-  .strict();
-
-export function parsePositiveIntId(raw: unknown): number {
-  const parsed = PositiveIntIdParamSchema.safeParse({ id: raw });
-  if (!parsed.success) throw parsed.error;
-  return parsed.data.id;
-}
+export { PositiveIntIdParamSchema, parsePositiveIntId } from '../../../lib/parse-id';
 
 const PRIVILEGED_KEYS = new Set(['isAdmin', 'role', 'password', 'password_hash', 'permissions']);
 

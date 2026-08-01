@@ -22,19 +22,22 @@ export const comissoesConfigSchema = z
     taxaHospedeNome: z.string().max(120).optional(),
     taxaHospedeDescricao: z.string().max(500).optional(),
   })
+  .strict()
   .refine((d) => d.taxaPlataformaPct + d.taxaCorretorPct <= 100, {
     message: 'A soma plataforma + corretor não pode exceder 100%',
   });
 
 export type ComissoesConfigInput = z.infer<typeof comissoesConfigSchema>;
 
-export const comissoesSugestaoIaSchema = z.object({
-  objetivo: z
-    .enum(['padrao', 'captar_corretores', 'max_margem_plataforma', 'competir_otas'])
-    .optional()
-    .default('padrao'),
-  contexto: z.string().max(500).optional(),
-});
+export const comissoesSugestaoIaSchema = z
+  .object({
+    objetivo: z
+      .enum(['padrao', 'captar_corretores', 'max_margem_plataforma', 'competir_otas'])
+      .optional()
+      .default('padrao'),
+    contexto: z.string().max(500).optional(),
+  })
+  .strict();
 
 export type ComissoesSugestaoIaInput = z.infer<typeof comissoesSugestaoIaSchema>;
 
@@ -52,44 +55,51 @@ export const comissoesSolicitarAprovacaoSchema = z
     objetivo: z.string().max(64).optional(),
     contexto: z.string().max(500).optional(),
   })
+  .strict()
   .refine((d) => d.taxaPlataformaPct + d.taxaCorretorPct <= 100, {
     message: 'A soma plataforma + corretor não pode exceder 100%',
   });
 
 export type ComissoesSolicitarAprovacaoInput = z.infer<typeof comissoesSolicitarAprovacaoSchema>;
 
-export const comissoesAprovarSugestaoSchema = z.object({
-  confirmouDiff: z.literal(true, {
-    errorMap: () => ({ message: 'Confirmação do diff é obrigatória' }),
-  }),
-  overrideBaixaConfianca: z.boolean().optional().default(false),
-});
+export const comissoesAprovarSugestaoSchema = z
+  .object({
+    confirmouDiff: z.literal(true, {
+      errorMap: () => ({ message: 'Confirmação do diff é obrigatória' }),
+    }),
+    overrideBaixaConfianca: z.boolean().optional().default(false),
+  })
+  .strict();
 
 export type ComissoesAprovarSugestaoInput = z.infer<typeof comissoesAprovarSugestaoSchema>;
 
-export const comissoesRejeitarSugestaoSchema = z.object({
-  motivo: z.string().max(500).optional(),
-});
+export const comissoesRejeitarSugestaoSchema = z
+  .object({
+    motivo: z.string().max(500).optional(),
+  })
+  .strict();
 
 export type ComissoesRejeitarSugestaoInput = z.infer<typeof comissoesRejeitarSugestaoSchema>;
 
-export const comissoesSimularQuerySchema = z.object({
-  valor: z.coerce.number().positive(),
-  temCorretor: z
-    .enum(['true', 'false'])
-    .optional()
-    .transform((v) => v !== 'false'),
-  taxaPlataformaPct: z.coerce.number().min(0).max(100).optional(),
-  taxaCorretorPct: z.coerce.number().min(0).max(100).optional(),
-  taxaHospedePct: z.coerce.number().min(0).max(10).optional(),
-  taxaHospedeAtiva: z
-    .enum(['true', 'false'])
-    .optional()
-    .transform((v) => v === 'true'),
-  preview: z
-    .enum(['true', 'false', '1', '0'])
-    .optional()
-    .transform((v) => v === 'true' || v === '1'),
-});
+export const comissoesSimularQuerySchema = z
+  .object({
+    valor: z.coerce.number().positive(),
+    temCorretor: z
+      .enum(['true', 'false'])
+      .optional()
+      .transform((v) => v !== 'false'),
+    taxaPlataformaPct: z.coerce.number().min(0).max(100).optional(),
+    taxaCorretorPct: z.coerce.number().min(0).max(100).optional(),
+    taxaHospedePct: z.coerce.number().min(0).max(10).optional(),
+    taxaHospedeAtiva: z
+      .enum(['true', 'false'])
+      .optional()
+      .transform((v) => v === 'true'),
+    preview: z
+      .enum(['true', 'false', '1', '0'])
+      .optional()
+      .transform((v) => v === 'true' || v === '1'),
+  })
+  .strict();
 
 export type ComissoesSimularQueryInput = z.infer<typeof comissoesSimularQuerySchema>;

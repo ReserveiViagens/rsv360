@@ -42,10 +42,12 @@ router.get('/config', async (_req, res) => {
   }
 });
 
-const perguntarSchema = z.object({
-  pergunta: z.string().min(1).max(500),
-  papel: z.enum(['staff', 'anfitriao', 'ambos']).optional(),
-});
+const perguntarSchema = z
+  .object({
+    pergunta: z.string().min(1).max(500),
+    papel: z.enum(['staff', 'anfitriao', 'ambos']).optional(),
+  })
+  .strict();
 
 router.post(
   '/instrutor/perguntar',
