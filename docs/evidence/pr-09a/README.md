@@ -41,10 +41,14 @@ Regexes: `CHANGE_ME_*`, `REDACTED_*`, `demo-token`, máscaras `sk_live_*` / `AKI
 ## Validação
 
 ```bash
-# Local (se CLI instalada):
+# Local (se CLI/Docker disponível):
 gitleaks detect --source . --config .gitleaks.toml --verbose --redact --exit-code 1
 
-# Senão: validação = job `gitleaks` no PR
+# Ambiente agente (2026-08-01): docker pull gitleaks hung — validação = job `gitleaks` no PR
 ```
 
 **Não** rodar pickaxe que imprima valores de `.env`.
+
+## Nota de implementação
+
+Workflow usa **CLI oficial** (`gitleaks` binary via curl) em vez de `gitleaks/gitleaks-action@v2|v3`, porque o Action exige `GITLEAKS_LICENSE` em orgs GitHub — o GO pediu fail-closed **sem** secret de licença community.
