@@ -9,6 +9,7 @@ import {
   CALDAS_EMPREENDIMENTOS_CATALOGO,
   type EmpreendimentoCatalogoItem,
 } from './caldas-empreendimentos-catalog';
+import { resolveSafeCsvPath } from './safe-csv-path';
 
 export interface SyncEmpreendimentosResult {
   inseridos: number;
@@ -140,10 +141,11 @@ export async function syncEmpreendimentosCaldas(options?: {
   csvPath?: string;
   usarCatalogo?: boolean;
 }): Promise<SyncEmpreendimentosResult> {
-  const csvPath =
-    options?.csvPath ??
-    process.env.EMPREENDIMENTOS_CALDAS_CSV ??
-    resolve(process.cwd(), 'data/cotacao/empreendimentos-caldas.csv');
+  // User-supplied csvPath is sandboxed (PR-07a). Env/default paths stay server-controlled.
+  const csvPath = options?.csvPath
+    ? resolveSafeCsvPath(options.csvPath)
+    : (process.env.EMPREENDIMENTOS_CALDAS_CSV ??
+      resolve(process.cwd(), 'data/cotacao/empreendimentos-caldas.csv'));
 
   if (existsSync(csvPath)) {
     const itens = lerEmpreendimentosDeCsv(csvPath);
