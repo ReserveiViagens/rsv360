@@ -22,9 +22,20 @@ export class DisputeService {
     return result[0] || null;
   }
 
-  async updateDispute(id: string, data: any): Promise<any> {
+  async updateDispute(
+    id: string,
+    data: {
+      reason?: string;
+      status?: 'opened' | 'in_review' | 'won' | 'lost' | 'accepted';
+      amount?: string;
+      evidence?: Record<string, unknown>;
+      deadline?: Date;
+      resolvedAt?: Date | null;
+      externalId?: string;
+    },
+  ): Promise<any> {
     const result = await db.update(disputes)
-      .set(data)
+      .set({ ...data, updatedAt: new Date() })
       .where(eq(disputes.id, id))
       .returning();
 

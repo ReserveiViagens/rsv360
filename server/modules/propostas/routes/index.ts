@@ -1,4 +1,5 @@
 import { Router, type Request } from 'express';
+import { ZodError } from 'zod';
 import { authenticateJwt, optionalJwt, requireRole, staffAuth } from '../../../middleware/auth.middleware';
 import { publicLimiter } from '../../../middleware/public-limiter';
 import { requireTurnstile } from '../../../middleware/turnstile.middleware';
@@ -29,9 +30,24 @@ import { hasMinRole } from '../rbac';
 import { registrarIndicacao } from '../mgm';
 import { sugerirPacoteFromProposta, criarTemplateFromProposta } from '../ia-copiloto';
 import { asRequiredString } from '../../../lib/parse';
+import {
+  PacoteTemplateUpdateSchema,
+  PacoteTemplateWriteSchema,
+  PropostaIdParamSchema,
+  PropostaUpdateSchema,
+  PropostaWriteSchema,
+  TemplateIdParamSchema,
+} from '../schemas/proposta-write.schema';
 
 const router = Router();
 const agentAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
+
+function zodOrBad(res: import('express').Response, error: unknown) {
+  if (error instanceof ZodError) {
+    return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+  }
+  return null;
+}
 
 function requireAuthActor(req: Request): { id: number; role: string; name?: string } {
   const id = req.user?.id;
@@ -70,9 +86,11 @@ router.get('/templates', ...staffAuth, async (req, res) => {
 
 router.post('/templates', ...staffAuth, async (req, res) => {
   try {
-    const created = await propostasService.createTemplate(req.body);
+    const body = PacoteTemplateWriteSchema.parse(req.body);
+    const created = await propostasService.createTemplate(body);
     res.status(201).json({ success: true, data: created });
   } catch (error) {
+    if (zodOrBad(res, error)) return;
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
@@ -89,10 +107,13 @@ router.get('/templates/:templateId', ...staffAuth, async (req, res) => {
 
 router.put('/templates/:templateId', ...staffAuth, async (req, res) => {
   try {
-    const updated = await propostasService.updateTemplate(Number(req.params.templateId), req.body);
+    const { templateId } = TemplateIdParamSchema.parse(req.params);
+    const body = PacoteTemplateUpdateSchema.parse(req.body);
+    const updated = await propostasService.updateTemplate(templateId, body);
     if (!updated) return res.status(404).json({ success: false, error: 'Template não encontrado' });
     res.json({ success: true, data: updated });
   } catch (error) {
+    if (zodOrBad(res, error)) return;
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
@@ -368,19 +389,37 @@ router.get('/:id', publicLimiter, optionalJwt, async (req, res) => {
 
 router.post('/', ...staffAuth, async (req, res) => {
   try {
-    const created = await propostasService.create(req.body, req.user?.id);
+    const body = PropostaWriteSchema.parse(req.body);
+    const created = await propostasService.create(
+      {
+        ...body,
+        ...(body.valorTotal !== undefined ? { valorTotal: String(body.valorTotal) } : {}),
+      },
+      req.user?.id,
+    );
     res.status(201).json({ success: true, data: created });
   } catch (error) {
+    if (zodOrBad(res, error)) return;
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
 
 router.put('/:id', ...staffAuth, async (req, res) => {
   try {
-    const updated = await propostasService.update(Number(req.params.id), req.body, req.user?.id);
+    const { id } = PropostaIdParamSchema.parse(req.params);
+    const body = PropostaUpdateSchema.parse(req.body);
+    const updated = await propostasService.update(
+      id,
+      {
+        ...body,
+        ...(body.valorTotal !== undefined ? { valorTotal: String(body.valorTotal) } : {}),
+      },
+      req.user?.id,
+    );
     if (!updated) return res.status(404).json({ success: false, error: 'Proposta não encontrada' });
     res.json({ success: true, data: updated });
   } catch (error) {
+    if (zodOrBad(res, error)) return;
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });

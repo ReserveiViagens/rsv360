@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { ZodError } from 'zod';
 import { getPinnedCodigosExternos, isEtapaAHotel, montarCardsPasso2 } from '@rsv360/shared';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { publicLimiter } from '../../../middleware/public-limiter';
@@ -8,6 +9,7 @@ import {
 } from '../services/acomodacoes.service';
 import { parsePeriodoEstadiaOpcional } from '../services/listar-disponiveis-calendario.util';
 import { resolverHotelIdParaAcomodacoes } from '../services/resolve-hotel-id';
+import { AddonPatchSchema } from '../schemas/write-allowlist.schema';
 
 const router = Router();
 const staffAuth = [authenticateJwt, requireRole('admin', 'manager', 'user')];
@@ -157,12 +159,28 @@ router.post('/admin/addons', ...adminAuth, async (req, res) => {
 
 router.patch('/admin/addons/:id', ...adminAuth, async (req, res) => {
   try {
-    const patch = { ...req.body };
-    if (patch.valor != null) patch.valor = String(patch.valor);
+    const parsed = AddonPatchSchema.parse(req.body);
+    const patch: {
+      nome?: string;
+      descricao?: string;
+      precoTipo?: string;
+      valor?: string;
+      ativo?: boolean;
+      ordem?: number;
+    } = {};
+    if (parsed.nome !== undefined) patch.nome = parsed.nome;
+    if (parsed.descricao !== undefined && parsed.descricao !== null) patch.descricao = parsed.descricao;
+    if (parsed.precoTipo !== undefined) patch.precoTipo = parsed.precoTipo;
+    if (parsed.valor !== undefined) patch.valor = String(parsed.valor);
+    if (parsed.ativo !== undefined) patch.ativo = parsed.ativo;
+    if (parsed.ordem !== undefined) patch.ordem = parsed.ordem;
     const data = await acomodacoesService.atualizarAddon(Number(req.params.id), patch);
     if (!data) return res.status(404).json({ success: false, error: 'Addon não encontrado' });
     res.json({ success: true, data });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });

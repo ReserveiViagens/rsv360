@@ -1,7 +1,12 @@
 import { Router, type Request } from 'express';
+import { ZodError } from 'zod';
 import { authenticateJwt, requireRole } from '../../../middleware/auth.middleware';
 import { tarifaService } from '../services/tarifa.service';
 import { anfitriaoService, type AuthContext } from '../services/anfitriao.service';
+import {
+  TarifaCategoriaCreateSchema,
+  TarifaRegraCreateSchema,
+} from '../schemas/write-allowlist.schema';
 
 const router = Router();
 const staffAuth = [authenticateJwt, requireRole('admin', 'manager')];
@@ -45,12 +50,21 @@ router.get('/categorias', ...staffAuth, async (_req, res) => {
 
 router.post('/categorias', ...staffAuth, async (req, res) => {
   try {
+    const body = TarifaCategoriaCreateSchema.parse(req.body);
     const data = await tarifaService.criarCategoria({
-      ...req.body,
+      slug: body.slug,
+      nome: body.nome,
+      ...(body.descontoPercentual != null
+        ? { descontoPercentual: String(body.descontoPercentual) }
+        : {}),
+      ...(body.ativo !== undefined ? { ativo: body.ativo } : {}),
       criadoPor: req.user?.id,
     });
     res.status(201).json({ success: true, data });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
@@ -116,12 +130,17 @@ router.get('/regras', ...staffAuth, async (_req, res) => {
 
 router.post('/regras', ...staffAuth, async (req, res) => {
   try {
+    const body = TarifaRegraCreateSchema.parse(req.body);
     const data = await tarifaService.criarRegra({
-      ...req.body,
+      ...body,
+      valor: String(body.valor),
       criadoPor: req.user?.id,
     });
     res.status(201).json({ success: true, data });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ success: false, error: 'Validation failed', details: error.flatten() });
+    }
     res.status(400).json({ success: false, error: (error as Error).message });
   }
 });
