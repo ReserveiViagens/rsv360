@@ -1,0 +1,63 @@
+# Placeholders documentados - nao sao secrets vivos (PR-09a).
+# Tip-tree scan (--no-git). Full-history report-only deferred to 09b.
+# Global allowlist MUST be [allowlist] (singular) — [[allowlists]] is ignored with useDefault.
+title = "rsv360 gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "placeholders documentados - nao sao secrets vivos"
+paths = [
+  '''apps/site-publico/ATIVACAO_CREDENCIAIS_PRODUCAO\.md''',
+  '''apps/site-publico/GUIA_MERCADO_PAGO_PASSO_A_PASSO\.md''',
+  '''apps/site-publico/PROXIMOS_PASSOS_MERCADO_PAGO\.md''',
+  '''apps/site-publico/lib/credentials-service\.ts''',
+  '''apps/turismo/pages/reservei/configuracoes\.tsx''',
+  '''NTX \+ OTAS''',
+  '''docs/evidence''',
+  '''\.next/''',
+  '''node_modules/''',
+  '''dist/''',
+  '''coverage/''',
+  '''__pycache__/''',
+  '''\.pyc$''',
+  '''\.env''',
+  '''backend/test-results/''',
+  '''ANALISE_.*\.md$''',
+  '''RESUMO_.*\.md$''',
+  '''BACKEND_REINICIADO_SUCESSO\.md$''',
+  '''CORRECAO_.*\.md$''',
+  '''apps/site-publico/docs/''',
+  '''apps/site-publico/GUIA_CONFIGURACAO_INTEGRACOES\.md''',
+  '''apps/site-publico/MERCADO_PAGO_CONFIGURADO''',
+  '''apps/site-publico/RESUMO_WEBHOOKS_IMPLEMENTADOS\.md''',
+  '''apps/site-publico/components/radial-menu/RadialMenu\.tsx''',
+  '''apps/site-publico/hooks/useCotacaoLeadAbandono\.ts''',
+  '''apps/site-publico/scripts/setup-next-steps\.js''',
+  '''apps/turismo/BACKUP_SRC_COMPONENTS/''',
+  '''apps/turismo/lib/favorites-system\.ts''',
+  '''apps/turismo/lib/collaboration-system\.ts''',
+  '''apps/turismo/pages/travel-catalog-rsv\.tsx''',
+  '''apps/turismo/src/pages/api-publica\.tsx''',
+  '''apps/turismo/src/pages/integracoes''',
+  '''backend/tests/''',
+  '''backend/src/__tests__/''',
+  '''packages/shared/''',
+  '''sre-agents/''',
+]
+regexes = [
+  '''CHANGE_ME_''',
+  '''REDACTED_''',
+  '''demo-token''',
+  '''sk_live_\*+''',
+  '''sk_test_''',
+  '''AKIA\*+''',
+  '''APP_USR-''',
+  '''APP_USR_''',
+  '''rsv360_[a-z0-9_]+''',
+  '''whsec_''',
+  '''your-secret-key-change-in-production''',
+  '''senha_segura_123''',
+  '''rsv360_dev_2024''',
+]
