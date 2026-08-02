@@ -8,6 +8,8 @@ x-app-env: &app-env
   NEXT_PUBLIC_API_URL: http://localhost:3002
   NEXT_PUBLIC_BACKEND_URL: http://localhost:3002
   INTERNAL_API_URL: http://backend:3002
+  # GATE-PROD-01 — mock contract/signature UIs (default false = prod-safe)
+  NEXT_PUBLIC_ENABLE_CONTRATOS_MOCK: ${NEXT_PUBLIC_ENABLE_CONTRATOS_MOCK:-false}
   # Cloudflare always-pass site key is public (docs); secret must come from host env (PR-09b).
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
   TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
