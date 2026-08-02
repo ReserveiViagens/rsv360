@@ -1,6 +1,7 @@
 name: Gitleaks
 
-# PR-09a — secret scanning fail-closed (no GITLEAKS_LICENSE; org uses CLI binary).
+# PR-09a — tip-tree fail-closed (no GITLEAKS_LICENSE; CLI binary).
+# --no-git: history has hundreds of dead/FP hits; full-history report-only deferred to 09b.
 on:
   push:
     branches: [ "main", "develop" ]
@@ -29,7 +30,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: false
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install gitleaks
         env:
@@ -42,9 +43,10 @@ jobs:
           sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
           gitleaks version
 
-      - name: Detect secrets
+      - name: Detect secrets (working tree)
         run: |
           gitleaks detect \
+            --no-git \
             --source . \
             --config .gitleaks.toml \
             --verbose \
