@@ -2,11 +2,11 @@ const { getJwtSecret } = require('@rsv360/shared');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { signJwt } = require('./jwt-verify');
-const {
-  isDbRefreshEnabled,
-  createRefreshToken,
-  queryDatabase,
-} = require('./refresh-token.service');
+const { isDbRefreshEnabled } = require('./refresh-token.service');
+
+function db() {
+  return require('./refresh-token.service');
+}
 
 async function comparePassword(password, passwordHash) {
   if (!passwordHash) return false;
@@ -36,13 +36,13 @@ function isUserActive(user) {
 
 async function updateUserPassword(userId, hashedPassword) {
   try {
-    await queryDatabase('UPDATE users SET password_hash = $1 WHERE id = $2', [
+    await db().queryDatabase('UPDATE users SET password_hash = $1 WHERE id = $2', [
       hashedPassword,
       userId,
     ]);
   } catch (error) {
     if (String(error.message).includes('password_hash')) {
-      await queryDatabase('UPDATE users SET password = $1 WHERE id = $2', [
+      await db().queryDatabase('UPDATE users SET password = $1 WHERE id = $2', [
         hashedPassword,
         userId,
       ]);
@@ -54,7 +54,7 @@ async function updateUserPassword(userId, hashedPassword) {
 
 async function touchLastLogin(userId) {
   try {
-    await queryDatabase('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1', [
+    await db().queryDatabase('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1', [
       userId,
     ]);
   } catch {
@@ -71,7 +71,7 @@ async function loginWithDatabase(email, password, meta = {}) {
     isEnrollmentWindowOpen,
   } = require('./mfa-policy');
 
-  const users = await queryDatabase('SELECT * FROM users WHERE email = $1', [
+  const users = await db().queryDatabase('SELECT * FROM users WHERE email = $1', [
     email.toLowerCase(),
   ]);
 
@@ -88,7 +88,7 @@ async function loginWithDatabase(email, password, meta = {}) {
   const storedHash = getStoredPasswordHash(user);
 
   if (storedHash) {
-    const valid = await comparePassword(password, storedHash);
+    const valid = await module.exports.comparePassword(password, storedHash);
     if (!valid) {
       return { error: 'invalid_credentials', status: 401 };
     }
@@ -134,12 +134,47 @@ async function loginWithDatabase(email, password, meta = {}) {
   }
 
   if (mfaOn) {
+    const {
+      isStepUpEnabled,
+      loadActiveFingerprints,
+      isKnownClient,
+      stepUpReasons,
+      logStepUp,
+    } = require('./step-up.service');
+
+    if (isStepUpEnabled()) {
+      const fingerprints = await loadActiveFingerprints(user.id);
+      if (isKnownClient(meta.ipAddress, meta.userAgent, fingerprints)) {
+        // Known device: skip TOTP challenge when step-up mode is on
+        return issueLoginTokens(user, meta);
+      }
+      logStepUp(user.id, stepUpReasons(meta.ipAddress, meta.userAgent, fingerprints));
+      const challenge = await twoFactor.createLoginChallenge(user.id);
+      return {
+        requires_2fa: true,
+        temp_token: challenge.temp_token,
+        expires_in: challenge.expires_in,
+      };
+    }
+
     const challenge = await twoFactor.createLoginChallenge(user.id);
     return {
       requires_2fa: true,
       temp_token: challenge.temp_token,
       expires_in: challenge.expires_in,
     };
+  }
+
+  if (require('./step-up.service').isStepUpEnabled()) {
+    const {
+      loadActiveFingerprints,
+      isKnownClient,
+      logStepUpSkip,
+    } = require('./step-up.service');
+    const fingerprints = await loadActiveFingerprints(user.id);
+    if (!isKnownClient(meta.ipAddress, meta.userAgent, fingerprints)) {
+      logStepUpSkip(user.id, 'no_mfa');
+    }
   }
 
   return issueLoginTokens(user, meta);
@@ -161,7 +196,8 @@ async function issueLoginTokens(user, meta = {}) {
     900
   );
 
-  const { refreshToken } = await createRefreshToken(
+  const refreshSvc = db();
+  const { refreshToken } = await refreshSvc.createRefreshToken(
     user.id,
     meta.deviceInfo,
     meta.ipAddress,

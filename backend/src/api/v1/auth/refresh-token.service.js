@@ -132,6 +132,22 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
   const user = users[0];
   if (!isUserActive(user)) return null;
 
+  // PR-10b — 2B-lite: deny rotation (no UPDATE) when both IP and UA are unknown
+  const {
+    isStepUpEnabled,
+    loadActiveFingerprints,
+    isAlienClient,
+    stepUpReasons,
+    logStepUp,
+  } = require('./step-up.service');
+  if (isStepUpEnabled()) {
+    const fingerprints = await loadActiveFingerprints(userId);
+    if (isAlienClient(ipAddress, userAgent, fingerprints)) {
+      logStepUp(userId, stepUpReasons(ipAddress, userAgent, fingerprints));
+      return null;
+    }
+  }
+
   await revokeRefreshToken(token.id, 'Rotação de token');
   const newRefresh = await createRefreshToken(
     userId,
