@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { Menu, Search } from 'lucide-react';
+import { LogOut, Menu, Search } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { AUTH_ACCESS_TOKEN_KEY, AUTH_REFRESH_TOKEN_KEY } from '@rsv360/shared';
 import { AppSidebar } from './AppSidebar';
 import { PropertySwitcher } from './PropertySwitcher';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Separator } from './ui/separator';
 import { Card } from './ui/card';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 const titles: Record<string, { title: string; description: string }> = {
   '/': { title: 'Dashboard Fase 4', description: 'Visão geral dos módulos operacionais, comerciais e de compliance.' },
@@ -42,7 +45,51 @@ const titles: Record<string, { title: string; description: string }> = {
 export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoutAllBusy, setLogoutAllBusy] = useState(false);
   const meta = titles[router.pathname] || { title: 'RSV360 Admin', description: 'Painel administrativo.' };
+
+  async function handleLogoutAllDevices() {
+    if (typeof window === 'undefined') return;
+    const confirmed = window.confirm('Deseja encerrar todas as outras sessões?');
+    if (!confirmed) return;
+
+    const accessToken = window.localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
+    const refreshToken = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+    if (!accessToken || !refreshToken) {
+      window.alert('Sessão local incompleta. Faça login novamente.');
+      return;
+    }
+
+    setLogoutAllBusy(true);
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/auth/logout-all`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as {
+        success?: boolean;
+        message?: string;
+        sessionsRevoked?: number;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.success) {
+        window.alert(payload.error || 'Não foi possível encerrar as outras sessões.');
+        return;
+      }
+
+      const n = typeof payload.sessionsRevoked === 'number' ? payload.sessionsRevoked : 0;
+      window.alert(`${n} sessões encerradas. ${payload.message || ''}`.trim());
+    } catch {
+      window.alert('Falha de rede ao encerrar outras sessões.');
+    } finally {
+      setLogoutAllBusy(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -60,6 +107,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               <p className="truncate text-xs text-slate-500">{meta.description}</p>
             </div>
 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="hidden shrink-0 sm:inline-flex"
+              disabled={logoutAllBusy}
+              onClick={() => {
+                void handleLogoutAllDevices();
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" aria-hidden />
+              {logoutAllBusy ? 'Encerrando…' : 'Sair de todos os dispositivos'}
+            </Button>
+
             <div className="hidden w-full max-w-sm items-center gap-2 xl:flex">
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -67,6 +128,21 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
               <PropertySwitcher />
             </div>
+          </div>
+          <div className="flex items-center gap-2 px-4 pb-3 sm:hidden">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full"
+              disabled={logoutAllBusy}
+              onClick={() => {
+                void handleLogoutAllDevices();
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" aria-hidden />
+              {logoutAllBusy ? 'Encerrando…' : 'Sair de todos os dispositivos'}
+            </Button>
           </div>
           <div className="px-4 pb-3 xl:hidden">
             <PropertySwitcher />
