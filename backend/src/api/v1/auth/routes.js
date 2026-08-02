@@ -84,6 +84,71 @@ router.post('/logout', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/v1/auth/logout-all — PR-10a
+ * Order: 401 Bearer → 429 rate limit → 400 refresh ownership → 503 DB → 200
+ * Preserves the caller's refresh family; revokes other families only.
+ */
+router.post('/logout-all', async (req, res) => {
+  const token = extractBearerToken(req);
+  if (!token) {
+    return res.status(401).json({ success: false, error: 'Token ausente' });
+  }
+
+  const secret = getJwtSecret();
+  const payload = verifyAccessToken(token, secret);
+  if (!payload) {
+    return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
+  }
+
+  const userId = payload.userId ?? payload.sub ?? payload.id;
+  if (!userId) {
+    return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
+  }
+
+  const { enforceMemoryRateLimit } = require('./memory-rate-limit');
+  const rate = enforceMemoryRateLimit(`logout-all:${userId}`, {
+    maxAttempts: 1,
+    windowMs: 60 * 1000,
+    blockDurationMs: 60 * 1000,
+  });
+  if (!rate.allowed) {
+    return res.status(429).json({
+      success: false,
+      error: 'Muitas tentativas. Aguarde um minuto e tente novamente.',
+    });
+  }
+
+  const { refresh_token: refreshToken } = req.body || {};
+  const { logoutAllOtherSessions } = require('./logout.service');
+
+  try {
+    const result = await logoutAllOtherSessions(token, refreshToken);
+    if (result?.error) {
+      const status = result.status || 400;
+      const message =
+        status === 503
+          ? 'Serviço temporariamente indisponível'
+          : status === 401
+            ? 'Token inválido ou expirado'
+            : 'refresh_token inválido ou não pertence à sessão atual';
+      return res.status(status).json({ success: false, error: message });
+    }
+
+    console.log(
+      `[AUTH][LOGOUT_ALL] userId=${result.userId} sessionsRevoked=${result.sessionsRevoked}`
+    );
+    return res.json({
+      success: true,
+      message: 'Todas as outras sessões foram encerradas',
+      sessionsRevoked: result.sessionsRevoked,
+    });
+  } catch (error) {
+    console.error('[AUTH] logout-all error:', error.message);
+    return res.status(503).json({ success: false, error: 'Serviço temporariamente indisponível' });
+  }
+});
+
 /** POST /api/v1/auth/refresh — renova access token (DB com rotação ou piloto JWT). */
 router.post('/refresh', async (req, res) => {
   const { refresh_token: refreshToken } = req.body || {};
