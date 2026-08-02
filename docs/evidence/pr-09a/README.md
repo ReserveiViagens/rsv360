@@ -2,7 +2,7 @@
 
 **Branch:** `security/pr-09a-gitleaks`  
 **Base:** `main @ a7da0940` (pós-PR-08 #195)  
-**Estado:** PARAR na URL (H0)
+**Estado:** PARAR na URL (H0) — aguardar `gitleaks` verde após fix
 
 ## Auditoria canônica (pré-GO)
 
@@ -16,39 +16,35 @@
 
 | Arquivo | Papel |
 | --- | --- |
-| `.gitleaks.toml` | allowlist 6 paths `APP_USR-` + `docs/evidence/**` + regexes placeholder |
-| `.github/workflows/gitleaks.yml` | CLI gitleaks fail-closed (`--exit-code 1`); sem `GITLEAKS_LICENSE` |
+| `.gitleaks.toml` | `[allowlist]` singular + paths/regexes FP |
+| `.github/workflows/gitleaks.yml` | CLI gitleaks `--no-git` fail-closed; sem `GITLEAKS_LICENSE` |
 | `docs/evidence/pr-09a/README.md` | esta evidence |
 
-## Allowlist (paths)
+## Fix pós-CI vermelho (logs job `gitleaks`)
 
-1. `apps/site-publico/ATIVACAO_CREDENCIAIS_PRODUCAO.md`
-2. `apps/site-publico/GUIA_MERCADO_PAGO_PASSO_A_PASSO.md`
-3. `apps/site-publico/PROXIMOS_PASSOS_MERCADO_PAGO.md`
-4. `apps/site-publico/lib/credentials-service.ts`
-5. `apps/turismo/pages/reservei/configuracoes.tsx`
-6. `NTX + OTAS LEILÕES+ FLASHDEALS/…SPLIT DE PAGAMENTOS….txt` (regex path)
+| Achado | Ação |
+| --- | --- |
+| `leaks found: 483` / 745 commits | `--no-git` + `fetch-depth: 1` |
+| `[[allowlists]]` ignorado com `useDefault` | `[allowlist]` singular (docs oficiais) |
+| FP tip (localStorage keys, docs MP, evidence JSON, demo UI) | paths + regexes expandidos |
 
-Regexes: `CHANGE_ME_*`, `REDACTED_*`, `demo-token`, máscaras `sk_live_*` / `AKIA*` / `APP_USR-x+`.
+Validação local (`git archive` tip + config): **no leaks found / exit 0**.
 
 ## OUT
 
 - Rotação / `.env` / `git filter-repo`
 - Endurecer `docker-compose.yml` → **09b**
 - Required check no ruleset → **owner**
-- `dependency-review` → **09b**
+- `dependency-review` / full-history report-only → **09b**
 
 ## Validação
 
 ```bash
-# Local (se CLI/Docker disponível):
-gitleaks detect --source . --config .gitleaks.toml --verbose --redact --exit-code 1
-
-# Ambiente agente (2026-08-01): docker pull gitleaks hung — validação = job `gitleaks` no PR
+gitleaks detect --no-git --source . --config .gitleaks.toml --verbose --redact --exit-code 1
 ```
 
 **Não** rodar pickaxe que imprima valores de `.env`.
 
 ## Nota de implementação
 
-Workflow usa **CLI oficial** (`gitleaks` binary via curl) em vez de `gitleaks/gitleaks-action@v2|v3`, porque o Action exige `GITLEAKS_LICENSE` em orgs GitHub — o GO pediu fail-closed **sem** secret de licença community.
+Workflow usa **CLI oficial** (`gitleaks` binary via curl) em vez de `gitleaks/gitleaks-action@v2|v3`, porque o Action exige `GITLEAKS_LICENSE` em orgs GitHub.
