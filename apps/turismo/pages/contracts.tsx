@@ -36,6 +36,11 @@ interface Contract {
   attachments: string[];
 }
 
+/** GATE-PROD-01: mock UI only — never treat as legally binding contracts. */
+const ENABLE_CONTRATOS_MOCK = process.env.NEXT_PUBLIC_ENABLE_CONTRATOS_MOCK === 'true';
+const CONTRATOS_DEMO_NOTICE =
+  'DEMO — Esta funcionalidade não está disponível em produção. Contratos e assinaturas exibidos aqui são simulações e não têm validade jurídica.';
+
 const ContractsPage: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([
     {
@@ -159,9 +164,31 @@ const ContractsPage: React.FC = () => {
     ));
   };
 
+  if (!ENABLE_CONTRATOS_MOCK) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-3xl mx-auto bg-white border border-amber-300 rounded-lg p-8 shadow-sm">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center mb-4">
+            <FileText className="mr-3 h-7 w-7 text-amber-600" aria-hidden />
+            Gestão de Contratos
+          </h1>
+          <p className="text-amber-900 font-medium" role="status">
+            {CONTRATOS_DEMO_NOTICE}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
+        <div
+          className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950 font-medium"
+          role="status"
+        >
+          {CONTRATOS_DEMO_NOTICE}
+        </div>
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
