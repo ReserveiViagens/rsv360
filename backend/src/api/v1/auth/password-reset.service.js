@@ -9,6 +9,62 @@ const { sendPasswordResetEmail } = require('./password-reset-email.service');
 
 const GENERIC_FORGOT_MESSAGE = 'Se o e-mail existir, enviaremos instruções.';
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
+const DEV_RESET_BASE_FALLBACK = 'http://localhost:3000';
+
+class PasswordResetBaseMissingError extends Error {
+  constructor() {
+    super(
+      'PASSWORD_RESET_BASE_URL or NEXT_PUBLIC_PRIMARY_SITE_URL is required in production (fail-closed).'
+    );
+    this.name = 'PasswordResetBaseMissingError';
+    this.code = 'PASSWORD_RESET_BASE_MISSING';
+  }
+}
+
+function readNonEmpty(env, key) {
+  const raw = env[key];
+  if (raw == null) return undefined;
+  const trimmed = String(raw).trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+/**
+ * PR-16a — canonical reset base (never Host / X-Forwarded-Host).
+ * Chain: PASSWORD_RESET_BASE_URL → PRIMARY_SITE_URL (NEXT_PUBLIC_PRIMARY_SITE_URL | PRIMARY_SITE_URL).
+ * Legacy PASSWORD_RESET_URL_BASE = alias of the specific slot. FRONTEND_URL removed from chain.
+ */
+function resolvePasswordResetBaseUrl(env = process.env) {
+  const specific =
+    readNonEmpty(env, 'PASSWORD_RESET_BASE_URL') ||
+    readNonEmpty(env, 'PASSWORD_RESET_URL_BASE');
+  if (specific) {
+    return specific.replace(/\/$/, '');
+  }
+
+  const primary =
+    readNonEmpty(env, 'NEXT_PUBLIC_PRIMARY_SITE_URL') ||
+    readNonEmpty(env, 'PRIMARY_SITE_URL');
+  if (primary) {
+    return primary.replace(/\/$/, '');
+  }
+
+  if (env.NODE_ENV === 'production') {
+    throw new PasswordResetBaseMissingError();
+  }
+
+  return DEV_RESET_BASE_FALLBACK;
+}
+
+function buildResetUrl(token, env = process.env) {
+  const base = resolvePasswordResetBaseUrl(env);
+
+  if (base.includes('/redefinir-senha')) {
+    const separator = base.includes('?') ? '&' : '?';
+    return `${base}${separator}token=${encodeURIComponent(token)}`;
+  }
+
+  return `${base}/redefinir-senha?token=${encodeURIComponent(token)}`;
+}
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -46,22 +102,6 @@ async function updateUserPassword(userId, passwordHash) {
     }
     throw error;
   }
-}
-
-function buildResetUrl(token) {
-  const base = (
-    process.env.PASSWORD_RESET_BASE_URL ||
-    process.env.PASSWORD_RESET_URL_BASE ||
-    process.env.FRONTEND_URL ||
-    'http://localhost:3000'
-  ).replace(/\/$/, '');
-
-  if (base.includes('/redefinir-senha')) {
-    const separator = base.includes('?') ? '&' : '?';
-    return `${base}${separator}token=${encodeURIComponent(token)}`;
-  }
-
-  return `${base}/redefinir-senha?token=${encodeURIComponent(token)}`;
 }
 
 async function invalidateActiveResetTokens(userId) {
@@ -127,10 +167,26 @@ async function requestPasswordReset(email) {
     const user = users[0];
     await invalidateActiveResetTokens(user.id);
     const token = await createResetToken(user.id);
+    let resetUrl;
+    try {
+      resetUrl = buildResetUrl(token);
+    } catch (error) {
+      if (error && error.code === 'PASSWORD_RESET_BASE_MISSING') {
+        console.error(
+          '[AUTH] password reset base missing in production (fail-closed); email not sent'
+        );
+        return {
+          error: 'config',
+          status: 503,
+          message: 'Serviço de redefinição temporariamente indisponível',
+        };
+      }
+      throw error;
+    }
     await sendPasswordResetEmail({
       email: user.email,
       name: user.name,
-      resetUrl: buildResetUrl(token),
+      resetUrl,
       token,
     });
   }
@@ -206,5 +262,7 @@ module.exports = {
   isDbPasswordResetEnabled: isDbRefreshEnabled,
   hashToken,
   buildResetUrl,
+  resolvePasswordResetBaseUrl,
+  PasswordResetBaseMissingError,
   GENERIC_FORGOT_MESSAGE,
 };
