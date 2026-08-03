@@ -128,3 +128,79 @@ export function formatClearedBrowserSessionCookie(
   const secure = isSecureBrowserCookieRequired(env) ? '; Secure' : '';
   return `${name}=; Path=/; Max-Age=0; SameSite=${BROWSER_SESSION_COOKIE_SAME_SITE}${secure}`;
 }
+
+/** PR-10c-pré-a / 04b — HttpOnly refresh cookie (BFF Path=/api/auth). */
+export const REFRESH_TOKEN_COOKIE_NAME = 'rsv360_refresh_token';
+export const REFRESH_TOKEN_COOKIE_PATH_BFF = '/api/auth';
+export const REFRESH_TOKEN_COOKIE_PATH_API = '/api/v1/auth';
+/** Max-Age aligned with backend refresh TTL (30 days). */
+export const REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+export const REFRESH_TRANSPORT_HEADER = 'x-rsv-refresh-transport';
+
+export function isRefreshCookieRequired(env: EnvLike = process.env): boolean {
+  return env.AUTH_REFRESH_COOKIE_REQUIRED === 'true';
+}
+
+export type RefreshCookieSerializeOptions = {
+  maxAgeSeconds?: number;
+  /** BFF same-origin path (default) or future API path. */
+  path?: string;
+  env?: EnvLike;
+};
+
+/** Options for NextResponse.cookies.set / .delete (HttpOnly refresh). */
+export function getRefreshTokenCookieOptions(
+  options: RefreshCookieSerializeOptions = {},
+): {
+  httpOnly: true;
+  secure: boolean;
+  sameSite: 'lax';
+  path: string;
+  maxAge: number;
+} {
+  const env = options.env ?? process.env;
+  return {
+    httpOnly: true,
+    secure: isSecureBrowserCookieRequired(env),
+    sameSite: 'lax',
+    path: options.path ?? REFRESH_TOKEN_COOKIE_PATH_BFF,
+    maxAge: options.maxAgeSeconds ?? REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS,
+  };
+}
+
+export function stripRefreshTokenFromAuthPayload(payload: unknown): unknown {
+  if (!payload || typeof payload !== 'object') return payload;
+  const root = payload as Record<string, unknown>;
+  const next: Record<string, unknown> = { ...root };
+  if ('refresh_token' in next) {
+    delete next.refresh_token;
+  }
+  if (next.data && typeof next.data === 'object') {
+    const data = { ...(next.data as Record<string, unknown>) };
+    delete data.refresh_token;
+    next.data = data;
+  }
+  return next;
+}
+
+/** Parse a single cookie value from a Cookie header (no cookie-parser). */
+export function readCookieValue(
+  cookieHeader: string | undefined | null,
+  name: string,
+): string | undefined {
+  if (!cookieHeader) return undefined;
+  const parts = cookieHeader.split(';');
+  for (const part of parts) {
+    const idx = part.indexOf('=');
+    if (idx === -1) continue;
+    const key = part.slice(0, idx).trim();
+    if (key !== name) continue;
+    const raw = part.slice(idx + 1).trim();
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  }
+  return undefined;
+}

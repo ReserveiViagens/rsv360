@@ -28,6 +28,49 @@ describe('auth v1 refresh', () => {
     expect(response.status).toBe(400);
   });
 
+  it('accepts refresh from rsv360_refresh_token cookie', async () => {
+    delete process.env.DATABASE_URL;
+    const refreshSecret =
+      (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET) as string;
+    const refreshToken = signJwt(
+      { userId: 'usr_2', type: 'refresh', tokenFamily: 'fam_cookie', enterpriseId: 'ent_1' },
+      refreshSecret,
+      3600,
+    );
+
+    const response = await request(app)
+      .post('/api/v1/auth/refresh')
+      .set('Cookie', `rsv360_refresh_token=${refreshToken}`)
+      .send({});
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.access_token).toBeTruthy();
+  });
+
+  it('rejects body when AUTH_REFRESH_COOKIE_REQUIRED=true', async () => {
+    const prev = process.env.AUTH_REFRESH_COOKIE_REQUIRED;
+    process.env.AUTH_REFRESH_COOKIE_REQUIRED = 'true';
+    delete process.env.DATABASE_URL;
+    try {
+      const refreshSecret =
+        (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET) as string;
+      const refreshToken = signJwt(
+        { userId: 'usr_2', type: 'refresh', tokenFamily: 'fam_flag', enterpriseId: 'ent_1' },
+        refreshSecret,
+        3600,
+      );
+      const response = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refresh_token: refreshToken });
+      expect(response.status).toBe(401);
+      expect(response.body.error).toMatch(/cookie/i);
+    } finally {
+      if (prev === undefined) delete process.env.AUTH_REFRESH_COOKIE_REQUIRED;
+      else process.env.AUTH_REFRESH_COOKIE_REQUIRED = prev;
+    }
+  });
+
   it('returns new access token for valid refresh JWT', async () => {
     delete process.env.DATABASE_URL;
     const refreshSecret =

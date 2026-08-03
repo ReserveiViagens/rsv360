@@ -29,7 +29,10 @@ function isCookieCsrfExemptApiPath(pathname: string): boolean {
 
 function hasCookieSession(req: NextRequest): boolean {
   return Boolean(
-    req.cookies.get('admin_token')?.value || req.cookies.get('auth_token')?.value,
+    req.cookies.get('admin_token')?.value ||
+      req.cookies.get('auth_token')?.value ||
+      // PR-10c-pré-a — HttpOnly refresh must trigger CSRF on /api/auth/refresh|logout
+      req.cookies.get('rsv360_refresh_token')?.value,
   );
 }
 

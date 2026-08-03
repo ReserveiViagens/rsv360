@@ -5,8 +5,11 @@ import {
   formatBrowserSessionCookie,
   formatClearedBrowserSessionCookie,
   getCorsOriginAllowlist,
+  getRefreshTokenCookieOptions,
   isCorsOriginAllowed,
   isSecureBrowserCookieRequired,
+  readCookieValue,
+  stripRefreshTokenFromAuthPayload,
 } from '../cors-origins';
 
 describe('cors-origins (PR-05b)', () => {
@@ -104,5 +107,39 @@ describe('cookie CSRF + browser cookie attrs (PR-16b)', () => {
     expect(
       formatClearedBrowserSessionCookie('auth_token', { NODE_ENV: 'production' }),
     ).toContain('Secure');
+  });
+});
+
+describe('refresh HttpOnly cookie helpers (PR-10c-pré-a)', () => {
+  it('exposes Path=/api/auth BFF options with Secure in production', () => {
+    const opts = getRefreshTokenCookieOptions({
+      env: { NODE_ENV: 'production' },
+    });
+    expect(opts).toEqual({
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/api/auth',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  });
+
+  it('strips refresh_token from nested auth payloads', () => {
+    expect(
+      stripRefreshTokenFromAuthPayload({
+        success: true,
+        data: { access_token: 'a', refresh_token: 'r' },
+        refresh_token: 'top',
+      }),
+    ).toEqual({
+      success: true,
+      data: { access_token: 'a' },
+    });
+  });
+
+  it('reads cookie value from Cookie header', () => {
+    expect(
+      readCookieValue('auth_token=x; rsv360_refresh_token=abc%2B1; other=y', 'rsv360_refresh_token'),
+    ).toBe('abc+1');
   });
 });
