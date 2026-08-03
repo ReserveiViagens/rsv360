@@ -1,6 +1,6 @@
 /**
- * PR-04a — centralized JWT secrets (fail-closed).
- * No defaults. Refresh inherits JWT_SECRET until PR-04b separates them.
+ * PR-04a / PR-04b (10c-pré-a) — centralized JWT secrets (fail-closed).
+ * No defaults. Prefer JWT_REFRESH_SECRET; absent → inherit JWT_SECRET (compat).
  */
 export declare const JWT_HS256_ALGORITHMS: ['HS256'];
 export type JwtHs256VerifyOptions = {
@@ -17,8 +17,7 @@ type EnvLike = Record<string, string | undefined>;
 export declare function getJwtSecret(env?: EnvLike): string;
 /**
  * Refresh-token HMAC secret.
- * If JWT_REFRESH_SECRET is absent, inherits JWT_SECRET explicitly (PR-04a).
- * Real separation / rotation → PR-04b.
+ * Prefer JWT_REFRESH_SECRET (PR-04b / 10c-pré-a). If absent, inherits JWT_SECRET (compat).
  */
 export declare function getJwtRefreshSecret(env?: EnvLike): string;
 /** Boot-time assert — call before listen / Next register. */

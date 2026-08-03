@@ -40,4 +40,29 @@ export declare function formatBrowserSessionCookie(name: string, value: string, 
     env?: EnvLike;
 }): string;
 export declare function formatClearedBrowserSessionCookie(name: string, env?: EnvLike): string;
+/** PR-10c-pré-a / 04b — HttpOnly refresh cookie (BFF Path=/api/auth). */
+export declare const REFRESH_TOKEN_COOKIE_NAME = "rsv360_refresh_token";
+export declare const REFRESH_TOKEN_COOKIE_PATH_BFF = "/api/auth";
+export declare const REFRESH_TOKEN_COOKIE_PATH_API = "/api/v1/auth";
+/** Max-Age aligned with backend refresh TTL (30 days). */
+export declare const REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS: number;
+export declare const REFRESH_TRANSPORT_HEADER = "x-rsv-refresh-transport";
+export declare function isRefreshCookieRequired(env?: EnvLike): boolean;
+export type RefreshCookieSerializeOptions = {
+    maxAgeSeconds?: number;
+    /** BFF same-origin path (default) or future API path. */
+    path?: string;
+    env?: EnvLike;
+};
+/** Options for NextResponse.cookies.set / .delete (HttpOnly refresh). */
+export declare function getRefreshTokenCookieOptions(options?: RefreshCookieSerializeOptions): {
+    httpOnly: true;
+    secure: boolean;
+    sameSite: 'lax';
+    path: string;
+    maxAge: number;
+};
+export declare function stripRefreshTokenFromAuthPayload(payload: unknown): unknown;
+/** Parse a single cookie value from a Cookie header (no cookie-parser). */
+export declare function readCookieValue(cookieHeader: string | undefined | null, name: string): string | undefined;
 export {};

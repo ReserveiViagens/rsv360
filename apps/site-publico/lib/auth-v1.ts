@@ -47,20 +47,20 @@ export function parseAuthV1LoginResponse(
 ): {
   user?: AuthV1UserPayload;
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
 } | null {
   const payload = (json.data ?? json) as Record<string, unknown>;
   const access = payload.access_token ?? json.access_token;
   const refresh = payload.refresh_token ?? json.refresh_token;
 
-  if (!access || !refresh) {
+  if (!access) {
     return null;
   }
 
   return {
     user: payload.user as AuthV1UserPayload | undefined,
     access_token: String(access),
-    refresh_token: String(refresh),
+    ...(refresh ? { refresh_token: String(refresh) } : {}),
   };
 }
 

@@ -84,6 +84,7 @@ export async function login(email: string, password: string) {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({ email, password }),
   });
 
@@ -101,10 +102,13 @@ export async function login(email: string, password: string) {
   if (result.success) {
     const parsed = parseAuthV1LoginResponse(result);
     const token = parsed?.access_token ?? (result.data as { token?: string })?.token;
-    if (token) setToken(token);
-    if (parsed?.refresh_token && typeof window !== 'undefined') {
-      localStorage.setItem('refresh_token', parsed.refresh_token);
-      localStorage.setItem('access_token', parsed.access_token);
+    if (token) {
+      setToken(token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('access_token', token);
+        // PR-10c-pré-a — refresh only in HttpOnly cookie (BFF); never localStorage.
+        localStorage.removeItem('refresh_token');
+      }
     }
     return result.data;
   }
@@ -213,7 +217,6 @@ export function logout(): void {
     const access =
       localStorage.getItem('auth_token') ||
       localStorage.getItem('access_token');
-    const refresh = localStorage.getItem('refresh_token');
     if (access) {
       void fetch(AUTH_BFF.LOGOUT, {
         method: 'POST',
@@ -221,7 +224,8 @@ export function logout(): void {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${access}`,
         },
-        body: JSON.stringify({ refresh_token: refresh }),
+        credentials: 'include',
+        body: JSON.stringify({}),
       }).catch(() => undefined);
     }
   }

@@ -1,6 +1,7 @@
 /**
  * ✅ ITEM 24: INTERCEPTOR DE AUTENTICAÇÃO - FRONTEND
  * Renovação automática de tokens e interceptação de requests
+ * PR-10c-pré-a — refresh via HttpOnly cookie (BFF); limpa refresh legado do localStorage.
  */
 
 import {
@@ -13,17 +14,25 @@ let accessToken: string | null = null;
 let refreshToken: string | null = null;
 let refreshPromise: Promise<string> | null = null;
 
+function clearLegacyRefreshFromStorage() {
+  refreshToken = null;
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('refresh_token');
+  }
+}
+
 /**
- * Configurar tokens
+ * Configurar access token (refresh vive em HttpOnly cookie via BFF).
+ * `refresh` arg kept for call-site compat — never persisted to localStorage.
  */
-export function setTokens(access: string, refresh: string) {
+export function setTokens(access: string, _refresh?: string) {
   accessToken = access;
-  refreshToken = refresh;
+  refreshToken = null;
 
   if (typeof window !== 'undefined') {
     localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
     localStorage.setItem('auth_token', access);
+    localStorage.removeItem('refresh_token');
     document.cookie = formatBrowserSessionCookie('auth_token', access);
   }
 }
@@ -34,6 +43,7 @@ export function setTokens(access: string, refresh: string) {
 export function getTokens(): { accessToken: string | null; refreshToken: string | null } {
   if (typeof window !== 'undefined') {
     accessToken = localStorage.getItem('access_token');
+    // Legacy only — used once to migrate sessions before cookie exists.
     refreshToken = localStorage.getItem('refresh_token');
   }
   return { accessToken, refreshToken };
@@ -55,7 +65,8 @@ export function clearTokens() {
 }
 
 /**
- * Renovar access token usando refresh token
+ * Renovar access token usando HttpOnly refresh cookie (BFF).
+ * Body legado só se ainda houver refresh no localStorage (migração).
  */
 async function refreshAccessToken(): Promise<string> {
   // Evitar múltiplas chamadas simultâneas
@@ -63,24 +74,24 @@ async function refreshAccessToken(): Promise<string> {
     return refreshPromise;
   }
 
-  const { refreshToken: currentRefreshToken } = getTokens();
-
-  if (!currentRefreshToken) {
-    throw new Error('Refresh token não disponível');
-  }
+  const { refreshToken: legacyRefresh } = getTokens();
 
   refreshPromise = (async () => {
     try {
-      const response = await fetch('/api/auth/refresh', {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const init: RequestInit = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh_token: currentRefreshToken }),
-      });
+        headers,
+        credentials: 'include',
+        body: legacyRefresh
+          ? JSON.stringify({ refresh_token: legacyRefresh })
+          : JSON.stringify({}),
+      };
 
+      const response = await fetch('/api/auth/refresh', init);
       const result = await response.json();
 
       if (!result.success) {
-        // Refresh token inválido - fazer logout
         clearTokens();
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
@@ -88,9 +99,15 @@ async function refreshAccessToken(): Promise<string> {
         throw new Error('Refresh token inválido');
       }
 
-      // Atualizar tokens
-      setTokens(result.data.access_token, result.data.refresh_token);
-      return result.data.access_token;
+      const access = result.data?.access_token as string | undefined;
+      if (!access) {
+        clearTokens();
+        throw new Error('Access token ausente no refresh');
+      }
+
+      setTokens(access);
+      clearLegacyRefreshFromStorage();
+      return access;
     } finally {
       refreshPromise = null;
     }
@@ -104,7 +121,7 @@ async function refreshAccessToken(): Promise<string> {
  */
 export async function authenticatedFetch(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> {
   const { accessToken } = getTokens();
   const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
@@ -120,18 +137,20 @@ export async function authenticatedFetch(
   let response = await fetch(url, {
     ...options,
     headers,
+    credentials: options.credentials ?? 'include',
   });
 
   // Se token expirou (401), tentar renovar
   if (response.status === 401 && currentAccessToken) {
     try {
       const newAccessToken = await refreshAccessToken();
-      
+
       // Retentar requisição com novo token
       headers.set('Authorization', `Bearer ${newAccessToken}`);
       response = await fetch(url, {
         ...options,
         headers,
+        credentials: options.credentials ?? 'include',
       });
     } catch (error) {
       // Falha ao renovar - fazer logout
@@ -164,4 +183,3 @@ export function useAuthInterceptor() {
     getTokens,
   };
 }
-

@@ -2,6 +2,7 @@ const { getJwtSecret, getJwtRefreshSecret } = require('@rsv360/shared');
 const express = require('express');
 const crypto = require('crypto');
 const { verifyAccessToken, verifyRefreshToken, signJwt, extractBearerToken } = require('./jwt-verify');
+const { resolveRefreshToken } = require('./resolve-refresh-token');
 
 const router = express.Router();
 
@@ -69,7 +70,11 @@ router.post('/logout', async (req, res) => {
     return res.status(401).json({ success: false, error: 'Token ausente' });
   }
 
-  const { refresh_token: refreshToken } = req.body || {};
+  const resolved = resolveRefreshToken(req, { optional: true });
+  if (resolved.error) {
+    return res.status(resolved.status).json({ success: false, error: resolved.message });
+  }
+  const refreshToken = resolved.token;
   const { logoutUser } = require('./logout.service');
 
   try {
@@ -151,10 +156,11 @@ router.post('/logout-all', async (req, res) => {
 
 /** POST /api/v1/auth/refresh — renova access token (DB com rotação ou piloto JWT). */
 router.post('/refresh', async (req, res) => {
-  const { refresh_token: refreshToken } = req.body || {};
-  if (!refreshToken) {
-    return res.status(400).json({ success: false, error: 'refresh_token é obrigatório' });
+  const resolved = resolveRefreshToken(req);
+  if (resolved.error) {
+    return res.status(resolved.status).json({ success: false, error: resolved.message });
   }
+  const refreshToken = resolved.token;
 
   const { isDbRefreshEnabled, verifyAndRotateRefreshToken } = require('./refresh-token.service');
 

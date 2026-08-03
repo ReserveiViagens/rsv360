@@ -4,7 +4,7 @@
  * Never falls back to '*' — unset CORS_ORIGIN → explicit dev allowlist.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BROWSER_SESSION_COOKIE_SAME_SITE = exports.DEV_CORS_ORIGIN_ALLOWLIST = void 0;
+exports.REFRESH_TRANSPORT_HEADER = exports.REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS = exports.REFRESH_TOKEN_COOKIE_PATH_API = exports.REFRESH_TOKEN_COOKIE_PATH_BFF = exports.REFRESH_TOKEN_COOKIE_NAME = exports.BROWSER_SESSION_COOKIE_SAME_SITE = exports.DEV_CORS_ORIGIN_ALLOWLIST = void 0;
 exports.getCorsOriginAllowlist = getCorsOriginAllowlist;
 exports.isCorsOriginAllowed = isCorsOriginAllowed;
 exports.corsOriginDelegate = corsOriginDelegate;
@@ -12,6 +12,10 @@ exports.assertCookieMutationOrigin = assertCookieMutationOrigin;
 exports.isSecureBrowserCookieRequired = isSecureBrowserCookieRequired;
 exports.formatBrowserSessionCookie = formatBrowserSessionCookie;
 exports.formatClearedBrowserSessionCookie = formatClearedBrowserSessionCookie;
+exports.isRefreshCookieRequired = isRefreshCookieRequired;
+exports.getRefreshTokenCookieOptions = getRefreshTokenCookieOptions;
+exports.stripRefreshTokenFromAuthPayload = stripRefreshTokenFromAuthPayload;
+exports.readCookieValue = readCookieValue;
 exports.DEV_CORS_ORIGIN_ALLOWLIST = [
     'http://localhost:3000',
     'http://localhost:3001',
@@ -100,4 +104,62 @@ function formatBrowserSessionCookie(name, value, options = {}) {
 function formatClearedBrowserSessionCookie(name, env = process.env) {
     const secure = isSecureBrowserCookieRequired(env) ? '; Secure' : '';
     return `${name}=; Path=/; Max-Age=0; SameSite=${exports.BROWSER_SESSION_COOKIE_SAME_SITE}${secure}`;
+}
+/** PR-10c-pré-a / 04b — HttpOnly refresh cookie (BFF Path=/api/auth). */
+exports.REFRESH_TOKEN_COOKIE_NAME = 'rsv360_refresh_token';
+exports.REFRESH_TOKEN_COOKIE_PATH_BFF = '/api/auth';
+exports.REFRESH_TOKEN_COOKIE_PATH_API = '/api/v1/auth';
+/** Max-Age aligned with backend refresh TTL (30 days). */
+exports.REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+exports.REFRESH_TRANSPORT_HEADER = 'x-rsv-refresh-transport';
+function isRefreshCookieRequired(env = process.env) {
+    return env.AUTH_REFRESH_COOKIE_REQUIRED === 'true';
+}
+/** Options for NextResponse.cookies.set / .delete (HttpOnly refresh). */
+function getRefreshTokenCookieOptions(options = {}) {
+    const env = options.env ?? process.env;
+    return {
+        httpOnly: true,
+        secure: isSecureBrowserCookieRequired(env),
+        sameSite: 'lax',
+        path: options.path ?? exports.REFRESH_TOKEN_COOKIE_PATH_BFF,
+        maxAge: options.maxAgeSeconds ?? exports.REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS,
+    };
+}
+function stripRefreshTokenFromAuthPayload(payload) {
+    if (!payload || typeof payload !== 'object')
+        return payload;
+    const root = payload;
+    const next = { ...root };
+    if ('refresh_token' in next) {
+        delete next.refresh_token;
+    }
+    if (next.data && typeof next.data === 'object') {
+        const data = { ...next.data };
+        delete data.refresh_token;
+        next.data = data;
+    }
+    return next;
+}
+/** Parse a single cookie value from a Cookie header (no cookie-parser). */
+function readCookieValue(cookieHeader, name) {
+    if (!cookieHeader)
+        return undefined;
+    const parts = cookieHeader.split(';');
+    for (const part of parts) {
+        const idx = part.indexOf('=');
+        if (idx === -1)
+            continue;
+        const key = part.slice(0, idx).trim();
+        if (key !== name)
+            continue;
+        const raw = part.slice(idx + 1).trim();
+        try {
+            return decodeURIComponent(raw);
+        }
+        catch {
+            return raw;
+        }
+    }
+    return undefined;
 }
