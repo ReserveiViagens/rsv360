@@ -23,6 +23,8 @@
 - Sem Origin/Referer → 403; Origin fora da allowlist → 403
 - Bearer `/api/v1/auth/*` e admin Bearer — **fora** (não tocados)
 
+- Deep import no middleware: `packages/shared/dist/http/cors-origins.js` (Edge — evita barrel `@rsv360/shared`)
+
 ## Validação
 
 ```bash
