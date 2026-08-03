@@ -1,4 +1,15 @@
-name: "CodeQL"
+# HIG-01 — CodeQL Advanced Setup (custom workflow).
+#
+# Two different PR checks appear with similar names:
+# 1) Actions job "Analyze (javascript-typescript)" — this workflow (~minutes). PASS = analysis ran.
+# 2) App check "CodeQL" from github-advanced-security (~5-7s) — FAIL when the PR introduces
+#    NEW code-scanning alerts; SUCCESS when title is "No new alerts...". Not a second workflow.
+#
+# Default Code Scanning setup is NOT configured on this repo; do not re-enable it alongside
+# this advanced workflow (would duplicate analysis).
+#
+# See docs/evidence/hig-01/README.md
+name: "CodeQL Analysis"
 
 on:
   push:
