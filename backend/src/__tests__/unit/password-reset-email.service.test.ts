@@ -11,25 +11,93 @@ describe('password reset email (D2.8)', () => {
 
   describe('buildResetUrl', () => {
     it('uses PASSWORD_RESET_BASE_URL with /redefinir-senha path', () => {
-      process.env.PASSWORD_RESET_BASE_URL = 'https://www.reserveiviagens.com.br';
-      expect(passwordReset.buildResetUrl('abc123')).toBe(
-        'https://www.reserveiviagens.com.br/redefinir-senha?token=abc123'
-      );
+      expect(
+        passwordReset.buildResetUrl('abc123', {
+          PASSWORD_RESET_BASE_URL: 'https://www.reserveiviagens.com.br',
+        })
+      ).toBe('https://www.reserveiviagens.com.br/redefinir-senha?token=abc123');
     });
 
     it('appends token when base already includes /redefinir-senha', () => {
-      process.env.PASSWORD_RESET_BASE_URL = 'http://localhost:3000/redefinir-senha';
-      expect(passwordReset.buildResetUrl('tok%2F')).toBe(
-        'http://localhost:3000/redefinir-senha?token=tok%252F'
+      expect(
+        passwordReset.buildResetUrl('tok%2F', {
+          PASSWORD_RESET_BASE_URL: 'http://localhost:3000/redefinir-senha',
+        })
+      ).toBe('http://localhost:3000/redefinir-senha?token=tok%252F');
+    });
+
+    it('falls back to PASSWORD_RESET_URL_BASE (legacy alias of specific slot)', () => {
+      expect(
+        passwordReset.buildResetUrl('x', {
+          PASSWORD_RESET_URL_BASE: 'http://localhost:3005',
+        })
+      ).toBe('http://localhost:3005/redefinir-senha?token=x');
+    });
+
+    it('falls back to NEXT_PUBLIC_PRIMARY_SITE_URL when specific base absent', () => {
+      expect(
+        passwordReset.buildResetUrl('x', {
+          NEXT_PUBLIC_PRIMARY_SITE_URL: 'https://primary.example',
+        })
+      ).toBe('https://primary.example/redefinir-senha?token=x');
+    });
+
+    it('PASSWORD_RESET_BASE_URL wins over PRIMARY_SITE_URL', () => {
+      expect(
+        passwordReset.buildResetUrl('x', {
+          PASSWORD_RESET_BASE_URL: 'https://reset.example',
+          NEXT_PUBLIC_PRIMARY_SITE_URL: 'https://primary.example',
+          PRIMARY_SITE_URL: 'https://primary-server.example',
+        })
+      ).toBe('https://reset.example/redefinir-senha?token=x');
+    });
+
+    it('ignores forged Host / X-Forwarded-Host style keys (never request Host)', () => {
+      expect(
+        passwordReset.buildResetUrl('x', {
+          PASSWORD_RESET_BASE_URL: 'https://canonical.example',
+          HOST: 'evil.example',
+          HTTP_HOST: 'evil.example',
+          X_FORWARDED_HOST: 'evil.example',
+        })
+      ).toBe('https://canonical.example/redefinir-senha?token=x');
+    });
+
+    it('production without base throws fail-closed (no localhost link)', () => {
+      expect(() =>
+        passwordReset.buildResetUrl('x', { NODE_ENV: 'production' })
+      ).toThrow(passwordReset.PasswordResetBaseMissingError);
+
+      let caught: unknown;
+      try {
+        passwordReset.buildResetUrl('x', { NODE_ENV: 'production' });
+      } catch (error: unknown) {
+        caught = error;
+      }
+      expect(caught).toMatchObject({
+        code: 'PASSWORD_RESET_BASE_MISSING',
+        name: 'PasswordResetBaseMissingError',
+      });
+      expect(caught).toEqual(
+        expect.not.objectContaining({
+          message: expect.stringMatching(/localhost/),
+        })
       );
     });
 
-    it('falls back to PASSWORD_RESET_URL_BASE', () => {
-      delete process.env.PASSWORD_RESET_BASE_URL;
-      process.env.PASSWORD_RESET_URL_BASE = 'http://localhost:3005';
-      expect(passwordReset.buildResetUrl('x')).toBe(
-        'http://localhost:3005/redefinir-senha?token=x'
-      );
+    it('dev without base falls back to localhost:3000', () => {
+      expect(
+        passwordReset.buildResetUrl('x', { NODE_ENV: 'development' })
+      ).toBe('http://localhost:3000/redefinir-senha?token=x');
+    });
+
+    it('does not use FRONTEND_URL (removed from chain; doc-only divergence)', () => {
+      expect(
+        passwordReset.buildResetUrl('x', {
+          NODE_ENV: 'development',
+          FRONTEND_URL: 'https://frontend-should-not-win.example',
+        })
+      ).toBe('http://localhost:3000/redefinir-senha?token=x');
     });
   });
 
@@ -105,6 +173,39 @@ describe('password reset email (D2.8)', () => {
 
       expect(result.sent).toBe(false);
       expect(result.mode).toBe('error');
+    });
+  });
+
+  describe('requestPasswordReset anti-enumeration (PR-16a)', () => {
+    it('prod without base returns 503 before querying users', async () => {
+      jest.resetModules();
+      const queryDatabase = jest.fn();
+      jest.doMock('../../api/v1/auth/refresh-token.service', () => ({
+        queryDatabase,
+        isDbRefreshEnabled: () => true,
+        revokeAllUserTokens: jest.fn(),
+      }));
+      jest.doMock('../../api/v1/auth/password-reset-email.service', () => ({
+        sendPasswordResetEmail: jest.fn(),
+      }));
+
+      delete process.env.PASSWORD_RESET_BASE_URL;
+      delete process.env.PASSWORD_RESET_URL_BASE;
+      delete process.env.NEXT_PUBLIC_PRIMARY_SITE_URL;
+      delete process.env.PRIMARY_SITE_URL;
+      delete process.env.FRONTEND_URL;
+      process.env.NODE_ENV = 'production';
+
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      const { requestPasswordReset } = require('../../api/v1/auth/password-reset.service');
+      const result = await requestPasswordReset('anyone@test.local');
+
+      expect(result).toEqual({
+        error: 'config',
+        status: 503,
+        message: 'Serviço de redefinição temporariamente indisponível',
+      });
+      expect(queryDatabase).not.toHaveBeenCalled();
     });
   });
 });
