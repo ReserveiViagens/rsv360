@@ -63,3 +63,68 @@ export function corsOriginDelegate(
   }
   callback(null, isCorsOriginAllowed(origin, getCorsOriginAllowlist(env)));
 }
+
+export type CookieCsrfCheckResult =
+  | { ok: true; source: 'origin' | 'referer' }
+  | {
+      ok: false;
+      reason: 'missing_origin_referer' | 'origin_not_allowed' | 'referer_not_allowed';
+    };
+
+/**
+ * PR-16b — fail-closed Origin/Referer check for cookie-authenticated mutations.
+ * Reuses PR-05b CORS allowlist. Never trusts Host / X-Forwarded-Host.
+ * Missing both Origin and Referer → reject (unlike corsOriginDelegate for non-browser).
+ */
+export function assertCookieMutationOrigin(
+  headers: { origin?: string | null; referer?: string | null },
+  env: EnvLike = process.env,
+): CookieCsrfCheckResult {
+  const allowlist = getCorsOriginAllowlist(env);
+  const origin = headers.origin?.trim() || '';
+  if (origin) {
+    return isCorsOriginAllowed(origin, allowlist)
+      ? { ok: true, source: 'origin' }
+      : { ok: false, reason: 'origin_not_allowed' };
+  }
+
+  const referer = headers.referer?.trim() || '';
+  if (!referer) {
+    return { ok: false, reason: 'missing_origin_referer' };
+  }
+
+  try {
+    const refererOrigin = new URL(referer).origin;
+    return isCorsOriginAllowed(refererOrigin, allowlist)
+      ? { ok: true, source: 'referer' }
+      : { ok: false, reason: 'referer_not_allowed' };
+  } catch {
+    return { ok: false, reason: 'referer_not_allowed' };
+  }
+}
+
+/** SameSite=Lax — OAuth / Mercado Pago top-level returns must keep the session cookie. */
+export const BROWSER_SESSION_COOKIE_SAME_SITE = 'Lax' as const;
+
+export function isSecureBrowserCookieRequired(env: EnvLike = process.env): boolean {
+  return env.NODE_ENV === 'production';
+}
+
+export function formatBrowserSessionCookie(
+  name: string,
+  value: string,
+  options: { maxAgeSeconds?: number; env?: EnvLike } = {},
+): string {
+  const env = options.env ?? process.env;
+  const maxAge = options.maxAgeSeconds ?? 60 * 60 * 24 * 7;
+  const secure = isSecureBrowserCookieRequired(env) ? '; Secure' : '';
+  return `${name}=${encodeURIComponent(value)}; Path=/; SameSite=${BROWSER_SESSION_COOKIE_SAME_SITE}; Max-Age=${maxAge}${secure}`;
+}
+
+export function formatClearedBrowserSessionCookie(
+  name: string,
+  env: EnvLike = process.env,
+): string {
+  const secure = isSecureBrowserCookieRequired(env) ? '; Secure' : '';
+  return `${name}=; Path=/; Max-Age=0; SameSite=${BROWSER_SESSION_COOKIE_SAME_SITE}${secure}`;
+}

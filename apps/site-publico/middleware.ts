@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// Deep import — Edge must not pull the @rsv360/shared barrel (schema/Node deps).
+import { assertCookieMutationOrigin } from '../../packages/shared/dist/http/cors-origins.js';
 import { verifyAdminToken } from '@/lib/admin-token';
 import {
   buildPrimarySiteUrl,
@@ -10,11 +12,50 @@ import {
 } from '@/lib/app-mode';
 import { isMarketingLabAuthRequired } from '@/lib/sso-config';
 
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/** Paths that must not run cookie-CSRF (no session cookie auth / external callbacks). */
+function isCookieCsrfExemptApiPath(pathname: string): boolean {
+  if (!pathname.startsWith('/api/')) return true;
+  if (pathname.startsWith('/api/webhooks/')) return true;
+  if (pathname.startsWith('/api/auth/google/')) return true;
+  if (pathname.startsWith('/api/auth/facebook/')) return true;
+  // Login / 2FA mint the cookie; CSRF applies after session exists.
+  if (pathname === '/api/admin/auth/login' || pathname === '/api/admin/auth/2fa') {
+    return true;
+  }
+  return false;
+}
+
+function hasCookieSession(req: NextRequest): boolean {
+  return Boolean(
+    req.cookies.get('admin_token')?.value || req.cookies.get('auth_token')?.value,
+  );
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
   if (isStaticAssetPath(pathname)) {
     return NextResponse.next();
+  }
+
+  // PR-16b — CSRF for mutating API calls that carry session cookies (fail-closed Origin/Referer).
+  if (
+    !SAFE_METHODS.has(req.method.toUpperCase()) &&
+    hasCookieSession(req) &&
+    !isCookieCsrfExemptApiPath(pathname)
+  ) {
+    const check = assertCookieMutationOrigin({
+      origin: req.headers.get('origin'),
+      referer: req.headers.get('referer'),
+    });
+    if (!check.ok) {
+      return NextResponse.json(
+        { success: false, error: 'Origem da requisição não permitida.' },
+        { status: 403 },
+      );
+    }
   }
 
   // Corrigir URL malformada: group-travel + http://... (concatenação incorreta)

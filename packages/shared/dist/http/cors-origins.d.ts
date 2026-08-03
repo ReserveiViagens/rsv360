@@ -16,4 +16,28 @@ export declare function isCorsOriginAllowed(origin: string | undefined | null, a
  * Missing Origin (non-browser / same-host tools) is allowed; browser Origin must be allowlisted.
  */
 export declare function corsOriginDelegate(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void, env?: EnvLike): void;
+export type CookieCsrfCheckResult = {
+    ok: true;
+    source: 'origin' | 'referer';
+} | {
+    ok: false;
+    reason: 'missing_origin_referer' | 'origin_not_allowed' | 'referer_not_allowed';
+};
+/**
+ * PR-16b — fail-closed Origin/Referer check for cookie-authenticated mutations.
+ * Reuses PR-05b CORS allowlist. Never trusts Host / X-Forwarded-Host.
+ * Missing both Origin and Referer → reject (unlike corsOriginDelegate for non-browser).
+ */
+export declare function assertCookieMutationOrigin(headers: {
+    origin?: string | null;
+    referer?: string | null;
+}, env?: EnvLike): CookieCsrfCheckResult;
+/** SameSite=Lax — OAuth / Mercado Pago top-level returns must keep the session cookie. */
+export declare const BROWSER_SESSION_COOKIE_SAME_SITE: "Lax";
+export declare function isSecureBrowserCookieRequired(env?: EnvLike): boolean;
+export declare function formatBrowserSessionCookie(name: string, value: string, options?: {
+    maxAgeSeconds?: number;
+    env?: EnvLike;
+}): string;
+export declare function formatClearedBrowserSessionCookie(name: string, env?: EnvLike): string;
 export {};

@@ -1,5 +1,9 @@
 // Utilitários de autenticação
 import * as jwt from 'jsonwebtoken';
+import {
+  formatBrowserSessionCookie,
+  formatClearedBrowserSessionCookie,
+} from '@rsv360/shared';
 import { AUTH_BFF, parseAuthV1LoginResponse } from '@/lib/auth-v1';
 
 export interface User {
@@ -25,7 +29,7 @@ export function getToken(): string | null {
 export function setToken(token: string): void {
   if (typeof window !== 'undefined') {
     localStorage.setItem('auth_token', token);
-    document.cookie = `auth_token=${encodeURIComponent(token)}; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`;
+    document.cookie = formatBrowserSessionCookie('auth_token', token);
   }
 }
 
@@ -34,7 +38,7 @@ export function removeToken(): void {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
+    document.cookie = formatClearedBrowserSessionCookie('auth_token');
   }
 }
 
@@ -228,7 +232,7 @@ export function logout(): void {
       credentials: 'include',
     }).catch(() => undefined);
     localStorage.removeItem('admin_token');
-    document.cookie = 'admin_token=; Path=/; Max-Age=0; SameSite=Lax';
+    document.cookie = formatClearedBrowserSessionCookie('admin_token');
     window.location.href = '/';
   }
 }
