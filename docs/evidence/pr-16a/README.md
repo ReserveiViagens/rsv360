@@ -38,11 +38,17 @@ Reset **não** usava Host do request. O risco era cadeia fragmentada (`PASSWORD_
 | `password-reset-email.service.test.ts` | test plan ①–④ |
 | `docs/evidence/pr-16a/README.md` | esta evidence |
 
+## Fix (typecheck + anti-enumeration)
+
+- `tsc`: catch tipado `unknown` no teste (useUnknownInCatchVariables).
+- `requestPasswordReset`: `resolvePasswordResetBaseUrl()` **antes** da consulta ao usuário → 503 uniforme (sem enumeração).
+
 ## Validação
 
 ```bash
+cd backend && npx tsc --noEmit   # EXIT 0
 cd backend && npx jest src/__tests__/unit/password-reset-email.service.test.ts --no-coverage
-# 13 passed
+# 14 passed
 ```
 
 ## OUT

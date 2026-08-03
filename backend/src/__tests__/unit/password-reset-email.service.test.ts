@@ -66,13 +66,23 @@ describe('password reset email (D2.8)', () => {
     it('production without base throws fail-closed (no localhost link)', () => {
       expect(() =>
         passwordReset.buildResetUrl('x', { NODE_ENV: 'production' })
-      ).toThrow(/PASSWORD_RESET_BASE_URL or NEXT_PUBLIC_PRIMARY_SITE_URL/);
+      ).toThrow(passwordReset.PasswordResetBaseMissingError);
+
+      let caught: unknown;
       try {
         passwordReset.buildResetUrl('x', { NODE_ENV: 'production' });
-      } catch (error) {
-        expect(error.code).toBe('PASSWORD_RESET_BASE_MISSING');
-        expect(String(error.message)).not.toMatch(/localhost/);
+      } catch (error: unknown) {
+        caught = error;
       }
+      expect(caught).toMatchObject({
+        code: 'PASSWORD_RESET_BASE_MISSING',
+        name: 'PasswordResetBaseMissingError',
+      });
+      expect(caught).toEqual(
+        expect.not.objectContaining({
+          message: expect.stringMatching(/localhost/),
+        })
+      );
     });
 
     it('dev without base falls back to localhost:3000', () => {
@@ -163,6 +173,39 @@ describe('password reset email (D2.8)', () => {
 
       expect(result.sent).toBe(false);
       expect(result.mode).toBe('error');
+    });
+  });
+
+  describe('requestPasswordReset anti-enumeration (PR-16a)', () => {
+    it('prod without base returns 503 before querying users', async () => {
+      jest.resetModules();
+      const queryDatabase = jest.fn();
+      jest.doMock('../../api/v1/auth/refresh-token.service', () => ({
+        queryDatabase,
+        isDbRefreshEnabled: () => true,
+        revokeAllUserTokens: jest.fn(),
+      }));
+      jest.doMock('../../api/v1/auth/password-reset-email.service', () => ({
+        sendPasswordResetEmail: jest.fn(),
+      }));
+
+      delete process.env.PASSWORD_RESET_BASE_URL;
+      delete process.env.PASSWORD_RESET_URL_BASE;
+      delete process.env.NEXT_PUBLIC_PRIMARY_SITE_URL;
+      delete process.env.PRIMARY_SITE_URL;
+      delete process.env.FRONTEND_URL;
+      process.env.NODE_ENV = 'production';
+
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      const { requestPasswordReset } = require('../../api/v1/auth/password-reset.service');
+      const result = await requestPasswordReset('anyone@test.local');
+
+      expect(result).toEqual({
+        error: 'config',
+        status: 503,
+        message: 'Serviço de redefinição temporariamente indisponível',
+      });
+      expect(queryDatabase).not.toHaveBeenCalled();
     });
   });
 });

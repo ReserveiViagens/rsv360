@@ -146,6 +146,17 @@ async function findValidResetToken(rawToken) {
   return row;
 }
 
+function passwordResetConfigUnavailable() {
+  console.error(
+    '[AUTH] password reset base missing in production (fail-closed); email not sent'
+  );
+  return {
+    error: 'config',
+    status: 503,
+    message: 'Serviço de redefinição temporariamente indisponível',
+  };
+}
+
 async function requestPasswordReset(email) {
   if (!isDbRefreshEnabled()) {
     return null;
@@ -159,6 +170,16 @@ async function requestPasswordReset(email) {
     return { error: 'validation', status: 400, message: 'E-mail inválido' };
   }
 
+  // PR-16a — resolve base before user lookup (uniform 503; no email enumeration).
+  try {
+    resolvePasswordResetBaseUrl();
+  } catch (error) {
+    if (error instanceof PasswordResetBaseMissingError) {
+      return passwordResetConfigUnavailable();
+    }
+    throw error;
+  }
+
   const users = await queryDatabase('SELECT id, email, name FROM users WHERE email = $1', [
     normalized,
   ]);
@@ -167,26 +188,10 @@ async function requestPasswordReset(email) {
     const user = users[0];
     await invalidateActiveResetTokens(user.id);
     const token = await createResetToken(user.id);
-    let resetUrl;
-    try {
-      resetUrl = buildResetUrl(token);
-    } catch (error) {
-      if (error && error.code === 'PASSWORD_RESET_BASE_MISSING') {
-        console.error(
-          '[AUTH] password reset base missing in production (fail-closed); email not sent'
-        );
-        return {
-          error: 'config',
-          status: 503,
-          message: 'Serviço de redefinição temporariamente indisponível',
-        };
-      }
-      throw error;
-    }
     await sendPasswordResetEmail({
       email: user.email,
       name: user.name,
-      resetUrl,
+      resetUrl: buildResetUrl(token),
       token,
     });
   }
