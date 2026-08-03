@@ -5,6 +5,11 @@
  * @author Douglas P. Figueiredo
  * @license UNLICENSED
  */
+import {
+  formatBrowserSessionCookie,
+  formatClearedBrowserSessionCookie,
+} from '@rsv360/shared';
+
 export const PORTAL_TOKEN_COOKIE = 'rsv360_guest_portal_token';
 export const PORTAL_GUEST_COOKIE = 'rsv360_guest_portal_guest';
 
@@ -67,7 +72,7 @@ export function setPortalSession(token: string, guest?: Record<string, unknown> 
   }
 
   window.localStorage.setItem(PORTAL_TOKEN_COOKIE, token);
-  document.cookie = `${PORTAL_TOKEN_COOKIE}=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+  document.cookie = formatBrowserSessionCookie(PORTAL_TOKEN_COOKIE, token);
 
   if (guest) {
     window.localStorage.setItem(PORTAL_GUEST_COOKIE, JSON.stringify(guest));
@@ -81,9 +86,9 @@ export function clearPortalSession() {
 
   window.localStorage.removeItem(PORTAL_TOKEN_COOKIE);
   window.localStorage.removeItem(PORTAL_GUEST_COOKIE);
-  document.cookie = `${PORTAL_TOKEN_COOKIE}=; path=/; max-age=0; samesite=lax`;
+  document.cookie = formatClearedBrowserSessionCookie(PORTAL_TOKEN_COOKIE);
 }
 
 export function buildClearedPortalTokenCookie() {
-  return `${PORTAL_TOKEN_COOKIE}=; path=/; max-age=0; samesite=lax`;
+  return formatClearedBrowserSessionCookie(PORTAL_TOKEN_COOKIE);
 }

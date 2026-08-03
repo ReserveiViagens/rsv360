@@ -3,6 +3,11 @@
  * Renovação automática de tokens e interceptação de requests
  */
 
+import {
+  formatBrowserSessionCookie,
+  formatClearedBrowserSessionCookie,
+} from '@rsv360/shared';
+
 // Armazenamento de tokens (pode ser localStorage, sessionStorage, ou cookies)
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
@@ -19,7 +24,7 @@ export function setTokens(access: string, refresh: string) {
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
     localStorage.setItem('auth_token', access);
-    document.cookie = `auth_token=${encodeURIComponent(access)}; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`;
+    document.cookie = formatBrowserSessionCookie('auth_token', access);
   }
 }
 
@@ -45,7 +50,7 @@ export function clearTokens() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('auth_token');
-    document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
+    document.cookie = formatClearedBrowserSessionCookie('auth_token');
   }
 }
 

@@ -1,8 +1,12 @@
 import {
   DEV_CORS_ORIGIN_ALLOWLIST,
+  assertCookieMutationOrigin,
   corsOriginDelegate,
+  formatBrowserSessionCookie,
+  formatClearedBrowserSessionCookie,
   getCorsOriginAllowlist,
   isCorsOriginAllowed,
+  isSecureBrowserCookieRequired,
 } from '../cors-origins';
 
 describe('cors-origins (PR-05b)', () => {
@@ -51,5 +55,54 @@ describe('cors-origins (PR-05b)', () => {
       {},
     );
     expect(results).toEqual([true, false, true]);
+  });
+});
+
+describe('cookie CSRF + browser cookie attrs (PR-16b)', () => {
+  const env = { CORS_ORIGIN: 'https://app.example,http://localhost:3000' };
+
+  it('allows allowlisted Origin', () => {
+    expect(
+      assertCookieMutationOrigin({ origin: 'https://app.example', referer: null }, env),
+    ).toEqual({ ok: true, source: 'origin' });
+  });
+
+  it('allows allowlisted Referer when Origin absent', () => {
+    expect(
+      assertCookieMutationOrigin(
+        { origin: null, referer: 'https://app.example/admin/security' },
+        env,
+      ),
+    ).toEqual({ ok: true, source: 'referer' });
+  });
+
+  it('fail-closed when Origin and Referer missing', () => {
+    expect(assertCookieMutationOrigin({ origin: null, referer: null }, env)).toEqual({
+      ok: false,
+      reason: 'missing_origin_referer',
+    });
+  });
+
+  it('rejects evil Origin (Host header irrelevant)', () => {
+    expect(
+      assertCookieMutationOrigin({ origin: 'https://evil.example', referer: null }, env),
+    ).toEqual({ ok: false, reason: 'origin_not_allowed' });
+  });
+
+  it('adds Secure only in production', () => {
+    expect(
+      formatBrowserSessionCookie('auth_token', 'abc', {
+        env: { NODE_ENV: 'development' },
+      }),
+    ).toBe('auth_token=abc; Path=/; SameSite=Lax; Max-Age=604800');
+    expect(
+      formatBrowserSessionCookie('auth_token', 'abc', {
+        env: { NODE_ENV: 'production' },
+      }),
+    ).toBe('auth_token=abc; Path=/; SameSite=Lax; Max-Age=604800; Secure');
+    expect(isSecureBrowserCookieRequired({ NODE_ENV: 'production' })).toBe(true);
+    expect(
+      formatClearedBrowserSessionCookie('auth_token', { NODE_ENV: 'production' }),
+    ).toContain('Secure');
   });
 });
