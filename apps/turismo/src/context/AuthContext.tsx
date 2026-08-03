@@ -131,14 +131,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [API_BASE_URL]);
 
-  const refreshAccessToken = useCallback(async (refreshTokenValue: string): Promise<void> => {
+  const refreshAccessToken = useCallback(async (refreshTokenValue?: string | null): Promise<void> => {
     try {
+      const legacy =
+        refreshTokenValue ||
+        (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
+
       const response = await fetch(`${API_BASE_URL}${AUTH_V1.REFRESH}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ refresh_token: refreshTokenValue }),
+        credentials: 'include',
+        body: legacy
+          ? JSON.stringify({ refresh_token: legacy })
+          : JSON.stringify({}),
       });
 
       if (response.ok) {
@@ -151,10 +158,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
         setAccessToken(data.access_token);
         localStorage.setItem('access_token', data.access_token);
-        if (data.refresh_token) {
-          setRefreshToken(data.refresh_token);
-          localStorage.setItem('refresh_token', data.refresh_token);
-        }
+        // PR-10c-pré-b — refresh lives in HttpOnly cookie; clear LS legacy.
+        setRefreshToken(null);
+        localStorage.removeItem('refresh_token');
       } else {
         throw new Error('Falha ao renovar token');
       }
@@ -172,14 +178,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshToken ||
       (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
 
-    if (token && storedRefresh && !isLegacyFabricatedToken(token)) {
+    if (token && !isLegacyFabricatedToken(token)) {
       void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ refresh_token: storedRefresh }),
+        credentials: 'include',
+        body: storedRefresh
+          ? JSON.stringify({ refresh_token: storedRefresh })
+          : JSON.stringify({}),
       }).catch((error) => {
         console.error('[AuthContext] Erro ao revogar sessão no servidor:', error);
       });
@@ -231,10 +240,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           accessToken: storedAccessToken?.substring(0, 10) + '...'
         });
         
-        if (storedAccessToken && storedRefreshToken) {
+        if (storedAccessToken) {
           if (isMounted) {
             setAccessToken(storedAccessToken);
-            setRefreshToken(storedRefreshToken);
+            if (storedRefreshToken) setRefreshToken(storedRefreshToken);
           }
           
           // Reject known legacy fabricated tokens (pre-T1 bypass)
@@ -255,14 +264,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
               setTimeout(() => reject(new Error('Timeout')), 3000)
             );
 
-            const isValid = (await Promise.race([
+            let tokenToUse = storedAccessToken;
+            let isValid = (await Promise.race([
               verifyToken(storedAccessToken),
               timeoutPromise,
             ])) as boolean;
 
+            if (!isValid) {
+              try {
+                await refreshAccessToken(storedRefreshToken);
+                tokenToUse =
+                  (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null) ||
+                  storedAccessToken;
+                isValid = true;
+              } catch {
+                isValid = false;
+              }
+            }
+
             console.log('[AuthContext] Token válido:', isValid);
             if (isValid && isMounted) {
-              await fetchUserData(storedAccessToken);
+              await fetchUserData(tokenToUse);
             } else if (isMounted) {
               console.log('[AuthContext] Token inválido - limpando autenticação');
               clearAuth();
@@ -303,7 +325,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isMounted = false;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [clearAuth, fetchUserData, verifyToken]);
+  }, [clearAuth, fetchUserData, verifyToken, refreshAccessToken]);
   
   // FALLBACK: Garantir que isLoading seja false após 5 segundos, independente de tudo
   useEffect(() => {
@@ -317,15 +339,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  // Renovação automática de token
+  // Renovação automática de token (cookie HttpOnly; legado LS só na migração)
   useEffect(() => {
     if (!accessToken) return;
 
     const tokenRefreshInterval = setInterval(async () => {
       try {
-        if (refreshToken) {
-          await refreshAccessToken(refreshToken);
-        }
+        await refreshAccessToken(
+          typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null,
+        );
       } catch (error) {
         console.error('Erro ao renovar token:', error);
         logout();
@@ -333,7 +355,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, 25 * 60 * 1000); // Renovar 5 minutos antes da expiração (30 min - 5 min)
 
     return () => clearInterval(tokenRefreshInterval);
-  }, [accessToken, refreshToken, logout, refreshAccessToken]);
+  }, [accessToken, logout, refreshAccessToken]);
 
   const persistPostLoginRole = (role?: string) => {
     if (typeof window !== 'undefined' && role) {
@@ -348,6 +370,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ email, password }),
     });
 
@@ -356,19 +379,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw new Error(err?.error || err?.message || 'Credenciais inválidas');
     }
 
-    const loginPayload = parseAuthV1LoginResponse(await response.json());
+    const raw = (await response.json()) as Record<string, unknown>;
+    let loginPayload = parseAuthV1LoginResponse(raw);
+    // Browser Origin → backend strips refresh from JSON (cookie Set-Cookie only).
     if (!loginPayload) {
+      const payload = (raw.data ?? raw) as Record<string, unknown>;
+      if (payload.requires_2fa === true) {
+        throw new Error('Autenticação em dois fatores necessária');
+      }
+      const access = payload.access_token ?? raw.access_token;
+      if (access) {
+        loginPayload = {
+          access_token: String(access),
+          refresh_token: '',
+          user: payload.user as Parameters<typeof mapAuthV1User>[0] | undefined,
+        };
+      }
+    }
+
+    if (!loginPayload?.access_token) {
       throw new Error('Resposta de login inválida');
     }
 
-    if (!loginPayload.access_token || !loginPayload.refresh_token) {
-      throw new Error('Resposta de login sem tokens');
-    }
-
     setAccessToken(loginPayload.access_token);
-    setRefreshToken(loginPayload.refresh_token);
+    setRefreshToken(null);
     localStorage.setItem('access_token', loginPayload.access_token);
-    localStorage.setItem('refresh_token', loginPayload.refresh_token);
+    localStorage.removeItem('refresh_token');
 
     if (loginPayload.user) {
       const mapped = mapAuthV1User(loginPayload.user, loginPayload.access_token);
@@ -475,7 +511,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     isLoading,
     isAuthenticated: !!user,
-    refreshToken: () => refreshToken ? refreshAccessToken(refreshToken) : Promise.resolve(),
+    refreshToken: () =>
+      refreshAccessToken(
+        typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null,
+      ),
     updateUser,
     changePassword,
     hasPermission,
