@@ -4,7 +4,8 @@
  */
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const { handleCspViolationReport } = require('../../../packages/shared/security-headers.cjs') as {
+// From apps/<app>/pages/api → repo root is ../../../../
+const { handleCspViolationReport } = require('../../../../packages/shared/security-headers.cjs') as {
   handleCspViolationReport: (raw: unknown) => { status: number };
 };
 
