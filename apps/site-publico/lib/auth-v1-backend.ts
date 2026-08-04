@@ -65,6 +65,11 @@ export async function proxyAuthV1(
   if (authorization) {
     headers.set('Authorization', authorization);
   }
+  // PR-10c-a2 — forward DPoP so AS can bind cnf.jkt (htu is upstream URL from client).
+  const dpop = request.headers.get('dpop');
+  if (dpop) {
+    headers.set('DPoP', dpop);
+  }
 
   let body: string | undefined;
   if (method !== 'GET' && method !== 'HEAD') {

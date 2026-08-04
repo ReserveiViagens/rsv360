@@ -3,8 +3,16 @@ import * as jwt from 'jsonwebtoken';
 import {
   formatBrowserSessionCookie,
   formatClearedBrowserSessionCookie,
+  resolveDpopHtu,
+  tryCreateDpopProof,
 } from '@rsv360/shared';
 import { AUTH_BFF, parseAuthV1LoginResponse } from '@/lib/auth-v1';
+
+const UPSTREAM_AUTH_BASE = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'http://localhost:3002'
+).replace(/\/$/, '');
 
 export interface User {
   id: number;
@@ -79,11 +87,14 @@ function traduzirErro(mensagem: string): string {
 }
 
 export async function login(email: string, password: string) {
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  const htu = resolveDpopHtu(AUTH_BFF.LOGIN, { upstreamAuthBase: UPSTREAM_AUTH_BASE });
+  const proof = await tryCreateDpopProof({ method: 'POST', url: htu });
+  if (proof) headers.set('DPoP', proof);
+
   const response = await fetch(AUTH_BFF.LOGIN, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ email, password }),
   });

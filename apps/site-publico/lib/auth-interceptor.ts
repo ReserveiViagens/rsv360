@@ -2,12 +2,36 @@
  * ✅ ITEM 24: INTERCEPTOR DE AUTENTICAÇÃO - FRONTEND
  * Renovação automática de tokens e interceptação de requests
  * PR-10c-pré-a — refresh via HttpOnly cookie (BFF); limpa refresh legado do localStorage.
+ * PR-10c-a2 — DPoP header (flag AUTH_DPOP_ENABLED OFF; best-effort).
  */
 
 import {
   formatBrowserSessionCookie,
   formatClearedBrowserSessionCookie,
+  resolveDpopHtu,
+  tryCreateDpopProof,
 } from '@rsv360/shared';
+
+const UPSTREAM_AUTH_BASE = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'http://localhost:3002'
+).replace(/\/$/, '');
+
+async function attachDpopHeader(
+  headers: Headers,
+  method: string,
+  url: string,
+  accessToken?: string | null,
+): Promise<void> {
+  const htu = resolveDpopHtu(url, { upstreamAuthBase: UPSTREAM_AUTH_BASE });
+  const proof = await tryCreateDpopProof({
+    method,
+    url: htu,
+    accessToken: accessToken || undefined,
+  });
+  if (proof) headers.set('DPoP', proof);
+}
 
 // Armazenamento de tokens (pode ser localStorage, sessionStorage, ou cookies)
 let accessToken: string | null = null;
@@ -78,7 +102,8 @@ async function refreshAccessToken(): Promise<string> {
 
   refreshPromise = (async () => {
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+      await attachDpopHeader(headers, 'POST', '/api/auth/refresh');
       const init: RequestInit = {
         method: 'POST',
         headers,
@@ -129,9 +154,11 @@ export async function authenticatedFetch(
 
   // Adicionar token ao header
   const headers = new Headers(options.headers);
+  const method = (options.method || 'GET').toUpperCase();
   if (currentAccessToken) {
     headers.set('Authorization', `Bearer ${currentAccessToken}`);
   }
+  await attachDpopHeader(headers, method, url, currentAccessToken);
 
   // Fazer requisição
   let response = await fetch(url, {
@@ -147,6 +174,7 @@ export async function authenticatedFetch(
 
       // Retentar requisição com novo token
       headers.set('Authorization', `Bearer ${newAccessToken}`);
+      await attachDpopHeader(headers, method, url, newAccessToken);
       response = await fetch(url, {
         ...options,
         headers,

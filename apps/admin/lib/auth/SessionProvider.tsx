@@ -9,9 +9,10 @@ import {
   type TenantSession,
   parseAuthSessionResponse,
   toTenantSession,
+  tryCreateDpopProof,
 } from '@rsv360/shared';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002').replace(/\/$/, '');
 
 export interface SessionContextValue {
   user: SessionUser | null;
@@ -29,9 +30,31 @@ function clearLegacyRefreshFromStorage() {
   window.localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
 }
 
+async function withDpopHeaders(
+  headers: Headers,
+  method: string,
+  url: string,
+  accessToken?: string | null,
+): Promise<Headers> {
+  const proof = await tryCreateDpopProof({
+    method,
+    url,
+    accessToken: accessToken || undefined,
+  });
+  if (proof) headers.set('DPoP', proof);
+  return headers;
+}
+
 async function fetchSession(token: string): Promise<AuthSessionResponse> {
-  const response = await fetch(`${API_BASE}/api/v1/auth/session`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const url = `${API_BASE}/api/v1/auth/session`;
+  const headers = await withDpopHeaders(
+    new Headers({ Authorization: `Bearer ${token}` }),
+    'GET',
+    url,
+    token,
+  );
+  const response = await fetch(url, {
+    headers,
     credentials: 'include',
   });
 
@@ -49,15 +72,22 @@ async function fetchSession(token: string): Promise<AuthSessionResponse> {
 /**
  * PR-10c-pré-b — refresh via HttpOnly cookie (Path=/api/v1/auth).
  * Body legado only while localStorage still holds a refresh (migration).
+ * PR-10c-a2 — DPoP on refresh (best-effort, flag OFF).
  */
 async function tryRefreshAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
 
   const legacyRefresh = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+  const url = `${API_BASE}/api/v1/auth/refresh`;
+  const headers = await withDpopHeaders(
+    new Headers({ 'Content-Type': 'application/json' }),
+    'POST',
+    url,
+  );
 
-  const response = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
+  const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: legacyRefresh
       ? JSON.stringify({ refresh_token: legacyRefresh })

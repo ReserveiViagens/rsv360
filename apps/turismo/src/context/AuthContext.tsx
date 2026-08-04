@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { tryCreateDpopProof } from '@rsv360/shared';
 import {
   AUTH_V1,
   DEFAULT_API_URL,
@@ -9,6 +10,22 @@ import {
   parseAuthV1LoginResponse,
   parseAuthV1RefreshResponse,
 } from '../lib/auth-v1';
+
+async function dpopHeaders(
+  base: HeadersInit,
+  method: string,
+  url: string,
+  accessToken?: string | null,
+): Promise<Headers> {
+  const headers = new Headers(base);
+  const proof = await tryCreateDpopProof({
+    method,
+    url,
+    accessToken: accessToken || undefined,
+  });
+  if (proof) headers.set('DPoP', proof);
+  return headers;
+}
 
 interface User {
   id: number;
@@ -74,12 +91,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const verifyToken = useCallback(async (token: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
-        method: 'GET',
-        headers: {
+      const url = `${API_BASE_URL}${AUTH_V1.SESSION}`;
+      const headers = await dpopHeaders(
+        {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        'GET',
+        url,
+        token,
+      );
+      const response = await fetch(url, {
+        method: 'GET',
+        headers,
       });
 
       if (!response.ok) {
@@ -100,12 +124,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setTimeout(() => reject(new Error('Timeout ao buscar dados do usuário')), 5000)
       );
 
-      const fetchPromise = fetch(`${API_BASE_URL}${AUTH_V1.SESSION}`, {
-        headers: {
+      const url = `${API_BASE_URL}${AUTH_V1.SESSION}`;
+      const headers = await dpopHeaders(
+        {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-      });
+        'GET',
+        url,
+        token,
+      );
+      const fetchPromise = fetch(url, { headers });
 
       const response = await Promise.race([fetchPromise, timeoutPromise]);
 
@@ -137,11 +166,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         refreshTokenValue ||
         (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
 
-      const response = await fetch(`${API_BASE_URL}${AUTH_V1.REFRESH}`, {
+      const url = `${API_BASE_URL}${AUTH_V1.REFRESH}`;
+      const headers = await dpopHeaders(
+        { 'Content-Type': 'application/json' },
+        'POST',
+        url,
+      );
+      const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         credentials: 'include',
         body: legacy
           ? JSON.stringify({ refresh_token: legacy })
@@ -179,17 +212,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null);
 
     if (token && !isLegacyFabricatedToken(token)) {
-      void fetch(`${API_BASE_URL}${AUTH_V1.LOGOUT}`, {
-        method: 'POST',
-        headers: {
+      const url = `${API_BASE_URL}${AUTH_V1.LOGOUT}`;
+      void dpopHeaders(
+        {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: storedRefresh
-          ? JSON.stringify({ refresh_token: storedRefresh })
-          : JSON.stringify({}),
-      }).catch((error) => {
+        'POST',
+        url,
+        token,
+      ).then((headers) =>
+        fetch(url, {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: storedRefresh
+            ? JSON.stringify({ refresh_token: storedRefresh })
+            : JSON.stringify({}),
+        }),
+      ).catch((error) => {
         console.error('[AuthContext] Erro ao revogar sessão no servidor:', error);
       });
     }
@@ -365,11 +406,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     // Fail-closed: only canonical backend auth — no client-side demo/admin bypass
-    const response = await fetch(`${API_BASE_URL}${AUTH_V1.LOGIN}`, {
+    const url = `${API_BASE_URL}${AUTH_V1.LOGIN}`;
+    const headers = await dpopHeaders(
+      { 'Content-Type': 'application/json' },
+      'POST',
+      url,
+    );
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     });

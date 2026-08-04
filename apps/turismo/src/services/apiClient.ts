@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
+import { tryCreateDpopProof } from '@rsv360/shared';
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002').replace(/\/$/, '');
 const API_TIMEOUT = 30000; // 30 seconds
 
 // Create axios instance
@@ -14,15 +15,30 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor - Add auth token
+// Request interceptor - Add auth token + DPoP (PR-10c-a2, flag OFF best-effort)
 apiClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
     // Tentar buscar token de diferentes locais (compatibilidade)
     const token = localStorage.getItem('access_token') || 
                   localStorage.getItem('authToken') ||
                   localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const method = (config.method || 'get').toUpperCase();
+      const url = axios.getUri(config);
+      const proof = await tryCreateDpopProof({
+        method,
+        url,
+        accessToken: token || undefined,
+      });
+      if (proof) {
+        config.headers['DPoP'] = proof;
+      }
+    } catch {
+      // best-effort
     }
     
     // Log request in development
