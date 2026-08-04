@@ -1,8 +1,10 @@
 /**
  * ✅ ITEM 71: SERVIÇO DE CUPONS/DESCONTOS - BACKEND
+ * PR-11c: applyCouponToBooking is atomic (row lock on coupon + re-check + INSERT).
  */
 
-import { queryDatabase } from './db';
+import type { PoolClient } from 'pg';
+import { queryDatabase, withDbTransaction } from './db';
 
 export interface Coupon {
   id?: number;
@@ -153,8 +155,23 @@ export async function validateCoupon(
   };
 }
 
+export type ApplyCouponSuccess = { ok: true; usageId: number };
+export type ApplyCouponFailure = {
+  ok: false;
+  status: 404 | 409 | 400;
+  error: string;
+};
+export type ApplyCouponResult = ApplyCouponSuccess | ApplyCouponFailure;
+
+export type ApplyCouponToBookingDeps = {
+  /** Injected for unit tests — defaults to withDbTransaction. */
+  runInTransaction?: typeof withDbTransaction;
+};
+
 /**
- * Aplicar cupom a uma reserva
+ * Aplicar cupom a uma reserva (PR-11c — single-use / usage_limit atomic).
+ * Locks only the coupon row (`FOR UPDATE`), re-checks limits, then INSERT.
+ * `total_uses` remains owned by existing AFTER INSERT trigger (no double increment).
  */
 export async function applyCouponToBooking(
   couponId: number,
@@ -163,34 +180,76 @@ export async function applyCouponToBooking(
   originalAmount: number,
   discountAmount: number,
   ipAddress?: string,
-  userAgent?: string
-): Promise<void> {
-  const coupon = await queryDatabase(
-    `SELECT code FROM coupons WHERE id = $1`,
-    [couponId]
-  );
+  userAgent?: string,
+  deps: ApplyCouponToBookingDeps = {},
+): Promise<ApplyCouponResult> {
+  const runTx = deps.runInTransaction ?? withDbTransaction;
 
-  if (coupon.length === 0) {
-    throw new Error('Cupom não encontrado');
-  }
+  return runTx(async (client: PoolClient) => {
+    const couponRes = await client.query(
+      `SELECT id, code, usage_limit, usage_limit_per_user, total_uses, is_active
+       FROM coupons
+       WHERE id = $1
+       FOR UPDATE`,
+      [couponId],
+    );
 
-  await queryDatabase(
-    `INSERT INTO coupon_usage 
-     (coupon_id, booking_id, user_id, code_used, discount_applied, 
-      original_amount, final_amount, ip_address, user_agent)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-    [
-      couponId,
-      bookingId,
-      userId,
-      coupon[0].code,
-      discountAmount,
-      originalAmount,
-      originalAmount - discountAmount,
-      ipAddress || null,
-      userAgent || null,
-    ]
-  );
+    if (!couponRes.rows.length) {
+      return { ok: false, status: 404, error: 'Cupom não encontrado' };
+    }
+
+    const coupon = couponRes.rows[0] as {
+      id: number;
+      code: string;
+      usage_limit: number | null;
+      usage_limit_per_user: number | null;
+      total_uses: number;
+      is_active: boolean;
+    };
+
+    if (coupon.is_active === false) {
+      return { ok: false, status: 400, error: 'Cupom não encontrado ou inativo' };
+    }
+
+    const totalUses = Number(coupon.total_uses) || 0;
+    if (coupon.usage_limit != null && totalUses >= Number(coupon.usage_limit)) {
+      return { ok: false, status: 409, error: 'Cupom esgotado' };
+    }
+
+    if (coupon.usage_limit_per_user != null) {
+      const userUsage = await client.query(
+        `SELECT COUNT(*)::int AS count
+         FROM coupon_usage
+         WHERE coupon_id = $1 AND user_id = $2`,
+        [couponId, userId],
+      );
+      const used = Number(userUsage.rows[0]?.count) || 0;
+      if (used >= Number(coupon.usage_limit_per_user)) {
+        return { ok: false, status: 409, error: 'Limite de uso por usuário atingido' };
+      }
+    }
+
+    const inserted = await client.query(
+      `INSERT INTO coupon_usage
+       (coupon_id, booking_id, user_id, code_used, discount_applied,
+        original_amount, final_amount, ip_address, user_agent)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id`,
+      [
+        couponId,
+        bookingId,
+        userId,
+        coupon.code,
+        discountAmount,
+        originalAmount,
+        originalAmount - discountAmount,
+        ipAddress || null,
+        userAgent || null,
+      ],
+    );
+
+    return { ok: true, usageId: Number(inserted.rows[0].id) };
+  });
 }
 
 /**
