@@ -198,12 +198,25 @@ async function issueLoginTokens(user, meta = {}) {
     meta.req,
   );
 
+  // PR-10c-b — bind refresh family to DPoP jkt from access cnf (single proof consumed above).
+  let dpopJkt = null;
+  try {
+    const { verifyAccessToken } = require('./jwt-verify');
+    const accessPayload = verifyAccessToken(accessToken, accessSecret);
+    if (typeof accessPayload?.cnf?.jkt === 'string') {
+      dpopJkt = accessPayload.cnf.jkt;
+    }
+  } catch {
+    dpopJkt = null;
+  }
+
   const refreshSvc = db();
   const { refreshToken } = await refreshSvc.createRefreshToken(
     user.id,
     meta.deviceInfo,
     meta.ipAddress,
-    meta.userAgent
+    meta.userAgent,
+    { dpopJkt },
   );
 
   return {

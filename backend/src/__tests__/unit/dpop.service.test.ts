@@ -272,7 +272,77 @@ describe('dpop.service (PR-10c-a1)', () => {
     expect(buildRequestHtu(req)).toBe('https://api.example/api/v1/x');
   });
 
-  it('getJwtSecret still available in test env', () => {
-    expect(getJwtSecret()).toBeTruthy();
+  it('flag ON rejects cnf-bound token without ath claim', () => {
+    process.env.AUTH_DPOP_ENABLED = 'true';
+    const { privateKey, publicJwk } = generateEcKeyPair();
+    const jkt = computeJwkThumbprintSync(publicJwk);
+    const access = signJwt(
+      { userId: 1, email: 'a@b.c', role: 'user', cnf: { jkt } },
+      secret,
+      900,
+    );
+    const proof = mintTestDpopProof({
+      method: 'GET',
+      htu: 'http://localhost:3002/api/v1/x',
+      privateKey,
+      publicJwk,
+      // no ath
+    });
+    const req = {
+      method: 'GET',
+      protocol: 'http',
+      originalUrl: '/api/v1/x',
+      get(name: string) {
+        if (name === 'host') return 'localhost:3002';
+        if (name === 'dpop') return proof;
+        return undefined;
+      },
+      headers: {},
+    };
+    const payload = verifyAccessToken(access, secret);
+    expect(enforceDpopIfEnabled(req, access, payload).error).toBe('dpop_ath_missing');
+  });
+
+  it('device_info helpers merge and extract dpop_jkt without migration', () => {
+    const {
+      mergeDpopJktIntoDeviceInfo,
+      extractDpopJktFromDeviceInfo,
+      DPOP_JKT_DEVICE_KEY,
+    } = require('../../api/v1/auth/dpop.service');
+    const merged = mergeDpopJktIntoDeviceInfo({ browser: 'x' }, 'abc123');
+    expect(merged).toEqual({ browser: 'x', [DPOP_JKT_DEVICE_KEY]: 'abc123' });
+    expect(extractDpopJktFromDeviceInfo(merged)).toBe('abc123');
+    expect(extractDpopJktFromDeviceInfo({ browser: 'x' })).toBeNull();
+  });
+
+  it('signAccessTokenBound accepts pre-verified dpopJkt without re-consuming jti', () => {
+    const { privateKey, publicJwk } = generateEcKeyPair();
+    const jkt = computeJwkThumbprintSync(publicJwk);
+    const proof = mintTestDpopProof({
+      method: 'POST',
+      htu: 'http://localhost:3002/api/v1/auth/refresh',
+      privateKey,
+      publicJwk,
+    });
+    const req = {
+      method: 'POST',
+      protocol: 'http',
+      originalUrl: '/api/v1/auth/refresh',
+      get(name: string) {
+        if (name === 'host') return 'localhost:3002';
+        if (name === 'dpop') return proof;
+        return undefined;
+      },
+      headers: {},
+    };
+    expect(verifyDpopProofForTokenEndpoint(req).ok).toBe(true);
+    const token = signAccessTokenBound(
+      { userId: 1, email: 'a@b.c', role: 'user' },
+      secret,
+      900,
+      req,
+      { dpopJkt: jkt },
+    );
+    expect(verifyAccessToken(token, secret)?.cnf?.jkt).toBe(jkt);
   });
 });

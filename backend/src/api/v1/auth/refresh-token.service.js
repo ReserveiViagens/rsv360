@@ -2,7 +2,13 @@ const { getJwtSecret, getJwtRefreshSecret } = require('@rsv360/shared');
 const crypto = require('crypto');
 const { Pool } = require('pg');
 const { signJwt } = require('./jwt-verify');
-const { signAccessTokenBound } = require('./dpop.service');
+const {
+  signAccessTokenBound,
+  verifyDpopProofForTokenEndpoint,
+  parseDeviceInfo,
+  extractDpopJktFromDeviceInfo,
+  mergeDpopJktIntoDeviceInfo,
+} = require('./dpop.service');
 
 let pool = null;
 
@@ -29,9 +35,15 @@ async function queryDatabase(sql, params = []) {
   return result.rows;
 }
 
-async function createRefreshToken(userId, deviceInfo, ipAddress, userAgent) {
-  const refreshSecret =
-    getJwtRefreshSecret();
+/**
+ * @param {number|string} userId
+ * @param {object|string|null} deviceInfo
+ * @param {string|null} ipAddress
+ * @param {string|null} userAgent
+ * @param {{ dpopJkt?: string | null }} [options]
+ */
+async function createRefreshToken(userId, deviceInfo, ipAddress, userAgent, options = {}) {
+  const refreshSecret = getJwtRefreshSecret();
   const tokenFamily = generateTokenFamily();
   const tokenHash = hashToken(crypto.randomBytes(32).toString('hex'));
   const expiresAt = new Date();
@@ -43,6 +55,10 @@ async function createRefreshToken(userId, deviceInfo, ipAddress, userAgent) {
     60 * 60 * 24 * 30
   );
 
+  const merged = Object.prototype.hasOwnProperty.call(options, 'dpopJkt')
+    ? mergeDpopJktIntoDeviceInfo(deviceInfo, options.dpopJkt)
+    : parseDeviceInfo(deviceInfo);
+
   await module.exports.queryDatabase(
     `INSERT INTO refresh_tokens
      (user_id, token_hash, token_family, device_info, ip_address, user_agent, expires_at)
@@ -51,7 +67,7 @@ async function createRefreshToken(userId, deviceInfo, ipAddress, userAgent) {
       userId,
       tokenHash,
       tokenFamily,
-      deviceInfo ? JSON.stringify(deviceInfo) : null,
+      merged ? JSON.stringify(merged) : null,
       ipAddress || null,
       userAgent || null,
       expiresAt.toISOString(),
@@ -93,8 +109,7 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, r
   const db = getPool();
   if (!db) return null;
 
-  const refreshSecret =
-    getJwtRefreshSecret();
+  const refreshSecret = getJwtRefreshSecret();
   const accessSecret = getJwtSecret();
 
   const { verifyRefreshToken } = require('./jwt-verify');
@@ -149,12 +164,28 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, r
     }
   }
 
+  // PR-10c-b — family DPoP bind (device_info.dpop_jkt). Single proof verify (avoid jti replay).
+  const boundJkt = extractDpopJktFromDeviceInfo(token.device_info);
+  const proof = req ? verifyDpopProofForTokenEndpoint(req) : { ok: false, error: 'missing_dpop' };
+
+  if (boundJkt) {
+    if (!proof.ok || proof.jkt !== boundJkt) {
+      if (proof.ok && proof.jkt !== boundJkt) {
+        await revokeTokenFamily(tokenFamily, 'DPoP family jkt mismatch — possível reutilização');
+      }
+      return null;
+    }
+  }
+
+  const dpopJkt = proof.ok ? proof.jkt : boundJkt || null;
+
   await revokeRefreshToken(token.id, 'Rotação de token');
   const newRefresh = await createRefreshToken(
     userId,
     token.device_info,
     ipAddress,
-    userAgent
+    userAgent,
+    { dpopJkt },
   );
 
   const newAccessToken = signAccessTokenBound(
@@ -167,6 +198,7 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, r
     accessSecret,
     900,
     req,
+    { dpopJkt: proof.ok ? proof.jkt : null },
   );
 
   return {
@@ -241,8 +273,7 @@ async function revokeOtherUserTokens(userId, keepTokenFamily, reason) {
 async function revokeRefreshTokenByJwt(refreshToken, reason) {
   if (!refreshToken) return false;
 
-  const refreshSecret =
-    getJwtRefreshSecret();
+  const refreshSecret = getJwtRefreshSecret();
   const { verifyRefreshToken } = require('./jwt-verify');
   let decoded;
   try {
