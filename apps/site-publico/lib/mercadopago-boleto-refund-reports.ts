@@ -229,8 +229,8 @@ export async function processRefund(
     if (booking.length > 0) {
       const bookingData = booking[0];
 
-      // Cancelar reserva
-      await updateBookingStatus(
+      // Cancelar reserva (CAS — PR-11b)
+      const statusResult = await updateBookingStatus(
         bookingId,
         'cancelled',
         refundedBy,
@@ -238,26 +238,27 @@ export async function processRefund(
         `Reembolso processado: ${reason || 'Solicitado pelo cliente'}`
       );
 
-      await queryDatabase(
-        `UPDATE bookings 
-         SET 
-           payment_status = 'refunded',
-           status = 'cancelled',
-           cancelled_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [bookingId]
-      );
+      if (statusResult.success) {
+        await queryDatabase(
+          `UPDATE bookings
+           SET
+             payment_status = 'refunded',
+             cancelled_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1 AND status = 'cancelled'`,
+          [bookingId]
+        );
 
-      // Registrar no histórico
-      await logStatusChange(
-        bookingId,
-        bookingData.status as any,
-        'cancelled' as any,
-        refundedBy,
-        refundedByEmail || bookingData.customer_email,
-        `Reembolso: ${reason || 'Solicitado'}`
-      );
+        // Registrar no histórico (complementar ao CAS)
+        await logStatusChange(
+          bookingId,
+          bookingData.status as any,
+          'cancelled' as any,
+          refundedBy,
+          refundedByEmail || bookingData.customer_email,
+          `Reembolso: ${reason || 'Solicitado'}`
+        );
+      }
     }
 
     return {

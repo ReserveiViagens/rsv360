@@ -58,8 +58,8 @@ describe('PR-02c — mp-payment-lookup helpers', () => {
 describe('PR-02c — processPaymentWebhook lookup always', () => {
   it('evento approved + API approved → baixa 1x (booking confirmed)', async () => {
     const getPaymentStatus = jest.fn(async () => ({ status: 'approved', id: 'pay-1' }));
-    const updateBookingStatus = jest.fn(async () => undefined);
-    const logStatusChange = jest.fn(async () => undefined);
+    const updateBookingStatus = jest.fn(async () => ({ success: true as const, booking: {} }));
+    const logStatusChange = jest.fn(async () => ({ success: true as const, booking: {} }));
     const queryDatabase = jest.fn(async (sql: string) => {
       if (sql.includes('FROM payments')) {
         return [
@@ -106,8 +106,8 @@ describe('PR-02c — processPaymentWebhook lookup always', () => {
 
   it('evento approved + API pending → sem confirm (pending); lookup chamado', async () => {
     const getPaymentStatus = jest.fn(async () => ({ status: 'pending', id: 'pay-2' }));
-    const updateBookingStatus = jest.fn(async () => undefined);
-    const logStatusChange = jest.fn(async () => undefined);
+    const updateBookingStatus = jest.fn(async () => ({ success: true as const, booking: {} }));
+    const logStatusChange = jest.fn(async () => ({ success: true as const, booking: {} }));
     const queryDatabase = jest.fn(async (sql: string) => {
       if (sql.includes('FROM payments')) {
         return [
@@ -146,8 +146,8 @@ describe('PR-02c — processPaymentWebhook lookup always', () => {
 
   it('evento approved + API rejected → cancela (só pela API)', async () => {
     const getPaymentStatus = jest.fn(async () => ({ status: 'rejected', id: 'pay-3' }));
-    const updateBookingStatus = jest.fn(async () => undefined);
-    const logStatusChange = jest.fn(async () => undefined);
+    const updateBookingStatus = jest.fn(async () => ({ success: true as const, booking: {} }));
+    const logStatusChange = jest.fn(async () => ({ success: true as const, booking: {} }));
     const queryDatabase = jest.fn(async (sql: string) => {
       if (sql.includes('FROM payments')) {
         return [
@@ -199,8 +199,8 @@ describe('PR-02c — processPaymentWebhook lookup always', () => {
         {
           queryDatabase: jest.fn(async () => []) as never,
           getPaymentStatus: getPaymentStatus as never,
-          updateBookingStatus: jest.fn(async () => undefined) as never,
-          logStatusChange: jest.fn(async () => undefined) as never,
+          updateBookingStatus: jest.fn(async () => ({ success: true as const, booking: {} })) as never,
+          logStatusChange: jest.fn(async () => ({ success: true as const, booking: {} })) as never,
         },
       ),
     ).rejects.toBeInstanceOf(MpApiUnavailableError);
