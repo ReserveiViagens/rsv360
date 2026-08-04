@@ -5,6 +5,7 @@ export * from './types/index.js';
 export * from './types/tenant.js';
 export * from './auth/session.js';
 export * from './auth/jwt-secrets.js';
+export * from './auth/dpop.js';
 export * from './http/cors-origins.js';
 export * from './http/metrics-auth.js';
 export * from './tenant/routing.js';

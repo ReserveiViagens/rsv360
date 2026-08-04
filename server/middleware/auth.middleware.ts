@@ -2,8 +2,9 @@ import type { NextFunction, Request, Response } from 'express';
 
 const { extractBearerToken, verifyAccessToken } = require('../../backend/src/api/v1/auth/jwt-verify');
 const { getJwtSecret } = require('@rsv360/shared');
+const { enforceDpopIfEnabled } = require('../../backend/src/api/v1/auth/dpop.service');
 
-/** Valida Bearer JWT (API v1) e popula req.user. */
+/** Valida Bearer JWT (API v1) e popula req.user. PR-10c-a1: DPoP when flag ON + cnf.jkt. */
 export function authenticateJwt(req: Request, res: Response, next: NextFunction) {
   const token = extractBearerToken(req);
   if (!token) {
@@ -13,6 +14,11 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
   const payload = verifyAccessToken(token, getJwtSecret());
   if (!payload || payload.userId == null) {
     return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
+  }
+
+  const dpop = enforceDpopIfEnabled(req, token, payload);
+  if (!dpop.ok) {
+    return res.status(401).json({ success: false, error: 'DPoP inválido ou ausente' });
   }
 
   const id = Number(payload.userId);
@@ -36,6 +42,10 @@ export function optionalJwt(req: Request, res: Response, next: NextFunction) {
   if (token) {
     const payload = verifyAccessToken(token, getJwtSecret());
     if (payload?.userId != null) {
+      const dpop = enforceDpopIfEnabled(req, token, payload);
+      if (!dpop.ok) {
+        return res.status(401).json({ success: false, error: 'DPoP inválido ou ausente' });
+      }
       const id = Number(payload.userId);
       if (!Number.isFinite(id)) {
         return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
