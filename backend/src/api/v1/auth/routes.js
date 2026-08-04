@@ -374,9 +374,22 @@ router.post('/sso/exchange', async (req, res) => {
   }
 
   try {
-    const { getClientIp } = require('./rate-limit.service');
+    const {
+      getClientIp,
+      enforceSsoExchangeRateLimit,
+      rateLimitDeniedStatus,
+      rateLimitDeniedBody,
+    } = require('./rate-limit.service');
     const ipAddress = getClientIp(req);
     const userAgent = req.get('user-agent');
+
+    // HIG-02 — rate limit before consuming SSO code (same shape as /refresh, /2fa/verify)
+    const rateLimitCheck = await enforceSsoExchangeRateLimit(ipAddress);
+    if (!rateLimitCheck.allowed) {
+      return res
+        .status(rateLimitDeniedStatus(rateLimitCheck))
+        .json(rateLimitDeniedBody(rateLimitCheck));
+    }
 
     const result = await exchangeSsoCode(req.body?.code, {
       ipAddress,

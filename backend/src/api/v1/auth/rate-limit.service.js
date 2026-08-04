@@ -23,6 +23,8 @@ const RATE_LIMIT_CONFIGS = {
   'change-password': isDev
     ? { maxAttempts: 50, windowMs: 15 * 60 * 1000, blockDurationMs: 60 * 1000 }
     : { maxAttempts: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 15 * 60 * 1000 },
+  // HIG-02 — SSO code exchange (token endpoint sibling of refresh)
+  'sso-exchange': { maxAttempts: 10, windowMs: 60 * 1000, blockDurationMs: 5 * 60 * 1000 },
 };
 
 function isRateLimitEnabled() {
@@ -215,6 +217,15 @@ async function enforceChangePasswordRateLimit(email, ipAddress) {
   return checkRateLimit(String(email || '').toLowerCase() || 'unknown', 'email', 'change-password');
 }
 
+/** HIG-02 — IP rate limit for POST /sso/exchange (DB store or memory when no DB). */
+async function enforceSsoExchangeRateLimit(ipAddress) {
+  const ip = ipAddress || 'unknown';
+  if (isRateLimitEnabled()) {
+    return checkRateLimit(ip, 'ip', 'sso-exchange');
+  }
+  return enforceMemoryRateLimit(`sso-exchange:ip:${ip}`, RATE_LIMIT_CONFIGS['sso-exchange']);
+}
+
 function getClientIp(req) {
   return (req.header('x-forwarded-for') || '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
 }
@@ -245,6 +256,7 @@ module.exports = {
   enforceResetPasswordRateLimit,
   enforceTwoFactorVerifyRateLimit,
   enforceChangePasswordRateLimit,
+  enforceSsoExchangeRateLimit,
   resetLoginRateLimit,
   recordLoginAttempt,
   getClientIp,
