@@ -1,9 +1,8 @@
 "use strict";
 /**
- * PR-10c-a1 — DPoP helpers (RFC 9449 / RFC 7638).
+ * PR-10c-a1/a2 — DPoP helpers (RFC 9449 / RFC 7638).
  * Browser-safe: WebCrypto ECDSA P-256 non-extractable + IndexedDB + DPoP proof.
  * Node callers may use computeJwkThumbprint (async) or backend dpop.service sync helpers.
- * No client wiring in this slice.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.base64UrlEncode = base64UrlEncode;
@@ -14,6 +13,8 @@ exports.stripQueryAndFragment = stripQueryAndFragment;
 exports.getOrCreateDpopKeyPair = getOrCreateDpopKeyPair;
 exports.exportDpopPublicJwk = exportDpopPublicJwk;
 exports.createDpopProof = createDpopProof;
+exports.resolveDpopHtu = resolveDpopHtu;
+exports.tryCreateDpopProof = tryCreateDpopProof;
 const DPOP_DB_NAME = 'rsv360-dpop';
 const DPOP_STORE = 'keys';
 const DPOP_KEY_ID = 'default';
@@ -127,4 +128,36 @@ async function createDpopProof(input) {
     const signingInput = `${encHeader}.${encPayload}`;
     const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, pair.privateKey, new TextEncoder().encode(signingInput));
     return `${signingInput}.${base64UrlEncode(signature)}`;
+}
+/**
+ * Absolute URL for DPoP `htu` (RFC 9449).
+ * Site-publico BFF `/api/auth/*` maps to upstream `/api/v1/auth/*` so proof matches the AS.
+ */
+function resolveDpopHtu(requestUrl, options) {
+    const base = options?.baseUrl ||
+        (typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+    let absolute;
+    try {
+        absolute = new URL(requestUrl, base);
+    }
+    catch {
+        return stripQueryAndFragment(requestUrl);
+    }
+    const upstreamBase = (options?.upstreamAuthBase || '').replace(/\/$/, '');
+    if (upstreamBase && absolute.pathname.startsWith('/api/auth')) {
+        const upstreamPath = absolute.pathname.replace(/^\/api\/auth/, '/api/v1/auth');
+        return stripQueryAndFragment(`${upstreamBase}${upstreamPath}`);
+    }
+    return stripQueryAndFragment(absolute.href);
+}
+/** Best-effort browser DPoP — never blocks the request (flag OFF migration). */
+async function tryCreateDpopProof(input) {
+    if (typeof window === 'undefined')
+        return null;
+    try {
+        return await createDpopProof(input);
+    }
+    catch {
+        return null;
+    }
 }

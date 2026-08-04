@@ -1,4 +1,6 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { tryCreateDpopProof } from '@rsv360/shared';
+
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002').replace(/\/$/, '');
 
 function getBrowserStorage(key: string, fallback = '') {
   if (typeof window === 'undefined') return fallback;
@@ -19,7 +21,16 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   headers.set('X-Property-Id', propertyId);
   headers.set('X-Enterprise-Id', enterpriseId);
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const method = (options.method || 'GET').toUpperCase();
+  const url = `${API_BASE}${path}`;
+  const proof = await tryCreateDpopProof({
+    method,
+    url,
+    accessToken: token || undefined,
+  });
+  if (proof) headers.set('DPoP', proof);
+
+  const response = await fetch(url, {
     ...options,
     headers,
   });
