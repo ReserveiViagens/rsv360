@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase } from '@/lib/db';
 import { sendBookingConfirmation } from '@/lib/email';
-import { checkAvailability, isPeriodBlocked, blockPeriod } from '@/lib/availability-service';
+import { checkAvailability, isPeriodBlocked } from '@/lib/availability-service';
+import { createBookingUnderPeriodLock } from '@/lib/booking-create-atomic';
 import { calculatePricing, validateStayRules } from '@/lib/pricing-service';
 import { triggerWebhook, WEBHOOK_EVENTS } from '@/lib/webhook-service';
 import { createCheckinRequest } from '@/lib/checkin-service';
@@ -368,9 +369,8 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Inserir reserva
-    const booking = await queryDatabase(
-      `INSERT INTO bookings (
+    // PR-11a — insert under per-item+night advisory locks (re-check inside tx)
+    const insertSql = `INSERT INTO bookings (
         booking_code, booking_type, item_id, item_name,
         check_in, check_out,
         adults, children, infants, total_guests,
@@ -386,35 +386,64 @@ export async function POST(request: NextRequest) {
         $16, $17, $18, $19, $20,
         $21, 'pending', 'pending',
         $22, $23
-      ) RETURNING *`,
-      [
-        bookingCode,
-        body.booking_type || 'hotel',
-        body.item_id,
-        body.item_name,
-        body.check_in,
-        body.check_out,
-        body.adults || 1,
-        body.children || 0,
-        body.infants || 0,
-        totalGuests,
-        body.customer.name,
-        body.customer.email,
-        body.customer.phone || null,
-        body.customer.document || null,
-        customerId,  // Usar customerId da tabela customers, não userId
-        subtotal,
-        discount,
-        taxes,
-        serviceFee,
-        total,
-        body.payment_method || 'pix',
-        body.special_requests || null,
-        JSON.stringify(metadata)
-      ]
-    );
+      ) RETURNING *`;
 
-    const newBooking = booking[0];
+    const insertParams = [
+      bookingCode,
+      body.booking_type || 'hotel',
+      body.item_id,
+      body.item_name,
+      body.check_in,
+      body.check_out,
+      body.adults || 1,
+      body.children || 0,
+      body.infants || 0,
+      totalGuests,
+      body.customer.name,
+      body.customer.email,
+      body.customer.phone || null,
+      body.customer.document || null,
+      customerId,
+      subtotal,
+      discount,
+      taxes,
+      serviceFee,
+      total,
+      body.payment_method || 'pix',
+      body.special_requests || null,
+      JSON.stringify(metadata),
+    ];
+
+    const atomic = await createBookingUnderPeriodLock({
+      itemId: Number(body.item_id),
+      checkIn: body.check_in,
+      checkOut: body.check_out,
+      totalGuests,
+      insertSql,
+      insertParams,
+    });
+
+    if (!atomic.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: atomic.error,
+          details: atomic.details,
+        },
+        { status: atomic.status },
+      );
+    }
+
+    const newBooking = atomic.booking as {
+      id: number;
+      booking_code: string;
+      status: string;
+      payment_status: string;
+      total: string | number;
+      check_in: string;
+      check_out: string;
+      total_guests: number;
+    };
 
     // ✅ ITEM 4 & 5: REGISTRAR MUDANÇA DE STATUS NO HISTÓRICO
     // Registrar criação da reserva (status: pending)
@@ -441,7 +470,7 @@ export async function POST(request: NextRequest) {
         booking_code: newBooking.booking_code,
         status: newBooking.status,
         payment_status: newBooking.payment_status,
-        total: parseFloat(newBooking.total),
+        total: parseFloat(String(newBooking.total)),
         check_in: newBooking.check_in,
         check_out: newBooking.check_out,
         guests: newBooking.total_guests,
