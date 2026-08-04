@@ -1,11 +1,13 @@
 /**
- * ✅ API DE HISTÓRICO DE USO DE CUPONS
- * GET /api/coupons/usage - Listar histórico de uso de cupons
+ * ✅ API DE HISTÓRICO / RESGATE DE CUPONS
+ * GET  /api/coupons/usage — listar histórico
+ * POST /api/coupons/usage — resgate atômico (PR-11c)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { queryDatabase } from '@/lib/db';
+import { applyCouponToBooking } from '@/lib/coupons-service';
 import { jsonInternalError } from '@/lib/api-error';
 
 export async function GET(request: NextRequest) {
@@ -115,6 +117,85 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erro ao listar histórico de uso:', error);
+    return jsonInternalError(error);
+  }
+}
+
+/**
+ * PR-11c — resgate atômico (locks coupon row; 409 se esgotado / limite por usuário).
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const { user, error } = await advancedAuthMiddleware(request);
+
+    if (error || !user) {
+      return NextResponse.json(
+        { success: false, error: error || 'Não autenticado' },
+        { status: 401 },
+      );
+    }
+
+    const body = await request.json();
+    const couponId = Number(body.coupon_id);
+    const bookingId = Number(body.booking_id);
+    const originalAmount = Number(body.original_amount);
+    const discountAmount = Number(body.discount_amount);
+
+    if (
+      !Number.isFinite(couponId) ||
+      !Number.isFinite(bookingId) ||
+      !Number.isFinite(originalAmount) ||
+      !Number.isFinite(discountAmount) ||
+      couponId <= 0 ||
+      bookingId <= 0 ||
+      originalAmount < 0 ||
+      discountAmount < 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'coupon_id, booking_id, original_amount e discount_amount são obrigatórios',
+        },
+        { status: 400 },
+      );
+    }
+
+    if (discountAmount > originalAmount) {
+      return NextResponse.json(
+        { success: false, error: 'discount_amount não pode exceder original_amount' },
+        { status: 400 },
+      );
+    }
+
+    const ipAddress =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      undefined;
+    const userAgent = request.headers.get('user-agent') || undefined;
+
+    const result = await applyCouponToBooking(
+      couponId,
+      bookingId,
+      user.id,
+      originalAmount,
+      discountAmount,
+      ipAddress,
+      userAgent,
+    );
+
+    if (!result.ok) {
+      return NextResponse.json(
+        { success: false, error: result.error },
+        { status: result.status },
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, usage_id: result.usageId },
+      { status: 201 },
+    );
+  } catch (error: unknown) {
+    console.error('Erro ao resgatar cupom:', error);
     return jsonInternalError(error);
   }
 }
