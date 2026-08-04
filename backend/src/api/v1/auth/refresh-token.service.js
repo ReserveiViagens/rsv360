@@ -2,6 +2,7 @@ const { getJwtSecret, getJwtRefreshSecret } = require('@rsv360/shared');
 const crypto = require('crypto');
 const { Pool } = require('pg');
 const { signJwt } = require('./jwt-verify');
+const { signAccessTokenBound } = require('./dpop.service');
 
 let pool = null;
 
@@ -88,7 +89,7 @@ function isUserActive(user) {
   return true;
 }
 
-async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
+async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, req) {
   const db = getPool();
   if (!db) return null;
 
@@ -156,7 +157,7 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
     userAgent
   );
 
-  const newAccessToken = signJwt(
+  const newAccessToken = signAccessTokenBound(
     {
       userId: user.id,
       email: user.email,
@@ -164,7 +165,8 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent) {
       enterpriseId: decoded.enterpriseId ?? 'ent_1',
     },
     accessSecret,
-    900
+    900,
+    req,
   );
 
   return {

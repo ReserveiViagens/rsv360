@@ -200,7 +200,8 @@ router.post('/refresh', async (req, res) => {
       const result = await verifyAndRotateRefreshToken(
         refreshToken,
         ipAddress,
-        userAgent
+        userAgent,
+        req,
       );
 
       if (!result) {
@@ -243,7 +244,8 @@ router.post('/refresh', async (req, res) => {
     return res.status(401).json({ success: false, error: 'Payload inválido' });
   }
 
-  const accessToken = signJwt(
+  const { signAccessTokenBound } = require('./dpop.service');
+  const accessToken = signAccessTokenBound(
     {
       userId,
       email: payload.email ?? '',
@@ -252,7 +254,8 @@ router.post('/refresh', async (req, res) => {
       enterpriseId: payload.enterpriseId ?? payload.enterprise_id ?? 'ent_1',
     },
     accessSecret,
-    900
+    900,
+    req,
   );
 
   let newRefreshToken = refreshToken;
@@ -750,6 +753,7 @@ router.post('/2fa/verify-setup', async (req, res) => {
         const tokens = await issueLoginTokens(user, {
           ipAddress: getClientIp(req),
           userAgent: req.get('user-agent'),
+          req,
         });
         return sendAuthJson(res, req, {
           success: true,
@@ -1056,6 +1060,7 @@ router.post('/login', async (req, res) => {
         ipAddress,
         userAgent,
         surface: 'staff-db',
+        req,
       });
 
       if (result?.error === 'invalid_credentials') {
@@ -1167,7 +1172,7 @@ router.post('/login', async (req, res) => {
 
   const secret = getJwtSecret();
   const crypto = require('crypto');
-  const header = base64UrlEncode(Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
+  const { signAccessTokenBound } = require('./dpop.service');
   // Numeric pilot id: 12 hex chars → 48-bit int (< MAX_SAFE_INTEGER), deterministic per email.
   // Magnitude ~1e14 avoids collision with DB serial user ids. Replaces hex string that Number() → NaN.
   const payloadObj = {
@@ -1179,13 +1184,8 @@ router.post('/login', async (req, res) => {
     name: email.split('@')[0],
     role: 'admin',
     enterpriseId: 'ent_1',
-    exp: Math.floor(Date.now() / 1000) + 900,
   };
-  const payload = base64UrlEncode(Buffer.from(JSON.stringify(payloadObj)));
-  const signature = base64UrlEncode(
-    crypto.createHmac('sha256', secret).update(`${header}.${payload}`).digest()
-  );
-  const accessToken = `${header}.${payload}.${signature}`;
+  const accessToken = signAccessTokenBound(payloadObj, secret, 900, req);
 
   const refreshSecret = getJwtRefreshSecret();
   const refreshToken = signJwt(

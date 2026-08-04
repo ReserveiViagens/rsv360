@@ -2,6 +2,7 @@ const { getJwtSecret } = require('@rsv360/shared');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { signJwt } = require('./jwt-verify');
+const { signAccessTokenBound } = require('./dpop.service');
 const { isDbRefreshEnabled } = require('./refresh-token.service');
 
 function db() {
@@ -184,7 +185,7 @@ async function issueLoginTokens(user, meta = {}) {
   await touchLastLogin(user.id);
 
   const accessSecret = getJwtSecret();
-  const accessToken = signJwt(
+  const accessToken = signAccessTokenBound(
     {
       userId: user.id,
       email: user.email,
@@ -193,7 +194,8 @@ async function issueLoginTokens(user, meta = {}) {
       enterpriseId: user.enterprise_id ?? 'ent_1',
     },
     accessSecret,
-    900
+    900,
+    meta.req,
   );
 
   const refreshSvc = db();
