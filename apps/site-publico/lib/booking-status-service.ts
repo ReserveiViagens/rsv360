@@ -123,19 +123,34 @@ export async function logStatusChange(
   }
 }
 
+export type UpdateBookingStatusResult =
+  | { success: true; booking: Record<string, unknown> }
+  | { success: false; error: string; conflict?: boolean };
+
+export type UpdateBookingStatusDeps = {
+  /** Injected for unit tests — defaults to queryDatabase. */
+  queryFn?: typeof queryDatabase;
+  logStatusChangeFn?: typeof logStatusChange;
+};
+
 /**
- * Atualiza status de uma reserva com validação
+ * Atualiza status de uma reserva com validação + CAS (PR-11b).
+ * `UPDATE … WHERE id AND status = $expected` — lost update → conflict.
  */
 export async function updateBookingStatus(
   bookingId: number,
   newStatus: BookingStatus,
   changedBy?: number,
   changedByEmail?: string,
-  reason?: string
-): Promise<{ success: boolean; error?: string; booking?: any }> {
+  reason?: string,
+  deps: UpdateBookingStatusDeps = {},
+): Promise<UpdateBookingStatusResult> {
+  const queryFn = deps.queryFn ?? queryDatabase;
+  const logFn = deps.logStatusChangeFn ?? logStatusChange;
+
   try {
     // Buscar reserva atual
-    const booking = await queryDatabase(
+    const booking = await queryFn(
       `SELECT id, status, booking_code FROM bookings WHERE id = $1`,
       [bookingId]
     );
@@ -159,14 +174,25 @@ export async function updateBookingStatus(
       };
     }
 
-    // Atualizar status
-    await queryDatabase(
-      `UPDATE bookings SET status = $1, updated_at = NOW() WHERE id = $2`,
-      [newStatus, bookingId]
+    // CAS: só aplica se o status observado ainda for o esperado
+    const casRows = await queryFn(
+      `UPDATE bookings
+       SET status = $1, updated_at = NOW()
+       WHERE id = $2 AND status = $3
+       RETURNING *`,
+      [newStatus, bookingId, currentStatus]
     );
 
+    if (!casRows || casRows.length === 0) {
+      return {
+        success: false,
+        conflict: true,
+        error: 'Conflito de status: a reserva foi alterada por outra operação',
+      };
+    }
+
     // Registrar no histórico
-    await logStatusChange(
+    await logFn(
       bookingId,
       currentStatus,
       newStatus,
@@ -175,15 +201,9 @@ export async function updateBookingStatus(
       reason
     );
 
-    // Buscar reserva atualizada
-    const updatedBooking = await queryDatabase(
-      `SELECT * FROM bookings WHERE id = $1`,
-      [bookingId]
-    );
-
     return {
       success: true,
-      booking: updatedBooking[0],
+      booking: casRows[0],
     };
   } catch (error: any) {
     console.error('Erro ao atualizar status:', error);

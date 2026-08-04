@@ -171,9 +171,9 @@ export async function processCardPayment(
       ]
     );
 
-    // Se aprovado, atualizar status da reserva
+    // Se aprovado, atualizar status da reserva (CAS — PR-11b)
     if (paymentStatus === 'paid') {
-      await updateBookingStatus(
+      const statusResult = await updateBookingStatus(
         bookingId,
         'confirmed',
         undefined,
@@ -181,16 +181,17 @@ export async function processCardPayment(
         'Pagamento aprovado via cartão'
       );
 
-      await queryDatabase(
-        `UPDATE bookings 
-         SET 
-           payment_status = 'paid',
-           status = 'confirmed',
-           confirmed_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [bookingId]
-      );
+      if (statusResult.success) {
+        await queryDatabase(
+          `UPDATE bookings
+           SET
+             payment_status = 'paid',
+             confirmed_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1 AND status = 'confirmed'`,
+          [bookingId]
+        );
+      }
     }
 
     return {
@@ -253,10 +254,12 @@ export async function processWebhookEvent(
       )`
     );
 
-    await resolved.queryDatabase(
+    // PR-11b: claim atômico — só o INSERT que ganha o UNIQUE processa side-effects
+    const claimed = await resolved.queryDatabase(
       `INSERT INTO webhook_logs (webhook_id, type, action, data)
        VALUES ($1, $2, $3, $4)
-       ON CONFLICT (webhook_id) DO NOTHING`,
+       ON CONFLICT (webhook_id) DO NOTHING
+       RETURNING id`,
       [
         webhookId?.toString() || `webhook-${Date.now()}`,
         eventType,
@@ -264,6 +267,17 @@ export async function processWebhookEvent(
         JSON.stringify(eventData),
       ]
     );
+
+    if (webhookId && (!claimed || claimed.length === 0)) {
+      const existing = await resolved.queryDatabase(
+        `SELECT processed FROM webhook_logs WHERE webhook_id = $1`,
+        [webhookId.toString()]
+      );
+      if (existing[0]?.processed) {
+        return { processed: false, reason: 'Already processed' };
+      }
+      return { processed: false, reason: 'Claim held by concurrent delivery' };
+    }
   } catch (error) {
     console.error('Erro ao logar webhook:', error);
   }
@@ -379,7 +393,7 @@ export async function processPaymentWebhook(
     const bookingData = booking[0];
 
     if (newPaymentStatus === 'paid') {
-      await deps.updateBookingStatus(
+      const statusResult = await deps.updateBookingStatus(
         payment.booking_id,
         'confirmed',
         undefined,
@@ -387,20 +401,20 @@ export async function processPaymentWebhook(
         'Pagamento confirmado via webhook (API MP approved)'
       );
 
-      await deps.queryDatabase(
-        `UPDATE bookings 
-         SET 
-           payment_status = 'paid',
-           status = 'confirmed',
-           confirmed_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [payment.booking_id]
-      );
-
-      console.log(`✅ Reserva ${payment.booking_id} confirmada após pagamento`);
+      if (statusResult.success) {
+        await deps.queryDatabase(
+          `UPDATE bookings
+           SET
+             payment_status = 'paid',
+             confirmed_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1 AND status = 'confirmed'`,
+          [payment.booking_id]
+        );
+        console.log(`✅ Reserva ${payment.booking_id} confirmada após pagamento`);
+      }
     } else if (newPaymentStatus === 'cancelled' || newPaymentStatus === 'failed') {
-      await deps.updateBookingStatus(
+      const statusResult = await deps.updateBookingStatus(
         payment.booking_id,
         'cancelled',
         undefined,
@@ -408,18 +422,19 @@ export async function processPaymentWebhook(
         `Pagamento ${newPaymentStatus} via webhook (API MP)`
       );
 
-      await deps.queryDatabase(
-        `UPDATE bookings 
-         SET 
-           payment_status = 'cancelled',
-           status = 'cancelled',
-           cancelled_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [payment.booking_id]
-      );
+      if (statusResult.success) {
+        await deps.queryDatabase(
+          `UPDATE bookings
+           SET
+             payment_status = 'cancelled',
+             cancelled_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1 AND status = 'cancelled'`,
+          [payment.booking_id]
+        );
+      }
     } else if (newPaymentStatus === 'refunded') {
-      await deps.updateBookingStatus(
+      const statusResult = await deps.updateBookingStatus(
         payment.booking_id,
         'cancelled',
         undefined,
@@ -427,16 +442,17 @@ export async function processPaymentWebhook(
         'Pagamento reembolsado via webhook (API MP)'
       );
 
-      await deps.queryDatabase(
-        `UPDATE bookings 
-         SET 
-           payment_status = 'refunded',
-           status = 'cancelled',
-           cancelled_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [payment.booking_id]
-      );
+      if (statusResult.success) {
+        await deps.queryDatabase(
+          `UPDATE bookings
+           SET
+             payment_status = 'refunded',
+             cancelled_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1 AND status = 'cancelled'`,
+          [payment.booking_id]
+        );
+      }
     }
   }
 
