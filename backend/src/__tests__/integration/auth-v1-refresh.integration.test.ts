@@ -40,6 +40,7 @@ describe('auth v1 refresh', () => {
 
     const response = await request(app)
       .post('/api/v1/auth/refresh')
+      .set('Origin', 'http://localhost:3004')
       .set('Cookie', `rsv360_refresh_token=${refreshToken}`)
       .send({});
 
@@ -88,5 +89,54 @@ describe('auth v1 refresh', () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data.access_token).toBeTruthy();
+  });
+
+  it('sets Path=/api/v1/auth cookie and strips JSON when Origin present', async () => {
+    delete process.env.DATABASE_URL;
+    const refreshSecret =
+      (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET) as string;
+    const refreshToken = signJwt(
+      { userId: 'usr_2', type: 'refresh', tokenFamily: 'fam_strip', enterpriseId: 'ent_1' },
+      refreshSecret,
+      3600,
+    );
+
+    const response = await request(app)
+      .post('/api/v1/auth/refresh')
+      .set('Origin', 'http://localhost:3004')
+      .send({ refresh_token: refreshToken });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.access_token).toBeTruthy();
+    expect(response.body.data.refresh_token).toBeUndefined();
+    const setCookie = response.headers['set-cookie'];
+    expect(setCookie).toBeTruthy();
+    expect(String(setCookie)).toMatch(/rsv360_refresh_token=/);
+    expect(String(setCookie)).toMatch(/Path=\/api\/v1\/auth/);
+    expect(String(setCookie)).toMatch(/HttpOnly/i);
+  });
+
+  it('rejects cookie-authenticated refresh from evil Origin (CSRF)', async () => {
+    delete process.env.DATABASE_URL;
+    const prevCors = process.env.CORS_ORIGIN;
+    process.env.CORS_ORIGIN = 'http://localhost:3004,http://localhost:3005';
+    const refreshSecret =
+      (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET) as string;
+    const refreshToken = signJwt(
+      { userId: 'usr_2', type: 'refresh', tokenFamily: 'fam_csrf', enterpriseId: 'ent_1' },
+      refreshSecret,
+      3600,
+    );
+    try {
+      const response = await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Origin', 'https://evil.example')
+        .set('Cookie', `rsv360_refresh_token=${refreshToken}`)
+        .send({});
+      expect(response.status).toBe(403);
+    } finally {
+      if (prevCors === undefined) delete process.env.CORS_ORIGIN;
+      else process.env.CORS_ORIGIN = prevCors;
+    }
   });
 });

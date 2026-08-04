@@ -24,6 +24,11 @@ export interface SessionContextValue {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+function clearLegacyRefreshFromStorage() {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
+}
+
 async function fetchSession(token: string): Promise<AuthSessionResponse> {
   const response = await fetch(`${API_BASE}/api/v1/auth/session`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -41,32 +46,35 @@ async function fetchSession(token: string): Promise<AuthSessionResponse> {
   return response.json() as Promise<AuthSessionResponse>;
 }
 
+/**
+ * PR-10c-pré-b — refresh via HttpOnly cookie (Path=/api/v1/auth).
+ * Body legado only while localStorage still holds a refresh (migration).
+ */
 async function tryRefreshAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
 
-  const refreshToken = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
-  if (!refreshToken) return null;
+  const legacyRefresh = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
 
   const response = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refresh_token: refreshToken }),
+    credentials: 'include',
+    body: legacyRefresh
+      ? JSON.stringify({ refresh_token: legacyRefresh })
+      : JSON.stringify({}),
   });
 
   if (!response.ok) return null;
 
   const payload = (await response.json()) as {
     success?: boolean;
-    data?: { access_token?: string; refresh_token?: string };
+    data?: { access_token?: string };
   };
 
   if (!payload.success || !payload.data?.access_token) return null;
 
   window.localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.data.access_token);
-  if (payload.data.refresh_token) {
-    window.localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, payload.data.refresh_token);
-  }
-
+  clearLegacyRefreshFromStorage();
   return payload.data.access_token;
 }
 
@@ -86,6 +94,7 @@ export function SessionProvider({ children, initialToken = null }: SessionProvid
       window.localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, token);
     } else {
       window.localStorage.removeItem(AUTH_ACCESS_TOKEN_KEY);
+      clearLegacyRefreshFromStorage();
     }
   }, []);
 

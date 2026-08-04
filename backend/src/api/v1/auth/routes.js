@@ -3,8 +3,16 @@ const express = require('express');
 const crypto = require('crypto');
 const { verifyAccessToken, verifyRefreshToken, signJwt, extractBearerToken } = require('./jwt-verify');
 const { resolveRefreshToken } = require('./resolve-refresh-token');
+const {
+  sendAuthJson,
+  clearRefreshTokenCookie,
+  cookieMutationOriginGuard,
+} = require('./refresh-cookie-response');
 
 const router = express.Router();
+
+/** PR-10c-pré-b — CSRF when refresh cookie is present (16b helper). */
+router.use(cookieMutationOriginGuard);
 
 function normalizePayload(payload) {
   const userId = payload.userId ?? payload.sub ?? payload.id;
@@ -82,6 +90,7 @@ router.post('/logout', async (req, res) => {
     if (result?.error) {
       return res.status(result.status).json({ success: false, error: 'Token inválido ou expirado' });
     }
+    clearRefreshTokenCookie(res);
     return res.json({ success: true, message: 'Logout realizado com sucesso' });
   } catch (error) {
     console.error('[AUTH] logout error:', error.message);
@@ -124,7 +133,13 @@ router.post('/logout-all', async (req, res) => {
     });
   }
 
-  const { refresh_token: refreshToken } = req.body || {};
+  const resolvedLogoutAll = resolveRefreshToken(req, { optional: true });
+  if (resolvedLogoutAll.error) {
+    return res
+      .status(resolvedLogoutAll.status)
+      .json({ success: false, error: resolvedLogoutAll.message });
+  }
+  const refreshToken = resolvedLogoutAll.token;
   const { logoutAllOtherSessions } = require('./logout.service');
 
   try {
@@ -143,6 +158,7 @@ router.post('/logout-all', async (req, res) => {
     console.log(
       `[AUTH][LOGOUT_ALL] userId=${result.userId} sessionsRevoked=${result.sessionsRevoked}`
     );
+    // Keep caller's refresh cookie — logout-all preserves this session family.
     return res.json({
       success: true,
       message: 'Todas as outras sessões foram encerradas',
@@ -191,7 +207,7 @@ router.post('/refresh', async (req, res) => {
         return res.status(401).json({ success: false, error: 'Refresh token inválido ou expirado' });
       }
 
-      return res.json({
+      return sendAuthJson(res, req, {
         success: true,
         message: 'Tokens renovados',
         data: {
@@ -254,7 +270,7 @@ router.post('/refresh', async (req, res) => {
     );
   }
 
-  return res.json({
+  return sendAuthJson(res, req, {
     success: true,
     message: 'Tokens renovados',
     data: {
@@ -393,7 +409,7 @@ router.post('/sso/exchange', async (req, res) => {
       });
     }
 
-    return res.json({
+    return sendAuthJson(res, req, {
       success: true,
       message: 'SSO realizado',
       data: {
@@ -467,7 +483,7 @@ router.post('/oauth', async (req, res) => {
       });
     }
 
-    return res.json({
+    return sendAuthJson(res, req, {
       success: true,
       message: 'Login OAuth realizado',
       data: {
@@ -735,7 +751,7 @@ router.post('/2fa/verify-setup', async (req, res) => {
           ipAddress: getClientIp(req),
           userAgent: req.get('user-agent'),
         });
-        return res.json({
+        return sendAuthJson(res, req, {
           success: true,
           data: { ...result, ...tokens },
         });
@@ -790,7 +806,7 @@ router.post('/2fa/verify', async (req, res) => {
       await resetAccountProtection(result.user.email);
     }
 
-    return res.json({
+    return sendAuthJson(res, req, {
       success: true,
       message: 'Login realizado',
       data: result,
@@ -1081,7 +1097,7 @@ router.post('/login', async (req, res) => {
         await resetLoginRateLimit(normalizedEmail, ipAddress);
         await resetAccountProtection(normalizedEmail);
         await recordLoginAttempt(normalizedEmail, ipAddress, userAgent, true);
-        return res.json({
+        return sendAuthJson(res, req, {
           success: true,
           message: 'Login realizado',
           data: result,
@@ -1194,7 +1210,7 @@ router.post('/login', async (req, res) => {
     await resetAccountProtection(normalizedEmail);
   }
 
-  return res.json({
+  return sendAuthJson(res, req, {
     success: true,
     message: 'Login piloto (dev)',
     data: {

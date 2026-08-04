@@ -54,11 +54,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (!confirmed) return;
 
     const accessToken = window.localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
-    const refreshToken = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
-    if (!accessToken || !refreshToken) {
+    if (!accessToken) {
       window.alert('Sessão local incompleta. Faça login novamente.');
       return;
     }
+
+    const legacyRefresh = window.localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
 
     setLogoutAllBusy(true);
     try {
@@ -68,7 +69,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ refresh_token: refreshToken }),
+        credentials: 'include',
+        body: legacyRefresh
+          ? JSON.stringify({ refresh_token: legacyRefresh })
+          : JSON.stringify({}),
       });
       const payload = (await response.json().catch(() => ({}))) as {
         success?: boolean;
@@ -81,6 +85,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         window.alert(payload.error || 'Não foi possível encerrar as outras sessões.');
         return;
       }
+
+      window.localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
 
       const n = typeof payload.sessionsRevoked === 'number' ? payload.sessionsRevoked : 0;
       window.alert(`${n} sessões encerradas. ${payload.message || ''}`.trim());
