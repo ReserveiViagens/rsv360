@@ -83,6 +83,30 @@ export async function queryDatabase<T = any>(
   }
 }
 
+/**
+ * PR-11a — run work in a single-connection transaction (BEGIN/COMMIT/ROLLBACK).
+ */
+export async function withDbTransaction<T>(
+  fn: (client: import('pg').PoolClient) => Promise<T>,
+): Promise<T> {
+  const client = await getDbPool().connect();
+  try {
+    await client.query('BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    try {
+      await client.query('ROLLBACK');
+    } catch {
+      // ignore rollback errors
+    }
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 // Alias para compatibilidade com guia Novas Att RSV 360
 // Retorna QueryResult completo (nÃ£o apenas rows)
 export async function queryDb(

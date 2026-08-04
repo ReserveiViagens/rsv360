@@ -19,6 +19,21 @@ jest.mock('@/lib/availability-service', () => ({
   isPeriodBlocked: jest.fn().mockResolvedValue({ blocked: false }),
   blockPeriod: jest.fn().mockResolvedValue(true)
 }));
+jest.mock('@/lib/booking-create-atomic', () => ({
+  createBookingUnderPeriodLock: jest.fn().mockResolvedValue({
+    ok: true,
+    booking: {
+      id: 1,
+      booking_code: 'RSV-TEST',
+      status: 'pending',
+      payment_status: 'pending',
+      total: 1000,
+      check_in: '2025-12-01',
+      check_out: '2025-12-05',
+      total_guests: 2,
+    },
+  }),
+}));
 jest.mock('@/lib/pricing-service', () => ({
   calculatePricing: jest.fn().mockResolvedValue({ total: 1000, breakdown: [] }),
   validateStayRules: jest.fn().mockResolvedValue({ valid: true })
