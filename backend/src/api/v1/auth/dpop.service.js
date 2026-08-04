@@ -1,8 +1,11 @@
 /**
- * PR-10c-a1 — DPoP access binding (RFC 9449).
- * AUTH_DPOP_ENABLED default OFF → validation no-op (fail-closed only when ON).
+ * PR-10c-a1/a2/b — DPoP access + refresh family bind (RFC 9449).
+ * AUTH_DPOP_ENABLED default OFF → resource enforcement no-op (fail-closed only when ON).
  * Emission binds cnf.jkt when a valid proof is presented (retrocompatible).
+ * PR-10c-b: refresh family jkt in device_info JSONB (no migration); ath required on resource when ON.
  */
+
+const DPOP_JKT_DEVICE_KEY = 'dpop_jkt';
 const crypto = require('crypto');
 const { stripQueryAndFragment } = require('@rsv360/shared');
 const { signJwt } = require('./jwt-verify');
@@ -174,22 +177,66 @@ function verifyDpopProofForResource(req, accessToken, expectedJkt) {
   const jti = typeof payload.jti === 'string' ? payload.jti : '';
   if (!jti || !rememberJti(jti)) return { ok: false, error: 'dpop_jti_replay' };
 
-  if (payload.ath != null && String(payload.ath) !== accessTokenHash(accessToken)) {
+  // PR-10c-b — RFC 9449: ath required on resource requests with access token.
+  if (payload.ath == null || payload.ath === '') {
+    return { ok: false, error: 'dpop_ath_missing' };
+  }
+  if (String(payload.ath) !== accessTokenHash(accessToken)) {
     return { ok: false, error: 'dpop_ath_mismatch' };
   }
 
   return { ok: true, jkt };
 }
 
-function bindCnfToClaims(claims, req) {
+function parseDeviceInfo(raw) {
+  if (raw == null) return null;
+  if (typeof raw === 'object' && !Array.isArray(raw)) return { ...raw };
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+function extractDpopJktFromDeviceInfo(deviceInfo) {
+  const info = parseDeviceInfo(deviceInfo);
+  const jkt = info?.[DPOP_JKT_DEVICE_KEY];
+  return typeof jkt === 'string' && jkt.trim() ? jkt.trim() : null;
+}
+
+function mergeDpopJktIntoDeviceInfo(deviceInfo, jkt) {
+  const base = parseDeviceInfo(deviceInfo) || {};
+  if (!jkt || typeof jkt !== 'string') return Object.keys(base).length ? base : null;
+  return { ...base, [DPOP_JKT_DEVICE_KEY]: jkt };
+}
+
+/**
+ * @param {object} claims
+ * @param {object} [req]
+ * @param {{ dpopJkt?: string | null }} [options]
+ *   - dpopJkt undefined: verify proof from req (login)
+ *   - dpopJkt string: bind that jkt (already verified; avoids jti double-consume)
+ *   - dpopJkt null: no cnf binding
+ */
+function bindCnfToClaims(claims, req, options = {}) {
+  if (Object.prototype.hasOwnProperty.call(options, 'dpopJkt')) {
+    if (typeof options.dpopJkt === 'string' && options.dpopJkt) {
+      return { ...claims, cnf: { jkt: options.dpopJkt } };
+    }
+    return { ...claims };
+  }
   if (!req) return { ...claims };
   const verified = verifyDpopProofForTokenEndpoint(req);
   if (!verified.ok) return { ...claims };
   return { ...claims, cnf: { jkt: verified.jkt } };
 }
 
-function signAccessTokenBound(claims, secret, expiresInSeconds, req) {
-  return signJwt(bindCnfToClaims(claims, req), secret, expiresInSeconds);
+function signAccessTokenBound(claims, secret, expiresInSeconds, req, options) {
+  return signJwt(bindCnfToClaims(claims, req, options || {}), secret, expiresInSeconds);
 }
 
 function enforceDpopIfEnabled(req, accessToken, payload) {
@@ -212,4 +259,8 @@ module.exports = {
   accessTokenHash,
   computeJwkThumbprintSync,
   base64UrlEncode,
+  parseDeviceInfo,
+  extractDpopJktFromDeviceInfo,
+  mergeDpopJktIntoDeviceInfo,
+  DPOP_JKT_DEVICE_KEY,
 };

@@ -1228,12 +1228,4 @@ router.post('/login', async (req, res) => {
   });
 });
 
-function base64UrlEncode(buffer) {
-  return buffer
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-}
-
 module.exports = { authRouter: router };
