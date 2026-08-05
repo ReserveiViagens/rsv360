@@ -1,7 +1,7 @@
 /**
  * ✅ API DE HISTÓRICO / RESGATE DE CUPONS
  * GET  /api/coupons/usage — listar histórico
- * POST /api/coupons/usage — resgate atômico (PR-11c)
+ * POST /api/coupons/usage — resgate atômico (PR-11c) + rate limit (PR-11e)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -9,6 +9,10 @@ import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { queryDatabase } from '@/lib/db';
 import { applyCouponToBooking } from '@/lib/coupons-service';
 import { jsonInternalError } from '@/lib/api-error';
+import {
+  checkCouponRedeemRateLimit,
+  clientIpFromHeaders,
+} from '@/lib/coupon-redeem-rate-limit';
 
 export async function GET(request: NextRequest) {
   try {
@@ -123,6 +127,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * PR-11c — resgate atômico (locks coupon row; 409 se esgotado / limite por usuário).
+ * PR-11e — rate limit por user_id (fallback IP) antes do redeem.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -132,6 +137,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: error || 'Não autenticado' },
         { status: 401 },
+      );
+    }
+
+    const ip = clientIpFromHeaders((n) => request.headers.get(n));
+    const rl = checkCouponRedeemRateLimit({ userId: user.id, ip });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rl.retryAfterSec) },
+        },
       );
     }
 

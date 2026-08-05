@@ -1,6 +1,7 @@
 /**
  * PR-06b — in-memory per-IP rate limit for Next.js route handlers.
  * Process-local (same model as /api/metrics 06a). Never fail-open.
+ * PR-11e: `check()` also returns Retry-After seconds for 429 responses.
  */
 
 export type IpRateLimitConfig = {
@@ -10,6 +11,10 @@ export type IpRateLimitConfig = {
 
 type Bucket = { count: number; windowStart: number };
 
+export type KeyedRateLimitResult =
+  | { allowed: true }
+  | { allowed: false; retryAfterSec: number };
+
 export function createIpRateLimitStore(config: IpRateLimitConfig) {
   const buckets = new Map<string, Bucket>();
 
@@ -17,19 +22,29 @@ export function createIpRateLimitStore(config: IpRateLimitConfig) {
     buckets.clear();
   }
 
-  function allow(ip: string): boolean {
+  function check(key: string): KeyedRateLimitResult {
     const now = Date.now();
-    const entry = buckets.get(ip);
+    const entry = buckets.get(key);
     if (!entry || now - entry.windowStart > config.windowMs) {
-      buckets.set(ip, { count: 1, windowStart: now });
-      return true;
+      buckets.set(key, { count: 1, windowStart: now });
+      return { allowed: true };
     }
-    if (entry.count >= config.max) return false;
+    if (entry.count >= config.max) {
+      const retryAfterSec = Math.max(
+        1,
+        Math.ceil((entry.windowStart + config.windowMs - now) / 1000),
+      );
+      return { allowed: false, retryAfterSec };
+    }
     entry.count += 1;
-    return true;
+    return { allowed: true };
   }
 
-  return { allow, clear, max: config.max, windowMs: config.windowMs };
+  function allow(ip: string): boolean {
+    return check(ip).allowed;
+  }
+
+  return { allow, check, clear, max: config.max, windowMs: config.windowMs };
 }
 
 export function clientIpFromHeaders(
