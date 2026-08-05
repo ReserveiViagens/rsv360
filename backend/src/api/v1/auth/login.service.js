@@ -185,7 +185,7 @@ async function issueLoginTokens(user, meta = {}) {
   await touchLastLogin(user.id);
 
   const accessSecret = getJwtSecret();
-  const accessToken = signAccessTokenBound(
+  const accessToken = await signAccessTokenBound(
     {
       userId: user.id,
       email: user.email,

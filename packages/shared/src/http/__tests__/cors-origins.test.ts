@@ -5,6 +5,7 @@ import {
   formatBrowserSessionCookie,
   formatClearedBrowserSessionCookie,
   getCorsOriginAllowlist,
+  getRefreshCookieDomain,
   getRefreshTokenCookieOptions,
   isCorsOriginAllowed,
   isSecureBrowserCookieRequired,
@@ -122,6 +123,27 @@ describe('refresh HttpOnly cookie helpers (PR-10c-pré-a)', () => {
       path: '/api/auth',
       maxAge: 60 * 60 * 24 * 30,
     });
+  });
+
+  it('adds a validated parent Domain for cross-subdomain refresh', () => {
+    expect(
+      getRefreshTokenCookieOptions({
+        env: {
+          NODE_ENV: 'production',
+          AUTH_REFRESH_COOKIE_DOMAIN: '.reserveiviagens.com.br',
+        },
+      }),
+    ).toMatchObject({
+      domain: '.reserveiviagens.com.br',
+      secure: true,
+      sameSite: 'lax',
+    });
+    expect(getRefreshCookieDomain({ AUTH_REFRESH_COOKIE_DOMAIN: '' })).toBeUndefined();
+    expect(() =>
+      getRefreshCookieDomain({
+        AUTH_REFRESH_COOKIE_DOMAIN: 'example.com\r\nInjected=true',
+      }),
+    ).toThrow('AUTH_REFRESH_COOKIE_DOMAIN inválido');
   });
 
   it('strips refresh_token from nested auth payloads', () => {

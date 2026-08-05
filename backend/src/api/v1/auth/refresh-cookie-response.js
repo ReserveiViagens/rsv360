@@ -30,9 +30,10 @@ function serializeRefreshCookie(token, { cleared = false } = {}) {
     `${REFRESH_TOKEN_COOKIE_NAME}=${cleared ? '' : encodeURIComponent(token)}`,
     `Path=${opts.path}`,
     `Max-Age=${cleared ? 0 : opts.maxAge}`,
-    'SameSite=Lax',
+    `SameSite=${opts.sameSite === 'lax' ? 'Lax' : opts.sameSite}`,
     'HttpOnly',
   ];
+  if (opts.domain) parts.push(`Domain=${opts.domain}`);
   if (opts.secure) parts.push('Secure');
   return parts.join('; ');
 }

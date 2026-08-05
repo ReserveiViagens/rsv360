@@ -5,7 +5,7 @@ const { getJwtSecret } = require('@rsv360/shared');
 const { enforceDpopIfEnabled } = require('../../backend/src/api/v1/auth/dpop.service');
 
 /** Valida Bearer JWT (API v1) e popula req.user. PR-10c-a1: DPoP when flag ON + cnf.jkt. */
-export function authenticateJwt(req: Request, res: Response, next: NextFunction) {
+export async function authenticateJwt(req: Request, res: Response, next: NextFunction) {
   const token = extractBearerToken(req);
   if (!token) {
     return res.status(401).json({ success: false, error: 'Token ausente' });
@@ -16,7 +16,7 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
     return res.status(401).json({ success: false, error: 'Token inválido ou expirado' });
   }
 
-  const dpop = enforceDpopIfEnabled(req, token, payload);
+  const dpop = await enforceDpopIfEnabled(req, token, payload);
   if (!dpop.ok) {
     return res.status(401).json({ success: false, error: 'DPoP inválido ou ausente' });
   }
@@ -37,12 +37,12 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
 }
 
 /** Autenticação opcional — não falha se token ausente. */
-export function optionalJwt(req: Request, res: Response, next: NextFunction) {
+export async function optionalJwt(req: Request, res: Response, next: NextFunction) {
   const token = extractBearerToken(req);
   if (token) {
     const payload = verifyAccessToken(token, getJwtSecret());
     if (payload?.userId != null) {
-      const dpop = enforceDpopIfEnabled(req, token, payload);
+      const dpop = await enforceDpopIfEnabled(req, token, payload);
       if (!dpop.ok) {
         return res.status(401).json({ success: false, error: 'DPoP inválido ou ausente' });
       }

@@ -55,6 +55,23 @@ describe('refresh-cookie-response (PR-10c-pré-b)', () => {
     expect(raw).toContain('SameSite=Lax');
   });
 
+  it('serializes and clears the same cross-subdomain cookie Domain', () => {
+    const previous = process.env.AUTH_REFRESH_COOKIE_DOMAIN;
+    process.env.AUTH_REFRESH_COOKIE_DOMAIN = '.reserveiviagens.com.br';
+    try {
+      const raw = serializeRefreshCookie('token');
+      expect(raw).toContain('Domain=.reserveiviagens.com.br');
+      const res = mockRes();
+      clearRefreshTokenCookie(res);
+      expect(String(res.getHeader('set-cookie'))).toContain(
+        'Domain=.reserveiviagens.com.br',
+      );
+    } finally {
+      if (previous === undefined) delete process.env.AUTH_REFRESH_COOKIE_DOMAIN;
+      else process.env.AUTH_REFRESH_COOKIE_DOMAIN = previous;
+    }
+  });
+
   it('strips refresh from JSON when Origin present (browser)', () => {
     const req = { get: (h: string) => (h === 'origin' ? 'http://localhost:3004' : undefined) };
     const res = mockRes();

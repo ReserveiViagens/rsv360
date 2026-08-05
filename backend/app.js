@@ -12,11 +12,19 @@ const { trackingRouter } = require('./src/routes/tracking.route');
 const { metricsRouter, metricsMiddleware } = require('./src/routes/metrics.route');
 const { docsRouter, openApiSpec } = require('./src/routes/docs.route');
 
+function trustedProxyAllowlist(env = process.env) {
+  const configured = String(env.TRUST_PROXY || '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+  return configured.length > 0 ? configured : ['loopback'];
+}
+
 async function createApp() {
   const app = express();
 
-  // PR 17 — Cloudflare/nginx: IP real para rate limit e logs (antes de qualquer middleware)
-  app.set('trust proxy', 1);
+  // Trust only explicit edge CIDRs/names. Never trust arbitrary client-forwarded headers.
+  app.set('trust proxy', trustedProxyAllowlist());
 
   // PR-07b C4 — limit nested query objects (default Express extended/qs is unbounded depth)
   app.set('query parser', (str) =>
@@ -138,4 +146,4 @@ async function createApp() {
   return app;
 }
 
-module.exports = { createApp };
+module.exports = { createApp, trustedProxyAllowlist };

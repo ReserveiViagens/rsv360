@@ -148,6 +148,17 @@ export type RefreshCookieSerializeOptions = {
   env?: EnvLike;
 };
 
+export function getRefreshCookieDomain(
+  env: EnvLike = process.env,
+): string | undefined {
+  const domain = env.AUTH_REFRESH_COOKIE_DOMAIN?.trim();
+  if (!domain) return undefined;
+  if (!/^\.?[a-z0-9.-]+$/i.test(domain) || domain.includes('..')) {
+    throw new Error('AUTH_REFRESH_COOKIE_DOMAIN inválido');
+  }
+  return domain;
+}
+
 /** Options for NextResponse.cookies.set / .delete (HttpOnly refresh). */
 export function getRefreshTokenCookieOptions(
   options: RefreshCookieSerializeOptions = {},
@@ -157,14 +168,17 @@ export function getRefreshTokenCookieOptions(
   sameSite: 'lax';
   path: string;
   maxAge: number;
+  domain?: string;
 } {
   const env = options.env ?? process.env;
+  const domain = getRefreshCookieDomain(env);
   return {
     httpOnly: true,
     secure: isSecureBrowserCookieRequired(env),
     sameSite: 'lax',
     path: options.path ?? REFRESH_TOKEN_COOKIE_PATH_BFF,
     maxAge: options.maxAgeSeconds ?? REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS,
+    ...(domain ? { domain } : {}),
   };
 }
 

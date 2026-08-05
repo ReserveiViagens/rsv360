@@ -12,7 +12,9 @@ const { signJwt } = require('./jwt-verify');
 
 const DPOP_SKEW_SECONDS = 60;
 const JTI_TTL_MS = 90 * 1000;
-const jtiCache = new Map();
+const JTI_KEY_PREFIX = 'dpop:jti:';
+let redisClient;
+let jtiStoreForTests;
 
 function base64UrlEncode(buf) {
   return Buffer.from(buf)
@@ -41,30 +43,61 @@ function isDpopEnabled(env = process.env) {
   return env.AUTH_DPOP_ENABLED === 'true';
 }
 
-function purgeJtiCache(now = Date.now()) {
-  for (const [jti, exp] of jtiCache.entries()) {
-    if (exp <= now) jtiCache.delete(jti);
+function dpopJtiKey(jti) {
+  const digest = crypto.createHash('sha256').update(jti, 'utf8').digest('hex');
+  return `${JTI_KEY_PREFIX}${digest}`;
+}
+
+function createRedisJtiStore(client) {
+  return {
+    async consume(jti, ttlMs = JTI_TTL_MS) {
+      const result = await client.set(dpopJtiKey(jti), '1', 'PX', ttlMs, 'NX');
+      return result === 'OK';
+    },
+  };
+}
+
+async function getDpopJtiStore() {
+  if (jtiStoreForTests) return jtiStoreForTests;
+  if (process.env.REDIS_DISABLED === 'true' || !process.env.REDIS_URL) {
+    throw new Error('DPoP replay store unavailable');
+  }
+  if (!redisClient) {
+    const Redis = require('ioredis');
+    redisClient = new Redis(process.env.REDIS_URL, {
+      lazyConnect: true,
+      enableReadyCheck: true,
+      maxRetriesPerRequest: 1,
+      connectTimeout: 5_000,
+    });
+    redisClient.on('error', () => {
+      // Request validation maps connection failures to dpop_jti_store_unavailable.
+    });
+    await redisClient.connect();
+  }
+  return createRedisJtiStore(redisClient);
+}
+
+async function rememberJti(jti) {
+  try {
+    const store = await getDpopJtiStore();
+    return { ok: await store.consume(jti, JTI_TTL_MS) };
+  } catch {
+    return { ok: false, error: 'dpop_jti_store_unavailable' };
   }
 }
 
-function rememberJti(jti) {
-  purgeJtiCache();
-  if (jtiCache.has(jti)) return false;
-  jtiCache.set(jti, Date.now() + JTI_TTL_MS);
-  return true;
+function setDpopJtiStoreForTests(store) {
+  jtiStoreForTests = store;
 }
 
 function clearDpopJtiCacheForTests() {
-  jtiCache.clear();
+  jtiStoreForTests = undefined;
 }
 
 function buildRequestHtu(req) {
-  const proto = String(req.get?.('x-forwarded-proto') || req.protocol || 'http')
-    .split(',')[0]
-    .trim();
-  const host = String(req.get?.('x-forwarded-host') || req.get?.('host') || 'localhost')
-    .split(',')[0]
-    .trim();
+  const proto = String(req.protocol || 'http').trim();
+  const host = String(req.get?.('host') || 'localhost').trim();
   const path = String(req.originalUrl || req.url || '/').split('?')[0];
   return stripQueryAndFragment(`${proto}://${host}${path}`);
 }
@@ -114,7 +147,7 @@ function verifyEs256(signingInput, signature, jwk) {
   }
 }
 
-function verifyDpopProofForTokenEndpoint(req) {
+async function verifyDpopProofForTokenEndpoint(req) {
   const raw = req.get?.('dpop') || req.headers?.dpop;
   const parsed = parseDpopJwt(raw);
   if (parsed.error) return { ok: false, error: parsed.error };
@@ -140,14 +173,18 @@ function verifyDpopProofForTokenEndpoint(req) {
   }
 
   const jti = typeof payload.jti === 'string' ? payload.jti : '';
-  if (!jti || !rememberJti(jti)) {
+  if (!jti) {
     return { ok: false, error: 'dpop_jti_replay' };
+  }
+  const consumed = await rememberJti(jti);
+  if (!consumed.ok) {
+    return { ok: false, error: consumed.error || 'dpop_jti_replay' };
   }
 
   return { ok: true, jkt: computeJwkThumbprintSync(jwk) };
 }
 
-function verifyDpopProofForResource(req, accessToken, expectedJkt) {
+async function verifyDpopProofForResource(req, accessToken, expectedJkt) {
   const raw = req.get?.('dpop') || req.headers?.dpop;
   const parsed = parseDpopJwt(raw);
   if (parsed.error) return { ok: false, error: parsed.error };
@@ -175,7 +212,11 @@ function verifyDpopProofForResource(req, accessToken, expectedJkt) {
   }
 
   const jti = typeof payload.jti === 'string' ? payload.jti : '';
-  if (!jti || !rememberJti(jti)) return { ok: false, error: 'dpop_jti_replay' };
+  if (!jti) return { ok: false, error: 'dpop_jti_replay' };
+  const consumed = await rememberJti(jti);
+  if (!consumed.ok) {
+    return { ok: false, error: consumed.error || 'dpop_jti_replay' };
+  }
 
   // PR-10c-b — RFC 9449: ath required on resource requests with access token.
   if (payload.ath == null || payload.ath === '') {
@@ -222,7 +263,7 @@ function mergeDpopJktIntoDeviceInfo(deviceInfo, jkt) {
  *   - dpopJkt string: bind that jkt (already verified; avoids jti double-consume)
  *   - dpopJkt null: no cnf binding
  */
-function bindCnfToClaims(claims, req, options = {}) {
+async function bindCnfToClaims(claims, req, options = {}) {
   if (Object.prototype.hasOwnProperty.call(options, 'dpopJkt')) {
     if (typeof options.dpopJkt === 'string' && options.dpopJkt) {
       return { ...claims, cnf: { jkt: options.dpopJkt } };
@@ -230,16 +271,17 @@ function bindCnfToClaims(claims, req, options = {}) {
     return { ...claims };
   }
   if (!req) return { ...claims };
-  const verified = verifyDpopProofForTokenEndpoint(req);
+  const verified = await verifyDpopProofForTokenEndpoint(req);
   if (!verified.ok) return { ...claims };
   return { ...claims, cnf: { jkt: verified.jkt } };
 }
 
-function signAccessTokenBound(claims, secret, expiresInSeconds, req, options) {
-  return signJwt(bindCnfToClaims(claims, req, options || {}), secret, expiresInSeconds);
+async function signAccessTokenBound(claims, secret, expiresInSeconds, req, options) {
+  const boundClaims = await bindCnfToClaims(claims, req, options || {});
+  return signJwt(boundClaims, secret, expiresInSeconds);
 }
 
-function enforceDpopIfEnabled(req, accessToken, payload) {
+async function enforceDpopIfEnabled(req, accessToken, payload) {
   if (!isDpopEnabled()) return { ok: true };
   const jkt = payload?.cnf?.jkt;
   if (!jkt || typeof jkt !== 'string') return { ok: true };
@@ -255,7 +297,11 @@ module.exports = {
   enforceDpopIfEnabled,
   buildRequestHtu,
   clearDpopJtiCacheForTests,
+  setDpopJtiStoreForTests,
+  createRedisJtiStore,
+  dpopJtiKey,
   DPOP_SKEW_SECONDS,
+  JTI_TTL_MS,
   accessTokenHash,
   computeJwkThumbprintSync,
   base64UrlEncode,
