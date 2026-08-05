@@ -245,7 +245,7 @@ router.post('/refresh', async (req, res) => {
   }
 
   const { signAccessTokenBound } = require('./dpop.service');
-  const accessToken = signAccessTokenBound(
+  const accessToken = await signAccessTokenBound(
     {
       userId,
       email: payload.email ?? '',
@@ -1198,7 +1198,7 @@ router.post('/login', async (req, res) => {
     role: 'admin',
     enterpriseId: 'ent_1',
   };
-  const accessToken = signAccessTokenBound(payloadObj, secret, 900, req);
+  const accessToken = await signAccessTokenBound(payloadObj, secret, 900, req);
 
   const refreshSecret = getJwtRefreshSecret();
   const refreshToken = signJwt(

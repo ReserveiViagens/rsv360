@@ -166,7 +166,9 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, r
 
   // PR-10c-b — family DPoP bind (device_info.dpop_jkt). Single proof verify (avoid jti replay).
   const boundJkt = extractDpopJktFromDeviceInfo(token.device_info);
-  const proof = req ? verifyDpopProofForTokenEndpoint(req) : { ok: false, error: 'missing_dpop' };
+  const proof = req
+    ? await verifyDpopProofForTokenEndpoint(req)
+    : { ok: false, error: 'missing_dpop' };
 
   if (boundJkt) {
     if (!proof.ok || proof.jkt !== boundJkt) {
@@ -188,7 +190,7 @@ async function verifyAndRotateRefreshToken(refreshToken, ipAddress, userAgent, r
     { dpopJkt },
   );
 
-  const newAccessToken = signAccessTokenBound(
+  const newAccessToken = await signAccessTokenBound(
     {
       userId: user.id,
       email: user.email,
