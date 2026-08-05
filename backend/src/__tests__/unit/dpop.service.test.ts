@@ -17,6 +17,7 @@ const {
 } = require('../../api/v1/auth/dpop.service');
 const { verifyAccessToken, signJwt } = require('../../api/v1/auth/jwt-verify');
 const { getJwtSecret } = require('@rsv360/shared');
+const { trustedProxyAllowlist } = require('../../../app');
 
 function b64urlJson(obj: Record<string, unknown>): string {
   return base64UrlEncode(Buffer.from(JSON.stringify(obj)));
@@ -297,6 +298,29 @@ describe('dpop.service (PR-10c-a1)', () => {
       get: (n: string) => (n === 'host' ? 'api.example' : undefined),
     };
     expect(buildRequestHtu(req)).toBe('https://api.example/api/v1/x');
+  });
+
+  it('buildRequestHtu ignores forged forwarded proto and host headers', () => {
+    const req = {
+      protocol: 'https',
+      originalUrl: '/api/v1/x',
+      get(name: string) {
+        if (name === 'host') return 'api.reserveiviagens.com.br';
+        if (name === 'x-forwarded-proto') return 'http';
+        if (name === 'x-forwarded-host') return 'attacker.example';
+        return undefined;
+      },
+    };
+    expect(buildRequestHtu(req)).toBe('https://api.reserveiviagens.com.br/api/v1/x');
+  });
+
+  it('parses an explicit trust proxy allowlist and defaults to loopback', () => {
+    expect(trustedProxyAllowlist({})).toEqual(['loopback']);
+    expect(
+      trustedProxyAllowlist({
+        TRUST_PROXY: 'loopback,::1,192.168.0.0/24',
+      }),
+    ).toEqual(['loopback', '::1', '192.168.0.0/24']);
   });
 
   it('fails closed when DPoP is enabled and the shared store is unavailable', async () => {
