@@ -14,10 +14,7 @@ import { agendarAvaliarObjecao, agendarEntregaRoteiro } from '../propostas.queue
 import { ConfigService } from '../../configuracoes/config.service';
 import { recordPropostaAceita, recordPropostaGerada } from '../metrics';
 import { detectarObjecaoPreco, revelarComparativo } from '../objecao';
-import {
-  assertDisponibilidadeReserva,
-  marcarDiariasReservadas,
-} from '../../acomodacoes/services/disponibilidade-reserva.hook';
+import { comHoldReservaAtomico } from '../../acomodacoes/services/disponibilidade-reserva.hook';
 
 type HitlMode = 'ai' | 'waiting' | 'human';
 
@@ -99,16 +96,20 @@ export class PropostasService {
   async changeStatus(id: number, status: string, actorId?: number) {
     const updated = await this.update(id, { status }, actorId);
     if (updated && (status === 'accepted' || status === 'paid')) {
-      recordPropostaAceita(actorId ? 'staff' : 'public');
-      try {
-        const config = await ConfigService.obterRegrasCotacao();
-        const delayMs = (config.delayDisparoMinutos ?? 0) * 60_000;
-        await agendarEntregaRoteiro(id, delayMs);
-      } catch (queueErr) {
-        console.warn('[propostas] agendarEntregaRoteiro ignorado:', (queueErr as Error).message);
-      }
+      await this.afterAcceptedStatus(id, actorId);
     }
     return updated;
+  }
+
+  private async afterAcceptedStatus(id: number, actorId?: number) {
+    recordPropostaAceita(actorId ? 'staff' : 'public');
+    try {
+      const config = await ConfigService.obterRegrasCotacao();
+      const delayMs = (config.delayDisparoMinutos ?? 0) * 60_000;
+      await agendarEntregaRoteiro(id, delayMs);
+    } catch (queueErr) {
+      console.warn('[propostas] agendarEntregaRoteiro ignorado:', (queueErr as Error).message);
+    }
   }
 
   async remove(id: number) {
@@ -386,6 +387,7 @@ export class PropostasService {
       throw new Error('Proposta já foi respondida');
     }
 
+    let updated;
     if (action === 'accept') {
       await assertPropostaNaoExpirada(row);
       const meta = parseMetadata(row.metadata);
@@ -396,13 +398,31 @@ export class PropostasService {
       const checkIn = typeof meta.checkIn === 'string' ? meta.checkIn : null;
       const checkOut = typeof meta.checkOut === 'string' ? meta.checkOut : null;
       if (acomodacaoId && checkIn && checkOut) {
-        await assertDisponibilidadeReserva(acomodacaoId, checkIn, checkOut);
-        await marcarDiariasReservadas(acomodacaoId, checkIn, checkOut);
+        updated = await comHoldReservaAtomico(
+          acomodacaoId,
+          checkIn,
+          checkOut,
+          async (tx) => {
+            const [accepted] = await tx
+              .update(propostas)
+              .set({ status: 'accepted', updatedAt: new Date() })
+              .where(and(eq(propostas.id, propostaId), eq(propostas.status, row.status)))
+              .returning();
+
+            if (!accepted) throw new Error('Proposta já foi respondida');
+            return accepted;
+          },
+        );
+
+        await this.logEvent(propostaId, 'updated', 'Proposta atualizada', {
+          fields: ['status'],
+        });
+        await this.afterAcceptedStatus(propostaId);
       }
     }
 
     const status = action === 'accept' ? 'accepted' : 'rejected';
-    const updated = await this.changeStatus(propostaId, status);
+    updated ??= await this.changeStatus(propostaId, status);
     await this.addChatMessage(propostaId, {
       senderType: 'system',
       senderName: 'Sistema',

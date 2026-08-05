@@ -2,10 +2,15 @@
  * Fase 2 — anti-overbooking por data (disponibilidade_acomodacao).
  * Tabela vazia = todas as diárias livres (zero regressão).
  */
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { countWizardNights } from '@rsv360/shared';
 import { db } from '../../../lib/db';
 import { disponibilidadeAcomodacao } from '../../../../backend/src/db/schema/disponibilidade-acomodacao';
+
+type ReservaTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+export type RunReservaTransaction = <T>(
+  fn: (tx: ReservaTransaction) => Promise<T>,
+) => Promise<T>;
 
 export class DisponibilidadeReservaConflictError extends Error {
   readonly statusCode = 409;
@@ -113,6 +118,54 @@ export async function marcarDiariasReservadas(
   }
 }
 
+/**
+ * PR-11d — hard-hold at proposal acceptance.
+ *
+ * Missing calendar rows cannot be protected with FOR UPDATE. Transaction-scoped
+ * advisory locks serialize the same accommodation+nights, then an atomic upsert
+ * claims each night. Any conflict throws and rolls the whole transaction back,
+ * including the caller's proposal-status CAS.
+ */
+export async function comHoldReservaAtomico<T>(
+  acomodacaoId: number,
+  checkIn: string,
+  checkOut: string,
+  onClaimed: (tx: ReservaTransaction) => Promise<T>,
+  runInTransaction: RunReservaTransaction = (fn) => db.transaction(fn),
+): Promise<T> {
+  const datas = [...listDiariasEstadia(checkIn, checkOut)].sort();
+
+  return runInTransaction(async (tx) => {
+    for (const data of datas) {
+      const lockKey = `rsv360:proposta-hold:v1:${acomodacaoId}:${data}`;
+      await tx.execute(
+        sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`,
+      );
+    }
+
+    for (const data of datas) {
+      const claimed = await tx.execute(sql`
+        INSERT INTO disponibilidade_acomodacao
+          (acomodacao_id, data, disponivel, observacao, atualizado_em)
+        VALUES
+          (${acomodacaoId}, ${data}, false, 'reservado', CURRENT_TIMESTAMP)
+        ON CONFLICT (acomodacao_id, data) DO UPDATE
+        SET disponivel = false,
+            observacao = 'reservado',
+            atualizado_em = CURRENT_TIMESTAMP
+        WHERE disponibilidade_acomodacao.disponivel = true
+        RETURNING data
+      `);
+
+      if (claimed.rows.length === 0) {
+        throw new DisponibilidadeReservaConflictError(acomodacaoId, [data]);
+      }
+    }
+
+    return onClaimed(tx);
+  });
+}
+
 module.exports = {
   DisponibilidadeReservaConflictError,
   listDiariasEstadia,
@@ -120,4 +173,5 @@ module.exports = {
   verificarDisponibilidadeReserva,
   assertDisponibilidadeReserva,
   marcarDiariasReservadas,
+  comHoldReservaAtomico,
 };
