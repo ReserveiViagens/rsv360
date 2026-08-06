@@ -97,13 +97,10 @@ function clearDpopJtiCacheForTests() {
 }
 
 function buildRequestHtu(req) {
-  // HTU trust-proxy hardening (XFH/XFP) is deferred to PR-10c-infra-b.
-  const proto = String(req.get?.('x-forwarded-proto') || req.protocol || 'http')
-    .split(',')[0]
-    .trim();
-  const host = String(req.get?.('x-forwarded-host') || req.get?.('host') || 'localhost')
-    .split(',')[0]
-    .trim();
+  // PR-10c-infra-b: ignore client-injected X-Forwarded-Proto/Host.
+  // Express trust proxy is configured via TRUST_PROXY in backend/app.js.
+  const proto = String(req.protocol || 'http').trim();
+  const host = String(req.get?.('host') || 'localhost').trim();
   const path = String(req.originalUrl || req.url || '/').split('?')[0];
   return stripQueryAndFragment(`${proto}://${host}${path}`);
 }
