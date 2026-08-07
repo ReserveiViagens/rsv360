@@ -33,6 +33,8 @@ __exportStar(require("./constants/index.js"), exports);
 __exportStar(require("./utils/index.js"), exports);
 // Payments — Mercado Pago webhook HMAC (PR-02 / PR-02b)
 __exportStar(require("./payments/mp-webhook-signature.js"), exports);
+// PR-13b — LLM prompt sanitization / field allowlist
+__exportStar(require("./llm/prompt-sanitize.js"), exports);
 // Drizzle schemas (Fase 1 migração)
 __exportStar(require("./schema.js"), exports);
 // Fase 1 API types & paths

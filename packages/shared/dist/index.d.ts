@@ -11,6 +11,7 @@ export * from './validators/booking.validator.js';
 export * from './constants/index.js';
 export * from './utils/index.js';
 export * from './payments/mp-webhook-signature.js';
+export * from './llm/prompt-sanitize.js';
 export * from './schema.js';
 export * from './fase1-api.js';
 export * from './cotacao/oferta-normalizada.js';
