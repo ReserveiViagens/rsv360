@@ -27,6 +27,9 @@ try:
 except ImportError:
     HAS_FLASK = False
 
+from sre_agents.http_auth import require_sre_token
+from sre_agents.safe_exec import full_restart_allowed
+
 app = Flask(__name__, static_folder=None) if HAS_FLASK else None
 
 # Armazenamento em memória
@@ -764,7 +767,11 @@ def _repo_root_path():
 
 
 def _start_full_restart():
-    """Dispara restart completo em background sem bloquear API."""
+    """Dispara restart completo em background sem bloquear API (PR-13c gated)."""
+    if not full_restart_allowed():
+        raise PermissionError(
+            "Full restart disabled. Set SRE_ALLOW_FULL_RESTART=true to enable."
+        )
     root = _repo_root_path()
     script = os.path.join(root, "Reiniciar Sistema Completo.ps1")
     if not os.path.isfile(script):
@@ -772,11 +779,13 @@ def _start_full_restart():
     if not os.path.isfile(script):
         raise FileNotFoundError("Script de reinicio/inicializacao nao encontrado")
 
+    # argv list only — never shell=True
     subprocess.Popen(
         ["powershell", "-ExecutionPolicy", "Bypass", "-File", script],
         cwd=root,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        shell=False,
     )
     return script
 
@@ -862,6 +871,7 @@ if HAS_FLASK:
         return jsonify({"error": "Arquivo não encontrado"}), 404
 
     @app.route("/trigger", methods=["POST"])
+    @require_sre_token
     def trigger():
         """Recebe log de erro via POST e dispara o fluxo."""
         log_text = None
@@ -889,9 +899,10 @@ if HAS_FLASK:
             "message": "Fluxo iniciado. Aguarde a análise ou aprovação.",
         })
 
-    @app.route("/approve/<thread_id>", methods=["POST", "GET"])
+    @app.route("/approve/<thread_id>", methods=["POST"])
+    @require_sre_token
     def approve(thread_id):
-        """Aprova a correção e retoma o fluxo."""
+        """Aprova a correção e retoma o fluxo (PR-13c: auth + POST-only)."""
         from main import resume
         result = resume(thread_id, approved=True)
         return jsonify({
@@ -899,16 +910,18 @@ if HAS_FLASK:
             "execution_output": result.get("execution_output", ""),
         })
 
-    @app.route("/reject/<thread_id>", methods=["POST", "GET"])
+    @app.route("/reject/<thread_id>", methods=["POST"])
+    @require_sre_token
     def reject(thread_id):
-        """Rejeita a correção."""
+        """Rejeita a correção (PR-13c: auth + POST-only)."""
         from main import resume
         result = resume(thread_id, approved=False)
         return jsonify({"status": result.get("status", "abortado")})
 
-    @app.route("/api/collector/start", methods=["POST", "GET"])
+    @app.route("/api/collector/start", methods=["POST"])
+    @require_sre_token
     def collector_start():
-        """Inicia o coletor automático."""
+        """Inicia o coletor automático (PR-13c: auth + POST-only)."""
         global _collector_running, _collector_thread, _collector_file_positions
         if _collector_running:
             return jsonify({"status": "already_running", "message": "Coletor já está em execução"})
@@ -926,9 +939,10 @@ if HAS_FLASK:
         _collector_thread.start()
         return jsonify({"status": "started", "message": "Coletor iniciado"})
 
-    @app.route("/api/collector/stop", methods=["POST", "GET"])
+    @app.route("/api/collector/stop", methods=["POST"])
+    @require_sre_token
     def collector_stop():
-        """Para o coletor automático."""
+        """Para o coletor automático (PR-13c: auth + POST-only)."""
         global _collector_running
         _collector_running = False
         return jsonify({"status": "stopped", "message": "Coletor parado"})
@@ -962,6 +976,7 @@ if HAS_FLASK:
         return jsonify(report)
 
     @app.route("/api/system/analyze-inconsistencies", methods=["POST"])
+    @require_sre_token
     def analyze_inconsistencies():
         """Dispara automaticamente as inconsistencias para o pipeline de agentes."""
         payload = request.json if request.is_json else {}
@@ -1028,6 +1043,7 @@ if HAS_FLASK:
         })
 
     @app.route("/api/system/auto-analysis-bulk-action", methods=["POST"])
+    @require_sre_token
     def auto_analysis_bulk_action():
         """Ação em lote para aprovar/rejeitar itens automáticos por severidade."""
         payload = request.json if request.is_json else {}
@@ -1111,8 +1127,9 @@ if HAS_FLASK:
         return jsonify({"events": list(reversed(events)), "running": _maintenance_running})
 
     @app.route("/api/system/auto-heal", methods=["POST"])
+    @require_sre_token
     def system_auto_heal():
-        """Auto-cura leve: verifica saúde e tenta ações básicas."""
+        """Auto-cura leve: verifica saúde e tenta ações básicas (PR-13c: auth)."""
         global _maintenance_running
         if _maintenance_running:
             return jsonify({"status": "busy", "message": "Ja existe rotina de manutencao em execucao"}), 409
@@ -1130,6 +1147,8 @@ if HAS_FLASK:
             if mode == "light":
                 if not _collector_running:
                     try:
+                        # Call underlying start logic without re-entering HTTP decorator
+                        # by invoking the view function body via already-authenticated path.
                         collector_start()
                         actions.append("collector_started")
                     except Exception:
@@ -1137,9 +1156,20 @@ if HAS_FLASK:
 
                 critical_down = [s for s in health["services"] if s["critical"] and not s["ok"]]
                 if critical_down:
-                    script = _start_full_restart()
-                    actions.append(f"full_restart_triggered:{script}")
+                    if not full_restart_allowed():
+                        actions.append("full_restart_blocked:SRE_ALLOW_FULL_RESTART")
+                    else:
+                        try:
+                            script = _start_full_restart()
+                            actions.append(f"full_restart_triggered:{script}")
+                        except PermissionError as err:
+                            actions.append(f"full_restart_blocked:{err}")
             elif mode == "full_restart":
+                if not full_restart_allowed():
+                    return jsonify({
+                        "status": "error",
+                        "message": "Full restart disabled. Set SRE_ALLOW_FULL_RESTART=true.",
+                    }), 403
                 script = _start_full_restart()
                 actions.append(f"full_restart_triggered:{script}")
             else:
@@ -1165,12 +1195,13 @@ if HAS_FLASK:
 
 
 def run_server(port: int = None):
-    """Inicia o servidor Flask."""
+    """Inicia o servidor Flask (PR-13c: bind loopback by default)."""
     if not HAS_FLASK:
         print("Instale Flask: pip install flask")
         return
     port = port or int(os.getenv("TRIGGER_API_PORT", "5050"))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    host = (os.getenv("TRIGGER_API_HOST") or "127.0.0.1").strip() or "127.0.0.1"
+    app.run(host=host, port=port, debug=False)
 
 
 # HTML do Dashboard - página com abas
@@ -1659,6 +1690,23 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
     <script>
         const API = '';
+        /** PR-13c — Bearer/X-SRE-Token from localStorage (localStorage.setItem('sre_api_token', '...')) */
+        function sreAuthHeaders(extra) {
+            const headers = Object.assign({}, extra || {});
+            const token = localStorage.getItem('sre_api_token') || '';
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+                headers['X-SRE-Token'] = token;
+            }
+            return headers;
+        }
+        function showAuthRequiredToast(status, payload) {
+            if (status === 401 || status === 503) {
+                showToast((payload && payload.message) || 'Configure localStorage.sre_api_token (SRE_API_TOKEN)', 'error');
+                return true;
+            }
+            return false;
+        }
         const DIAG_FILTERS_STORAGE_KEY = 'rsv360_sre_diag_filters_v1';
         const DIAG_PRESETS_STORAGE_KEY = 'rsv360_sre_diag_presets_v1';
         const DIAG_BUILTIN_PRESETS = {
@@ -1826,7 +1874,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             try {
                 const r = await fetch(API + '/api/system/auto-heal', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: sreAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ mode })
                 });
                 const d = await r.json();
@@ -2778,7 +2826,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
                 const r = await fetch(API + '/api/system/analyze-inconsistencies', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: sreAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ max_items: maxItems, include_low: includeLow })
                 });
                 const d = await r.json();
@@ -2868,7 +2916,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
                 const r = await fetch(API + '/api/system/auto-analysis-bulk-action', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: sreAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({
                         action,
                         severity,
@@ -2892,7 +2940,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
         async function approveAutoThread(threadId) {
             try {
-                const r = await fetch(API + '/approve/' + threadId, { method: 'POST' });
+                const r = await fetch(API + '/approve/' + threadId, { method: 'POST', headers: sreAuthHeaders() });
                 const d = await r.json();
                 if (!r.ok) throw new Error(d.error || 'Falha ao aprovar');
                 showToast(`Aprovado: ${threadId}`);
@@ -2906,7 +2954,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
         async function rejectAutoThread(threadId) {
             try {
-                const r = await fetch(API + '/reject/' + threadId, { method: 'POST' });
+                const r = await fetch(API + '/reject/' + threadId, { method: 'POST', headers: sreAuthHeaders() });
                 const d = await r.json();
                 if (!r.ok) throw new Error(d.error || 'Falha ao rejeitar');
                 showToast(`Rejeitado: ${threadId}`);
@@ -3032,7 +3080,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             try {
                 const r = await fetch(API + '/trigger', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: sreAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ log })
                 });
                 const data = await r.json();
@@ -3092,7 +3140,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
         async function approve(tid) {
             try {
-                const r = await fetch(API + '/approve/' + tid, { method: 'POST' });
+                const r = await fetch(API + '/approve/' + tid, { method: 'POST', headers: sreAuthHeaders() });
                 const d = await r.json();
                 showToast('Aprovado: ' + (d.execution_output || d.status));
                 loadStatus();
@@ -3102,7 +3150,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
         async function reject(tid) {
             try {
-                await fetch(API + '/reject/' + tid, { method: 'POST' });
+                await fetch(API + '/reject/' + tid, { method: 'POST', headers: sreAuthHeaders() });
                 showToast('Rejeitado');
                 loadStatus();
                 loadHistory();
@@ -3205,7 +3253,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         // Coletor Automático
         async function collectorStart() {
             try {
-                const r = await fetch(API + '/api/collector/start', { method: 'POST' });
+                const r = await fetch(API + '/api/collector/start', { method: 'POST', headers: sreAuthHeaders() });
                 const d = await r.json();
                 if (r.ok) {
                     showToast('Coletor iniciado');
@@ -3219,7 +3267,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         }
         async function collectorStop() {
             try {
-                await fetch(API + '/api/collector/stop', { method: 'POST' });
+                await fetch(API + '/api/collector/stop', { method: 'POST', headers: sreAuthHeaders() });
                 showToast('Coletor parado');
                 document.getElementById('collectorStartBtn').classList.remove('hidden');
                 document.getElementById('collectorStopBtn').classList.add('hidden');
@@ -3261,7 +3309,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             try {
                 const r = await fetch(API + '/trigger', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: sreAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ log: line })
                 });
                 const d = await r.json();

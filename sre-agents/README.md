@@ -85,11 +85,14 @@ O watcher dispara o fluxo automaticamente ao detectar linhas com Error, Exceptio
 ### API - Trigger via HTTP e Dashboard Web
 
 ```bash
+# PR-13c: defina SRE_API_TOKEN antes de subir (rotas mutáveis falham fechado sem ele)
+export SRE_API_TOKEN='replace-me'
+# Opcional: SRE_ALLOW_FULL_RESTART=true para permitir auto-heal full_restart
 python watcher/trigger_api.py
-# Servidor em http://localhost:5050
+# Servidor em http://127.0.0.1:5050 (TRIGGER_API_HOST default loopback)
 ```
 
-**Dashboard Web**: Acesse http://localhost:5050/ para uma interface completa que permite:
+**Dashboard Web**: Acesse http://127.0.0.1:5050/ para uma interface completa que permite:
 - Ver status do serviço
 - Colar logs e disparar análise
 - Aprovar ou rejeitar correções pendentes
@@ -107,16 +110,23 @@ python watcher/trigger_api.py
 - Paginação da lista de páginas monitoradas.
 - Botão de análise automática das inconsistências com IA (dispara pipeline de agentes).
 
+**PR-13c auth:** no console do browser: `localStorage.setItem('sre_api_token', '<SRE_API_TOKEN>')`.  
+**Execução:** apenas `recipe:<id>` da allowlist fechada (`shell=False`); free-form shell é rejeitado.
+
 ```bash
-# Disparar fluxo (API)
-curl -X POST http://localhost:5050/trigger -H "Content-Type: application/json" \
+# Disparar fluxo (API) — token obrigatório
+curl -X POST http://127.0.0.1:5050/trigger \
+  -H "Authorization: Bearer $SRE_API_TOKEN" \
+  -H "Content-Type: application/json" \
   -d '{"log": "2026-01-30 error: EADDRINUSE port 5000 already in use"}'
 
 # Aprovar (use o thread_id retornado)
-curl -X POST http://localhost:5050/approve/api-abc123
+curl -X POST http://127.0.0.1:5050/approve/api-abc123 \
+  -H "Authorization: Bearer $SRE_API_TOKEN"
 
 # Rejeitar
-curl -X POST http://localhost:5050/reject/api-abc123
+curl -X POST http://127.0.0.1:5050/reject/api-abc123 \
+  -H "Authorization: Bearer $SRE_API_TOKEN"
 ```
 
 ## Estrutura do Projeto
