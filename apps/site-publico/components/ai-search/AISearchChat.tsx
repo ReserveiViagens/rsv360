@@ -45,6 +45,15 @@ export function AISearchChat({ initialContext, onSearchResult }: AISearchChatPro
     }
   }, [messages]);
 
+  const authHeaders = (): HeadersInit => {
+    const token =
+      typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
@@ -61,9 +70,7 @@ export function AISearchChat({ initialContext, onSearchResult }: AISearchChatPro
     try {
       const response = await fetch('/api/ai-search/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: authHeaders(),
         body: JSON.stringify({
           message: userMessage.content,
           context,
@@ -71,6 +78,15 @@ export function AISearchChat({ initialContext, onSearchResult }: AISearchChatPro
       });
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        toast.error('Faça login para usar a busca com AI');
+        return;
+      }
+      if (response.status === 429) {
+        toast.error(data.error || 'Muitas requisições. Tente novamente em breve.');
+        return;
+      }
 
       if (data.success) {
         const assistantMessage: ChatMessage = {
@@ -85,9 +101,7 @@ export function AISearchChat({ initialContext, onSearchResult }: AISearchChatPro
         if (data.data.searchQuery && onSearchResult) {
           const searchResponse = await fetch('/api/ai-search/search', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: authHeaders(),
             body: JSON.stringify({
               query: data.data.searchQuery,
               context,
@@ -115,7 +129,13 @@ export function AISearchChat({ initialContext, onSearchResult }: AISearchChatPro
     try {
       const response = await fetch('/api/ai-search/history', {
         method: 'DELETE',
+        headers: authHeaders(),
       });
+
+      if (response.status === 401) {
+        toast.error('Faça login para limpar o histórico');
+        return;
+      }
 
       if (response.ok) {
         setMessages([
