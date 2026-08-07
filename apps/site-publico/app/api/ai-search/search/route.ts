@@ -1,25 +1,33 @@
 /**
  * ✅ TAREFA LOW-2: API para busca de propriedades com AI
  * POST /api/ai-search/search
+ * PR-13a: auth + rate limit + input length
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { aiSearchService } from '@/lib/ai-search-service';
 import { jsonInternalError } from '@/lib/api-error';
+import {
+  requireAiSearchAccess,
+  validateAiSearchTextInput,
+} from '@/lib/ai-search-guard';
 
 export async function POST(request: NextRequest) {
   try {
+    const gate = await requireAiSearchAccess(request);
+    if (gate.errorResponse) return gate.errorResponse;
+
     const body = await request.json();
     const { query, context } = body;
 
-    if (!query || typeof query !== 'string') {
-      return NextResponse.json(
-        { success: false, error: 'Query é obrigatória' },
-        { status: 400 }
-      );
-    }
+    const invalid = validateAiSearchTextInput(query, 'Query');
+    if (invalid) return invalid;
 
-    const result = await aiSearchService.searchProperties(query, context);
+    const result = await aiSearchService.searchProperties(
+      (query as string).trim(),
+      context,
+      gate.user.id,
+    );
 
     return NextResponse.json({
       success: true,
@@ -30,4 +38,3 @@ export async function POST(request: NextRequest) {
     return jsonInternalError(error);
   }
 }
-

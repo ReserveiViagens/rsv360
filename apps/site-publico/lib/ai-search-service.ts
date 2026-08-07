@@ -36,7 +36,8 @@ export interface SearchResult {
 export class AISearchService {
   private apiKey?: string;
   private model: string;
-  private conversationHistory: ChatMessage[] = [];
+  /** PR-13a: per-user history — never share a process-wide singleton across users. */
+  private histories = new Map<string, ChatMessage[]>();
   private maxHistory: number = 10;
 
   constructor(apiKey?: string, model: string = 'gpt-4o-mini') {
@@ -44,16 +45,53 @@ export class AISearchService {
     this.model = model;
   }
 
+  private historyKey(userId: number | string): string {
+    return String(userId);
+  }
+
+  private getBucket(userId: number | string): ChatMessage[] {
+    const key = this.historyKey(userId);
+    let bucket = this.histories.get(key);
+    if (!bucket) {
+      bucket = [];
+      this.histories.set(key, bucket);
+    }
+    return bucket;
+  }
+
   /**
    * Processar mensagem do usuário e retornar resposta
    */
   async processMessage(
     userMessage: string,
-    context?: SearchContext
+    context?: SearchContext,
+    userId?: number | string,
   ): Promise<{ response: string; searchQuery?: string; results?: any[] }> {
     try {
+      if (userId === undefined || userId === null || userId === '') {
+        throw new Error('userId is required for AI search history');
+      }
+
       if (!this.apiKey) {
-        return this.getMockResponse(userMessage, context);
+        const mock = this.getMockResponse(userMessage, context);
+        const bucket = this.getBucket(userId);
+        bucket.push({
+          role: 'user',
+          content: userMessage,
+          timestamp: new Date(),
+        });
+        bucket.push({
+          role: 'assistant',
+          content: mock.response,
+          timestamp: new Date(),
+        });
+        if (bucket.length > this.maxHistory) {
+          this.histories.set(
+            this.historyKey(userId),
+            bucket.slice(-this.maxHistory),
+          );
+        }
+        return mock;
       }
 
       // Adicionar contexto do sistema
@@ -69,16 +107,22 @@ export class AISearchService {
         timestamp: new Date(),
       };
 
-      // Manter histórico limitado
-      this.conversationHistory.push(userMsg);
-      if (this.conversationHistory.length > this.maxHistory) {
-        this.conversationHistory = this.conversationHistory.slice(-this.maxHistory);
+      // Manter histórico limitado (por usuário)
+      const conversationHistory = this.getBucket(userId);
+      conversationHistory.push(userMsg);
+      if (conversationHistory.length > this.maxHistory) {
+        this.histories.set(
+          this.historyKey(userId),
+          conversationHistory.slice(-this.maxHistory),
+        );
       }
+
+      const history = this.getBucket(userId);
 
       // Preparar mensagens para API
       const messages = [
         systemMessage,
-        ...this.conversationHistory.slice(-5), // Últimas 5 mensagens
+        ...history.slice(-5), // Últimas 5 mensagens
       ];
 
       // Chamar OpenAI API
@@ -112,7 +156,7 @@ export class AISearchService {
         content: assistantMessage,
         timestamp: new Date(),
       };
-      this.conversationHistory.push(assistantMsg);
+      this.getBucket(userId).push(assistantMsg);
 
       // Extrair query de busca se aplicável
       const searchQuery = this.extractSearchQuery(userMessage, assistantMessage);
@@ -134,11 +178,12 @@ export class AISearchService {
    */
   async searchProperties(
     query: string,
-    context?: SearchContext
+    context?: SearchContext,
+    userId?: number | string,
   ): Promise<SearchResult> {
     try {
       // Processar query com AI para extrair parâmetros
-      const aiResponse = await this.processMessage(query, context);
+      const aiResponse = await this.processMessage(query, context, userId);
       
       // Se AI extraiu uma query, usar ela
       const searchQuery = aiResponse.searchQuery || query;
@@ -167,17 +212,22 @@ export class AISearchService {
   }
 
   /**
-   * Limpar histórico de conversação
+   * Limpar histórico de conversação do usuário autenticado
    */
-  clearHistory(): void {
-    this.conversationHistory = [];
+  clearHistory(userId: number | string): void {
+    this.histories.delete(this.historyKey(userId));
   }
 
   /**
-   * Obter histórico de conversação
+   * Obter histórico de conversação do usuário autenticado
    */
-  getHistory(): ChatMessage[] {
-    return [...this.conversationHistory];
+  getHistory(userId: number | string): ChatMessage[] {
+    return [...this.getBucket(userId)];
+  }
+
+  /** Test helper — wipe all in-memory histories. */
+  clearAllHistoriesForTests(): void {
+    this.histories.clear();
   }
 
   /**
