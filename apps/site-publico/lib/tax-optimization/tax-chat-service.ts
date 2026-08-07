@@ -1,22 +1,35 @@
 /**
  * Serviço de chat tributário com IA
  * Simulador conversacional para Perse, Goyazes, deduções
+ * PR-13b: sanitize message + allowlisted context before LLM
  */
 
 import { simulateTax } from './tax-optimization-service';
 import { checkPerseEligibility } from './perse-enrollment-service';
+import {
+  LLM_MAX_MESSAGE_CHARS,
+  sanitizeLlmText,
+  sanitizeTaxChatContext,
+  type SanitizedTaxChatContext,
+} from '@rsv360/shared';
 
 const apiKey = process.env.OPENAI_API_KEY;
 
 export async function processTaxChat(
   userMessage: string,
-  context?: { grossRevenue?: number; deductions?: number; cnae?: string }
+  context?: SanitizedTaxChatContext | Record<string, unknown>
 ): Promise<string> {
+  const safeMessage = sanitizeLlmText(userMessage, LLM_MAX_MESSAGE_CHARS);
+  if (!safeMessage) {
+    return 'Envie uma pergunta válida sobre tributação (texto não vazio).';
+  }
+  const safeContext = sanitizeTaxChatContext(context);
+
   if (!apiKey) {
-    return getFallbackResponse(userMessage, context);
+    return getFallbackResponse(safeMessage, safeContext);
   }
 
-  const systemContext = await buildContext(context);
+  const systemContext = await buildContext(safeContext);
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -35,35 +48,31 @@ Responda de forma clara e objetiva sobre: Perse (0% federais até dez/2026), Goy
 ${systemContext}
 Não dê consultoria jurídica. Recomende sempre um contador para validação.`,
           },
-          { role: 'user', content: userMessage },
+          { role: 'user', content: safeMessage },
         ],
         temperature: 0.5,
         max_tokens: 400,
       }),
     });
 
-    if (!response.ok) return getFallbackResponse(userMessage, context);
+    if (!response.ok) return getFallbackResponse(safeMessage, safeContext);
 
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || getFallbackResponse(userMessage, context);
+    return data.choices?.[0]?.message?.content || getFallbackResponse(safeMessage, safeContext);
   } catch (err) {
     console.warn('[tax-chat] OpenAI error:', err);
-    return getFallbackResponse(userMessage, context);
+    return getFallbackResponse(safeMessage, safeContext);
   }
 }
 
-async function buildContext(ctx?: {
-  grossRevenue?: number;
-  deductions?: number;
-  cnae?: string;
-}): Promise<string> {
+async function buildContext(ctx?: SanitizedTaxChatContext): Promise<string> {
   if (!ctx?.grossRevenue) return '';
 
   const sim = await simulateTax(ctx.grossRevenue, 'simples', 'services');
   const perse = await checkPerseEligibility(ctx.cnae);
 
   return `
-Dados do usuário:
+Dados do usuário (allowlist):
 - Faturamento bruto: R$ ${ctx.grossRevenue.toLocaleString('pt-BR')}
 - Deduções: R$ ${(ctx.deductions ?? sim.deductions).toLocaleString('pt-BR')}
 - Base tributável: R$ ${sim.taxable_base.toLocaleString('pt-BR')}
@@ -74,7 +83,7 @@ Dados do usuário:
 
 function getFallbackResponse(
   message: string,
-  ctx?: { grossRevenue?: number; deductions?: number }
+  ctx?: SanitizedTaxChatContext
 ): string {
   const m = message.toLowerCase();
   if (m.includes('perse')) {
