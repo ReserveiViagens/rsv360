@@ -2,6 +2,7 @@ import {
   COMISSOES_OFICIAL_RESERVEI,
   type ComissoesSugestaoIaInput,
 } from '../schema';
+import { sanitizeComissoesIaPromptFields } from '@rsv360/shared';
 
 export interface ComissoesSugestaoIaResult {
   taxaPlataformaPct: number;
@@ -68,6 +69,14 @@ async function openAiSuggest(input: ComissoesSugestaoIaInput): Promise<Comissoes
   if (!apiKey) return null;
 
   const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+  // PR-13b: allowlisted lines — never JSON.stringify(user input object)
+  const userContent = sanitizeComissoesIaPromptFields({
+    objetivo: input.objetivo ?? 'padrao',
+    contexto: input.contexto,
+    oficialPlataformaPct: COMISSOES_OFICIAL_RESERVEI.taxaPlataformaPct,
+    oficialCorretorPct: COMISSOES_OFICIAL_RESERVEI.taxaCorretorPct,
+  });
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -89,11 +98,7 @@ async function openAiSuggest(input: ComissoesSugestaoIaInput): Promise<Comissoes
         },
         {
           role: 'user',
-          content: JSON.stringify({
-            objetivo: input.objetivo ?? 'padrao',
-            contexto: input.contexto ?? '',
-            oficial: COMISSOES_OFICIAL_RESERVEI,
-          }),
+          content: userContent,
         },
       ],
     }),

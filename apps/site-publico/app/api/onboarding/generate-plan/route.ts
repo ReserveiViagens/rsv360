@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as jwt from 'jsonwebtoken';
 import { generateMockPlan, type OnboardingPlanData, type OnboardingPlan } from '@/lib/onboarding-plan-generator';
-import { getJwtSecret, JWT_HS256_VERIFY_OPTIONS } from '@rsv360/shared';
+import {
+  getJwtSecret,
+  JWT_HS256_VERIFY_OPTIONS,
+  sanitizeOnboardingPromptFields,
+} from '@rsv360/shared';
 import { jsonInternalError } from '@/lib/api-error';
 
 function getUserId(request: NextRequest): { userId: number; error?: NextResponse } {
@@ -38,8 +42,11 @@ export async function POST(request: NextRequest) {
         if (!openaiModule) throw new Error('openai package not installed');
         const OpenAI = openaiModule.default;
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        // PR-13b: allowlisted fields only — never JSON.stringify(request body)
+        const safeFields = sanitizeOnboardingPromptFields(data);
         const prompt = `Com base nos dados do usuário, crie um plano de onboarding em JSON. Resposta APENAS JSON válido, sem markdown.
-Dados: ${JSON.stringify(data)}
+Dados (allowlist):
+${safeFields}
 Estrutura: { "title": string, "description": string, "estimatedDuration": number, "difficulty": "beginner"|"intermediate"|"advanced", "steps": [{ "title": string, "duration": number }], "resources": [{ "title": string, "type": string, "duration": number }] }`;
 
         const completion = await openai.chat.completions.create({

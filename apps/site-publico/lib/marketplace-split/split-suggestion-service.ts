@@ -2,10 +2,12 @@
  * Serviço de Sugestão de Split com IA
  * Analisa histórico e sugere % de comissão ótimo
  * Híbrido: regras + OpenAI opcional
+ * PR-13b: context allowlisted / sanitized (no free-form dump)
  */
 
 import { queryDatabase } from '../db';
 import type { ServiceType } from './types';
+import { sanitizeSplitAiContext } from '@rsv360/shared';
 
 const DEFAULT_PCT: Record<ServiceType, number> = {
   rent: 20,
@@ -103,7 +105,8 @@ export async function suggestSplitWithAI(
   const base = await suggestSplit(receiverId, serviceType);
 
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey || !context) {
+  const safeContext = sanitizeSplitAiContext(context);
+  if (!apiKey || !safeContext) {
     return base;
   }
 
@@ -112,7 +115,7 @@ export async function suggestSplitWithAI(
 Analise o contexto e sugira um percentual de comissão (platform_pct) para a plataforma.
 - Tipo de serviço: ${serviceType}
 - Sugestão baseada em histórico: ${base.platform_pct}%
-- Contexto adicional: ${context}
+- Contexto adicional (sanitizado): ${safeContext}
 
 Responda APENAS com um JSON válido: {"platform_pct": number, "reason": "string curta"}
 O platform_pct deve estar entre 5 e 35.`;

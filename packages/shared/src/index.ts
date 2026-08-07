@@ -23,6 +23,9 @@ export * from './utils/index.js';
 // Payments — Mercado Pago webhook HMAC (PR-02 / PR-02b)
 export * from './payments/mp-webhook-signature.js';
 
+// PR-13b — LLM prompt sanitization / field allowlist
+export * from './llm/prompt-sanitize.js';
+
 // Drizzle schemas (Fase 1 migração)
 export * from './schema.js';
 

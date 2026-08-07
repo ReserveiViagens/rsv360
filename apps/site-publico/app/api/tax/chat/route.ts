@@ -1,11 +1,17 @@
 /**
  * API simulador conversacional tributário
+ * PR-13b: sanitize message + allowlisted context before LLM
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAuthMiddleware } from '@/lib/advanced-auth';
 import { processTaxChat } from '@/lib/tax-optimization/tax-chat-service';
 import { jsonInternalError } from '@/lib/api-error';
+import {
+  LLM_MAX_MESSAGE_CHARS,
+  sanitizeLlmText,
+  sanitizeTaxChatContext,
+} from '@rsv360/shared';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,14 +26,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { message, context } = body;
 
-    if (!message || typeof message !== 'string') {
+    const safeMessage = sanitizeLlmText(message, LLM_MAX_MESSAGE_CHARS);
+    if (!safeMessage) {
       return NextResponse.json(
         { success: false, error: 'message é obrigatório' },
         { status: 400 }
       );
     }
 
-    const response = await processTaxChat(message, context);
+    const response = await processTaxChat(
+      safeMessage,
+      sanitizeTaxChatContext(context),
+    );
 
     return NextResponse.json({
       success: true,
