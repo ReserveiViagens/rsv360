@@ -1,7 +1,12 @@
 /**
  * PR-10c-pré-a — resolveRefreshToken: cookie first, body legacy + flag.
+ * PR-10c-telemetry — Prometheus counters for deprecated body / cookie-required reject.
  */
 const { resolveRefreshToken } = require('../../api/v1/auth/resolve-refresh-token');
+const {
+  authRefreshDeprecatedTotal,
+  authRefreshCookieRequiredRejectedTotal,
+} = require('../../monitoring/prometheus');
 
 function mockReq({
   cookie,
@@ -46,8 +51,14 @@ describe('resolveRefreshToken (PR-10c-pré-a)', () => {
     expect(r).toEqual({ token: 'from-cookie', source: 'cookie' });
   });
 
-  it('accepts body legacy when flag OFF and logs deprecation path', () => {
+  it('accepts body legacy when flag OFF and logs deprecation path', async () => {
     process.env.AUTH_REFRESH_COOKIE_REQUIRED = 'false';
+    const before = await authRefreshDeprecatedTotal.get();
+    const beforeCount =
+      before.values.find(
+        (v: { labels: { transport?: string }; value: number }) =>
+          v.labels.transport === 'direct-body',
+      )?.value ?? 0;
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const r = resolveRefreshToken(
       mockReq({ body: { refresh_token: 'legacy' }, origin: 'http://localhost:3004' }),
@@ -57,6 +68,13 @@ describe('resolveRefreshToken (PR-10c-pré-a)', () => {
     const payload = JSON.parse(String(warn.mock.calls[0][0]));
     expect(payload.event).toBe('auth_refresh_body_deprecated');
     expect(payload.origin).toBe('http://localhost:3004');
+    const after = await authRefreshDeprecatedTotal.get();
+    const afterCount =
+      after.values.find(
+        (v: { labels: { transport?: string }; value: number }) =>
+          v.labels.transport === 'direct-body',
+      )?.value ?? 0;
+    expect(afterCount).toBe(beforeCount + 1);
     warn.mockRestore();
   });
 
@@ -74,14 +92,27 @@ describe('resolveRefreshToken (PR-10c-pré-a)', () => {
     warn.mockRestore();
   });
 
-  it('rejects direct body when AUTH_REFRESH_COOKIE_REQUIRED=true', () => {
+  it('rejects direct body when AUTH_REFRESH_COOKIE_REQUIRED=true', async () => {
     process.env.AUTH_REFRESH_COOKIE_REQUIRED = 'true';
+    const before = await authRefreshCookieRequiredRejectedTotal.get();
+    const beforeCount =
+      before.values.find(
+        (v: { labels: { transport?: string }; value: number }) =>
+          v.labels.transport === 'direct-body',
+      )?.value ?? 0;
     const r = resolveRefreshToken(mockReq({ body: { refresh_token: 'legacy' } }));
     expect(r).toEqual({
       error: true,
       status: 401,
       message: 'Refresh via cookie obrigatório',
     });
+    const after = await authRefreshCookieRequiredRejectedTotal.get();
+    const afterCount =
+      after.values.find(
+        (v: { labels: { transport?: string }; value: number }) =>
+          v.labels.transport === 'direct-body',
+      )?.value ?? 0;
+    expect(afterCount).toBe(beforeCount + 1);
   });
 
   it('allows BFF cookie transport when flag ON', () => {

@@ -24,8 +24,24 @@ const httpRequestsTotal = new client.Counter({
   labelNames: ['method', 'route', 'status_code', 'property_id'],
 });
 
+/** PR-10c-telemetry — body refresh while cookie path is preferred (pre-cutover signal). */
+const authRefreshDeprecatedTotal = new client.Counter({
+  name: 'rsv360_auth_refresh_deprecated_total',
+  help: 'Refresh token accepted from request body while cookie transport is preferred',
+  labelNames: ['transport'],
+});
+
+/** PR-10c-telemetry — AUTH_REFRESH_COOKIE_REQUIRED rejected a non-cookie body. */
+const authRefreshCookieRequiredRejectedTotal = new client.Counter({
+  name: 'rsv360_auth_refresh_cookie_required_rejected_total',
+  help: 'Refresh body rejected because AUTH_REFRESH_COOKIE_REQUIRED=true without bff-cookie transport',
+  labelNames: ['transport'],
+});
+
 metricsRegistry.registerMetric(httpRequestDuration);
 metricsRegistry.registerMetric(httpRequestsTotal);
+metricsRegistry.registerMetric(authRefreshDeprecatedTotal);
+metricsRegistry.registerMetric(authRefreshCookieRequiredRejectedTotal);
 
 function normalizeRoute(req) {
   return req.route?.path
@@ -59,4 +75,6 @@ module.exports = {
   metricsRegistry,
   metricsMiddleware,
   renderMetrics,
+  authRefreshDeprecatedTotal,
+  authRefreshCookieRequiredRejectedTotal,
 };

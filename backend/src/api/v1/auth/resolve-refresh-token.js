@@ -8,6 +8,10 @@ const {
   isRefreshCookieRequired,
   readCookieValue,
 } = require('@rsv360/shared');
+const {
+  authRefreshDeprecatedTotal,
+  authRefreshCookieRequiredRejectedTotal,
+} = require('../../../monitoring/prometheus');
 
 /**
  * @param {import('express').Request} req
@@ -22,6 +26,7 @@ function resolveRefreshToken(req, opts = {}) {
   const transport = String(req.get?.(REFRESH_TRANSPORT_HEADER) || '')
     .trim()
     .toLowerCase();
+  const transportLabel = transport || 'direct-body';
 
   if (fromCookie) {
     return { token: fromCookie, source: 'cookie' };
@@ -29,6 +34,7 @@ function resolveRefreshToken(req, opts = {}) {
 
   if (fromBody) {
     if (isRefreshCookieRequired() && transport !== 'bff-cookie') {
+      authRefreshCookieRequiredRejectedTotal.inc({ transport: transportLabel });
       return {
         error: true,
         status: 401,
@@ -37,10 +43,11 @@ function resolveRefreshToken(req, opts = {}) {
     }
     if (transport !== 'bff-cookie') {
       // Deprecation signal for planning cut-over after 10c-pré-b (no PII).
+      authRefreshDeprecatedTotal.inc({ transport: transportLabel });
       console.warn(
         JSON.stringify({
           event: 'auth_refresh_body_deprecated',
-          transport: transport || 'direct-body',
+          transport: transportLabel,
           origin: req.get?.('origin') || null,
           path: req.originalUrl || req.url || null,
         }),
