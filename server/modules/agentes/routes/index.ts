@@ -7,6 +7,7 @@ import { requireInstrutorAtivo } from '../middleware/require-instrutor-ativo';
 import { instrutorRateLimit } from '../middleware/instrutor-rate-limit';
 import { InstrutorService } from '../instrutor/instrutor.service';
 import { resolvePapel } from '../instrutor/papel';
+import { sanitizeLlmText, LLM_MAX_MESSAGE_CHARS } from '@rsv360/shared';
 
 type AuthedRequest = Request & {
   user?: { id?: number; role?: string };
@@ -65,10 +66,18 @@ router.post(
         });
       }
 
+      const pergunta = sanitizeLlmText(parsed.data.pergunta, LLM_MAX_MESSAGE_CHARS);
+      if (!pergunta) {
+        return res.status(400).json({
+          success: false,
+          error: 'Payload inválido',
+        });
+      }
+
       const user = (req as AuthedRequest).user;
       const papel = resolvePapel(user?.role, parsed.data.papel);
       const result = await InstrutorService.perguntar({
-        pergunta: parsed.data.pergunta,
+        pergunta,
         papel,
         canal: 'api',
         userId: user?.id,

@@ -5,12 +5,17 @@ import { SemanticCacheService } from '../semantic-cache.service';
 import { chatInstrutor, embedText, hasOpenAiKey } from './openai.client';
 import { buscarChunksRag } from './rag.service';
 import {
+  filterInstrutorOutput,
+  logInstrutorEvent,
+} from './output-filter';
+import {
   AGENTE_INSTRUTOR,
   VERSAO_BASE_PADRAO,
   normalizePergunta,
   type InstrutorPapel,
   type InstrutorResposta,
 } from './tipos';
+import { sanitizeLlmText, LLM_MAX_MESSAGE_CHARS } from '@rsv360/shared';
 
 const PEDIDO_VALOR =
   /\b(quanto custa|preço|preco|valor da diária|valor da diaria|\%\s*de\s*comiss|comiss[aã]o de\s*\d|r\$\s*\d)/i;
@@ -47,9 +52,20 @@ CONTEXTOS:
 ${ctx || '(nenhum chunk — diga que não sabe)'}`;
 }
 
-function ensureOndeClicar(texto: string, fallbackRota: string): string {
-  if (/onde clicar:/i.test(texto)) return texto.trim();
-  return `${texto.trim()}\n\nOnde clicar: ${fallbackRota}`;
+function defaultRota(papel: Exclude<InstrutorPapel, 'ambos'>): string {
+  return papel === 'anfitriao' ? '/anfitriao' : '/modulos';
+}
+
+function applyOutputFilter(
+  texto: string,
+  papel: Exclude<InstrutorPapel, 'ambos'>,
+  rotaHint?: string,
+): { resposta: string; filtered: boolean } {
+  const filtered = filterInstrutorOutput(
+    texto,
+    rotaHint || defaultRota(papel),
+  );
+  return { resposta: filtered.text, filtered: filtered.filtered };
 }
 
 export type T1Result = InstrutorResposta & {
@@ -57,18 +73,21 @@ export type T1Result = InstrutorResposta & {
   tokensOut?: number;
   modelo?: string | null;
   entradaHash: string;
+  outputFiltered?: boolean;
 };
 
 /**
  * T1: cache exato → semântico → RAG + LLM.
  * Fail-safe sem OPENAI_API_KEY → 503 (nunca lança).
+ * PR-13d: output filter + logging sem PII.
  */
 export async function executarT1(
   pergunta: string,
   papel: Exclude<InstrutorPapel, 'ambos'>,
 ): Promise<T1Result> {
   const cfg = await AgentesConfigService.obterConfig();
-  const perguntaNorm = normalizePergunta(pergunta);
+  const perguntaSafe = sanitizeLlmText(pergunta, LLM_MAX_MESSAGE_CHARS) || normalizePergunta(pergunta);
+  const perguntaNorm = normalizePergunta(perguntaSafe);
   const entradaHash = hashEntrada(`${papel}|${perguntaNorm}`);
   const versaoBase = VERSAO_BASE_PADRAO;
   const carimbo = carimboInstrutor(papel, versaoBase);
@@ -76,13 +95,23 @@ export async function executarT1(
 
   const exact = await getExactCache(AGENTE_INSTRUTOR, entradaHash);
   if (exact) {
+    const { resposta, filtered } = applyOutputFilter(exact, papel);
+    if (filtered) {
+      await setExactCache(AGENTE_INSTRUTOR, entradaHash, resposta, ttlExact);
+      logInstrutorEvent('output_filtered', {
+        source: 'exact_cache',
+        papel,
+        entradaHashPrefix: entradaHash.slice(0, 12),
+      });
+    }
     return {
-      resposta: exact,
+      resposta,
       tier: 't1',
       cacheHit: 'exact',
       status: 200,
       entradaHash,
       modelo: null,
+      outputFiltered: filtered,
     };
   }
 
@@ -98,29 +127,43 @@ export async function executarT1(
   }
 
   try {
-    const { embedding, tokens: embTokens } = await embedText(pergunta, cfg.modeloEmbedding);
+    const { embedding, tokens: embTokens } = await embedText(perguntaSafe, cfg.modeloEmbedding);
 
     const semantic = await SemanticCacheService.buscar(embedding, carimbo, { tipo: 'instrutor' });
     if (semantic?.tier === 'hit') {
-      await setExactCache(AGENTE_INSTRUTOR, entradaHash, semantic.resposta, ttlExact);
+      const { resposta, filtered } = applyOutputFilter(semantic.resposta, papel);
+      await setExactCache(AGENTE_INSTRUTOR, entradaHash, resposta, ttlExact);
+      if (filtered) {
+        logInstrutorEvent('output_filtered', {
+          source: 'semantic_cache',
+          papel,
+          entradaHashPrefix: entradaHash.slice(0, 12),
+        });
+      }
       return {
-        resposta: semantic.resposta,
+        resposta,
         tier: 't1',
         cacheHit: 'semantic',
         status: 200,
         entradaHash,
         tokensIn: embTokens,
         modelo: cfg.modeloEmbedding,
+        outputFiltered: filtered,
       };
     }
 
-    if (solicitaValorConcreto(pergunta)) {
+    if (solicitaValorConcreto(perguntaSafe)) {
       const rota = papel === 'anfitriao' ? '/anfitriao/comissoes' : '/financeiro';
-      const resposta = ensureOndeClicar(
+      const { resposta } = applyOutputFilter(
         'Não informo valores, preços nem percentuais de comissão. Confirme no sistema ou com a equipe financeira responsável.',
+        papel,
         rota,
       );
       await setExactCache(AGENTE_INSTRUTOR, entradaHash, resposta, ttlExact);
+      logInstrutorEvent('blocked_value_request', {
+        papel,
+        entradaHashPrefix: entradaHash.slice(0, 12),
+      });
       return {
         resposta,
         tier: 't1',
@@ -129,24 +172,34 @@ export async function executarT1(
         entradaHash,
         tokensIn: embTokens,
         modelo: cfg.modeloEmbedding,
+        outputFiltered: true,
       };
     }
 
     const chunks = await buscarChunksRag(embedding, papel, cfg.ragTopK);
     const fallbackRota =
-      chunks[0]?.rotas?.[0] || (papel === 'anfitriao' ? '/anfitriao' : '/modulos');
+      chunks[0]?.rotas?.[0] || defaultRota(papel);
 
     const { content, tokensIn, tokensOut } = await chatInstrutor({
       system: buildSystemPrompt(chunks),
-      user: pergunta,
+      user: perguntaSafe,
       modelo: cfg.modeloT1,
     });
 
-    const resposta = ensureOndeClicar(
+    const { resposta, filtered } = applyOutputFilter(
       content ||
         'Não encontrei informação suficiente nos guias. Fale com a equipe de suporte.',
+      papel,
       fallbackRota,
     );
+
+    if (filtered) {
+      logInstrutorEvent('output_filtered', {
+        source: 'llm',
+        papel,
+        entradaHashPrefix: entradaHash.slice(0, 12),
+      });
+    }
 
     await setExactCache(AGENTE_INSTRUTOR, entradaHash, resposta, ttlExact);
     const expira = new Date();
@@ -171,8 +224,14 @@ export async function executarT1(
       tokensIn: embTokens + tokensIn,
       tokensOut,
       modelo: cfg.modeloT1,
+      outputFiltered: filtered,
     };
   } catch (err) {
+    logInstrutorEvent('t1_failsafe', {
+      papel,
+      entradaHashPrefix: entradaHash.slice(0, 12),
+      errName: (err as Error).name || 'Error',
+    });
     console.error('[instrutor] T1 falhou (fail-safe 503):', (err as Error).message);
     return {
       resposta: 'Instrutor temporariamente indisponível',

@@ -3,6 +3,8 @@ import { AgentesExecucoesService } from '../execucoes.service';
 import { hashEntrada } from '../exact-cache';
 import { normalizePergunta, type InstrutorPapel } from './tipos';
 import { runInstrutorGraph } from './graph';
+import { logInstrutorEvent } from './output-filter';
+import { sanitizeLlmText, LLM_MAX_MESSAGE_CHARS } from '@rsv360/shared';
 
 export class InstrutorService {
   static async perguntar(input: {
@@ -12,14 +14,31 @@ export class InstrutorService {
     userId?: number;
   }) {
     const started = Date.now();
-    const result = await runInstrutorGraph(input.pergunta, input.papel, input.userId
-      ? `instrutor:u${input.userId}`
-      : undefined);
+    const perguntaSafe =
+      sanitizeLlmText(input.pergunta, LLM_MAX_MESSAGE_CHARS) ||
+      normalizePergunta(input.pergunta);
+
+    const result = await runInstrutorGraph(
+      perguntaSafe,
+      input.papel,
+      input.userId ? `instrutor:u${input.userId}` : undefined,
+    );
 
     const entradaHash =
       result.entradaHash ||
-      hashEntrada(`${input.papel}|${normalizePergunta(input.pergunta)}`) ||
-      createHash('sha256').update(input.pergunta).digest('hex');
+      hashEntrada(`${input.papel}|${normalizePergunta(perguntaSafe)}`) ||
+      createHash('sha256').update(perguntaSafe).digest('hex');
+
+    logInstrutorEvent('perguntar_done', {
+      papel: input.papel,
+      canal: input.canal ?? 'api',
+      tier: result.tier,
+      cacheHit: result.cacheHit,
+      status: result.status,
+      entradaHashPrefix: entradaHash.slice(0, 12),
+      duracaoMs: Date.now() - started,
+      hasUserId: Boolean(input.userId),
+    });
 
     try {
       await AgentesExecucoesService.registrar({
