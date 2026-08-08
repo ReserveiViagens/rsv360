@@ -1,10 +1,18 @@
 /**
- * PR-13e — shared LLM chat gateway unit tests.
+ * PR-13e / 13e-followup-a — shared LLM chat gateway unit tests.
  */
-import { describe, it, expect, jest } from '@jest/globals';
-import { llmChatCompletion } from '@rsv360/shared';
+import { beforeEach, describe, it, expect, jest } from '@jest/globals';
+import {
+  clearLlmGatewayBudgetForTests,
+  LLM_GATEWAY_BUDGET_MAX_CALLS,
+  llmChatCompletion,
+} from '@rsv360/shared';
 
 describe('PR-13e — llmChatCompletion gateway', () => {
+  beforeEach(() => {
+    clearLlmGatewayBudgetForTests();
+  });
+
   it('fails closed without API key', async () => {
     const result = await llmChatCompletion(
       {
@@ -105,5 +113,80 @@ describe('PR-13e — llmChatCompletion gateway', () => {
       expect(result.error).toBe('http_error');
       expect(result.status).toBe(429);
     }
+  });
+
+  it('truncates output when over maxOutputChars', async () => {
+    const long = 'x'.repeat(500);
+    const fetchImpl = jest.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        model: 'gpt-4o-mini',
+        choices: [{ message: { content: long } }],
+        usage: { prompt_tokens: 1, completion_tokens: 10 },
+      }),
+    })) as unknown as typeof fetch;
+
+    const result = await llmChatCompletion(
+      {
+        surface: 'ai-search',
+        messages: [{ role: 'user', content: 'q' }],
+        maxOutputChars: 100,
+      },
+      { apiKey: 'sk-test', fetchImpl },
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.content).toHaveLength(100);
+      expect(result.truncated).toBe(true);
+    }
+  });
+
+  it('rejects when per-surface call budget is exceeded', async () => {
+    const fetchImpl = jest.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        model: 'gpt-4o-mini',
+        choices: [{ message: { content: 'ok' } }],
+        usage: { prompt_tokens: 1, completion_tokens: 1 },
+      }),
+    })) as unknown as typeof fetch;
+
+    const now = () => 1_000_000;
+    for (let i = 0; i < LLM_GATEWAY_BUDGET_MAX_CALLS; i++) {
+      const ok = await llmChatCompletion(
+        {
+          surface: 'budget-surface',
+          messages: [{ role: 'user', content: 'ping' }],
+          maxTokens: 1,
+        },
+        { apiKey: 'sk-test', fetchImpl, now },
+      );
+      expect(ok.ok).toBe(true);
+    }
+
+    const blocked = await llmChatCompletion(
+      {
+        surface: 'budget-surface',
+        messages: [{ role: 'user', content: 'ping' }],
+        maxTokens: 1,
+      },
+      { apiKey: 'sk-test', fetchImpl, now },
+    );
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) expect(blocked.error).toBe('budget_exceeded');
+
+    // Other surfaces remain independent
+    const other = await llmChatCompletion(
+      {
+        surface: 'other-surface',
+        messages: [{ role: 'user', content: 'ping' }],
+        maxTokens: 1,
+      },
+      { apiKey: 'sk-test', fetchImpl, now },
+    );
+    expect(other.ok).toBe(true);
   });
 });
