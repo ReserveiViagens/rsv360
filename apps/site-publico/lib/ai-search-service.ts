@@ -1,7 +1,10 @@
 /**
  * ✅ TAREFA LOW-2: Serviço de Busca Conversacional com AI
  * Integração com OpenAI para busca conversacional inteligente
+ * PR-13e-followup-a: via shared llmChatCompletion gateway
  */
+
+import { llmChatCompletion } from '@rsv360/shared';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -125,30 +128,27 @@ export class AISearchService {
         ...history.slice(-5), // Últimas 5 mensagens
       ];
 
-      // Chamar OpenAI API
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // PR-13e-followup-a: shared gateway (timeout / budget / sanitize / safe logs)
+      const result = await llmChatCompletion(
+        {
+          surface: 'ai-search',
           model: this.model,
-          messages: messages.map(msg => ({
+          temperature: 0.7,
+          maxTokens: 500,
+          maxOutputChars: 2_000,
+          messages: messages.map((msg) => ({
             role: msg.role,
             content: msg.content,
           })),
-          temperature: 0.7,
-          max_tokens: 500,
-        }),
-      });
+        },
+        { apiKey: this.apiKey },
+      );
 
-      if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
+      if (!result.ok) {
+        throw new Error(`OpenAI gateway error: ${result.error}`);
       }
 
-      const data = await response.json();
-      const assistantMessage = data.choices[0]?.message?.content || 'Desculpe, não entendi.';
+      const assistantMessage = result.content || 'Desculpe, não entendi.';
 
       // Adicionar resposta ao histórico
       const assistantMsg: ChatMessage = {

@@ -1,7 +1,14 @@
 /**
  * Classificador de despesas com IA (OpenAI)
  * Categoriza despesas a partir de descrição para dedução tributária
+ * PR-13e-followup-a: via shared llmChatCompletion gateway
  */
+
+import {
+  LLM_MAX_MESSAGE_CHARS,
+  llmChatCompletion,
+  sanitizeLlmText,
+} from '@rsv360/shared';
 
 const CATEGORIES = [
   'marketing',
@@ -48,58 +55,53 @@ export async function classifyExpense(
   description: string,
   amount?: number
 ): Promise<ClassificationResult> {
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    return classifyByRules(description);
+  const safeDescription = sanitizeLlmText(description, LLM_MAX_MESSAGE_CHARS);
+  if (!safeDescription) {
+    return classifyByRules(description || '');
   }
 
-  try {
-    const prompt = `Classifique a despesa abaixo em UMA das categorias: ${CATEGORIES.join(', ')}.
-Despesa: "${description}"${amount != null ? ` (R$ ${amount.toFixed(2)})` : ''}
+  const amountPart =
+    typeof amount === 'number' && Number.isFinite(amount)
+      ? ` (R$ ${amount.toFixed(2)})`
+      : '';
+
+  const prompt = `Classifique a despesa abaixo em UMA das categorias: ${CATEGORIES.join(', ')}.
+Despesa: "${safeDescription}"${amountPart}
 
 Responda APENAS com JSON: {"category": "categoria_em_ingles", "confidence": 0.0 a 1.0}
 Use a categoria mais específica possível.`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.2,
-        max_tokens: 80,
-      }),
-    });
+  const result = await llmChatCompletion({
+    surface: 'expense-classifier',
+    model: 'gpt-4o-mini',
+    temperature: 0.2,
+    maxTokens: 80,
+    maxOutputChars: 200,
+    messages: [{ role: 'user', content: prompt }],
+  });
 
-    if (!response.ok) {
-      return classifyByRules(description);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || '';
-    const match = content.match(/\{"category":\s*"([^"]+)",\s*"confidence":\s*([\d.]+)/);
-    if (match) {
-      let category = match[1].toLowerCase().replace(/\s+/g, '_');
-      if (!CATEGORIES.includes(category)) {
-        const found = CATEGORIES.find((c) => category.includes(c) || c.includes(category));
-        category = found || 'outros';
-      }
-      const confidence = Math.min(1, Math.max(0, parseFloat(match[2])));
-      return {
-        category,
-        confidence,
-        suggested_category_pt: CATEGORY_LABELS[category] || category,
-      };
-    }
-  } catch (err) {
-    console.warn('[expense-classifier] OpenAI error:', err);
+  if (!result.ok) {
+    return classifyByRules(safeDescription);
   }
 
-  return classifyByRules(description);
+  const match = result.content.match(
+    /\{"category":\s*"([^"]+)",\s*"confidence":\s*([\d.]+)/,
+  );
+  if (match) {
+    let category = match[1].toLowerCase().replace(/\s+/g, '_');
+    if (!CATEGORIES.includes(category)) {
+      const found = CATEGORIES.find((c) => category.includes(c) || c.includes(category));
+      category = found || 'outros';
+    }
+    const confidence = Math.min(1, Math.max(0, parseFloat(match[2])));
+    return {
+      category,
+      confidence,
+      suggested_category_pt: CATEGORY_LABELS[category] || category,
+    };
+  }
+
+  return classifyByRules(safeDescription);
 }
 
 /**
