@@ -1,4 +1,8 @@
 import OpenAI from 'openai';
+import {
+  llmChatCompletion,
+  type LlmChatGatewayDeps,
+} from '@rsv360/shared';
 import { AGENTES_CONFIG_PADRAO } from '../schema';
 
 export function hasOpenAiKey(): boolean {
@@ -37,23 +41,40 @@ export async function embedText(
   return { embedding, tokens: res.usage?.total_tokens ?? 0 };
 }
 
-export async function chatInstrutor(opts: {
-  system: string;
-  user: string;
-  modelo: string;
-}): Promise<{ content: string; tokensIn: number; tokensOut: number }> {
-  const res = await getClient().chat.completions.create({
-    model: opts.modelo,
-    temperature: 0.2,
-    messages: [
-      { role: 'system', content: opts.system },
-      { role: 'user', content: opts.user },
-    ],
-  });
-  const content = res.choices[0]?.message?.content?.trim() || '';
+/**
+ * PR-13e-followup-c: Instrutor chat via shared llmChatCompletion.
+ * Embeddings remain on the OpenAI SDK (not chat.completions).
+ */
+export async function chatInstrutor(
+  opts: {
+    system: string;
+    user: string;
+    modelo: string;
+  },
+  deps: LlmChatGatewayDeps = {},
+): Promise<{ content: string; tokensIn: number; tokensOut: number }> {
+  const result = await llmChatCompletion(
+    {
+      surface: 'instrutor',
+      model: opts.modelo || process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      temperature: 0.2,
+      maxTokens: 800,
+      maxOutputChars: 4_000,
+      messages: [
+        { role: 'system', content: opts.system },
+        { role: 'user', content: opts.user },
+      ],
+    },
+    deps,
+  );
+
+  if (!result.ok) {
+    throw new Error(`LLM falhou: ${result.error}`);
+  }
+
   return {
-    content,
-    tokensIn: res.usage?.prompt_tokens ?? 0,
-    tokensOut: res.usage?.completion_tokens ?? 0,
+    content: result.content,
+    tokensIn: result.tokensIn ?? 0,
+    tokensOut: result.tokensOut ?? 0,
   };
 }
