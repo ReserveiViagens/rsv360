@@ -1,7 +1,8 @@
 /**
- * PR-13e / 13e-followup-a — shared LLM chat gateway (OpenAI chat.completions).
+ * PR-13e / 13e-followup-a / 13e-followup-d — shared LLM chat gateway.
  * Centralizes: API key fail-closed, timeout, user-message sanitize, safe logs,
- * per-surface process-local budget, output char redaction.
+ * per-surface budget (process-local + optional Redis), circuit breaker,
+ * output char redaction.
  * Does not log prompts, completions, or secrets.
  */
 
@@ -19,6 +20,10 @@ export const LLM_GATEWAY_BUDGET_MAX_CALLS = 60;
 export const LLM_GATEWAY_BUDGET_WINDOW_MS = 60_000;
 /** Process-local token budget (prompt+completion) per surface per window. */
 export const LLM_GATEWAY_BUDGET_MAX_TOKENS = 80_000;
+/** Consecutive upstream failures before opening the circuit. */
+export const LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD = 5;
+/** How long the circuit stays open (ms). */
+export const LLM_GATEWAY_CIRCUIT_COOLDOWN_MS = 30_000;
 
 export type LlmChatRole = 'system' | 'user' | 'assistant';
 
@@ -61,25 +66,45 @@ export type LlmChatGatewayErr = {
     | 'http_error'
     | 'empty'
     | 'network'
-    | 'budget_exceeded';
+    | 'budget_exceeded'
+    | 'circuit_open';
   status?: number;
 };
 
 export type LlmChatGatewayResult = LlmChatGatewayOk | LlmChatGatewayErr;
+
+/** Duck-typed Redis (ioredis-compatible). Optional — no ioredis dep in shared. */
+export type LlmGatewayRedisLike = {
+  incr(key: string): Promise<number>;
+  incrby(key: string, increment: number): Promise<number>;
+  expire(key: string, seconds: number): Promise<unknown>;
+};
 
 export type LlmChatGatewayDeps = {
   apiKey?: string | null;
   fetchImpl?: typeof fetch;
   now?: () => number;
   log?: (event: string, meta: Record<string, string | number | boolean | null>) => void;
+  /** When set, budget is counted in Redis (multi-instance). Falls back to memory on Redis errors. */
+  redis?: LlmGatewayRedisLike | null;
 };
 
 type BudgetBucket = { windowStart: number; calls: number; tokens: number };
+type CircuitState = { failures: number; openUntil: number };
 
 const budgetBuckets = new Map<string, BudgetBucket>();
+const circuitBySurface = new Map<string, CircuitState>();
+let globalRedis: LlmGatewayRedisLike | null = null;
+
+/** Process-wide Redis for budget (call once at boot). Tests should pass deps.redis instead. */
+export function setLlmGatewayRedis(client: LlmGatewayRedisLike | null): void {
+  globalRedis = client;
+}
 
 export function clearLlmGatewayBudgetForTests(): void {
   budgetBuckets.clear();
+  circuitBySurface.clear();
+  globalRedis = null;
 }
 
 function checkAndReserveBudget(
@@ -111,6 +136,74 @@ function estimateRequestTokens(messages: LlmChatMessage[], maxTokens: number): n
   const chars = messages.reduce((n, m) => n + (m.content?.length || 0), 0);
   // ~4 chars/token rough; include completion budget
   return Math.ceil(chars / 4) + maxTokens;
+}
+
+function isCircuitOpen(surface: string, now: number): boolean {
+  const c = circuitBySurface.get(surface);
+  return Boolean(c && c.openUntil > now);
+}
+
+function recordCircuitSuccess(surface: string): void {
+  circuitBySurface.delete(surface);
+}
+
+function recordCircuitFailure(surface: string, now: number): void {
+  const existing = circuitBySurface.get(surface);
+  const failures = (existing?.failures ?? 0) + 1;
+  if (failures >= LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD) {
+    circuitBySurface.set(surface, {
+      failures,
+      openUntil: now + LLM_GATEWAY_CIRCUIT_COOLDOWN_MS,
+    });
+    return;
+  }
+  circuitBySurface.set(surface, {
+    failures,
+    openUntil: existing?.openUntil ?? 0,
+  });
+}
+
+function shouldTripCircuit(status?: number): boolean {
+  if (status === undefined) return true; // timeout / network
+  return status === 429 || status >= 500;
+}
+
+function redisWindowId(now: number): number {
+  return Math.floor(now / LLM_GATEWAY_BUDGET_WINDOW_MS);
+}
+
+async function checkAndReserveBudgetRedis(
+  redis: LlmGatewayRedisLike,
+  surface: string,
+  estimatedTokens: number,
+  now: number,
+): Promise<{ allowed: true } | { allowed: false; reason: 'calls' | 'tokens' }> {
+  const windowId = redisWindowId(now);
+  const ttlSec = Math.ceil(LLM_GATEWAY_BUDGET_WINDOW_MS / 1000);
+  const callsKey = `llm-gw:c:${surface}:${windowId}`;
+  const tokensKey = `llm-gw:t:${surface}:${windowId}`;
+  const calls = await redis.incr(callsKey);
+  if (calls === 1) await redis.expire(callsKey, ttlSec);
+  const tokens = await redis.incrby(tokensKey, estimatedTokens);
+  if (tokens === estimatedTokens) await redis.expire(tokensKey, ttlSec);
+  if (calls > LLM_GATEWAY_BUDGET_MAX_CALLS) {
+    return { allowed: false, reason: 'calls' };
+  }
+  if (tokens > LLM_GATEWAY_BUDGET_MAX_TOKENS) {
+    return { allowed: false, reason: 'tokens' };
+  }
+  return { allowed: true };
+}
+
+async function addRedisTokenDelta(
+  redis: LlmGatewayRedisLike,
+  surface: string,
+  delta: number,
+  now: number,
+): Promise<void> {
+  if (delta <= 0) return;
+  const windowId = redisWindowId(now);
+  await redis.incrby(`llm-gw:t:${surface}:${windowId}`, delta);
 }
 
 function defaultLog(
@@ -201,8 +294,24 @@ export async function llmChatCompletion(
       : 0.3;
 
   const now = nowFn();
+  if (isCircuitOpen(surface, now)) {
+    log('circuit_open', { surface });
+    return { ok: false, error: 'circuit_open' };
+  }
+
   const estimated = estimateRequestTokens(messages, maxTokens);
-  const budget = checkAndReserveBudget(surface, estimated, now);
+  let budget: { allowed: true } | { allowed: false; reason: 'calls' | 'tokens' };
+  const redis = deps.redis ?? globalRedis;
+  if (redis) {
+    try {
+      budget = await checkAndReserveBudgetRedis(redis, surface, estimated, now);
+    } catch {
+      log('redis_budget_fallback', { surface });
+      budget = checkAndReserveBudget(surface, estimated, now);
+    }
+  } else {
+    budget = checkAndReserveBudget(surface, estimated, now);
+  }
   if (!budget.allowed) {
     log('budget_exceeded', {
       surface,
@@ -235,6 +344,9 @@ export async function llmChatCompletion(
     });
 
     if (!response.ok) {
+      if (shouldTripCircuit(response.status)) {
+        recordCircuitFailure(surface, nowFn());
+      }
       log('http_error', {
         surface,
         status: response.status,
@@ -266,10 +378,19 @@ export async function llmChatCompletion(
       (typeof tokensIn === 'number' ? tokensIn : 0) +
       (typeof tokensOut === 'number' ? tokensOut : 0);
     if (actual > estimated) {
+      const delta = actual - estimated;
       const b = budgetBuckets.get(surface);
-      if (b) b.tokens += actual - estimated;
+      if (b) b.tokens += delta;
+      if (redis) {
+        try {
+          await addRedisTokenDelta(redis, surface, delta, nowFn());
+        } catch {
+          /* memory already updated when fallback was used */
+        }
+      }
     }
 
+    recordCircuitSuccess(surface);
     log('ok', {
       surface,
       model: payload.model || model,
@@ -290,9 +411,11 @@ export async function llmChatCompletion(
   } catch (err) {
     const name = (err as Error)?.name || '';
     if (name === 'AbortError') {
+      recordCircuitFailure(surface, nowFn());
       log('timeout', { surface, model, timeoutMs });
       return { ok: false, error: 'timeout' };
     }
+    recordCircuitFailure(surface, nowFn());
     log('network', { surface, model, errName: name || 'Error' });
     return { ok: false, error: 'network' };
   } finally {

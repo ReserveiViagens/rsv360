@@ -5,7 +5,9 @@ import { beforeEach, describe, it, expect, jest } from '@jest/globals';
 import {
   clearLlmGatewayBudgetForTests,
   LLM_GATEWAY_BUDGET_MAX_CALLS,
+  LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD,
   llmChatCompletion,
+  type LlmGatewayRedisLike,
 } from '@rsv360/shared';
 
 describe('PR-13e — llmChatCompletion gateway', () => {
@@ -188,5 +190,142 @@ describe('PR-13e — llmChatCompletion gateway', () => {
       { apiKey: 'sk-test', fetchImpl, now },
     );
     expect(other.ok).toBe(true);
+  });
+
+  it('opens circuit after consecutive upstream failures', async () => {
+    const fetchImpl = jest.fn(async () => {
+      const err = new Error('down');
+      err.name = 'AbortError';
+      throw err;
+    });
+
+    for (let i = 0; i < LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD; i++) {
+      const r = await llmChatCompletion(
+        {
+          surface: 'circuit-surface',
+          messages: [{ role: 'user', content: 'ping' }],
+          timeoutMs: 1000,
+        },
+        {
+          apiKey: 'sk-test',
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+          now: () => 1_000_000,
+        },
+      );
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.error).toBe('timeout');
+    }
+
+    const blocked = await llmChatCompletion(
+      {
+        surface: 'circuit-surface',
+        messages: [{ role: 'user', content: 'ping' }],
+        timeoutMs: 1000,
+      },
+      {
+        apiKey: 'sk-test',
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+        now: () => 1_000_000,
+      },
+    );
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) expect(blocked.error).toBe('circuit_open');
+    expect(fetchImpl).toHaveBeenCalledTimes(LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD);
+
+    const other = await llmChatCompletion(
+      {
+        surface: 'other-circuit',
+        messages: [{ role: 'user', content: 'ping' }],
+        timeoutMs: 1000,
+      },
+      {
+        apiKey: 'sk-test',
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+        now: () => 1_000_000,
+      },
+    );
+    expect(other.ok).toBe(false);
+    if (!other.ok) expect(other.error).toBe('timeout');
+  });
+
+  it('uses Redis budget and falls back to memory if Redis throws', async () => {
+    const fetchImpl = jest.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        model: 'gpt-4o-mini',
+        choices: [{ message: { content: 'ok' } }],
+        usage: { prompt_tokens: 1, completion_tokens: 1 },
+      }),
+    }));
+
+    let calls = 0;
+    const redis: LlmGatewayRedisLike = {
+      incr: async () => {
+        calls += 1;
+        return calls;
+      },
+      incrby: async (_key, n) => n,
+      expire: async () => 1,
+    };
+
+    for (let i = 0; i < LLM_GATEWAY_BUDGET_MAX_CALLS; i++) {
+      const ok = await llmChatCompletion(
+        {
+          surface: 'redis-budget',
+          messages: [{ role: 'user', content: 'ping' }],
+          maxTokens: 1,
+        },
+        {
+          apiKey: 'sk-test',
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+          redis,
+          now: () => 2_000_000,
+        },
+      );
+      expect(ok.ok).toBe(true);
+    }
+
+    const blocked = await llmChatCompletion(
+      {
+        surface: 'redis-budget',
+        messages: [{ role: 'user', content: 'ping' }],
+        maxTokens: 1,
+      },
+      {
+        apiKey: 'sk-test',
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+        redis,
+        now: () => 2_000_000,
+      },
+    );
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) expect(blocked.error).toBe('budget_exceeded');
+
+    const falling: LlmGatewayRedisLike = {
+      incr: async () => {
+        throw new Error('redis-down');
+      },
+      incrby: async () => {
+        throw new Error('redis-down');
+      },
+      expire: async () => {
+        throw new Error('redis-down');
+      },
+    };
+    const fallback = await llmChatCompletion(
+      {
+        surface: 'redis-fallback',
+        messages: [{ role: 'user', content: 'ping' }],
+        maxTokens: 1,
+      },
+      {
+        apiKey: 'sk-test',
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+        redis: falling,
+        now: () => 3_000_000,
+      },
+    );
+    expect(fallback.ok).toBe(true);
   });
 });
