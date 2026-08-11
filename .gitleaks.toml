@@ -1,5 +1,5 @@
 # Placeholders documentados - nao sao secrets vivos (PR-09a).
-# Tip-tree scan (--no-git). Full-history report-only deferred to 09b.
+# Tip-tree scan (--no-git). Full-history report-only = PR-09c (gitleaks-history.yml).
 # Global allowlist MUST be [allowlist] (singular) — [[allowlists]] is ignored with useDefault.
 title = "rsv360 gitleaks"
 

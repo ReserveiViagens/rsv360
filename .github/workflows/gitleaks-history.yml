@@ -1,0 +1,69 @@
+name: Gitleaks History (report-only)
+
+# PR-09c — full git history scan, report-only (never fail-closed).
+# Tip-tree fail-closed remains in gitleaks.yml (PR-09a).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+  pull_request:
+    paths:
+      - ".github/workflows/gitleaks-history.yml"
+      - ".gitleaks.toml"
+      - "docs/evidence/pr-09c/**"
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks-history:
+    name: gitleaks-history-report
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Report-only: do not block merge / required checks.
+    continue-on-error: true
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v7
+        with:
+          lfs: false
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: "8.24.2"
+        run: |
+          set -euo pipefail
+          curl -sSL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp gitleaks
+          sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Detect secrets (git history, report-only)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          # exit-code 0 always — findings are informational (FPs known in history).
+          gitleaks detect \
+            --source . \
+            --config .gitleaks.toml \
+            --report-path artifacts/gitleaks-history-redacted.json \
+            --report-format json \
+            --verbose \
+            --redact \
+            --exit-code 0
+          if [ -f artifacts/gitleaks-history-redacted.json ]; then
+            COUNT=$(node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('artifacts/gitleaks-history-redacted.json','utf8')); console.log(Array.isArray(j)?j.length:0)")
+            echo "gitleaks_history_findings_count=${COUNT}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Findings (redacted report): ${COUNT}"
+          fi
+
+      - name: Upload redacted report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-history-redacted
+          path: artifacts/gitleaks-history-redacted.json
+          if-no-files-found: warn
+          retention-days: 14
