@@ -1,7 +1,24 @@
 import * as XLSX from 'xlsx';
 import mammoth from 'mammoth';
+import {
+  LLM_GATEWAY_HARD_MAX_TOKENS,
+  llmChatCompletion,
+  type LlmChatGatewayDeps,
+} from '@rsv360/shared';
 import type { AcomodacaoImportDTO, FormatoImportacao } from './acomodacao-import.types';
 import { acomodacaoImportSchema } from './acomodacao-import.types';
+
+/** Import docs are larger than chat prompts; keep prior 120k ceiling. */
+const ACOM_IMPORT_MAX_INPUT_CHARS = 120_000;
+const ACOM_IMPORT_SYSTEM_PROMPT =
+  'Extraia acomodações do texto e retorne JSON {"itens":[...]} com campos snake_case: codigo_externo, empreendimento, tipo, titulo, quartos, capacidade_max, config_sala, config_banheiro, preco_diaria, utensilios, eletrodomesticos, amenidades (listas). Use enums config_sala: nenhum|cama_na_sala|sofa_cama e config_banheiro: suite_wc_social|so_suite|so_wc_social.';
+
+/** Strip control chars without collapsing whitespace (document structure). */
+function sanitizeImportDocumentText(texto: string): string {
+  return texto
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
+    .slice(0, ACOM_IMPORT_MAX_INPUT_CHARS);
+}
 
 const EXT_POR_FORMATO: Record<string, FormatoImportacao> = {
   xlsx: 'xlsx',
@@ -109,7 +126,10 @@ function mapLlmItem(item: Record<string, unknown>): AcomodacaoImportDTO {
   return parsed;
 }
 
-export async function extrairViaLLM(texto: string): Promise<Record<string, unknown>[]> {
+export async function extrairViaLLM(
+  texto: string,
+  deps: LlmChatGatewayDeps = {},
+): Promise<Record<string, unknown>[]> {
   const jsonInline = texto.match(/\[[\s\S]*\]/);
   if (jsonInline) {
     try {
@@ -120,46 +140,47 @@ export async function extrairViaLLM(texto: string): Promise<Record<string, unkno
     }
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = (deps.apiKey ?? process.env.OPENAI_API_KEY ?? '').trim();
   if (!apiKey) {
     throw new Error(
       'OPENAI_API_KEY ausente — necessária para importar .md/.docx/.pdf não estruturados',
     );
   }
 
-  const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
+  // PR-13e-followup-b: shared gateway (timeout / budget / safe logs).
+  // sanitizeUser=false: chat cap (2k) + whitespace collapse would break import docs.
+  const result = await llmChatCompletion(
+    {
+      surface: 'acomodacoes-import',
+      model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       temperature: 0,
-      response_format: { type: 'json_object' },
+      maxTokens: LLM_GATEWAY_HARD_MAX_TOKENS,
+      maxOutputChars: 20_000,
+      jsonObject: true,
+      sanitizeUser: false,
       messages: [
-        {
-          role: 'system',
-          content:
-            'Extraia acomodações do texto e retorne JSON {"itens":[...]} com campos snake_case: codigo_externo, empreendimento, tipo, titulo, quartos, capacidade_max, config_sala, config_banheiro, preco_diaria, utensilios, eletrodomesticos, amenidades (listas). Use enums config_sala: nenhum|cama_na_sala|sofa_cama e config_banheiro: suite_wc_social|so_suite|so_wc_social.',
-        },
-        { role: 'user', content: texto.slice(0, 120_000) },
+        { role: 'system', content: ACOM_IMPORT_SYSTEM_PROMPT },
+        { role: 'user', content: sanitizeImportDocumentText(texto) },
       ],
-    }),
-  });
+    },
+    { ...deps, apiKey },
+  );
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`LLM falhou: ${err.slice(0, 200)}`);
+  if (!result.ok) {
+    const statusPart = result.status ? ` (${result.status})` : '';
+    throw new Error(`LLM falhou: ${result.error}${statusPart}`);
   }
 
-  const payload = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  const content = payload.choices?.[0]?.message?.content ?? '{"itens":[]}';
-  const parsed = JSON.parse(content) as { itens?: Record<string, unknown>[] };
-  const itens = parsed.itens ?? (Array.isArray(parsed) ? parsed : []);
+  const content = result.content || '{"itens":[]}';
+  let parsed: { itens?: Record<string, unknown>[] } | Record<string, unknown>[];
+  try {
+    parsed = JSON.parse(content) as { itens?: Record<string, unknown>[] };
+  } catch {
+    throw new Error('LLM falhou: empty');
+  }
+  const itens =
+    (parsed as { itens?: Record<string, unknown>[] }).itens ??
+    (Array.isArray(parsed) ? parsed : []);
   return itens.map((item) => {
     try {
       return mapLlmItem(item) as unknown as Record<string, unknown>;
