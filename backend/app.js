@@ -127,6 +127,34 @@ async function createApp() {
   await initMpWebhookIpLimiter();
   console.log('[BOOT] mpWebhookIpLimiter Redis/memória inicializado ✓');
 
+  // PR-13e-followup-e: optional Redis for shared LLM gateway budget (fallback = memory).
+  try {
+    const { setLlmGatewayRedis } = require('@rsv360/shared');
+    const {
+      isRedisRequiredForLocks,
+      getRedisConnection,
+    } = require('../server/modules/fornecedores-hub/redis-connection');
+    if (isRedisRequiredForLocks()) {
+      const client = await getRedisConnection();
+      setLlmGatewayRedis(client);
+      console.log('[BOOT] LLM gateway Redis budget ✓');
+    } else {
+      setLlmGatewayRedis(null);
+      console.log('[BOOT] LLM gateway budget: in-memory (REDIS_URL ausente)');
+    }
+  } catch (err) {
+    try {
+      const { setLlmGatewayRedis } = require('@rsv360/shared');
+      setLlmGatewayRedis(null);
+    } catch {
+      /* shared unavailable — ignore */
+    }
+    console.warn(
+      '[BOOT] LLM gateway Redis skip (memory budget):',
+      err && err.message ? err.message : err,
+    );
+  }
+
   try {
     const { registerMigracaoFase1Modules } = require('../server/app');
     registerMigracaoFase1Modules(app);
