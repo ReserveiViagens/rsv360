@@ -60,20 +60,22 @@ describe('PR-13e-followup-b — extrairViaLLM gateway', () => {
         ],
         usage: { prompt_tokens: 10, completion_tokens: 20 },
       }),
-    })) as unknown as typeof fetch;
+    }));
 
     const rows = await extrairViaLLM(secretDoc, {
       apiKey: 'sk-test',
-      fetchImpl,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
       log: (event, meta) => {
         logs.push(`${event}:${JSON.stringify(meta)}`);
       },
     });
 
     expect(fetchImpl).toHaveBeenCalledTimes(1);
-    const body = JSON.parse(
-      (fetchImpl.mock.calls[0][1] as { body: string }).body,
-    ) as {
+    const callArgs = fetchImpl.mock.calls[0] as unknown as [
+      unknown,
+      { body: string },
+    ];
+    const body = JSON.parse(callArgs[1].body) as {
       response_format?: { type: string };
       messages: Array<{ role: string; content: string }>;
     };

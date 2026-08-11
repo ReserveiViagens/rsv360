@@ -27,6 +27,8 @@ cd apps/site-publico && npx jest __tests__/lib/llm-chat-gateway.test.ts --forceE
 
 Resultado: **7 passed** (backend: extrair-via-llm + parse-estruturado) · gateway site-publico regressão OK.
 
+Follow-up CI: `backend-typecheck` falhou em `fetchImpl.mock` após `as typeof fetch`. Fix: manter o mock tipado como `jest.fn` e só castear na deps.
+
 ## Risco
 
 - Blast radius: 1 superfície server (import .md/.docx/.pdf).
