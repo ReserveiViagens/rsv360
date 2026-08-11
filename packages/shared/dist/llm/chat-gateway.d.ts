@@ -1,7 +1,8 @@
 /**
- * PR-13e / 13e-followup-a — shared LLM chat gateway (OpenAI chat.completions).
+ * PR-13e / 13e-followup-a / 13e-followup-d — shared LLM chat gateway.
  * Centralizes: API key fail-closed, timeout, user-message sanitize, safe logs,
- * per-surface process-local budget, output char redaction.
+ * per-surface budget (process-local + optional Redis), circuit breaker,
+ * output char redaction.
  * Does not log prompts, completions, or secrets.
  */
 export declare const LLM_GATEWAY_DEFAULT_MODEL = "gpt-4o-mini";
@@ -16,6 +17,10 @@ export declare const LLM_GATEWAY_BUDGET_MAX_CALLS = 60;
 export declare const LLM_GATEWAY_BUDGET_WINDOW_MS = 60000;
 /** Process-local token budget (prompt+completion) per surface per window. */
 export declare const LLM_GATEWAY_BUDGET_MAX_TOKENS = 80000;
+/** Consecutive upstream failures before opening the circuit. */
+export declare const LLM_GATEWAY_CIRCUIT_FAILURE_THRESHOLD = 5;
+/** How long the circuit stays open (ms). */
+export declare const LLM_GATEWAY_CIRCUIT_COOLDOWN_MS = 30000;
 export type LlmChatRole = 'system' | 'user' | 'assistant';
 export type LlmChatMessage = {
     role: LlmChatRole;
@@ -46,16 +51,26 @@ export type LlmChatGatewayOk = {
 };
 export type LlmChatGatewayErr = {
     ok: false;
-    error: 'missing_api_key' | 'invalid_request' | 'timeout' | 'http_error' | 'empty' | 'network' | 'budget_exceeded';
+    error: 'missing_api_key' | 'invalid_request' | 'timeout' | 'http_error' | 'empty' | 'network' | 'budget_exceeded' | 'circuit_open';
     status?: number;
 };
 export type LlmChatGatewayResult = LlmChatGatewayOk | LlmChatGatewayErr;
+/** Duck-typed Redis (ioredis-compatible). Optional — no ioredis dep in shared. */
+export type LlmGatewayRedisLike = {
+    incr(key: string): Promise<number>;
+    incrby(key: string, increment: number): Promise<number>;
+    expire(key: string, seconds: number): Promise<unknown>;
+};
 export type LlmChatGatewayDeps = {
     apiKey?: string | null;
     fetchImpl?: typeof fetch;
     now?: () => number;
     log?: (event: string, meta: Record<string, string | number | boolean | null>) => void;
+    /** When set, budget is counted in Redis (multi-instance). Falls back to memory on Redis errors. */
+    redis?: LlmGatewayRedisLike | null;
 };
+/** Process-wide Redis for budget (call once at boot). Tests should pass deps.redis instead. */
+export declare function setLlmGatewayRedis(client: LlmGatewayRedisLike | null): void;
 export declare function clearLlmGatewayBudgetForTests(): void;
 /**
  * Call OpenAI chat.completions through the shared gateway.
