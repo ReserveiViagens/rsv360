@@ -2,6 +2,7 @@ import request from 'supertest';
 import express from 'express';
 import { portalAuthMiddleware } from '../../../../server/modules/guest-portal/middleware/portal-auth.middleware';
 import portalRouter from '../../../../server/modules/guest-portal/routes/portal.routes';
+import { initPublicLimiter } from '../../../../server/middleware/public-limiter';
 
 jest.mock('../../../../server/modules/guest-portal/services/token.service', () => ({
   tokenService: {
@@ -20,6 +21,11 @@ const { tokenService } = require('../../../../server/modules/guest-portal/servic
 const { guestPortalAuditService } = require('../../../../server/modules/guest-portal/services/audit.service');
 
 describe('guest portal auth middleware', () => {
+  beforeAll(async () => {
+    // PR-06a: portal.routes mounts publicLimiter — fail-closed until init (H4).
+    await initPublicLimiter();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
