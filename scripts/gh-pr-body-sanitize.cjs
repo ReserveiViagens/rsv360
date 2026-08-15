@@ -11,7 +11,7 @@
  *
  * Call after every `gh pr create` / before gate. Source of injection is Cursor's
  * PR summary appender, not .github/pull_request_template.md.
- * PR-237 CI unblock: non-docs path so required backend-typecheck can report.
+ * CI unblock (non-docs): required backend-typecheck — used by docs-only PRs (#237, PR-12 Fase 0).
  */
 const { execFileSync } = require('child_process');
 const fs = require('fs');
