@@ -1,4 +1,6 @@
 import request from 'supertest';
+import { authHeader } from '../../test/fase1-test-helpers';
+
 const { createApp } = require('../../../app');
 
 describe('Payments Integration', () => {
@@ -8,9 +10,17 @@ describe('Payments Integration', () => {
     app = await createApp();
   });
 
+  it('rejects staff payments routes without JWT (PR-01)', async () => {
+    const response = await request(app)
+      .get('/api/v1/payments/payments')
+      .query({ enterpriseId: 'ent_1' });
+    expect(response.status).toBe(401);
+  });
+
   it('cria e consulta pagamento', async () => {
     const createResponse = await request(app)
       .post('/api/v1/payments/payments')
+      .set(authHeader())
       .send({
         enterpriseId: 'ent_1',
         amount: 150,
@@ -24,6 +34,7 @@ describe('Payments Integration', () => {
 
     const getResponse = await request(app)
       .get(`/api/v1/payments/payments/${createResponse.body.id}`)
+      .set(authHeader())
       .query({ enterpriseId: 'ent_1' });
 
     expect(getResponse.status).toBe(200);
@@ -33,12 +44,15 @@ describe('Payments Integration', () => {
   it('lista pagamentos e pix', async () => {
     const paymentsResponse = await request(app)
       .get('/api/v1/payments/payments')
+      .set(authHeader())
       .query({ enterpriseId: 'ent_1' });
 
     expect(paymentsResponse.status).toBe(200);
     expect(Array.isArray(paymentsResponse.body.data)).toBe(true);
 
-    const pixResponse = await request(app).get('/api/v1/payments/pix');
+    const pixResponse = await request(app)
+      .get('/api/v1/payments/pix')
+      .set(authHeader());
     expect(pixResponse.status).toBe(200);
     expect(Array.isArray(pixResponse.body)).toBe(true);
   });
@@ -46,12 +60,14 @@ describe('Payments Integration', () => {
   it('cria e atualiza cliente', async () => {
     const createResponse = await request(app)
       .post('/api/v1/payments/customers')
+      .set(authHeader())
       .send({ enterpriseId: 'ent_1', email: 'test@rsv360.com', name: 'Tester' });
 
     expect(createResponse.status).toBe(200);
 
     const updateResponse = await request(app)
       .put(`/api/v1/payments/customers/${createResponse.body.id}`)
+      .set(authHeader())
       .send({ name: 'Tester Updated' });
 
     expect(updateResponse.status).toBe(200);
