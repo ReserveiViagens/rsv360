@@ -121,11 +121,90 @@ function sanitizeDocumentPath(uri) {
   }
 }
 
+/** @type {Map<string, number>} in-process counters — PR-16d-telemetry */
+const cspTelemetryCounts = new Map();
+
+function resolveCspTelemetryApp(env = process.env) {
+  const raw = String(env.CSP_TELEMETRY_APP || 'unknown').trim() || 'unknown';
+  return raw.slice(0, 48).replace(/[^\w.-]/g, '_');
+}
+
+function cspTelemetryBucketKey(summary, app) {
+  const directive =
+    summary.effectiveDirective || summary.violatedDirective || 'unknown';
+  const blocked = summary.blockedUri || 'unknown';
+  const path = summary.documentPath || '/';
+  return `${app}\t${directive}\t${blocked}\t${path}`;
+}
+
+/**
+ * PR-16d-telemetry: bump in-memory counts; optional JSONL append (CSP_TELEMETRY_FILE).
+ * Never writes raw report bodies, query strings, cookies, or IPs.
+ */
+function recordCspTelemetry(summary, env = process.env) {
+  const app = resolveCspTelemetryApp(env);
+  const key = cspTelemetryBucketKey(summary, app);
+  cspTelemetryCounts.set(key, (cspTelemetryCounts.get(key) || 0) + 1);
+
+  const filePath = String(env.CSP_TELEMETRY_FILE || '').trim();
+  if (!filePath) return;
+
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const dir = path.dirname(filePath);
+    if (dir && dir !== '.') {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const line = JSON.stringify({
+      ts: new Date().toISOString(),
+      app,
+      disposition: summary.disposition || 'report',
+      effectiveDirective: summary.effectiveDirective || null,
+      violatedDirective: summary.violatedDirective || null,
+      blockedUri: summary.blockedUri || null,
+      documentPath: summary.documentPath || null,
+    });
+    fs.appendFileSync(filePath, `${line}\n`, { encoding: 'utf8', flag: 'a' });
+  } catch {
+    // Fail soft — disk full / read-only FS must not break collectors.
+  }
+}
+
+function getCspTelemetrySnapshot() {
+  const byApp = Object.create(null);
+  const byDirective = Object.create(null);
+  const rows = [];
+
+  for (const [key, count] of cspTelemetryCounts.entries()) {
+    const [app, directive, blockedUri, documentPath] = key.split('\t');
+    byApp[app] = (byApp[app] || 0) + count;
+    byDirective[directive] = (byDirective[directive] || 0) + count;
+    rows.push({ app, directive, blockedUri, documentPath, count });
+  }
+
+  rows.sort((a, b) => b.count - a.count || a.app.localeCompare(b.app));
+
+  return {
+    event: 'csp_telemetry_snapshot',
+    generatedAt: new Date().toISOString(),
+    total: rows.reduce((n, r) => n + r.count, 0),
+    byApp,
+    byDirective,
+    rows: rows.slice(0, 200),
+  };
+}
+
+function resetCspTelemetryForTests() {
+  cspTelemetryCounts.clear();
+}
+
 /**
  * Structured CSP violation log — no cookies, IPs, full URLs with query, or report bodies.
  * Always safe to call from /api/csp-report handlers; returns HTTP status.
+ * PR-16d-telemetry: also records aggregate buckets (+ optional JSONL).
  */
-function handleCspViolationReport(rawBody) {
+function handleCspViolationReport(rawBody, env = process.env) {
   try {
     let parsed = rawBody;
     if (typeof rawBody === 'string') {
@@ -148,9 +227,11 @@ function handleCspViolationReport(rawBody) {
       blockedUri: sanitizeReportUri(report['blocked-uri'] || report.blockedURI),
       documentPath: sanitizeDocumentPath(report['document-uri'] || report.documentURI),
       statusCode: report['status-code'] || report.statusCode || null,
+      app: resolveCspTelemetryApp(env),
     };
 
     console.info(JSON.stringify(summary));
+    recordCspTelemetry(summary, env);
   } catch {
     // Fail soft — never echo parse errors or raw body.
   }
@@ -163,5 +244,8 @@ module.exports = {
   buildReportingEndpointsHeader,
   handleCspViolationReport,
   sanitizeReportUri,
+  recordCspTelemetry,
+  getCspTelemetrySnapshot,
+  resetCspTelemetryForTests,
   DEFAULT_CSP_REPORT_PATH,
 };
