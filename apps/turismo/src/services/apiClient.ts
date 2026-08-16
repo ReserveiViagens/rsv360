@@ -10,6 +10,7 @@ const API_TIMEOUT = 30000; // 30 seconds
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT,
+  withCredentials: true, // PR turismo-LS-prep — HttpOnly refresh cookie (Path=/api/v1/auth)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -212,30 +213,45 @@ export const api = {
   },
 };
 
-// Token management
+// Token management — access in LS; refresh only via HttpOnly cookie (PR-10c-pré-b / ls-prep).
+const REFRESH_LS_KEYS = ['refresh_token', 'refreshToken'] as const;
+
 export const tokenManager = {
-  setTokens: (accessToken: string, refreshToken?: string) => {
+  /** Never persist refresh in localStorage (cookie is source of truth). */
+  setTokens: (accessToken: string, _refreshToken?: string) => {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('authToken', accessToken); // Compatibilidade
-    if (refreshToken) {
-      localStorage.setItem('refresh_token', refreshToken);
-      localStorage.setItem('refreshToken', refreshToken); // Compatibilidade
+    for (const key of REFRESH_LS_KEYS) {
+      localStorage.removeItem(key);
     }
+  },
+
+  setAccessToken: (accessToken: string) => {
+    tokenManager.setTokens(accessToken);
   },
 
   getAccessToken: (): string | null => {
     return localStorage.getItem('access_token') || localStorage.getItem('authToken');
   },
 
+  /**
+   * Migration bridge only — returns legacy LS refresh once; callers must clear after cookie mint.
+   * New logins never write these keys.
+   */
   getRefreshToken: (): string | null => {
     return localStorage.getItem('refresh_token') || localStorage.getItem('refreshToken');
   },
 
+  clearRefreshTokens: () => {
+    for (const key of REFRESH_LS_KEYS) {
+      localStorage.removeItem(key);
+    }
+  },
+
   clearTokens: () => {
     localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
     localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
+    tokenManager.clearRefreshTokens();
   },
 
   isAuthenticated: (): boolean => {
