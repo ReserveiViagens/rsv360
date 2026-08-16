@@ -84,7 +84,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setRefreshToken(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('authToken');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('refreshToken');
     }
     setIsLoading(false);
   }, []);
@@ -191,9 +193,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
         setAccessToken(data.access_token);
         localStorage.setItem('access_token', data.access_token);
-        // PR-10c-pré-b — refresh lives in HttpOnly cookie; clear LS legacy.
+        localStorage.setItem('authToken', data.access_token);
+        // PR-10c-pré-b / turismo-ls-prep — refresh lives in HttpOnly cookie; clear LS legacy.
         setRefreshToken(null);
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('refreshToken');
       } else {
         throw new Error('Falha ao renovar token');
       }
@@ -449,7 +453,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setAccessToken(loginPayload.access_token);
     setRefreshToken(null);
     localStorage.setItem('access_token', loginPayload.access_token);
+    localStorage.setItem('authToken', loginPayload.access_token);
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('refreshToken');
 
     if (loginPayload.user) {
       const mapped = mapAuthV1User(loginPayload.user, loginPayload.access_token);

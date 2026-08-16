@@ -95,8 +95,9 @@ export const authService = {
           };
         }
 
-        if (parsed?.access_token && parsed.refresh_token) {
-          tokenManager.setTokens(parsed.access_token, parsed.refresh_token);
+        if (parsed?.access_token) {
+          // Cookie path: refresh may be stripped from JSON (HttpOnly Set-Cookie).
+          tokenManager.setAccessToken(parsed.access_token);
           wsClient.connect();
           toast.success('Login realizado com sucesso!');
           const userPayload = parsed.user;
@@ -105,7 +106,7 @@ export const authService = {
               ? (mapAuthV1User(userPayload) as unknown as User)
               : (response.data as LoginResponse).user,
             access_token: parsed.access_token,
-            refresh_token: parsed.refresh_token,
+            refresh_token: '',
             expires_in: parsed.expires_in ?? 900,
           };
         }
@@ -128,8 +129,8 @@ export const authService = {
           data: response.data as Record<string, unknown>,
         });
 
-        if (parsed?.access_token && parsed.refresh_token) {
-          tokenManager.setTokens(parsed.access_token, parsed.refresh_token);
+        if (parsed?.access_token) {
+          tokenManager.setAccessToken(parsed.access_token);
           wsClient.connect();
           toast.success('Autenticação concluída com sucesso!');
           const userPayload = parsed.user;
@@ -138,7 +139,7 @@ export const authService = {
               ? (mapAuthV1User(userPayload) as unknown as User)
               : (response.data as LoginResponse).user,
             access_token: parsed.access_token,
-            refresh_token: parsed.refresh_token,
+            refresh_token: '',
             expires_in: parsed.expires_in ?? 900,
           };
         }
@@ -186,15 +187,17 @@ export const authService = {
     }
   },
 
-  // Logout
+  // Logout — cookie cleared by backend Set-Cookie; body legado só se LS ainda tiver refresh
   async logout(): Promise<void> {
     try {
-      const refreshToken = tokenManager.getRefreshToken();
-      await api.post(AUTH_V1.LOGOUT, { refresh_token: refreshToken });
+      const legacyRefresh = tokenManager.getRefreshToken();
+      await api.post(
+        AUTH_V1.LOGOUT,
+        legacyRefresh ? { refresh_token: legacyRefresh } : {},
+      );
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Always clear local data
       tokenManager.clearTokens();
       wsClient.disconnect();
       toast.success('Logout realizado com sucesso!');
@@ -229,30 +232,23 @@ export const authService = {
     }
   },
 
-  // Refresh token
+  // Refresh — HttpOnly cookie (withCredentials); LS body only during migration
   async refreshToken(): Promise<string> {
     try {
-      const refreshToken = tokenManager.getRefreshToken();
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
-      }
-
-      const response = await api.post<{ access_token: string; refresh_token: string }>(
+      const legacyRefresh = tokenManager.getRefreshToken();
+      const response = await api.post<{ access_token: string; refresh_token?: string }>(
         AUTH_V1.REFRESH,
-        {
-          refresh_token: refreshToken,
-        }
+        legacyRefresh ? { refresh_token: legacyRefresh } : {},
       );
-      
-      if (response.success && response.data) {
-        tokenManager.setTokens(response.data.access_token, response.data.refresh_token);
+
+      if (response.success && response.data?.access_token) {
+        tokenManager.setAccessToken(response.data.access_token);
         return response.data.access_token;
       }
-      
+
       throw new Error(response.message || 'Erro ao renovar token');
     } catch (error: unknown) {
       console.error('Refresh token error:', error);
-      // Clear tokens on refresh failure
       tokenManager.clearTokens();
       throw error;
     }
